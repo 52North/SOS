@@ -30,11 +30,12 @@ package org.n52.sos;
 
 import javax.servlet.ServletContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.aop.target.HotSwappableTargetSource;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
-import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
@@ -50,6 +51,7 @@ import org.n52.sos.context.ContextSwitcher;
 public class SOSDispatcherServlet
         extends DispatcherServlet
         implements ContextSwitcher {
+    private static final Logger LOG = LoggerFactory.getLogger(SOSDispatcherServlet.class);
     private static final long serialVersionUID = -5390564503165988702L;
     private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     public static final String UNCONFIGURED_CONFIG_LOCATION_PARAM = "unconfiguredConfigLocations";
@@ -128,6 +130,7 @@ public class SOSDispatcherServlet
         if (!(applicationContext instanceof ConfigurableWebApplicationContext)) {
             throw new IllegalStateException("WebApplicationContext does not support refresh: " + applicationContext);
         }
+        LOG.info("Reloading context");
         this.configureAndRefreshWebApplicationContext((ConfigurableWebApplicationContext) applicationContext);
     }
 

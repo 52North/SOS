@@ -36,18 +36,20 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 
 /**
  * Abstract DAO class for querying {@link AbstractValue}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -57,7 +59,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
      * criteria
-     * 
+     *
      * @param c
      *            Criteria to add crtierion
      * @param request
@@ -85,7 +87,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     * 
+     *
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
@@ -112,7 +114,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     /**
      * Get projection for {@link ExtendedIndeterminateTime} value
-     * 
+     *
      * @param indetTime
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
@@ -129,7 +131,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
     /**
      * Get the AbstractValue property to filter on for an
      * {@link ExtendedIndeterminateTime}
-     * 
+     *
      * @param indetTime
      *            Value to get property for
      * @return String property to filter on
@@ -145,21 +147,32 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
     /**
      * Add chunk information to {@link Criteria}
-     * 
+     *
      * @param c
      *            {@link Criteria} to add information
      * @param chunkSize
      *            Chunk size
      * @param currentRow
      *            Start row
+     * @param request
      */
-    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow) {
-        c.addOrder(Order.asc(AbstractValue.PHENOMENON_TIME_START));
+    protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, GetObservationRequest request) {
+        c.addOrder(Order.asc(getOrderColumn(request)));
         if (chunkSize > 0) {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
         }
     }
-    
+
+    private String getOrderColumn(GetObservationRequest request) {
+        if (request.isSetTemporalFilter()) {
+            TemporalFilter filter = request.getTemporalFilters().iterator().next();
+            if (filter.getValueReference().contains(AbstractValue.RESULT_TIME)) {
+               return AbstractValue.RESULT_TIME;
+            }
+        }
+        return AbstractValue.PHENOMENON_TIME_START;
+    }
+
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
 
 }

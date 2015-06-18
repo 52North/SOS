@@ -14,5 +14,11 @@
     <bean id="contentModificationListener"
           class="org.n52.sos.cache.ctrl.DefaultContentModificationListener" />
 
+     <!-- ServiceEventListener implementations from core/api -->
+    <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger"/>
+
+    <bean id="eventListenerRegistrator" class="org.n52.iceland.event.ServiceEventListenerRegistrator">
+        <description>Used to decouple EventListener and EventBus creation.</description>
+    </bean>
 
 </beans>

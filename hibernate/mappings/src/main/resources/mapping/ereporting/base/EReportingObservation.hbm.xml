@@ -130,5 +130,112 @@
             	<comment>AQD e-Reporting uncertainty estimation quality value</comment>
             </column>
         </property>
+<<<<<<< HEAD:hibernate/mappings/src/main/resources/mapping/ereporting/base/EReportingObservation.hbm.xml
+=======
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="numericValue">
+			<comment>Value table for numeric/Measurment observation</comment>
+        	<key foreign-key="observationNumericValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" type="double">
+         		<column name="value">
+         			<comment>Numeric/Measurment observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+        <!-- <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="blobValue">
+        	<comment>Value table for blob observation</comment>
+        	<key foreign-key="observationBlobValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" type="blob">
+         		<column name="value">
+         			<comment>Blob observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="booleanValue" check="value in ('T','F')">
+			<comment>Value table for boolean observation</comment>
+        	<key foreign-key="observationBooleanValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" type="org.hibernate.type.TrueFalseType">
+         		<column name="value">
+         			<comment>Boolean observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="categoryValue">
+			<comment>Value table for category observation</comment>
+        	<key foreign-key="observationCategoryValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" type="string">
+         		<column name="value">
+         			<comment>Category observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingCountObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="countValue">
+			<comment>Value table for count observation</comment>
+        	<key foreign-key="observationCountValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" type="integer">
+         		<column name="value">
+         			<comment>Count observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingGeometryObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="geometryValue">
+			<comment>Value table for geometry observation</comment>
+        	<key foreign-key="observationGeometryValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" type="org.hibernate.spatial.GeometryType">
+         		<column name="value">
+         			<comment>Geometry observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="textValue">
+			<comment>Value table for text observation</comment>
+        	<key foreign-key="observationTextValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" type="org.hibernate.type.StringClobType">
+         		<column name="value">
+         			<comment>Text observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="sweDataArrayValue">
+        	<comment>Value table for SweDataArray observation</comment>
+        	<key foreign-key="observationSweDataArrayValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" type="org.hibernate.type.StringClobType">
+         		<column name="value">
+         			<comment>SweDataArray observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass> -->
+>>>>>>> upstream/develop:hibernate/mappings/src/main/resources/mapping/ereporting/EReportingObservation.hbm.xml
     </class>
 </hibernate-mapping>

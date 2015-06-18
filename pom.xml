@@ -973,7 +973,7 @@
             <dependency>
 			  <groupId>se.jiderhamn</groupId>
 			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.11.0</version>
+			  <version>1.13.0</version>
 			</dependency>
             <!-- third party dialects -->
             <!-- Remove third party ncname resolver from SOS and use OXF instead -->
@@ -1214,6 +1214,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
+            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -Psqlserver,oracle -->
+            <plugin>
+				<groupId>external.atlassian.jgitflow</groupId>
+				<artifactId>jgitflow-maven-plugin</artifactId>
+				<version>1.0-m5.1</version>
+				<configuration>
+					<flowInitContext>
+				         <masterBranchName>master</masterBranchName>
+				         <developBranchName>develop</developBranchName>
+				         <featureBranchPrefix>feature/</featureBranchPrefix>
+				         <releaseBranchPrefix>release/</releaseBranchPrefix>
+				         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+				         <versionTagPrefix />
+				       </flowInitContext>
+				       <useReleaseProfile>false</useReleaseProfile>
+				</configuration>
+			</plugin>
         </plugins>
         <pluginManagement>
             <plugins>

@@ -47,6 +47,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
@@ -247,6 +248,7 @@ public class InspireExtendedCapabilitiesProvider
         }
     }
 
+
     /**
      * Get the temporal reference
      *
@@ -268,7 +270,11 @@ public class InspireExtendedCapabilitiesProvider
 
         for (String offering : getCache().getOfferings()) {
             InspireUniqueResourceIdentifier iuri = new InspireUniqueResourceIdentifier(offering);
-//            iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
+            if (getInspireHelper().isSetNamespace()) {
+                iuri.setNamespace(getInspireHelper().getNamespace());
+            } else {
+                iuri.setNamespace(ServiceConfiguration.getInstance().getServiceURL());
+            }
             spatialDataSetIdentifier.add(iuri);
         }
         return spatialDataSetIdentifier;

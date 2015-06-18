@@ -32,18 +32,24 @@ import java.net.URI;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.cache.ContentCache;
+import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.Validation;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.inspire.settings.InspireSettings;
 import org.n52.sos.service.Configurator;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -82,6 +88,15 @@ public class InspireHelper implements Constructable {
     private Set<InspireLanguageISO6392B> supportedLanguages = Sets.newHashSet();
 
     private boolean useAuthority = false;
+
+    private String namespace;
+
+    private ContentCacheController contentCacheController;
+
+    @Inject
+    public void setContentCacheController(ContentCacheController contentCacheController) {
+        this.contentCacheController = contentCacheController;
+    }
 
     @Override
     public void init() {
@@ -134,7 +149,7 @@ public class InspireHelper implements Constructable {
      * @return the supporte languages
      */
      public Set<InspireLanguageISO6392B> getSupportedLanguages() {
-         if (supportedLanguages.size() != Configurator.getInstance().getCache().getSupportedLanguages().size()) {
+         if (supportedLanguages.size() != getCache().getSupportedLanguages().size()) {
              updateSupportedLanguages();
          }
          return supportedLanguages;
@@ -146,13 +161,17 @@ public class InspireHelper implements Constructable {
      private void updateSupportedLanguages() {
          supportedLanguages.clear();
          supportedLanguages.add(getDefaultLanguage());
-         for (Locale language : Configurator.getInstance().getCache().getSupportedLanguages()) {
+         for (Locale language : getCache().getSupportedLanguages()) {
              try {
                  supportedLanguages.add(InspireLanguageISO6392B.fromValue(language));
              } catch (IllegalArgumentException iae) {
                  LOGGER.error(String.format("The supported language %s is not valid for INSPIRE", language), iae);
              }
          }
+    }
+
+    private SosContentCache getCache() {
+        return (SosContentCache) contentCacheController.getCache();
     }
 
     /**
@@ -257,6 +276,28 @@ public class InspireHelper implements Constructable {
 
     public boolean isUseAuthority() {
         return useAuthority;
+    }
+
+    /**
+     * @return the namespace
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * @param namespace the namespace to set
+     */
+    @Setting(InspireSettings.INSPIRE_NAMESPACE_KEY)
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    /**
+     * @return the namespace
+     */
+    public boolean isSetNamespace() {
+        return !Strings.isNullOrEmpty(getNamespace());
     }
 
     /**

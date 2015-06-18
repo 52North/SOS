@@ -8,10 +8,8 @@
     <bean id="poxBinding" class="org.n52.iceland.binding.pox.PoxBinding"/>
     <bean id="jsonBinding" class="org.n52.iceland.binding.json.JSONBinding"/>
     <bean id="soapBinding" class="org.n52.iceland.binding.soap.SoapBinding"/>
-
     <!-- Binding implementations from bindings/rest/code -->
     <bean id="restBinding" class="org.n52.sos.binding.rest.RestBinding"/>
-
     <!-- Binding implementations from bindings/exi -->
     <bean id="exiBinding" class="org.n52.sos.binding.EXIBinding"/>
 

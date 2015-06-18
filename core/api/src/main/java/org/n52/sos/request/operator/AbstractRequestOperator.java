@@ -42,7 +42,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
@@ -71,6 +70,8 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -246,6 +247,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             checkForModifierAndProcess(request);
             checkParameters(request);
             A response = receive(request);
+            this.serviceEventBus.submit(new ResponseEvent(response));
             return checkForModifierAndProcess(request, response);
         } else {
             throw new OperationNotSupportedException(abstractRequest.getOperationName());

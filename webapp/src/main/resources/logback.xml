@@ -40,7 +40,7 @@
 	</appender>
 
 	<logger name="org.n52" level="${config.logger.level}" />
-	<logger name="org.springframework" level="INFO" />
+	<logger name="org.springframework" level="DEBUG" />
 
 	<root level="INFO">
 		<appender-ref ref="STDOUT" />

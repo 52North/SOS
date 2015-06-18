@@ -3,23 +3,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <bean id="contentCacheController"
-          class="org.n52.iceland.cache.ctrl.ContentCacheControllerImpl"/>
-
-    <bean id="cacheFeederDao"
-          class="org.n52.sos.ds.hibernate.SosCacheFeederDAO"/>
-
-    <bean id="cachePersistenceStrategy"
-          class="org.n52.iceland.cache.ctrl.persistence.AsyncCachePersistenceStrategy" />
-
-    <!-- ServiceEventListener implementations from extensions/do/core -->
-    <bean id="deleteObservationContentModificationListener"
-          class="org.n52.sos.ext.deleteobservation.DeleteObservationContentModificationListener"/>
-
-    <!-- ServiceEventListener implementations from core/cache -->
-    <bean id="contentModificationListener"
-          class="org.n52.sos.cache.ctrl.DefaultContentModificationListener"/>
-
-    <bean class="org.n52.sos.cache.ContentCacheFactoryImpl"/>
-    <bean class="org.n52.sos.cache.ctrl.CompleteCacheUpdateFactoryImpl"/>
+    <bean id="contentCacheController" class="org.n52.iceland.cache.ctrl.ContentCacheControllerImpl"/>
+    <bean id="cacheFeederDao" class="org.n52.sos.ds.hibernate.SosCacheFeederDAO"/>
+    <bean id="cachePersistenceStrategy" class="org.n52.iceland.cache.ctrl.persistence.AsyncCachePersistenceStrategy" />
+    <bean id="contentCacheFactory" class="org.n52.sos.cache.ContentCacheFactoryImpl"/>
+    <bean id="completeCacheUpdateFactory" class="org.n52.sos.cache.ctrl.CompleteCacheUpdateFactoryImpl"/>
 </beans>

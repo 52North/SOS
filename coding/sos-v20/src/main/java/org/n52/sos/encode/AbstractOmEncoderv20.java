@@ -108,7 +108,6 @@ import org.n52.sos.util.XmlOptionsHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-
 public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> implements
         ObservationEncoder<XmlObject, Object>, StreamingEncoder<XmlObject, Object> {
 
@@ -157,10 +156,10 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
      * @return Indicator
      */
     protected abstract boolean convertEncodedProcedure();
-    
+
     @Override
     public boolean forceStreaming() {
-    	return false;
+        return false;
     }
 
     @Override
@@ -229,7 +228,8 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         OMObservationType xbObservation =
                 OMObservationType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (!sosObservation.isSetObservationID()) {
-            sosObservation.setObservationID(JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random())));
+            sosObservation.setObservationID(JavaHelper.generateID(Double.toString(System.currentTimeMillis()
+                    * Math.random())));
         }
         String observationID = sosObservation.getObservationID();
         if (!sosObservation.isSetGmlID()) {
@@ -237,12 +237,13 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         }
         // set a unique gml:id
         xbObservation.setId(sosObservation.getGmlId());
-        
+
         // set observation identifier if available
         if (sosObservation.isSetIdentifier()) {
             Encoder<?, CodeWithAuthority> encoder =
                     CodingRepository.getInstance().getEncoder(
-                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sosObservation.getIdentifierCodeWithAuthority()));
+                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32,
+                                    sosObservation.getIdentifierCodeWithAuthority()));
             if (encoder != null) {
                 XmlObject xmlObject = (XmlObject) encoder.encode(sosObservation.getIdentifierCodeWithAuthority());
                 xbObservation.addNewIdentifier().set(xmlObject);
@@ -279,23 +280,27 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
         }
 
         // set observedProperty (phenomenon)
+        xbObservation.addNewObservedProperty().setHref(
+                sosObservation.getObservationConstellation().getObservableProperty().getIdentifier());
+        // set name as xlink:title
+        if (sosObservation.getObservationConstellation().getObservableProperty().isSetName()
+                && sosObservation.getObservationConstellation().getObservableProperty().getFirstName().isSetValue()) {
+            xbObservation.getObservedProperty().setTitle(
+                    sosObservation.getObservationConstellation().getObservableProperty().getFirstName().getValue());
+        }
         List<OmObservableProperty> phenComponents;
         if (sosObservation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty) {
-            xbObservation.addNewObservedProperty().setHref(
-                    sosObservation.getObservationConstellation().getObservableProperty().getIdentifier());
             phenComponents = new ArrayList<OmObservableProperty>(1);
             phenComponents.add((OmObservableProperty) sosObservation.getObservationConstellation()
                     .getObservableProperty());
         } else if (sosObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
             OmCompositePhenomenon compPhen =
                     (OmCompositePhenomenon) sosObservation.getObservationConstellation().getObservableProperty();
-            xbObservation.addNewObservedProperty().setHref(compPhen.getIdentifier());
             phenComponents = compPhen.getPhenomenonComponents();
         }
         // set feature
         xbObservation.addNewFeatureOfInterest().set(
                 addFeatureOfInterest(sosObservation.getObservationConstellation().getFeatureOfInterest()));
-
 
         addResultQualities(xbObservation, sosObservation);
 
@@ -342,7 +347,8 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
                             ImmutableMap.of(HelperValues.DOCUMENT, "true"));
             DQElementPropertyType addNewResultQuality = xbObservation.addNewResultQuality();
             addNewResultQuality.setAbstractDQElement(encodedQuality.getAbstractDQElement());
-            XmlHelper.substituteElement(addNewResultQuality.getAbstractDQElement(), encodedQuality.getAbstractDQElement());
+            XmlHelper.substituteElement(addNewResultQuality.getAbstractDQElement(),
+                    encodedQuality.getAbstractDQElement());
         }
     }
 
@@ -399,6 +405,10 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             }
         } else {
             procedure.setHref(procedureDescription.getIdentifier());
+        }
+     // set name as xlink:title
+        if (procedure.isSetHref() && procedureDescription.isSetName() && procedureDescription.getFirstName().isSetValue()) {
+            procedure.setTitle(procedureDescription.getFirstName().getValue());
         }
     }
 
@@ -600,8 +610,7 @@ public abstract class AbstractOmEncoderv20 extends AbstractXmlEncoder<Object> im
             } else if (value instanceof GeometryValue) {
                 GeometryValue geometryValue = (GeometryValue) value;
                 if (geometryValue.getValue() != null) {
-                    return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, geometryValue,
-                            helperValues);
+                    return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, geometryValue, helperValues);
                 }
             } else if (value instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) value;

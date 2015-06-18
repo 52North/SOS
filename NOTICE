@@ -2,7 +2,7 @@ Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source Software
 
 Licensed under GNU General Public License, Version 2.0
 
-This project includes: 
+This project includes:
 
   52North Sensor Web Client PDF report structure under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
@@ -156,6 +156,7 @@ This project includes:
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
   JavaServer Pages(TM) API under CDDL 1.1 or GPL2 w/ CPE
+  JavaScript SOS Client under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain

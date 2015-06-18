@@ -41,6 +41,8 @@ public interface InspireSettings {
 
     String INSPIRE_ID_KEY = "inspire.id";
 
+    String INSPIRE_NAMESPACE_KEY = "inspire.namespace";
+
     String INSPIRE_FULL_EXTENDED_CAPABILITIES_KEY
             = "inspire.fullExtendedCapabilities";
 

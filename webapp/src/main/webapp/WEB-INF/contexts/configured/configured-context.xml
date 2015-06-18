@@ -6,42 +6,6 @@
                            http://www.springframework.org/schema/context
                            http://www.springframework.org/schema/context/spring-context-4.1.xsd">
 
-    <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
-        <description>Used to wire up activation persistence.</description>
-        <property name="listeners">
-            <map>
-                <entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
-                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesListener}"/>
-                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorListener}"/>
-            </map>
-        </property>
-        <property name="initializers">
-            <map>
-                <entry key-ref="bindingRepository" value="#{activationService.bindingInitializer}" />
-                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesInitializer}"/>
-                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorInitializer}" />
-            </map>
-        </property>
-    </bean>
-
-     <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
-        <description>Used to wire up SOS specific activation persistence.</description>
-        <property name="listeners">
-            <map>
-                <entry key-ref="offeringExtensionRepository" value="#{sosActivationService.offeringExtensionListener}" />
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatListener}"/>
-                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatListener}" />
-            </map>
-        </property>
-        <property name="initializers">
-            <map>
-                <entry key-ref="offeringExtensionRepository" value="#{sosActivationService.offeringExtensionInitializer}" />
-                <entry key-ref="procedureDescriptionFormatRepository" value="#{sosActivationService.procedureDescriptionFormatInitializer}" />
-                <entry key-ref="responseFormatRepository" value="#{sosActivationService.responseFormatInitializer}" />
-            </map>
-        </property>
-    </bean>
-
     <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
 
     <bean id="configurator" class="org.n52.sos.service.Configurator" />
@@ -93,6 +57,7 @@
     <bean id="geometryHandler" class="org.n52.sos.util.GeometryHandler" />
 
 
+
     <!--<bean id="encoderRepository" class="org.n52.iceland.coding.EncoderRepository" />-->
     <bean id="encoderRepository" class="org.n52.sos.coding.encode.SosEncoderRepository" />
     <bean id="procedureDescriptionFormatRepository" class="org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository" />
@@ -102,10 +67,11 @@
     <bean id="requestResponseModifierRepository" class="org.n52.iceland.convert.RequestResponseModifierRepository" />
     <bean id="responseWriterRepository" class="org.n52.iceland.coding.encode.ResponseWriterRepository" />
     <bean id="serviceOperatorRepository" class="org.n52.iceland.service.operator.ServiceOperatorRepository" />
-
-    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
+    <bean id="requestOperatorRepository" class="org.n52.iceland.request.operator.RequestOperatorRepository" />
     <bean id="converterRepository" class="org.n52.iceland.convert.ConverterRepository" />
     <bean id="decoderRepository" class="org.n52.iceland.coding.decode.DecoderRepository" />
+
+    <bean id="driverCleanupListener" class="org.n52.sos.service.DriverCleanupListener" />
     <bean id="insertSensorCapabilitiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertSensorCapabilitiesExtensionProvider" />
     <bean id="insertResultCapabiltiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
     <bean id="insertResultTemplateCapabilitiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
@@ -118,5 +84,4 @@
 
     <!-- ProfileHandler implementations from core/profile/coding -->
     <bean id="profileHandler" class="org.n52.sos.profile.ProfileHandlerImpl" />
-
 </beans>

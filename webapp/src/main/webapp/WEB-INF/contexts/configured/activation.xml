@@ -1,0 +1,27 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+    <bean class="org.n52.iceland.util.activation.ActivationRegistrator">
+        <description>Used to wire up activation persistence.</description>
+        <property name="listeners">
+            <map>
+                <entry key-ref="bindingRepository" value="#{activationService.bindingListener}" />
+                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesListener}"/>
+                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorListener}"/>
+            </map>
+        </property>
+        <property name="initializers">
+            <map>
+                <entry key-ref="bindingRepository" value="#{activationService.bindingInitializer}" />
+                <entry key-ref="owsExtendedCapabilitiesRepository" value="#{activationService.owsExtendedCapabiltiesInitializer}"/>
+                <entry key-ref="requestOperatorRepository" value="#{activationService.requestOperatorInitializer}" />
+            </map>
+        </property>
+    </bean>
+
+</beans>

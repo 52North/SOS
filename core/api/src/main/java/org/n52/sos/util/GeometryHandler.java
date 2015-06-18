@@ -28,9 +28,9 @@
  */
 package org.n52.sos.util;
 
-import static org.geotools.factory.Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER;
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
 import static org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
+import static org.n52.iceland.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -44,7 +44,6 @@ import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.factory.AbstractAuthorityFactory;
 import org.geotools.referencing.factory.DeferredAuthorityFactory;
-import org.geotools.util.WeakCollectionCleaner;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -111,34 +110,45 @@ public class GeometryHandler implements Constructable, Destroyable {
     private String authority;
     private CRSAuthorityFactory crsAuthority;
     private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
+    private String srsNamePrefixSosV2;
 
+    @Setting(SRS_NAME_PREFIX_SOS_V2)
+    public void setSrsNamePrefixSosV2(String srsNamePrefixSosV2) {
+        this.srsNamePrefixSosV2 = srsNamePrefixSosV2;
+    }
 
     @Override
     public void init() {
         GeometryHandler.instance = this;
-        crsAuthority = getCRSAuthorityFactory(
-                authority, new Hints(FORCE_LONGITUDE_FIRST_AXIS_ORDER,
-                        isEastingFirstEpsgCode(getStorageEPSG())));
+        Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER,
+                isEastingFirstEpsgCode(getStorageEPSG()));
+        this.crsAuthority = getCRSAuthorityFactory(this.authority, hints);
     }
 
     @Override
     public void destroy() {
-        if (getCrsAuthorityFactory() != null) {
-            if (getCrsAuthorityFactory() instanceof DeferredAuthorityFactory) {
-                DeferredAuthorityFactory.exit();
-            }
-            if (getCrsAuthorityFactory() instanceof AbstractAuthorityFactory) {
-                try {
-                    ((AbstractAuthorityFactory) getCrsAuthorityFactory()).dispose();
-                } catch (FactoryException fe) {
-                    LOGGER.error("Error while GeometryHandler clean up", fe);
-                }
+        if (this.crsAuthority == null) {
+            return;
+        }
+
+        if (this.crsAuthority instanceof DeferredAuthorityFactory) {
+            DeferredAuthorityFactory.exit();
+        }
+        if (this.crsAuthority instanceof AbstractAuthorityFactory) {
+            try {
+                ((AbstractAuthorityFactory) this.crsAuthority).dispose();
+            } catch (FactoryException fe) {
+                LOGGER.error("Error while GeometryHandler clean up", fe);
             }
         }
         /*
-        * close {@link WeakCollectionCleaner}
-        */
-        WeakCollectionCleaner.DEFAULT.exit();
+         * close {@link WeakCollectionCleaner}
+         *
+         * Note: Not required if
+         * se.jiderhamn.classloader.leak.prevention.ClassLoaderLeakPreventor is
+         * defined in the web.xml
+         */
+        // WeakCollectionCleaner.DEFAULT.exit();
     }
 
     /**
@@ -186,7 +196,7 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public void setStorageEpsg(final int epsgCode) throws ConfigurationError {
+    public void setStorageEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
@@ -368,12 +378,9 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @return <code>true</code>, if the EPSG code is northing first
      */
     public boolean isNorthingFirstEpsgCode(final int epsgCode) {
-        for (final Range r : epsgsWithNorthingFirstAxisOrder) {
-            if (r.contains(epsgCode)) {
-                return true;
-            }
-        }
-        return false;
+        return this.epsgsWithNorthingFirstAxisOrder.stream()
+                .filter(r -> r.contains(epsgCode))
+                .findAny().isPresent();
     }
 
     /**
@@ -693,7 +700,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     public String addOgcCrsPrefix(int crs) {
-        return new StringBuilder(ServiceConfiguration.getInstance().getSrsNamePrefixSosV2()).append(crs).toString();
+        return this.srsNamePrefixSosV2 + crs;
     }
 
     /**

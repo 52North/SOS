@@ -28,7 +28,7 @@
  */
 package org.n52.sos.event.events;
 
-import org.n52.iceland.event.events.ResponseEvent;
+import org.n52.iceland.event.events.ModificationResponseEvent;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 
@@ -38,7 +38,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  * @since 4.0.0
  */
 public abstract class SosInsertionEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse> extends
-        ResponseEvent<I, O> {
+        ModificationResponseEvent<I, O> {
 
     public SosInsertionEvent(I request, O response) {
         super(request, response);

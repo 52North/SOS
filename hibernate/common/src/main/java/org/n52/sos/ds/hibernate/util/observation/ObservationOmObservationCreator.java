@@ -161,12 +161,13 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         String procedureId = createProcedure(hObservation);
         String featureId = createFeatureOfInterest(hObservation);
         String phenomenonId = createPhenomenon(hObservation);
-        final Value<?> value = getValueFromObservation(hObservation);
+        final Value<?> value = hObservation.accept(new ObservationValueCreator());
         OmObservation sosObservation = null;
         if (value != null) {
-            if (hObservation.getUnit() != null) {
-                value.setUnit(hObservation.getUnit().getUnit());
-            }
+            // TODO delete, set in ObservationValueCreator
+//            if (hObservation.getUnit() != null) {
+//                value.setUnit(hObservation.getUnit().getUnit());
+//            }
             checkOrSetObservablePropertyUnit(getObservedProperty(phenomenonId), value.getUnit());
             OmObservationConstellation obsConst =
                     createObservationConstellation(hObservation, procedureId, phenomenonId, featureId);
@@ -183,14 +184,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done.");
         return sosObservation;
-    }
-
-    private void checkFoAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) {
-        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
-        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, hObservation);
-        }
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {
@@ -212,13 +205,17 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      *
      * @throws OwsExceptionReport
      * @throws CodedException
+     * 
+     * 
+     * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
+    @Deprecated
     private Value<?> getValueFromObservation(Observation<?> hObservation)
             throws OwsExceptionReport {
         Value<?> value = hObservation.accept(new ObservationValueCreator());
-        if (value != null && hObservation.isSetUnit()) {
-            value.setUnit(hObservation.getUnit().getUnit());
-        }
+//        if (value != null && hObservation.isSetUnit()) {
+//            value.setUnit(hObservation.getUnit().getUnit());
+//        }
         return value;
     }
 

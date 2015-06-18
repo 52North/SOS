@@ -41,6 +41,7 @@ import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
@@ -169,7 +170,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      *             If an error occurs when getting the value
      */
     protected TimeValuePair createTimeValuePairFrom(ValuedObservation<?> abstractValue) throws OwsExceptionReport {
-        return new TimeValuePair(createPhenomenonTime(abstractValue), getValueFrom(abstractValue));
+        return new TimeValuePair(createPhenomenonTime(abstractValue), abstractValue.accept(new ObservationValueCreator()));
     }
 
     /**
@@ -196,7 +197,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         if (abstractValue.isSetDescription()) {
             observation.setDescription(abstractValue.getDescription());
         }
-        Value<?> value = getValueFrom(abstractValue);
+        Value<?> value = abstractValue.accept(new ObservationValueCreator());
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }
@@ -350,12 +351,15 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * @throws OwsExceptionReport
      *             If an error occurs when creating
      *             {@link org.n52.sos.ogc.om.values.SweDataArrayValue}
+     *             
+     * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
+    @Deprecated
     protected Value<?> getValueFrom(ValuedObservation<?> abstractValue) throws OwsExceptionReport {
         Value<?> value = abstractValue.accept(new ObservationValueCreator());
-        if (value != null && abstractValue.isSetUnit()) {
-            value.setUnit(abstractValue.getUnit().getUnit());
-        }
+//        if (value != null && abstractValue.isSetUnit()) {
+//            value.setUnit(abstractValue.getUnit().getUnit());
+//        }
         return value;
     }
 

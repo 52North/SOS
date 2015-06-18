@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.entities.observation.legacy;
 
 import java.util.Date;
 
-import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -39,15 +38,7 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
+import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -57,16 +48,11 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.XmlHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -144,7 +130,7 @@ public abstract class AbstractValuedLegacyObservation<T>
      *             If an error occurs when getting the value
      */
     public TimeValuePair createTimeValuePairFrom() throws OwsExceptionReport {
-        return new TimeValuePair(createPhenomenonTime(), getValueFrom(this));
+        return new TimeValuePair(createPhenomenonTime(), accept(new ObservationValueCreator()));
     }
     
     /**
@@ -169,7 +155,7 @@ public abstract class AbstractValuedLegacyObservation<T>
         if (isSetDescription()) {
             observation.setDescription(getDescription());
         }
-        Value<?> value = getValueFrom(this);
+        Value<?> value = accept(new ObservationValueCreator());
         if (!observation.getObservationConstellation().isSetObservationType()) {
             observation.getObservationConstellation().setObservationType(OMHelper.getObservationTypeFor(value));
         }
@@ -211,48 +197,6 @@ public abstract class AbstractValuedLegacyObservation<T>
         return null;
     }
 
-    /**
-     * Get internal {@link Value} from {@link AbstractValue}
-     * 
-     * @param abstractValue
-     *            {@link AbstractValue} to get {@link Value} from
-     * @return {@link Value} or null if the concrete {@link AbstractValue} is
-     *         not supported
-     * @throws OwsExceptionReport
-     *             If an error occurs when creating
-     *             {@link org.n52.sos.ogc.om.values.SweDataArrayValue}
-     */
-    protected Value<?> getValueFrom(ValuedObservation abstractValue) throws OwsExceptionReport {
-        Value<?> value = null;
-        if (abstractValue instanceof NumericValuedObservation) {
-            value = new QuantityValue(((NumericValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof BooleanValuedObservation) {
-            value =
-                    new org.n52.sos.ogc.om.values.BooleanValue(Boolean.valueOf(((BooleanValuedObservation) abstractValue)
-                            .getValue()));
-        } else if (abstractValue instanceof CategoryValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.CategoryValue(((CategoryValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof CountValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.CountValue(Integer.valueOf(((CountValuedObservation) abstractValue).getValue()));
-        } else if (abstractValue instanceof TextValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.TextValue(((TextValuedObservation) abstractValue).getValue().toString());
-        } else if (abstractValue instanceof GeometryValuedObservation) {
-            value = new org.n52.sos.ogc.om.values.GeometryValue(((GeometryValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof BlobValuedObservation) {
-            value = new UnknownValue(((BlobValuedObservation) abstractValue).getValue());
-        } else if (abstractValue instanceof SweDataArrayValuedObservation) {
-            org.n52.sos.ogc.om.values.SweDataArrayValue sweDataArrayValue =
-                    new org.n52.sos.ogc.om.values.SweDataArrayValue();
-            final XmlObject xml = XmlHelper.parseXmlString(((SweDataArrayValuedObservation) abstractValue).getValue());
-            sweDataArrayValue.setValue((SweDataArray) CodingHelper.decodeXmlElement(xml));
-            value = sweDataArrayValue;
-        }
-        if (value != null && abstractValue.isSetUnit()) {
-            value.setUnit(abstractValue.getUnit().getUnit());
-        }
-        return value;
-    }
-    
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
@@ -276,7 +220,7 @@ public abstract class AbstractValuedLegacyObservation<T>
                 observation.getObservationConstellation().setObservationType(
                         OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
             }
-            observation.mergeWithObservation(getSingleObservationValue(getValueFrom(this)));
+            observation.mergeWithObservation(getSingleObservationValue(accept(new ObservationValueCreator())));
         }
         return observation;
     }

@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
@@ -65,22 +66,31 @@ public class ObservationValueCreator
 
     @Override
     public QuantityValue visit(NumericValuedObservation o) {
-        return new QuantityValue(o.getValue());
+        QuantityValue v = new QuantityValue(o.getValue());
+        addUnit(o, v);
+        return v;
     }
+
 
     @Override
     public UnknownValue visit(BlobValuedObservation o) {
-        return new UnknownValue(o.getValue());
+        UnknownValue v = new UnknownValue(o.getValue());
+        addUnit(o, v);
+        return v;
     }
 
     @Override
     public BooleanValue visit(BooleanValuedObservation o) {
-        return new BooleanValue(o.getValue());
+        BooleanValue v = new BooleanValue(o.getValue());
+        addUnit(o, v);
+        return v;
     }
 
     @Override
     public CategoryValue visit(CategoryValuedObservation o) {
-        return new CategoryValue(o.getValue());
+        CategoryValue v = new CategoryValue(o.getValue());
+        addUnit(o, v);
+        return v;
     }
 
     @Override
@@ -99,12 +109,16 @@ public class ObservationValueCreator
 
     @Override
     public GeometryValue visit(GeometryValuedObservation o) {
-        return new GeometryValue(o.getValue());
+        GeometryValue v = new GeometryValue(o.getValue());
+        addUnit(o, v);
+        return v;
     }
 
     @Override
     public TextValue visit(TextValuedObservation o) {
-        return new TextValue(o.getValue());
+        TextValue v = new TextValue(o.getValue());
+        addUnit(o, v);
+        return v;
     }
 
     @Override
@@ -114,5 +128,13 @@ public class ObservationValueCreator
         SweDataArray array = (SweDataArray) CodingHelper.decodeXmlElement(xml);
         return new SweDataArrayValue(array);
     }
+
+    protected void addUnit(ValuedObservation<?> o, Value<?> v) {
+        if (!v.isSetUnit() && o.isSetUnit()) {
+            v.setUnit(o.getUnit().getUnit());
+        }
+    }
+    
+    
 
 }

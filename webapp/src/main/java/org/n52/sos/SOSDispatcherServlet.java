@@ -54,8 +54,14 @@ public class SOSDispatcherServlet
     private static final String CONTEXT_SWITCHER_BEAN_NAME = "contextSwitcherSwapper";
     public static final String UNCONFIGURED_CONFIG_LOCATION_PARAM = "unconfiguredConfigLocations";
     public static final String CONFIGURED_CONFIG_LOCATION_PARAM = "configuredConfigLocations";
+    public static final String COMMON_CONFIG_LOCATION_PARAM = "commonConfigLocation";
 
     private boolean configured;
+
+    @Override
+    public String getContextConfigLocation() {
+        return getConfigLocation(getServletContext());
+    }
 
     private String getConfigLocation(ServletContext servletContext) {
         String def = getDefaultConfigLocations();
@@ -67,6 +73,7 @@ public class SOSDispatcherServlet
     }
 
 	protected String getDefaultConfigLocations() {
+        // -> /WEB-INF/dispatcher-servlet.xml
         return XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_PREFIX +
                getNamespace() +
                XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_SUFFIX;
@@ -78,7 +85,7 @@ public class SOSDispatcherServlet
     }
 
     private String getCommonConfigLocation(ServletContext servletContext) {
-        return getConfigLocation(servletContext, ContextLoader.CONFIG_LOCATION_PARAM);
+        return getConfigLocation(servletContext, COMMON_CONFIG_LOCATION_PARAM);
     }
 
     private String getUnconfiguredConfigLocation(ServletContext servletContext) {

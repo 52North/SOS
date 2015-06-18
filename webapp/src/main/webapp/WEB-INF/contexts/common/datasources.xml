@@ -3,10 +3,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
-    <!--
-        org.n52.iceland.ds.Datasource
-    -->
-
     <!-- Datasource implementations from hibernate/datasource/oracle -->
     <!--
     <bean class="org.n52.sos.ds.datasource.OracleDatasource"/>

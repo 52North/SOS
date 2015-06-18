@@ -37,7 +37,7 @@
 	<jsp:param name="leadParagraph" value="Please login to view the admin console." />
 </jsp:include>
 <hr/>
-<form action="<c:url value="/j_spring_security_check" />" method="POST" class="form-horizontal">
+<form action="<c:url value="/login" />" method="POST" class="form-horizontal">
 	<div class="control-group">
 		<label class="control-label" for="username">Username</label>
 		<div class="controls">
@@ -69,7 +69,7 @@
 			$("input[type=text], input[type=password]").each(function(i,e) {
 				if ($(e).val() === "") { empty = true; }
 			});
-			$("button[type=submit]").attr("disabled", empty);	
+			$("button[type=submit]").attr("disabled", empty);
 		}).trigger("input");
 		$("input[name=username]").focus();
 	});

@@ -48,7 +48,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import org.n52.iceland.config.SettingValue;
 import org.n52.iceland.config.SettingsService;
-import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.context.ContextSwitcher;
@@ -67,7 +66,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     private static final Logger LOG = LoggerFactory.getLogger(InstallFinishController.class);
 
     @Inject
-    private SettingsService settingsManager;
+    private SettingsService settingsService;
 
     @Inject
     private ContextSwitcher contextSwitcher;
@@ -188,7 +187,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
     protected void saveServiceSettings(InstallationConfiguration c) throws InstallationSettingsError {
         try {
             for (SettingValue<?> e : c.getSettings().values()) {
-                this.settingsManager.changeSetting(e);
+                this.settingsService.changeSetting(e);
             }
         } catch (ConfigurationError e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSERT_SETTINGS,
@@ -207,7 +206,7 @@ public class InstallFinishController extends AbstractProcessingInstallationContr
 
     protected void clearSettings(InstallationConfiguration c) throws InstallationSettingsError {
         try {
-            this.settingsManager.deleteAll();
+            this.settingsService.deleteAll();
         } catch (Throwable e) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_DELETE_PREVIOUS_SETTINGS, e.getMessage()), e);
         }

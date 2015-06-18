@@ -19,8 +19,6 @@
         <sec:authentication-provider ref="authenticationProvider" />
     </sec:authentication-manager>
 
-
-
     <bean id="httpBasicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
         <constructor-arg ref="authenticationManager" />
         <constructor-arg>
@@ -32,29 +30,25 @@
 
     <sec:http pattern="/static/**" security="none" />
     <sec:http pattern="/install/**" security="none" />
-    <sec:http pattern="/sos" security="none" />
     <sec:http pattern="/service" security="none" />
+    <sec:http pattern="/sos" security="none" />
 
     <sec:http auto-config="true" use-expressions="true" disable-url-rewriting="true">
         <sec:csrf disabled="true" />
-        <sec:intercept-url pattern="/admin"
-                           access="hasRole('ROLE_ADMIN')" />
-        <sec:intercept-url pattern="/admin/**"
-                           access="hasRole('ROLE_ADMIN')" />
-
-        <sec:intercept-url pattern="/login"
-                           access="hasRole('ROLE_ANONYMOUS')" />
-        <sec:intercept-url pattern="/j_spring_security_check"
-                           access="hasRole('ROLE_ANONYMOUS')" />
-
+        <sec:intercept-url pattern="/admin" access="hasRole('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+        <sec:intercept-url pattern="/login" access="hasRole('ROLE_ANONYMOUS')" />
         <sec:custom-filter before="SECURITY_CONTEXT_FILTER" ref="httpBasicAuthenticationFilter" />
         <sec:form-login username-parameter="username"
                         password-parameter="password"
                         login-page="/login"
                         default-target-url="/admin/index"
                         authentication-failure-url="/login?error=true"
-                        login-processing-url="/j_spring_security_check" />
-        <sec:logout logout-success-url="/index" />
+                        login-processing-url="/login" />
+        <sec:logout invalidate-session="true"
+                    delete-cookies="true"
+                    logout-url="/logout"
+                    logout-success-url="/index" />
     </sec:http>
 
 </beans>

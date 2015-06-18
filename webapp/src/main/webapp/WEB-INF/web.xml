@@ -13,17 +13,25 @@
         <param-name>datasourceConfigLocation</param-name>
         <param-value>/WEB-INF/datasource.properties</param-value>
     </context-param>
+    <!-- root context -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/common-context.xml</param-value>
+        <param-value>/WEB-INF/contexts/root/*.xml</param-value>
     </context-param>
+    <!-- common sos context -->
+    <context-param>
+        <param-name>commonConfigLocation</param-name>
+        <param-value>/WEB-INF/contexts/common/*.xml</param-value>
+    </context-param>
+    <!-- unconfigured context, only loaded if uninstalled -->
     <context-param>
         <param-name>unconfiguredConfigLocations</param-name>
-        <param-value>/WEB-INF/unconfigured-context.xml</param-value>
+        <param-value>/WEB-INF/contexts/unconfigured/*.xml</param-value>
     </context-param>
+    <!-- configured context, only loaded if installed -->
     <context-param>
         <param-name>configuredConfigLocations</param-name>
-        <param-value>/WEB-INF/configured-context.xml</param-value>
+        <param-value>/WEB-INF/contexts/configured/*.xml</param-value>
     </context-param>
     <!-- Memory leak preventer listener -->
     <listener>

@@ -203,7 +203,7 @@
                                     </c:if>
                                     <sec:authorize access="hasRole('ROLE_ADMIN')">
 										<li style="float: right;">
-											<a id="logout-menuitem" class="menu-item4" href="<c:url value="/j_spring_security_logout" />">
+											<a id="logout-menuitem" class="menu-item4" href="<c:url value="/logout" />">
 												<span class="menu-title">Logout</span>
 											</a>
 										</li>

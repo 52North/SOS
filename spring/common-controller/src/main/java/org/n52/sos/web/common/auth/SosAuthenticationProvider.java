@@ -131,12 +131,12 @@ public class SosAuthenticationProvider implements AuthenticationProvider, Serial
     }
 
     @Inject
-    public void setAdminUserService(AdminUserService adminUserService) {
-        this.adminUserService = adminUserService;
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Inject
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
+    public void setAdminUserService(AdminUserService adminUserService) {
+        this.adminUserService = adminUserService;
     }
 }

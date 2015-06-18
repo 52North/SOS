@@ -110,42 +110,11 @@
     <bean id="insertResultCapabiltiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertResultCapabiltiesExtensionProvider" />
     <bean id="insertResultTemplateCapabilitiesExtensionProvider" class="org.n52.sos.ds.hibernate.InsertResultTemplateCapabilitiesExtensionProvider" />
 
-
-    <import resource="components/configured/cache.xml" />
-    <import resource="components/configured/events.xml" />
-    <import resource="components/configured/bindings.xml" />
-    <import resource="components/configured/encoders.xml" />
-    <import resource="components/configured/decoders.xml" />
-    <import resource="components/configured/converters.xml" />
-    <import resource="components/configured/operation-handlers.xml" />
-    <import resource="components/configured/request-operators.xml" />
-    <import resource="components/configured/request-response-modifiers.xml" />
-    <import resource="components/configured/service-operators.xml" />
-    <import resource="components/configured/response-writers.xml" />
-    <import resource="components/configured/daos.xml" />
-    <import resource="components/configured/web.xml" />
-    <!--<import resource="components/configured/settings-sqlite.xml" />-->
-    <import resource="components/configured/settings-json.xml" />
-
-
-    <!--
-        org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider
-    -->
-
     <!-- OwsExtendedCapabilitiesProvider implementations from extensions/inspire/code -->
     <bean class="org.n52.sos.inspire.capabilities.InspireExtendedCapabilitiesProvider"/>
 
-
-    <!--
-        org.n52.iceland.ogc.swes.OfferingExtensionProvider
-    -->
-
     <!-- OfferingExtensionProvider implementations from extensions/inspire/code -->
     <bean class="org.n52.sos.inspire.offering.InspireOfferingExtensionProvider"/>
-
-    <!--
-        org.n52.sos.service.profile.ProfileHandler
-    -->
 
     <!-- ProfileHandler implementations from core/profile/coding -->
     <bean id="profileHandler" class="org.n52.sos.profile.ProfileHandlerImpl" />

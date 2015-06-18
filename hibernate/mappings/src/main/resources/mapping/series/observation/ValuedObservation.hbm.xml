@@ -216,12 +216,12 @@
                 <key column="parentObservationId"
                      not-null="true"
                      foreign-key="observationParentFK" />
-                <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
+                <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
                               foreign-key="observationChildFk">
                     <column name="childObservationId" not-null="true" />
                 </many-to-many>
             </set>
-        </joined-subclass>
+        </joined-subclass> 
         <!-- old definition
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ComplexValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"

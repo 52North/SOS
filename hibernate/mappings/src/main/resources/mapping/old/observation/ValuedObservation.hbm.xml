@@ -241,7 +241,7 @@
             <key column="observationId"
                  foreign-key="observationComplexValueFk" />
             <many-to-one name="value"
-                         class="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
+                         class="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation"
                          fetch="select"
                          lazy="no-proxy"
                          foreign-key="complexValueObsIdentifierFk">

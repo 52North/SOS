@@ -249,7 +249,7 @@
             <key column="observationId"
                  foreign-key="observationComplexValueFk" />
             <many-to-one name="value"
-                         class="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
+                         class="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
                          fetch="select"
                          lazy="no-proxy"
                          foreign-key="complexValueObsIdentifierFk">

@@ -40,10 +40,13 @@ import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.config.ActivationDao;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.Binding;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
 import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilitiesKey;
 import org.n52.sos.config.sqlite.entities.Operation;
@@ -57,6 +60,32 @@ import org.n52.sos.config.sqlite.entities.OperationKey;
 public class SQLiteActivationDao
         extends AbstractSQLiteDao
         implements ActivationDao {
+
+    // OFFERING EXTENSION
+    @Override
+    public void setOfferingExtensionStatus(OfferingExtensionKey oek,
+                                           boolean active) {
+        setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
+    }
+
+    @Override
+    public boolean isOfferingExtensionActive(OfferingExtensionKey oek) {
+        return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(oek));
+    }
+
+    @Override
+    public Set<OfferingExtensionKey> getOfferingExtensionKeys() {
+        return asOfferingExtensionKeys(getKeys(DynamicOfferingExtension.class));
+    }
+
+    private Set<OfferingExtensionKey> asOfferingExtensionKeys(
+            List<DynamicOfferingExtensionKey> hkeys) {
+        Set<OfferingExtensionKey> keys = new HashSet<>(hkeys.size());
+        for (DynamicOfferingExtensionKey key : hkeys) {
+            keys.add(new OfferingExtensionKey(new ServiceOperatorKey(key.getService(), key.getVersion()), key.getDomain()));
+        }
+        return keys;
+    }
 
     // BINDING
     @Override

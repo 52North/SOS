@@ -32,13 +32,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
-import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
-import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
 import org.n52.sos.config.sqlite.entities.ObservationEncoding;
 import org.n52.sos.config.sqlite.entities.ObservationEncodingKey;
 import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
@@ -110,31 +107,5 @@ public class SosSQLiteActivationDao
         return keys;
     }
 
-    // OFFERING EXTENSION
-    @Override
-    public void setOfferingExtensionStatus(OfferingExtensionKey oek,
-                                           boolean active) {
-        setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
-    }
-
-    @Override
-    public boolean isOfferingExtensionActive(OfferingExtensionKey oek) {
-        return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(oek));
-    }
-
-    @Override
-    public Set<OfferingExtensionKey> getOfferingExtensionKeys() {
-        return asOfferingExtensionKeys(getKeys(DynamicOfferingExtension.class));
-    }
-
-    private Set<OfferingExtensionKey> asOfferingExtensionKeys(
-            List<DynamicOfferingExtensionKey> hkeys) {
-        Set<OfferingExtensionKey> keys = new HashSet<>(hkeys.size());
-        for (DynamicOfferingExtensionKey key : hkeys) {
-            keys.add(new OfferingExtensionKey(new ServiceOperatorKey(key
-                    .getService(), key.getVersion()), key.getDomain()));
-        }
-        return keys;
-    }
 
 }

@@ -37,7 +37,6 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
-import java.math.BigDecimal;
 import java.util.Iterator;
 
 import javax.xml.namespace.NamespaceContext;
@@ -61,7 +60,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
-
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
@@ -104,10 +102,13 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.request.operator.RequestOperatorKey;
+import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.Client;
+import org.n52.sos.service.operator.ServiceOperatorKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaTypes;
@@ -157,8 +158,15 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
 
     @Before
     public void before() throws OwsExceptionReport {
+        activate();
         assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
+    }
+
+    private void activate() {
+        ServiceOperatorKey sok = new ServiceOperatorKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
+        RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
     }
 
     @After
@@ -474,7 +482,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         observation.setObservationConstellation(createObservationConstellation(NUMERIC_OBSERVATION_PROCEDURE, NUMERIC_OBSERVATION_OFFERING, OmConstants.OBS_TYPE_MEASUREMENT, createObservableProperty()));
         observation.setResultTime(resultTime);
         observation.setValidTime(validTime);
-        observation.setValue(new SingleObservationValue<>(phenomenonTime, new QuantityValue(BigDecimal.valueOf(42), UNIT)));
+        observation.setValue(new SingleObservationValue<>(phenomenonTime, new QuantityValue(Double.valueOf(42), UNIT)));
 
         return observation;
     }

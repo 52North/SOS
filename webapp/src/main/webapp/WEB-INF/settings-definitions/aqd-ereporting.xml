@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+ <bean id="aqdEReportingSettingDefintionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+        <property name="title" value="eReporting" />
+        <property name="description" value="Setting to define AQD e-Reporting related settings." />
+        <property name="order" value="6.0" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.observation.prefix" />
+        <property name="title" value="AQD e-Reporting observation prefix" />
+        <property name="description" value="AQD e-Reporting observation prefix used for observation gml:id, e.g. &apos;OBS.&apos; for AQD e-Reporting" />
+        <property name="order" value="10.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.samplingPoint.prefix" />
+        <property name="title" value="AQD e-Reporting Sampling Point prefix" />
+        <property name="description" value="This prefix is used to add a prefix to the Sampling Point identifier, e.g &apos;SPO.&apos; for AQD e-Reporting" />
+        <property name="order" value="5.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.offering.prefix" />
+        <property name="title" value="Offering prefix" />
+        <property name="description" value="This prefix is used to add a prefix to the offering identifier" />
+        <property name="order" value="1.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.featureOfInterest.prefix" />
+        <property name="title" value="AQD e-Reporting Sample/FeatureOfInterest prefix" />
+        <property name="description" value="This prefix is used to add a prefix to the AQD e-Reporting Sample/FeatureOfInterest identifier, e.g. &apos;SAM.&apos; for AQD e-Reporting" />
+        <property name="order" value="4.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.namespace" />
+        <property name="title" value="AQD e-Reporting namespace/global prefix" />
+        <property name="description" value="AQD e-Reporting namespace is used as global prefix for localId of inspireIds. Should end with &apos;/&apos; (http) or &apos;:&apos; (urn)" />
+        <property name="order" value="0.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.station.prefix" />
+        <property name="title" value="AQD e-Reporting Station prefix" />
+        <property name="description" value="This prefix is used to add a prefix to the Station identifier, e.g. &apos;STA.&apos; for AQD e-Reporting" />
+        <property name="order" value="6.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.flags.validity" />
+        <property name="title" value="Validity flag for validated data (E1 flows)" />
+        <property name="description" value="Comma separated list of validity flags (int) that indentify validated data. Conjunction (AND) with verification flags!" />
+        <property name="order" value="11.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="defaultValue" value="1,2,3" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.flags.verification" />
+        <property name="title" value="Verification flag for validated data (E1 flows)" />
+        <property name="description" value="Comma separated list of verificatio flags (int) that indentify validated data. Conjunction (AND) with validity flags!" />
+        <property name="order" value="12.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="defaultValue" value="1" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.procedure.prefix" />
+        <property name="title" value="AQD e-Reporting Sampling Point Process/Procedure prefix" />
+        <property name="description" value="This prefix is used to add a prefix to the AQD e-Reporting Sampling Point Process/Procedure identifier, &apos;SPP.&apos; for AQD e-Reporting" />
+        <property name="order" value="2.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="eReporting.network.prefix" />
+        <property name="title" value="AQD e-Reporting Network prefix" />
+        <property name="description" value="This prefix is used to add a prefix to the Network identifier, e.g. &apos;NET.&apos; for AQD e-Reporting" />
+        <property name="order" value="7.0" />
+        <property name="group" ref="aqdEReportingSettingDefintionGroup" />
+        <property name="optional" value="true" />
+    </bean>
+
+</beans>

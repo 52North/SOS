@@ -32,13 +32,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.util.activation.ActivationInitializer;
 import org.n52.iceland.util.activation.ActivationSource;
 import org.n52.iceland.util.activation.DefaultActivationInitializer;
 import org.n52.iceland.util.activation.FunctionalActivationListener;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 
 public class SosActivationService {
 
@@ -110,32 +109,4 @@ public class SosActivationService {
         return new DefaultActivationInitializer<>(getProcedureDescriptionFormatSource());
     }
 
-    /**
-     * Checks if the offering extension is active.
-     *
-     * @param key
-     *            the offering extension key
-     *
-     * @return if the offering extension is active
-     */
-    public boolean isOfferingExtensionActive(OfferingExtensionKey key) {
-        return this.dao.isOfferingExtensionActive(key);
-    }
-
-    public FunctionalActivationListener<OfferingExtensionKey> getOfferingExtensionListener() {
-        return this.dao::setOfferingExtensionStatus;
-    }
-
-    public ActivationSource<OfferingExtensionKey> getOfferingExtensionSource() {
-        return ActivationSource.create(this::isOfferingExtensionActive,
-                                       this::getOfferingExtensionKeys);
-    }
-
-    protected Set<OfferingExtensionKey> getOfferingExtensionKeys() {
-        return this.dao.getOfferingExtensionKeys();
-    }
-
-    public ActivationInitializer<OfferingExtensionKey> getOfferingExtensionInitializer() {
-        return new DefaultActivationInitializer<>(getOfferingExtensionSource());
-    }
 }

@@ -1,0 +1,54 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- ResponseWriterFactory implementations from coding/json -->
+    <bean class="org.n52.sos.encode.json.JSONResponseWriterFactory"/>
+
+    <!-- Decoder implementations from coding/json -->
+    <bean class="org.n52.sos.decode.json.impl.GetObservationRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.InsertObservationRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.InsertResultTemplateRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.InsertSensorRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.FeatureDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.GeoJSONDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.ObservationDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.FieldDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.BatchRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.TemporalFilterDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.SpatialFilterDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.GetCapabilitiesRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.DeleteSensorRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.DescribeSensorRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.GetObservationByIdRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.UpdateSensorRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.InsertResultRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.GetFeatureOfInterestRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.GetResultRequestDecoder"/>
+    <bean class="org.n52.sos.decode.json.impl.GetResultTemplateRequestDecoder"/>
+
+
+    <!-- Encoder implementations from coding/json -->
+    <bean class="org.n52.sos.encode.json.impl.GeoJSONEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.ObservationEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.OwsExceptionReportEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.GetObservationResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.FeatureOfInterestEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.FieldEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.InsertObservationResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.InsertResultTemplateResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.InsertSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.InsertResultResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.DeleteSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.UpdateSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.GetFeatureOfInterestResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.GetObservationByIdResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.DescribeSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.GetResultResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.GetResultTemplateResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.GetCapabilitiesResponseEncoder"/>
+    <bean class="org.n52.sos.encode.json.impl.BatchResponseEncoder"/>
+
+
+</beans>

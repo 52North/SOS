@@ -1,0 +1,34 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <!-- ResponseWriterFactory implementations from coding/exi -->
+    <bean class="org.n52.sos.encode.EXIResponseWriterFactory"/>
+
+    <!-- Encoder implementations from coding/exi -->
+    <bean class="org.n52.sos.encode.exi.impl.OwsExceptionReportEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetObservationResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetFeatureOfInterestResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.DescribeSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetCapabilitiesResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetDataAvailabilityResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetObservationByIdResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetResultTemplateResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.GetResultResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.DeleteSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.UpdateSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.InsertSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.InsertObservationResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.InsertResultTemplateResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.InsertResultTemplateResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.InsertResultResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.v1.GetObservationResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.v1.GetFeatureOfInterestResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.v1.DescribeSensorResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.v1.GetCapabilitiesResponseEncoder"/>
+    <bean class="org.n52.sos.encode.exi.impl.v1.GetObservationByIdResponseEncoder"/>
+
+    <bean class="org.n52.sos.utils.EXIUtils" />
+
+</beans>

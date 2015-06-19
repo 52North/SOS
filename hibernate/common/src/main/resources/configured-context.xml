@@ -1,0 +1,60 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <bean id="procedureI18NDAO"
+          class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
+
+    <bean id="featureI18NDAO"
+          class="org.n52.sos.ds.hibernate.dao.i18n.FeatureI18NDAO"/>
+
+    <bean id="observablePropertyI18NDAO"
+          class="org.n52.sos.ds.hibernate.dao.i18n.ObservablePropertyI18NDAO"/>
+
+    <bean id="offeringI18NDAO"
+          class="org.n52.sos.ds.hibernate.dao.i18n.OfferingI18NDAO"/>
+
+    <bean id="deleteDeletedObservationsDAO"
+          class="org.n52.sos.ds.hibernate.admin.HibernateDeleteDeletedObservationsDAO"/>
+
+    <bean id="generalQueryDAO"
+          class="org.n52.sos.ds.hibernate.admin.HibernateGeneralQueryDAO"/>
+
+    <bean id="eReportingObservationCreator"
+          class="org.n52.sos.ds.hibernate.util.observation.EReportingObservationCreator"/>
+
+    <bean id="hibernateProcedureDescriptionGeneratorFactorySml101"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml101"/>
+
+    <bean id="hibernateProcedureDescriptionGeneratorFactorySml20"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactorySml20"/>
+
+    <bean id="hibernateProcedureDescriptionGeneratorFactoryWml20"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryWml20"/>
+
+    <bean id="procedureFormatDAO"
+          class="org.n52.sos.ds.hibernate.admin.HibernateProcedureFormatDAO"/>
+
+    <bean id="renameDAO"
+          class="org.n52.sos.ds.hibernate.admin.HibernateRenameDAO"/>
+
+    <bean id="deleteObservationCacheFeederDAO"
+          class="org.n52.sos.ext.deleteobservation.HibernateDeleteObservationCacheFeederDAO"/>
+
+    <bean id="insertSensorDAO"
+          class="org.n52.sos.ds.hibernate.InsertSensorDAO"/>
+
+    <bean id="insertResultDAO"
+          class="org.n52.sos.ds.hibernate.InsertResultDAO"/>
+
+    <bean id="insertResultTemplateDAO"
+          class="org.n52.sos.ds.hibernate.InsertResultTemplateDAO"/>
+
+    <bean id="additionalObservationCreatorRepository"
+          class="org.n52.sos.ds.hibernate.util.observation.AdditionalObservationCreatorRepository" />
+
+    <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"
+          class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
+
+</beans>

@@ -65,7 +65,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
  * TODO JavaDoc
  * @author Christian Autermann
  */
-public class JsonCapabilitiesExtensionService extends AbstractJsonDao implements CapabilitiesExtensionService {
+public class JsonCapabilitiesExtensionService
+        extends AbstractJsonDao
+        implements CapabilitiesExtensionService {
 
     private ContentCacheController contentCacheController;
 

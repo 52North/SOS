@@ -16,22 +16,40 @@
     <!-- root context -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>/WEB-INF/contexts/root/*.xml</param-value>
+        <param-value>
+            /WEB-INF/application-context.xml
+            /WEB-INF/settings-definitions/*.xml
+            classpath*:contexts/root.xml
+            classpath*:root-context.xml
+            classpath*:contexts/root/*.xml
+        </param-value>
     </context-param>
     <!-- common sos context -->
     <context-param>
         <param-name>commonConfigLocation</param-name>
-        <param-value>/WEB-INF/contexts/common/*.xml</param-value>
+        <param-value>
+            classpath*:contexts/common.xml
+            classpath*:common-context.xml
+            classpath*:contexts/common/*.xml
+        </param-value>
     </context-param>
     <!-- unconfigured context, only loaded if uninstalled -->
     <context-param>
         <param-name>unconfiguredConfigLocations</param-name>
-        <param-value>/WEB-INF/contexts/unconfigured/*.xml</param-value>
+        <param-value>
+            classpath*:contexts/unconfigured.xml
+            classpath*:unconfigured-context.xml
+            classpath*:contexts/unconfigured/*.xml
+        </param-value>
     </context-param>
     <!-- configured context, only loaded if installed -->
     <context-param>
         <param-name>configuredConfigLocations</param-name>
-        <param-value>/WEB-INF/contexts/configured/*.xml</param-value>
+        <param-value>
+            classpath*:contexts/configured.xml
+            classpath*:configured-context.xml
+            classpath:contexts/configured/*.xml
+        </param-value>
     </context-param>
     <!-- Memory leak preventer listener -->
     <listener>

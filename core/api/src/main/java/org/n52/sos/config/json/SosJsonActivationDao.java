@@ -35,11 +35,10 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.config.json.AbstractJsonActivationDao;
-import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -56,7 +55,6 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
     protected static final String PROCEDURE_DESCRIPTION_FORMATS
             = "procedureDescriptionFormats";
     protected static final String FORMAT = "format";
-    protected static final String OFFERING_EXTENSIONS = "offeringExtensions";
     private static final Function<ProcedureDescriptionFormatKey, ServiceOperatorKey> PDF_SOK
             = ProcedureDescriptionFormatKey::getServiceOperatorKey;
     private static final Function<ProcedureDescriptionFormatKey, String> PDF_FORMAT
@@ -96,21 +94,6 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
     @Override
     public Set<ProcedureDescriptionFormatKey> getProcedureDescriptionFormatKeys() {
         return getKeys(PROCEDURE_DESCRIPTION_FORMATS, createFormatDecoder(ProcedureDescriptionFormatKey::new));
-    }
-
-    @Override
-    public boolean isOfferingExtensionActive(OfferingExtensionKey key) {
-        return isActive(OFFERING_EXTENSIONS, matches(key), true);
-    }
-
-    @Override
-    public void setOfferingExtensionStatus(OfferingExtensionKey key, boolean active) {
-        setStatus(OFFERING_EXTENSIONS, matches(key), s -> encode(s, key), active);
-    }
-
-    @Override
-    public Set<OfferingExtensionKey> getOfferingExtensionKeys() {
-        return getKeys(OFFERING_EXTENSIONS, createDomainDecoder(OfferingExtensionKey::new));
     }
 
     protected <K> Function<JsonNode, K> createFormatDecoder(

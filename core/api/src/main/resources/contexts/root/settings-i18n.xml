@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+    <bean id="i18nSettingDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+        <property name="title" value="I18N" />
+        <property name="order" value="10.0" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="i18n.defaultLanguage" />
+        <property name="title" value="I18N default language" />
+        <property name="description" value="Set the I18N default language for this service" />
+        <property name="order" value="1.0" />
+        <property name="group" ref="i18nSettingDefinitionGroup" />
+        <property name="defaultValue" value="eng" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="i18n.showAllLanguageValues" />
+        <property name="title" value="I18N show all language values" />
+        <property name="description" value="Show all language specific values if no language is queried or the queried language is not supported!" />
+        <property name="order" value="2.0" />
+        <property name="group" ref="i18nSettingDefinitionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
+
+</beans>

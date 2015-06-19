@@ -44,9 +44,9 @@ import org.n52.sos.util.BatchConstants;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class BatchRequestOperator extends AbstractRequestOperator<BatchOperationHandler, BatchRequest, BatchResponse> {
@@ -59,7 +59,7 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
         for (AbstractServiceRequest<?> r : request) {
             r.setRequestContext(request.getRequestContext());
         }
-        return getDao().executeRequests(request);
+        return getOperationHandler().executeRequests(request);
     }
 
     @Override

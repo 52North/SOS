@@ -5,6 +5,7 @@
     <class abstract="true"
            name="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
            table="observation">
+        <comment>Stores the observations. Mapping file: mapping/old/observation/ValuedObservation.hbm.xml</comment>
         <id name="observationId"
             type="long">
             <column name="observationId" />
@@ -20,7 +21,9 @@
             <column index="obsFeatureIdx"
                     name="featureOfInterestId"
                     not-null="true"
-                    unique-key="observationIdentity" />
+                    unique-key="observationIdentity">
+           		<comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
+           	</column>
         </many-to-one>
         <many-to-one name="observableProperty"
                      class="org.n52.sos.ds.hibernate.entities.ObservableProperty"
@@ -30,7 +33,9 @@
             <column index="obsObsPropIdx"
                     name="observablePropertyId"
                     not-null="true"
-                    unique-key="observationIdentity"/>
+                    unique-key="observationIdentity">
+           		<comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
+           	</column>
         </many-to-one>
         <many-to-one name="procedure"
                      class="org.n52.sos.ds.hibernate.entities.Procedure"
@@ -40,7 +45,9 @@
             <column index="obsProcedureIdx"
                     name="procedureId"
                     not-null="true"
-                    unique-key="observationIdentity" />
+                    unique-key="observationIdentity">
+           		<comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
+           	</column>
         </many-to-one>
         <property name="phenomenonTimeStart"
                   type="timestamp" >
@@ -48,7 +55,9 @@
                     name="phenomenonTimeStart"
                     length="29"
                     not-null="true"
-                    unique-key="observationIdentity"/>
+                    unique-key="observationIdentity">
+            	<comment>Time stamp when the observation was started or phenomenon was observed</comment>
+            </column>
         </property>
         <property name="phenomenonTimeEnd"
                   type="timestamp">
@@ -56,7 +65,9 @@
                     name="phenomenonTimeEnd"
                     length="29"
                     not-null="true"
-                    unique-key="observationIdentity"/>
+                    unique-key="observationIdentity">
+            	<comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
+            </column>
         </property>
         <property name="resultTime"
                   type="timestamp" >
@@ -64,32 +75,54 @@
                     name="resultTime"
                     length="29"
                     not-null="true"
-                    unique-key="observationIdentity"/>
+                    unique-key="observationIdentity">
+            	<comment>Time stamp when the observation was published or result was published/available</comment>
+            </column>
         </property>
         <property name="identifier"
                   type="string">
             <column name="identifier"
-                    unique="true"
-                    unique-key="obsIdentifierUK"/>
+                    unique-key="obsIdentifierUK">
+            	<comment>The identifier of the observation, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
         </property>
         <many-to-one name="codespace"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
                      fetch="select"
                      lazy="no-proxy"
-                     foreign-key="observationCodespaceFk">
-            <column index="obsCodespaceIdx"
-                    name="codespaceId" />
+                     foreign-key="obsCodespaceIdentifierFk">
+            <column name="codespace">
+            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name"
+                  type="string">
+            <column name="name">
+            	<comment>The name of the observation, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
+                     fetch="select"
+                     foreign-key="obsCodespaceNameFk">
+            <column name="codespaceName">
+            	<comment>The name of the observation, gml:name. Optional</comment>
+            </column>
         </many-to-one>
         <property name="description"
                   type="string">
-            <column name="description"/>
+            <column name="description">
+            	<comment>Description of the observation, gml:description. Optional</comment>
+            </column>
         </property>
         <property name="deleted"
                   type="org.hibernate.type.TrueFalseType">
             <column name="deleted"
                     not-null="true"
                     default="'F'"
-                    check="deleted in ('T','F')"/>
+                    check="deleted in ('T','F')">
+            	<comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
+            </column>
         </property>
         <property name="child"
                   type="org.hibernate.type.TrueFalseType">
@@ -97,7 +130,9 @@
                     not-null="true"
                     default="'F'"
                     length="1"
-                    check="child in ('T','F')" />
+                    check="child in ('T','F')">
+            	<comment>Flag to indicate that this observation is a child observation for complex observation</comment>
+            </column>
         </property>
         <property name="parent"
                   type="org.hibernate.type.TrueFalseType">
@@ -105,21 +140,27 @@
                     not-null="true"
                     default="'F'"
                     length="1"
-                    check="parent in ('T','F')" />
+                    check="parent in ('T','F')">
+            	<comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
+            </column>
         </property>
         <property name="validTimeStart"
                   type="timestamp">
             <column name="validTimeStart"
                     length="29"
                     not-null="false"
-                    default="NULL" />
+                    default="NULL">
+            	<comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+            </column>
         </property>
         <property name="validTimeEnd"
                   type="timestamp">
             <column name="validTimeEnd"
                     length="29"
                     not-null="false"
-                    default="NULL" />
+                    default="NULL">
+            	<comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+            </column>
         </property>
         <many-to-one name="unit"
                      class="org.n52.sos.ds.hibernate.entities.Unit"
@@ -127,7 +168,9 @@
                      lazy="no-proxy"
                      foreign-key="observationUnitFk">
             <column name="unitId"
-                    not-null="false" />
+                    not-null="false">
+            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+            </column>
         </many-to-one>
         <set name="offerings"
              table="observationHasOffering"
@@ -137,116 +180,181 @@
             <key>
                 <column name="observationId"
                         not-null="true"
-                        index="obshasoffobservationidx" />
+                        index="obshasoffobservationidx">
+	            	<comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
+	            </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
                           foreign-key="observationOfferingFk"
                           lazy="proxy">
                 <column name="offeringId"
                         not-null="true"
-                        index="obshasoffofferingidx" />
+                        index="obshasoffofferingidx">
+	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+	            </column>
             </many-to-many>
         </set>
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType">
-            <column name="samplingGeometry"/>
+            <column name="samplingGeometry">
+            	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
+            </column>
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.BlobValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="blobValue">
-            <key column="observationId"
-                 foreign-key="observationBlobValueFk" />
-            <property name="value"
-                      type="blob" />
+            <comment>Value table for blob observation</comment>
+        	<key foreign-key="observationBlobValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" 
+         			  type="blob">
+         		<column name="value">
+         			<comment>Blob observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.BooleanValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="booleanValue"
                          check="value in ('T','F')">
-            <key column="observationId"
-                 foreign-key="observationBooleanValueFk" />
-            <property name="value"
-                      type="org.hibernate.type.TrueFalseType"/>
+            <comment>Value table for boolean observation</comment>
+        	<key foreign-key="observationBooleanValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" 
+        			  type="org.hibernate.type.TrueFalseType">
+         		<column name="value">
+         			<comment>Boolean observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.CategoryValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="categoryValue">
-            <key column="observationId"
-                 foreign-key="observationCategoryValueFk" />
-            <property name="value"
-                      type="string" />
+            <comment>Value table for category observation</comment>
+        	<key foreign-key="observationCategoryValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" 
+         			  type="string">
+         		<column name="value">
+         			<comment>Category observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.CountValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="countValue">
-            <key column="observationId"
-                 foreign-key="observationCountValueFk" />
-            <property name="value"
-                      type="integer" />
+            <comment>Value table for count observation</comment>
+        	<key foreign-key="observationCountValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" 
+        			  type="integer">
+         		<column name="value">
+         			<comment>Count observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.GeometryValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="geometryValue">
-            <key column="observationId"
-                 foreign-key="observationGeometryValueFk" />
-            <property name="value"
-                      type="org.hibernate.spatial.GeometryType" />
+            <comment>Value table for geometry observation</comment>
+        	<key foreign-key="observationGeometryValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" 
+         			  type="org.hibernate.spatial.GeometryType">
+         		<column name="value">
+         			<comment>Geometry observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.NumericValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="numericValue">
-            <key column="observationId"
-                 foreign-key="observationNumericValueFk" />
-            <property name="value"
-                      type="double" />
+            <comment>Value table for numeric/Measurment observation</comment>
+            <key foreign-key="observationNumericValueFk">
+                 <column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+	        </key>
+            <property name="value" 
+            		  type="double">
+         		<column name="value">
+         			<comment>Numeric/Measurment observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.TextValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="textValue">
-            <key column="observationId"
-                 foreign-key="observationTextValueFk" />
-            <property name="value"
-                      type="org.hibernate.type.StringClobType" />
+            <comment>Value table for text observation</comment>
+        	<key foreign-key="observationTextValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" 
+        			  type="org.hibernate.type.StringClobType">
+         		<column name="value">
+         			<comment>Text observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="sweDataArrayValue">
-            <key column="observationId"
-                 foreign-key="observationSweDataArrayValueFk" />
-            <property name="value"
-                      type="org.hibernate.type.StringClobType" />
+            <comment>Value table for SweDataArray observation</comment>
+        	<key foreign-key="observationSweDataArrayValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="value" 
+        			  type="org.hibernate.type.StringClobType">
+         		<column name="value">
+         			<comment>SweDataArray observation value</comment>
+         		</column>
+         	</property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.ComplexValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                          table="complexValue">
-            <key column="observationId"
-                 foreign-key="observationComplexValueFk" />
+            <comment>Value table for complex observation</comment>
+            <key foreign-key="observationComplexValueFk">
+            	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
             <set name="value"
                  table="compositeObservation"
                  inverse="false"
                  fetch="join">
-                <key column="parentObservationId"
-                     not-null="true"
-                     foreign-key="observationParentFK" />
+                <comment>Relation table for complex parent/child observations</comment>
+                <key foreign-key="observationParentFK" >
+                     <column name="observationId" not-null="true">
+	        		 	<comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
+	        		</column>
+	        	</key>
                 <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
                               foreign-key="observationChildFk">
-                    <column name="childObservationId" not-null="true" />
+                    <column name="childObservationId" not-null="true">
+                    	<comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
+                    </column>
                 </many-to-many>
             </set>
         </joined-subclass>
-        <!-- old definition
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.ComplexValuedLegacyObservation"
-                         extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="complexValue">
-            <key column="observationId"
-                 foreign-key="observationComplexValueFk" />
-            <many-to-one name="value"
-                         class="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation"
-                         fetch="select"
-                         lazy="no-proxy"
-                         foreign-key="complexValueObsIdentifierFk">
-                <column name="value" />
-            </many-to-one>
-        </joined-subclass> -->
     </class>
 </hibernate-mapping>

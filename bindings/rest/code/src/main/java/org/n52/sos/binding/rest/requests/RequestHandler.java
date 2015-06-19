@@ -134,7 +134,7 @@ public abstract class RequestHandler {
     
     private ServiceOperator getServiceOperator(AbstractServiceRequest<?> req) throws OwsExceptionReport
     {
-        for (ServiceOperatorKey sok : req.getServiceOperatorKeyType()) {
+        for (ServiceOperatorKey sok : req.getServiceOperatorKeys()) {
             ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sok);
             if (so != null) {
                 return so;

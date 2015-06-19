@@ -80,7 +80,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
 
     protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         checkServiceOperatorKeys(request);
-        for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
+        for (ServiceOperatorKey sokt : request.getServiceOperatorKeys()) {
             ServiceOperator so = getServiceOperatorRepository().getServiceOperator(sokt);
             if (so != null) {
                 return so;
@@ -100,7 +100,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
 
     protected void checkServiceOperatorKeys(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
-        for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
+        for (ServiceOperatorKey sokt : request.getServiceOperatorKeys()) {
             checkService(sokt, exceptions);
             if (request instanceof GetCapabilitiesRequest) {
                 checkAcceptVersions(request, exceptions);

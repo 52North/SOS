@@ -71,11 +71,6 @@ public abstract class AbstractSoapStringDecoder implements Decoder<SoapRequest, 
     }
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
     public SoapRequest decode(String xmlString) throws OwsExceptionReport {
         return (SoapRequest) CodingHelper.decodeXmlObject(xmlString);
     }

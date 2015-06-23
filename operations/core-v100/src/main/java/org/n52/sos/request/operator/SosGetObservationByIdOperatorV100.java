@@ -49,8 +49,8 @@ import org.slf4j.LoggerFactory;
 public class SosGetObservationByIdOperatorV100
         extends
         AbstractV1RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(SosGetObservationByIdOperatorV100.class.getName());
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SosGetObservationByIdOperatorV100.class.getName());
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetObservationById.name();
 

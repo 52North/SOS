@@ -123,7 +123,6 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosDecoderv20.class);
 
-    @SuppressWarnings("unchecked")
     private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
             Sos2Constants.NS_SOS_20, GetCapabilitiesDocument.class, GetObservationDocument.class,
             GetFeatureOfInterestDocument.class, GetObservationByIdDocument.class, InsertObservationDocument.class,

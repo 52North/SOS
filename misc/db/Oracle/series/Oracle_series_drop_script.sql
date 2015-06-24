@@ -32,6 +32,8 @@ drop table blobValue cascade constraints;
 drop table booleanValue cascade constraints;
 drop table categoryValue cascade constraints;
 drop table codespace cascade constraints;
+drop table complexValue cascade constraints;
+drop table compositeObservation cascade constraints;
 drop table compositePhenomenon cascade constraints;
 drop table countValue cascade constraints;
 drop table featureOfInterest cascade constraints;

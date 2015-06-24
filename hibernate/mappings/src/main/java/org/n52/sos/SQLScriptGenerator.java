@@ -92,38 +92,36 @@ public class SQLScriptGenerator {
         switch (selection) {
         case 1:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            if (concept == 1) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
-            } else if (concept == 2) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
-            } else if (concept == 3) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/ereporting").toURI()));
-            } 
             break;
         case 2:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
-            if (concept == 1) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
-                        .toURI()));
-            } else if (concept == 2) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
-            } else if (concept == 2) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/ereporting").toURI()));
-            }
-            
+            configuration
+                    .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             break;
         case 3:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
+            configuration
+                    .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/i18n").toURI()));
-            if (concept == 1) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
-            } else if (concept == 2) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/ereporting").toURI()));
-            } else if (concept == 2) {
-            }
+            break;
+        default:
+            throw new Exception("The entered value is invalid!");
+        }
+        addConceptDirectories(concept, configuration);
+    }
+
+    private void addConceptDirectories(int concept, Configuration configuration) throws Exception {
+        switch (concept) {
+        case 1:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
+                    .toURI()));
+            break;
+        case 2:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation")
+                    .toURI()));
+            break;
+        case 3:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/ereporting").toURI()));
             break;
         default:
             throw new Exception("The entered value is invalid!");

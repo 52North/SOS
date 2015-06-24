@@ -37,7 +37,7 @@ import java.util.Set;
  * @since 4.0.0
  *
  */
-interface AbstractLoggingConfigurator {
+public interface AbstractLoggingConfigurator {
 
     Set<Appender> getEnabledAppender();
 

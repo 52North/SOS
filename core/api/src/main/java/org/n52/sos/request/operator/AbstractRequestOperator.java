@@ -41,7 +41,6 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
@@ -119,6 +118,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private ServiceOperatorRepository serviceOperatorRepository;
     private ServiceEventBus serviceEventBus;
 
+	private final String service;
+
     public AbstractRequestOperator(String service,
                                    String version,
                                    String operationName,
@@ -132,6 +133,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                                    boolean defaultActive,
                                    Class<Q> requestType) {
         this.requestOperatorKey = new RequestOperatorKey(service, version, operationName, defaultActive);
+        this.service = service;
         this.requestType = requestType;
         LOGGER.info("{} initialized successfully!", getClass().getSimpleName());
     }
@@ -190,6 +192,9 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         return serviceEventBus;
     }
 
+    /**
+     * Use {@link #getOperationHandler()}
+     */
     @Deprecated
     protected D getDao() {
         return getOperationHandler();
@@ -422,7 +427,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
         if (service == null || service.equalsIgnoreCase("NOT_SET")) {
             throw new MissingServiceParameterException();
-        } else if (!service.equals(SosConstants.SOS)) {
+        } else if (!service.equals(this.service)) {
             throw new InvalidServiceParameterException(service);
         }
     }

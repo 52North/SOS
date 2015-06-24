@@ -7,7 +7,7 @@ xsi:schemaLocation="http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 http://i
   </inspire_common:ResourceLocator>
   <inspire_common:ResourceType>service</inspire_common:ResourceType>
   <inspire_common:TemporalReference>
-    <inspire_common:DateOfCreation>2014-01-15T14:06:23.898+01:00:</inspire_common:DateOfCreation>
+    <inspire_common:DateOfCreation>2014-01-15T14:06:23.898+01:00:00</inspire_common:DateOfCreation>
     <inspire_common:DateOfLastRevision>2014-01-15T14:06:23.928+01:00:00</inspire_common:DateOfLastRevision>
     <inspire_common:DateOfPublication>2014-01-15T14:06:23.928+01:00:00</inspire_common:DateOfPublication>
     <inspire_common:TemporalExtent>

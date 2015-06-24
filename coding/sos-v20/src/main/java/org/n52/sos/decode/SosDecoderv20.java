@@ -124,9 +124,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SosDecoderv20.class);
 
-    @SuppressWarnings("unchecked")
-    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper
-            .union(CodingHelper.decoderKeysForElements(
+    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
                             Sos2Constants.NS_SOS_20,
                             GetCapabilitiesDocument.class,
                             GetObservationDocument.class,
@@ -134,20 +132,17 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
                             GetObservationByIdDocument.class,
                             InsertObservationDocument.class,
                             InsertResultTemplateDocument.class,
-                            InsertResultDocument.class, GetResultTemplateDocument.class,
+                            InsertResultDocument.class,
+                            GetResultTemplateDocument.class,
                             GetResultDocument.class,
                             GetResultTemplateResponseDocument.class,
                             GetResultResponseDocument.class),
                    CodingHelper
                    .xmlDecoderKeysForOperation(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                                               SosConstants.Operations.GetCapabilities,
-                                               SosConstants.Operations.GetObservation,
-                                               SosConstants.Operations.GetFeatureOfInterest,
-                                               SosConstants.Operations.GetObservationById,
-                                               SosConstants.Operations.InsertObservation,
-                                               Sos2Constants.Operations.InsertResultTemplate,
-                                               Sos2Constants.Operations.InsertResult,
-                                               Sos2Constants.Operations.GetResultTemplate,
+                                               SosConstants.Operations.GetCapabilities, SosConstants.Operations.GetObservation,
+                                               SosConstants.Operations.GetFeatureOfInterest, SosConstants.Operations.GetObservationById,
+                                               SosConstants.Operations.InsertObservation, Sos2Constants.Operations.InsertResultTemplate,
+                                               Sos2Constants.Operations.InsertResult, Sos2Constants.Operations.GetResultTemplate,
                                                SosConstants.Operations.GetResult));
 
     public SosDecoderv20() {

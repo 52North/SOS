@@ -181,6 +181,8 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 
     @Override
     public AbstractSensorML decode(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
+        // validate document
+        XmlHelper.validateDocument(element);
         AbstractSensorML sml = null;
         if (element instanceof PhysicalSystemDocument) {
             sml = parsePhysicalSystem(((PhysicalSystemDocument) element).getPhysicalSystem());

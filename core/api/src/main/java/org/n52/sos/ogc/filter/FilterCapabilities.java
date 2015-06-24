@@ -50,9 +50,10 @@ import com.google.common.collect.Lists;
 
 /**
  * SOS filter capabilities
- * 
+ *
  * @since 4.0.0
  */
+//FIXME move to iceland
 public class FilterCapabilities {
     /**
      * Spatial operands list
@@ -80,12 +81,12 @@ public class FilterCapabilities {
      * Comparison operators list
      */
     private SortedSet<ComparisonOperator> comparisonOperators = new TreeSet<ComparisonOperator>();
-    
+
     private List<OwsDomainType> conformance = Lists.newArrayList();
 
     /**
      * Get spatial operands
-     * 
+     *
      * @return spatial operands
      */
     public SortedSet<QName> getSpatialOperands() {
@@ -94,7 +95,7 @@ public class FilterCapabilities {
 
     /**
      * Set spatial operands
-     * 
+     *
      * @param spatialOperands
      *            spatial operands
      */
@@ -107,7 +108,7 @@ public class FilterCapabilities {
 
     /**
      * Get spatial operators
-     * 
+     *
      * @return spatial operators
      */
     public SortedMap<SpatialOperator, SortedSet<QName>> getSpatialOperators() {
@@ -116,7 +117,7 @@ public class FilterCapabilities {
 
     /**
      * Set spatial operators
-     * 
+     *
      * @param spatialOperators
      *            spatial operators
      */
@@ -135,7 +136,7 @@ public class FilterCapabilities {
 
     /**
      * Get temporal operands
-     * 
+     *
      * @return temporal operands
      */
     public SortedSet<QName> getTemporalOperands() {
@@ -144,7 +145,7 @@ public class FilterCapabilities {
 
     /**
      * Set temporal operands
-     * 
+     *
      * @param temporalOperands
      *            temporal operands
      */
@@ -157,7 +158,7 @@ public class FilterCapabilities {
 
     /**
      * Get temporal operators
-     * 
+     *
      * @return temporal operators
      */
     public SortedMap<TimeOperator, SortedSet<QName>> getTempporalOperators() {
@@ -166,7 +167,7 @@ public class FilterCapabilities {
 
     /**
      * Set temporal operators
-     * 
+     *
      * @param temporalOperators
      *            temporal operators
      */
@@ -185,7 +186,7 @@ public class FilterCapabilities {
 
     /**
      * Get comparison operators
-     * 
+     *
      * @return comparison operators
      */
     public SortedSet<ComparisonOperator> getComparisonOperators() {
@@ -194,7 +195,7 @@ public class FilterCapabilities {
 
     /**
      * Set comparison operators
-     * 
+     *
      * @param comparisonOperators
      *            comparison operators
      */
@@ -208,19 +209,19 @@ public class FilterCapabilities {
     public void addConformance(OwsDomainType domainType) {
         getConformance().add(domainType);
     }
-    
+
     public void addConformance(Collection<OwsDomainType> domainTypes) {
         getConformance().addAll(domainTypes);
     }
-    
+
     public void setConformance(Collection<OwsDomainType> domainTypes) {
         this.conformance = Lists.newArrayList(domainTypes);
     }
-    
+
     public Collection<OwsDomainType> getConformance() {
         return conformance;
     }
-    
+
     public boolean isSetCoinformance() {
         return CollectionHelper.isNotEmpty(getConformance());
     }

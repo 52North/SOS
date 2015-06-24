@@ -57,7 +57,7 @@ import org.n52.iceland.w3c.soap.SoapHeader;
 import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
-import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.exception.swes.InvalidRequestException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.W3cHelper;

@@ -78,7 +78,7 @@ import org.w3c.dom.NodeList;
 
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;

@@ -82,8 +82,7 @@ public final class N52XmlHelper implements Constants {
     public static final SchemaLocation SCHEMA_LOCATION_OGC = new SchemaLocation(OGCConstants.NS_OGC,
             OGCConstants.SCHEMA_LOCATION_OGC);
 
-    public static final SchemaLocation SCHEMA_LOCATION_OWS_110 = new SchemaLocation(OWSConstants.NS_OWS,
-            OWSConstants.SCHEMA_LOCATION_URL_OWS);
+    public static final SchemaLocation SCHEMA_LOCATION_OWS_110 = OWSConstants.OWS_110_SCHEMA_LOCATION;
 
     public static final SchemaLocation SCHEMA_LOCATION_OWS_110_ER = new SchemaLocation(OWSConstants.NS_OWS,
             OWSConstants.SCHEMA_LOCATION_URL_OWS_EXCEPTIONREPORT);
@@ -150,7 +149,7 @@ public final class N52XmlHelper implements Constants {
                 StringBuilder builder = new StringBuilder();
                 builder.append(it.next().getSchemaLocationString());
                 while(it.hasNext()) {
-                    builder.append(BLANK_CHAR).append(it.next().getSchemaLocationString());
+                    builder.append(" ").append(it.next().getSchemaLocationString());
                 }
                 return builder.toString();
             }

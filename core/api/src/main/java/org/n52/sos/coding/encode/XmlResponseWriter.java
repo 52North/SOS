@@ -28,8 +28,6 @@
  */
 package org.n52.sos.coding.encode;
 
-import org.n52.iceland.coding.encode.AbstractResponseWriter;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -38,11 +36,10 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
+import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.util.Producer;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * TODO JavaDoc
@@ -54,7 +51,6 @@ import org.n52.sos.util.XmlOptionsHelper;
 public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     public static final ResponseWriterKey KEY = new ResponseWriterKey(XmlObject.class);
 
-    private MediaType contentType;
     private final Producer<XmlOptions> xmlOptions;
 
     public XmlResponseWriter(Producer<XmlOptions> xmlOptions) {
@@ -69,16 +65,6 @@ public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
     @Override
     public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
         xml.save(out, this.xmlOptions.get());
-    }
-
-    @Override
-    public MediaType getContentType() {
-        return contentType;
-    }
-
-    @Override
-    public void setContentType(MediaType contentType) {
-        this.contentType = contentType;
     }
 
     @Override

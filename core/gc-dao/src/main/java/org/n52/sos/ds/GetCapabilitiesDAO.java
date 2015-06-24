@@ -48,12 +48,10 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.decode.DecoderRepository;
-import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.DecoderRepository;
 import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.config.SettingsService;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerRepository;
@@ -99,6 +97,8 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.ogc.filter.FilterCapabilities;
 import org.n52.sos.ogc.sos.SosCapabilities;
@@ -337,7 +337,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
         // FIXME: OpsMetadata for InsertSensor, InsertObservation SOS 2.0
         final Set<RequestOperatorKey> requestOperatorKeyTypes =
                 getRequestOperatorRepository().getActiveRequestOperatorKeys();
-        final List<OwsOperation> opsMetadata = new ArrayList<OwsOperation>(requestOperatorKeyTypes.size());
+        final List<OwsOperation> opsMetadata = new ArrayList<>(requestOperatorKeyTypes.size());
         for (final RequestOperatorKey requestOperatorKey : requestOperatorKeyTypes) {
             if (requestOperatorKey.getServiceOperatorKey().getVersion().equals(version)) {
                 OwsOperation operationMetadata = getRequestOperatorRepository()
@@ -641,7 +641,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
     private void getSpatialFilterCapabilities(final FilterCapabilities filterCapabilities, final String version) {
 
         // set GeometryOperands
-        final List<QName> operands = new LinkedList<QName>();
+        final List<QName> operands = new LinkedList<>();
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             operands.add(GmlConstants.QN_ENVELOPE_32);
         } else if (version.equals(Sos1Constants.SERVICEVERSION)) {

@@ -32,8 +32,11 @@ import java.util.List;
 import java.util.Locale;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.AbstractObservationRequest;
@@ -41,12 +44,11 @@ import org.n52.sos.request.AbstractObservationRequest;
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 
 
-    public EReportingSeriesOmObservationCreator(EReportingSeries series, AbstractObservationRequest request, Session session) {
-        super(series, request, session);
-    }
-
-    public EReportingSeriesOmObservationCreator(EReportingSeries series, AbstractObservationRequest request, Locale language, Session session) {
-        super(series, request, language, session);
+    public EReportingSeriesOmObservationCreator(EReportingSeries series,
+                                                AbstractObservationRequest request,
+                                                LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                                Locale language, Session session) {
+        super(series, request, serviceProvider, language, session);
     }
 
     @Override

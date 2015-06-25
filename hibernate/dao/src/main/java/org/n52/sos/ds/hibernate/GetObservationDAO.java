@@ -51,6 +51,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -104,9 +105,15 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private ServiceMetadataRepository serviceMetadataRepository;
 
     public GetObservationDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
     }
 
     @Inject
@@ -118,7 +125,6 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
     }
-
 
     @Override
     public GetObservationResponse getObservation(final GetObservationRequest sosRequest) throws OwsExceptionReport {
@@ -251,13 +257,11 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, LocaleHelper.fromRequest(request), session);
+        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations()
                 || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
-            for (OmObservation omObservation : result) {
-                timeSeries.add(omObservation.getObservationConstellation());
-            }
+            result.stream().map(OmObservation::getObservationConstellation).forEach(timeSeries::add);
         }
         if (ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
@@ -267,7 +271,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                 final List<String> featureIds =
                         HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
                 for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
-                        featureIds, request, LocaleHelper.fromRequest(request), session)) {
+                        featureIds, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
                         result.add(omObservation);
                         timeSeries.add(omObservation.getObservationConstellation());
@@ -370,7 +374,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             metadataObservationsCount = seriesToCheckMap.size();
             for (Series series : seriesToCheckMap.values()) {
                 result.addAll(HibernateObservationUtilities.createSosObservationFromSeries(series,
-                        request, LocaleHelper.fromRequest(request), session));
+                        request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
             }
         }
         HibernateGetObservationHelper
@@ -380,7 +384,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<AbstractObservation> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, LocaleHelper.fromRequest(request), session));
+        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
         return result;
     }
 
@@ -415,7 +419,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             final List<String> featureIds =
                     HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
             for (OmObservation observationTemplate : HibernateObservationUtilities
-                    .createSosObservationFromObservationConstellation(oc, featureIds, request, session)) {
+                    .createSosObservationFromObservationConstellation(oc, featureIds, request,this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session)) {
                 FeatureOfInterest featureOfInterest =
                         new FeatureOfInterestDAO().getFeatureOfInterest(observationTemplate
                                 .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
@@ -464,7 +468,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         for (Series series : serieses) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
-                            .createSosObservationFromSeries(series, request, session);
+                            .createSosObservationFromSeries(series, request,this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
             HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
             streamingValue.setResponseFormat(request.getResponseFormat());

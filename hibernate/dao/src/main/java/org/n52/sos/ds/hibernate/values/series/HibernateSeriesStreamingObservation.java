@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -35,6 +36,8 @@ import org.hibernate.HibernateException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -66,8 +69,8 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
      *            {@link GetObservationRequest}
      * @throws OwsExceptionReport
      */
-    public HibernateSeriesStreamingObservation(GetObservationRequest request, ConnectionProvider connectionProvider) throws OwsExceptionReport {
-        super(connectionProvider, request);
+    public HibernateSeriesStreamingObservation(GetObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale locale, ConnectionProvider connectionProvider) throws OwsExceptionReport {
+        super(connectionProvider, request, serviceProvider);
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         if (observationDAO instanceof AbstractSeriesObservationDAO) {
             seriesObservationDAO = (AbstractSeriesObservationDAO) observationDAO;

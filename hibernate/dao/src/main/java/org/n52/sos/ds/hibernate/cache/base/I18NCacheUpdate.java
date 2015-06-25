@@ -43,7 +43,7 @@ import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 
 /**
@@ -57,12 +57,12 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(I18NCacheUpdate.class);
 
-    private final ServiceIdentificationFactory serviceIdentificationFactory;
+    private final ServiceMetadataRepository serviceMetadataRepository;
     private final I18NDAORepository i18NDAORepository;
 
-    public I18NCacheUpdate(ServiceIdentificationFactory serviceIdentificationFactory,
+    public I18NCacheUpdate(ServiceMetadataRepository serviceMetadataRepository,
                            I18NDAORepository i18NDAORepository) {
-        this.serviceIdentificationFactory = serviceIdentificationFactory;
+        this.serviceMetadataRepository = serviceMetadataRepository;
         this.i18NDAORepository = i18NDAORepository;
     }
 
@@ -71,7 +71,7 @@ public class I18NCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         LOGGER.info("Executing I18NCacheUpdate");
         startStopwatch();
         try {
-            getCache().addSupportedLanguage(this.serviceIdentificationFactory.getAvailableLocales());
+            getCache().addSupportedLanguage(this.serviceMetadataRepository.getAvailableLocales());
             getCache().addSupportedLanguage(getEntityLocales(I18NFeatureMetadata.class));
             getCache().addSupportedLanguage(getEntityLocales(I18NOfferingMetadata.class));
             getCache().addSupportedLanguage(getEntityLocales(I18NObservablePropertyMetadata.class));

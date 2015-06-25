@@ -28,16 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.sos.service.Configurator;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sos.iso.CodeList;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -49,6 +51,15 @@ import com.google.common.base.Optional;
  */
 public class ContactsEnrichment extends SensorMLEnrichment {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactsEnrichment.class);
+
+    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private final Locale locale;
+
+    public ContactsEnrichment(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+        this.serviceProvider = serviceProvider;
+        this.locale = locale;
+    }
+
 
     @Override
     protected void enrich(AbstractSensorML description) throws OwsExceptionReport {
@@ -74,12 +85,7 @@ public class ContactsEnrichment extends SensorMLEnrichment {
      */
     @VisibleForTesting
     Optional<OwsServiceProvider> getServiceProvider() {
-        try {
-            return Optional.fromNullable(Configurator.getInstance().getServiceProvider());
-        } catch (final OwsExceptionReport e) {
-            LOGGER.error(String.format("Exception thrown: %s", e.getMessage()), e);
-            return Optional.absent();
-        }
+        return Optional.of(this.serviceProvider.get());
     }
 
     /**

@@ -60,12 +60,12 @@ import org.n52.sos.request.GetObservationByIdRequest;
 /**
  * The class <code>HibernateObservationUtilitiesTest</code> contains tests for
  * the class {@link <code>HibernateObservationUtilities</code>}
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
  *         HinderkJ&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     private static final String PROCEDURE = "junit_test_procedure_id";
@@ -88,7 +88,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         List<OmObservation> resultList =
-                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null);
+                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.size(), is(0));
     }
@@ -158,7 +158,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             List<OmObservation> resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            request, null, session);
+                            request, null, null, session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.size(), is(1));

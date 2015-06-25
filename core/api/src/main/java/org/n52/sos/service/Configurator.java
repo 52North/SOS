@@ -44,10 +44,6 @@ import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.ows.OwsServiceIdentification;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
-import org.n52.iceland.ogc.ows.ServiceProviderFactory;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.Producer;
 import org.n52.sos.cache.SosContentCache;
@@ -69,8 +65,6 @@ public class Configurator implements Constructable {
     private ConnectionProvider dataConnectionProvider;
     private ConnectionProvider featureConnectionProvider;
     private ContentCacheController contentCacheController;
-    private ServiceIdentificationFactory serviceIdentificationFactory;
-    private ServiceProviderFactory serviceProviderFactory;
     private String connectionProviderIdentificator;
     private String datasourceDaoIdentificator;
     private ServiceEventBus eventBus;
@@ -106,20 +100,6 @@ public class Configurator implements Constructable {
     }
 
     @Inject
-    public void setServiceIdentificationFactory(ServiceIdentificationFactory serviceIdentificationFactory) {
-        this.serviceIdentificationFactory = serviceIdentificationFactory;
-    }
-
-    public ServiceIdentificationFactory getServiceIdentificationFactory() throws OwsExceptionReport {
-        return serviceIdentificationFactory;
-    }
-
-    @Inject
-    public void setServiceProviderFactory(ServiceProviderFactory serviceProviderFactory) {
-        this.serviceProviderFactory = serviceProviderFactory;
-    }
-
-    @Inject
     public void setDataConnectionProvider(DataConnectionProvider dataConnectionProvider) {
         this.dataConnectionProvider = dataConnectionProvider;
     }
@@ -144,33 +124,6 @@ public class Configurator implements Constructable {
             featureConnectionProvider = dataConnectionProvider;
         }
         this.eventBus.submit(new ConfiguratorInitializedEvent());
-    }
-
-    /**
-     * @return Returns the service identification
-     *         <p/>
-     * @throws OwsExceptionReport
-     */
-    public OwsServiceIdentification getServiceIdentification() throws OwsExceptionReport {
-        return get(serviceIdentificationFactory);
-    }
-
-    /**
-     * @return Returns the service identification for the specific language
-     *         <p/>
-     * @throws OwsExceptionReport
-     */
-    public OwsServiceIdentification getServiceIdentification(Locale lanugage) throws OwsExceptionReport {
-        return get(serviceIdentificationFactory, lanugage);
-    }
-
-    /**
-     * @return Returns the service provider
-     *         <p/>
-     * @throws OwsExceptionReport
-     */
-    public OwsServiceProvider getServiceProvider() throws OwsExceptionReport {
-        return get(serviceProviderFactory);
     }
 
     /**

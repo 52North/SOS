@@ -419,7 +419,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      *             if service parameter is incorrect
      */
     protected void checkServiceParameter(final String service) throws OwsExceptionReport {
-
         if (service == null || service.equalsIgnoreCase("NOT_SET")) {
             throw new MissingServiceParameterException();
         } else if (!service.equals(this.service)) {

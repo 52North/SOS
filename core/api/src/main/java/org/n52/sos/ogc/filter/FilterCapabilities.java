@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -166,16 +167,24 @@ public class FilterCapabilities {
     }
 
     /**
+     * @deprecated use {@link #setTemporalOperators(java.util.Map)}
+     */
+    @Deprecated
+    public void setTempporalOperators(Map<TimeOperator, ? extends Collection<QName>> temporalOperators) {
+        this.setTemporalOperators(temporalOperators);
+    }
+
+    /**
      * Set temporal operators
      *
      * @param temporalOperators
      *            temporal operators
      */
-    public void setTempporalOperators(Map<TimeOperator, ? extends Collection<QName>> temporalOperators) {
+    public void setTemporalOperators(Map<TimeOperator, ? extends Collection<QName>> temporalOperators) {
         this.temporalOperators.clear();
         if (temporalOperators != null) {
             for (TimeOperator timeOperator : temporalOperators.keySet()) {
-                final TreeSet<QName> set = new TreeSet<QName>(QNameComparator.INSTANCE);
+                TreeSet<QName> set = new TreeSet<>(QNameComparator.INSTANCE);
                 if (temporalOperators.get(timeOperator) != null) {
                     set.addAll(temporalOperators.get(timeOperator));
                 }

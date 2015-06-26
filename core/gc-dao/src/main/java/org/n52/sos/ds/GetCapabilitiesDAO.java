@@ -724,7 +724,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 }
                 break;
         }
-        filterCapabilities.setTempporalOperators(ops);
+        filterCapabilities.setTemporalOperators(ops);
     }
 
     /**

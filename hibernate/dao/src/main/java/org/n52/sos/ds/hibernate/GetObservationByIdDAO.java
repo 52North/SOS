@@ -56,6 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 
 
 /**
@@ -69,9 +70,15 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationByIdDAO.class);
 
     private HibernateSessionHolder sessionHolder;
+    private ServiceMetadataRepository serviceMetadataRepository;
 
     public GetObservationByIdDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
     }
 
     @Inject
@@ -90,7 +97,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
             response.setVersion(request.getVersion());
             response.setResponseFormat(request.getResponseFormat());
             response.setObservationCollection(HibernateObservationUtilities.createSosObservationsFromObservations(
-                    observations, request, LocaleHelper.fromRequest(request), session));
+                    observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
             return response;
 
         } catch (HibernateException he) {

@@ -37,10 +37,11 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -73,18 +74,16 @@ public abstract class AbstractOmObservationCreator {
     private final AbstractObservationRequest request;
     private final Session session;
     private final Locale i18n;
+    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
 
-    public AbstractOmObservationCreator(AbstractObservationRequest request, Session session) {
-        super();
-        this.request = request;
-        this.session = session;
-        this.i18n = ServiceConfiguration.getInstance().getDefaultLanguage();
-    }
-
-    public AbstractOmObservationCreator(AbstractObservationRequest request, Locale i18n, Session session) {
+    public AbstractOmObservationCreator(AbstractObservationRequest request,
+                                        Locale i18n,
+                                        LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                        Session session) {
         this.request = request;
         this.session = session;
         this.i18n = i18n;
+        this.serviceProvider = serviceProvider;
     }
 
     protected SosContentCache getCache() {
@@ -181,8 +180,8 @@ public abstract class AbstractOmObservationCreator {
         Procedure hProcedure = new ProcedureDAO().getProcedureForIdentifier(identifier, getSession());
         String pdf = hProcedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat();
         if (getActiveProfile().isEncodeProcedureInObservation()) {
-            return new HibernateProcedureConverter().createSosProcedureDescription(hProcedure, pdf, getVersion(),
-                    getSession());
+            return new HibernateProcedureConverter(this.serviceProvider)
+                    .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
         } else {
             SosProcedureDescriptionUnknowType sosProcedure =
                     new SosProcedureDescriptionUnknowType(identifier, pdf, null);
@@ -203,9 +202,9 @@ public abstract class AbstractOmObservationCreator {
             abstractFeature.addName(hAbstractFeature.getName(), hAbstractFeature.getCodespaceName().getCodespace());
         }
         abstractFeature.addName(hAbstractFeature.getName());
-        
+
     }
-    
+
     /**
      * Get featureOfInterest object from series
      *

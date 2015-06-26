@@ -16,14 +16,6 @@
         <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
         <property name="optional" value="true" />
     </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="serviceIdentification.serviceType" />
-        <property name="title" value="Service Type" />
-        <property name="description" value="SOS Service Type." />
-        <property name="order" value="6.0" />
-        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
-        <property name="defaultValue" value="OGC:SOS" />
-    </bean>
     <bean class="org.n52.iceland.config.settings.MultilingualStringSettingDefinition">
         <property name="key" value="serviceIdentification.abstract" />
         <property name="title" value="SOS Abstract" />
@@ -47,14 +39,6 @@
         <property name="order" value="5.0" />
         <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
         <property name="defaultValue" value="NONE" />
-    </bean>
-    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
-        <property name="key" value="serviceIdentification.serviceTypeCodeSpace" />
-        <property name="title" value="Service Type Code Space" />
-        <property name="description" value="SOS Service Type Code Space." />
-        <property name="order" value="7.0" />
-        <property name="group" ref="serviceIdentificationSettingsDefinitionGroup" />
-        <property name="optional" value="true" />
     </bean>
     <bean class="org.n52.iceland.config.settings.MultilingualStringSettingDefinition">
         <property name="key" value="serviceIdentification.title" />

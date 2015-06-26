@@ -43,6 +43,7 @@ import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
 import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
@@ -84,15 +85,16 @@ public class InspireExtendedCapabilitiesProvider
     private final OwsExtendedCapabilitiesProviderKey key
             = new OwsExtendedCapabilitiesProviderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, InspireConstants.INSPIRE);
 
-    private Producer<OwsServiceProvider> owsServiceProvider;
+    private ServiceMetadataRepository serviceMetadataRepository;
 
     @Inject
-    public void setOwsServiceProvider(Producer<OwsServiceProvider> owsServiceProvider) {
-        this.owsServiceProvider = owsServiceProvider;
+    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
     }
 
+
     public OwsServiceProvider getOwsServiceProvider() {
-        return owsServiceProvider.get();
+        return serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS).get();
     }
 
     @Override

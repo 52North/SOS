@@ -41,7 +41,9 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.DescriptionXmlEntity;
@@ -78,6 +80,12 @@ import com.google.common.collect.Lists;
  */
 public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
 
+    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+
+    public HibernateProcedureConverter(LocalizedProducer<OwsServiceProvider> serviceProvider) {
+        this.serviceProvider = serviceProvider;
+    }
+
     /**
      * Create procedure description from file, single XML text or generate
      *
@@ -95,12 +103,14 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion, Session session)
+    public SosProcedureDescription createSosProcedureDescription(
+            Procedure procedure,
+            String requestedDescriptionFormat,
+            String requestedServiceVersion,
+            Session session)
             throws OwsExceptionReport {
         // child hierarchy procedures haven't been queried yet, pass null
-        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null,
-                session);
+        return createSosProcedureDescription(procedure, requestedDescriptionFormat, requestedServiceVersion, null, session);
     }
 
     /**
@@ -123,9 +133,13 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescription(Procedure procedure,
-            String requestedDescriptionFormat, String requestedServiceVersion,
-            Map<String, Procedure> loadedProcedures, Locale i18n, Session session) throws OwsExceptionReport {
+    public SosProcedureDescription createSosProcedureDescription(
+            Procedure procedure,
+            String requestedDescriptionFormat,
+            String requestedServiceVersion,
+            Map<String, Procedure> loadedProcedures,
+            Locale i18n,
+            Session session) throws OwsExceptionReport {
         if (procedure == null) {
             throw new NoApplicableCodeException().causedBy(
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
@@ -208,7 +222,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     /**
      * Checks the requested procedureDescriptionFormat with the datasource
      * procedureDescriptionFormat.
-     * @param identifier 
+     * @param identifier
      *
      * @param procedure
      *            the procedure
@@ -241,7 +255,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     private boolean existConverter(String from, String to) {
         return ConverterRepository.getInstance().hasConverter(from, to);
     }
-    
+
     private boolean existsGenerator(String descriptionFormat) {
         return HibernateProcedureDescriptionGeneratorFactoryRepository.getInstance()
                 .hasHibernateProcedureDescriptionGeneratorFactory(descriptionFormat);
@@ -298,9 +312,15 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
             TimePeriod validTime, Map<String, Procedure> cache, Locale language, Session session)
             throws OwsExceptionReport {
         ProcedureDescriptionEnrichments enrichments =
-                ProcedureDescriptionEnrichments.create().setIdentifier(procedure.getIdentifier()).setVersion(version)
-                        .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session)
-                        .setValidTime(validTime).setProcedureCache(cache).setConverter(this).setLanguage(language);
+                ProcedureDescriptionEnrichments.create(language, serviceProvider)
+                        .setIdentifier(procedure.getIdentifier())
+                        .setVersion(version)
+                        .setDescription(desc)
+                        .setProcedureDescriptionFormat(format)
+                        .setSession(session)
+                        .setValidTime(validTime)
+                        .setProcedureCache(cache)
+                        .setConverter(this);
         if (desc instanceof SensorML && ((SensorML) desc).isWrapper()) {
             enrichments.setDescription(desc).createValidTimeEnrichment().enrich();
             for (AbstractProcess abstractProcess : ((SensorML) desc).getMembers()) {

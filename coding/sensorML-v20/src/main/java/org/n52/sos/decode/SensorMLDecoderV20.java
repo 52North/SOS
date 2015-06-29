@@ -183,6 +183,10 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     public AbstractSensorML decode(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
         // validate document
         XmlHelper.validateDocument(element);
+        return parse(element);
+    }
+    
+    private AbstractSensorML parse(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
         AbstractSensorML sml = null;
         if (element instanceof PhysicalSystemDocument) {
             sml = parsePhysicalSystem(((PhysicalSystemDocument) element).getPhysicalSystem());
@@ -661,7 +665,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                     final SmlComponent sosSmlcomponent = new SmlComponent(component.getName());
                     AbstractSensorML abstractProcess = null;
                     if (component.isSetAbstractProcess()) {
-                        abstractProcess = decode(component.getAbstractProcess());
+                        abstractProcess = parse(component.getAbstractProcess());
                     } else {
                         abstractProcess = new AbstractProcess();
                         abstractProcess.setIdentifier(component.getHref());

@@ -171,6 +171,8 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     @Override
     public AbstractSensorML decode(final XmlObject element) throws OwsExceptionReport {
+        // validate document
+        XmlHelper.validateDocument(element);
         if (element instanceof SensorMLDocument) {
             return parseSensorML((SensorMLDocument) element);
         } else if (element instanceof SystemDocument) {

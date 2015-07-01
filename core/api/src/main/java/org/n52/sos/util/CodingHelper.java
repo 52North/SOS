@@ -34,10 +34,12 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
@@ -47,7 +49,6 @@ import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 
 import com.google.common.collect.Maps;

@@ -5,13 +5,13 @@
 
 
     <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger"/>
+
     <bean id="kvpBinding" class="org.n52.iceland.binding.kvp.KvpBinding"/>
     <bean id="poxBinding" class="org.n52.iceland.binding.pox.PoxBinding"/>
     <bean id="jsonBinding" class="org.n52.iceland.binding.json.JSONBinding"/>
     <bean id="soapBinding" class="org.n52.iceland.binding.soap.SoapBinding"/>
 
-    <bean id="serviceProviderFactory" class="org.n52.iceland.ogc.ows.ServiceProviderFactory" />
-    <bean id="serviceIdentificationFactory" class="org.n52.iceland.ogc.ows.ServiceIdentificationFactory" />
+    <bean id="serviceMetadataRepository" class="org.n52.iceland.ogc.ows.ServiceMetadataRepositoryImpl"/>
 
     <bean id="bindingRepository" class="org.n52.iceland.binding.BindingRepository" />
     <bean id="codingRepository" class="org.n52.iceland.coding.CodingRepository" />

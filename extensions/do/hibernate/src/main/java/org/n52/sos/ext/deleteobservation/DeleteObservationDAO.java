@@ -29,6 +29,8 @@
 package org.n52.sos.ext.deleteobservation;
 
 import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -41,6 +43,9 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
@@ -61,6 +66,13 @@ import org.n52.sos.request.GetObservationRequest;
 public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     private HibernateSessionHolder hibernateSessionHolder;
+
+    private ServiceMetadataRepository serviceMetadataRepository;
+
+    @Inject
+    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
+    }
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -91,9 +103,10 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
             }
             OmObservation so = null;
             if (observation != null) {
-                so =
-                        HibernateObservationUtilities
-                                .createSosObservationsFromObservations(Collections.singleton(observation), getRequest(request), null, session).iterator().next();
+                Set<AbstractObservation> oberservations = Collections.singleton(observation);
+                LocalizedProducer<OwsServiceProvider> serviceProvider = this.serviceMetadataRepository.getServiceProviderFactory(request.getService());
+                Locale locale = request.getRequestedLocale();
+                so = HibernateObservationUtilities.createSosObservationsFromObservations(oberservations, getRequest(request), serviceProvider, locale, session).iterator().next();
                 observation.setDeleted(true);
                 session.saveOrUpdate(observation);
                 checkSeriesForFirstLatest(observation, session);

@@ -40,6 +40,8 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.generator.AbstractHibernateProcedureDescriptionGeneratorSml;
@@ -68,15 +70,8 @@ public class ObservationConstellationOmObservationCreator extends AbstractOmObse
     protected final List<String> featureIds;
 
     public ObservationConstellationOmObservationCreator(ObservationConstellation observationConstellation,
-            List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, Session session) {
-        super(request, session);
-        this.oc = observationConstellation;
-        this.featureIds = featureOfInterestIdentifiers;
-    }
-
-    public ObservationConstellationOmObservationCreator(ObservationConstellation observationConstellation,
-            List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, Locale language, Session session) {
-        super(request, language, session);
+            List<String> featureOfInterestIdentifiers, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, Session session) {
+        super(request, language, serviceProvider, session);
         this.oc = observationConstellation;
         this.featureIds = featureOfInterestIdentifiers;
     }

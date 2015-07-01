@@ -35,6 +35,8 @@ import org.hibernate.HibernateException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.ObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -67,8 +69,8 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
      * @param request
      *            {@link GetObservationRequest}
      */
-    public HibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request) {
-        super(connectionProvider, request);
+    public HibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+        super(connectionProvider, request, serviceProvider);
     }
 
     @Override

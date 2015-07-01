@@ -41,6 +41,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
@@ -48,6 +49,7 @@ import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerRepository;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.RequestEvent;
+import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -70,7 +72,6 @@ import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -193,7 +194,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     /**
-     * Use {@link #getOperationHandler()}
+     * @deprecated Use {@link #getOperationHandler()}
      */
     @Deprecated
     protected D getDao() {
@@ -230,12 +231,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
 
     protected String getOperationName() {
         return this.requestOperatorKey.getOperationName();
-    }
-
-    @Override
-    @Deprecated
-    public RequestOperatorKey getRequestOperatorKeyType() {
-        return requestOperatorKey;
     }
 
     @Override
@@ -424,7 +419,6 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      *             if service parameter is incorrect
      */
     protected void checkServiceParameter(final String service) throws OwsExceptionReport {
-
         if (service == null || service.equalsIgnoreCase("NOT_SET")) {
             throw new MissingServiceParameterException();
         } else if (!service.equals(this.service)) {

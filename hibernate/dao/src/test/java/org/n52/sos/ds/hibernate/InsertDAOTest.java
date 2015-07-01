@@ -45,6 +45,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
 
 import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.ConverterException;
@@ -55,6 +56,7 @@ import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.ows.ServiceProviderFactory;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
@@ -310,8 +312,9 @@ public class InsertDAOTest extends HibernateTestCase {
             ConverterException {
         OmObservationConstellation obsConst = new OmObservationConstellation();
         Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(procedureId, session);
+        ServiceProviderFactory serviceProviderFactory = Mockito.mock(ServiceProviderFactory.class);
         SosProcedureDescription spd =
-                new HibernateProcedureConverter().createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
+                new HibernateProcedureConverter(serviceProviderFactory).createSosProcedureDescription(procedure, SensorMLConstants.NS_SML,
                         Sos2Constants.SERVICEVERSION, session);
         obsConst.setProcedure(spd);
         OmObservableProperty omObservableProperty = new OmObservableProperty(obsPropId);

@@ -54,6 +54,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.cache.SosWritableContentCache;
@@ -80,7 +81,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private Locale defaultLocale;
     private I18NDAORepository i18NDAORepository;
     private FeatureQueryHandler featureQueryHandler;
-    private ServiceIdentificationFactory serviceIdentificationFactory;
+    private ServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionHolder sessionHolder;
 
     @Inject
@@ -94,9 +95,11 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     }
 
     @Inject
-    public void setServiceIdentificationFactory(ServiceIdentificationFactory serviceIdentificationFactory) {
-        this.serviceIdentificationFactory = serviceIdentificationFactory;
+    public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
+        this.serviceMetadataRepository = repo;
     }
+
+
 
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
@@ -126,7 +129,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
                     this.i18NDAORepository,
                     this.featureQueryHandler,
                     this.sessionHolder.getConnectionProvider(),
-                    this.serviceIdentificationFactory);
+                    this.serviceMetadataRepository);
             session = this.sessionHolder.getSession();
             update.setCache(cache);
             update.setErrors(errors);

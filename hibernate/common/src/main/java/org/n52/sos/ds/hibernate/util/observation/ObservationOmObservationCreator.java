@@ -39,6 +39,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -77,8 +78,12 @@ import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -94,24 +99,18 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
     private final Collection<AbstractObservation> observations;
-
     private final AbstractObservationRequest request;
-
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
-
     private final Map<String, AbstractPhenomenon> observedProperties = Maps.newHashMap();
-
     private final Map<String, SosProcedureDescription> procedures = Maps.newHashMap();
-
-    
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
-
     private List<OmObservation> observationCollection;
 
-    
+
     public ObservationOmObservationCreator(Collection<AbstractObservation> observations,
-            AbstractObservationRequest request, Locale language, Session session) {
-    	super(request, session);
+            AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
+            Locale language, Session session) {
+    	super(request, language, serviceProvider, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -119,18 +118,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             this.observations = observations;
         }
     }
-    
-    public ObservationOmObservationCreator(Collection<AbstractObservation> observations, AbstractObservationRequest request,
-            Session session) {
-    	super(request, session);
-        this.request = request;
-        if (observations == null) {
-            this.observations = Collections.emptyList();
-        } else {
-            this.observations = observations;
-        }
-    }
-    
+
 	private Collection<AbstractObservation> getObservations() {
         return observations;
     }
@@ -138,7 +126,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private String getResultModel() {
         return request.getResultModel();
     }
-    
+
     private SosProcedureDescription getProcedure(String procedureId) {
         return procedures.get(procedureId);
     }
@@ -176,7 +164,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
         return this.observationCollection;
     }
-    
+
     protected OmObservation createObservation(AbstractObservation hObservation) throws OwsExceptionReport, ConverterException {
         LOGGER.trace("Creating Observation...");
         SosHelper.checkFreeMemory();

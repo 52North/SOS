@@ -33,6 +33,7 @@ import java.util.Locale;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
+import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.base.CompositePhenomenonCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.FeatureOfInterestCacheUpdate;
@@ -72,7 +73,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                               I18NDAORepository i18NDAORepository,
                               FeatureQueryHandler featureQueryHandler,
                               ConnectionProvider connectionProvider,
-                              ServiceIdentificationFactory serviceIdentificationFactory) {
+                              ServiceMetadataRepository serviceMetadataRepository) {
         //execute all updates except offerings and procedures in parallel, then execute offering and procedure updates
         //(which spawn their own threads)
         super(new ParallelCacheUpdate(threadCount,
@@ -84,7 +85,7 @@ public class InitialCacheUpdate extends CompositeCacheUpdate {
                                       new CompositePhenomenonCacheUpdate(),
                                       new ResultTemplateCacheUpdate(),
                                       new ObservationTimeCacheUpdate()),
-              new I18NCacheUpdate(serviceIdentificationFactory,
+              new I18NCacheUpdate(serviceMetadataRepository,
                                   i18NDAORepository),
               new OfferingCacheUpdate(threadCount,
                                       defaultLocale,

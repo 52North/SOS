@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 

@@ -156,13 +156,13 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     /**
      * Get the HTTP DCPs for a operation
      *
-     * @param decoderKey
+     * @param operationKey
      *            the decoderKey
      * @return Map with DCPs for the service operation
      *
      * @throws OwsExceptionReport
      */
-    protected Map<String, Set<DCP>> getDCP(OperationKey decoderKey) throws OwsExceptionReport {
+    protected Map<String, Set<DCP>> getDCP(OperationKey operationKey) throws OwsExceptionReport {
         SetMultiMap<String, DCP> dcps = MultiMaps.newSetMultiMap();
         String serviceURL = getServiceConfiguration().getServiceURL();
 
@@ -180,16 +180,16 @@ public abstract class AbstractOperationHandler implements OperationHandler {
                     }
                     constraint = new Constraint(HTTPHeaders.CONTENT_TYPE, new OwsParameterValuePossibleValues(ss));
                 }
-                if (binding.checkOperationHttpGetSupported(decoderKey)) {
+                if (binding.checkOperationHttpGetSupported(operationKey)) {
                     dcps.add(HTTPMethods.GET, new DCP(url + "?", constraint));
                 }
-                if (binding.checkOperationHttpPostSupported(decoderKey)) {
+                if (binding.checkOperationHttpPostSupported(operationKey)) {
                     dcps.add(HTTPMethods.POST, new DCP(url, constraint));
                 }
-                if (binding.checkOperationHttpPutSupported(decoderKey)) {
+                if (binding.checkOperationHttpPutSupported(operationKey)) {
                     dcps.add(HTTPMethods.PUT, new DCP(url, constraint));
                 }
-                if (binding.checkOperationHttpDeleteSupported(decoderKey)) {
+                if (binding.checkOperationHttpDeleteSupported(operationKey)) {
                     dcps.add(HTTPMethods.DELETE, new DCP(url, constraint));
                 }
             }

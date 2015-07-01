@@ -32,9 +32,11 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -56,9 +58,12 @@ public class ProcedureDescriptionEnrichments {
     private Session session;
     private HibernateProcedureConverter converter;
     private TimePeriod validTime;
-    private Locale language = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private final Locale language;
+    private final LocalizedProducer<OwsServiceProvider> serviceProvider;
 
-    private ProcedureDescriptionEnrichments() {
+    private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+        this.serviceProvider = serviceProvider;
+        this.language = locale;
     }
 
     public ProcedureDescriptionEnrichments setIdentifier(String identifier) {
@@ -106,13 +111,6 @@ public class ProcedureDescriptionEnrichments {
         return this;
     }
 
-    public ProcedureDescriptionEnrichments setLanguage(Locale language) {
-        if (language != null) {
-            this.language = language;
-        }
-        return this;
-    }
-
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
                 Lists.newArrayList(
@@ -149,7 +147,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public ContactsEnrichment createContactsEnrichment() {
-        return setValues(new ContactsEnrichment());
+        return setValues(new ContactsEnrichment(this.language, this.serviceProvider));
     }
 
     public KeywordEnrichment createKeywordEnrichment() {
@@ -188,7 +186,7 @@ public class ProcedureDescriptionEnrichments {
         return enrichment;
     }
 
-    public static ProcedureDescriptionEnrichments create() {
-        return new ProcedureDescriptionEnrichments();
+    public static ProcedureDescriptionEnrichments create(Locale language, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+        return new ProcedureDescriptionEnrichments(language, serviceProvider);
     }
 }

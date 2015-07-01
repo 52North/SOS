@@ -10,8 +10,8 @@
 
     <!-- ServiceOperator implementations from extensions/aqd/operation -->
     <bean class="org.n52.iceland.service.operator.GenericServiceOperator">
-        <property name="service" value="AQD" />
-        <property name="version" value="1.0.0" />
+        <constructor-arg value="AQD" />
+        <constructor-arg value="1.0.0" />
     </bean>
 
 </beans>

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -39,7 +40,8 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
@@ -62,22 +64,16 @@ import org.n52.sos.service.profile.ProfileHandler;
 public abstract class AbstractHibernateStreamingObservation extends StreamingObservation {
 
     private static final long serialVersionUID = 7836070766447328741L;
-
     protected final HibernateSessionHolder sessionHolder;
-
     protected Session session;
-
     protected ScrollableResults result;
-
     protected GetObservationRequest request;
-
     protected Set<String> features;
-
     protected Criterion temporalFilterCriterion;
-
     protected boolean showMetadataOfEmptyObservation = false;
-
     protected boolean observationNotQueried = true;
+    private LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private final Locale locale;
 
     /**
      * constructor
@@ -86,11 +82,13 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
      *            {@link GetObservationRequest}
      * @param connectionProvider the connection provider
      */
-    public AbstractHibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request) {
+    public AbstractHibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider) {
         this.request = request;
         showMetadataOfEmptyObservation =
                 ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations();
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
+        this.serviceProvider = serviceProvider;
+        this.locale =  request.getRequestedLocale();
     }
 
     @Override
@@ -122,15 +120,9 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             OmObservation observation;
             Object resultObject = result.get()[0];
             if (resultObject instanceof SeriesObservation) {
-                observation =
-                        HibernateGetObservationHelper.toSosObservation(
-                                checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]),
-                                request, LocaleHelper.fromRequest(request), session);
+                observation = HibernateGetObservationHelper.toSosObservation(checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]), this.request, this.serviceProvider, this.locale, this.session);
             } else if (resultObject instanceof Series) {
-                observation =
-                        HibernateObservationUtilities
-                                .createSosObservationFromSeries((Series) resultObject, request, session)
-                                .iterator().next();
+                observation = HibernateObservationUtilities.createSosObservationFromSeries((Series) resultObject, this.request, this.serviceProvider, this.locale, this.session).iterator().next();
             } else {
                 throw new NoApplicableCodeException().withMessage("The object {} is not supported", resultObject
                         .getClass().getName());

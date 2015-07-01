@@ -33,12 +33,13 @@ import org.n52.iceland.ogc.swes.SwesConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public enum SwesExceptionCode implements ExceptionCode {
-    InvalidRequest(SwesConstants.SOAP_REASON_INVALID_REQUEST), RequestExtensionNotSupported(
-            SwesConstants.SOAP_REASON_REQUEST_EXTENSION_NOT_SUPPORTED);
+    InvalidRequest(SwesConstants.SOAP_REASON_INVALID_REQUEST),
+    RequestExtensionNotSupported(SwesConstants.SOAP_REASON_REQUEST_EXTENSION_NOT_SUPPORTED);
+
     private final String soapFaultReason;
 
     private SwesExceptionCode(String soapFaultReason) {

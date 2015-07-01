@@ -7,7 +7,9 @@
     <bean class="org.n52.sos.decode.FesDecoderv20"/>
     <bean class="org.n52.sos.decode.GmlDecoderv321"/>
     <bean class="org.n52.sos.decode.SosDecoderv20"/>
+    <bean class="org.n52.sos.decode.SosStringDecoderv20"/>
     <bean class="org.n52.sos.decode.SwesDecoderv20"/>
+    <bean class="org.n52.sos.decode.SwesStringDecoderv20" />
     <bean class="org.n52.sos.decode.SweCommonDecoderV20"/>
     <bean class="org.n52.sos.decode.OmDecoderv20"/>
     <bean class="org.n52.sos.decode.SamplingDecoderv20"/>

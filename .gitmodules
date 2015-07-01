@@ -1,4 +1,4 @@
 [submodule "iceland"]
 	path = iceland
-	branch = feature/spring
+	branch = develop
 	url = https://github.com/52North/iceland.git

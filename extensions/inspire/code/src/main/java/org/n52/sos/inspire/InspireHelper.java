@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.n52.sos.config.SettingsManager;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
@@ -44,6 +43,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.Validation;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -81,6 +81,8 @@ public class InspireHelper {
     private Set<InspireLanguageISO6392B> supportedLanguages = Sets.newHashSet();
 
     private boolean useAuthority = false;
+    
+    private String namespace;
 
     /**
      * @return Returns a singleton instance of the ServiceConfiguration.
@@ -270,6 +272,28 @@ public class InspireHelper {
 
     public boolean isUseAuthority() {
         return useAuthority;
+    }
+
+    /**
+     * @return the namespace
+     */
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * @param namespace the namespace to set
+     */
+    @Setting(InspireSettings.INSPIRE_NAMESPACE_KEY)
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+    
+    /**
+     * @return the namespace
+     */
+    public boolean isSetNamespace() {
+        return !Strings.isNullOrEmpty(getNamespace());
     }
 
     /**

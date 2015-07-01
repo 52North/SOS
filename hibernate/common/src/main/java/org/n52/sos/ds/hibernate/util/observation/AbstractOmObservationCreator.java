@@ -37,6 +37,7 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -154,7 +155,7 @@ public abstract class AbstractOmObservationCreator {
         OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
         if (observableProperty.isSetName()) {
         	omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
-        	omObservableProperty.setName(new CodeType(observableProperty.getName()));
+        	addName(omObservableProperty, observableProperty);
         }
         return omObservableProperty;
     }
@@ -180,9 +181,22 @@ public abstract class AbstractOmObservationCreator {
                     new SosProcedureDescriptionUnknowType(identifier, pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
+                addName(sosProcedure, hProcedure);
             }
             return sosProcedure;
         }
+    }
+    
+    /**
+     * @param abstractFeature
+     * @param hAbstractFeature
+     */
+    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature) {
+        if (hAbstractFeature.isSetCodespaceName()) {
+            abstractFeature.addName(hAbstractFeature.getName(), hAbstractFeature.getCodespaceName().getCodespace());
+        }
+        abstractFeature.addName(hAbstractFeature.getName());
+        
     }
     
     /**

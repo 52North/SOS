@@ -130,7 +130,20 @@
             	<comment>AQD e-Reporting uncertainty estimation quality value</comment>
             </column>
         </property>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="blobValue">
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="numericValue">
+			<comment>Value table for numeric/Measurment observation</comment>
+        	<key foreign-key="observationNumericValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+         	<property name="value" type="double">
+         		<column name="value">
+         			<comment>Numeric/Measurment observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
+        <!-- <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="blobValue">
         	<comment>Value table for blob observation</comment>
         	<key foreign-key="observationBlobValueFk">
 	        	<column name="observationId" >
@@ -195,19 +208,6 @@
          		</column>
          	</property>
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="numericValue">
-			<comment>Value table for numeric/Measurment observation</comment>
-        	<key foreign-key="observationNumericValueFk">
-	        	<column name="observationId" >
-	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
-	        	</column>
-        	</key>
-         	<property name="value" type="double">
-         		<column name="value">
-         			<comment>Numeric/Measurment observation value</comment>
-         		</column>
-         	</property>
-        </joined-subclass>
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation" extends="org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation" table="textValue">
 			<comment>Value table for text observation</comment>
         	<key foreign-key="observationTextValueFk">
@@ -233,6 +233,6 @@
          			<comment>SweDataArray observation value</comment>
          		</column>
          	</property>
-        </joined-subclass>
+        </joined-subclass> -->
     </class>
 </hibernate-mapping>

@@ -188,8 +188,7 @@ public abstract class AbstractSeriesDAO {
     }
     
     public Criteria getSeriesCriteria(String observedProperty, Collection<String> features, Session session) {
-        final Criteria c = session.createCriteria(getSeriesClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        c.add(Restrictions.eq(Series.DELETED, false));
+        final Criteria c = getDefaultSeriesCriteria(session);
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
         }

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
         <groupId>org.n52</groupId>
@@ -10,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.4.0-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -979,7 +978,7 @@
             <dependency>
 			  <groupId>se.jiderhamn</groupId>
 			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.11.0</version>
+			  <version>1.13.0</version>
 			</dependency>
             <!-- third party dialects -->
             <!-- Remove third party ncname resolver from SOS and use OXF instead -->
@@ -1219,6 +1218,24 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
+            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -Psqlserver,oracle -->
+            <plugin>
+				<groupId>external.atlassian.jgitflow</groupId>
+				<artifactId>jgitflow-maven-plugin</artifactId>
+				<version>1.0-m5.1</version>
+				<configuration>
+					<flowInitContext>
+				         <masterBranchName>master</masterBranchName>
+				         <developBranchName>develop</developBranchName>
+				         <featureBranchPrefix>feature/</featureBranchPrefix>
+				         <releaseBranchPrefix>release/</releaseBranchPrefix>
+				         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+				         <versionTagPrefix />
+				       </flowInitContext>
+				       <useReleaseProfile>false</useReleaseProfile>
+				</configuration>
+			</plugin>
         </plugins>
         <pluginManagement>
             <plugins>

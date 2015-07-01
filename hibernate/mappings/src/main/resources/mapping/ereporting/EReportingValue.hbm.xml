@@ -80,7 +80,11 @@
         <property name="uncertaintyEstimation" type="double">
             <column name="uncertaintyEstimation" not-null="false" />
         </property>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingBlobValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="blobValue">
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingNumericValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="numericValue">
+        	<key column="observationId" foreign-key="observationNumericValueFk" />
+         	<property name="value" type="double" />
+        </joined-subclass>
+        <!-- <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingBlobValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="blobValue">
         	<key column="observationId" foreign-key="observationBlobValueFk" />
          	<property name="value" type="blob" />
         </joined-subclass>
@@ -100,10 +104,6 @@
         	<key column="observationId" foreign-key="observationGeometryValueFk" />
          	<property name="value" type="org.hibernate.spatial.GeometryType" />
         </joined-subclass>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingNumericValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="numericValue">
-        	<key column="observationId" foreign-key="observationNumericValueFk" />
-         	<property name="value" type="double" />
-        </joined-subclass>
 		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingTextValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="textValue">
         	<key column="observationId" foreign-key="observationTextValueFk" />
         	<property name="value" type="org.hibernate.type.StringClobType" />
@@ -111,6 +111,6 @@
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingSweDataArrayValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="sweDataArrayValue">
         	<key column="observationId" foreign-key="observationSweDataArrayValueFk" />
         	<property name="value" type="org.hibernate.type.StringClobType" />
-        </joined-subclass>
+        </joined-subclass> -->
     </class>
 </hibernate-mapping>

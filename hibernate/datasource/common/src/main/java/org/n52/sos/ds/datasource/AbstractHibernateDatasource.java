@@ -51,6 +51,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
+import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
@@ -628,6 +629,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         return false;
+    }
+    
+    protected Set<SettingDefinition<?,?>> filter(Set<SettingDefinition<?,?>> definitions, Set<String> keysToExclude) {
+        Iterator<SettingDefinition<?, ?>> iterator = definitions.iterator();
+        while(iterator.hasNext()) {
+            if (keysToExclude.contains(iterator.next().getKey())) {
+                iterator.remove();
+            }
+        }
+        return definitions;
     }
 
     /**

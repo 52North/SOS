@@ -134,7 +134,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private static final String OFFERING = PROCEDURE + OFFERING_IDENTIFIER_EXTENSION;
 
-    private AbstractServiceRequest request;
+    private AbstractServiceRequest<?> request;
 
     private TestableInMemoryCacheController controller;
 

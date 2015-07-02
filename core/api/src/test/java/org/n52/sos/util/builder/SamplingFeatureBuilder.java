@@ -30,6 +30,7 @@ package org.n52.sos.util.builder;
 
 import org.n52.iceland.exception.ows.concrete.InvalidSridException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.JTSHelper;
@@ -64,6 +65,8 @@ public class SamplingFeatureBuilder {
     private int epsgCode = Integer.MIN_VALUE;
 
     private String featureType;
+
+	private String name;
 
     public SamplingFeatureBuilder setIdentifier(String featureIdentifier) {
         this.featureIdentifier = featureIdentifier;
@@ -100,6 +103,9 @@ public class SamplingFeatureBuilder {
         if (featureType != null && !featureType.isEmpty()) {
             feature.setFeatureType(featureType);
         }
+        if (name != null && !name.isEmpty()) {
+        	feature.setName(new CodeType(name));
+        }
         return feature;
     }
 
@@ -107,5 +113,10 @@ public class SamplingFeatureBuilder {
         this.featureType = featureType;
         return this;
     }
+
+	public SamplingFeatureBuilder setName(String name) {
+		this.name = name;
+		return this;
+	}
 
 }

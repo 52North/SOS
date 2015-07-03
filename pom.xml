@@ -1060,6 +1060,33 @@
                 <artifactId>coding-exi</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            
+            <!-- netCDF -->
+			<dependency>
+        		<groupId>edu.ucar</groupId>
+		        <artifactId>netcdf</artifactId>
+		        <version>4.3.22</version>
+			</dependency>   
+			<dependency>
+				<groupId>com.axiomalaska</groupId>
+				<artifactId>cf4j</artifactId>
+				<version>27.2</version>      
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+                <artifactId>api-netcdf</artifactId>
+                <version>${project.version}</version>   
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+                <artifactId>coding-netcdf</artifactId>
+                <version>${project.version}</version>   
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+                <artifactId>coding-oceansites</artifactId>
+                <version>${project.version}</version>   
+			</dependency>
         </dependencies>
     </dependencyManagement>
     <build>
@@ -1466,6 +1493,10 @@
 			<name>Boundless, formerly OpenGeo</name>
 			<url>http://repo.boundlessgeo.com/main/</url>
 		</repository>
+		<repository>
+			<id>unidata-releases</id>
+			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+    	</repository>
     </repositories>
     <profiles>
         <profile>

@@ -253,6 +253,9 @@ public abstract class SimpleBinding extends Binding {
             AbstractServiceResponse serviceResponse) throws HTTPException, IOException {
         MediaType contentType =
                 chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request), getDefaultContentType());
+        if (!serviceResponse.isSetContentType()) {
+            serviceResponse.setContentType(contentType);
+        }
         HTTPUtils.writeObject(request, response, contentType, serviceResponse);
     }
 

@@ -34,11 +34,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.OperationEncoderKey;
+import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -52,13 +54,17 @@ import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
-import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class SplitMergeObservations implements
         RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
@@ -104,15 +110,16 @@ public class SplitMergeObservations implements
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
         if (request instanceof GetObservationRequest && response instanceof GetObservationResponse) {
-            return mergeObservations((GetObservationRequest)request, (GetObservationResponse) response); 
+            return mergeObservations((GetObservationRequest) request, (GetObservationResponse) response);
         }
         if (response instanceof GetObservationResponse) {
             return mergeObservations((GetObservationResponse) response);
         }
         return response;
     }
-    
-    private AbstractServiceResponse mergeObservations(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport {
+
+    private AbstractServiceResponse mergeObservations(GetObservationRequest request, GetObservationResponse response)
+            throws OwsExceptionReport {
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
         request.setMergeObservationValues(checkForMergeObservationsInResponse);
         boolean checkEncoderForMergeObservations = checkEncoderForMergeObservations(response);
@@ -121,10 +128,10 @@ public class SplitMergeObservations implements
                 mergeObservationsWithSameConstellation(response);
             }
             response.setMergeObservations(true);
-        }        
+        }
         return response;
     }
-    
+
     private void mergeObservationsWithSameConstellation(GetObservationResponse response) {
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
@@ -158,12 +165,33 @@ public class SplitMergeObservations implements
 
     private boolean checkEncoderForMergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         if (response.isSetResponseFormat()) {
-            ObservationEncoder<XmlObject, OmObservation> encoder =
-                    (ObservationEncoder<XmlObject, OmObservation>) CodingHelper.getEncoder(
-                            response.getResponseFormat(), new OmObservation());
-            if (encoder.shouldObservationsWithSameXBeMerged()) {
-                return true;
+            // check for XML encoder
+            ObservationEncoder<Object, Object> encoder =
+                    (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
+                            new XmlEncoderKey(response.getResponseFormat(), new OmObservation().getClass()));
+            // check for response contentType
+            if (encoder == null && response.isSetContentType()) {
+                encoder =
+                        (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
+                                new OperationEncoderKey(response.getService(), response.getVersion(), response
+                                        .getOperationName(), response.getContentType()));
             }
+            // check for responseFormat as MediaType
+            if (encoder == null && response.isSetResponseFormat()) {
+                try {
+                    encoder =
+                            (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
+                                    new OperationEncoderKey(response.getService(), response.getVersion(), response
+                                            .getOperationName(), MediaType.parse(response.getResponseFormat())));
+                } catch (IllegalArgumentException iae) {
+                    LOGGER.debug("ResponseFormat isNot a XML response format");
+                }
+            }
+
+            if (encoder != null) {
+                return encoder.shouldObservationsWithSameXBeMerged();
+            }
+
         }
         return false;
     }
@@ -178,7 +206,7 @@ public class SplitMergeObservations implements
         }
         return response;
     }
-    
+
     private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
         if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
             return true;
@@ -191,7 +219,7 @@ public class SplitMergeObservations implements
                 && sosRequest.getExtensions().isBooleanExtensionSet(
                         Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
-    
+
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();
     }

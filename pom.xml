@@ -2,6 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!-- Remove the parent in the case of 52°North repos are not available -->
+    <parent>
+        <groupId>org.n52</groupId>
+        <artifactId>52-North</artifactId>
+        <version>5.6.7</version>
+    </parent>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
     <version>5.0.0-SNAPSHOT</version>
@@ -19,8 +25,6 @@
         <url>http://build.dev.52north.org/jenkins/job/sos-dev/</url>
     </ciManagement>
     <modules>
-        <!-- Remove when Iceland is an own project -->
-    	<module>iceland</module>
         <module>core</module>
         <module>bindings</module>
         <module>coding</module>

@@ -1089,6 +1089,19 @@
 			</dependency>
         </dependencies>
     </dependencyManagement>
+    <dependencies>
+    	<dependency>
+    		<groupId>org.mockito</groupId>
+    		<artifactId>mockito-core</artifactId>
+    		<version>1.9.0</version>
+    		<exclusions>
+    			<exclusion>
+    				<artifactId>hamcrest-core</artifactId>
+    				<groupId>org.hamcrest</groupId>
+    			</exclusion>
+    		</exclusions>
+    	</dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -1580,7 +1593,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>check</goal>
+                                    <goal>generate</goal>
                                 </goals>
                             </execution>
                         </executions>
@@ -1589,17 +1602,4 @@
             </build>
         </profile>
     </profiles>
-    <dependencies>
-    	<dependency>
-    		<groupId>org.mockito</groupId>
-    		<artifactId>mockito-core</artifactId>
-    		<version>1.9.0</version>
-    		<exclusions>
-    			<exclusion>
-    				<artifactId>hamcrest-core</artifactId>
-    				<groupId>org.hamcrest</groupId>
-    			</exclusion>
-    		</exclusions>
-    	</dependency>
-    </dependencies>
 </project>

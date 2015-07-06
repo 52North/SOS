@@ -76,11 +76,11 @@ public class NetcdfSettings implements SettingDefinitionProvider {
             setOrder(ORDER_1),
             
             // TODO should be a NumericSettingDefinition()
-            new StringSettingDefinition().
+            new NumericSettingDefinition().
             setGroup(SETTINGS_GROUP).
             setKey(NETCDF_FILL_VALUE).
             setTitle("NetCDF _FillValue").
-            setDefaultValue("-9999.9").
+            setDefaultValue(-9999.9).
             setDescription("Set the netCDF _FillValue").
             setOptional(false).
             setOrder(ORDER_2),

@@ -89,16 +89,9 @@ public class NetcdfHelper {
     }
     
     @Setting(NetcdfSettings.NETCDF_FILL_VALUE)
-    public void setFillValue(String fillValue) {
-        this.fillValue = Double.parseDouble(fillValue);
+    public void setFillValue(double fillValue) {
+        this.fillValue = fillValue;
     }
-    
-    // TODO change to use the double method if NumericSettingDefinition is supported
-    
-//    @Setting(NetcdfSettings.NETCDF_FILL_VALUE)
-//    public void setFillValue(double fillValue) {
-//        this.fillValue = fillValue;
-//    }
     
     public double getFillValue() {
         return fillValue;

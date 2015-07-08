@@ -19,6 +19,10 @@ RELEASE NOTES
   
   --- Fixed issues ---
   
+      * Issue #258: SQL-Server 2012 Express: Can not clean datasource via 
+      				admin/datasource -> clear datasource
+         * https://github.com/52North/SOS/pull/260
+  
   
   
   Release 52n-sensorweb-sos-4.3.0

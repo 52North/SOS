@@ -28,6 +28,14 @@
  */
 package org.n52.sos.netcdf.data.subsensor;
 
+/**
+ * Abstract class of {@link SubSensor} for profile sub sensors.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class ProfileSubSensor extends SubSensor implements IndexedSubSensor {
     public abstract double getHeight();
     

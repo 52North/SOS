@@ -38,6 +38,14 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 
+/**
+ * Implementation of {@link AbstractStringSensorDataset} for trajectory sensor datasets.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class TrajectorySensorDataset extends AbstractStringSensorDataset implements StaticAltitudeDataset{
     private Double alt;
     
@@ -46,7 +54,8 @@ public class TrajectorySensorDataset extends AbstractStringSensorDataset impleme
         super( CF.FeatureType.trajectory, sensor, dataValues, procedure);
         this.alt = alt;
     }
-
+    
+    @Override
     public Double getAlt() {
         return alt;
     }

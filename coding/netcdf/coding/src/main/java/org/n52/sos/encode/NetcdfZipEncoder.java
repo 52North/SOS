@@ -60,6 +60,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
+/**
+ * Implementation of {@link AbstractBasicNetcdfEncoder} for OceanSITE netCDF
+ * encoding with multiple files as ZIP.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfZipEncoder.class);
 
@@ -127,22 +136,13 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
         }
 
         BinaryAttachmentResponse response = null;
-//        ByteArrayOutputStream zipBoas = null;
         try(ByteArrayOutputStream zipBoas = createZip(tempDir)) {
-//            zipBoas = createZip(tempDir);
             response =
                     new BinaryAttachmentResponse(zipBoas.toByteArray(), getContentType(), String.format(
                             DOWNLOAD_FILENAME_FORMAT, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } catch (IOException e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage("Couldn't create netCDF zip file");
         } finally {
-//            if (zipBoas != null) {
-//                try {
-//                    zipBoas.close();
-//                } catch (IOException e) {
-//                    // NOOP closing BAOS has no effect anyway
-//                }
-//            }
             tempDir.delete();
         }
 
@@ -151,14 +151,14 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
 
     private static ByteArrayOutputStream createZip(File dirToZip) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ZipOutputStream zipfile = new ZipOutputStream(bos);
-        ZipEntry zipentry = null;
-        for (File file : dirToZip.listFiles()) {
-            zipentry = new ZipEntry(file.getName());
-            zipfile.putNextEntry(zipentry);
-            zipfile.write(Files.toByteArray(file));
+        try (ZipOutputStream zipfile = new ZipOutputStream(bos)) {
+            ZipEntry zipentry = null;
+            for (File file : dirToZip.listFiles()) {
+                zipentry = new ZipEntry(file.getName());
+                zipfile.putNextEntry(zipentry);
+                zipfile.write(Files.toByteArray(file));
+            }
         }
-        zipfile.close();
         return bos;
     }
 }

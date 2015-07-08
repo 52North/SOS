@@ -28,6 +28,14 @@
  */
 package org.n52.sos.netcdf.data.subsensor;
 
+/**
+ * Abstract class for sub sensors (profiles).
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class SubSensor implements Comparable<SubSensor>{
     @Override
     public int compareTo(SubSensor o) {

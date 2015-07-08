@@ -32,6 +32,14 @@ import org.n52.sos.util.http.MediaType;
 
 import com.google.common.collect.ImmutableListMultimap;
 
+/**
+ * Constants interface for netCDF
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public interface NetcdfConstants {
 
     String PARAM_VERSION = "version";

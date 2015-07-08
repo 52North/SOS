@@ -28,20 +28,25 @@
  */
 package org.n52.sos.encode;
 
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.response.BinaryAttachmentResponse;
+import org.n52.sos.ogc.sensorML.AbstractSensorML;
 
 import ucar.nc2.NetcdfFileWriter;
 
+/**
+ * Abstract basic class of {@link AbstractNetcdfEncoder} to implement abstract
+ * methods used by implemented encoder.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractBasicNetcdfEncoder extends AbstractNetcdfEncoder {
     
     @Override
-    protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+    protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset, AbstractSensorML sml) {
         // TODO Auto-generated method stub
-        
     }
     
 

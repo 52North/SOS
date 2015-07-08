@@ -47,6 +47,16 @@ import ucar.nc2.constants.CF;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+/**
+ * Abstract sensor dataset class used by netCDF encoding
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ * 
+ * @param <T>
+ *            sensor type
+ */
 public abstract class AbstractSensorDataset<T> implements Comparable<AbstractSensorDataset<T>>{
     private CF.FeatureType featureType;    
     private T sensor;

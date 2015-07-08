@@ -34,15 +34,23 @@ import ucar.nc2.jni.netcdf.Nc4ChunkingStrategyImpl;
 
 import com.axiomalaska.cf4j.CFStandardNames;
 
+/**
+ * Implementation of {@link Nc4ChunkingStrategyImpl} to force time chunk.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class Nc4ForceTimeChunkingStategy extends Nc4ChunkingStrategyImpl {
     private static final int TIME_CHUNK_MAX = 1000;
-    
-    private final int chunkSize; 
+
+    private final int chunkSize;
 
     public Nc4ForceTimeChunkingStategy() {
         this(TIME_CHUNK_MAX);
     }
-    
+
     public Nc4ForceTimeChunkingStategy(int chunkSize) {
         super(5, true);
         this.chunkSize = chunkSize;
@@ -51,12 +59,12 @@ public class Nc4ForceTimeChunkingStategy extends Nc4ChunkingStrategyImpl {
     @Override
     public long[] computeChunking(Variable v) {
         long[] chunks = super.computeChunking(v);
-        
+
         int numDim = v.getDimensions().size();
         for (int i = 0; i < numDim; i++) {
             Dimension dim = v.getDimension(i);
             if (dim.getFullName().equals(CFStandardNames.TIME.getName())) {
-                //force time chunking to TIME_CHUNK_MAX
+                // force time chunking to TIME_CHUNK_MAX
                 chunks[i] = chunkSize;
             }
         }

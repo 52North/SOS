@@ -38,6 +38,14 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 
+/**
+ * Implementation of {@link AbstractStringSensorDataset} for time series sensor datasets
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class TimeSeriesSensorDataset extends AbstractStringSensorDataset implements StaticLocationDataset, StaticAltitudeDataset{
     private Double lng;
     private Double lat;
@@ -51,14 +59,17 @@ public class TimeSeriesSensorDataset extends AbstractStringSensorDataset impleme
         this.alt = alt;
     }
 
+    @Override
     public Double getLng() {
         return lng;
     }
-
+    
+    @Override
     public Double getLat() {
         return lat;
     }
 
+    @Override
     public Double getAlt() {
         return alt;
     }

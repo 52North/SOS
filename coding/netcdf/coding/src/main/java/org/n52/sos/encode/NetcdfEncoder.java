@@ -48,7 +48,6 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.response.BinaryAttachmentResponse;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
@@ -61,6 +60,14 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 
+/**
+ * Implementation of {@link AbstractBasicNetcdfEncoder} for netCDF encoding.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfEncoder.class);
     
@@ -162,6 +169,4 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
         throw new UnsupportedEncoderInputException(this, netCDFObsList).withMessage(sb.toString());
     }
     
-    
-
 }

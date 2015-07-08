@@ -44,7 +44,13 @@ import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * An netCDF compatible observation block containing all observations for a feature type  
+ * An netCDF compatible observation block containing all observations for a
+ * feature type.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
  */
 public class NetCDFObservation {
     //for metadata block
@@ -54,11 +60,11 @@ public class NetCDFObservation {
     private Envelope envelope = new Envelope();
 
     //for data block
-    private Map<String,? extends AbstractSensorDataset> sensorDatasetMap;
+    private Map<String,? extends AbstractSensorDataset<?>> sensorDatasetMap;
     
     //constructor
     public NetCDFObservation(CF.FeatureType featureType, TimePeriod samplingTime,
-            Map<String, ? extends AbstractSensorDataset> sensorDatasetMap, Set<OmObservableProperty> phenomena,
+            Map<String, ? extends AbstractSensorDataset<?>> sensorDatasetMap, Set<OmObservableProperty> phenomena,
             Envelope envelope) {
         super();
         this.featureType = featureType;
@@ -76,7 +82,7 @@ public class NetCDFObservation {
         return samplingTime;
     }
         
-    public Map<String, ? extends AbstractSensorDataset> getSensorDatasetMap() {
+    public Map<String, ? extends AbstractSensorDataset<?>> getSensorDatasetMap() {
         return sensorDatasetMap;
     }
 
@@ -88,7 +94,7 @@ public class NetCDFObservation {
         return envelope;
     }
 
-    public List<? extends AbstractSensorDataset> getSensorDatasets(){
+    public List<? extends AbstractSensorDataset<?>> getSensorDatasets(){
         return Collections.unmodifiableList(Lists.newArrayList(sensorDatasetMap.values()));
     }
   

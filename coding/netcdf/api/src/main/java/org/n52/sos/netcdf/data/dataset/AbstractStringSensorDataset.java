@@ -38,6 +38,14 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF.FeatureType;
 
+/**
+ * Abstract class of {@link AbstractSensorDataset} for {@link String} sensor types.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractStringSensorDataset extends AbstractSensorDataset<String> {
 
     public AbstractStringSensorDataset(FeatureType featureType, String sensor,

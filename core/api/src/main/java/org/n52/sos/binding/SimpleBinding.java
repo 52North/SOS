@@ -51,6 +51,7 @@ import org.n52.sos.exception.ows.concrete.InvalidServiceOrVersionException;
 import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.exception.ows.concrete.VersionNotSupportedException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
@@ -101,8 +102,11 @@ public abstract class SimpleBinding extends Binding {
         return ServiceOperatorRepository.getInstance();
     }
 
-    protected <F, T> Decoder<F, T> getDecoder(DecoderKey key) {
-        return CodingRepository.getInstance().getDecoder(key);
+    protected <F, T> Decoder<F, T> getDecoder(DecoderKey key) throws OwsExceptionReport {
+        if (hasDecoder(key)) {
+            return CodingRepository.getInstance().getDecoder(key);
+        }
+        throw new NoDecoderForKeyException(key).setStatus(HTTPStatus.BAD_REQUEST);
     }
 
     protected <F, T> Encoder<F, T> getEncoder(EncoderKey key) {

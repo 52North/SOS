@@ -93,7 +93,7 @@ public class JSONBinding extends SimpleBinding {
 
     @Override
     public boolean checkOperationHttpPostSupported(OperationKey k) throws HTTPException {
-        return getDecoder(new OperationDecoderKey(k, MediaTypes.APPLICATION_JSON)) != null;
+        return hasDecoder(new OperationDecoderKey(k, MediaTypes.APPLICATION_JSON));
     }
 
     @Override

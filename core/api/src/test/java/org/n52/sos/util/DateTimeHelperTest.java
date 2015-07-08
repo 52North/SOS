@@ -51,7 +51,7 @@ public class DateTimeHelperTest {
     
     private final int DAYS_SINCE = 23948;
     
-    private final double DAYS_SINCE_PR = 23948.5;
+    private final double DAYS_SINCE_PR = 23948.475694444445;
     
     @Test
     public void testGetTimeLengthBeforeTimeZone() {
@@ -74,7 +74,7 @@ public class DateTimeHelperTest {
     @Test
     public void testGetDaysSince() {
         assertThat(DateTimeHelper.getDaysSince(DT_1950, DT_END), is(DAYS_SINCE));
-        assertThat(DateTimeHelper.getDaysSinceWithPrecision(DT_1950, DT_END, 1), is(DAYS_SINCE_PR));
+        assertThat(DateTimeHelper.getDaysSinceWithPrecision(DT_1950, DT_END), is(DAYS_SINCE_PR));
     }
     
 

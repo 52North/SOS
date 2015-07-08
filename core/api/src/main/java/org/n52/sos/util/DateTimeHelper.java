@@ -474,9 +474,9 @@ public final class DateTimeHelper {
         return Days.daysBetween(start, end).getDays();
     }
     
-    public static double getDaysSinceWithPrecision(DateTime start, DateTime end, int precision) {
+    public static double getDaysSinceWithPrecision(DateTime start, DateTime end) {
         double value = Days.daysBetween(start, end).getDays() + end.getSecondOfDay()/SECONDS_OF_DAY;
-        return new BigDecimal(value).setScale(precision, RoundingMode.HALF_UP).doubleValue();
+        return new BigDecimal(value).doubleValue();
     }
     
     public static double getSecondsSinceEpoch(DateTime time) throws CodedException{

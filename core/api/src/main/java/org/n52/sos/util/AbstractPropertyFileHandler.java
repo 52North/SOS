@@ -109,10 +109,10 @@ public class AbstractPropertyFileHandler {
         }
     }
 
-    public String get(String m) throws ConfigurationException {
+    public String get(String key) throws ConfigurationException {
         lock.readLock().lock();
         try {
-            return load().getProperty(m);
+            return load().getProperty(key);
         } catch (IOException e) {
             throw new ConfigurationException("Error reading properties", e);
         } finally {
@@ -120,11 +120,11 @@ public class AbstractPropertyFileHandler {
         }
     }
 
-    public void delete(String m) throws ConfigurationException {
+    public void delete(String key) throws ConfigurationException {
         lock.writeLock().lock();
         try {
             Properties p = load();
-            p.remove(m);
+            p.remove(key);
             save(p);
         } catch (IOException e) {
             throw new ConfigurationException("Error writing properties", e);
@@ -133,11 +133,11 @@ public class AbstractPropertyFileHandler {
         }
     }
 
-    public void save(String m, String value) throws ConfigurationException {
+    public void save(String key, String value) throws ConfigurationException {
         lock.writeLock().lock();
         try {
             Properties p = load();
-            p.setProperty(m, value);
+            p.setProperty(key, value);
             save(p);
         } catch (IOException e) {
             throw new ConfigurationException("Error writing properties", e);
@@ -181,7 +181,7 @@ public class AbstractPropertyFileHandler {
     }
 
     public String getPath() {
-        return this.propertiesFile.getAbsolutePath();
+        return propertiesFile.getAbsolutePath();
     }
 
     public boolean exists() {

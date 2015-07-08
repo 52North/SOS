@@ -141,18 +141,6 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         return p;
     }
 
-    private void checkAndPut(Properties p, String key, Object value) {
-        if (value != null) {
-            if (value instanceof String) {
-                if (StringHelper.isNotEmpty(((String) value))) {
-                    p.put(key, value);
-                }
-            } else {
-                p.put(key, value);
-            }
-        }
-    }
-
     protected Map<String, Object> parseDatasourceProperties(final Properties current) {
         final Map<String, Object> settings = new HashMap<String, Object>(current.size());
         if (supportsSchema) {

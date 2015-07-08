@@ -188,7 +188,6 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
 
         @Override
         protected String[] checkDropSchema(final String[] dropSchema) {
-            // TODO Auto-generated method stub
             return null;
         }
     }

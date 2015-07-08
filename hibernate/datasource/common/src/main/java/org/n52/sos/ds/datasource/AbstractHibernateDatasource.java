@@ -644,21 +644,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return multilingualismDefinition;
     }
 
-    /**
-     * Concatenate two arrays
-     *
-     * @param first
-     *            First array
-     * @param rest
-     *            The other array
-     * @return Concatenated array
-     */
-    private <T> T[] concat(T[] first, T[]... rest) {
-        int length = first.length;
+    private String[] concat(String[] first, String[]... rest) {
+		int length = first.length;
         for (int i = 0; i < rest.length; ++i) {
             length += rest[i].length;
         }
-        T[] result = Arrays.copyOf(first, length);
+        String[] result = Arrays.copyOf(first, length);
         int offset = first.length;
         for (int i = 0; i < rest.length; ++i) {
             System.arraycopy(rest[i], 0, result, offset, rest[i].length);

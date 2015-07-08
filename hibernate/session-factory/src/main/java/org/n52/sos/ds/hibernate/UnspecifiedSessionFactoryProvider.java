@@ -65,11 +65,6 @@ HibernateDatasourceConstants {
      */
     protected Configuration configuration = null;
     
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#getConnection()
-     */
     @Override
     public Session getConnection() throws ConnectionProviderException {
         try {
@@ -86,11 +81,6 @@ HibernateDatasourceConstants {
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#returnConnection(java.lang.Object)
-     */
     @Override
     public void returnConnection(Object connection) {
         try {
@@ -106,7 +96,6 @@ HibernateDatasourceConstants {
         }
 
     }
-    
     
     protected DatasourceCallback getDatasourceCallback(Properties properties) {
         if (properties.containsKey(Datasource.class.getName())) {

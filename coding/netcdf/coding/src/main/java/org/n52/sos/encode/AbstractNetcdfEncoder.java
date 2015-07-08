@@ -57,8 +57,6 @@ import org.n52.sos.netcdf.NetCDFUtil;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.netcdf.NetcdfHelper;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
-import org.n52.sos.netcdf.data.dataset.AbstractStringSensorDataset;
-import org.n52.sos.netcdf.data.dataset.StaticAltitudeDataset;
 import org.n52.sos.netcdf.data.dataset.StaticLocationDataset;
 import org.n52.sos.netcdf.data.subsensor.BinProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.ProfileSubSensor;
@@ -93,6 +91,7 @@ import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.util.Constants;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
@@ -101,10 +100,12 @@ import org.slf4j.LoggerFactory;
 
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
+import ucar.ma2.ArrayFloat;
 import ucar.ma2.DataType;
 import ucar.ma2.Index;
 import ucar.ma2.IndexIterator;
 import ucar.nc2.Attribute;
+import ucar.nc2.CDMNode;
 import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.NetcdfFileWriter.Version;
@@ -117,14 +118,22 @@ import com.axiomalaska.cf4j.CFStandardNames;
 import com.axiomalaska.cf4j.constants.ACDDConstants;
 import com.axiomalaska.cf4j.constants.CFConstants;
 import com.axiomalaska.cf4j.constants.NODCConstants;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * Abstract class of {@link ObservationEncoder} for netCDF encoding.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractNetcdfEncoder implements ObservationEncoder<BinaryAttachmentResponse, Object> {
 
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractNetcdfEncoder.class);
@@ -186,7 +195,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     public BinaryAttachmentResponse encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         if (objectToEncode instanceof AbstractObservationResponse) {
-            // TODO get NetCDF version from ResponseFormat/ContentType
             AbstractObservationResponse aor = (AbstractObservationResponse) objectToEncode;
             Version version = getVersion(aor);
             return encodeGetObsResponse(aor.getObservationCollection(), version);
@@ -204,6 +212,10 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                 return Version.netcdf4;
             }
         }
+        return getDefaultVersion();
+    }
+
+    protected Version getDefaultVersion() {
         return NetcdfHelper.getInstance().getNetcdfVersion();
     }
 
@@ -256,12 +268,14 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
         return encodeNetCDFObsToNetcdf(netCDFSosObsList, version);
     }
+    
+    
 
     protected abstract BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFSosObsList,
             Version version) throws OwsExceptionReport;
 
     protected abstract void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer,
-            AbstractSensorDataset<?> sensorDataset);
+            AbstractSensorDataset<?> sensorDataset, AbstractSensorML sml) throws OwsExceptionReport;
 
     protected NetcdfFileWriter getNetcdfFileWriter(File netcdfFile) throws CodedException {
         return getNetcdfFileWriter(netcdfFile, NetcdfHelper.getInstance().getNetcdfVersion());
@@ -289,33 +303,17 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         int numTimes = sensorDataset.getTimes().size();
         // FIXME shouldn't assume that all subsensors are heights (or rename
         // subsensors if they are)
-        int numHeightDepth = sensorDataset.getSubSensors().size();
+        int numHeightDepth = sensorDataset.getSubSensors().size() > 0 ? sensorDataset.getSubSensors().size() : 1;
 
         // global attributes
         addGlobaleAttributes(writer, sensorDataset, stationSystem);
 
-        // //parentNetwork -> institution
-        // String parentNetwork = null;
-        // //getClassifier(stationSystem, IoosDefConstants.PARENT_NETWORK_DEF);
-        // if (parentNetwork != null){
-        // writer.addGroupAttribute(null, new
-        // Attribute(ACDDConstants.INSTITUTION, parentNetwork));
-        // }
-        //
-        // //sponsor -> acknowledgement
-        // String sponsor = null;
-        // //getClassifier(stationSystem, IoosDefConstants.SPONSOR_DEF);
-        // if (sponsor != null){
-        // writer.addGroupAttribute(null, new
-        // Attribute(ACDDConstants.ACKNOWLEDGEMENT, sponsor));
-        // }
-
         // add appropriate dims for feature type
-        Dimension dZ = null;
-
         List<Dimension> noDims = Lists.newArrayList();
         List<Dimension> timeDims = Lists.newArrayList();
         List<Dimension> latLngDims = Lists.newArrayList();
+        List<Dimension> latDims = Lists.newArrayList();
+        List<Dimension> lngDims = Lists.newArrayList();
         List<Dimension> zDims = Lists.newArrayList();
         List<Dimension> obsPropDims = Lists.newArrayList();
 
@@ -323,7 +321,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // add Dimensions
         // dTime = writer.addDimension(null, CFStandardNames.TIME.getName(),
         // numTimes);
-        Dimension dTime = writer.addUnlimitedDimension(CFStandardNames.TIME.getName());
+        Dimension dTime = writer.addUnlimitedDimension(getVariableDimensionCaseName(CFStandardNames.TIME.getName()));
         dTime.setLength(numTimes);
         timeDims.add(dTime);
         if (!(sensorDataset instanceof StaticLocationDataset)) {
@@ -332,42 +330,30 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         obsPropDims.add(dTime);
 
         // set up lat/lng dimensions
-        if ((sensorDataset instanceof StaticLocationDataset)) {
-            latLngDims.add(dTime);
-        }
+        // FIXME do not set time dimension for static location dataset
+//        if ((sensorDataset instanceof StaticLocationDataset)) {
+//            latLngDims.add(dTime);
+//        }
 
         // set up z dimensions
-        if (sensorDataset instanceof StaticAltitudeDataset) {
-            // zDims.add(dFeatureTypeInstance);
+        String dimensionName = "";
+        if (useHeight()) {
+            dimensionName = getVariableDimensionCaseName(CFStandardNames.HEIGHT.getName());
         } else {
-            if (sensorDataset instanceof StaticLocationDataset) {
-                // profile/timeSeriesProfile
-                dZ = writer.addDimension(null, CFConstants.Z, numHeightDepth);
-                dZ.setLength(numHeightDepth);
-                zDims.add(dZ);
-                obsPropDims.add(dZ);
-            } else {
-                // trajectory
-                // zDims.add(dFeatureTypeInstance);
-                zDims.add(dTime);
-            }
+            dimensionName = getVariableDimensionCaseName(CFStandardNames.DEPTH.getName());
         }
+        // profile/timeSeriesProfile
+        Dimension dZ = writer.addDimension(null, dimensionName, numHeightDepth);
+        if (sensorDataset instanceof StaticLocationDataset) {
+            // nothing to do
+        } else {
+            // trajectory
+            zDims.add(dTime);
+        }
+        zDims.add(dZ);
+        obsPropDims.add(dZ);
 
         variableArrayMap.putAll(getNetcdfProfileSpecificVariablesArrays(writer, sensorDataset));
-
-        // //crs var
-        // Variable vCrs = writer.addVariable(null, NODCConstants.CRS,
-        // DataType.INT, noDims);
-        // vCrs.addAttribute(new Attribute(CFConstants.LONG_NAME,
-        // getLongNameEPSG()));
-        // vCrs.addAttribute(new Attribute(CFConstants.GRID_MAPPING_NAME,
-        // CFConstants.GRID_MAPPING_NAME_WGS84));
-        // vCrs.addAttribute(new Attribute(CFConstants.EPSG_CODE,
-        // CFConstants.EPSG_CODE_WGS84));
-        // vCrs.addAttribute(new Attribute(CFConstants.SEMI_MAJOR_AXIS,
-        // CFConstants.SEMI_MAJOR_AXIS_WGS84));
-        // vCrs.addAttribute(new Attribute(CFConstants.INVERSE_FLATTENING,
-        // CFConstants.INVERSE_FLATTENING_WGS84));
 
         // time var
         Variable vTime = addVariableTime(writer, timeDims);
@@ -377,33 +363,33 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         ArrayDouble timeArray = new ArrayDouble(getDimShapes(timeDims));
         initArrayWithFillValue(timeArray, NetcdfHelper.getInstance().getFillValue());
 
-        // lat var
-        Variable vLat = addVariableLatitude(writer, latLngDims);
-
-        // lon var
-        Variable vLon = addVariableLongitude(writer, latLngDims);
-
-        ArrayDouble latArray = null;
-        ArrayDouble lonArray = null;
-        if (sensorDataset instanceof StaticLocationDataset) {
-            StaticLocationDataset LocationDataset = (StaticLocationDataset) sensorDataset;
-            if (LocationDataset.getLat() != null && LocationDataset.getLng() != null) {
-                latArray = new ArrayDouble.D1(1);
-                lonArray = new ArrayDouble.D1(1);
-                Index latIndex = latArray.getIndex();
-                Index lonIndex = lonArray.getIndex();
-                latIndex.set(0);
-                lonIndex.set(0);
-                latArray.set(latIndex, LocationDataset.getLat());
-                lonArray.set(lonIndex, LocationDataset.getLng());
-            }
-        } else {
-            // TODO support varying lat/lons
-            throw new NoApplicableCodeException().withMessage("Varying lat/lngs are not yet supported.");
-        }
+        Array latArray = getLatitudeArray(sensorDataset);
+        Array lonArray = getLongitudeArray(sensorDataset);
+        
         // add lat/long dimensions
-        writer.addDimension(null, CFStandardNames.LATITUDE.getName(), (int) latArray.getSize());
-        writer.addDimension(null, CFStandardNames.LONGITUDE.getName(), (int) lonArray.getSize());
+        long latSize = 1;
+        if (latArray != null) {
+            latSize = latArray.getSize();
+        }
+        Dimension dLat = writer.addDimension(null, getVariableDimensionCaseName(CFStandardNames.LATITUDE.getName()), (int) latSize);
+        latDims.add(dLat);
+        long lonSize = 1;
+        if (lonArray != null) {
+            lonSize = lonArray.getSize();
+        }
+        Dimension dLon = writer.addDimension(null, getVariableDimensionCaseName(CFStandardNames.LONGITUDE.getName()), (int) lonSize);
+        lngDims.add(dLon);
+        
+        // lat/lon var
+        Variable vLat = null;
+        Variable vLon = null;
+        if (latLngDims.size() > 0) {
+            vLat = addVariableLatitude(writer, latLngDims);
+            vLon = addVariableLongitude(writer, latLngDims);  
+        } else {
+            vLat = addVariableLatitude(writer, latDims);
+            vLon = addVariableLongitude(writer, lngDims); 
+        }
 
         // height/depth var
         Variable vHeightDepth = null;
@@ -413,107 +399,29 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
             vHeightDepth = addVariableDepth(writer, zDims);
         }
 
-        ArrayDouble heightDephtArray = new ArrayDouble(getDimShapes(zDims));
-        initArrayWithFillValue(heightDephtArray, NetcdfHelper.getInstance().getFillValue());
-        if (sensorDataset instanceof StaticAltitudeDataset) {
-            StaticAltitudeDataset AltitudeDataset = (StaticAltitudeDataset) sensorDataset;
-            Index heightDepthIndex = heightDephtArray.getIndex();
-            if (AltitudeDataset.getAlt() != null) {
-                heightDephtArray.set(heightDepthIndex, AltitudeDataset.getAlt());
-            } else {
-                heightDephtArray.set(heightDepthIndex, NetcdfHelper.getInstance().getFillValue());
-            }
-        }
-
-        // platform container var
-        Variable vPlatform = writer.addVariable(null, NODCConstants.PLATFORM, DataType.INT, noDims);
-        // stationId
-        // vPlatform.addAttribute(new Attribute(IoosNetcdfConstants.IOOS_CODE,
-        // sensorDataset.getSensor().getStationAsset().getAssetId()));
-        // platform description
-        if (stationSystem.isSetDescription() && !stationSystem.getDescription().isEmpty()) {
-            vPlatform.addAttribute(new Attribute(CFConstants.COMMENT, stationSystem.getDescription()));
-        }
-
-        // //wmo code
-        // addAttributeIfIdentifierExists(vPlatform, stationSystem,
-        // IoosDefConstants.WMO_ID_DEF, CFConstants.WMO_CODE);
-        // //short_name
-        // addAttributeIfIdentifierExists(vPlatform, stationSystem,
-        // IoosDefConstants.SHORT_NAME_DEF, IoosNetcdfConstants.SHORT_NAME);
-        // //long_name
-        // addAttributeIfIdentifierExists(vPlatform, stationSystem,
-        // IoosDefConstants.LONG_NAME_DEF, CFConstants.LONG_NAME);
-        // //source
-        // addAttributeIfClassifierExists(vPlatform, stationSystem,
-        // IoosDefConstants.PLATFORM_TYPE_DEF, CFConstants.SOURCE);
-
-        // instrument container var
-        Variable vInstrument = writer.addVariable(null, NODCConstants.INSTRUMENT, DataType.INT, noDims);
-        // vInstrument.addAttribute(new Attribute(DEFINITION,
-        // IoosDefConstants.SENSOR_ID_DEF));
-        vInstrument.addAttribute(new Attribute(CFConstants.LONG_NAME, stationSystem.getIdentifier()));
-
         String coordinateString =
                 Joiner.on(' ').join(
                         Lists.newArrayList(vTime.getFullName(), vLat.getFullName(), vLon.getFullName(),
                                 vHeightDepth.getFullName()));
 
         Map<OmObservableProperty, Variable> obsPropVarMap = Maps.newHashMap();
-        Map<Variable, ArrayDouble> varDataArrayMap = Maps.newHashMap();
+        Map<Variable, Array> varDataArrayMap = Maps.newHashMap();
         for (OmObservableProperty obsProp : sensorDataset.getPhenomena()) {
             // obs prop var
-            // String standardName =
-            // IoosSosUtil.getNameFromUri(obsProp.getIdentifier());
-            String standardName = obsProp.getIdentifier();
-            Variable vObsProp = writer.addVariable(null, standardName, DataType.DOUBLE, obsPropDims);
-            vObsProp.addAttribute(new Attribute(CFConstants.STANDARD_NAME, standardName));
-            if (obsProp.getIdentifier() != null) {
-                vObsProp.addAttribute(new Attribute(CFConstants.LONG_NAME, obsProp.getIdentifier()));
-            }
-            vObsProp.addAttribute(new Attribute(CFConstants.COORDINATES, coordinateString));
-            vObsProp.addAttribute(new Attribute(CFConstants.FILL_VALUE, NetcdfHelper.getInstance().getFillValue()));
-            // if (obsProp.getUnit() != null) {
-            // vObsProp.addAttribute(new Attribute(CFConstants.UNITS,
-            // IoosSosUtil.getNameFromUri(obsProp.getUnit())));
-            // }
-            if (obsProp.getUnit() != null) {
-                vObsProp.addAttribute(new Attribute(CFConstants.UNITS, obsProp.getUnit()));
-            }
+            Variable vObsProp = addVariableForObservedProperty(writer, obsProp, obsPropDims, coordinateString);
             obsPropVarMap.put(obsProp, vObsProp);
 
             // init obs prop data array
-            ArrayDouble obsPropArray = new ArrayDouble(getDimShapes(obsPropDims));
+            Array obsPropArray = getArray(obsPropDims);
             initArrayWithFillValue(obsPropArray, NetcdfHelper.getInstance().getFillValue());
             varDataArrayMap.put(vObsProp, obsPropArray);
         }
 
         // populate heights array for profile
+        Array heightDephtArray = null;
         if (zDims.size() == 1 && hasDimension(zDims, dZ) && !sensorDataset.getSubSensors().isEmpty()) {
-            Index heightIndex = heightDephtArray.getIndex();
-            int heightIndexCounter = 0;
-            Double consistentBinHeight = null;
-            for (SubSensor subSensor : sensorDataset.getSubSensors()) {
-                if (subSensor instanceof ProfileSubSensor) {
-                    heightIndex.setDim(0, heightIndexCounter++);
-                    heightDephtArray.set(heightIndex, ((ProfileSubSensor) subSensor).getHeight());
-
-                    // check for consistent bin size
-                    if (subSensor instanceof BinProfileSubSensor) {
-                        double binHeight = ((BinProfileSubSensor) subSensor).getBinHeight();
-                        if (consistentBinHeight == null) {
-                            consistentBinHeight = binHeight;
-                        } else if (consistentBinHeight != NetcdfHelper.getInstance().getFillValue()
-                                && consistentBinHeight != binHeight) {
-                            // mark bin height as inconsistent
-                            consistentBinHeight = NetcdfHelper.getInstance().getFillValue();
-                        }
-                    }
-                } else {
-                    throw new NoApplicableCodeException().withMessage("Non-profile subsensors not supported.");
-                }
-            }
-
+            heightDephtArray = initHeightDephtArray(zDims);
+            Double consistentBinHeight = populateHeightDepthArray(sensorDataset, heightDephtArray, vHeightDepth);
             String verticalResolution = null;
             if (consistentBinHeight == null) {
                 verticalResolution = ACDDConstants.POINT;
@@ -545,7 +453,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
             Map<OmObservableProperty, Map<SubSensor, Value<?>>> obsPropMap = sensorDataset.getDataValues().get(time);
             for (OmObservableProperty obsProp : obsPropMap.keySet()) {
                 Variable variable = obsPropVarMap.get(obsProp);
-                ArrayDouble array = varDataArrayMap.get(variable);
+                Array array = varDataArrayMap.get(variable);
                 for (Entry<SubSensor, Value<?>> subSensorEntry : obsPropMap.get(obsProp).entrySet()) {
                     SubSensor subSensor = subSensorEntry.getKey();
                     Value<?> value = subSensorEntry.getValue();
@@ -554,7 +462,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                         throw new NoApplicableCodeException().withMessage("Value class "
                                 + valObj.getClass().getCanonicalName() + " not supported");
                     }
-
                     Index index = array.getIndex();
                     int obsPropDimCounter = 0;
                     for (Dimension dim : obsPropDims) {
@@ -565,21 +472,31 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                         if (dim.equals(dTime)) {
                             // time index dim
                             index.setDim(obsPropDimCounter++, timeCounter - 1);
-                        } else if (dim.equals(dZ)) {
-                            // height index dim
+                        } else if (dim.equals(dZ) && dim.getLength() > 1) {
+                            // height/depth index dim
                             index.setDim(obsPropDimCounter++, sensorDataset.getSubSensors().indexOf(subSensor));
                         }
                     }
-                    array.set(index, ((Double) valObj).doubleValue());
+                    if (array instanceof ArrayFloat) {
+                        ((ArrayFloat)array).set(index, Float.parseFloat(Double.toString(((Double) valObj).doubleValue())));
+                    } else {
+                        ((ArrayDouble)array).set(index, ((Double) valObj).doubleValue());
+                    }
                 }
             }
         }
 
         // create the empty netCDF with dims/vars/attributes defined
         variableArrayMap.put(vTime, timeArray);
-        variableArrayMap.put(vLat, latArray);
-        variableArrayMap.put(vLon, lonArray);
-        variableArrayMap.put(vHeightDepth, heightDephtArray);
+        if (latArray != null) {
+            variableArrayMap.put(vLat, latArray);
+        }
+        if (lonArray != null) {
+            variableArrayMap.put(vLon, lonArray);
+        }
+        if (heightDephtArray != null) {
+            variableArrayMap.put(vHeightDepth, heightDephtArray);
+        }
         variableArrayMap.putAll(varDataArrayMap);
         // create the empty netCDF with dims/vars/attributes defined
         writeToFile(writer, variableArrayMap);
@@ -591,31 +508,216 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
     }
 
+    protected void addGlobaleAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset,
+            AbstractSensorML sml) throws OwsExceptionReport {
+        addConventions(writer);
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.METADATA_CONVENTIONS,
+                ACDDConstants.UNIDATA_DATASET_DISCOVERY_1_0));
+        writer.addGroupAttribute(null, new Attribute(CFConstants.FEATURE_TYPE, sensorDataset.getFeatureType().name()));
+        writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.CDM_DATA_TYPE, CF.FeatureType.convert(sensorDataset.getFeatureType())
+                        .name()));
+        writer.addGroupAttribute(null, new Attribute(NODCConstants.NODC_TEMPLATE_VERSION,
+                getNodcTemplateVersion(sensorDataset.getFeatureType())));
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.STANDARD_NAME_VOCABULARY, CFConstants.CF_1_6));
+
+        // platform
+        addPlatform(writer, sensorDataset, sml);
+        // instrument
+        addInstrument(writer, sensorDataset, sml);
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TITLE, sensorDataset.getSensorIdentifier()));
+        writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.SUMMARY, "Sensor observations for " + sensorDataset.getSensor()
+                        + ", feature type " + sensorDataset.getFeatureType().name()));
+        
+        writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.DATE_CREATED, new DateTime(DateTimeZone.UTC).toString()));
+    
+        addLicense(writer, sml);
+    
+        writer.addGroupAttribute(null, new Attribute(NODCConstants.UUID, UUID.randomUUID().toString()));
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.ID, sensorDataset.getSensorIdentifier()));
+        // keywords
+        writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.KEYWORDS, Joiner.on(",").join(getKeywords(sensorDataset))));
+    
+        // operator -> contributor
+        addContributor(sml, writer);
+    
+        // publisher
+        addPublisher(sml, writer);
+    
+        // geospatial extent
+        addGeospatialAttributes(writer, sensorDataset);
+        
+        // geospatial_vertical_min/max/units/resolution/positive
+        addGeospatialVerticalAttributes(writer, sensorDataset);
+    
+        // time coverage
+        addTimeCoverageAttributes(writer, sensorDataset);
+    
+        // additional global attributes
+        addProfileSpecificGlobalAttributes(writer, sensorDataset, sml);
+    }
+
+    private void addGeospatialAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) throws CodedException {
+        // FIXME when trajectories are implemented, bbox should be calculated in
+        // AbstractSensorDataset during construction
+        if (sensorDataset instanceof StaticLocationDataset) {
+            StaticLocationDataset LocationDataset = (StaticLocationDataset) sensorDataset;
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MIN, LocationDataset.getLat()));
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MAX, LocationDataset.getLat()));
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_UNITS,
+                    CFConstants.UNITS_DEGREES_NORTH));
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_MIN, LocationDataset.getLng()));
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_MAX, LocationDataset.getLng()));
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_UNITS,
+                    CFConstants.UNITS_DEGREES_EAST));
+        } else {
+            throw new NoApplicableCodeException().withMessage("Trajectory encoding is not supported (bbox)");
+        }
+        
+    }
+
+    protected void addTimeCoverageAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) throws CodedException {
+        List<Time> times = Lists.newArrayList(sensorDataset.getTimes());
+        Collections.sort(times);
+        DateTime firstTime = getDateTime(times.get(0));
+        DateTime lastTime = getDateTime(times.get(times.size() - 1));
+    
+        // temporal extent
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TIME_COVERAGE_START, firstTime.toString()));
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TIME_COVERAGE_END, lastTime.toString()));
+        
+    }
+
+    protected void addGeospatialVerticalAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_UNITS, CFConstants.UNITS_METERS));
+        double min = getGeospatialVerticalMin(sensorDataset);
+        double max = getGeospatialVerticalMax(sensorDataset);
+        if (useHeight()) {
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_POSITIVE,
+                    CFConstants.POSITIVE_UP));
+        } else {
+            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_POSITIVE,
+                    CFConstants.POSITIVE_DOWN));
+            min = min != 0.0 ? min * (-1.0) : min;
+            max = max != 0.0 ? max * (-1.0) : max;
+            if (min > max) {
+                double tmp = min;
+                min = max;
+                max = tmp;
+            }
+        }
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_MIN, min));
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_MAX, max));
+    }
+
+    protected CDMNode addPlatform(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset, AbstractSensorML sml) {
+       return writer.addGroupAttribute(null, new Attribute(NODCConstants.PLATFORM, sml.getIdentifier()));
+    }
+    
+    protected CDMNode addInstrument(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset, AbstractSensorML sml) {
+        return  writer.addGroupAttribute(null, new Attribute(NODCConstants.INSTRUMENT, sml.getIdentifier()));
+    }
+
+    private Double populateHeightDepthArray(AbstractSensorDataset<?> sensorDataset, Array heightDephtArray, Variable v) throws CodedException {
+        Index index = heightDephtArray.getIndex();
+        int indexCounter = 0;
+        Double consistentBinHeight = null;
+        for (SubSensor subSensor : sensorDataset.getSubSensors()) {
+            if (subSensor instanceof ProfileSubSensor) {
+                index.setDim(0, indexCounter++);
+                heightDephtArray.setDouble(index, checkValue(v, ((ProfileSubSensor) subSensor).getHeight()));
+                // check for consistent bin size
+                if (subSensor instanceof BinProfileSubSensor) {
+                    double binHeight = checkValue(v, ((BinProfileSubSensor) subSensor).getBinHeight());
+                    if (consistentBinHeight == null) {
+                        consistentBinHeight = binHeight;
+                    } else if (consistentBinHeight != NetcdfHelper.getInstance().getFillValue()
+                            && consistentBinHeight != binHeight) {
+                        // mark bin height as inconsistent
+                        consistentBinHeight = NetcdfHelper.getInstance().getFillValue();
+                    }
+                }
+            } else {
+                throw new NoApplicableCodeException().withMessage("Non-profile subsensors not supported.");
+            }
+        }
+        return consistentBinHeight;
+    }
+
+    private double checkValue(Variable v, Double value) {
+        Attribute aStandardName = v.findAttributeIgnoreCase(CFConstants.STANDARD_NAME);
+        if (aStandardName.isString() && CFStandardNames.DEPTH.getName().equals(aStandardName.getStringValue())) {
+            return value != 0.0 ? value * (-1.0) : value;
+        }
+        return value;
+    }
+
+    private Array initHeightDephtArray(List<Dimension> zDims) {
+        Array array = getArray(zDims);
+        initArrayWithFillValue(array, NetcdfHelper.getInstance().getFillValue());
+        return array;
+    }
+
+
+    protected Array getLatitudeArray(AbstractSensorDataset<?> sensorDataset) throws CodedException {
+        if (sensorDataset instanceof StaticLocationDataset) {
+            StaticLocationDataset locationDataset = (StaticLocationDataset) sensorDataset;
+            if (locationDataset.getLat() != null) {
+                Array array = getArray();
+                initArrayWithFillValue(array, NetcdfHelper.getInstance().getFillValue());
+                Index index = array.getIndex();
+                index.set(0);
+                array.setDouble(index, locationDataset.getLat());
+            }
+        } else {
+            // TODO support varying lat
+            throw new NoApplicableCodeException().withMessage("Varying lat are not yet supported.");
+        }
+        return null;
+    }
+
+    protected Array getLongitudeArray(AbstractSensorDataset<?> sensorDataset) throws CodedException {
+        if (sensorDataset instanceof StaticLocationDataset) {
+            StaticLocationDataset locationDataset = (StaticLocationDataset) sensorDataset;
+            if (locationDataset.getLat() != null) {
+                Array array = getArray();
+                initArrayWithFillValue(array, NetcdfHelper.getInstance().getFillValue());
+                Index index = array.getIndex();
+                index.set(0);
+                array.setDouble(index, locationDataset.getLat());
+            }
+        } else {
+            // TODO support varying lat
+            throw new NoApplicableCodeException().withMessage("Varying longs are not yet supported.");
+        }
+        return null;
+    }
+    
+    private Array getArray(int[] dims) {
+        if (DataType.FLOAT.equals(getDataType())) {
+            return new ArrayFloat(dims);
+        } 
+        return new ArrayDouble(dims);
+    }
+    
+    private Array getArray(List<Dimension> zDims) {
+        return getArray(getDimShapes(zDims));
+    }
+
+    private Array getArray() {
+        if (DataType.FLOAT.equals(getDataType())) {
+            return new ArrayFloat.D1(1);
+        }
+        return new ArrayDouble.D1(1);
+    }
+
     protected Map<Variable, Array> getNetcdfProfileSpecificVariablesArrays(NetcdfFileWriter writer,
             AbstractSensorDataset<?> dataset) throws CodedException {
-        Map<Variable, Array> variableArrayMap = Maps.newHashMap();
-        // //feature type instance var
-        // Dimension dFeatureTypeInstance = writer.addDimension(null,
-        // CFConstants.FEATURE_TYPE_INSTANCE,
-        // dataset.getSensorIdentifier().length());
-        // List<Dimension> featureTypeInstanceDims =
-        // Lists.newArrayList(dFeatureTypeInstance);
-        // Variable vFeatureTypeInstance = writer.addVariable(null,
-        // CFConstants.FEATURE_TYPE_INSTANCE,
-        // DataType.CHAR, featureTypeInstanceDims);
-        // vFeatureTypeInstance.addAttribute(new
-        // Attribute(CFConstants.LONG_NAME,
-        // "Identifier for each feature type instance"));
-        // String cfRole = getCfRole(dataset.getFeatureType());
-        // if (cfRole != null) {
-        // vFeatureTypeInstance.addAttribute(new Attribute(CFConstants.CF_ROLE,
-        // getCfRole(dataset.getFeatureType())));
-        // }
-        // ArrayChar.D1 featureTypeInstanceArray = new
-        // ArrayChar.D1(dataset.getSensorIdentifier().length());
-        // featureTypeInstanceArray.setString(dataset.getSensorIdentifier());
-        // variableArrayMap.put(vFeatureTypeInstance, featureTypeInstanceArray);
-        return variableArrayMap;
+        return Maps.newHashMap();
     }
 
     private void writeToFile(NetcdfFileWriter writer, Map<Variable, Array> variableArrayMap) throws CodedException {
@@ -633,91 +735,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         } catch (Exception e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage("Error writing netCDF variable data");
         }
-    }
-
-    protected void addGlobaleAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset,
-            AbstractSensorML sml) throws CodedException {
-        addConventions(writer);
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.METADATA_CONVENTIONS,
-                ACDDConstants.UNIDATA_DATASET_DISCOVERY_1_0));
-        writer.addGroupAttribute(null, new Attribute(CFConstants.FEATURE_TYPE, sensorDataset.getFeatureType().name()));
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.CDM_DATA_TYPE, CF.FeatureType.convert(sensorDataset.getFeatureType())
-                        .name()));
-        writer.addGroupAttribute(null, new Attribute(NODCConstants.NODC_TEMPLATE_VERSION,
-                getNodcTemplateVersion(sensorDataset.getFeatureType())));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.STANDARD_NAME_VOCABULARY, CFConstants.CF_1_6));
-        writer.addGroupAttribute(null, new Attribute(NODCConstants.PLATFORM, NODCConstants.PLATFORM));
-        writer.addGroupAttribute(null, new Attribute(NODCConstants.INSTRUMENT, NODCConstants.INSTRUMENT));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TITLE, sensorDataset.getSensorIdentifier()));
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.SUMMARY, "Sensor observations for " + sensorDataset.getSensor()
-                        + ", feature type " + sensorDataset.getFeatureType().name()));
-        // TODO adjust processing_level?
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROCESSING_LEVEL, ACDDConstants.NONE));
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.DATE_CREATED, new DateTime(DateTimeZone.UTC).toString()));
-
-        addLicense(writer);
-
-        writer.addGroupAttribute(null, new Attribute(NODCConstants.UUID, UUID.randomUUID().toString()));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.ID, sensorDataset.getSensorIdentifier()));
-        // keywords
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.KEYWORDS, Joiner.on(",").join(getKeywords(sensorDataset))));
-
-        // operator -> contributor
-        addContributor(sml, writer);
-
-        // publisher
-        addPublisher(sml, writer);
-
-        // geospatial extent
-        // FIXME when trajectories are implemented, bbox should be calculated in
-        // AbstractSensorDataset during construction
-        if (sensorDataset instanceof StaticLocationDataset) {
-            StaticLocationDataset LocationDataset = (StaticLocationDataset) sensorDataset;
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MIN, LocationDataset.getLat()));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_MAX, LocationDataset.getLat()));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LAT_UNITS,
-                    CFConstants.UNITS_DEGREES_NORTH));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_MIN, LocationDataset.getLng()));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_MAX, LocationDataset.getLng()));
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_LON_UNITS,
-                    CFConstants.UNITS_DEGREES_EAST));
-        } else {
-            throw new NoApplicableCodeException().withMessage("Trajectory encoding is not supported (bbox)");
-        }
-
-        List<Time> times = Lists.newArrayList(sensorDataset.getTimes());
-        Collections.sort(times);
-        DateTime firstTime = getDateTime(times.get(0));
-        DateTime lastTime = getDateTime(times.get(times.size() - 1));
-
-        // temporal extent
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TIME_COVERAGE_START, firstTime.toString()));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TIME_COVERAGE_END, lastTime.toString()));
-
-        // global attributes:
-        // geospatial_vertical_min/max/units/resolution/positive
-
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_UNITS, CFConstants.UNITS_METERS));
-        if (useHeight()) {
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_POSITIVE,
-                    CFConstants.POSITIVE_UP));
-        } else {
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_POSITIVE,
-                    CFConstants.POSITIVE_DOWN));
-        }
-        // FIXME HEIGHT vs DEPTH: min/max order
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_MIN,
-                getGeospatialVerticalMin(sensorDataset)));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.GEOSPATIAL_VERTICAL_MAX,
-                getGeospatialVerticalMax(sensorDataset)));
-
-        // additional global attributes
-        addProfileSpecificGlobalAttributes(writer, sensorDataset);
     }
 
     private double getGeospatialVerticalMin(AbstractSensorDataset<?> dataset) {
@@ -740,7 +757,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return 0;
     }
 
-    private boolean useHeight() {
+    protected boolean useHeight() {
         if (CFStandardNames.HEIGHT.equals(NetcdfHelper.getInstance().getHeightDepth())) {
             return true;
         }
@@ -753,25 +770,53 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         // keywords.add(sensor.getStation());
         // keywords.add(sensor.getSensor());
         for (OmObservableProperty obsProp : sensorDataset.getPhenomena()) {
-            // keywords.add(IoosSosUtil.getNameFromUri(obsProp.getIdentifier()));
             keywords.add(obsProp.getIdentifier());
         }
         return keywords;
     }
 
+    protected Variable addVariableForObservedProperty(NetcdfFileWriter writer, OmObservableProperty obsProp, List<Dimension> obsPropDims, String coordinateString) {
+        String standardName = getObservedPropertyStandardName(obsProp);
+        String longName = getObservedPropertyLongName(obsProp);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(standardName), getDataType(), obsPropDims);
+        v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, standardName));
+        if (!Strings.isNullOrEmpty(longName)) {
+            v.addAttribute(new Attribute(CFConstants.LONG_NAME, longName));
+        }
+        v.addAttribute(new Attribute(CFConstants.COORDINATES, coordinateString));
+        v.addAttribute(new Attribute(CFConstants.FILL_VALUE, NetcdfHelper.getInstance().getFillValue()));
+        // if (obsProp.getUnit() != null) {
+        // vObsProp.addAttribute(new Attribute(CFConstants.UNITS,
+        // IoosSosUtil.getNameFromUri(obsProp.getUnit())));
+        // }
+        if (obsProp.getUnit() != null) {
+            v.addAttribute(new Attribute(CFConstants.UNITS, obsProp.getUnit()));
+        }
+        return v;
+    }
+
+    protected String getObservedPropertyStandardName(OmObservableProperty obsProp) {
+        return obsProp.getIdentifier();
+    }
+
+    protected String getObservedPropertyLongName(OmObservableProperty obsProp) {
+        return obsProp.getIdentifier();
+    }
+
     protected Variable addVariableTime(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, CFStandardNames.TIME.getName(), DataType.DOUBLE, dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.TIME.getName()), DataType.DOUBLE, dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.TIME.getName()));
-        v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_TIME));
+        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.TIME.getName())));
+        v.addAttribute(new Attribute(CFConstants.UNITS, getTimeUnits()));
         v.addAttribute(new Attribute(CFConstants.AXIS, CFConstants.AXIS_T));
         v.addAttribute(new Attribute(CFConstants.FILL_VALUE, NetcdfHelper.getInstance().getFillValue()));
         return v;
     }
 
     protected Variable addVariableLatitude(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, CFStandardNames.LATITUDE.getName(), DataType.DOUBLE, dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.LATITUDE.getName()), getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.LATITUDE.getName()));
-        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongNameLatitude()));
+        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.LATITUDE.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_DEGREES_NORTH));
         v.addAttribute(new Attribute(CFConstants.AXIS, CFConstants.AXIS_Y));
         v.addAttribute(new Attribute(CFConstants.FILL_VALUE, NetcdfHelper.getInstance().getFillValue()));
@@ -780,9 +825,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableLongitude(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, CFStandardNames.LONGITUDE.getName(), DataType.DOUBLE, dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.LONGITUDE.getName()), getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.LONGITUDE.getName()));
-        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongNameLongitude()));
+        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.LONGITUDE.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_DEGREES_EAST));
         v.addAttribute(new Attribute(CFConstants.AXIS, CFConstants.AXIS_X));
         v.addAttribute(new Attribute(CFConstants.FILL_VALUE, NetcdfHelper.getInstance().getFillValue()));
@@ -790,8 +835,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableHeight(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, CFStandardNames.HEIGHT.getName(), DataType.DOUBLE, dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.HEIGHT.getName()), getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.HEIGHT.getName()));
+        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.HEIGHT.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_METERS));
         v.addAttribute(new Attribute(CFConstants.AXIS, CFConstants.AXIS_Z));
         v.addAttribute(new Attribute(CFConstants.POSITIVE, CFConstants.POSITIVE_UP));
@@ -800,25 +846,41 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected Variable addVariableDepth(NetcdfFileWriter writer, List<Dimension> dims) {
-        Variable v = writer.addVariable(null, CFStandardNames.DEPTH.getName(), DataType.DOUBLE, dims);
+        Variable v = writer.addVariable(null, getVariableDimensionCaseName(CFStandardNames.DEPTH.getName()), getDataType(), dims);
         v.addAttribute(new Attribute(CFConstants.STANDARD_NAME, CFStandardNames.DEPTH.getName()));
+        v.addAttribute(new Attribute(CFConstants.LONG_NAME, getLongName(CFStandardNames.DEPTH.getName())));
         v.addAttribute(new Attribute(CFConstants.UNITS, CFConstants.UNITS_METERS));
         v.addAttribute(new Attribute(CFConstants.AXIS, CFConstants.AXIS_Z));
         v.addAttribute(new Attribute(CFConstants.POSITIVE, CFConstants.POSITIVE_DOWN));
         v.addAttribute(new Attribute(CFConstants.FILL_VALUE, NetcdfHelper.getInstance().getFillValue()));
         return v;
     }
+    
+    protected String getVariableDimensionCaseName(String name) {
+        if (NetcdfHelper.getInstance().isUpperCaseNames()) {
+            return name.toUpperCase();
+        }
+        return name;
+    }
+
+    protected String getTimeUnits() {
+        return CFConstants.UNITS_TIME;
+    }
+
+    private String getLongName(String name) {
+        return String.format("%s of measurement", name);
+    }
+
+    protected DataType getDataType() {
+        if (Float.class.getSimpleName().equals(NetcdfHelper.getInstance().getVariableType())) {
+            return DataType.FLOAT;
+        }
+        return DataType.DOUBLE;
+    }
+
 
     protected String getLongNameEPSG() {
         return OGCConstants.URN_DEF_CRS_EPSG + 4326;
-    }
-
-    protected String getLongNameLatitude() {
-        return "Latitude";
-    }
-
-    protected String getLongNameLongitude() {
-        return "Longitude";
     }
 
     private String getNodcTemplateVersion(CF.FeatureType featureType) throws CodedException {
@@ -831,7 +893,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
                 + " is not supported for netCDF output");
     }
 
-    private String getCfRole(CF.FeatureType featureType) throws CodedException {
+    protected String getCfRole(CF.FeatureType featureType) throws CodedException {
         if (featureType.equals(CF.FeatureType.timeSeries)) {
             return CF.TIMESERIES_ID;
         } else if (featureType.equals(CF.FeatureType.timeSeriesProfile)) {
@@ -875,7 +937,6 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         IndexIterator indexIterator = array.getIndexIterator();
         while (indexIterator.hasNext()) {
             indexIterator.setObjectNext(fillValue);
-            ;
         }
     }
 
@@ -947,7 +1008,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         throw new NoApplicableCodeException().withMessage("Could not get DescribeSensor DAO");
     }
 
-    private String getIdentifier(AbstractSensorML sml, String identifierDefinition) {
+    protected String getIdentifier(AbstractSensorML sml, String identifierDefinition) {
         Optional<SmlIdentifier> identifier =
                 sml.findIdentification(SmlIdentifierPredicates.definition(identifierDefinition));
         if (identifier.isPresent()) {
@@ -956,12 +1017,24 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return null;
     }
 
-    private void addAttributeIfIdentifierExists(Variable variable, System system, String identifierDefinition,
+    protected boolean addAttributeIfIdentifierExists(NetcdfFileWriter writer, AbstractSensorML system, String identifierDefinition,
+            String attributeName) {
+        String value = getIdentifier(system, identifierDefinition);
+        if (value != null) {
+            writer.addGroupAttribute(null, new Attribute(attributeName, value));
+            return true;
+        }
+        return false;
+    }
+    
+    protected boolean addAttributeIfIdentifierExists(Variable variable, AbstractSensorML system, String identifierDefinition,
             String attributeName) {
         String value = getIdentifier(system, identifierDefinition);
         if (value != null) {
             variable.addAttribute(new Attribute(attributeName, value));
+            return true;
         }
+        return false;
     }
 
     protected String getClassifierValue(AbstractSensorML sml, String classifierDefinition) {
@@ -972,13 +1045,25 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return null;
     }
+    
+    protected boolean addAttributeIfClassifierExists(NetcdfFileWriter writer, AbstractSensorML system, String classifierDefinition,
+            String attributeName) {
+        String value = getClassifierValue(system, classifierDefinition);
+        if (value != null) {
+            writer.addGroupAttribute(null,new Attribute(attributeName, value));
+            return true;
+        }
+        return false;
+    }
 
-    private void addAttributeIfClassifierExists(Variable variable, System system, String classifierDefinition,
+    protected boolean addAttributeIfClassifierExists(Variable variable, System system, String classifierDefinition,
             String attributeName) {
         String value = getClassifierValue(system, classifierDefinition);
         if (value != null) {
             variable.addAttribute(new Attribute(attributeName, value));
+            return true;
         }
+        return false;
     }
 
     protected SmlResponsibleParty getResponsibleParty(AbstractSensorML sml, String contactRole) {
@@ -997,8 +1082,8 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return CFConstants.CF_1_6;
     }
 
-    private void addLicense(NetcdfFileWriter writer) {
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.LICENSE, getLicenseValue()));
+    private CDMNode addLicense(NetcdfFileWriter writer, AbstractSensorML sml) {
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.LICENSE, getLicenseValue()));
     }
 
     protected String getLicenseValue() {
@@ -1006,6 +1091,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected boolean addPublisher(AbstractSensorML sml, NetcdfFileWriter writer) {
+        if (addPublisher(sml, NetcdfHelper.getInstance().getPublisher(), writer)) {
+            return true;
+        }
         return addPublisher(sml, CiRoleCodes.CI_RoleCode_publisher, writer);
     }
 
@@ -1034,10 +1122,12 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected boolean addContributor(AbstractSensorML sml, NetcdfFileWriter writer) {
-        if (!addContributor(sml, CiRoleCodes.CI_RoleCode_principalInvestigator, writer)) {
-            return addContributor(sml, CiRoleCodes.CI_RoleCode_author, writer);
+        if (addContributor(sml, NetcdfHelper.getInstance().getContributor(), writer)) {
+            return true;
+        } else if (addContributor(sml, CiRoleCodes.CI_RoleCode_principalInvestigator, writer)) {
+            return true;
         }
-        return true;
+        return addContributor(sml, CiRoleCodes.CI_RoleCode_author, writer);
     }
 
     protected boolean addContributor(AbstractSensorML sml, CiRoleCodes ciRoleCode, NetcdfFileWriter writer) {
@@ -1063,12 +1153,22 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return false;
     }
+    
+    protected String getPrefixlessIdentifier(String identifier) {
+        String splitter = "";
+        if (identifier.startsWith(Constants.URN)) {
+            splitter = Constants.COLON_STRING;
+        } else if (identifier.startsWith(Constants.HTTP)) {
+            splitter = Constants.SLASH_STRING;
+        }
+        return identifier.substring(identifier.lastIndexOf(splitter) + 1);
+    }
 
     protected String makeDateSafe(DateTime dt) {
         return dt.toString().replace(":", "");
     }
 
-    protected String getFilename(AbstractSensorDataset sensorDataset) throws OwsExceptionReport {
+    protected String getFilename(AbstractSensorDataset<?> sensorDataset) throws OwsExceptionReport {
         List<Time> times = Lists.newArrayList(sensorDataset.getTimes());
         Collections.sort(times);
         DateTime firstTime = getDateTime(times.get(0));

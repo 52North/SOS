@@ -37,6 +37,14 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
+/**
+ * Utility class for features in netCDF encoding
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class FeatureUtil {
     public static Set<Point> getFeaturePoints( Set<SamplingFeature> features ){
     	Set<Point> featurePoints = new HashSet<Point>();
@@ -82,6 +90,8 @@ public class FeatureUtil {
         for (Point point : points) {
             if( !Double.isNaN( point.getCoordinate().z ) ){
                 heights.add(point.getCoordinate().z);
+            } else {
+                heights.add(0.0);
             }
         }                
         return heights;

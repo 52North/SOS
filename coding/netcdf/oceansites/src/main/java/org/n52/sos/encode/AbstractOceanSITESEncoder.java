@@ -26,78 +26,157 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.netcdf.oceansites;
+package org.n52.sos.encode;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
 import org.n52.sos.encode.AbstractNetcdfEncoder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.iso.CodeList.CiRoleCodes;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
-import org.n52.sos.netcdf.om.NetCDFObservation;
+import org.n52.sos.netcdf.oceansites.OceanSITESConstants;
+import org.n52.sos.netcdf.oceansites.OceanSITESHelper;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import ucar.ma2.DataType;
+import ucar.nc2.Attribute;
+import ucar.nc2.Dimension;
+import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.Variable;
+import ucar.nc2.NetcdfFileWriter.Version;
+import ucar.nc2.constants.CF.FeatureType;
+
+import com.axiomalaska.cf4j.constants.ACDDConstants;
 import com.axiomalaska.cf4j.constants.CFConstants;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
-import ucar.nc2.Attribute;
-import ucar.nc2.NetcdfFileWriter;
-import ucar.nc2.NetcdfFileWriter.Version;
-
+/**
+ * Abstract encoder class of {@link AbstractNetcdfEncoder} for OceanSITES netCDF
+ * encoding
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
-    
+
+    private final Logger LOGGER = LoggerFactory.getLogger(AbstractOceanSITESEncoder.class);
+
     private static final DateTime DT_1950 = new DateTime(1950, 1, 1, 0, 0, DateTimeZone.UTC);
 
     @Override
-    public MediaType getContentType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset,
+            AbstractSensorML sml) throws OwsExceptionReport {
+        // site_code (RECOMMENDED)
+        addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getSiteDefinition(),
+                OceanSITESConstants.SITE_CODE);
+        // platform_code (RECOMMENDED)
+        addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getPlatformDefinition(),
+                OceanSITESConstants.PLATFORM_CODE);
+        // data_mode (RECOMMENDED)
+        if (!addAttributeIfClassifierExists(writer, sml, OceanSITESHelper.getInstance().getDataModeDefinition(),
+                OceanSITESConstants.DATA_MODE)) {
+            String dataModeText = OceanSITESConstants.DataMode.R.toString();
+            if (OceanSITESHelper.getInstance().isSetDataMode()) {
+                dataModeText = OceanSITESHelper.getInstance().getDataMode().name();
+            }
+            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
+        }
+        // data_type (RECOMMENDED)
+        writer.addGroupAttribute(null,
+                new Attribute(OceanSITESConstants.DATA_TYPE, getDataType(sensorDataset.getFeatureType())));
+        // format_version (RECOMMENDED)
+        writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL, OceanSITESHelper
+                .getInstance().getFormatVersion()));
 
-    @Override
-    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFSosObsList, Version version)
-            throws OwsExceptionReport {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        // update_interval (RECOMMENDED)
+        writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL,
+                OceanSITESConstants.UPDATE_INTERVAL_TEXT));
 
-    @Override
-    protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
-        // TODO Auto-generated method stub
-        
-        // In OceanSITES the names a UpperCase
-        //writer.renameVariable(oldName, newName);
-        //        writer.renameDimension(g, oldName, newName);
-        //        writer.renameGlobalAttribute(g, oldName, newName);
-        //        writer.renameVariableAttribute(v, attName, newName);
+        // OPTIONAL
+        // wmo code
+        addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getWmoPlatformCodeDefinition(),
+                OceanSITESConstants.WMO_PLATFORM_CODE);
+        // acknowledgement
+        addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getAcknowledgement(),
+                ACDDConstants.ACKNOWLEDGEMENT);
+        // array
+        addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getArrayDefinition(),
+                OceanSITESConstants.ARRAY);
+        // network
+        addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getNetworkDefinition(),
+                OceanSITESConstants.NETWORK);
+        // project
+        if (addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getProjectDefinition(),
+                ACDDConstants.PROJECT)) {
+            if (OceanSITESHelper.getInstance().isSetProject()) {
+                writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROJECT, OceanSITESHelper.getInstance()
+                        .getProject()));
+            }
+        }
+        // id
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.ID, getFilename(sensorDataset).replace(".nc", "")));
+        // citation
+        String citationText = OceanSITESConstants.CITATION_DEFAULT_TEXT;
+        if (OceanSITESHelper.getInstance().isSetCitation()) {
+            citationText = OceanSITESHelper.getInstance().getCitation();
+        }
+        writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.CITATION, citationText));
+        // license
+        String licenseText = OceanSITESConstants.LICENSE_DEFAULT_TEXT;
+        if (OceanSITESHelper.getInstance().isSetLicense()) {
+            citationText = OceanSITESHelper.getInstance().getLicense();
+        }
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.LICENSE, licenseText));
+        // processing level
+        // TODO get from ???
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROCESSING_LEVEL, ACDDConstants.NONE));
+        // QC_indicator
+        // TODO get from ???
+        writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.QC_INDICATOR,
+                OceanSITESConstants.QCIndicator.UNKNOWN.name()));
+        // netcdf_version
+        String netCDFVersion = "3.5";
+        if (Version.netcdf4.equals(writer.getVersion())) {
+            netCDFVersion = "4.0";
+        }
+        writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.NETCDF_VERSION, netCDFVersion));
+        // references
+        if (OceanSITESHelper.getInstance().isSetReferences()) {
+            writer.addGroupAttribute(null, new Attribute(CFConstants.REFERENCES, OceanSITESHelper.getInstance()
+                    .getReferences()));
+        }
+        writer.addGroupAttribute(null, new Attribute(ACDDConstants.NAMING_AUTHORITY,
+                OceanSITESConstants.NAMING_AUTHORITY_TEXT));
+
     }
 
     @Override
     protected String getConventionsValue() {
-        return Joiner.on(Constants.COMMA_CHAR).join(CFConstants.CF_1_6,
-                        OceanSITESConstants.OCEANSITES_VERSION, OceanSITESConstants.ACCD_VERSION);
+        return Joiner.on(Constants.COMMA_CHAR).join(CFConstants.CF_1_6, OceanSITESConstants.OCEANSITES_VERSION,
+                OceanSITESConstants.ACCD_VERSION);
     }
-    
+
     @Override
     protected String getLicenseValue() {
-        return OceansitesHelper.getInstance().getLicense();
+        return OceanSITESHelper.getInstance().getLicense();
     }
-    
+
     @Override
     protected double getTimeValue(Time time) throws CodedException {
-        return DateTimeHelper.getDaysSinceWithPrecision(DT_1950, getDateTime(time), 1);
+        return DateTimeHelper.getDaysSinceWithPrecision(DT_1950, getDateTime(time));
     }
 
     protected boolean addPrincipalInvestigator(AbstractSensorML sml, NetcdfFileWriter writer) {
@@ -106,6 +185,69 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected boolean addPrincipalInvestigator(AbstractSensorML sml, CiRoleCodes ciRoleCode, NetcdfFileWriter writer) {
         return addContributor(sml, ciRoleCode.getIdentifier(), writer);
+    }
+
+    @Override
+    protected Variable addVariableTime(NetcdfFileWriter writer, List<Dimension> dims) {
+        Variable variable = super.addVariableTime(writer, dims);
+        variable.addAttribute(getDefaultQcIndicatorAttribute());
+        variable.addAttribute(getValidMin(0.0));
+        variable.addAttribute(getValidMax(90000.0));
+        return variable;
+    }
+
+    @Override
+    protected Variable addVariableLatitude(NetcdfFileWriter writer, List<Dimension> dims) {
+        Variable variable = super.addVariableLatitude(writer, dims);
+        variable.addAttribute(new Attribute(OceanSITESConstants.REFERENCE, OceanSITESConstants.EPSG_REFERENCE));
+        variable.addAttribute(getDefaultQcIndicatorAttribute());
+        variable.addAttribute(getValidMin(-90.0));
+        variable.addAttribute(getValidMax(90.0));
+        return variable;
+    }
+
+    @Override
+    protected Variable addVariableLongitude(NetcdfFileWriter writer, List<Dimension> dims) {
+        Variable variable = super.addVariableLongitude(writer, dims);
+        variable.addAttribute(new Attribute(OceanSITESConstants.REFERENCE, OceanSITESConstants.EPSG_REFERENCE));
+        variable.addAttribute(getDefaultQcIndicatorAttribute());
+        variable.addAttribute(getValidMin(-180.0));
+        variable.addAttribute(getValidMax(180.0));
+        return variable;
+    }
+
+    @Override
+    protected Variable addVariableHeight(NetcdfFileWriter writer, List<Dimension> dims) {
+        Variable variable = super.addVariableHeight(writer, dims);
+        variable.addAttribute(new Attribute(OceanSITESConstants.REFERENCE,
+                OceanSITESConstants.HEIGHT_DEPTH_REFERENCE_DEFAULT));
+        variable.addAttribute(new Attribute(OceanSITESConstants.COORDINATE_REFERENCE_FRAME,
+                OceanSITESConstants.EPSG_5829));
+        variable.addAttribute(getDefaultQcIndicatorAttribute());
+        return variable;
+    }
+
+    @Override
+    protected Variable addVariableDepth(NetcdfFileWriter writer, List<Dimension> dims) {
+        Variable variable = super.addVariableDepth(writer, dims);
+        variable.addAttribute(new Attribute(OceanSITESConstants.REFERENCE,
+                OceanSITESConstants.HEIGHT_DEPTH_REFERENCE_DEFAULT));
+        variable.addAttribute(new Attribute(OceanSITESConstants.COORDINATE_REFERENCE_FRAME,
+                OceanSITESConstants.EPSG_5831));
+        variable.addAttribute(getDefaultQcIndicatorAttribute());
+        variable.addAttribute(getValidMin(0.0));
+        variable.addAttribute(getValidMax(12000.0));
+        return variable;
+    }
+
+    @Override
+    protected Variable addVariableForObservedProperty(NetcdfFileWriter writer, OmObservableProperty obsProp,
+            List<Dimension> obsPropDims, String coordinateString) {
+        Variable variable = super.addVariableForObservedProperty(writer, obsProp, obsPropDims, coordinateString);
+        variable.addAttribute(getDefaultQcIndicatorAttribute());
+        // sensor, from SensorML?
+
+        return variable;
     }
 
     protected boolean addPrincipalInvestigator(AbstractSensorML sml, String contactRole, NetcdfFileWriter writer) {
@@ -126,6 +268,103 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
             return true;
         }
         return false;
+    }
+
+    private Attribute getValidMin(double d) {
+        return new Attribute(CFConstants.VALID_MIN, d);
+    }
+
+    private Attribute getValidMax(double d) {
+        return new Attribute(CFConstants.VALID_MAX, d);
+    }
+
+    private Attribute getDefaultQcIndicatorAttribute() {
+        return new Attribute(OceanSITESConstants.QC_INDICATOR,
+                OceanSITESConstants.QCIndicatorValues.QCI_0.getMeaning());
+    }
+
+    @Override
+    protected String getObservedPropertyStandardName(OmObservableProperty obsProp) {
+        try {
+            return getVariableName(obsProp.getIdentifier()).getStandardName();
+        } catch (IllegalArgumentException iae) {
+            LOGGER.debug("The observed property is not a defined OceanSITES variable name.", iae);
+        }
+        return obsProp.getIdentifier();
+    }
+
+    @Override
+    protected String getObservedPropertyLongName(OmObservableProperty obsProp) {
+        try {
+            return getVariableName(obsProp.getIdentifier()).getStandardName();
+        } catch (IllegalArgumentException iae) {
+            LOGGER.debug("The observed property is not a defined OceanSITES variable name.", iae);
+        }
+        return null;
+    }
+
+    private OceanSITESConstants.VariableName getVariableName(String identifier) {
+        return OceanSITESConstants.VariableName.valueOf(getPrefixlessIdentifier(identifier).toUpperCase());
+    }
+
+    private String getDataType(FeatureType featureType) {
+        switch (featureType) {
+        case timeSeries:
+            return OceanSITESConstants.DataType.OS_TIME_SERIES.getType();
+        case timeSeriesProfile:
+            return OceanSITESConstants.DataType.OS_PROFILE.getType();
+        case trajectory:
+            return OceanSITESConstants.DataType.OS_TRAJECTORY.getType();
+        default:
+            return OceanSITESConstants.DataType.OS_TIME_SERIES.getType();
+        }
+    }
+
+    @Override
+    protected String getTimeUnits() {
+        return OceanSITESConstants.UNITS_TIME;
+    }
+
+    @Override
+    protected boolean useHeight() {
+        return false;
+    }
+
+    @Override
+    protected String getVariableDimensionCaseName(String name) {
+        return name.toUpperCase();
+    }
+
+    @Override
+    protected Version getDefaultVersion() {
+        return Version.netcdf3;
+    }
+
+    @Override
+    protected DataType getDataType() {
+        return DataType.FLOAT;
+    }
+
+    @Override
+    protected String getFilename(AbstractSensorDataset<?> sensorDataset) throws OwsExceptionReport {
+        List<Time> times = Lists.newArrayList(sensorDataset.getTimes());
+        Collections.sort(times);
+        DateTime firstTime = getDateTime(times.get(0));
+        DateTime lastTime = getDateTime(times.get(times.size() - 1));
+        // prefix
+        StringBuffer pathBuffer = new StringBuffer("OS_");
+        // platform code
+        pathBuffer.append("_" + getPrefixlessIdentifier(sensorDataset.getSensorIdentifier()));
+        // deployment code
+        pathBuffer.append("_" + makeDateSafe(new DateTime(DateTimeZone.UTC)));
+        // data mode
+        pathBuffer.append("_" + OceanSITESHelper.getInstance().getDataMode().name());
+        // partx/times
+        pathBuffer.append("_" + makeDateSafe(firstTime) + "-" + makeDateSafe(lastTime));
+        // todo
+        pathBuffer.append("_" + Long.toString(java.lang.System.nanoTime()) + ".nc");
+        return pathBuffer.toString();
+        // return super.getFilename(sensorDataset);
     }
 
 }

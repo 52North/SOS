@@ -76,14 +76,22 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
+/**
+ * Utility class for netCDF encoding.
+ * 
+ * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class NetCDFUtil {
     /**
-     * Organizes SosObservation collection into a list of IoosSosObservation
+     * Organizes OmObservation collection into a list of NetCDFObservation
      * blocks, each of which contain a single feature type
      * 
      * @param omObservations
      *            The collection of observations to transform
-     * @return List<IoosSosObservation> ready for encoding
+     * @return List<NetCDFObservation> ready for encoding
      * @throws OwsExceptionReport
      */
     public static List<NetCDFObservation> createNetCDFSosObservations(List<OmObservation> omObservations)
@@ -177,24 +185,22 @@ public class NetCDFUtil {
             // axes shouldn't be composite phenomena
             if (phenomena.size() == 1) {
                 OmObservableProperty phenomenon = phenomena.get(0);
-                ////add dimensional values to procedure dimension tracking maps
-                // if( AxisUtil.isLng( phenomenon.getIdentifier() ) ){
-                // sensorLngs.get( sensor ).add(
-                // quantityValue.getValue().doubleValue() );
-                // }
-                //
-                // if( AxisUtil.isLat( phenomenon.getIdentifier() ) ){
-                // sensorLats.get( sensor ).add(
-                // quantityValue.getValue().doubleValue() );
-                // }
-                //
-                // if( AxisUtil.isZ( phenomenon.getIdentifier() ) ){
-                // Double zValue = quantityValue.getValue().doubleValue();
-                // if( AxisUtil.isDepth( phenomenon.getIdentifier() ) ){
-                // zValue = 0 - zValue;
-                // }
-                // sensorHeights.get( sensor ).add( zValue );
-                // }
+                // add dimensional values to procedure dimension tracking maps
+                if (isLng(phenomenon.getIdentifier())) {
+                    sensorLngs.get(sensor).add(quantityValue.getValue().doubleValue());
+                }
+
+                if (isLat(phenomenon.getIdentifier())) {
+                    sensorLats.get(sensor).add(quantityValue.getValue().doubleValue());
+                }
+
+                if (isZ(phenomenon.getIdentifier())) {
+                    Double zValue = quantityValue.getValue().doubleValue();
+//                    if (isDepth(phenomenon.getIdentifier())) {
+//                        zValue = 0 - zValue;
+//                    }
+                    sensorHeights.get(sensor).add(zValue);
+                }
             }
             
             // check for samplingGeometry in observation
@@ -239,7 +245,11 @@ public class NetCDFUtil {
             }
 
             // add obs value to subsensor map (null subsensors are ok)
-            subSensorMap.put(createSubSensor(sensor, foi), obsValue);
+            if (sosObs.isSetParameter() && hasSamplingGeometry(sosObs)) {
+                subSensorMap.put(createSubSensor(sensor, getSamplingGeometryGeometry(sosObs)), obsValue);
+            } else {
+                subSensorMap.put(createSubSensor(sensor, foi), obsValue);
+            }
         }
 
         // now we know about each station's dimensions, sort into CF feature
@@ -446,20 +456,47 @@ public class NetCDFUtil {
         return new Envelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(), envelope.getMaxX());
     }
 
+    // public static void checkSrid( int srid, Logger logger ) throws
+    // InvalidParameterValueException{
+    // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
+    // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
+    // );
+    // }
+    // }
+    
     public static SubSensor createSubSensor(String sensor, SamplingFeature foi) {
         // return null if sensor or station id is same as foi
         if (sensor.equals(foi.getIdentifierCodeWithAuthority().getValue())) {
             return null;
         }
+        return createSubSensor(sensor, foi.getGeometry());
+    }
 
-        // check for valid subsensor
+    // public static void checkSrid( int srid, Logger logger ) throws
+    // InvalidParameterValueException{
+    // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
+    // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
+    // );
+    // }
+    // }
+
+    // public static void checkSrid( int srid, Logger logger ) throws
+    // InvalidParameterValueException{
+    // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
+    // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
+    // );
+    // }
+    // }
+    
+    public static SubSensor createSubSensor(String sensor, Geometry geom) {
         SubSensor subSensor = null;
-        Geometry geom = foi.getGeometry();
         if (geom instanceof Point) {
             Point point = (Point) geom;
             // profile height
             if (!Double.isNaN(point.getCoordinate().z)) {
                 subSensor = new PointProfileSubSensor(point.getCoordinate().z);
+            } else {
+                subSensor = new PointProfileSubSensor(0.0);
             }
         } else if (geom instanceof LineString) {
             LineString lineString = (LineString) geom;
@@ -467,7 +504,7 @@ public class NetCDFUtil {
             if (lineString.getNumPoints() == 2) {
                 Point topPoint = lineString.getPointN(0);
                 Point bottomPoint = lineString.getPointN(1);
-
+    
                 if (FeatureUtil.equal2d(topPoint, bottomPoint) && !Double.isNaN(topPoint.getCoordinate().z)
                         && !Double.isNaN(bottomPoint.getCoordinate().z)) {
                     double topHeight = Math.max(topPoint.getCoordinate().z, bottomPoint.getCoordinate().z);
@@ -478,14 +515,24 @@ public class NetCDFUtil {
         }
         return subSensor;
     }
+    
+        
+    public static boolean isLng(String phenomenon) {
+        return getNetcdfHelper().getLatitude().contains(phenomenon.toLowerCase());
+    }
 
-    // public static void checkSrid( int srid, Logger logger ) throws
-    // InvalidParameterValueException{
-    // if( !Ioos52nConstants.ALLOWED_EPSGS.contains( srid ) ){
-    // throw new InvalidParameterValueException("EPSG", Integer.toString( srid )
-    // );
-    // }
-    // }
+    public static boolean isLat(String phenomenon) {
+        return  getNetcdfHelper().getLongitude().contains(phenomenon.toLowerCase());
+    }
+
+    public static boolean isZ(String phenomenon) {
+        phenomenon = phenomenon.toLowerCase();
+        return  getNetcdfHelper().getZ().contains(phenomenon.toLowerCase());
+    }
+
+    private static NetcdfHelper getNetcdfHelper() {
+        return NetcdfHelper.getInstance();
+    }
 
     private static boolean hasSamplingGeometry(OmObservation sosObs) {
         return getSamplingGeometryGeometry(sosObs) != null;

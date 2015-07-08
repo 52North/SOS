@@ -34,26 +34,53 @@ import java.util.Set;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
+import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.ChoiceSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.NumericSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
+import org.n52.sos.iso.CodeList.CiRoleCodes;
+import org.n52.sos.util.Constants;
 
 import ucar.nc2.NetcdfFileWriter;
 
 import com.axiomalaska.cf4j.CFStandardNames;
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * Implementation of {@link SettingDefinitionProvider} for netCDF encoding
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class NetcdfSettings implements SettingDefinitionProvider {
     
     public static final String NETCDF_VERSION = "netcdf.version";
+
     public static final String NETCDF_CHUNK_SIZE_TIME = "netcdf.chunk.size";
+
     public static final String NETCDF_FILL_VALUE = "netcdf.fillValue";
+
     public static final String NETCDF_HEIGHT_DEPTH = "netcdf.heightDepth";
+
+    public static final String NETCDF_VARIABLE_TYPE = "netcdf.varibale.type";
+
+    public static final String NETCDF_VARIABLE_UPPER_CASE = "netcdf.varibale.upperCase";
+
+    public static final String NETCDF_PUBLISHER = "netcdf.publisher";
+
+    public static final String NETCDF_CONTRIBUTOR = "netcdf.contributor";
+    
+    public static final String NETCDF_PHEN_LATITUDE = "netcdf.phenomenon.latitude";
+
+    public static final String NETCDF_PHEN_LONGITUDE = "netcdf.phenomenon.longitude";
+
+    public static final String NETCDF_PHEN_Z = "netcdf.phenomenon.z";
     
     private static final SettingDefinitionGroup SETTINGS_GROUP = new SettingDefinitionGroup()
     .setTitle("netCDF").setDescription("Define netCDF specific parameter").setOrder(10.5f);
-    
+
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             new ChoiceSettingDefinition().
             addOption(NetcdfFileWriter.Version.netcdf3.name(), "NetCDF 3 version").
@@ -94,7 +121,72 @@ public class NetcdfSettings implements SettingDefinitionProvider {
             setDefaultValue(CFStandardNames.HEIGHT.getName()).
             setDescription("Define which vertical variable should be use, height or depth").
             setOptional(false).
-            setOrder(ORDER_3)
+            setOrder(ORDER_3),
+            
+            new ChoiceSettingDefinition().
+            addOption(Double.class.getSimpleName(), "DOUBLE").
+            addOption(Float.class.getSimpleName(), "FLOAT").
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_VARIABLE_TYPE).
+            setTitle("Set the variable type").
+            setDefaultValue(Double.class.getSimpleName()).
+            setDescription("Define the variable type for latitude, longitude, height/depth, values.").
+            setOptional(false).
+            setOrder(ORDER_4),
+            
+            new BooleanSettingDefinition().
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_VARIABLE_UPPER_CASE).
+            setTitle("Use UPPER_CASE variable/dimension names").
+            setDefaultValue(false).
+            setDescription("Set TRUE if the variable/dimension names should be UPPER_CASE").
+            setOptional(false).
+            setOrder(ORDER_5),
+            
+            getCiRoleCodeChoiceSettingDefinition().
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_PUBLISHER).
+            setTitle("Set the publisher CI_RoleCode definition").
+            setDefaultValue(CiRoleCodes.CI_RoleCode_publisher.name()).
+            setDescription("Define the publisher CI_RoleCode definition.").
+            setOptional(false).
+            setOrder(ORDER_6),
+            
+            getCiRoleCodeChoiceSettingDefinition().
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_CONTRIBUTOR).
+            setTitle("Set the contributor CI_RoleCode definition").
+            setDefaultValue(CiRoleCodes.CI_RoleCode_principalInvestigator.name()).
+            setDescription("Define the contributor CI_RoleCode definition.").
+            setOptional(false).
+            setOrder(ORDER_7),
+            
+            new StringSettingDefinition().
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_PHEN_LATITUDE).
+            setTitle("Set latitude phenomenon identifier").
+            setDefaultValue(Constants.EMPTY_STRING).
+            setDescription("Define the phenomenon identifier for latitude values. Multiple values as comma separated list.").
+            setOptional(true).
+            setOrder(ORDER_8),
+            
+            new StringSettingDefinition().
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_PHEN_LONGITUDE).
+            setTitle("Set longitude phenomenon identifier").
+            setDefaultValue(Constants.EMPTY_STRING).
+            setDescription("Define the phenomenon identifier for longitude values. Multiple values as comma separated list.").
+            setOptional(true).
+            setOrder(ORDER_9),
+            
+            new StringSettingDefinition().
+            setGroup(SETTINGS_GROUP).
+            setKey(NETCDF_PHEN_Z).
+            setTitle("Set height/depth phenomenon identifier").
+            setDefaultValue(Constants.EMPTY_STRING).
+            setDescription("Define the phenomenon identifier for height/depth values. Multiple values as comma separated list.").
+            setOptional(true).
+            setOrder(ORDER_10)
             
             );
 
@@ -102,5 +194,19 @@ public class NetcdfSettings implements SettingDefinitionProvider {
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         return Collections.unmodifiableSet(DEFINITIONS);
     }
-
+    
+    public static ChoiceSettingDefinition getCiRoleCodeChoiceSettingDefinition() {
+        return new ChoiceSettingDefinition().
+        addOption(CiRoleCodes.CI_RoleCode_author.name(), CiRoleCodes.CI_RoleCode_author.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_custodian.name(), CiRoleCodes.CI_RoleCode_custodian.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_distributor.name(), CiRoleCodes.CI_RoleCode_distributor.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_originator.name(), CiRoleCodes.CI_RoleCode_originator.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_owner.name(), CiRoleCodes.CI_RoleCode_owner.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_pointOfContact.name(), CiRoleCodes.CI_RoleCode_pointOfContact.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_principalInvestigator.name(), CiRoleCodes.CI_RoleCode_principalInvestigator.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_processor.name(), CiRoleCodes.CI_RoleCode_processor.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_publisher.name(), CiRoleCodes.CI_RoleCode_publisher.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_resourceProvider.name(), CiRoleCodes.CI_RoleCode_resourceProvider.getIdentifier()).
+        addOption(CiRoleCodes.CI_RoleCode_user.name(), CiRoleCodes.CI_RoleCode_user.getIdentifier());
+    }
 }

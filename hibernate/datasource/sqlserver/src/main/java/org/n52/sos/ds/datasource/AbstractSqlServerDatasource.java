@@ -268,21 +268,28 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                 StringBuffer statement = new StringBuffer();
                 // alter table MyOtherTable nocheck constraint all
                 for (String table : names) {
-                    statement = statement.append("ALTER TABLE \"").append(table).append("\" NOCHECK CONSTRAINT ALL;");
+                    statement = statement.append("ALTER TABLE \"")
+                    		.append(table)
+                    		.append("\" NOCHECK CONSTRAINT ALL; ");
                 }
                 // delete from MyTable
                 for (String table : names) {
-                    statement =
-                            statement.append("DELETE from \"").append(table).append("\"; DBCC CHECKIDENT(\"")
-                                    .append(table).append("\", RESEED, 0);");
+                    statement = statement.append("DELETE from \"")
+                    		.append(table)
+                    		.append("\"; DBCC CHECKIDENT(\"")
+                            .append(table)
+                            .append("\", RESEED, 0); ");
                 }
                 // alter table MyOtherTable check constraint all
                 for (String table : names) {
-                    statement = statement.append("ALTER TABLE \"").append(table).append("\" CHECK CONSTRAINT ALL;");
+                    statement = statement.append("ALTER TABLE \"")
+                    		.append(table)
+                    		.append("\" CHECK CONSTRAINT ALL; ");
                 }
                 statement =
-                        statement.append("DBCC SHRINKDATABASE (").append(settings.get(DATABASE_KEY).toString())
-                                .append(");");
+                        statement.append("DBCC SHRINKDATABASE (")
+                        .append(settings.get(DATABASE_KEY).toString())
+                        .append(");");
                 stmt.execute(statement.toString());
             } catch (SQLException ex) {
                 throw new ConfigurationException(ex);

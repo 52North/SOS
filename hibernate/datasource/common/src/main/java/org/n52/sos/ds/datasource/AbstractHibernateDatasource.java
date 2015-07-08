@@ -254,6 +254,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected String getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
         String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+        if (concept == null || concept.isEmpty()) {
+        	String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+        	concept = DatabaseConcept.SERIES_CONCEPT.name();
+        	if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+        		concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+        	} else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+        		concept = DatabaseConcept.OLD_CONCEPT.name();
+        	}
+        	LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+        			+ " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+        			databaseConceptDefinition.getKey(),
+        			HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+        			concept,
+        			databaseConceptDefinition.getKey(),
+        			concept);
+        }
         switch (DatabaseConcept.valueOf(concept)) {
         case SERIES_CONCEPT:
             return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;

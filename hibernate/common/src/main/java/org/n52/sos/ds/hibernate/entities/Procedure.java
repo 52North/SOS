@@ -29,9 +29,10 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.Set;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
+import org.n52.sos.util.CollectionHelper;
 
 /**
  * @since 4.0.0
@@ -57,7 +58,12 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean disabled;
     
     private boolean reference;
-
+    
+    private Procedure typeOf;
+    
+    // TODO check if this is necessary or can be replaced with a query
+    private Set<Procedure> instances;
+ 
     public long getProcedureId() {
         return this.procedureId;
     }
@@ -129,6 +135,45 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
      */
     public void setReference(boolean reference) {
         this.reference = reference;
+    }
+
+    /**
+     * @return the typeOf
+     */
+    public Procedure getTypeOf() {
+        return typeOf;
+    }
+
+    /**
+     * @param typeOf the typeOf to set
+     */
+    public void setTypeOf(Procedure typeOf) {
+        this.typeOf = typeOf;
+    }
+    
+    /**
+     * @return the typeOf
+     */
+    public boolean isTypeOf() {
+        return typeOf != null;
+    }
+
+    /**
+     * @return the instances
+     */
+    public Set<Procedure> getInstances() {
+        return instances;
+    }
+
+    /**
+     * @param instances the instances to set
+     */
+    public void setInstances(Set<Procedure> instances) {
+        this.instances = instances;
+    }
+    
+    public boolean isSetInstances() {
+        return CollectionHelper.isNotEmpty(getInstances());
     }
 
 }

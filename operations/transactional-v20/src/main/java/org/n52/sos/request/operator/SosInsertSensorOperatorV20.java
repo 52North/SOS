@@ -48,6 +48,7 @@ import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -65,6 +66,7 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
 /**
@@ -157,6 +159,11 @@ public class SosInsertSensorOperatorV20 extends
         }
         try {
             checkParentChildProcedures(request.getProcedureDescription(), request.getAssignedProcedureIdentifier());
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        try {
+            checkTypeOf(request.getProcedureDescription());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -287,6 +294,31 @@ public class SosInsertSensorOperatorV20 extends
             }
         }
         
+    }
+
+    private void checkTypeOf(SosProcedureDescription procedureDescription) throws OwsExceptionReport {
+        // if href is URL, remove typeOf
+        // else href empty/title.xml/PREFIX/title.xml check title if exists
+        if (procedureDescription.isSetTypeOf()) {
+            ReferenceType typeOf = procedureDescription.getTypeOf();
+            boolean referenced = false;
+            if (typeOf.isSetHref()) {
+                if (typeOf.getHref().startsWith(Constants.HTTP)) {
+                    procedureDescription.setTypeOf(null);
+                    referenced = true;
+                }
+            }
+            if (!referenced) {
+                if (typeOf.isSetTitle()) {
+                    String title = typeOf.getTitle();
+                    if (!getCache().hasProcedure(title)) {
+                        throw new InvalidParameterValueException("sml:AbstractProcess.typeOf", title);
+                    } 
+                } else {
+                    throw new MissingParameterValueException("sml:AbstractProcess.typeOf.title");
+                }
+            }
+        }
     }
 
     private void getChildProcedures() {

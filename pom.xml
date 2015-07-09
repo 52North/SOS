@@ -33,6 +33,7 @@
         <module>hibernate</module>
         <module>extensions</module>
         <module>spring</module>
+        <module>statistics</module>
         <module>third-party</module>
         <module>webapp</module>
         <module>webapp-bundle</module>

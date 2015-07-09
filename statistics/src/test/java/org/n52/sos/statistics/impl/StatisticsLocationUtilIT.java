@@ -1,0 +1,106 @@
+/**
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+package org.n52.sos.statistics.impl;
+
+import java.io.File;
+
+import org.elasticsearch.common.lang3.SystemUtils;
+import org.junit.Test;
+import org.n52.sos.statistics.api.StatisticsLocationUtilSettingsKeys;
+import org.springframework.util.Assert;
+
+public class StatisticsLocationUtilIT {
+
+    @Test
+    public void downloadDefaultDatabases() throws Exception {
+        StatisticsLocationUtil loc = new StatisticsLocationUtil();
+        loc.setEnabled(true);
+        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_AUTO);
+        if(SystemUtils.IS_OS_WINDOWS) {
+        loc.setDownloadFolderPath("C:\\temp");
+        } else {
+        	loc.setDownloadFolderPath("/tmp");
+        }
+        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_CITY);
+
+        loc.init();
+        Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
+    }
+
+    @Test
+    public void manualCityDatabase() throws Exception {
+        StatisticsLocationUtil loc = new StatisticsLocationUtil();
+        loc.setEnabled(true);
+        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+        String filepath = new File(getClass().getResource("/geolite/city.mmdb").toURI()).getAbsolutePath();
+        loc.setCityDbLoc(filepath);
+        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_CITY);
+
+        loc.init();
+        Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
+    }
+
+    @Test
+    public void manualCountryDatabase() throws Exception {
+        StatisticsLocationUtil loc = new StatisticsLocationUtil();
+        loc.setEnabled(true);
+        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+        String filepath = new File(getClass().getResource("/geolite/country.mmdb").toURI()).getAbsolutePath();
+        loc.setCountryDbLoc(filepath);
+        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+
+        loc.init();
+        Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
+    }
+
+    @Test
+    public void geolocIsDisabled() throws Exception {
+        StatisticsLocationUtil loc = new StatisticsLocationUtil();
+        loc.setEnabled(false);
+        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+        String filepath = new File(getClass().getResource("/geolite/country.mmdb").toURI()).getAbsolutePath();
+        loc.setCountryDbLoc(filepath);
+        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+
+        loc.init();
+        Assert.isNull(loc.ip2SpatialData("67.20.172.183"));
+    }
+
+    @Test
+    public void manualDatabaseButLocationIsEmpty() throws Exception {
+        StatisticsLocationUtil loc = new StatisticsLocationUtil();
+        loc.setEnabled(true);
+        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+        loc.setCountryDbLoc(null);
+        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+
+        loc.init();
+        Assert.isNull(loc.ip2SpatialData("67.20.172.183"));
+    }
+}

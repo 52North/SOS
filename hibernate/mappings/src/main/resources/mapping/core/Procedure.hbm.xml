@@ -99,5 +99,19 @@
             	<comment>Flag to indicate that this procedure is a reference procedure of another procedure. Not used by the SOS but by the Sensor Web REST-API</comment>
             </column>
         </property>
+		<many-to-one name="typeOf" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="typeOfFk">
+            <column name="typeOf" not-null="false">
+            	<comment>Relation/foreign key to procedure table. Optional, contains procedureId if this procedure is typeOf another procedure</comment>
+            </column>
+        </many-to-one>
+        <!-- TODO Check if this is required or can be replaced with a DAO query!!! -->
+        <set name="instances" inverse="false" fetch="select" table="`procedure`">
+        	<key>
+	        	<column name="typeOf" not-null="true" />
+	    	</key>
+		    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="instanceFk">
+		        <column name="procedureId" not-null="false" />
+		    </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

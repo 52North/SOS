@@ -123,7 +123,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             if (procedureDescriptionFormat != null && observationTypes != null && featureOfInterestTypes != null) {
                 final Procedure hProcedure =
                         new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
-                                request.getProcedureDescription().getParentProcedures(), session);
+                                request.getProcedureDescription(), session);
                 // TODO: set correct validTime,
                 new ValidProcedureTimeDAO().insertValidProcedureTime(
                         hProcedure,

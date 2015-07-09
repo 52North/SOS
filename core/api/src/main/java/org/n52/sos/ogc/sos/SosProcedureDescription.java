@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.util.CollectionHelper;
@@ -56,6 +57,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<String> parentProcedures = Sets.newLinkedHashSet();
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
+    private ReferenceType typeOf;
 
     @Override
     public SosProcedureDescription setIdentifier(String identifier) {
@@ -284,10 +286,33 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         copyOf.setOffetrings(getOfferings());
         copyOf.setParentProcedures(getParentProcedures());
         copyOf.setChildProcedures(getChildProcedures());
+        copyOf.setTypeOf(getTypeOf());
     }
     
     public boolean isSetFeatures() {
         return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
+    }
+
+    /**
+     * @return the typeOf
+     */
+    public ReferenceType getTypeOf() {
+        return typeOf;
+    }
+
+    /**
+     * @param typeOf the typeOf to set
+     */
+    public void setTypeOf(ReferenceType typeOf) {
+        this.typeOf = typeOf;
+    }
+    
+    
+    /**
+     * @return <code>true</code>, if typeOf is not null
+     */
+    public boolean isSetTypeOf() {
+        return getTypeOf() != null;
     }
 
     private void setFeatureOfInterest(Set<String> featuresOfInterest) {

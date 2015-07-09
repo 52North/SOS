@@ -74,8 +74,10 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 
@@ -770,15 +772,60 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @return Procedure object
      */
     public Procedure getOrInsertProcedure(final String identifier,
-            final ProcedureDescriptionFormat procedureDecriptionFormat, final Collection<String> parentProcedures,
+            final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
             final Session session) {
+//        Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
+//        if (procedure == null) {
+//            final TProcedure tProcedure = new TProcedure();
+//            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
+//            tProcedure.setIdentifier(identifier);
+//            if (CollectionHelper.isNotEmpty(parentProcedures)) {
+//                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
+//            }
+//            procedure = tProcedure;
+//        }
+//        procedure.setDeleted(false);
+//        session.saveOrUpdate(procedure);
+//        session.flush();
+//        session.refresh(procedure);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, session);
+    }
+
+    public Procedure getOrInsertProcedure(String identifier,
+            ProcedureDescriptionFormat procedureDescriptionFormat, SosProcedureDescription procedureDescription,
+            Session session) {
+//        Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
+//        if (procedure == null) {
+//            final TProcedure tProcedure = new TProcedure();
+//            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
+//            tProcedure.setIdentifier(identifier);
+//            if (procedureDescription.isSetParentProcedures()) {
+//                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
+//            }
+//            procedure = tProcedure;
+//        }
+//        procedure.setDeleted(false);
+//        session.saveOrUpdate(procedure);
+//        session.flush();
+//        session.refresh(procedure);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), session);
+    }
+    
+    private Procedure getOrInsertProcedure(String identifier,
+            ProcedureDescriptionFormat procedureDescriptionFormat, Collection<String> parentProcedures, ReferenceType typeOf,
+            Session session) {
         Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
         if (procedure == null) {
             final TProcedure tProcedure = new TProcedure();
-            tProcedure.setProcedureDescriptionFormat(procedureDecriptionFormat);
+            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
             tProcedure.setIdentifier(identifier);
             if (CollectionHelper.isNotEmpty(parentProcedures)) {
                 tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
+            }
+            if (typeOf != null) {
+                // TODO check typeOf in Operator, if still contained in SOS or if xlink:href is external link
+                // if not external, throw exception
+                tProcedure.setTypeOf(getProcedureForIdentifier(typeOf.getTitle(), session));
             }
             procedure = tProcedure;
         }

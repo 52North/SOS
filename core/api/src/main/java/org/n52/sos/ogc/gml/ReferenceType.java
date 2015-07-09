@@ -46,6 +46,19 @@ public class ReferenceType extends AbstractReferenceType {
         setHref(href);
     }
 
+    /**
+     * constructor
+     * 
+     * @param href
+     *            Href
+     * @param title
+     *            Title
+     */
+    public ReferenceType(String href, String title) {
+        setHref(href);
+        setTitle(title);
+    }
+
     @Override
     public String toString() {
         return String.format("ReferenceType [title=%s, role=%s, href=%s]", getTitle(), getRole(), getHref());

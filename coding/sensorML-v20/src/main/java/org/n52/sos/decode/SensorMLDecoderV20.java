@@ -333,7 +333,10 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     private void parseAbstractProcess(AbstractProcessType apt, AbstractProcessV20 abstractProcess)
             throws OwsExceptionReport {
         if (apt.isSetTypeOf()) {
-
+            Object decodedElement = CodingHelper.decodeXmlElement(apt.getTypeOf());
+            if (decodedElement instanceof ReferenceType) {
+                abstractProcess.setTypeOf((ReferenceType)decodedElement);
+            }
         }
         if (apt.isSetConfiguration()) {
 

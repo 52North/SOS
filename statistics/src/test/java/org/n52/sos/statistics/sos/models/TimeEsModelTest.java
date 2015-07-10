@@ -28,8 +28,39 @@
  */
 package org.n52.sos.statistics.sos.models;
 
-import java.util.Map;
+import org.joda.time.DateTime;
+import org.junit.Assert;
+import org.junit.Test;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
 
-public interface IJsonConverter {
-    Map<String, Object> getAsMap();
+public class TimeEsModelTest {
+
+    @Test
+    public void timeInstant() {
+        TimeInstant instant = new TimeInstant(DateTime.now());
+        TimeEsModel ret = TimeEsModel.convert(instant);
+
+        Assert.assertEquals(instant.getValue(), ret.getTimeInstant());
+    }
+
+    @Test
+    public void timePeriodNoDuration() {
+        TimePeriod period = new TimePeriod(DateTime.now(), DateTime.now().plusHours(3));
+        TimeEsModel ret = TimeEsModel.convert(period);
+
+        Assert.assertEquals(period.getStart(), ret.getStart());
+        Assert.assertEquals(period.getEnd(), ret.getEnd());
+        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), ret.getDuration());
+    }
+
+    @Test
+    public void invalidStartEndTimePeriod() {
+        TimePeriod period = new TimePeriod(DateTime.now().plusHours(3), DateTime.now());
+        TimeEsModel ret = TimeEsModel.convert(period);
+
+        Assert.assertEquals(period.getStart(), ret.getStart());
+        Assert.assertEquals(period.getEnd(), ret.getEnd());
+        Assert.assertNull(period.getDuration());
+    }
 }

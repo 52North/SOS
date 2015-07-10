@@ -78,7 +78,6 @@ public class StatisticsLocationUtil implements IStatisticsLocationUtil, IAdminSt
     private String cityDbLoc;
     private String countryDbLoc;
     private LocationDatabaseType dbType;
-
     private DatabaseReader reader;
 
     public StatisticsLocationUtil() {

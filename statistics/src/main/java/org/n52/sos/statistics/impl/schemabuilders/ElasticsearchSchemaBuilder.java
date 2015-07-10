@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.n52.sos.statistics.sos.SosDataMapping;
+
 import com.google.common.collect.ImmutableMap;
 
 public class ElasticsearchSchemaBuilder {
@@ -47,6 +49,7 @@ public class ElasticsearchSchemaBuilder {
     protected static Map<String, Object> doubleField = ImmutableMap.<String, Object> of("type", "double");
     protected static Map<String, Object> booleanField = ImmutableMap.<String, Object> of("type", "boolean");
     protected static Map<String, Object> geoPointField = ImmutableMap.<String, Object> of("type", "geo_point");
+    protected static Map<String, Object> geoShapeField = ImmutableMap.<String, Object> of("type", "geo_shape", "precision", "1km");
 
     private ElasticsearchSchemaBuilder() {
         properties = new HashMap<>(1);
@@ -100,6 +103,49 @@ public class ElasticsearchSchemaBuilder {
     public ElasticsearchSchemaBuilder addGeoPointField(String fieldName) {
         Objects.requireNonNull(fieldName);
         mappings.put(fieldName, geoPointField);
+        return this;
+    }
+
+    public ElasticsearchSchemaBuilder addGeoShapeField(String fieldName) {
+        Objects.requireNonNull(fieldName);
+        mappings.put(fieldName, geoShapeField);
+        return this;
+    }
+
+    public ElasticsearchSchemaBuilder addTimeFilterField(String fieldName) {
+        Objects.requireNonNull(fieldName);
+        ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
+        builder.addLongField(SosDataMapping.TIME_DURARTION);
+        builder.addDateField(SosDataMapping.TIME_START);
+        builder.addDateField(SosDataMapping.TIME_END);
+        builder.addDateField(SosDataMapping.TIME_TIMEINSTANT);
+        builder.addStringField(SosDataMapping.TIME_TIMEINSTANT);
+
+        addObject(fieldName, builder.build());
+        return this;
+    }
+
+    public ElasticsearchSchemaBuilder addSpatialFilterField(String fieldName) {
+        Objects.requireNonNull(fieldName);
+
+        ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
+        builder.addStringField(SosDataMapping.SPATIAL_FILTER_OPERATOR);
+        builder.addStringField(SosDataMapping.SPATIAL_FILTER_VALUE_REF);
+        builder.addGeoShapeField(SosDataMapping.SPATIAL_FILTER_SHAPE);
+
+        addObject(fieldName, builder.build());
+        return this;
+    }
+
+    public ElasticsearchSchemaBuilder addTimeField(String fieldName) {
+        Objects.requireNonNull(fieldName);
+        ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
+        builder.addLongField(SosDataMapping.TIME_DURARTION);
+        builder.addDateField(SosDataMapping.TIME_START);
+        builder.addDateField(SosDataMapping.TIME_END);
+        builder.addDateField(SosDataMapping.TIME_TIMEINSTANT);
+
+        addObject(fieldName, builder.build());
         return this;
     }
 

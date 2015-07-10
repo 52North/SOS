@@ -32,7 +32,7 @@ import javax.inject.Named;
 
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
-import org.n52.sos.statistics.sos.models.SosTimeJsonHolder;
+import org.n52.sos.statistics.sos.models.TimeEsModel;
 
 @Named
 public class DescribeSensorRequestHandler extends AbstractSosRequestHandler<DescribeSensorRequest> {
@@ -43,7 +43,7 @@ public class DescribeSensorRequestHandler extends AbstractSosRequestHandler<Desc
         put(SosDataMapping.DS_PROCEDURE, request.getProcedure());
         put(SosDataMapping.DS_PROCEDURE_DESC_FORMAT, request.getProcedureDescriptionFormat());
         if(request.getValidTime() != null) {
-        	put(SosDataMapping.DS_VALID_TIME, SosTimeJsonHolder.convert(request.getValidTime()).getAsMap());
+        	put(SosDataMapping.DS_VALID_TIME, TimeEsModel.convert(request.getValidTime()).getAsMap());
         }
     }
 }

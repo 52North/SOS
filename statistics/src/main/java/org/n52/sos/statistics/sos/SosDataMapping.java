@@ -40,14 +40,7 @@ public class SosDataMapping {
     // --------------- DESCRIBE SENSOR --------------//
     public static final String DS_PROCEDURE = "describesensor-procedure";
     public static final String DS_PROCEDURE_DESC_FORMAT = "describesensor-procedure-description-format";
-
-    // -------------- OBJECT ----------------------//
     public static final String DS_VALID_TIME = "describesensor-validtime";
-    public static final String DS_VALID_TIME_DURATION = "describesensor-validtime-duration";
-    public static final String DS_VALID_TIME_START = "describesensor-validtime-start";
-    public static final String DS_VALID_TIME_END = "describesensor-validtime-end";
-    public static final String DS_VALID_TIME_TIMEINSTANT = "describesensor-validtime-timeinstant";
-    // -------------- END OBJECT ----------------------//
 
     // --------------- GET OBSERVATION --------------//
     public static final String GO_PROCEDURES = "getobservation-procedures";
@@ -61,27 +54,19 @@ public class SosDataMapping {
 
     // --------------- GET FEATURE OF INTEREST --------------//
     public static final String GFOI_FEATURE_IDENTIFIERS = "getfeatureofinterest-feature-identifiers";
-
     public static final String GFOI_NAMESPACES = "getfeatureofinterest-namespaces";
-
     public static final String GFOI_OBSERVED_PROPERTIES = "getfeatureofinterest-observed-properties";
-
     public static final String GFOI_PROCEDURES = "getfeatureofinterest-procedures";
 
     // --------------- INSERT SENSOR --------------//
     public static final String IS_ASSIGNED_OFFERINGS = "insertsensor-assigned-offerings";
-
     public static final String IS_ASSIGNED_PROCEDURE_IDENTIFIERS = "insertsensor-assigned-procedure-identifiers";
-
     public static final String IS_OBSERVABLE_PROPERTY = "insertsensor-observable-property";
-
     public static final String IS_PROCEDURE_DESCRIPTION = "insertsensor-procedure-description";
-
     public static final String IS_PROCEDURE_DESCRIPTION_FORMAT = "insertsensor-description-format";
 
     // --------------- UPDATE SENSOR --------------//
     public static final String US_PROCEDURE_IDENTIFIER = "updatesensor-procedure-identifier";
-
     public static final String US_PROCEDURE_DESCRIPTION_FORMAT = "updatesensor-description-format";
 
     // --------------- DELETE SENSOR --------------//
@@ -89,12 +74,10 @@ public class SosDataMapping {
 
     // --------------- INSERT OBSERVATION --------------//
     public static final String IO_ASSIGNED_SENSORID = "insertobservation-assigned-sensorid";
-
     public static final String IO_OFFERINGS = "insertobservation-offerings";
 
     // --------------- INSERT RESULT TEMPLATE --------------//
     public static final String IRT_IDENTIFIER = "insertresulttemplate-identifier";
-
     public static final String IRT_RESULT_ENCODING = "insertresulttemplate-result-encoding";
 
     // --------------- INSERT RESULT --------------//
@@ -102,33 +85,45 @@ public class SosDataMapping {
 
     // --------------- GET RESULT TEMPLATE --------------//
     public static final String GRT_OBSERVED_PROPERTY = "getresulttemplate-observed-property";
-
     public static final String GRT_OFFERING = "getresulttemplate-offering";
 
     // --------------- GET RESULT --------------//
     public static final String GR_FEATURE_IDENTIFIERS = "getresult-feature-identifiers";
-
     public static final String GR_NAMSPACES = "getresult-namespaces";
-
     public static final String GR_OBSERVATION_TEMPLATE_IDENTIFIER = "getresult-observation-template-identifier";
-
     public static final String GR_OBSERVATION_PROPERTY = "getresult-observation-property";
-
     public static final String GR_OFFERING = "getresult-offering";
 
     // --------------- GET DATA AVAILABILITY --------------//
     public static final String GDA_FEATURES_OF_INTEREST = "getdataavailability-features-of-interest";
-
     public static final String GDA_NAMESPACE = "getdataavailability-namespace";
-
     public static final String GDA_OBSERVED_PROPERTIES = "getdataavailability-observed-properties";
-
     public static final String GDA_OFFERINGS = "getdataavailability-offerings";
-
     public static final String GDA_PROCEDURES = "getdataavailability-procedures";
 
     // --------------- DEFAULT RESPONSE EVENTS --------------//
 
     public static final String SRESP_MEDIATYPE = "sresp-mediatype";
+
+    // ----------------- OBJECTS DETEILS -----------------//
+    // --------------- SPATIAL FILTER --------------------//
+    public static final String SPATIAL_FILTER_OPERATOR = "operation";
+    public static final String SPATIAL_FILTER_SHAPE = "shape";
+    public static final String SPATIAL_FILTER_VALUE_REF = "value-reference";
+
+    // --------------- SPATIAL FILTER SHAPE--------------------//
+    // type and coordinates must be given for geo_shape types
+    // // TODO maybe we don't need them.
+    // public static final String GEO_SHAPE_TYPE = "type";
+    // public static final String GEO_SHAPE_COORDINATES = "coordinates";
+
+    // ---------------- TIME -------------------//
+    public static final String TIME_DURARTION = "duration";
+    public static final String TIME_START = "start";
+    public static final String TIME_END = "end";
+    public static final String TIME_TIMEINSTANT = "timeInstant";
+
+    // ---------------- TEMPORAL FILTER INC TIME -------------------//
+    public static final String TIME_FILTER_OPERATOR = "operator";
 
 }

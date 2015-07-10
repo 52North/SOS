@@ -26,41 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.statistics.sos.models;
+package custom;
 
-import org.joda.time.DateTime;
-import org.junit.Assert;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.junit.Test;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
+import org.n52.sos.util.JTSHelper;
 
-public class SosTimeJsonHolderTest {
+import basetest.SpringBaseTest;
 
-    @Test
-    public void timeInstant() {
-        TimeInstant instant = new TimeInstant(DateTime.now());
-        SosTimeJsonHolder ret = SosTimeJsonHolder.convert(instant);
+import com.vividsolutions.jts.geom.Geometry;
 
-        Assert.assertEquals(instant.getValue(), ret.getTimeInstant());
-    }
+public class GeoShapeInsert extends SpringBaseTest {
 
-    @Test
-    public void timePeriodNoDuration() {
-        TimePeriod period = new TimePeriod(DateTime.now(), DateTime.now().plusHours(3));
-        SosTimeJsonHolder ret = SosTimeJsonHolder.convert(period);
-
-        Assert.assertEquals(period.getStart(), ret.getStart());
-        Assert.assertEquals(period.getEnd(), ret.getEnd());
-        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), ret.getDuration());
-    }
+    @Inject
+    IStatisticsDataHandler handler;
 
     @Test
-    public void invalidStartEndTimePeriod() {
-        TimePeriod period = new TimePeriod(DateTime.now().plusHours(3), DateTime.now());
-        SosTimeJsonHolder ret = SosTimeJsonHolder.convert(period);
+    public void insert() throws OwsExceptionReport {
+        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
-        Assert.assertEquals(period.getStart(), ret.getStart());
-        Assert.assertEquals(period.getEnd(), ret.getEnd());
-        Assert.assertNull(period.getDuration());
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter).getAsMap();
+
+        Map<String, Object> root = new HashMap<>();
+        root.put(SosDataMapping.GO_SPATIAL_FILTER, map);
+        root.put(SosDataMapping.GO_FEATURE_OF_INTERESTS, "feature of interest");
+
+        handler.persist(root);
     }
 }

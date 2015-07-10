@@ -82,18 +82,12 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
         schema.addStringField(SosDataMapping.DS_PROCEDURE_DESC_FORMAT);
         schema.addStringField(SosDataMapping.GC_SECTIONS);
 
-        ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
-        builder.addLongField(SosDataMapping.DS_VALID_TIME_DURATION);
-        builder.addDateField(SosDataMapping.DS_VALID_TIME_START);
-        builder.addDateField(SosDataMapping.DS_VALID_TIME_END);
-        builder.addDateField(SosDataMapping.DS_VALID_TIME_TIMEINSTANT);
-
-        schema.addObject(SosDataMapping.DS_VALID_TIME, builder.build());
+        schema.addTimeField(SosDataMapping.DS_VALID_TIME);
     }
 
     private void getObservation(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(SosDataMapping.GO_PROCEDURES);
-        schema.addStringField(SosDataMapping.GO_SPATIAL_FILTER);
+        schema.addSpatialFilterField(SosDataMapping.GO_SPATIAL_FILTER);
         schema.addStringField(SosDataMapping.GO_OBSERVED_PROPERTIES);
         schema.addStringField(SosDataMapping.GO_OFFERINGS);
         schema.addStringField(SosDataMapping.GO_FEATURE_OF_INTERESTS);

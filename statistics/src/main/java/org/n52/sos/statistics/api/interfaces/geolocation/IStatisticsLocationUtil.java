@@ -45,5 +45,4 @@ public interface IStatisticsLocationUtil {
     public Map<String, Object> ip2SpatialData(String host);
 
     public IPAddress resolveOriginalIpAddress(RequestContext ctx);
-
 }

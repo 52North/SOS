@@ -35,9 +35,9 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.sos.statistics.sos.SosDataMapping;
 
-public class SosTimeJsonHolder extends AbstractElasticSearchDataHolder implements IJsonConverter {
+public class TimeEsModel extends AbstractElasitcsearchModel {
 
     private DateTime timeInstant = null;
 
@@ -49,15 +49,15 @@ public class SosTimeJsonHolder extends AbstractElasticSearchDataHolder implement
 
     private String timeOperator;
 
-    private SosTimeJsonHolder() {
+    private TimeEsModel() {
     }
 
-    public static SosTimeJsonHolder convert(Time time) {
+    public static TimeEsModel convert(Time time) {
         if (time == null) {
             return null;
         }
 
-        SosTimeJsonHolder o = new SosTimeJsonHolder();
+        TimeEsModel o = new TimeEsModel();
         if (time instanceof TimeInstant) {
             o.timeInstant = ((TimeInstant) time).getValue();
 
@@ -80,18 +80,20 @@ public class SosTimeJsonHolder extends AbstractElasticSearchDataHolder implement
         return o;
     }
 
-    public static SosTimeJsonHolder convert(TemporalFilter temporalFilter) {
-        SosTimeJsonHolder json = convert(temporalFilter.getTime());
+    public static TimeEsModel convert(TemporalFilter temporalFilter) {
+        TimeEsModel json = convert(temporalFilter.getTime());
         json.timeOperator = temporalFilter.getOperator().toString();
         return json;
     }
 
     @Override
     public Map<String, Object> getAsMap() {
-        put("duration", duration);
-        put("start", start);
-        put("end", end);
-        put("timeInstant", timeInstant);
+        put(SosDataMapping.TIME_DURARTION, duration);
+        put(SosDataMapping.TIME_START, start);
+        put(SosDataMapping.TIME_END, end);
+        put(SosDataMapping.TIME_TIMEINSTANT, timeInstant);
+        // only by TemporalFilter
+        put(SosDataMapping.TIME_FILTER_OPERATOR, timeOperator);
         return dataMap;
     }
 

@@ -32,6 +32,7 @@ import javax.inject.Named;
 
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
 
 @Named
 public class GetObservationRequestHandler extends AbstractSosRequestHandler<GetObservationRequest> {
@@ -42,8 +43,8 @@ public class GetObservationRequestHandler extends AbstractSosRequestHandler<GetO
         put(SosDataMapping.GO_OFFERINGS, request.getOfferings());
         put(SosDataMapping.GO_OBSERVED_PROPERTIES, request.getObservedProperties());
         put(SosDataMapping.GO_FEATURE_OF_INTERESTS, request.getFeatureIdentifiers());
-        // TODO implement spatial filter
-        // put(SosDataMapping.GO_SPATIAL_FILTER,request.getSpatialFilter());
+        put(SosDataMapping.GO_SPATIAL_FILTER, SpatialFilterEsModel.convert(request.getSpatialFilter()).getAsMap());
+
         // TODO implement temporalfilter
     }
 }

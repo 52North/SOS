@@ -26,17 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package basetest;
+package org.n52.sos.statistics.sos.models;
 
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import java.util.Map;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(
-        locations = { "classpath:configured-context.xml", "classpath:configured-context.xml", "classpath:testContext.xml" })
-public abstract class SpringBaseTest {
-    protected final static Logger logger = LoggerFactory.getLogger(SpringBaseTest.class);
+import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
+
+public abstract class AbstractElasitcsearchModel extends AbstractElasticSearchDataHolder {
+
+    public abstract Map<String, Object> getAsMap();
 }

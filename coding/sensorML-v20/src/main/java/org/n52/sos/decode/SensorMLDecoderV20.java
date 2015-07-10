@@ -627,51 +627,29 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return position;
     }
 
-    // private List<SmlComponent> parseComponents(final Components components)
-    // throws OwsExceptionReport {
-    // final List<SmlComponent> sosSmlComponents = Lists.newLinkedList();
-    // if (components.isSetComponentList() &&
-    // components.getComponentList().getComponentArray() != null) {
-    // for (final Component component :
-    // components.getComponentList().getComponentArray()) {
-    // if (component.isSetProcess() || component.isSetHref()) {
-    // final SmlComponent sosSmlcomponent = new
-    // SmlComponent(component.getName());
-    // AbstractProcess abstractProcess = null;
-    // if (component.isSetProcess()) {
-    // if (component.getProcess() instanceof SystemType) {
-    // abstractProcess = new System();
-    // parseSystem((SystemType) component.getProcess(), (System)
-    // abstractProcess);
-    // } else {
-    // abstractProcess = new AbstractProcess();
-    // parseAbstractProcess(component.getProcess(), abstractProcess);
-    // }
-    // } else {
-    // abstractProcess = new AbstractProcess();
-    // abstractProcess.setIdentifier(component.getHref());
-    // }
-    // sosSmlcomponent.setProcess(abstractProcess);
-    // sosSmlComponents.add(sosSmlcomponent);
-    // }
-    // }
-    // }
-    // return sosSmlComponents;
-    // }
-
     private List<SmlComponent> parseComponents(ComponentListPropertyType components)
             throws UnsupportedDecoderInputException, OwsExceptionReport {
         final List<SmlComponent> sosSmlComponents = Lists.newLinkedList();
         if (components.isSetComponentList() && components.getComponentList().getComponentArray() != null) {
             for (final Component component : components.getComponentList().getComponentArray()) {
-                if (component.isSetAbstractProcess() || component.isSetHref()) {
+                if (component.isSetAbstractProcess() || component.isSetHref() || component.isSetTitle() ) {
                     final SmlComponent sosSmlcomponent = new SmlComponent(component.getName());
                     AbstractSensorML abstractProcess = null;
                     if (component.isSetAbstractProcess()) {
                         abstractProcess = parse(component.getAbstractProcess());
                     } else {
+                        if (component.isSetTitle()) {
+                            sosSmlcomponent.setTitle(component.getTitle());
+                        } 
+                        if (component.isSetHref()) {
+                            sosSmlcomponent.setHref(component.getHref());
+                        }
                         abstractProcess = new AbstractProcess();
-                        abstractProcess.setIdentifier(component.getHref());
+                        if (sosSmlcomponent.isSetTitle()) {
+                            abstractProcess.setIdentifier(sosSmlcomponent.getTitle());
+                        } else if (!sosSmlcomponent.isSetTitle() && sosSmlcomponent.isSetHref()) {
+                            abstractProcess.setIdentifier(sosSmlcomponent.getHref());
+                        }
                     }
                     sosSmlcomponent.setProcess(abstractProcess);
                     sosSmlComponents.add(sosSmlcomponent);
@@ -737,15 +715,32 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     private SmlIo<?> parseInput(Input xbInput) throws OwsExceptionReport {
         final SmlIo<?> sosIo = new SmlIo();
         sosIo.setIoName(xbInput.getName());
-        sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbInput));
+        if (xbInput.isSetHref()) {
+            parseReference(xbInput, sosIo);
+        } else {
+            sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbInput));
+        }
+        
         return sosIo;
     }
     
+    private void parseReference(DataComponentOrObservablePropertyType adcpt, SmlIo<?> sosIo) {
+        sosIo.setHref(adcpt.getHref());
+        if (adcpt.isSetTitle()) {
+            sosIo.setTitle(adcpt.getTitle());
+        }
+        
+    }
+
     @SuppressWarnings({ "rawtypes" })
     private SmlIo<?> parseOutput(Output xbOutput) throws OwsExceptionReport {
         final SmlIo<?> sosIo = new SmlIo();
         sosIo.setIoName(xbOutput.getName());
-        sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbOutput));
+        if (xbOutput.isSetHref()) {
+            parseReference(xbOutput, sosIo);
+        } else {
+            sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbOutput));
+        }
         return sosIo;
     }
 

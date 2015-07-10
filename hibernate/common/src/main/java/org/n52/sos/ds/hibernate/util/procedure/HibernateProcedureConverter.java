@@ -309,7 +309,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                 ProcedureDescriptionEnrichments.create().setIdentifier(procedure.getIdentifier()).setVersion(version)
                         .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session)
                         .setValidTime(validTime).setProcedureCache(cache).setConverter(this).setLanguage(language);
-        if (procedure.isTypeOf()) {
+        if (procedure.isSetTypeOf()) {
             Procedure typeOf = procedure.getTypeOf();
             enrichments.setTypeOfIdentifier(typeOf.getIdentifier()).setTypeOfFormat(format);
         }

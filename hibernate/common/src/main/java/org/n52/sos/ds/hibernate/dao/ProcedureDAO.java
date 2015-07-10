@@ -774,46 +774,30 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public Procedure getOrInsertProcedure(final String identifier,
             final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
             final Session session) {
-//        Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
-//        if (procedure == null) {
-//            final TProcedure tProcedure = new TProcedure();
-//            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
-//            tProcedure.setIdentifier(identifier);
-//            if (CollectionHelper.isNotEmpty(parentProcedures)) {
-//                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
-//            }
-//            procedure = tProcedure;
-//        }
-//        procedure.setDeleted(false);
-//        session.saveOrUpdate(procedure);
-//        session.flush();
-//        session.refresh(procedure);
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, session);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, true, session);
     }
 
+    /**
+     * Insert and get procedure object
+     *
+     * @param identifier
+     *            Procedure identifier
+     * @param procedureDecriptionFormat
+     *            Procedure description format object
+     * @param procedureDescription
+     *            {@link SosProcedureDescription} to insert
+     * @param session
+     *            Hibernate session
+     * @return Procedure object
+     */
     public Procedure getOrInsertProcedure(String identifier,
             ProcedureDescriptionFormat procedureDescriptionFormat, SosProcedureDescription procedureDescription,
             Session session) {
-//        Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
-//        if (procedure == null) {
-//            final TProcedure tProcedure = new TProcedure();
-//            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
-//            tProcedure.setIdentifier(identifier);
-//            if (procedureDescription.isSetParentProcedures()) {
-//                tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
-//            }
-//            procedure = tProcedure;
-//        }
-//        procedure.setDeleted(false);
-//        session.saveOrUpdate(procedure);
-//        session.flush();
-//        session.refresh(procedure);
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), session);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), procedureDescription.isAggragation(), session);
     }
     
-    private Procedure getOrInsertProcedure(String identifier,
-            ProcedureDescriptionFormat procedureDescriptionFormat, Collection<String> parentProcedures, ReferenceType typeOf,
-            Session session) {
+    private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
+            Collection<String> parentProcedures, ReferenceType typeOf, boolean isAggregation, Session session) {
         Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
         if (procedure == null) {
             final TProcedure tProcedure = new TProcedure();
@@ -822,11 +806,14 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             if (CollectionHelper.isNotEmpty(parentProcedures)) {
                 tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
             }
-            if (typeOf != null) {
-                // TODO check typeOf in Operator, if still contained in SOS or if xlink:href is external link
-                // if not external, throw exception
-                tProcedure.setTypeOf(getProcedureForIdentifier(typeOf.getTitle(), session));
+            if (typeOf != null && !tProcedure.isSetTypeOf()) {
+                Procedure typeOfProc = getProcedureForIdentifier(typeOf.getTitle(), session);
+                if (typeOfProc != null) {
+                    tProcedure.setTypeOf(typeOfProc);
+                }
+                tProcedure.setIsType(true);
             }
+            tProcedure.setIsAggragation(isAggregation);
             procedure = tProcedure;
         }
         procedure.setDeleted(false);

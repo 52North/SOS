@@ -688,6 +688,9 @@ public class CoordianteTransformator implements
             crs =
                     crs.replace(EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
                             EpsgConstants.EPSG_PREFIX, Constants.EMPTY_STRING);
+            if (!crs.isEmpty() && !Character.isDigit(crs.toCharArray()[0])) {
+                return -1;
+            }
             try {
                 return Integer.valueOf(crs);
             } catch (final NumberFormatException nfe) {

@@ -29,14 +29,17 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
-import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
-import org.n52.sos.util.CollectionHelper;
 
 /**
  * @since 4.0.0
  * 
+ */
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since
+ *
  */
 public class Procedure extends SpatialEntity implements Serializable, HasDeletedFlag, HasProcedureDescriptionFormat,
         HasGeometry, HasCoordinate, HasDisabledFlag {
@@ -61,9 +64,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     
     private Procedure typeOf;
     
-    // TODO check if this is necessary or can be replaced with a query
-    private Set<Procedure> instances;
- 
+    private boolean isType;
+    
+    private boolean isAggragation;
+    
     public long getProcedureId() {
         return this.procedureId;
     }
@@ -152,28 +156,37 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
     
     /**
-     * @return the typeOf
+     * @return <code>true</code>, if is not null
      */
-    public boolean isTypeOf() {
-        return typeOf != null;
+    public boolean isSetTypeOf() {
+        return getTypeOf() != null;
     }
 
     /**
-     * @return the instances
+     * @return the isType
      */
-    public Set<Procedure> getInstances() {
-        return instances;
+    public boolean isType() {
+        return isType;
     }
 
     /**
-     * @param instances the instances to set
+     * @param isType the isType to set
      */
-    public void setInstances(Set<Procedure> instances) {
-        this.instances = instances;
-    }
-    
-    public boolean isSetInstances() {
-        return CollectionHelper.isNotEmpty(getInstances());
+    public void setIsType(boolean isType) {
+        this.isType = isType;
     }
 
+    /**
+     * @return the isAggragation
+     */
+    public boolean isAggragation() {
+        return isAggragation;
+    }
+
+    /**
+     * @param isAggragation the isAggragation to set
+     */
+    public void setIsAggragation(boolean isAggragation) {
+        this.isAggragation = isAggragation;
+    }
 }

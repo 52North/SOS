@@ -58,6 +58,15 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
     private ReferenceType typeOf;
+    
+    /**
+     * Is it an aggregation procedure, e.g. System, PhysicalSystem
+     * 
+     * @return <code>true</code>, if this is an aggregation procedure
+     */
+    public boolean isAggragation() {
+        return false;
+    }
 
     @Override
     public SosProcedureDescription setIdentifier(String identifier) {

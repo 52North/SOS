@@ -114,13 +114,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             final ProcedureDescriptionFormat procedureDescriptionFormat =
                     new ProcedureDescriptionFormatDAO().getOrInsertProcedureDescriptionFormat(
                             request.getProcedureDescriptionFormat(), session);
-            final List<ObservationType> observationTypes =
-                    new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
-                            session);
-            final List<FeatureOfInterestType> featureOfInterestTypes =
-                    new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestTypes(request.getMetadata()
-                            .getFeatureOfInterestTypes(), session);
-            if (procedureDescriptionFormat != null && observationTypes != null && featureOfInterestTypes != null) {
+            if (procedureDescriptionFormat != null)  {
                 final Procedure hProcedure =
                         new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
                                 request.getProcedureDescription(), session);
@@ -130,42 +124,105 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                         procedureDescriptionFormat,
                         getSensorDescriptionFromProcedureDescription(request.getProcedureDescription(),
                                 assignedProcedureID), new DateTime(DateTimeZone.UTC), session);
-                final List<ObservableProperty> hObservableProperties =
-                        getOrInsertNewObservableProperties(request.getObservableProperty(), session);
-                final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-                final OfferingDAO offeringDAO = new OfferingDAO();
-                for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-                    final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
-                    if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
-                        final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
-                        final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
-                        for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-                            final List<RelatedFeatureRole> relatedFeatureRoles =
-                                    relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
-                                            session);
-                            hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
-                                    relatedFeature.getFeature(), relatedFeatureRoles, session));
+                if (!request.isType()) {
+                    final List<ObservationType> observationTypes =
+                            new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
+                                    session);
+                    final List<FeatureOfInterestType> featureOfInterestTypes =
+                            new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestTypes(request.getMetadata()
+                                    .getFeatureOfInterestTypes(), session);
+                    if (observationTypes != null && featureOfInterestTypes != null) {
+                        final List<ObservableProperty> hObservableProperties =
+                                getOrInsertNewObservableProperties(request.getObservableProperty(), session);
+                        final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+                        final OfferingDAO offeringDAO = new OfferingDAO();
+                        for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
+                            final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
+                            if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
+                                final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
+                                final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
+                                for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
+                                    final List<RelatedFeatureRole> relatedFeatureRoles =
+                                            relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
+                                                    session);
+                                    hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
+                                            relatedFeature.getFeature(), relatedFeatureRoles, session));
+                                }
+                            }
+                            final Offering hOffering =
+                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
+                                            assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
+                                            featureOfInterestTypes, session);
+                            for (final ObservableProperty hObservableProperty : hObservableProperties) {
+                                observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
+                                        hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
+                            }
                         }
-                    }
-                    final Offering hOffering =
-                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
-                                    assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
-                                    featureOfInterestTypes, session);
-                    for (final ObservableProperty hObservableProperty : hObservableProperties) {
-                        observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
-                                hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
+                        // TODO: parent and child procedures
+//                        response.setAssignedProcedure(assignedProcedureID);
+//                        response.setAssignedOffering(firstAssignedOffering.getIdentifier());
+                    } else {
+                        throw new NoApplicableCodeException().withMessage("Error while inserting InsertSensor into database!");
                     }
                 }
-                // TODO: parent and child procedures
                 response.setAssignedProcedure(assignedProcedureID);
                 response.setAssignedOffering(firstAssignedOffering.getIdentifier());
-            } else if (procedureDescriptionFormat == null && observationTypes != null
-                    && featureOfInterestTypes != null) {
-                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                        "");
             } else {
-                throw new NoApplicableCodeException().withMessage("Error while inserting InsertSensor into database!");
+                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat, request.getProcedureDescriptionFormat());
             }
+            
+//            final List<ObservationType> observationTypes =
+//                    new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
+//                            session);
+//            final List<FeatureOfInterestType> featureOfInterestTypes =
+//                    new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestTypes(request.getMetadata()
+//                            .getFeatureOfInterestTypes(), session);
+//            if (procedureDescriptionFormat != null && observationTypes != null && featureOfInterestTypes != null) {
+//                final Procedure hProcedure =
+//                        new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
+//                                request.getProcedureDescription(), session);
+//                // TODO: set correct validTime,
+//                new ValidProcedureTimeDAO().insertValidProcedureTime(
+//                        hProcedure,
+//                        procedureDescriptionFormat,
+//                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription(),
+//                                assignedProcedureID), new DateTime(DateTimeZone.UTC), session);
+//                final List<ObservableProperty> hObservableProperties =
+//                        getOrInsertNewObservableProperties(request.getObservableProperty(), session);
+//                final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
+//                final OfferingDAO offeringDAO = new OfferingDAO();
+//                for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
+//                    final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
+//                    if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
+//                        final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
+//                        final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
+//                        for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
+//                            final List<RelatedFeatureRole> relatedFeatureRoles =
+//                                    relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
+//                                            session);
+//                            hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
+//                                    relatedFeature.getFeature(), relatedFeatureRoles, session));
+//                        }
+//                    }
+//                    final Offering hOffering =
+//                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
+//                                    assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
+//                                    featureOfInterestTypes, session);
+//                    for (final ObservableProperty hObservableProperty : hObservableProperties) {
+//                        observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
+//                                hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
+//                    }
+//                }
+//                // TODO: parent and child procedures
+//                response.setAssignedProcedure(assignedProcedureID);
+//                response.setAssignedOffering(firstAssignedOffering.getIdentifier());
+//            } else if (procedureDescriptionFormat == null && observationTypes != null
+//                    && featureOfInterestTypes != null) {
+//                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
+//                        "");
+//            } else {
+//                throw new NoApplicableCodeException().withMessage("Error while inserting InsertSensor into database!");
+//            }
             session.flush();
             transaction.commit();
         } catch (final HibernateException he) {

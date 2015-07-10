@@ -55,17 +55,24 @@ public class SpatialFilterEsModel extends AbstractElasitcsearchModel {
 
     @Override
     public Map<String, Object> getAsMap() {
-        switch (spatialFilter.getSrid()) {
-        case 4326:
-            createBBOX();
-            break;
-
-        default:
-            logger.debug("Unsupported SRID coordination system {}", spatialFilter.getSrid());
+        if (spatialFilter == null) {
             return null;
         }
+        try {
+            switch (spatialFilter.getSrid()) {
+            case 4326:
+                createBBOX();
+                break;
 
-        return dataMap;
+            default:
+                logger.debug("Unsupported SRID coordination system {}", spatialFilter.getSrid());
+                return null;
+            }
+            return dataMap;
+        } catch (Throwable e) {
+            logger.warn(e.getMessage(), e);
+        }
+        return null;
     }
 
     private void createBBOX() {

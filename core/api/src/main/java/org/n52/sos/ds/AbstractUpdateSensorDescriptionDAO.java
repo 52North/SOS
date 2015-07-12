@@ -51,7 +51,7 @@ public abstract class AbstractUpdateSensorDescriptionDAO extends AbstractOperati
         addProcedureParameter(opsMeta);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+                    CodingRepository.getInstance().getSupportedTransactionalProcedureDescriptionFormats(service, version));
         }
         opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
     }

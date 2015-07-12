@@ -40,33 +40,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.opengis.gml.StringOrRefType;
-import net.opengis.swe.x101.AbstractDataComponentType;
-import net.opengis.swe.x101.AbstractEncodingType;
-import net.opengis.swe.x101.AnyScalarPropertyType;
-import net.opengis.swe.x101.BlockEncodingPropertyType;
-import net.opengis.swe.x101.CategoryDocument.Category;
-import net.opengis.swe.x101.CountDocument.Count;
-import net.opengis.swe.x101.DataArrayDocument;
-import net.opengis.swe.x101.DataArrayType;
-import net.opengis.swe.x101.DataComponentPropertyType;
-import net.opengis.swe.x101.DataRecordType;
-import net.opengis.swe.x101.EnvelopeType;
-import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
-import net.opengis.swe.x101.QualityPropertyType;
-import net.opengis.swe.x101.QuantityDocument.Quantity;
-import net.opengis.swe.x101.QuantityRangeDocument.QuantityRange;
-import net.opengis.swe.x101.SimpleDataRecordType;
-import net.opengis.swe.x101.TextBlockDocument.TextBlock;
-import net.opengis.swe.x101.TextDocument.Text;
-import net.opengis.swe.x101.TimeDocument.Time;
-import net.opengis.swe.x101.TimeGeometricPrimitivePropertyType;
-import net.opengis.swe.x101.TimeRangeDocument.TimeRange;
-import net.opengis.swe.x101.UomPropertyType;
-import net.opengis.swe.x101.VectorPropertyType;
-import net.opengis.swe.x101.VectorType;
-import net.opengis.swe.x101.VectorType.Coordinate;
-
 import org.apache.xmlbeans.GDateBuilder;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlDateTime;
@@ -114,6 +87,33 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import net.opengis.gml.StringOrRefType;
+import net.opengis.swe.x101.AbstractDataComponentType;
+import net.opengis.swe.x101.AbstractEncodingType;
+import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.BlockEncodingPropertyType;
+import net.opengis.swe.x101.CategoryDocument.Category;
+import net.opengis.swe.x101.CountDocument.Count;
+import net.opengis.swe.x101.DataArrayDocument;
+import net.opengis.swe.x101.DataArrayType;
+import net.opengis.swe.x101.DataComponentPropertyType;
+import net.opengis.swe.x101.DataRecordType;
+import net.opengis.swe.x101.EnvelopeType;
+import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
+import net.opengis.swe.x101.QualityPropertyType;
+import net.opengis.swe.x101.QuantityDocument.Quantity;
+import net.opengis.swe.x101.QuantityRangeDocument.QuantityRange;
+import net.opengis.swe.x101.SimpleDataRecordType;
+import net.opengis.swe.x101.TextBlockDocument.TextBlock;
+import net.opengis.swe.x101.TextDocument.Text;
+import net.opengis.swe.x101.TimeDocument.Time;
+import net.opengis.swe.x101.TimeGeometricPrimitivePropertyType;
+import net.opengis.swe.x101.TimeRangeDocument.TimeRange;
+import net.opengis.swe.x101.UomPropertyType;
+import net.opengis.swe.x101.VectorPropertyType;
+import net.opengis.swe.x101.VectorType;
+import net.opengis.swe.x101.VectorType.Coordinate;
 
 /**
  * Encoder class for SWE Common 1.0.1

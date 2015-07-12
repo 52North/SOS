@@ -91,7 +91,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLEncoder.class);
     
     private static final String OUTPUT_PREFIX = "output#";
-
+    
     /**
      * Add special capabilities to abstract process:
      * <ul>
@@ -500,6 +500,4 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
     protected XmlOptions getOptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
-    
-    
 }

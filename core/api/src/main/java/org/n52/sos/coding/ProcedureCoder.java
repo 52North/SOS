@@ -26,18 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.coding;
 
-import org.n52.sos.coding.ProcedureCoder;
+import java.util.Set;
+
 
 /**
- * <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.0.0
- * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
  * @param <S>
  * @param <T>
  */
-public interface ProcedureEncoder<T, S> extends Encoder<T, S>, ProcedureCoder {
-
-
+public interface ProcedureCoder {
+    /**
+     * Get the supported procedure description formats for this
+     * {@linkplain ProcedureCoder} and the specified service and version.
+     * 
+     * @param service
+     *            the service
+     * @param version
+     *            the version
+     * 
+     * @return the procedure description formats
+     */
+    Set<String> getSupportedProcedureDescriptionFormats(String service, String version);
 }

@@ -26,18 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.decode;
 
 import org.n52.sos.coding.ProcedureCoder;
 
 /**
- * <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.0.0
- * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
  * @param <S>
  * @param <T>
  */
-public interface ProcedureEncoder<T, S> extends Encoder<T, S>, ProcedureCoder {
-
+public interface ProcedureDecoder<T, S> extends Decoder<T, S>, ProcedureCoder {
 
 }

@@ -26,37 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds;
+package org.n52.sos.decode;
 
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.response.UpdateSensorResponse;
+import org.n52.sos.coding.ProcedureCoder;
 
 /**
- * @since 4.0.0
- * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <S>
+ * @param <T>
  */
-public abstract class AbstractUpdateSensorDescriptionDAO extends AbstractOperationDAO {
-
-    public AbstractUpdateSensorDescriptionDAO(String service) {
-        super(service, Sos2Constants.Operations.UpdateSensorDescription.name());
-    }
-
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
-        if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedTransactionalProcedureDescriptionFormats(service, version));
-        }
-        opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
-    }
-
-    public abstract UpdateSensorResponse updateSensorDescription(UpdateSensorRequest request)
-            throws OwsExceptionReport;
+public interface ProcedureDecoder<T, S> extends Decoder<T, S>, ProcedureCoder {
 
 }

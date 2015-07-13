@@ -35,6 +35,64 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlObject;
+import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
+import org.n52.sos.encode.AbstractSensorMLDecoder;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.AbstractProcess;
+import org.n52.sos.ogc.sensorML.AbstractSensorML;
+import org.n52.sos.ogc.sensorML.SensorML20Constants;
+import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.ogc.sensorML.SmlContact;
+import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.sos.ogc.sensorML.elements.SmlCapability;
+import org.n52.sos.ogc.sensorML.elements.SmlCharacteristic;
+import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
+import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
+import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
+import org.n52.sos.ogc.sensorML.v20.AbstractProcessV20;
+import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
+import org.n52.sos.ogc.sensorML.v20.DescribedObject;
+import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
+import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.sos.ogc.sensorML.v20.SmlDataStreamPropertyType;
+import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
+import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import net.opengis.gml.x32.FeaturePropertyType;
 import net.opengis.sensorml.x20.AbstractPhysicalProcessType;
 import net.opengis.sensorml.x20.AbstractProcessDocument;
@@ -80,60 +138,6 @@ import net.opengis.sensorml.x20.SimpleProcessType;
 import net.opengis.sensorml.x20.TermType;
 import net.opengis.swe.x20.DataStreamPropertyType;
 
-import org.apache.xmlbeans.XmlObject;
-import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
-import org.n52.sos.encode.AbstractSensorMLDecoder;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.SmlContact;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlCapability;
-import org.n52.sos.ogc.sensorML.elements.SmlCharacteristic;
-import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
-import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
-import org.n52.sos.ogc.sensorML.elements.SmlComponent;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sensorML.elements.SmlPosition;
-import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
-import org.n52.sos.ogc.sensorML.v20.AbstractProcessV20;
-import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
-import org.n52.sos.ogc.sensorML.v20.DescribedObject;
-import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
-import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
-import org.n52.sos.ogc.sensorML.v20.SmlDataStreamPropertyType;
-import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
 /**
  * {@link AbstractSensorMLDecoder} class to decode OGC SensorML 2.0
  * 
@@ -157,6 +161,14 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
 
     private static final Set<String> REMOVABLE_COMPONENTS_ROLES = Collections
             .singleton(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES);
+    
+    private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
+            ImmutableMap.of(
+                    SosConstants.SOS,
+                    ImmutableMap
+                            .<String, Set<String>> builder()
+                            .put(Sos2Constants.SERVICEVERSION,
+                                    ImmutableSet.of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)).build());
 
     public SensorMLDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -177,6 +189,15 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
                 SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    }
+    
+    @Override
+    public Set<String> getSupportedProcedureDescriptionFormats(final String service, final String version) {
+        if (SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
+                && SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
+            return SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
+        }
+        return Collections.emptySet();
     }
 
     @Override

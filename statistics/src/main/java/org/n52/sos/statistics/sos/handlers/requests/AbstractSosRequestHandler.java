@@ -28,7 +28,9 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -39,6 +41,7 @@ import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
 import org.n52.sos.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
 import org.n52.sos.statistics.impl.StatisticsLocationUtil;
+import org.n52.sos.statistics.sos.models.ExtensionEsModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,9 +68,16 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
         put(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD, ip);
         put(ServiceEventDataMapping.SR_GEO_LOC_FIELD, locationUtil.ip2SpatialData(ip));
         if (request.getRequestContext() != null) {
-            put(ServiceEventDataMapping.PROXIED_REQUEST_FIELD, request.getRequestContext().getForwardedForChain().isPresent());
+            put(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD, request.getRequestContext().getForwardedForChain().isPresent());
             put(ServiceEventDataMapping.SR_CONTENT_TYPE, request.getRequestContext().getContentType().orNull());
             put(ServiceEventDataMapping.SR_ACCEPT_TYPES, request.getRequestContext().getAcceptType().orNull());
+        }
+        // extensions
+        if (request.getExtensions() != null && request.getExtensions().getExtensions() != null) {
+            List<Map<String, Object>> list =
+                    request.getExtensions().getExtensions().stream().map(ExtensionEsModel::convert).map(ExtensionEsModel::getAsMap)
+                            .collect(Collectors.toList());
+            put(ServiceEventDataMapping.SR_EXTENSIONS, list);
         }
         return this;
     }

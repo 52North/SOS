@@ -73,13 +73,12 @@
 		<!-- apache commons -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-compress</artifactId>
 			<version>1.9</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 
 
@@ -111,6 +110,7 @@
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>gda-operation</artifactId>
 		</dependency>
+
 	</dependencies>
 
 	<build>

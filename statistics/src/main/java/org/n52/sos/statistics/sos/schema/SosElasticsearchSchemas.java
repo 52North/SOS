@@ -61,7 +61,7 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
         schema.addStringField(ServiceEventDataMapping.SR_VERSION_FIELD).addStringField(ServiceEventDataMapping.SR_SERVICE_FIELD);
         schema.addStringField(ServiceEventDataMapping.SR_LANGUAGE_FIELD).addStringField(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD);
         schema.addStringField(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD).addStringField(ServiceEventDataMapping.SR_CONTENT_TYPE);
-        schema.addStringField(ServiceEventDataMapping.SR_ACCEPT_TYPES).addBooleanField(ServiceEventDataMapping.PROXIED_REQUEST_FIELD);
+        schema.addStringField(ServiceEventDataMapping.SR_ACCEPT_TYPES).addBooleanField(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD);
 
         Map<String, Object> geoloc =
                 ElasticsearchSchemaBuilder.builder().addStringField(ServiceEventDataMapping.GEO_LOC_CITY_CODE)

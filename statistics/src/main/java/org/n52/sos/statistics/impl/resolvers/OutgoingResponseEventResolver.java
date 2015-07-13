@@ -28,8 +28,10 @@
  */
 package org.n52.sos.statistics.impl.resolvers;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.sos.statistics.api.ServiceEventDataMapping;
@@ -41,12 +43,18 @@ public class OutgoingResponseEventResolver extends AbstractElasticSearchDataHold
 
     @Override
     public Map<String, Object> resolve() {
-        //Objects.requireNonNull(response);
-    	if(response == null) {
-    		return null;
-    	}
+        // Objects.requireNonNull(response);
+        if (response == null) {
+            return null;
+        }
         put(ServiceEventDataMapping.ORE_EXEC_TIME, response.getElapsedTime());
         put(ServiceEventDataMapping.ORE_COUNT, response.getRequestNumber());
+        if (response.getBytesWritten() != null) {
+            Map<String, Object> data = new HashMap<String, Object>();
+            data.put(ServiceEventDataMapping.ORE_BYTES_WRITTEN_BYTES, response.getBytesWritten());
+            data.put(ServiceEventDataMapping.ORE_BYTES_WRITTEN_DISPLAY, FileUtils.byteCountToDisplaySize(response.getBytesWritten()));
+        }
+
         return dataMap;
     }
 

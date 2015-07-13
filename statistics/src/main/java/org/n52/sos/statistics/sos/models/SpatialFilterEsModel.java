@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Coordinate;
 
-public class SpatialFilterEsModel extends AbstractElasitcsearchModel {
+public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     private static final Logger logger = LoggerFactory.getLogger(SpatialFilterEsModel.class);
 

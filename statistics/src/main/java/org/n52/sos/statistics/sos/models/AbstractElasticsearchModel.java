@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
 
-public abstract class AbstractElasitcsearchModel extends AbstractElasticSearchDataHolder {
+public abstract class AbstractElasticsearchModel extends AbstractElasticSearchDataHolder {
 
     public abstract Map<String, Object> getAsMap();
 }

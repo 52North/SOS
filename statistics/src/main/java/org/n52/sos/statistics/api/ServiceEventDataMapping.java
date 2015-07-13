@@ -44,6 +44,9 @@ public class ServiceEventDataMapping {
     // --------------- OutgoingResponseEvent --------------//
     public static final String ORE_EXEC_TIME = "outre-exec-time";
     public static final String ORE_COUNT = "outre-count";
+    public static final String ORE_BYTES_WRITTEN = "outre-bytes-written";
+    public static final String ORE_BYTES_WRITTEN_BYTES = "bytes";
+    public static final String ORE_BYTES_WRITTEN_DISPLAY = "display";
 
     // --------------- Iceland Exception --------------//
     public static final String EX_STATUS = "exception-status";
@@ -66,11 +69,17 @@ public class ServiceEventDataMapping {
     public static final String SR_CONTENT_TYPE = "sr-content-type";
     public static final String SR_ACCEPT_TYPES = "sr-accept-types";
     public static final String SR_GEO_LOC_FIELD = "sr-source-geolocation";
-    // -------------- START SUB FIELD ---------- //
+    // -------------- START SUB FIELD ---------------------------------//
     public static final String GEO_LOC_COUNTRY_CODE = "country-code";
     public static final String GEO_LOC_CITY_CODE = "city-name";
     public static final String GEO_LOC_GEOPOINT = "geopoint";
-    // -------------- SUB FIELD ---------- //
-    public static final String PROXIED_REQUEST_FIELD = "proxied-request";
+    // -------------- SUB FIELD ---------------- //
+    public static final String SR_PROXIED_REQUEST_FIELD = "sr-proxied-request";
+    public static final String SR_EXTENSIONS = "sr-extensions";
+
+    // --------------- EXTENSIONS -------------//
+    public static final String EXT_DEFINITION = "extension-definition";
+    public static final String EXT_IDENTIFIER = "extension-identifier";
+    public static final String EXT_VALUE = "extension-value";
 
 }

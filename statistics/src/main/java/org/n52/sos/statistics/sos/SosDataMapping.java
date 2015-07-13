@@ -46,8 +46,10 @@ public class SosDataMapping {
     public static final String GO_PROCEDURES = "getobservation-procedures";
     public static final String GO_FEATURE_OF_INTERESTS = "getobservation-feature-of-interests";
     public static final String GO_SPATIAL_FILTER = "getobservation-spatial-filter";
+    public static final String GO_TEMPORAL_FILTERS = "getobservation-temporal-filters";
     public static final String GO_OBSERVED_PROPERTIES = "getobservation-observed-properties";
     public static final String GO_OFFERINGS = "getobservation-offerings";
+    public static final String GO_RESPONSE_FORMAT = "getobservation-response-format";
 
     // --------------- GET OBSERVATION BY ID--------------//
     public static final String GOBID_OBSERVATION_IDENTIFIER = "getobservationbyid-observation-identifier";

@@ -37,7 +37,7 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
-public class TimeEsModel extends AbstractElasitcsearchModel {
+public class TimeEsModel extends AbstractElasticsearchModel {
 
     private DateTime timeInstant = null;
 

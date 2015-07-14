@@ -66,7 +66,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     
     private boolean isType;
     
-    private boolean isAggragation;
+    private boolean isAggregation;
     
     public long getProcedureId() {
         return this.procedureId;
@@ -168,6 +168,13 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public boolean isType() {
         return isType;
     }
+    
+    /**
+     * @return the isType
+     */
+    public boolean getIsType() {
+        return isType;
+    }
 
     /**
      * @param isType the isType to set
@@ -177,16 +184,23 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     /**
-     * @return the isAggragation
+     * @return the isAggregation
      */
-    public boolean isAggragation() {
-        return isAggragation;
+    public boolean isAggregation() {
+        return isAggregation;
+    }
+    
+    /**
+     * @return the isAggregation
+     */
+    public boolean getIsAggregation() {
+        return isAggregation;
     }
 
     /**
-     * @param isAggragation the isAggragation to set
+     * @param isAggregation the isAggregation to set
      */
-    public void setIsAggragation(boolean isAggragation) {
-        this.isAggragation = isAggragation;
+    public void setIsAggregation(boolean isAggregation) {
+        this.isAggregation = isAggregation;
     }
 }

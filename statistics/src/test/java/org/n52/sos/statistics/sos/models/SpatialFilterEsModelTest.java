@@ -76,6 +76,11 @@ public class SpatialFilterEsModelTest {
     }
 
     @Test
+    public void returnNullMapIfNull() {
+        Assert.assertNull(SpatialFilterEsModel.convert(null).getAsMap());
+    }
+
+    @Test
     public void createInvalidSridGeometry() throws OwsExceptionReport {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 9999);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");

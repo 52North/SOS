@@ -40,7 +40,6 @@ import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
 import org.n52.sos.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
-import org.n52.sos.statistics.impl.StatisticsLocationUtil;
 import org.n52.sos.statistics.sos.models.ExtensionEsModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +51,8 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
 
     protected T request;
 
-    // FIXME remove new object in DI environment
     @Inject
-    protected IStatisticsLocationUtil locationUtil = new StatisticsLocationUtil();
+    protected IStatisticsLocationUtil locationUtil;
 
     private AbstractSosRequestHandler<?> init() {
 

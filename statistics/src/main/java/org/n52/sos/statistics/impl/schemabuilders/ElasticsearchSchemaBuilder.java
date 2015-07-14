@@ -36,11 +36,15 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Schema builder for creating schema for Elasticsearch
+ */
 public class ElasticsearchSchemaBuilder {
 
     protected Map<String, Object> properties;
     protected Map<String, Object> mappings;
 
+    /***** Objects for creating data types for elasticsearch *******/
     protected static Map<String, Object> stringField = ImmutableMap.<String, Object> of("type", "string", "index", "not_analyzed");
     protected static Map<String, Object> stringAnalyzedField = ImmutableMap.<String, Object> of("type", "string", "index", "analyzed");
     protected static Map<String, Object> dateField = ImmutableMap.<String, Object> of("type", "date");

@@ -7,9 +7,14 @@ The following parameters for request are measured in the statistics collection m
 - **sr-service** - name of the service e.g: SOS
 - **sr-language** - language of the service
 - **sr-operation-name** - name of the operation which is requestes e.g: GetCapabilites
+- **extension-definition** - definition of the Extension
+- **extension-identifier** - identifier of the Extension
+- **extension-value** - toString() version of the value of the Extension
+
 ##### OutgoingResponseEvent
 - **outre-exec-time** - the execution time of processing the request-response
 - **outre-count** - an incremental number since the start of the webapplication. this field indicates the serial number of the request.
+
 ##### External/Computed values
 - **sr-source-ip-address** - source ip address of the client even in case of proxying
 - **sr-content-type** - HTTP content-type of the request
@@ -53,9 +58,13 @@ The following parameters for request are measured in the statistics collection m
 ### GetObservation
 ##### RequestEvent
 - **getobservation-procedures** - list of the procedures
-- **getobservation-spatial-filter** - TODO
+- **getobservation-spatial-filter** - The spatial filter of the request
 - **getobservation-observed-properties** - list of the observed properties
 - **getobservation-offerings** - list of the offerings in question
+- **getobservation-temporal-filters** - list of temporal filters if any
+- **getobservation-response-format** - response format
+- **getobservation-merged-observation-values** - boolean value if the observation are merged
+
 
 ### GetObservationById
 ##### RequestEvent

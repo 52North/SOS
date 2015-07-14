@@ -87,10 +87,14 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
 
     private void getObservation(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(SosDataMapping.GO_PROCEDURES);
-        schema.addSpatialFilterField(SosDataMapping.GO_SPATIAL_FILTER);
-        schema.addStringField(SosDataMapping.GO_OBSERVED_PROPERTIES);
         schema.addStringField(SosDataMapping.GO_OFFERINGS);
+        schema.addStringField(SosDataMapping.GO_OBSERVED_PROPERTIES);
         schema.addStringField(SosDataMapping.GO_FEATURE_OF_INTERESTS);
+        schema.addBooleanField(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES);
+        schema.addStringField(SosDataMapping.GO_RESPONSE_FORMAT);
+        schema.addSpatialFilterField(SosDataMapping.GO_SPATIAL_FILTER);
+        schema.addTimeFilterField(SosDataMapping.GO_TEMPORAL_FILTERS);
+
     }
 
     private void getObservationById(ElasticsearchSchemaBuilder schema) {

@@ -50,6 +50,7 @@ public class SosDataMapping {
     public static final String GO_OBSERVED_PROPERTIES = "getobservation-observed-properties";
     public static final String GO_OFFERINGS = "getobservation-offerings";
     public static final String GO_RESPONSE_FORMAT = "getobservation-response-format";
+    public static final String GO_IS_MERGED_OBSERVATION_VALUES = "getobservation-merged-observation-values";
 
     // --------------- GET OBSERVATION BY ID--------------//
     public static final String GOBID_OBSERVATION_IDENTIFIER = "getobservationbyid-observation-identifier";

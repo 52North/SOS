@@ -39,10 +39,10 @@
 		</encoder>
 	</appender>
 
-	<logger name="org.n52" level="${config.logger.level}" />
-	<logger name="org.springframework" level="DEBUG" />
+	<logger name="org.n52" level="DEBUG" />
+<!-- 	<logger name="org.springframework" level="DEBUG" /> -->
 
 	<root level="INFO">
-		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
 	</root>
 </configuration>

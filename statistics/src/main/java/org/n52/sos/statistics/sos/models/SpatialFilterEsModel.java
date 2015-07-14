@@ -31,6 +31,7 @@ package org.n52.sos.statistics.sos.models;
 import java.util.Map;
 
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.statistics.sos.SosDataMapping;
 import org.slf4j.Logger;
@@ -58,6 +59,12 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         if (spatialFilter == null) {
             return null;
         }
+        // only bbox is allowed here
+        if (spatialFilter.getOperator() != SpatialOperator.BBOX) {
+            logger.debug("SpatialFilter operator is not allowed here {}", spatialFilter.getOperator());
+            return null;
+        }
+
         try {
             switch (spatialFilter.getSrid()) {
             case 4326:

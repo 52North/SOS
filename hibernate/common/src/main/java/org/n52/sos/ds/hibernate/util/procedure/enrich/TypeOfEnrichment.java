@@ -28,20 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import java.io.UnsupportedEncodingException;
-
-import org.n52.sos.binding.BindingConstants;
-import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos1Constants;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.service.operator.ServiceOperatorRepository;
-import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;
 
@@ -72,23 +61,7 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
 
     private SosProcedureDescription setTypeOfReferenceType(SosProcedureDescription description)
             throws OwsExceptionReport {
-        String href = null;
-        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
-            final String version =
-                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
-                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                            : Sos1Constants.SERVICEVERSION;
-            try {
-                href =
-                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
-                                getTypeOfIdentifier(), BindingConstants.KVP_BINDING_ENDPOINT, getTypeOfFormat());
-            } catch (final UnsupportedEncodingException uee) {
-                throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL").causedBy(
-                        uee);
-            }
-        } else {
-            href = getTypeOfIdentifier();
-        }
+        String href = description.createKvpDescribeSensorOrReturnIdentifier(getTypeOfIdentifier());
         description.setTypeOf(new ReferenceType(href, getTypeOfIdentifier()));
         return description;
     }

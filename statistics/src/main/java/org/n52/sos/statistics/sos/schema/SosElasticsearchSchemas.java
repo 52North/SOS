@@ -93,7 +93,7 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
         schema.addBooleanField(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES);
         schema.addStringField(SosDataMapping.GO_RESPONSE_FORMAT);
         schema.addSpatialFilterField(SosDataMapping.GO_SPATIAL_FILTER);
-        schema.addTimeFilterField(SosDataMapping.GO_TEMPORAL_FILTERS);
+        schema.addTemporalFilterField(SosDataMapping.GO_TEMPORAL_FILTER);
 
     }
 
@@ -103,9 +103,10 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
 
     private void getFeatureOfInterest(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(SosDataMapping.GFOI_FEATURE_IDENTIFIERS);
-        schema.addStringField(SosDataMapping.GFOI_NAMESPACES);
         schema.addStringField(SosDataMapping.GFOI_OBSERVED_PROPERTIES);
         schema.addStringField(SosDataMapping.GFOI_PROCEDURES);
+        schema.addSpatialFilterField(SosDataMapping.GFOI_SPATIAL_FILTER);
+        schema.addTemporalFilterField(SosDataMapping.GFOI_TEMPORAL_FILTER);
     }
 
     private void insertSensor(ElasticsearchSchemaBuilder schema) {

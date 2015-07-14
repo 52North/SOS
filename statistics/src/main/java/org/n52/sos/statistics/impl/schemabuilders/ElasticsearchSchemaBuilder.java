@@ -116,14 +116,14 @@ public class ElasticsearchSchemaBuilder {
         return this;
     }
 
-    public ElasticsearchSchemaBuilder addTimeFilterField(String fieldName) {
+    public ElasticsearchSchemaBuilder addTemporalFilterField(String fieldName) {
         Objects.requireNonNull(fieldName);
         ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
         builder.addLongField(SosDataMapping.TIME_DURARTION);
         builder.addDateField(SosDataMapping.TIME_START);
         builder.addDateField(SosDataMapping.TIME_END);
         builder.addDateField(SosDataMapping.TIME_TIMEINSTANT);
-        builder.addStringField(SosDataMapping.TIME_TIMEINSTANT);
+        builder.addStringField(SosDataMapping.TIME_FILTER_OPERATOR);
 
         addObject(fieldName, builder.build());
         return this;

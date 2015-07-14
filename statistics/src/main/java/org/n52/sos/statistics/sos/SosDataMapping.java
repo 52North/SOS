@@ -46,7 +46,7 @@ public class SosDataMapping {
     public static final String GO_PROCEDURES = "getobservation-procedures";
     public static final String GO_FEATURE_OF_INTERESTS = "getobservation-feature-of-interests";
     public static final String GO_SPATIAL_FILTER = "getobservation-spatial-filter";
-    public static final String GO_TEMPORAL_FILTERS = "getobservation-temporal-filters";
+    public static final String GO_TEMPORAL_FILTER = "getobservation-temporal-filter";
     public static final String GO_OBSERVED_PROPERTIES = "getobservation-observed-properties";
     public static final String GO_OFFERINGS = "getobservation-offerings";
     public static final String GO_RESPONSE_FORMAT = "getobservation-response-format";
@@ -57,9 +57,10 @@ public class SosDataMapping {
 
     // --------------- GET FEATURE OF INTEREST --------------//
     public static final String GFOI_FEATURE_IDENTIFIERS = "getfeatureofinterest-feature-identifiers";
-    public static final String GFOI_NAMESPACES = "getfeatureofinterest-namespaces";
     public static final String GFOI_OBSERVED_PROPERTIES = "getfeatureofinterest-observed-properties";
     public static final String GFOI_PROCEDURES = "getfeatureofinterest-procedures";
+    public static final String GFOI_SPATIAL_FILTER = "getfeatureofinterest-spatial-filter";
+    public static final String GFOI_TEMPORAL_FILTER = "getfeatureofinterest-temporal-filter";
 
     // --------------- INSERT SENSOR --------------//
     public static final String IS_ASSIGNED_OFFERINGS = "insertsensor-assigned-offerings";

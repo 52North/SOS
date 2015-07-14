@@ -5,7 +5,6 @@ The following parameters for request are measured in the statistics collection m
 ##### RequestEvent
 - **sr-version** - version of the service
 - **sr-service** - name of the service e.g: SOS
-- **sr-language** - language of the service
 - **sr-operation-name** - name of the operation which is requestes e.g: GetCapabilites
 - **extension-definition** - definition of the Extension
 - **extension-identifier** - identifier of the Extension
@@ -61,7 +60,7 @@ The following parameters for request are measured in the statistics collection m
 - **getobservation-spatial-filter** - The spatial filter of the request
 - **getobservation-observed-properties** - list of the observed properties
 - **getobservation-offerings** - list of the offerings in question
-- **getobservation-temporal-filters** - list of temporal filters if any
+- **getobservation-temporal-filter** - list of temporal filters if any
 - **getobservation-response-format** - response format
 - **getobservation-merged-observation-values** - boolean value if the observation are merged
 
@@ -73,9 +72,10 @@ The following parameters for request are measured in the statistics collection m
 ### GetFeatureOfInterest
 ##### RequestEvent
 - **getfeatureofinterest-feature-identifiers** - list of identifiers of the features
-- **getfeatureofinterest-namespaces** - list of namespaces
 - **getfeatureofinterest-observed-properties** - list of the observed properties
 - **getfeatureofinterest-procedures** - list of the procedures
+- **getfeatureofinterest-spatial-filter** - list of spatial filters
+- **getfeatureofinterest-temporal-filter** - list of temporal filters
 
 ### InsertSensor
 ##### RequestEvent

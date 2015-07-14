@@ -50,7 +50,7 @@ public class GetObservationRequestHandler extends AbstractSosRequestHandler<GetO
         put(SosDataMapping.GO_RESPONSE_FORMAT, request.getResponseFormat());
         put(SosDataMapping.GO_SPATIAL_FILTER, SpatialFilterEsModel.convert(request.getSpatialFilter()).getAsMap());
         if (request.getTemporalFilters() != null) {
-            put(SosDataMapping.GO_TEMPORAL_FILTERS, request.getTemporalFilters().stream().map(TimeEsModel::convert).map(TimeEsModel::getAsMap)
+            put(SosDataMapping.GO_TEMPORAL_FILTER, request.getTemporalFilters().stream().map(TimeEsModel::convert).map(TimeEsModel::getAsMap)
                     .collect(Collectors.toList()));
         }
 

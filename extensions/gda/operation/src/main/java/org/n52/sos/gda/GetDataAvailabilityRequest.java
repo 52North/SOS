@@ -50,9 +50,9 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
     private List<String> observedProperties = new LinkedList<String>();
 
     private List<String> featuresOfInterest = new LinkedList<String>();
-    
-    private List<String> offerings =  new LinkedList<String>();
-    
+
+    private List<String> offerings = new LinkedList<String>();
+
     private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
     @Override
@@ -80,7 +80,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
     public List<String> getFeaturesOfInterest() {
         return featuresOfInterest;
     }
-    
+
     /**
      * @return the requested {@code offerings}.
      */
@@ -117,13 +117,12 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
     public void addFeatureOfInterest(String featureOfInterest) {
         this.featuresOfInterest.add(featureOfInterest);
     }
-    
-    public void setFeatureOfInterest(
-			List<String> featuresOfInterest) {
-		this.featuresOfInterest = featuresOfInterest;
-	}
 
-	/**
+    public void setFeatureOfInterest(List<String> featuresOfInterest) {
+        this.featuresOfInterest = featuresOfInterest;
+    }
+
+    /**
      * Add a {@code offering} to the request.
      * 
      * @param offering
@@ -134,30 +133,37 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
     }
 
     public void setOffering(List<String> offerings) {
-    	this.offerings = offerings;
-	}
+        this.offerings = offerings;
+    }
 
-	public boolean isSetProcedures() {
+    public boolean isSetProcedures() {
         return CollectionHelper.isNotEmpty(getProcedures());
     }
 
     public void setProcedure(List<String> procedures) {
-		this.procedures = procedures;
-	}
+        this.procedures = procedures;
+    }
+    
+    public boolean isSetProcedure() {
+        return CollectionHelper.isNotEmpty(getProcedures());
+    }
 
-	public boolean isSetObservedProperties() {
+    public void setProcedures(List<String> procedures) {
+        this.procedures = procedures;
+    }
+
+    public boolean isSetObservedProperties() {
         return CollectionHelper.isNotEmpty(getObservedProperties());
     }
 
-    public void setObservedProperty(
-			List<String> observedProperties) {
-		this.observedProperties = observedProperties;
-	}
+    public void setObservedProperty(List<String> observedProperties) {
+        this.observedProperties = observedProperties;
+    }
 
-	public boolean isSetFeaturesOfInterest() {
+    public boolean isSetFeaturesOfInterest() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
     }
-    
+
     public boolean isSetOfferings() {
         return CollectionHelper.isNotEmpty(getOfferings());
     }
@@ -172,9 +178,9 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
             this.namspace = namspace;
         }
     }
-    
+
     public String getNamespace() {
         return this.namspace;
     }
-    
+
 }

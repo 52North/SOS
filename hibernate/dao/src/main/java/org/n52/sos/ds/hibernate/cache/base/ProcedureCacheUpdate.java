@@ -31,10 +31,10 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -101,6 +101,29 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
     }
 
+
+    private void setTypeProcedure(Procedure procedure) {
+        if (procedure.isType()) {
+            getCache().addTypeInstanceProcedure(ContentCache.TypeInstance.TYPE, procedure.getIdentifier());
+        } else {
+            getCache().addTypeInstanceProcedure(ContentCache.TypeInstance.INSTANCE, procedure.getIdentifier());
+        }
+    }
+
+    private void setAggregatedProcedure(Procedure procedure) {
+        if (procedure.isAggregation()) {
+            getCache().addComponentAggregationProcedure(ContentCache.ComponentAggregation.AGGREGATION, procedure.getIdentifier());
+        } else {
+            getCache().addComponentAggregationProcedure(ContentCache.ComponentAggregation.COMPONENT, procedure.getIdentifier());
+        }
+    }
+
+    private void setTypeInstanceProcedure(Procedure procedure) {
+        if (procedure.isSetTypeOf()) {
+            getCache().addTypeOfProcedure(procedure.getTypeOf().getIdentifier(), procedure.getIdentifier());
+        }
+    }
+
     @Override
     protected ProcedureCacheUpdateTask[] getUpdatesToExecute() {
         Collection<ProcedureCacheUpdateTask> procedureUpdateTasks = Lists.newArrayList();
@@ -153,6 +176,10 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
                         observablePropertyDAO.getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
             }
+            
+            setTypeProcedure(procedure);
+            setAggregatedProcedure(procedure);
+            setTypeInstanceProcedure(procedure);
 
             if (!CollectionHelper.isEmpty(parentProcedures)) {
                 getCache().addParentProcedures(procedureIdentifier, parentProcedures);

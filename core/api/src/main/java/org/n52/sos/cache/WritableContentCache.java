@@ -1604,6 +1604,28 @@ public interface WritableContentCache extends ContentCache {
     
     void clearProcedureIdentifierHumanReadableNameMaps();
 
-	void clearOfferingIdentifierHumanReadableNameMaps();
+    void clearOfferingIdentifierHumanReadableNameMaps();
+    
+    void addTypeInstanceProcedure(TypeInstance typeInstance, String identifier);
+
+    void removeTypeInstanceProcedure(String identifier);
+
+    void clearTypeInstanceProcedure();
+
+    void addComponentAggregationProcedure(ComponentAggregation componentAggregation, String identifier);
+
+    void removeComponentAggregationProcedure(String identifier);
+
+    void clearComponentAggregationProcedure();
+
+    void addTypeOfProcedure(String type, String instance);
+
+    void addTypeOfProcedure(String type, Set<String> instances);
+
+    void removeTypeOfProcedure(String type);
+
+    void removeTypeOfProcedure(String type, String instance);
+
+    void clearTypeOfProcedure();
     
 }

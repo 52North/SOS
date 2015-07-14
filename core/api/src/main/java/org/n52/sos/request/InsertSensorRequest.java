@@ -212,9 +212,8 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     
     /**
      * @return <code>true</code>, if the sensor type flag is set
-     * @throws InvalidParameterValueException 
      */
-    public boolean isType() throws InvalidParameterValueException {
+    public boolean isType() {
         if (hasExtension(SENSOR_TYPE_FLAG)) {
             return getExtensions().isBooleanExtensionSet(SENSOR_TYPE_FLAG);
         }

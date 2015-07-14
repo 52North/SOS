@@ -463,18 +463,21 @@ public class CoordianteTransformator implements
      */
     private void transformPosition(SmlPosition position, int targetCrs) throws OwsExceptionReport {
         int sourceCrs = targetCrs;
-        if (position.isSetReferenceFrame()) {
+        if (position.isSetReferenceFrame() && checkReferenceFrame(position.getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getReferenceFrame());
-        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
+        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()
+                && checkReferenceFrame(position.getVector().getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
-        if (position.isSetPosition()) {
-            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
-        } else if (position.isSetVector()) {
-            SweVector vector = position.getVector();
-            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        if (sourceCrs != targetCrs) {
+            if (position.isSetPosition()) {
+                position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+                position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+            } else if (position.isSetVector()) {
+                SweVector vector = position.getVector();
+                vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+                vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+            }
         }
     }
 
@@ -688,9 +691,6 @@ public class CoordianteTransformator implements
             crs =
                     crs.replace(EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
                             EpsgConstants.EPSG_PREFIX, Constants.EMPTY_STRING);
-            if (!crs.isEmpty() && !Character.isDigit(crs.toCharArray()[0])) {
-                return -1;
-            }
             try {
                 return Integer.valueOf(crs);
             } catch (final NumberFormatException nfe) {
@@ -709,6 +709,16 @@ public class CoordianteTransformator implements
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);
+    }
+
+    private boolean checkReferenceFrame(String referenceFrame) {
+        char[] charArray = referenceFrame.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            if (Character.isDigit(referenceFrame.toCharArray()[i])){
+                return true;
+            }
+        } 
+        return false;
     }
 
     /**

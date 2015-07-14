@@ -28,17 +28,13 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import javax.inject.Named;
-
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
-@Named
 public class GetDataAvailabilityRequestHandler extends AbstractSosRequestHandler<GetDataAvailabilityRequest> {
 
     @Override
-    protected void resolveConcreteRequest()
-    {
+    protected void resolveConcreteRequest() {
         put(SosDataMapping.GDA_FEATURES_OF_INTEREST, request.getFeaturesOfInterest());
         put(SosDataMapping.GDA_NAMESPACE, request.getNamespace());
         put(SosDataMapping.GDA_OBSERVED_PROPERTIES, request.getObservedProperties());

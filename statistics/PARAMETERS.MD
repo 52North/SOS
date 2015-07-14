@@ -84,6 +84,8 @@ The following parameters for request are measured in the statistics collection m
 - **insertsensor-observable-property** - observable property of the sensor
 - **insertsensor-procedure-description** - description of the procedure
 - **insertsensor-description-format** - format of the sensor
+- **insertsensor-feature-of-interest-types"** - feature of interest types of the metadata
+- **insertsensor-observation-types** - observation type of the metadata
 
 ### UpdateSensor
 ##### RequestEvent

@@ -56,7 +56,7 @@ public class GeoShapeInsert extends SpringBaseTest {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter).getAsMap();
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
         Map<String, Object> root = new HashMap<>();
         root.put(SosDataMapping.GO_SPATIAL_FILTER, map);

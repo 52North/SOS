@@ -123,7 +123,7 @@ public class ElasticsearchSchemaBuilder {
         builder.addDateField(SosDataMapping.TIME_START);
         builder.addDateField(SosDataMapping.TIME_END);
         builder.addDateField(SosDataMapping.TIME_TIMEINSTANT);
-        builder.addStringField(SosDataMapping.TIME_FILTER_OPERATOR);
+        builder.addStringField(SosDataMapping.TEMPORAL_FILTER_OPERATOR);
 
         addObject(fieldName, builder.build());
         return this;

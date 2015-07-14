@@ -28,12 +28,9 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import javax.inject.Named;
-
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
-@Named
 public class GetCapabilitiesRequestHandler extends AbstractSosRequestHandler<GetCapabilitiesRequest> {
 
     @Override

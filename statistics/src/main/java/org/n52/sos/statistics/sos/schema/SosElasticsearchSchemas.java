@@ -115,6 +115,8 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
         schema.addStringField(SosDataMapping.IS_OBSERVABLE_PROPERTY);
         schema.addStringField(SosDataMapping.IS_PROCEDURE_DESCRIPTION);
         schema.addStringField(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT);
+        schema.addStringField(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES);
+        schema.addStringField(SosDataMapping.IS_OBSERVATION_TYPES);
     }
 
     private void updateSensor(ElasticsearchSchemaBuilder schema) {
@@ -147,7 +149,6 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
 
     private void getResult(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(SosDataMapping.GR_FEATURE_IDENTIFIERS);
-        schema.addStringField(SosDataMapping.GR_NAMSPACES);
         schema.addStringField(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER);
         schema.addStringField(SosDataMapping.GR_OBSERVATION_PROPERTY);
         schema.addStringField(SosDataMapping.GR_OFFERING);

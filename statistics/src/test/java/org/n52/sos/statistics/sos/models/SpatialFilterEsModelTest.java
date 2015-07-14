@@ -47,7 +47,7 @@ public class SpatialFilterEsModelTest {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter).getAsMap();
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
         Assert.assertEquals("value-ref", map.get(SosDataMapping.SPATIAL_FILTER_VALUE_REF));
         Assert.assertEquals(SpatialOperator.BBOX.toString(), map.get(SosDataMapping.SPATIAL_FILTER_OPERATOR));
@@ -59,7 +59,7 @@ public class SpatialFilterEsModelTest {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, "value-ref");
 
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter).getAsMap();
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
         Assert.assertNull(map);
     }
@@ -70,14 +70,14 @@ public class SpatialFilterEsModelTest {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.Crosses, geom, "value-ref");
 
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter).getAsMap();
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
         Assert.assertNull(map);
     }
 
     @Test
     public void returnNullMapIfNull() {
-        Assert.assertNull(SpatialFilterEsModel.convert(null).getAsMap());
+        Assert.assertNull(SpatialFilterEsModel.convert((SpatialFilter) null));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class SpatialFilterEsModelTest {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 9999);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter).getAsMap();
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
         Assert.assertNull(map);
     }

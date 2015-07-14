@@ -28,9 +28,7 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -72,10 +70,7 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
         }
         // extensions
         if (request.getExtensions() != null && request.getExtensions().getExtensions() != null) {
-            List<Map<String, Object>> list =
-                    request.getExtensions().getExtensions().stream().map(ExtensionEsModel::convert).map(ExtensionEsModel::getAsMap)
-                            .collect(Collectors.toList());
-            put(ServiceEventDataMapping.SR_EXTENSIONS, list);
+            put(ServiceEventDataMapping.SR_EXTENSIONS, ExtensionEsModel.convert(request.getExtensions().getExtensions()));
         }
         return this;
     }

@@ -28,16 +28,12 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import javax.inject.Named;
-
 import org.n52.sos.request.BatchRequest;
 
-@Named
 public class BatchRequestHandler extends AbstractSosRequestHandler<BatchRequest> {
 
     @Override
-    protected void resolveConcreteRequest()
-    {
-       //This is intentionally left blank
+    protected void resolveConcreteRequest() {
+        // This is intentionally left blank
     }
 }

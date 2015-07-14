@@ -17,7 +17,7 @@ public class ExtensionEsModelTest {
         ext.setIdentifier("identifier");
         ext.setNamespace("namespace");
 
-        Map<String, Object> map = ExtensionEsModel.convert(ext).getAsMap();
+        Map<String, Object> map = ExtensionEsModel.convert(ext);
 
         Assert.assertEquals("my-value", map.get(ServiceEventDataMapping.EXT_VALUE));
         Assert.assertEquals("definition", map.get(ServiceEventDataMapping.EXT_DEFINITION));
@@ -26,7 +26,7 @@ public class ExtensionEsModelTest {
 
     @Test
     public void resultsInNullExtension() {
-        Map<String, Object> map = ExtensionEsModel.convert(null).getAsMap();
+        Map<String, Object> map = ExtensionEsModel.convert((Extension<?>) null);
         Assert.assertNull(map);
     }
 

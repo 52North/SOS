@@ -28,7 +28,10 @@
  */
 package org.n52.sos.statistics.sos.models;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
@@ -45,20 +48,27 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     private final SpatialFilter spatialFilter;
 
-    private SpatialFilterEsModel(SpatialFilter filter) {
-        this.spatialFilter = filter;
+    private SpatialFilterEsModel(SpatialFilter filters) {
+        this.spatialFilter = filters;
     }
 
-    public static SpatialFilterEsModel convert(SpatialFilter filter) {
-        SpatialFilterEsModel m = new SpatialFilterEsModel(filter);
-        return m;
+    public static Map<String, Object> convert(SpatialFilter filter) {
+        return new SpatialFilterEsModel(filter).getAsMap();
+    }
+
+    public static List<Map<String, Object>> convert(Collection<SpatialFilter> filters) {
+        if (filters == null || filters.isEmpty()) {
+            return null;
+        }
+        return filters.stream().map(SpatialFilterEsModel::convert).collect(Collectors.toList());
     }
 
     @Override
-    public Map<String, Object> getAsMap() {
+    protected Map<String, Object> getAsMap() {
         if (spatialFilter == null) {
             return null;
         }
+
         // only bbox is allowed here
         if (spatialFilter.getOperator() != SpatialOperator.BBOX) {
             logger.debug("SpatialFilter operator is not allowed here {}", spatialFilter.getOperator());
@@ -68,7 +78,7 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         try {
             switch (spatialFilter.getSrid()) {
             case 4326:
-                createBBOX();
+                createBBOX(spatialFilter);
                 break;
 
             default:
@@ -82,15 +92,15 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         return null;
     }
 
-    private void createBBOX() {
+    private void createBBOX(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
-        for (Coordinate coord : spatialFilter.getGeometry().getCoordinates()) {
+        for (Coordinate coord : filter.getGeometry().getCoordinates()) {
             polygon.point(coord);
         }
 
-        put(SosDataMapping.SPATIAL_FILTER_OPERATOR, spatialFilter.getOperator().toString());
+        put(SosDataMapping.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
         put(SosDataMapping.SPATIAL_FILTER_SHAPE, polygon);
-        put(SosDataMapping.SPATIAL_FILTER_VALUE_REF, spatialFilter.getValueReference());
+        put(SosDataMapping.SPATIAL_FILTER_VALUE_REF, filter.getValueReference());
 
     }
 

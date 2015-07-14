@@ -68,6 +68,8 @@ public class SosDataMapping {
     public static final String IS_OBSERVABLE_PROPERTY = "insertsensor-observable-property";
     public static final String IS_PROCEDURE_DESCRIPTION = "insertsensor-procedure-description";
     public static final String IS_PROCEDURE_DESCRIPTION_FORMAT = "insertsensor-description-format";
+    public static final String IS_FEATURE_OF_INTEREST_TYPES = "insertsensor-feature-of-interest-types";
+    public static final String IS_OBSERVATION_TYPES = "insertsensor-observation-types";
 
     // --------------- UPDATE SENSOR --------------//
     public static final String US_PROCEDURE_IDENTIFIER = "updatesensor-procedure-identifier";
@@ -79,10 +81,12 @@ public class SosDataMapping {
     // --------------- INSERT OBSERVATION --------------//
     public static final String IO_ASSIGNED_SENSORID = "insertobservation-assigned-sensorid";
     public static final String IO_OFFERINGS = "insertobservation-offerings";
+    public static final String IO_FEATURE_OF_INTEREST = "insertobservation-feature-of-interest";
 
     // --------------- INSERT RESULT TEMPLATE --------------//
     public static final String IRT_IDENTIFIER = "insertresulttemplate-identifier";
     public static final String IRT_RESULT_ENCODING = "insertresulttemplate-result-encoding";
+    public static final String IRT_OBSERVATION_TEMPLATE = "insertresulttemplate-observation-template";
 
     // --------------- INSERT RESULT --------------//
     public static final String IR_TEMPLATE_IDENTIFIER = "insertresult-template-identifier";
@@ -93,10 +97,11 @@ public class SosDataMapping {
 
     // --------------- GET RESULT --------------//
     public static final String GR_FEATURE_IDENTIFIERS = "getresult-feature-identifiers";
-    public static final String GR_NAMSPACES = "getresult-namespaces";
     public static final String GR_OBSERVATION_TEMPLATE_IDENTIFIER = "getresult-observation-template-identifier";
     public static final String GR_OBSERVATION_PROPERTY = "getresult-observation-property";
     public static final String GR_OFFERING = "getresult-offering";
+    public static final String GR_SPATIAL_FILTER = "getresult-spatial-filter";
+    public static final String GR_TEMPORAL_FILTER = "getresult-temporal-filter";
 
     // --------------- GET DATA AVAILABILITY --------------//
     public static final String GDA_FEATURES_OF_INTEREST = "getdataavailability-features-of-interest";
@@ -128,6 +133,12 @@ public class SosDataMapping {
     public static final String TIME_TIMEINSTANT = "timeInstant";
 
     // ---------------- TEMPORAL FILTER INC TIME -------------------//
-    public static final String TIME_FILTER_OPERATOR = "operator";
+    public static final String TEMPORAL_FILTER_OPERATOR = "operator";
+
+    // ----------- OmObservationConstellation -----------//
+    public static final String OMOC_PROCEDURE = "procedure";
+    public static final String OMOC_OBSERVABLE_PROPERTY = "observable-property";
+    public static final String OMOC_FEATURE_OF_INTEREST = "feature-of-interest";
+    public static final String OMOC_OBSERVATION_TYPE = "observation-type";
 
 }

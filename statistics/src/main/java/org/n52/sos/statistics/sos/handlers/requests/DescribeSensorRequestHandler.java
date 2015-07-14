@@ -28,22 +28,18 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import javax.inject.Named;
-
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 import org.n52.sos.statistics.sos.models.TimeEsModel;
 
-@Named
 public class DescribeSensorRequestHandler extends AbstractSosRequestHandler<DescribeSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest()
-    {
+    protected void resolveConcreteRequest() {
         put(SosDataMapping.DS_PROCEDURE, request.getProcedure());
         put(SosDataMapping.DS_PROCEDURE_DESC_FORMAT, request.getProcedureDescriptionFormat());
-        if(request.getValidTime() != null) {
-        	put(SosDataMapping.DS_VALID_TIME, TimeEsModel.convert(request.getValidTime()).getAsMap());
+        if (request.getValidTime() != null) {
+            put(SosDataMapping.DS_VALID_TIME, TimeEsModel.convert(request.getValidTime()));
         }
     }
 }

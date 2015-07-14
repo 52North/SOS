@@ -28,7 +28,10 @@
  */
 package org.n52.sos.statistics.sos.models;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.n52.iceland.ogc.gml.time.Time;
@@ -40,60 +43,61 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 public class TimeEsModel extends AbstractElasticsearchModel {
 
     private DateTime timeInstant = null;
-
     private DateTime start = null;
-
     private DateTime end = null;
-
     private Long duration = null;
-
     private String timeOperator;
+    private Time time;
 
-    private TimeEsModel() {
+    private TimeEsModel(Time time) {
+        this.time = time;
     }
 
-    public static TimeEsModel convert(Time time) {
-        if (time == null) {
+    public static Map<String, Object> convert(Time time) {
+        return new TimeEsModel(time).getAsMap();
+    }
+
+    public static Map<String, Object> convert(TemporalFilter temporalFilter) {
+        TimeEsModel timeEsModel = new TimeEsModel(temporalFilter.getTime());
+        timeEsModel.timeOperator = temporalFilter.getOperator().toString();
+        return timeEsModel.getAsMap();
+    }
+
+    public static List<Map<String, Object>> convert(Collection<TemporalFilter> filters) {
+        if (filters == null || filters.isEmpty()) {
             return null;
         }
+        return filters.stream().map(TimeEsModel::convert).collect(Collectors.toList());
+    }
 
-        TimeEsModel o = new TimeEsModel();
+    @Override
+    protected Map<String, Object> getAsMap() {
         if (time instanceof TimeInstant) {
-            o.timeInstant = ((TimeInstant) time).getValue();
+            this.timeInstant = ((TimeInstant) time).getValue();
 
         } else if (time instanceof TimePeriod) {
             TimePeriod p = (TimePeriod) time;
 
             if (p.getStart() != null && p.getEnd() != null) {
                 if (p.getEnd().compareTo(p.getStart()) >= 0) {
-                    o.duration = ((p.getEnd().getMillis() - p.getStart().getMillis()));
+                    this.duration = ((p.getEnd().getMillis() - p.getStart().getMillis()));
                 }
             }
 
             if (p.getStart() != null) {
-                o.start = p.getStart();
+                this.start = p.getStart();
             }
             if (p.getEnd() != null) {
-                o.end = p.getEnd();
+                this.end = p.getEnd();
             }
         }
-        return o;
-    }
 
-    public static TimeEsModel convert(TemporalFilter temporalFilter) {
-        TimeEsModel json = convert(temporalFilter.getTime());
-        json.timeOperator = temporalFilter.getOperator().toString();
-        return json;
-    }
-
-    @Override
-    public Map<String, Object> getAsMap() {
         put(SosDataMapping.TIME_DURARTION, duration);
         put(SosDataMapping.TIME_START, start);
         put(SosDataMapping.TIME_END, end);
         put(SosDataMapping.TIME_TIMEINSTANT, timeInstant);
         // only by TemporalFilter
-        put(SosDataMapping.TIME_FILTER_OPERATOR, timeOperator);
+        put(SosDataMapping.TEMPORAL_FILTER_OPERATOR, timeOperator);
         return dataMap;
     }
 

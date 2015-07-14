@@ -28,39 +28,42 @@
  */
 package org.n52.sos.statistics.sos.models;
 
+import java.util.Map;
+
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class TimeEsModelTest {
 
     @Test
     public void timeInstant() {
         TimeInstant instant = new TimeInstant(DateTime.now());
-        TimeEsModel ret = TimeEsModel.convert(instant);
+        Map<String, Object> map = TimeEsModel.convert(instant);
 
-        Assert.assertEquals(instant.getValue(), ret.getTimeInstant());
+        Assert.assertEquals(instant.getValue(), map.get(SosDataMapping.TIME_TIMEINSTANT));
     }
 
     @Test
     public void timePeriodNoDuration() {
         TimePeriod period = new TimePeriod(DateTime.now(), DateTime.now().plusHours(3));
-        TimeEsModel ret = TimeEsModel.convert(period);
+        Map<String, Object> map = TimeEsModel.convert(period);
 
-        Assert.assertEquals(period.getStart(), ret.getStart());
-        Assert.assertEquals(period.getEnd(), ret.getEnd());
-        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), ret.getDuration());
+        Assert.assertEquals(period.getStart(), map.get(SosDataMapping.TIME_START));
+        Assert.assertEquals(period.getEnd(), map.get(SosDataMapping.TIME_END));
+        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), map.get(SosDataMapping.TIME_DURARTION));
     }
 
     @Test
     public void invalidStartEndTimePeriod() {
         TimePeriod period = new TimePeriod(DateTime.now().plusHours(3), DateTime.now());
-        TimeEsModel ret = TimeEsModel.convert(period);
+        Map<String, Object> map = TimeEsModel.convert(period);
 
-        Assert.assertEquals(period.getStart(), ret.getStart());
-        Assert.assertEquals(period.getEnd(), ret.getEnd());
+        Assert.assertEquals(period.getStart(), map.get(SosDataMapping.TIME_START));
+        Assert.assertEquals(period.getEnd(), map.get(SosDataMapping.TIME_END));
         Assert.assertNull(period.getDuration());
     }
 }

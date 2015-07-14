@@ -28,22 +28,22 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import javax.inject.Named;
-
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
-@Named
 public class InsertSensorRequestHandler extends AbstractSosRequestHandler<InsertSensorRequest> {
 
     @Override
-    protected void resolveConcreteRequest()
-    {
+    protected void resolveConcreteRequest() {
         put(SosDataMapping.IS_ASSIGNED_OFFERINGS, request.getAssignedOfferings());
         put(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS, request.getAssignedProcedureIdentifier());
         put(SosDataMapping.IS_OBSERVABLE_PROPERTY, request.getObservableProperty());
         put(SosDataMapping.IS_PROCEDURE_DESCRIPTION, request.getProcedureDescription());
         put(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT, request.getProcedureDescriptionFormat());
+        if (request.getMetadata() != null) {
+            put(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES, request.getMetadata().getFeatureOfInterestTypes());
+            put(SosDataMapping.IS_OBSERVATION_TYPES, request.getMetadata().getObservationTypes());
+        }
     }
 
 }

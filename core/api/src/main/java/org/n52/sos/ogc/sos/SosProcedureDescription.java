@@ -28,15 +28,23 @@
  */
 package org.n52.sos.ogc.sos;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.binding.BindingConstants;
+import org.n52.sos.binding.BindingRepository;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -175,7 +183,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
     	this.parentProcedures.clear();
-        this.parentProcedures.addAll(parentProcedures);
+    	addParentProcedures(parentProcedures);
         return this;
     }
     
@@ -322,6 +330,25 @@ public abstract class SosProcedureDescription extends AbstractFeature {
      */
     public boolean isSetTypeOf() {
         return getTypeOf() != null;
+    }
+
+    public String createKvpDescribeSensorOrReturnIdentifier(String identifier) throws CodedException {
+        String href = identifier;
+        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+            final String version =
+                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
+                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                            : Sos1Constants.SERVICEVERSION;
+            try {
+                href =
+                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
+                                identifier, BindingConstants.KVP_BINDING_ENDPOINT, getDescriptionFormat());
+            } catch (final UnsupportedEncodingException uee) {
+                throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL").causedBy(
+                        uee);
+            }
+        }
+        return href;
     }
 
     private void setFeatureOfInterest(Set<String> featuresOfInterest) {

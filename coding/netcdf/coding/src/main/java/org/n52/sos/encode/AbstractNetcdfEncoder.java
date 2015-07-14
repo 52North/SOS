@@ -510,57 +510,120 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     protected void addGlobaleAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset,
             AbstractSensorML sml) throws OwsExceptionReport {
+        // convetion
         addConventions(writer);
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.METADATA_CONVENTIONS,
-                ACDDConstants.UNIDATA_DATASET_DISCOVERY_1_0));
-        writer.addGroupAttribute(null, new Attribute(CFConstants.FEATURE_TYPE, sensorDataset.getFeatureType().name()));
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.CDM_DATA_TYPE, CF.FeatureType.convert(sensorDataset.getFeatureType())
-                        .name()));
-        writer.addGroupAttribute(null, new Attribute(NODCConstants.NODC_TEMPLATE_VERSION,
-                getNodcTemplateVersion(sensorDataset.getFeatureType())));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.STANDARD_NAME_VOCABULARY, CFConstants.CF_1_6));
-
+        // metadata conventions
+        addMetadataConventions(writer);
+        // feature type
+        addFeatureType(writer, sensorDataset);
+        // CDM data type
+        addCdmDataType(writer, sensorDataset);
+        // NODC template version 
+        addNodcTemplateVersion(writer, sensorDataset);
+        // standardName vocabulary
+        addStandardNameVocabulary(writer);
         // platform
         addPlatform(writer, sensorDataset, sml);
         // instrument
         addInstrument(writer, sensorDataset, sml);
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.TITLE, sensorDataset.getSensorIdentifier()));
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.SUMMARY, "Sensor observations for " + sensorDataset.getSensor()
-                        + ", feature type " + sensorDataset.getFeatureType().name()));
-        
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.DATE_CREATED, new DateTime(DateTimeZone.UTC).toString()));
-    
+        // title
+        addTitle(writer, sensorDataset);
+        // summary
+        addSummary(writer, sensorDataset);
+        // date created
+        addCreateDate(writer);
+        // license
         addLicense(writer, sml);
-    
-        writer.addGroupAttribute(null, new Attribute(NODCConstants.UUID, UUID.randomUUID().toString()));
-        writer.addGroupAttribute(null, new Attribute(ACDDConstants.ID, sensorDataset.getSensorIdentifier()));
+        // id
+        addId(writer, sensorDataset);
+        // uuid
+        addUUID(writer);
+        // keywords vocabulary
+        addKeywordsVocabulary(writer);
         // keywords
-        writer.addGroupAttribute(null,
-                new Attribute(ACDDConstants.KEYWORDS, Joiner.on(",").join(getKeywords(sensorDataset))));
-    
+        addKeywords(writer, sensorDataset);
         // operator -> contributor
         addContributor(sml, writer);
-    
         // publisher
         addPublisher(sml, writer);
-    
         // geospatial extent
         addGeospatialAttributes(writer, sensorDataset);
-        
         // geospatial_vertical_min/max/units/resolution/positive
         addGeospatialVerticalAttributes(writer, sensorDataset);
-    
         // time coverage
         addTimeCoverageAttributes(writer, sensorDataset);
-    
         // additional global attributes
         addProfileSpecificGlobalAttributes(writer, sensorDataset, sml);
     }
 
-    private void addGeospatialAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) throws CodedException {
+    protected CDMNode addCreateDate(NetcdfFileWriter writer) {
+        return writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.DATE_CREATED, new DateTime(DateTimeZone.UTC).toString()));
+        
+    }
+
+    protected CDMNode addMetadataConventions(NetcdfFileWriter writer) {
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.METADATA_CONVENTIONS,
+                ACDDConstants.UNIDATA_DATASET_DISCOVERY_1_0));
+        
+    }
+
+    protected CDMNode addFeatureType(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        return writer.addGroupAttribute(null, new Attribute(CFConstants.FEATURE_TYPE, sensorDataset.getFeatureType().name()));
+        
+    }
+
+    protected CDMNode addCdmDataType(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        return writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.CDM_DATA_TYPE, CF.FeatureType.convert(sensorDataset.getFeatureType())
+                        .name()));
+        
+    }
+
+    protected CDMNode addNodcTemplateVersion(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) throws CodedException {
+        return writer.addGroupAttribute(null, new Attribute(NODCConstants.NODC_TEMPLATE_VERSION,
+                getNodcTemplateVersion(sensorDataset.getFeatureType())));
+        
+    }
+
+    protected CDMNode addStandardNameVocabulary(NetcdfFileWriter writer) {
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.STANDARD_NAME_VOCABULARY, CFConstants.CF_1_6));
+        
+    }
+
+    protected CDMNode addKeywords(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        return writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.KEYWORDS, Joiner.on(",").join(getKeywords(sensorDataset))));
+    }
+
+    protected CDMNode addKeywordsVocabulary(NetcdfFileWriter writer) {
+        // TODO define setting? Choice?
+//        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.KEYWORDS_VOCABULARY, ""));
+        return null;
+        
+    }
+
+    protected CDMNode addId(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.ID, sensorDataset.getSensorIdentifier()));
+    }
+
+    protected CDMNode addUUID(NetcdfFileWriter writer) {
+        return writer.addGroupAttribute(null, new Attribute(NODCConstants.UUID, UUID.randomUUID().toString()));
+        
+    }
+
+    protected CDMNode addSummary(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        return writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.SUMMARY, "Sensor observations for " + sensorDataset.getSensorIdentifier()
+                        + ", feature type " + sensorDataset.getFeatureType().name()));
+        
+    }
+
+    protected CDMNode addTitle(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) {
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.TITLE, sensorDataset.getSensorIdentifier()));
+    }
+
+    protected void addGeospatialAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset) throws CodedException {
         // FIXME when trajectories are implemented, bbox should be calculated in
         // AbstractSensorDataset during construction
         if (sensorDataset instanceof StaticLocationDataset) {

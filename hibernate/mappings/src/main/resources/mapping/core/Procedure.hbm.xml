@@ -105,12 +105,12 @@
             </column>
         </many-to-one>
         <property name="isType" type="org.hibernate.type.TrueFalseType">
-        	<column name="isType" default="'F'" check="referenceFlag in ('T','F')">
+        	<column name="isType" default="'F'" check="isType in ('T','F')">
             	<comment>Flag to indicate that this procedure is a type description, has no observations.</comment>
             </column>
         </property>
         <property name="isAggregation" type="org.hibernate.type.TrueFalseType">
-        	<column name="isAggregation" default="'T'" check="referenceFlag in ('T','F')">
+        	<column name="isAggregation" default="'T'" check="isAggregation in ('T','F')">
             	<comment>Flag to indicate that this procedure is an aggregation (e.g. System, PhysicalSystem).</comment>
             </column>
         </property>

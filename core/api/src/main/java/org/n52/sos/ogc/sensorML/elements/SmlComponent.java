@@ -88,7 +88,7 @@ public class SmlComponent extends AbstractReferenceType {
         return name != null && !name.isEmpty();
     }
     
-    public boolean isReferenced() {
+    public boolean isReferencedExternally() {
         return isSetTitle() || isSetHref();
     }
 

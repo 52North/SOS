@@ -53,11 +53,8 @@ import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -377,6 +374,22 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             throw new InvalidParameterValueException(parameterName, procedureID);
         }
     }
+    
+    protected void checkTransactionalProcedureID(final String procedureID, final String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedureID)) {
+            throw new MissingProcedureParameterException();
+        } else if (!getCache().hasTransactionalObservationProcedure(procedureID)) {
+            throw new InvalidParameterValueException(parameterName, procedureID);
+        }
+    }
+    
+    protected void checkQueryableProcedureID(final String procedureID, final String parameterName) throws OwsExceptionReport {
+        if (Strings.isNullOrEmpty(procedureID)) {
+            throw new MissingProcedureParameterException();
+        } else if (!getCache().hasQueryableProcedure(procedureID)) {
+            throw new InvalidParameterValueException(parameterName, procedureID);
+        }
+    }
 
     protected void checkProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
             throws OwsExceptionReport {
@@ -385,6 +398,36 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             for (final String procedureID : procedureIDs) {
                 try {
                     checkProcedureID(procedureID, parameterName);
+                } catch (final OwsExceptionReport owse) {
+                    exceptions.add(owse);
+                }
+            }
+            exceptions.throwIfNotEmpty();
+        }
+    }
+    
+    protected void checkTransactionalProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
+            throws OwsExceptionReport {
+        if (procedureIDs != null) {
+            final CompositeOwsException exceptions = new CompositeOwsException();
+            for (final String procedureID : procedureIDs) {
+                try {
+                    checkTransactionalProcedureID(procedureID, parameterName);
+                } catch (final OwsExceptionReport owse) {
+                    exceptions.add(owse);
+                }
+            }
+            exceptions.throwIfNotEmpty();
+        }
+    }
+
+    protected void checkQueryableProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
+            throws OwsExceptionReport {
+        if (procedureIDs != null) {
+            final CompositeOwsException exceptions = new CompositeOwsException();
+            for (final String procedureID : procedureIDs) {
+                try {
+                    checkQueryableProcedureID(procedureID, parameterName);
                 } catch (final OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
@@ -587,13 +630,26 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             throw new InvalidParameterValueException(parameterName, resultTemplate);
         }
     }
-
+    
     protected List<String> addChildProcedures(final Collection<String> procedures) {
         final Set<String> allProcedures = Sets.newHashSet();
         if (procedures != null) {
             for (final String procedure : procedures) {
                 allProcedures.add(procedure);
                 allProcedures.addAll(getCache().getChildProcedures(procedure, true, false));
+            }
+        }
+        return Lists.newArrayList(allProcedures);
+    }
+
+    protected List<String> addInstanceProcedures(final Collection<String> procedures) {
+        final Set<String> allProcedures = Sets.newHashSet();
+        if (procedures != null) {
+            for (String procedure : procedures) {
+                allProcedures.add(procedure);
+                if (getCache().hasInstancesForProcedure(procedure)) {
+                    allProcedures.addAll(getCache().getInstancesForProcedure(procedure));
+                }
             }
         }
         return Lists.newArrayList(allProcedures);

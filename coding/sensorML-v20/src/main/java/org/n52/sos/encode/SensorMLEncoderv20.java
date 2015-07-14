@@ -130,6 +130,8 @@ import net.opengis.sensorml.x20.ComponentListPropertyType;
 import net.opengis.sensorml.x20.ComponentListType;
 import net.opengis.sensorml.x20.ComponentListType.Component;
 import net.opengis.sensorml.x20.ContactListType;
+import net.opengis.sensorml.x20.DataComponentOrObservablePropertyType;
+import net.opengis.sensorml.x20.DataInterfaceType;
 import net.opengis.sensorml.x20.DescribedObjectType;
 import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
 import net.opengis.sensorml.x20.DescribedObjectType.Characteristics;
@@ -683,10 +685,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             } else {
                 substitute(apt.addNewTypeOf(), encodeObjectToXmlGml32(abstractProcess.getTypeOf()));
             }
-//            XmlObject encodeObjectToXml = encodeObjectToXmlGml32(abstractProcess.getTypeOf());
-//            XmlObject substituteElement =
-//                    XmlHelper.substituteElement(apt.addNewTypeOf(), encodeObjectToXml);
-//            substituteElement.set(encodeObjectToXml);
         }
         // set configuration
         // set featureOfInterest
@@ -712,12 +710,14 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     private void addAbstractPhysicalProcessValues(final AbstractPhysicalProcessType appt,
             final AbstractPhysicalProcess absPhysicalProcess) throws OwsExceptionReport {
         // set attachedTo
-        if (!appt.isSetAttachedTo() && absPhysicalProcess.isSetAttachedTo()) {
-            XmlObject encodeObjectToXml = encodeObjectToXmlGml32(absPhysicalProcess.getAttachedTo());
-            if (encodeObjectToXml != null) {
-                appt.addNewAttachedTo().set(encodeObjectToXml);
+        if (absPhysicalProcess.isSetAttachedTo()) {
+            if (appt.isSetAttachedTo()) {
+                substitute(appt.getAttachedTo(), encodeObjectToXmlGml32(absPhysicalProcess.getAttachedTo()));
+            } else {
+                substitute(appt.addNewAttachedTo(), encodeObjectToXmlGml32(absPhysicalProcess.getAttachedTo()));
             }
         }
+        
         // set localReferenceFrame
         // set localTimeFrame
         // set position
@@ -1402,19 +1402,20 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     private void addDataComponentOrObservablePropertyType(DataComponentOrObservablePropertyType type, SmlIo<?> sosSMLIO) throws OwsExceptionReport {
         if (sosSMLIO.isSetHref()) {
             type.setHref(sosSMLIO.getHref());
-            
+            if (sosSMLIO.isSetTitle()) {
+                type.setTitle(sosSMLIO.getTitle());
+            }
         } else if (sosSMLIO.getIoValue() instanceof SweObservableProperty) {
             addValueToObservableProperty(type.addNewObservableProperty(), sosSMLIO.getIoValue());
         } else if (sosSMLIO.getIoValue() instanceof SmlDataInterface) {
             // TODO implement
-//            addValueToDataInterface
+//            addValueToDataInterface(type.addNewDataInterface(), sosSMLIO.getIoValue());
         } else {
             final XmlObject encodeObjectToXml = encodeObjectToXmlSwe20(sosSMLIO.getIoValue());
             XmlObject substituteElement =
                     XmlHelper.substituteElement(type.addNewAbstractDataComponent(), encodeObjectToXml);
             substituteElement.set(encodeObjectToXml);
         }
-        
     }
 
     private void addValueToObservableProperty(ObservablePropertyType opt, SweAbstractDataComponent observableProperty) {
@@ -1430,6 +1431,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         if (observableProperty.isSetLabel()) {
             opt.setLabel(observableProperty.getLabel());
         }
+    }
+
+    private void addValueToDataInterface(DataInterfaceType addNewDataInterface, SweAbstractDataComponent ioValue) {
+        // TODO Auto-generated method stub
     }
 
     /**

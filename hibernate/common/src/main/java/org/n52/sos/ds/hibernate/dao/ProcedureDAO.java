@@ -763,7 +763,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *
      * @param identifier
      *            Procedure identifier
-     * @param procedureDecriptionFormat
+     * @param procedureDescriptionFormat
      *            Procedure description format object
      * @param parentProcedures
      *            Parent procedure identifiers
@@ -774,7 +774,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     public Procedure getOrInsertProcedure(final String identifier,
             final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
             final Session session) {
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, true, session);
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, false, true, session);
     }
 
     /**
@@ -782,22 +782,24 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *
      * @param identifier
      *            Procedure identifier
-     * @param procedureDecriptionFormat
+     * @param procedureDescriptionFormat
      *            Procedure description format object
      * @param procedureDescription
      *            {@link SosProcedureDescription} to insert
+     * @param isType 
      * @param session
      *            Hibernate session
      * @return Procedure object
      */
-    public Procedure getOrInsertProcedure(String identifier,
-            ProcedureDescriptionFormat procedureDescriptionFormat, SosProcedureDescription procedureDescription,
-            Session session) {
-        return getOrInsertProcedure(identifier, procedureDescriptionFormat, procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), procedureDescription.isAggragation(), session);
+    public Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
+            SosProcedureDescription procedureDescription, boolean isType, Session session) {
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat,
+                procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), isType,
+                procedureDescription.isAggragation(), session);
     }
     
     private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
-            Collection<String> parentProcedures, ReferenceType typeOf, boolean isAggregation, Session session) {
+            Collection<String> parentProcedures, ReferenceType typeOf, boolean isType, boolean isAggregation, Session session) {
         Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
         if (procedure == null) {
             final TProcedure tProcedure = new TProcedure();
@@ -811,9 +813,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 if (typeOfProc != null) {
                     tProcedure.setTypeOf(typeOfProc);
                 }
-                tProcedure.setIsType(true);
             }
-            tProcedure.setIsAggragation(isAggregation);
+            tProcedure.setIsType(isType);
+            tProcedure.setIsAggregation(isAggregation);
             procedure = tProcedure;
         }
         procedure.setDeleted(false);

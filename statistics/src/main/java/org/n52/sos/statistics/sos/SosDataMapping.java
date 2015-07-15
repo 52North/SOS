@@ -81,7 +81,7 @@ public class SosDataMapping {
     // --------------- INSERT OBSERVATION --------------//
     public static final String IO_ASSIGNED_SENSORID = "insertobservation-assigned-sensorid";
     public static final String IO_OFFERINGS = "insertobservation-offerings";
-    public static final String IO_FEATURE_OF_INTEREST = "insertobservation-feature-of-interest";
+    public static final String IO_OBSERVATION = "insertobservation-observation";
 
     // --------------- INSERT RESULT TEMPLATE --------------//
     public static final String IRT_IDENTIFIER = "insertresulttemplate-identifier";
@@ -134,11 +134,19 @@ public class SosDataMapping {
 
     // ---------------- TEMPORAL FILTER INC TIME -------------------//
     public static final String TEMPORAL_FILTER_OPERATOR = "operator";
+    public static final String TEMPORAL_FILTER_VALUE_REF = "value-reference";
 
     // ----------- OmObservationConstellation -----------//
-    public static final String OMOC_PROCEDURE = "procedure";
-    public static final String OMOC_OBSERVABLE_PROPERTY = "observable-property";
-    public static final String OMOC_FEATURE_OF_INTEREST = "feature-of-interest";
-    public static final String OMOC_OBSERVATION_TYPE = "observation-type";
+    public static final String OMOCONSTELL_PROCEDURE = "procedure";
+    public static final String OMOCONSTELL_OBSERVABLE_PROPERTY = "observable-property";
+    public static final String OMOCONSTELL_FEATURE_OF_INTEREST = "feature-of-interest";
+    public static final String OMOCONSTELL_OBSERVATION_TYPE = "observation-type";
+
+    // ----------- OmObservation -----------//
+    public static final String OMOBS_CONSTELLATION = "constellation";
+    public static final String OMOBS_SAMPLING_GEOMETRY = "sampling-geometry";
+    public static final String OMOBS_PHENOMENON_TIME = "phenomenon-time";
+    public static final String OMOBS_RESULT_TIME = "result-time";
+    public static final String OMOBS_VALID_TIME = "valid-time";
 
 }

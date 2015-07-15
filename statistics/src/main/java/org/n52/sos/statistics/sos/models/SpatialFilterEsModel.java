@@ -65,12 +65,12 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     @Override
     protected Map<String, Object> getAsMap() {
-        if (spatialFilter == null) {
+        if (spatialFilter == null || spatialFilter.getGeometry() == null) {
             return null;
         }
 
-        // only bbox is allowed here
-        if (spatialFilter.getOperator() != SpatialOperator.BBOX) {
+        // only bbox is allowed here or empty
+        if (spatialFilter.getOperator() != null && spatialFilter.getOperator() != SpatialOperator.BBOX) {
             logger.debug("SpatialFilter operator is not allowed here {}", spatialFilter.getOperator());
             return null;
         }
@@ -98,7 +98,9 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
             polygon.point(coord);
         }
 
-        put(SosDataMapping.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
+        if (filter.getOperator() != null) {
+            put(SosDataMapping.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
+        }
         put(SosDataMapping.SPATIAL_FILTER_SHAPE, polygon);
         put(SosDataMapping.SPATIAL_FILTER_VALUE_REF, filter.getValueReference());
 

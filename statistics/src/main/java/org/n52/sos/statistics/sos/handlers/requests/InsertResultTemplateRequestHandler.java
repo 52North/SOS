@@ -31,14 +31,14 @@ package org.n52.sos.statistics.sos.handlers.requests;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
-import org.n52.sos.statistics.sos.models.ObservationTemplateEsModel;
+import org.n52.sos.statistics.sos.models.OmObservationConstellationEsModel;
 
 public class InsertResultTemplateRequestHandler extends AbstractSosRequestHandler<InsertResultTemplateRequest> {
 
     @Override
     protected void resolveConcreteRequest() {
         put(SosDataMapping.IRT_IDENTIFIER, request.getIdentifier());
-        put(SosDataMapping.IRT_OBSERVATION_TEMPLATE, ObservationTemplateEsModel.convert(request.getObservationTemplate()));
+        put(SosDataMapping.IRT_OBSERVATION_TEMPLATE, OmObservationConstellationEsModel.convert(request.getObservationTemplate()));
         try {
             put(SosDataMapping.IRT_RESULT_ENCODING, request.getResultEncoding().getXml());
         } catch (OwsExceptionReport | NullPointerException e) {

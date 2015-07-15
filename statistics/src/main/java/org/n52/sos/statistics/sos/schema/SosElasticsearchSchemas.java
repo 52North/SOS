@@ -131,6 +131,11 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
     private void insertObservation(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(SosDataMapping.IO_ASSIGNED_SENSORID);
         schema.addStringField(SosDataMapping.IO_OFFERINGS);
+
+        ElasticsearchSchemaBuilder observationMap = ElasticsearchSchemaBuilder.builder();
+        observationMap.addTimeField(SosDataMapping.OMOBS_PHENOMENON_TIME).addTimeField(SosDataMapping.OMOBS_RESULT_TIME)
+                .addTimeField(SosDataMapping.OMOBS_VALID_TIME).addSpatialFilterField(SosDataMapping.OMOBS_SAMPLING_GEOMETRY);
+        schema.addObject(SosDataMapping.IO_OBSERVATION, observationMap.build());
     }
 
     private void inesertResultTemplate(ElasticsearchSchemaBuilder schema) {

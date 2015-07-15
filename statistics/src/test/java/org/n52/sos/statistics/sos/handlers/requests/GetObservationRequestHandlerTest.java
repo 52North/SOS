@@ -45,6 +45,5 @@ public class GetObservationRequestHandlerTest extends HandlerBaseTest {
         Assert.assertThat(map.get(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES), CoreMatchers.is(true));
         Assert.assertThat(map.get(SosDataMapping.GO_SPATIAL_FILTER), CoreMatchers.notNullValue());
         Assert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER), CoreMatchers.allOf(CoreMatchers.instanceOf(List.class)));
-        Assert.assertThat((List<?>) map.get(SosDataMapping.GO_TEMPORAL_FILTER), CoreMatchers.hasItem(CoreMatchers.instanceOf(Map.class)));
     }
 }

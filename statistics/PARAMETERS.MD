@@ -100,6 +100,7 @@ The following parameters for request are measured in the statistics collection m
 ##### RequestEvent
 - **insertobservation-assigned-sensorid** - id of the sensor to insert the observation to
 - **insertobservation-offerings** - offerings of the observation
+- **insertobservation-observation** - the requested observation and some of it's interesting fields
  
 ### InsertResultTemplate
 ##### RequestEvent

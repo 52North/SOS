@@ -28,13 +28,17 @@
  */
 package org.n52.sos.statistics.sos.models;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class TimeEsModelTest {
@@ -65,5 +69,25 @@ public class TimeEsModelTest {
         Assert.assertEquals(period.getStart(), map.get(SosDataMapping.TIME_START));
         Assert.assertEquals(period.getEnd(), map.get(SosDataMapping.TIME_END));
         Assert.assertNull(period.getDuration());
+    }
+
+    @Test
+    public void temporalFilterConversion() {
+        TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), "val-ref");
+        Map<String, Object> map = TimeEsModel.convert(filter);
+
+        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(SosDataMapping.TEMPORAL_FILTER_OPERATOR));
+        Assert.assertEquals("val-ref", map.get(SosDataMapping.TEMPORAL_FILTER_VALUE_REF));
+    }
+
+    @Test
+    public void temporalFilterListConversion() {
+        TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), "val-ref");
+        List<Map<String, Object>> list = TimeEsModel.convert(Arrays.asList(filter));
+
+        Map<String, Object> map = list.get(0);
+
+        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(SosDataMapping.TEMPORAL_FILTER_OPERATOR));
+        Assert.assertEquals("val-ref", map.get(SosDataMapping.TEMPORAL_FILTER_VALUE_REF));
     }
 }

@@ -47,6 +47,7 @@ public class TimeEsModel extends AbstractElasticsearchModel {
     private DateTime end = null;
     private Long duration = null;
     private String timeOperator;
+    private String valueReference;
     private Time time;
 
     private TimeEsModel(Time time) {
@@ -60,6 +61,7 @@ public class TimeEsModel extends AbstractElasticsearchModel {
     public static Map<String, Object> convert(TemporalFilter temporalFilter) {
         TimeEsModel timeEsModel = new TimeEsModel(temporalFilter.getTime());
         timeEsModel.timeOperator = temporalFilter.getOperator().toString();
+        timeEsModel.valueReference = temporalFilter.getValueReference();
         return timeEsModel.getAsMap();
     }
 
@@ -98,6 +100,7 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         put(SosDataMapping.TIME_TIMEINSTANT, timeInstant);
         // only by TemporalFilter
         put(SosDataMapping.TEMPORAL_FILTER_OPERATOR, timeOperator);
+        put(SosDataMapping.TEMPORAL_FILTER_VALUE_REF, valueReference);
         return dataMap;
     }
 

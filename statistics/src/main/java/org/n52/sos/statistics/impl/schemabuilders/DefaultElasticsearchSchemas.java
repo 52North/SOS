@@ -33,34 +33,40 @@ import java.util.Map;
 import org.n52.sos.statistics.api.ServiceEventDataMapping;
 
 /**
- * Abstract class for further application specific Elasticsearch schema creation.
+ * Abstract class for further application specific Elasticsearch schema
+ * creation.
  *
  */
 public abstract class DefaultElasticsearchSchemas {
-    
+
     private final ElasticsearchSchemaBuilder schema = ElasticsearchSchemaBuilder.builder();
 
     public final Map<String, Object> getSchema() {
         addDefaultFields(schema);
         icelandExceptions(schema);
+        extensions(schema);
+
         appSpecificSchema(schema);
-        
+
         return schema.build();
     }
+
     /**
-     * Override this method and insert your application specific schemas to Elasticsearch
-     * @param schema 
+     * Override this method and insert your application specific schemas to
+     * Elasticsearch
+     * 
+     * @param schema
      */
     protected abstract void appSpecificSchema(final ElasticsearchSchemaBuilder schema);
-    
+
     public abstract int getSchemaVersion();
-    
+
     private void addDefaultFields(ElasticsearchSchemaBuilder schema) {
-    	schema.addDateField(ServiceEventDataMapping.TIMESTAMP_FIELD);
+        schema.addDateField(ServiceEventDataMapping.TIMESTAMP_FIELD);
         schema.addStringField(ServiceEventDataMapping.UUID_FIELD);
         schema.addStringField(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE);
     }
-    
+
     private void icelandExceptions(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(ServiceEventDataMapping.EX_STATUS);
         schema.addStringField(ServiceEventDataMapping.EX_VERSION);
@@ -68,6 +74,14 @@ public abstract class DefaultElasticsearchSchemas {
         schema.addStringField(ServiceEventDataMapping.CEX_LOCATOR);
         schema.addStringField(ServiceEventDataMapping.CEX_SOAP_FAULT);
         schema.addStringField(ServiceEventDataMapping.OWSEX_NAMESPACE);
+    }
+
+    private void extensions(ElasticsearchSchemaBuilder schema) {
+        ElasticsearchSchemaBuilder extension =
+                ElasticsearchSchemaBuilder.builder().addStringField(ServiceEventDataMapping.EXT_DEFINITION)
+                        .addStringField(ServiceEventDataMapping.EXT_IDENTIFIER).addStringField(ServiceEventDataMapping.EXT_VALUE);
+
+        schema.addObject(ServiceEventDataMapping.SR_EXTENSIONS, extension.build());
     }
 
     public final Map<String, Object> getMetadataSchema() {

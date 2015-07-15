@@ -36,6 +36,7 @@ public class HandlerBaseTest extends MockitoBaseTest {
     protected static SpatialFilter spatialFilter;
     protected static TemporalFilter temporalFilter;
     protected static OmObservation omObservation;
+    protected static OmObservationConstellation omConstellation;
 
     @Mock
     protected IStatisticsLocationUtil locationUtil;
@@ -52,24 +53,28 @@ public class HandlerBaseTest extends MockitoBaseTest {
 
         temporalFilter = new TemporalFilter(TimeOperator.TM_Equals, new TimeInstant(DateTime.now()), "nothing");
 
+        createOmConstellation();
         createOmObservation();
+    }
+
+    private static void createOmConstellation() {
+        // constellation
+        omConstellation = new OmObservationConstellation();
+        omConstellation.setProcedure(new SosProcedureDescriptionUnknowType("id", "format", "xml"));
+        omConstellation.setObservableProperty(new OmObservableProperty("id", "desc", "unit", "value"));
+        omConstellation.setFeatureOfInterest(new OmObservation() {
+            {
+                setIdentifier("foi");
+            }
+        });
+        omConstellation.setObservationType("obstype");
     }
 
     private static void createOmObservation() throws OwsExceptionReport {
         omObservation = new OmObservation();
         omObservation.setIdentifier("id");
 
-        // constellation
-        OmObservationConstellation constellation = new OmObservationConstellation();
-        constellation.setProcedure(new SosProcedureDescriptionUnknowType("id", "format", "xml"));
-        constellation.setObservableProperty(new OmObservableProperty("id", "desc", "unit", "value"));
-        constellation.setFeatureOfInterest(new OmObservation() {
-            {
-                setIdentifier("foi");
-            }
-        });
-        constellation.setObservationType("obstype");
-        omObservation.setObservationConstellation(constellation);
+        omObservation.setObservationConstellation(omConstellation);
 
         // result time
         // valid time

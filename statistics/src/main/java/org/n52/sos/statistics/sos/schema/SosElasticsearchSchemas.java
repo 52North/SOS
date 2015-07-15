@@ -140,7 +140,9 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
 
     private void inesertResultTemplate(ElasticsearchSchemaBuilder schema) {
         schema.addStringField(SosDataMapping.IRT_IDENTIFIER);
-        schema.addStringField(SosDataMapping.IRT_RESULT_ENCODING);
+        ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
+        schema.addObject(SosDataMapping.IRT_OBSERVATION_TEMPLATE, builder.build());
+        // schema.addStringField(SosDataMapping.IRT_RESULT_ENCODING);
     }
 
     private void insertResult(ElasticsearchSchemaBuilder schema) {

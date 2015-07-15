@@ -105,7 +105,7 @@ The following parameters for request are measured in the statistics collection m
 ### InsertResultTemplate
 ##### RequestEvent
 - **insertresulttemplate-identifier** - identifier of the result template
-- **insertresulttemplate-result-encoding** - encoding of the template
+- **insertresulttemplate-observation-template** - the observation template contains the procedure, observedProperty, featureOfInterest, observationType fields
  
 ### InsertResult
 ##### RequestEvent

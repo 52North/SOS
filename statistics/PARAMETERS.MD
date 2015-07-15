@@ -123,6 +123,8 @@ The following parameters for request are measured in the statistics collection m
 - **getresult-observation-template-identifier** - template idenfitier
 - **getresult-observation-property** - name of the observation property
 - **getresult-offering** - name of the offering
+- **getresult-spatial-filter** - spatial filter of the request
+- **getresult-temporal-filter** - temporal filters of the request
 
 ### GetDataAvailability
 ##### RequestEvent

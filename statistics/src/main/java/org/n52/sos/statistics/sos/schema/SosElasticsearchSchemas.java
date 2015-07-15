@@ -159,6 +159,8 @@ public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
         schema.addStringField(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER);
         schema.addStringField(SosDataMapping.GR_OBSERVATION_PROPERTY);
         schema.addStringField(SosDataMapping.GR_OFFERING);
+        schema.addSpatialFilterField(SosDataMapping.GR_SPATIAL_FILTER);
+        schema.addTemporalFilterField(SosDataMapping.GR_TEMPORAL_FILTER);
     }
 
     private void getDataAvailability(ElasticsearchSchemaBuilder schema) {

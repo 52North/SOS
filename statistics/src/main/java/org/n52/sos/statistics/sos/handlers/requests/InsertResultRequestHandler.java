@@ -36,6 +36,8 @@ public class InsertResultRequestHandler extends AbstractSosRequestHandler<Insert
     @Override
     protected void resolveConcreteRequest() {
         put(SosDataMapping.IR_TEMPLATE_IDENTIFIER, request.getTemplateIdentifier());
+        put(SosDataMapping.IR_RESULT_VALUES, request.getResultValues());
+
     }
 
 }

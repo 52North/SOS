@@ -90,6 +90,7 @@ public class SosDataMapping {
 
     // --------------- INSERT RESULT --------------//
     public static final String IR_TEMPLATE_IDENTIFIER = "insertresult-template-identifier";
+    public static final String IR_RESULT_VALUES = "insertresult-result-values";
 
     // --------------- GET RESULT TEMPLATE --------------//
     public static final String GRT_OBSERVED_PROPERTY = "getresulttemplate-observed-property";

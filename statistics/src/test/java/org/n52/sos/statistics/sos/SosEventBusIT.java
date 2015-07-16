@@ -80,6 +80,9 @@ public class SosEventBusIT extends ElasticsearchAwareTest {
         ResponseEvent respEvent = new ResponseEvent(resp);
 
         OutgoingResponseEvent outgoingResponseEvent = new OutgoingResponseEvent(null, null, 100L, 1234L);
+        outgoingResponseEvent.setBytesWritten(123456L);
+        
+        
 
         serviceBus.submit(evt);
         serviceBus.submit(respEvent);

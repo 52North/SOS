@@ -51,8 +51,9 @@ public class OutgoingResponseEventResolver extends AbstractElasticSearchDataHold
         put(ServiceEventDataMapping.ORE_COUNT, response.getRequestNumber());
         if (response.getBytesWritten() != null) {
             Map<String, Object> data = new HashMap<String, Object>();
-            data.put(ServiceEventDataMapping.ORE_BYTES_WRITTEN_BYTES, response.getBytesWritten());
-            data.put(ServiceEventDataMapping.ORE_BYTES_WRITTEN_DISPLAY, FileUtils.byteCountToDisplaySize(response.getBytesWritten()));
+            data.put(ServiceEventDataMapping.BYTES_WRITTEN, response.getBytesWritten());
+            data.put(ServiceEventDataMapping.BYTES_WRITTEN_DISPLAY, FileUtils.byteCountToDisplaySize(response.getBytesWritten()));
+            dataMap.put(ServiceEventDataMapping.ORE_BYTES_WRITTEN, data);
         }
 
         return dataMap;

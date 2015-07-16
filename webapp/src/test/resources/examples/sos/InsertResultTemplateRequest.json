@@ -1,0 +1,68 @@
+{
+  "request": "InsertResultTemplate",
+  "service": "SOS",
+  "version": "2.0.0",
+  "identifier": "http://www.52north.org/test/procedure/6/template/1",
+  "offering": "offering6",
+  "observationTemplate": {
+    "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+    "procedure": "http://52north.org/example/procedure/6",
+    "observedProperty": "http://52north.org/example/observedProperty/6",
+    "featureOfInterest": {
+      "identifier": {
+        "value": "http://52north.org/example/feature/6",
+        "codespace": "http://www.opengis.net/def/nil/OGC/0/unknown"
+      },
+      "name": [
+        {
+          "value": "Hochschule Bochum",
+          "codespace": "http://www.opengis.net/def/nil/OGC/0/unknown"
+        }
+      ],
+      "sampledFeature": [
+        "http://52north.org/example/feature/world"
+      ],
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          51.447722,
+          7.270806
+        ],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:4326"
+          }
+        }
+      }
+    },
+    "phenomenonTime": "template",
+    "resultTime": "template"
+  },
+  "resultStructure": {
+    "fields": [
+      {
+        "type": "timeRange",
+        "name": "phenomenonTime",
+        "definition": "http://www.opengis.net/def/property/OGC/0/PhenomenonTime",
+        "uom": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+      },
+      {
+        "type": "time",
+        "name": "resultTime",
+        "definition": "http://www.opengis.net/def/property/OGC/0/ResultTime",
+        "uom": "testunit1"
+      },
+      {
+        "type": "quantity",
+        "name": "observable_property_6",
+        "definition": "http://www.52north.org/test/observableProperty/6",
+        "uom": "test_unit_6"
+      }
+    ]
+  },
+  "resultEncoding": {
+    "tokenSeparator": ",",
+    "blockSeparator": "#"
+  }
+}

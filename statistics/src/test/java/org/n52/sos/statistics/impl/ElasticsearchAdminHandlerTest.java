@@ -32,13 +32,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas;
 
@@ -96,7 +96,7 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
     }
 
     @Test(
-            expected = ElasticsearchException.class)
+            expected = ConfigurationError.class)
     public void failOnVersionMismatch() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InterruptedException {
         Map<String, Object> data = new HashMap<>();

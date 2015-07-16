@@ -46,12 +46,6 @@
 			<version>${elasticsearch-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>javax</groupId>
-			<artifactId>javaee-api</artifactId>
-			<version>7.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
@@ -109,6 +103,18 @@
 		<dependency>
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>gda-operation</artifactId>
+		</dependency>
+
+		<!-- N52 Test Suits -->
+		<dependency>
+			<groupId>org.n52.sensorweb.sos</groupId>
+			<artifactId>test-suite-common</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb.sos</groupId>
+			<artifactId>test-suite-sos-20</artifactId>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

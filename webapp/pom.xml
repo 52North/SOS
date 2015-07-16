@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <artifactId>52n-sos</artifactId>
-        <groupId>org.n52.sensorweb.sos</groupId>
-        <version>5.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>webapp</artifactId>
-    <packaging>war</packaging>
-    <name>52°North SOS - Webapp</name>
-    <description>52°North Sensor Observation Service WAR</description>
-    <properties>
-        <sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
-        <databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
-        <!-- do not overwrite this one! -->
-        <sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
-    </properties>
-    <build>
-        <finalName>${conf.sos.name}##${project.version}</finalName>
-        <plugins>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<parent>
+		<artifactId>52n-sos</artifactId>
+		<groupId>org.n52.sensorweb.sos</groupId>
+		<version>5.0.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>webapp</artifactId>
+	<packaging>war</packaging>
+	<name>52°North SOS - Webapp</name>
+	<description>52°North Sensor Observation Service WAR</description>
+	<properties>
+		<sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
+		<databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
+		<tomcat.version>8.0.24</tomcat.version>
+		<!-- do not overwrite this one! -->
+		<sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
+	</properties>
+	<build>
+		<finalName>${conf.sos.name}##${project.version}</finalName>
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -28,595 +30,709 @@
 					</includes>
 				</configuration>
 			</plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                    	<id>hibernate-mapping</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>hibernate-mappings</artifactId>
-                                    <overWrite>false</overWrite>
-                                </artifactItem>
-                            </artifactItems>
-                            <includes>**/*.xml,**/README</includes>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/webapp</directory>
-                            <filtering>true</filtering>
-                        </resource>
-                        <resource>
-                            <directory>src/main/resources</directory>
-                            <filtering>true</filtering>
-                            <targetPath>WEB-INF/classes</targetPath>
-                        </resource>
-                        <resource>
-                            <directory>../misc/db</directory>
-                            <filtering>false</filtering>
-                            <targetPath>sql</targetPath>
-                            <includes>
-                                <include>**/*.sql</include>
-                            </includes>
-                        </resource>
-                    </webResources>
-                    <overlays>
-                        <overlay>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>views</artifactId>
-                        </overlay>
-                    </overlays>
-                </configuration>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse m2e settings
-                only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.apache.maven.plugins</groupId>
-                                        <artifactId>maven-dependency-plugin</artifactId>
-                                        <versionRange>[2.6,)</versionRange>
-                                        <goals>
-                                            <goal>unpack</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-    <dependencies>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>hibernate-mapping</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>hibernate-mappings</artifactId>
+									<overWrite>false</overWrite>
+								</artifactItem>
+							</artifactItems>
+							<includes>**/*.xml,**/README</includes>
+							<outputDirectory>${project.build.outputDirectory}</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+					<webResources>
+						<resource>
+							<directory>src/main/webapp</directory>
+							<filtering>true</filtering>
+						</resource>
+						<resource>
+							<directory>src/main/resources</directory>
+							<filtering>true</filtering>
+							<targetPath>WEB-INF/classes</targetPath>
+						</resource>
+						<resource>
+							<directory>../misc/db</directory>
+							<filtering>false</filtering>
+							<targetPath>sql</targetPath>
+							<includes>
+								<include>**/*.sql</include>
+							</includes>
+						</resource>
+					</webResources>
+					<overlays>
+						<overlay>
+							<groupId>${project.groupId}</groupId>
+							<artifactId>views</artifactId>
+						</overlay>
+					</overlays>
+				</configuration>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-dependency-plugin</artifactId>
+										<versionRange>[2.6,)</versionRange>
+										<goals>
+											<goal>unpack</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<dependencies>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-
-        <!-- LOGGING -->
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-
-        <!-- CORE -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>profile-coding</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.iceland</groupId>
-            <artifactId>iceland</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>sqlite-config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>cache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gc-dao</artifactId>
-        </dependency>
-
-        <!-- CODING -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-ows-v110</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML-v101</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sensorML-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-sos-v100</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-wml-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-kvp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-soap</artifactId>
-        </dependency>
-
-        <!-- OPERATIONS -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>enhanced-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>transactional-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>resultHandling-v20</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>request-response-coordinate-transformer</artifactId>
-        </dependency>
-        <!-- dependencies for integration test -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core-v100</artifactId>
-        </dependency>
-
-
-        <!-- HIBERNATE -->
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-session-factory</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-dao</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-feature</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-postgres</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-mysql</artifactId>
-        </dependency>
-        <dependency>
-		    <groupId>${project.groupId}</groupId>
-		    <artifactId>hibernate-datasource-h2</artifactId>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 		</dependency>
 
-         <!-- BINDINGS -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>binding-exi</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+		</dependency>
 
-        <!-- REST BINDING -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-code</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>rest-xml</artifactId>
-        </dependency>
+		<!-- LOGGING -->
 
-         <!-- GET DATA AVAILABILITY -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jul-to-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gda-operation</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>gda-hibernate</artifactId>
-        </dependency>
+		<!-- CORE -->
 
-        <!-- DELETE OBSERVATION -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>profile-coding</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.iceland</groupId>
+			<artifactId>iceland</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>sqlite-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gc-dao</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-json</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-hibernate</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-kvp</artifactId>
-        </dependency>
+		<!-- CODING -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-ows-v110</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-sensorML</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-sensorML-v101</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-sensorML-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-sos-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-sos-v100</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-wml-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-kvp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-soap</artifactId>
+		</dependency>
+
+		<!-- OPERATIONS -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>enhanced-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>transactional-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>resultHandling-v20</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>request-response-coordinate-transformer</artifactId>
+		</dependency>
+		<!-- dependencies for integration test -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core-v100</artifactId>
+		</dependency>
 
 
-        <!-- dependencies for integration test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test-suite-common</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test-suite-sos-20</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>test</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<!-- HIBERNATE -->
 
-        <!-- #### Spring dependencies #### -->
-        <dependency>
-            <groupId>com.thetransactioncompany</groupId>
-            <artifactId>cors-filter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-session-factory</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-dao</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-feature</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-datasource-common</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-datasource-postgres</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-datasource-mysql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-datasource-h2</artifactId>
+		</dependency>
 
-        <!-- ADMINISTRATION INTERFACE -->
+		<!-- BINDINGS -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>binding-exi</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>client-controller</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>install-controller</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>admin-controller</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>common-controller</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>views</artifactId>
-            <type>war</type>
-        </dependency>
+		<!-- REST BINDING -->
 
-        <!-- THIRD PARTY -->
-        <dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rest-code</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>rest-xml</artifactId>
+		</dependency>
+
+		<!-- GET DATA AVAILABILITY -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gda-operation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>gda-hibernate</artifactId>
+		</dependency>
+
+		<!-- DELETE OBSERVATION -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>do-xml</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>do-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>do-json</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>do-hibernate</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>do-kvp</artifactId>
+		</dependency>
+
+
+		<!-- dependencies for integration test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>hibernate-h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>test-suite-common</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>test-suite-sos-20</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- #### Spring dependencies #### -->
+		<dependency>
+			<groupId>com.thetransactioncompany</groupId>
+			<artifactId>cors-filter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+		</dependency>
+
+		<!-- ADMINISTRATION INTERFACE -->
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>client-controller</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>install-controller</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>admin-controller</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>common-controller</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>views</artifactId>
+			<type>war</type>
+		</dependency>
+
+		<!-- THIRD PARTY -->
+		<dependency>
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>third-party-ncname-resolver</artifactId>
-        </dependency>
+		</dependency>
 
-        <!-- EREPORTING -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ereporting</artifactId>
-        </dependency>
-
-        <!-- INSPIRE -->
+		<!-- EREPORTING -->
 		<dependency>
-            <groupId>${project.groupId}</groupId>
-        	<artifactId>inspire-code</artifactId>
-        </dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ereporting</artifactId>
+		</dependency>
 
-        <!-- AQD eReporting -->
-         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>coding-aqd-v10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>core-aqd-v10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>api-aqd-v10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>aqd-split-and-merge</artifactId>
-        </dependency>
-        <!-- flexible identifiers -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>abstract-identifier</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>flexible-identifier</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>prefixed-identifier</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>ereporting-identifier</artifactId>
-        </dependency>
-        <!-- Split and Merge observatioons -->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>split-and-merge</artifactId>
-        </dependency>
-        <dependency>
-        	<groupId>org.n52.sensorweb.sos</groupId>
-        	<artifactId>statistics</artifactId>
-        	<version>5.0.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-    <profiles>
-        <profile>
-            <id>oracle</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-oracle</artifactId>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.oracle</groupId>
-                                <artifactId>ojdbc6</artifactId>
-                                <version>${ojdbc6.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>sqlserver</id>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.microsoft</groupId>
-                                <artifactId>sqljdbc4</artifactId>
-                                <version>${sqljdbc4.version}</version>
-                            </dependency>
-                        </dependencies>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <!-- Profile for integration testing, run with: mvn -P itest clean install -->
-            <!-- To specify an alternate port: mvn -P itest clean install -Djetty.port=9090 -->
-            <id>itest</id>
-            <properties>
-                <jetty.port>9090</jetty.port>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <configuration>
-                            <scanIntervalSeconds>10</scanIntervalSeconds>
-                            <stopPort>9999</stopPort>
-                            <stopKey>STOP</stopKey>
-                            <contextPath>/</contextPath>
-                            <connectors>
-                                <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                                    <port>${jetty.port}</port>
-                                </connector>
-                            </connectors>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>start-jetty</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                    <goal>run-exploded</goal>
-                                </goals>
-                                <configuration>
-                                    <scanIntervalSeconds>0</scanIntervalSeconds>
-                                    <daemon>true</daemon>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>stop-jetty</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>assembly</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <executions>
-                        	<execution>
-                        		<phase>install</phase>
-                        		<goals>
-                        			<goal>single</goal>
-                        		</goals>
-                        		<configuration>
-                        			<finalName>52n-sensorweb-sos-${project.version}</finalName>
-                        			<appendAssemblyId>false</appendAssemblyId>
-                        		</configuration>
-                        	</execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <dependencies>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-oracle</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>hibernate-datasource-sqlserver</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
+		<!-- INSPIRE -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>inspire-code</artifactId>
+		</dependency>
 
-        <!-- Profile for deploy SOS -->
-        <profile>
+		<!-- AQD eReporting -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-aqd-v10</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>core-aqd-v10</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>api-aqd-v10</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>aqd-split-and-merge</artifactId>
+		</dependency>
+		<!-- flexible identifiers -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>abstract-identifier</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>flexible-identifier</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>prefixed-identifier</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>ereporting-identifier</artifactId>
+		</dependency>
+		<!-- Split and Merge observatioons -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>split-and-merge</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.n52.sensorweb.sos</groupId>
+			<artifactId>statistics</artifactId>
+			<version>5.0.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.3.0.v20150612</version>
+			<scope>test</scope>
+		</dependency>
+
+
+	</dependencies>
+	<profiles>
+		<profile>
+			<id>statistics-it-test</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+							<webResources>
+								<resource>
+									<directory>src/main/webapp</directory>
+									<filtering>true</filtering>
+								</resource>
+								<resource>
+									<directory>src/main/resources</directory>
+									<filtering>true</filtering>
+									<targetPath>WEB-INF/classes</targetPath>
+								</resource>
+								<resource>
+									<directory>../misc/db</directory>
+									<filtering>false</filtering>
+									<targetPath>sql</targetPath>
+									<includes>
+										<include>**/*.sql</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>src/test/resources</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>
+											**configuration.json
+										</include>
+									</includes>
+								</resource>
+								<resource>
+									<directory>src/test/resources</directory>
+									<filtering>false</filtering>
+									<includes>
+										<include>
+											**datasource.properties
+										</include>
+									</includes>
+									<targetPath>WEB-INF</targetPath>
+								</resource>
+							</webResources>
+							<overlays>
+								<overlay>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>views</artifactId>
+								</overlay>
+							</overlays>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.eclipse.jetty</groupId>
+						<artifactId>jetty-maven-plugin</artifactId>
+						<version>9.3.0.M2</version>
+						<executions>
+							<execution>
+								<id>preit</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>deploy-war</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<httpConnector>
+								<port>10100</port>
+							</httpConnector>
+							<webAppConfig>
+								<allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
+							</webAppConfig>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>it</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>integration-test</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<includes>
+								<include>**/*IT.java</include>
+							</includes>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>oracle</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>hibernate-datasource-oracle</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>maven-jetty-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>com.oracle</groupId>
+								<artifactId>ojdbc6</artifactId>
+								<version>${ojdbc6.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>sqlserver</id>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>hibernate-datasource-sqlserver</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>maven-jetty-plugin</artifactId>
+						<dependencies>
+							<dependency>
+								<groupId>com.microsoft</groupId>
+								<artifactId>sqljdbc4</artifactId>
+								<version>${sqljdbc4.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<!-- Profile for integration testing, run with: mvn -P itest clean install -->
+			<!-- To specify an alternate port: mvn -P itest clean install -Djetty.port=9090 -->
+			<id>itest</id>
+			<properties>
+				<jetty.port>9090</jetty.port>
+			</properties>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.mortbay.jetty</groupId>
+						<artifactId>maven-jetty-plugin</artifactId>
+						<configuration>
+							<scanIntervalSeconds>10</scanIntervalSeconds>
+							<stopPort>9999</stopPort>
+							<stopKey>STOP</stopKey>
+							<contextPath>/</contextPath>
+							<connectors>
+								<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+									<port>${jetty.port}</port>
+								</connector>
+							</connectors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>start-jetty</id>
+								<phase>pre-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+									<goal>run-exploded</goal>
+								</goals>
+								<configuration>
+									<scanIntervalSeconds>0</scanIntervalSeconds>
+									<daemon>true</daemon>
+								</configuration>
+							</execution>
+							<execution>
+								<id>stop-jetty</id>
+								<phase>post-integration-test</phase>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>assembly</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>install</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+								<configuration>
+									<finalName>52n-sensorweb-sos-${project.version}</finalName>
+									<appendAssemblyId>false</appendAssemblyId>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+			<dependencies>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>hibernate-datasource-oracle</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>${project.groupId}</groupId>
+					<artifactId>hibernate-datasource-sqlserver</artifactId>
+				</dependency>
+			</dependencies>
+		</profile>
+
+		<!-- Profile for deploy SOS -->
+		<profile>
 			<id>deploy</id>
 			<build>
 				<finalName>${conf.sos.name}</finalName>
@@ -633,13 +749,8 @@
 									<goal>deployer-redeploy</goal>
 								</goals>
 							</execution>
-							<!-- <execution>
-								<id>clean-undeploy</id>
-								<phase>pre-clean</phase>
-								<goals>
-									<goal>deployer-undeploy</goal>
-								</goals>
-							</execution> -->
+							<!-- <execution> <id>clean-undeploy</id> <phase>pre-clean</phase> 
+								<goals> <goal>deployer-undeploy</goal> </goals> </execution> -->
 						</executions>
 						<configuration>
 							<!-- Container Configuration -->
@@ -650,87 +761,83 @@
 							</container>
 							<configuration>
 								<type>runtime</type>
-								 <!--
-                                    <cargo.hostname>${remote.server}</cargo.hostname>
-                                    <cargo.servlet.port>${remote.port}</cargo.servlet.port>
-                                    <cargo.remote.username>${remote.user}</cargo.remote.username>
-									<cargo.remote.password>${remote.password}</cargo.remote.password>
+								<!-- <cargo.hostname>${remote.server}</cargo.hostname> <cargo.servlet.port>${remote.port}</cargo.servlet.port> 
+									<cargo.remote.username>${remote.user}</cargo.remote.username> <cargo.remote.password>${remote.password}</cargo.remote.password> -->
+							</configuration>
+							<deployables>
+								<deployable>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<type>war</type>
+								</deployable>
+							</deployables>
+							<!-- Deployer and Deployables configuration -->
+							<deployer>
+								<type>remote</type>
+							</deployer>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- ################################################################################ 
+			######################## Profiles to preconfigure the webapp ######################## 
+			################################################################################# -->
 
-                                -->
-                            </configuration>
-                            <deployables>
-                                <deployable>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <type>war</type>
-                                </deployable>
-                            </deployables>
-                            <!-- Deployer and Deployables configuration -->
-                            <deployer>
-                                <type>remote</type>
-                            </deployer>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <!-- ################################################################################
-        ######################## Profiles to preconfigure the webapp ########################
-        ################################################################################# -->
-
-        <!-- ########## Profile to use a specified database configuration file
-        ########## -->
-        <profile>
-            <id>configure-datasource</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>configure-datasource</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <!-- ############## Profile to use a existing SQLite configuration ############## -->
-        <profile>
-            <id>use-default-settings</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>use-default-settings</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <tasks>
-                                        <delete quiet="true" file="${sqliteSettingDatabaseTargetFile}" />
-                                        <copy file="${sqliteSettingDatabase}" tofile="${sqliteSettingDatabaseTargetFile}" />
-                                    </tasks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+		<!-- ########## Profile to use a specified database configuration file 
+			########## -->
+		<profile>
+			<id>configure-datasource</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>configure-datasource</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<copy file="${databaseConfigurationFile}"
+											tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- ############## Profile to use a existing SQLite configuration ############## -->
+		<profile>
+			<id>use-default-settings</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>use-default-settings</id>
+								<phase>process-resources</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete quiet="true" file="${sqliteSettingDatabaseTargetFile}" />
+										<copy file="${sqliteSettingDatabase}" tofile="${sqliteSettingDatabaseTargetFile}" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

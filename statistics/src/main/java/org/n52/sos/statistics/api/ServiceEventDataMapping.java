@@ -45,8 +45,6 @@ public class ServiceEventDataMapping {
     public static final String ORE_EXEC_TIME = "outre-exec-time";
     public static final String ORE_COUNT = "outre-count";
     public static final String ORE_BYTES_WRITTEN = "outre-bytes-written";
-    public static final String ORE_BYTES_WRITTEN_BYTES = "bytes";
-    public static final String ORE_BYTES_WRITTEN_DISPLAY = "display";
 
     // --------------- Iceland Exception --------------//
     public static final String EX_STATUS = "exception-status";
@@ -81,5 +79,10 @@ public class ServiceEventDataMapping {
     public static final String EXT_DEFINITION = "extension-definition";
     public static final String EXT_IDENTIFIER = "extension-identifier";
     public static final String EXT_VALUE = "extension-value";
+    
+    
+    //----------------- BYTES WRITTEN -----------//
+    public static final String BYTES_WRITTEN = "bytes";
+    public static final String BYTES_WRITTEN_DISPLAY = "display";
 
 }

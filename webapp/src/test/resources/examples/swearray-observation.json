@@ -1,0 +1,42 @@
+{
+  "type": "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation",
+  "procedure": "http://52north.org/example/procedure/1",
+  "observedProperty": "http://52north.org/example/observedProperty/1",
+  "featureOfInterest": "http://52north.org/example/feature/1",
+  "phenomenonTime": "2013-01-01T00:00:00+02:00",
+  "resultTime": "2013-01-01T00:00:00+02:00",
+  "validTime": [
+    "2013-01-01T00:00:00+02:00",
+    "2013-01-01T01:00:00+02:00"
+  ],
+  "result": {
+    "fields": [
+      {
+        "type": "timeRange",
+        "name": "timeRangeField",
+        "definition": "urn:ogc:def:timeRangeField",
+        "uom": "http://www.opengis.net/def/uom/ISO-8601/0/Gregorian"
+      },
+      {
+        "type": "quantity",
+        "name": "quantityField",
+        "definition": "urn:ogc:def:quantityField",
+        "uom": "testunit1"
+      },
+      {
+        "type": "category",
+        "name": "categoryField",
+        "definition": "urn:ogc:def:categoryField",
+        "codespace": "http://52north.org/"
+      }
+    ],
+    "values": [
+      [["2013-01-01T00:00:00+02:00","2013-01-01T00:01:00+02:00"],123.123,"cat1"],
+      [["2013-01-01T00:02:00+02:00","2013-01-01T00:03:00+02:00"],123.123,"cat2"],
+      [["2013-01-01T00:04:00+02:00","2013-01-01T00:05:00+02:00"],123.123,"cat1"],
+      [["2013-01-01T00:06:00+02:00","2013-01-01T00:07:00+02:00"],123.123,"cat3"],
+      [["2013-01-01T00:08:00+02:00","2013-01-01T00:09:00+02:00"],123.123,"cat4"],
+      [["2013-01-01T00:10:00+02:00","2013-01-01T00:11:00+02:00"],123.123,"cat2"]
+    ]
+  }
+}

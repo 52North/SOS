@@ -486,6 +486,13 @@
 	<profiles>
 		<profile>
 			<id>statistics-it-test</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.elasticsearch</groupId>
+					<artifactId>elasticsearch</artifactId>
+					<version>1.6.0</version>
+				</dependency>
+			</dependencies>
 			<build>
 				<plugins>
 					<plugin>

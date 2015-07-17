@@ -44,6 +44,7 @@ import basetest.ElasticsearchAwareTest;
 
 import com.google.common.base.Optional;
 
+//TODO these classes needs to be in the integration test
 public class SosRequestEventResolverTest extends ElasticsearchAwareTest {
 
     @Inject

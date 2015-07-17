@@ -14,7 +14,7 @@
 	<properties>
 		<sqliteSettingDatabase>${project.parent.basedir}/misc/conf/default_settings.db</sqliteSettingDatabase>
 		<databaseConfigurationFile>${project.parent.basedir}/misc/conf/datasource.properties</databaseConfigurationFile>
-		<tomcat.version>8.0.24</tomcat.version>
+		<jetty.version>9.3.0.v20150612</jetty.version>
 		<!-- do not overwrite this one! -->
 		<sqliteSettingDatabaseTargetFile>${project.build.directory}/${project.build.finalName}/configuration.db</sqliteSettingDatabaseTargetFile>
 	</properties>
@@ -474,12 +474,20 @@
 			<version>5.0.0-SNAPSHOT</version>
 		</dependency>
 
+		<!-- integration test -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>9.3.0.v20150612</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+			<version>9.3.0.v20150612</version>
+			<scope>test</scope>
+		</dependency>
+
 
 
 	</dependencies>
@@ -491,6 +499,33 @@
 					<groupId>org.elasticsearch</groupId>
 					<artifactId>elasticsearch</artifactId>
 					<version>1.6.0</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts</artifactId>
+					<version>1.13</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>commons-io</groupId>
+					<artifactId>commons-io</artifactId>
+					<scope>test</scope>
 				</dependency>
 			</dependencies>
 			<build>
@@ -554,34 +589,12 @@
 						</configuration>
 					</plugin>
 					<plugin>
-						<groupId>org.eclipse.jetty</groupId>
-						<artifactId>jetty-maven-plugin</artifactId>
-						<version>9.3.0.M2</version>
-						<executions>
-							<execution>
-								<id>preit</id>
-								<phase>pre-integration-test</phase>
-								<goals>
-									<goal>deploy-war</goal>
-								</goals>
-							</execution>
-						</executions>
-						<configuration>
-							<httpConnector>
-								<port>10100</port>
-							</httpConnector>
-							<webAppConfig>
-								<allowDuplicateFragmentNames>true</allowDuplicateFragmentNames>
-							</webAppConfig>
-						</configuration>
-					</plugin>
-					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-failsafe-plugin</artifactId>
 						<executions>
 							<execution>
 								<id>it</id>
-								<phase>verify</phase>
+								<phase>integration-test</phase>
 								<goals>
 									<goal>integration-test</goal>
 								</goals>
@@ -589,8 +602,9 @@
 						</executions>
 						<configuration>
 							<includes>
-								<include>**/*IT.java</include>
+								<include>**/statistics/*It.java</include>
 							</includes>
+							<classpathDependencyScopeExclude>compile</classpathDependencyScopeExclude>
 						</configuration>
 					</plugin>
 				</plugins>

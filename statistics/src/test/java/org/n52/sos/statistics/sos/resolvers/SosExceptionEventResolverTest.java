@@ -38,6 +38,7 @@ import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
 import basetest.ElasticsearchAwareTest;
 
+//TODO these classes needs to be in the integration test
 public class SosExceptionEventResolverTest extends ElasticsearchAwareTest {
 
     @Inject

@@ -43,6 +43,7 @@ import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
 
 import basetest.ElasticsearchAwareTest;
 
+//TODO these classes needs to be in the integration test
 public class DefaultServiceEventResolverTest extends ElasticsearchAwareTest {
 
     @Inject

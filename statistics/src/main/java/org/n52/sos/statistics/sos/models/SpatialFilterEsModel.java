@@ -33,8 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.elasticsearch.common.geo.builders.ShapeBuilder;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.statistics.sos.SosDataMapping;
 import org.slf4j.Logger;
@@ -69,16 +70,10 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
             return null;
         }
 
-        // only bbox is allowed here or empty
-        if (spatialFilter.getOperator() != null && spatialFilter.getOperator() != SpatialOperator.BBOX) {
-            logger.debug("SpatialFilter operator is not allowed here {}", spatialFilter.getOperator());
-            return null;
-        }
-
         try {
             switch (spatialFilter.getSrid()) {
             case 4326:
-                createBBOX(spatialFilter);
+            	transform4326(spatialFilter);
                 break;
 
             default:
@@ -92,18 +87,45 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         return null;
     }
 
-    private void createBBOX(SpatialFilter filter) {
+    private void transform4326(SpatialFilter spatialFilter) {
+		switch (spatialFilter.getOperator()) {
+		case BBOX:
+			createBbox(spatialFilter);
+			break;
+		case Equals:
+			createEquals(spatialFilter);
+			break;
+		default:
+			break;
+		}
+		
+	}
+    
+    private void createEquals(SpatialFilter filter) {
+    	Coordinate[] points = filter.getGeometry().getCoordinates();
+    	if(points.length != 1) {
+    		throw new IllegalArgumentException("Invalid number of coordinates in geometry. It should be a point. Got "+points.length);
+    	}
+    	PointBuilder point = PointBuilder.newPoint(points[0].x,points[0].y);
+    	 createSpatialFilter(filter, point);
+    }
+
+	private void createBbox(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
         for (Coordinate coord : filter.getGeometry().getCoordinates()) {
             polygon.point(coord);
         }
 
-        if (filter.getOperator() != null) {
-            put(SosDataMapping.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
-        }
-        put(SosDataMapping.SPATIAL_FILTER_SHAPE, polygon);
-        put(SosDataMapping.SPATIAL_FILTER_VALUE_REF, filter.getValueReference());
+       createSpatialFilter(filter, polygon);
 
     }
+	
+	private void createSpatialFilter(SpatialFilter filter,ShapeBuilder builder) {
+		 if (filter.getOperator() != null) {
+	            put(SosDataMapping.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
+	        }
+	        put(SosDataMapping.SPATIAL_FILTER_SHAPE, builder);
+	        put(SosDataMapping.SPATIAL_FILTER_VALUE_REF, filter.getValueReference());
+	}
 
 }

@@ -30,77 +30,78 @@ package org.n52.sos.statistics.impl;
 
 import java.io.File;
 
-import org.elasticsearch.common.lang3.SystemUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.n52.sos.statistics.api.StatisticsLocationUtilSettingsKeys;
 import org.springframework.util.Assert;
 
+//TODO these classes needs to be in the integration test
 public class StatisticsLocationUtilIT {
 
-    @Test
-    public void downloadDefaultDatabases() throws Exception {
-        StatisticsLocationUtil loc = new StatisticsLocationUtil();
-        loc.setEnabled(true);
-        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_AUTO);
-        if(SystemUtils.IS_OS_WINDOWS) {
-        loc.setDownloadFolderPath("C:\\temp");
-        } else {
-        	loc.setDownloadFolderPath("/tmp");
-        }
-        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_CITY);
+	@Rule
+	public final TemporaryFolder folder = new TemporaryFolder();
 
-        loc.init();
-        Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
-    }
+	@Test
+	public void downloadDefaultDatabases() throws Exception {
+		StatisticsLocationUtil loc = new StatisticsLocationUtil();
+		loc.setEnabled(true);
+		loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_AUTO);
+		loc.setDownloadFolderPath(folder.newFolder("tmp").getAbsolutePath());
+		loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_CITY);
 
-    @Test
-    public void manualCityDatabase() throws Exception {
-        StatisticsLocationUtil loc = new StatisticsLocationUtil();
-        loc.setEnabled(true);
-        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
-        String filepath = new File(getClass().getResource("/geolite/city.mmdb").toURI()).getAbsolutePath();
-        loc.setCityDbLoc(filepath);
-        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_CITY);
+		loc.init();
+		Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
+	}
 
-        loc.init();
-        Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
-    }
+	@Test
+	public void manualCityDatabase() throws Exception {
+		StatisticsLocationUtil loc = new StatisticsLocationUtil();
+		loc.setEnabled(true);
+		loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+		String filepath = new File(getClass().getResource("/geolite/city.mmdb").toURI()).getAbsolutePath();
+		loc.setCityDbLoc(filepath);
+		loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_CITY);
 
-    @Test
-    public void manualCountryDatabase() throws Exception {
-        StatisticsLocationUtil loc = new StatisticsLocationUtil();
-        loc.setEnabled(true);
-        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
-        String filepath = new File(getClass().getResource("/geolite/country.mmdb").toURI()).getAbsolutePath();
-        loc.setCountryDbLoc(filepath);
-        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+		loc.init();
+		Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
+	}
 
-        loc.init();
-        Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
-    }
+	@Test
+	public void manualCountryDatabase() throws Exception {
+		StatisticsLocationUtil loc = new StatisticsLocationUtil();
+		loc.setEnabled(true);
+		loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+		String filepath = new File(getClass().getResource("/geolite/country.mmdb").toURI()).getAbsolutePath();
+		loc.setCountryDbLoc(filepath);
+		loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
 
-    @Test
-    public void geolocIsDisabled() throws Exception {
-        StatisticsLocationUtil loc = new StatisticsLocationUtil();
-        loc.setEnabled(false);
-        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
-        String filepath = new File(getClass().getResource("/geolite/country.mmdb").toURI()).getAbsolutePath();
-        loc.setCountryDbLoc(filepath);
-        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+		loc.init();
+		Assert.notNull(loc.ip2SpatialData("67.20.172.183"));
+	}
 
-        loc.init();
-        Assert.isNull(loc.ip2SpatialData("67.20.172.183"));
-    }
+	@Test
+	public void geolocIsDisabled() throws Exception {
+		StatisticsLocationUtil loc = new StatisticsLocationUtil();
+		loc.setEnabled(false);
+		loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+		String filepath = new File(getClass().getResource("/geolite/country.mmdb").toURI()).getAbsolutePath();
+		loc.setCountryDbLoc(filepath);
+		loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
 
-    @Test
-    public void manualDatabaseButLocationIsEmpty() throws Exception {
-        StatisticsLocationUtil loc = new StatisticsLocationUtil();
-        loc.setEnabled(true);
-        loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
-        loc.setCountryDbLoc(null);
-        loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+		loc.init();
+		Assert.isNull(loc.ip2SpatialData("67.20.172.183"));
+	}
 
-        loc.init();
-        Assert.isNull(loc.ip2SpatialData("67.20.172.183"));
-    }
+	@Test
+	public void manualDatabaseButLocationIsEmpty() throws Exception {
+		StatisticsLocationUtil loc = new StatisticsLocationUtil();
+		loc.setEnabled(true);
+		loc.setAutoDownload(StatisticsLocationUtilSettingsKeys.DATABASE_DOWNLOADER_MANUAL);
+		loc.setCountryDbLoc(null);
+		loc.setDbType(StatisticsLocationUtilSettingsKeys.DATABASE_TYPE_COUNTRY);
+
+		loc.init();
+		Assert.isNull(loc.ip2SpatialData("67.20.172.183"));
+	}
 }

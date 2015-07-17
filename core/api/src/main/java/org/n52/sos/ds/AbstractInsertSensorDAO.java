@@ -55,7 +55,7 @@ public abstract class AbstractInsertSensorDAO extends AbstractOperationDAO {
         } else {
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
             opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                    CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(service, version));
+                    CodingRepository.getInstance().getSupportedTransactionalProcedureDescriptionFormats(service, version));
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
             opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,

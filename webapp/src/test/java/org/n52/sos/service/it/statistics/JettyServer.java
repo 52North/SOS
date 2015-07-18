@@ -28,47 +28,40 @@
  */
 package org.n52.sos.service.it.statistics;
 
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
-import org.junit.rules.ExternalResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
 
-public class ElasticsearchServer extends ExternalResource {
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.junit.rules.ExternalResource;
+
+public class JettyServer extends ExternalResource {
 	
-	private static final Logger logger = LoggerFactory.getLogger(ElasticsearchServer.class);
-	
-	private Node embeddedNode;
-	private Client client;
+	Server server;
 
 	@Override
 	protected void before() throws Throwable {
-        Settings settings = ImmutableSettings.settingsBuilder().loadFromClasspath("elasticsearch_embedded.yml").build();
-        embeddedNode = NodeBuilder.nodeBuilder().settings(settings).build();
-        embeddedNode.start();
-        client = embeddedNode.client();
-        logger.info("Elasticsearch server started");
-        try 
-        {
-        client.admin().indices().prepareDelete(AbstractStatisticsBase.ES_INDEX).get();
-        } catch (ElasticsearchException e) {
-        	
-        }
+		server = new Server(AbstractStatisticsBase.JETTY_PORT);
+		WebAppContext webapp = new WebAppContext();
+        webapp.setContextPath("/");
+        //TODO get from property
+        File warFile = new File("target/52n-sos-webapp##5.0.0-SNAPSHOT.war");
+        webapp.setAllowDuplicateFragmentNames(true);
+        webapp.setWar(warFile.getAbsolutePath());
+        
+        server.setHandler(webapp); 
+        server.start();        
 	}
 
 	@Override
 	protected void after() {
-		embeddedNode.close();
-		logger.info("Elasticsearch server closed");
+		try {
+			server.stop();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	public Client getClient() {
-		return client;
-	}
+	
 
-	
 }

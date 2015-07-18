@@ -89,4 +89,24 @@ public class SpatialFilterEsModelTest {
 
         Assert.assertNull(map);
     }
+    
+    @Test
+    public void createPointGeometry() throws OwsExceptionReport {
+        Geometry geom = JTSHelper.createGeometryFromWKT("POINT (40 40)", 4326);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, "value-ref");
+
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
+
+        Assert.assertNotNull(map);
+    }
+    
+    @Test
+    public void createPointButItisPologyonGeometry() throws OwsExceptionReport {
+        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
+        SpatialFilter filter = new SpatialFilter(SpatialOperator.Equals, geom, "value-ref");
+
+        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
+
+        Assert.assertNull(map);
+    }
 }

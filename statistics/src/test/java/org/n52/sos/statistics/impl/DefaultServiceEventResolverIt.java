@@ -26,54 +26,47 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.statistics.sos.resolvers;
-
-import java.util.Arrays;
+package org.n52.sos.statistics.impl;
 
 import javax.inject.Inject;
 
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
+import org.elasticsearch.client.Client;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.request.RequestContext;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.iceland.event.events.ExceptionEvent;
+import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
 
 import basetest.ElasticsearchAwareTest;
 
-import com.google.common.base.Optional;
-
 //TODO these classes needs to be in the integration test
-public class SosRequestEventResolverTest extends ElasticsearchAwareTest {
+public class DefaultServiceEventResolverIt extends ElasticsearchAwareTest {
 
     @Inject
-    private SosRequestEventResolver resolve;
+    private DefaultServiceEventResolver resolver;
 
     @Inject
     private IStatisticsDataHandler dataHandler;
 
     @Test
-    public void persistExceptionToDb() throws InterruptedException {
+    public void saveSosEvent() throws InterruptedException {
 
-        RequestContext ctx = new RequestContext();
-        ctx.setIPAddress(new IPAddress("172.168.22.53"));
-        ctx.setToken("asdf-asdf-asdf");
-        GetCapabilitiesRequest r = new GetCapabilitiesRequest("SOS");
-        r.setRequestContext(ctx);
-        r.setService("sos service");
-        r.setVersion("1.0.0");
-        r.setAcceptFormats(Arrays.asList("a", "b", "c"));
-        r.setAcceptVersions(Arrays.asList("1.0", "1.1"));
+        ExceptionEvent evt = new ExceptionEvent(new NullPointerException("sos event exception"));
+        resolver.setEvent(evt);
 
-        resolve.setRequest(r);
-        new RequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.53")));
-
-        dataHandler.persist(resolve.resolve());
-        // eventually realtime should be enough
+        dataHandler.persist(resolver.resolve());
         Thread.sleep(2000);
 
-        SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
+        Client client = getEmbeddedClient();
+        SearchResponse resp =
+                client.prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).setSearchType(SearchType.DFS_QUERY_AND_FETCH)
+                        .setQuery(QueryBuilders.matchQuery(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE, evt.getClass().toString())).get();
+
         Assert.assertEquals(1, resp.getHits().getTotalHits());
     }
+
 }

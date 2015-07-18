@@ -77,8 +77,7 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
                 break;
 
             default:
-                logger.debug("Unsupported SRID coordination system {}", spatialFilter.getSrid());
-                return null;
+                throw new IllegalArgumentException("Unsupported SRID coordination system "+ spatialFilter.getSrid());
             }
             return dataMap;
         } catch (Throwable e) {
@@ -96,7 +95,7 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 			createEquals(spatialFilter);
 			break;
 		default:
-			break;
+			throw new IllegalArgumentException("Unsupported operator "+spatialFilter.getOperator().toString());
 		}
 		
 	}

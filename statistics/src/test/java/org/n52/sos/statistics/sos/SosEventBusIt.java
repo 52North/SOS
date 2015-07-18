@@ -49,7 +49,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import basetest.ElasticsearchAwareTest;
 
-public class SosEventBusIT extends ElasticsearchAwareTest {
+public class SosEventBusIt extends ElasticsearchAwareTest {
 
     @Autowired
     private SosStatisticsServiceEventListener listener;

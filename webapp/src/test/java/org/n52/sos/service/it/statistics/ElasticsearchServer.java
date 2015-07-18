@@ -28,7 +28,7 @@
  */
 package org.n52.sos.service.it.statistics;
 
-import java.io.File;
+import java.io.File; 
 
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.ElasticsearchException;

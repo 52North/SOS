@@ -53,7 +53,7 @@ public class ExtensionEsModelTest {
         Assert.assertEquals("SweBoolean [value=true; quality=null; simpleType=Boolean]", map.get(ServiceEventDataMapping.EXT_VALUE));
         Assert.assertEquals("definition", map.get(ServiceEventDataMapping.EXT_DEFINITION));
         Assert.assertEquals("identifier", map.get(ServiceEventDataMapping.EXT_IDENTIFIER));
-    }
+    } 
 
     @Test
     public void resultsInNullExtension() {

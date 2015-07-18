@@ -34,7 +34,7 @@ public class DefaultSosResponseHandler extends AbstractSosResponseHandler<Abstra
 
     @Override
     protected void resolveConcreteResponse() {
-
+    	
     }
 
 }

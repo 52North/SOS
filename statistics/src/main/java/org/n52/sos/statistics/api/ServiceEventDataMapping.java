@@ -67,11 +67,6 @@ public class ServiceEventDataMapping {
     public static final String SR_CONTENT_TYPE = "sr-content-type";
     public static final String SR_ACCEPT_TYPES = "sr-accept-types";
     public static final String SR_GEO_LOC_FIELD = "sr-source-geolocation";
-    // -------------- START SUB FIELD ---------------------------------//
-    public static final String GEO_LOC_COUNTRY_CODE = "country-code";
-    public static final String GEO_LOC_CITY_CODE = "city-name";
-    public static final String GEO_LOC_GEOPOINT = "geopoint";
-    // -------------- SUB FIELD ---------------- //
     public static final String SR_PROXIED_REQUEST_FIELD = "sr-proxied-request";
     public static final String SR_EXTENSIONS = "sr-extensions";
 
@@ -80,9 +75,17 @@ public class ServiceEventDataMapping {
     public static final String EXT_IDENTIFIER = "extension-identifier";
     public static final String EXT_VALUE = "extension-value";
     
+    // --------------- DEFAULT RESPONSE EVENTS --------------//
+
+    public static final String SRESP_CONTENT_TYPE = "sresp-content-type";
     
     //----------------- BYTES WRITTEN -----------//
     public static final String BYTES_WRITTEN = "bytes";
     public static final String BYTES_WRITTEN_DISPLAY = "display";
+    
+    //----------- GEO LOCATION -------------------//
+    public static final String GEO_LOC_COUNTRY_CODE = "country-code";
+    public static final String GEO_LOC_CITY_CODE = "city-name";
+    public static final String GEO_LOC_GEOPOINT = "geopoint";
 
 }

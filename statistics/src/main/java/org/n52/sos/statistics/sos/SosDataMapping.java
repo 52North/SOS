@@ -111,10 +111,6 @@ public class SosDataMapping {
     public static final String GDA_OFFERINGS = "getdataavailability-offerings";
     public static final String GDA_PROCEDURES = "getdataavailability-procedures";
 
-    // --------------- DEFAULT RESPONSE EVENTS --------------//
-
-    public static final String SRESP_MEDIATYPE = "sresp-mediatype";
-
     // ----------------- OBJECTS DETEILS -----------------//
     // --------------- SPATIAL FILTER --------------------//
     public static final String SPATIAL_FILTER_OPERATOR = "operation";

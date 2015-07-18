@@ -45,10 +45,10 @@ public class SosResponseEventResolver implements IStatisticsServiceEventResolver
 
     @Override
     public Map<String, Object> resolve() {
-        //Objects.requireNonNull(response);
     	if(response == null) {
     		return null;
     	}
+    	//TODO probably implement more specific event handler
         return defaultSosResponseHandler.resolveAsMap(response);
     }
 

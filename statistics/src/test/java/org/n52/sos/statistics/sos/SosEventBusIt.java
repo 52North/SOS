@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.event.ServiceEventBus;
+import org.n52.iceland.event.events.CountingOutputstreamEvent;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.iceland.event.events.RequestEvent;
@@ -58,7 +59,7 @@ public class SosEventBusIt extends ElasticsearchAwareTest {
     private ServiceEventBus serviceBus;
 
     @Test
-    public void sendSosNormalFlowTriadtToElasticSearch() throws InterruptedException {
+    public void sendSosNormalFlowToElasticSearch() throws InterruptedException {
 
         RequestContext ctx = new RequestContext();
         ctx.setIPAddress(new IPAddress("241.56.199.99"));
@@ -80,12 +81,12 @@ public class SosEventBusIt extends ElasticsearchAwareTest {
         ResponseEvent respEvent = new ResponseEvent(resp);
 
         OutgoingResponseEvent outgoingResponseEvent = new OutgoingResponseEvent(null, null, 100L, 1234L);
-        outgoingResponseEvent.setBytesWritten(123456L);
         
-        
+        CountingOutputstreamEvent countingEvent = new CountingOutputstreamEvent(1234L);
 
         serviceBus.submit(evt);
         serviceBus.submit(respEvent);
+        serviceBus.submit(countingEvent);
         serviceBus.submit(outgoingResponseEvent);
 
         // wait for the other thread to stop, hopefully
@@ -93,7 +94,7 @@ public class SosEventBusIt extends ElasticsearchAwareTest {
 
         SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
 
-        logger.debug(response.toString());
+        logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
         Assert.assertThat(hit.sourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));
@@ -127,7 +128,7 @@ public class SosEventBusIt extends ElasticsearchAwareTest {
 
         SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
 
-        logger.debug(response.toString());
+        logger.info(response.toString());
         SearchHit hit = response.getHits().getAt(0);
         Assert.assertNotNull(hit);
         Assert.assertThat(hit.sourceAsMap().values(), CoreMatchers.hasItem(request.getOperationName()));

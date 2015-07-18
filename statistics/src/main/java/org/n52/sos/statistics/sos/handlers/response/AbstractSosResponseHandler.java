@@ -32,15 +32,16 @@ import java.util.Map;
 
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.sos.SosDataMapping;
 
 public abstract class AbstractSosResponseHandler<T extends AbstractServiceResponse> extends AbstractElasticSearchDataHolder implements
         IServiceEventHandler<AbstractServiceResponse> {
 
-    private T response;
+    protected T response;
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public Map<String, Object> resolveAsMap(AbstractServiceResponse event) {
         this.response = (T) event;
         init();
@@ -50,7 +51,7 @@ public abstract class AbstractSosResponseHandler<T extends AbstractServiceRespon
 
     private void init() {
         if (response.getContentType() != null) {
-            put(SosDataMapping.SRESP_MEDIATYPE, response.getContentType().toString());
+            put(ServiceEventDataMapping.SRESP_CONTENT_TYPE, response.getContentType().toString());
         }
     }
 

@@ -42,9 +42,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
@@ -92,6 +89,8 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -109,8 +108,9 @@ public class RestBinding extends Binding implements Constructable {
     private ServiceEventBus eventBus;
     private EncoderRepository encoderRepository;
     private DecoderRepository decoderRepository;
+    private HTTPUtils httpUtils;
 
-    private Producer<XmlOptions> xmlOptions;
+	private Producer<XmlOptions> xmlOptions;
 
     public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
         this.xmlOptions = xmlOptions;
@@ -119,6 +119,15 @@ public class RestBinding extends Binding implements Constructable {
     public XmlOptions getXmlOptions() {
         return xmlOptions.get();
     }
+    
+    public HTTPUtils getHttpUtils() {
+		return httpUtils;
+	}
+
+    @Inject
+	public void setHttpUtils(HTTPUtils httpUtils) {
+		this.httpUtils = httpUtils;
+	}
 
     @Inject
     public void setDecoderRepository(DecoderRepository decoderRepository) {
@@ -239,7 +248,7 @@ public class RestBinding extends Binding implements Constructable {
             this.eventBus.submit(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
-        HTTPUtils.writeObject(request, response, serviceResponse);
+        httpUtils.writeObject(request, response, serviceResponse);
     }
 
     private ServiceResponse encodeOwsExceptionReport(OwsExceptionReport oer) throws HTTPException, IOException {

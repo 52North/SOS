@@ -85,6 +85,16 @@
 		<property name="order" value="7.0" />
 		<property name="group" ref="elasticSearchSettingDefintionGroup" />
 	</bean>
+	
+		<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+		<property name="key" value="statistics.counting-outputstream" />
+		<property name="title"
+			value="The response document size is calculated" />
+		<property name="description" value="The size of the response document which is sent back to the client. This could result in a small performance degradation." />
+		<property name="order" value="8.0" />
+		<property name="group" ref="elasticSearchSettingDefintionGroup" />
+		<property name="defaultValue" value="false" />
+	</bean>
 
 	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
 		<property name="key" value="elasticsearch.kibana_config_enable" />
@@ -92,7 +102,7 @@
 			value="Enables installation of preconfigured Kibana settings" />
 		<property name="description" value="If this checkbox is enabled the preconfigured Kibana settings, visualizations and dashboards will be installed.
 		If you point your Kibana instance to this Elasticsearch cluster you can use our deployed configurations. The statistics collection MUST be enabled." />
-		<property name="order" value="8.0" />
+		<property name="order" value="9.0" />
 		<property name="group" ref="elasticSearchSettingDefintionGroup" />
 		<property name="defaultValue" value="false" />
 	</bean>
@@ -105,7 +115,7 @@
 			If you leave this field blank we import the default settings which came with this server deployment.
 			You can export from the Kibana settings with our Kibana exporter tool." />
 		<property name="optional" value="true" />
-		<property name="order" value="9.0" />
+		<property name="order" value="10.0" />
 		<property name="group" ref="elasticSearchSettingDefintionGroup" />
 	</bean>
 </beans>

@@ -26,7 +26,7 @@ The following parameters for request are measured in the statistics collection m
 
 ### Default to all responses
 ##### ResponseEvent
-- **sresp-mediatype** - HTTP content type of the response
+- **sresp-content-type** - HTTP content type of the response
 
 ### Exceptions
 ##### ExceptionEvent

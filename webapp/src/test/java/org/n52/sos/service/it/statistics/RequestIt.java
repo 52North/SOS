@@ -55,6 +55,8 @@ public class RequestIt extends AbstractStatisticsBase {
 		Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_EXEC_TIME));
 		Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_BYTES_WRITTEN));
 		Assert.assertNotNull(map.get(ServiceEventDataMapping.UUID_FIELD));
+		
+		//Assert.assertNotNull(map.get(ServiceEventDataMapping.SRESP_CONTENT_TYPE));
 	}
 	
 	@Test

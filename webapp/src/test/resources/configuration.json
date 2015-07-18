@@ -1,44 +1,12 @@
 {
   "settings" : {
-    "sos.flexibleIdentifier" : {
-      "type" : "boolean",
-      "value" : false
-    },
     "procedureDesc.ENRICH_WITH_DISCOVERY_INFORMATION" : {
       "type" : "boolean",
       "value" : true
     },
-    "eReporting.procedure.prefix" : {
-      "type" : "string",
-      "value" : null
-    },
-    "rest.errorMsg.HttpMethodNotAllowedForResource" : {
-      "type" : "string",
-      "value" : "HTTP method \"%s\" not allowed for \"%s\" resources."
-    },
     "misc.defaultProcedurePrefix" : {
       "type" : "string",
       "value" : "http://www.example.org/procedure/"
-    },
-    "procedureDesc.IDENTIFIER_SHORT_NAME_DEFINITION" : {
-      "type" : "string",
-      "value" : "urn:ogc:def:identifier:OGC:1.0:shortname"
-    },
-    "rest.urlpattern" : {
-      "type" : "string",
-      "value" : "/rest"
-    },
-    "misc.srsNamePrefixSosV2" : {
-      "type" : "string",
-      "value" : "http://www.opengis.net/def/crs/EPSG/0/"
-    },
-    "rest.encodingPrefix" : {
-      "type" : "string",
-      "value" : "sosREST"
-    },
-    "misc.srsNamePrefixSosV1" : {
-      "type" : "string",
-      "value" : "urn:ogc:def:crs:EPSG::"
     },
     "serviceProvider.postalCode" : {
       "type" : "string",
@@ -51,28 +19,6 @@
     "rest.resource.relation.observableproperty.get" : {
       "type" : "string",
       "value" : "property-get"
-    },
-    "serviceIdentification.abstract" : {
-      "type" : "multilingual",
-      "value" : {
-        "eng" : "52North Sensor Observation Service - Data Access for the Sensor Web"
-      }
-    },
-    "eReporting.offering.prefix" : {
-      "type" : "string",
-      "value" : null
-    },
-    "procedureDesc.ENRICH_WITH_OFFERINGS" : {
-      "type" : "boolean",
-      "value" : true
-    },
-    "serviceProvider.city" : {
-      "type" : "string",
-      "value" : "Münster"
-    },
-    "eReporting.flags.verification" : {
-      "type" : "string",
-      "value" : "1"
     },
     "rest.kvp.encoding.valuesplitter" : {
       "type" : "string",
@@ -94,61 +40,17 @@
       "type" : "integer",
       "value" : 5
     },
-    "service.defaultEpsg" : {
-      "type" : "integer",
-      "value" : 4326
-    },
-    "sos.prefix.obervableProperty" : {
-      "type" : "string",
-      "value" : null
-    },
     "exi.fidelity.comments" : {
       "type" : "boolean",
       "value" : false
-    },
-    "rest.http.get.parametername.namespaces" : {
-      "type" : "string",
-      "value" : "namespaces"
-    },
-    "eReporting.samplingPoint.prefix" : {
-      "type" : "string",
-      "value" : null
-    },
-    "sos.flexibleIdentifier.procedure" : {
-      "type" : "boolean",
-      "value" : true
     },
     "exi.grammar" : {
       "type" : "choice",
       "value" : "exi.grammar.schemaless"
     },
-    "service.response.validate" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "rest.resource.relation.observations.get" : {
-      "type" : "string",
-      "value" : "observations-get"
-    },
-    "rest.http.get.parametername.foi" : {
-      "type" : "string",
-      "value" : "feature"
-    },
-    "serviceProvider.file" : {
-      "type" : "file",
-      "value" : null
-    },
-    "service.streaming.datasource" : {
-      "type" : "boolean",
-      "value" : true
-    },
     "misc.defaultOfferingPrefix" : {
       "type" : "string",
       "value" : "http://www.example.org/offering/"
-    },
-    "rest.resource.relation.sensor.delete" : {
-      "type" : "string",
-      "value" : "sensor-delete"
     },
     "service.defaultRespopnse3DEpsg" : {
       "type" : "integer",
@@ -157,10 +59,6 @@
     "sos.prefix.procedure" : {
       "type" : "string",
       "value" : null
-    },
-    "serviceProvider.phone" : {
-      "type" : "string",
-      "value" : "+49(0)251/396 371-0"
     },
     "eReporting.featureOfInterest.prefix" : {
       "type" : "string",
@@ -182,14 +80,6 @@
       "type" : "string",
       "value" : "52North"
     },
-    "rest.http.get.parametername.offering" : {
-      "type" : "string",
-      "value" : "offering"
-    },
-    "sos.flexibleIdentifier.featureOfInterest" : {
-      "type" : "boolean",
-      "value" : true
-    },
     "inspire.useAuthority" : {
       "type" : "boolean",
       "value" : false
@@ -198,25 +88,9 @@
       "type" : "string",
       "value" : "observation-delete"
     },
-    "profile.hydrology.maxReturnedTimeSeries" : {
-      "type" : "integer",
-      "value" : 0
-    },
-    "rest.sos.version" : {
-      "type" : "string",
-      "value" : "2.0.0"
-    },
-    "exi.fidelity.dtd" : {
-      "type" : "boolean",
-      "value" : false
-    },
     "profile.hydrology.overallExtrema" : {
       "type" : "boolean",
       "value" : true
-    },
-    "eReporting.station.prefix" : {
-      "type" : "string",
-      "value" : null
     },
     "rest.resource.offerings" : {
       "type" : "string",
@@ -226,33 +100,9 @@
       "type" : "string",
       "value" : "1,2,3"
     },
-    "rest.resource.relation.features.get" : {
-      "type" : "string",
-      "value" : "features-get"
-    },
-    "sos.flexibleIdentifier.obervableProperty" : {
-      "type" : "boolean",
-      "value" : true
-    },
-    "service.cachePersistenceDelay" : {
-      "type" : "integer",
-      "value" : 30
-    },
     "service.transactionalToken" : {
       "type" : "string",
       "value" : null
-    },
-    "rest.encodingNamspace" : {
-      "type" : "uri",
-      "value" : "http://www.opengis.net/sosREST/1.0"
-    },
-    "rest.sos.capabilities.section.name.contents" : {
-      "type" : "string",
-      "value" : "Contents"
-    },
-    "rest.resource.relation.self" : {
-      "type" : "string",
-      "value" : "self"
     },
     "service.transactionalAllowedIps" : {
       "type" : "string",
@@ -266,10 +116,6 @@
       "type" : "integer",
       "value" : 10000
     },
-    "inspire.conformity.title" : {
-      "type" : "string",
-      "value" : "OGC SOS 2.0 for Inspire"
-    },
     "serviceProvider.address" : {
       "type" : "string",
       "value" : "Martin-Luther-King-Weg 24"
@@ -281,26 +127,6 @@
     "misc.httpResponseCodeUseInKvpAndPoxBinding" : {
       "type" : "boolean",
       "value" : false
-    },
-    "procedureDesc.ALTITUDE_UOM" : {
-      "type" : "string",
-      "value" : "m"
-    },
-    "eReporting.namespace" : {
-      "type" : "string",
-      "value" : null
-    },
-    "procedureDesc.LAT_LONG_UOM" : {
-      "type" : "string",
-      "value" : "degree"
-    },
-    "exi.fidelity" : {
-      "type" : "choice",
-      "value" : "exi.fidelity.specific"
-    },
-    "exi.alignment" : {
-      "type" : "choice",
-      "value" : "BIT_PACKED"
     },
     "rest.http.get.parametername.procedures" : {
       "type" : "string",
@@ -322,10 +148,6 @@
       "type" : "string",
       "value" : null
     },
-    "elasticsearch.cluster_name" : {
-      "type" : "string",
-      "value" : "ogc-statistics-cluster"
-    },
     "service.useDefaultPrefixes" : {
       "type" : "boolean",
       "value" : false
@@ -336,33 +158,17 @@
     },
     "elasticsearch.uuid" : {
       "type" : "string",
-      "value" : "63a13502-196f-4ce4-847f-afd2cffcf011"
+      "value" : "f7834221-a29b-4f46-98c4-c75910a4fe6f"
     },
     "geoloc.db_type" : {
       "type" : "choice",
       "value" : "geoloc.db_type.city"
     },
-    "service.encodeFullChildrenInDescribeSensor" : {
-      "type" : "boolean",
-      "value" : true
-    },
     "elasticsearch.index_name" : {
       "type" : "string",
       "value" : "ogc-statistics-index"
     },
-    "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION" : {
-      "type" : "string",
-      "value" : "urn:ogc:def:identifier:OGC:1.0:longname"
-    },
     "exi.fidelity.prefixes" : {
-      "type" : "boolean",
-      "value" : true
-    },
-    "elasticsearch.is_logging_enabled" : {
-      "type" : "boolean",
-      "value" : true
-    },
-    "service.SpatialDatasource" : {
       "type" : "boolean",
       "value" : true
     },
@@ -374,18 +180,6 @@
       "type" : "string",
       "value" : "properties"
     },
-    "serviceProvider.positionName" : {
-      "type" : "string",
-      "value" : "TBA"
-    },
-    "rest.errorMsg.badGetRequest.search" : {
-      "type" : "string",
-      "value" : "\"../%s?$SEARCH_REQUEST\". Please refer to the documentation regarding allowed parameters"
-    },
-    "rest.sos.errormessage.operationNotSupported.start" : {
-      "type" : "string",
-      "value" : "The requested operation "
-    },
     "rest.sml.capability.observationtype.name" : {
       "type" : "string",
       "value" : "sos:ObservationType"
@@ -394,25 +188,9 @@
       "type" : "string",
       "value" : "operation is not allowed for the resource type"
     },
-    "service.blockGetObservationRequestsWithoutRestriction" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "misc.characterEncoding" : {
-      "type" : "string",
-      "value" : "UTF-8"
-    },
-    "inspire.conformity.dateOfCreation" : {
-      "type" : "string",
-      "value" : "2008-06-01"
-    },
     "rest.resource.relation.sensor.create" : {
       "type" : "string",
       "value" : "sensor-create"
-    },
-    "misc.defaultObservablePropertyPrefix" : {
-      "type" : "string",
-      "value" : "http://www.example.org/observableProperty/"
     },
     "rest.resource.relation.sensor.get" : {
       "type" : "string",
@@ -438,17 +216,9 @@
       "type" : "string",
       "value" : "NONE"
     },
-    "procedureDesc.ENRICH_WITH_FEATURES" : {
-      "type" : "boolean",
-      "value" : true
-    },
     "serviceProvider.individualName" : {
       "type" : "string",
       "value" : "TBA"
-    },
-    "service.crsAuthority" : {
-      "type" : "string",
-      "value" : "EPSG"
     },
     "service.capabilitiesCacheUpdateInterval" : {
       "type" : "integer",
@@ -466,23 +236,7 @@
       "type" : "string",
       "value" : "sos:FeatureOfInterestType"
     },
-    "procedureDesc.CLASSIFIER_PROCEDURE_TYPE_VALUE" : {
-      "type" : "string",
-      "value" : null
-    },
     "service.strictSpatialFilteringProfile" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "exi.fidelity.processing.instructions" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "procedureDesc.GENERATE_CLASSIFICATION" : {
-      "type" : "boolean",
-      "value" : true
-    },
-    "misc.datasourceNorthingFirst" : {
       "type" : "boolean",
       "value" : false
     },
@@ -490,57 +244,17 @@
       "type" : "string",
       "value" : "http://www.52north.org/"
     },
-    "exi.fidelity.lexical.value" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "operation.gda.forceValueCount" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "profile.hydrology.maxReturnedValue" : {
-      "type" : "integer",
-      "value" : 0
-    },
     "sos.prefix.global" : {
       "type" : "string",
       "value" : null
-    },
-    "inspire.metadataDate" : {
-      "type" : "string",
-      "value" : "2008-06-01"
-    },
-    "misc.defaultFeaturePrefix" : {
-      "type" : "string",
-      "value" : "http://www.example.org/feature/"
-    },
-    "inspire.metadataUrl.url" : {
-      "type" : "uri",
-      "value" : "http://myserver.org/"
     },
     "rest.urlEncoding" : {
       "type" : "string",
       "value" : "UTF-8"
     },
-    "rest.errorMsg.badGetRequest" : {
-      "type" : "string",
-      "value" : "Received GET request invalid for resource type \"%s\". Try "
-    },
     "serviceIdentification.keywords" : {
       "type" : "string",
       "value" : null
-    },
-    "elasticsearch.connection_mode" : {
-      "type" : "choice",
-      "value" : "elasticsearch.connection_mode.transport_client"
-    },
-    "rest.resource.relation.observation.create" : {
-      "type" : "string",
-      "value" : "observation-create"
-    },
-    "sos.flexibleIdentifier.offering" : {
-      "type" : "boolean",
-      "value" : true
     },
     "service.security.transactional.active" : {
       "type" : "boolean",
@@ -550,10 +264,6 @@
       "type" : "string",
       "value" : "\"..%s\""
     },
-    "rest.contentType.default" : {
-      "type" : "string",
-      "value" : "application/gml+xml"
-    },
     "serviceIdentification.file" : {
       "type" : "file",
       "value" : null
@@ -562,47 +272,9 @@
       "type" : "string",
       "value" : null
     },
-    "misc.switchCoordinatesForEpsgCodes" : {
-      "type" : "string",
-      "value" : "2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700"
-    },
-    "misc.tokenSeparator" : {
-      "type" : "string",
-      "value" : ","
-    },
     "rest.http.get.parametername.temporalfilter" : {
       "type" : "string",
       "value" : "temporalfilter"
-    },
-    "service.default3DEpsg" : {
-      "type" : "integer",
-      "value" : 4979
-    },
-    "rest.sml.capability.insertionmetadata.name" : {
-      "type" : "string",
-      "value" : "InsertionMetadata"
-    },
-    "serviceIdentification.title" : {
-      "type" : "multilingual",
-      "value" : {
-        "eng" : "52N SOS"
-      }
-    },
-    "service.streaming.encoding" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "rest.epsgcode.default" : {
-      "type" : "integer",
-      "value" : 4326
-    },
-    "rest.resource.relation.observation.get" : {
-      "type" : "string",
-      "value" : "observation-get"
-    },
-    "rest.resource.relation.feature.get" : {
-      "type" : "string",
-      "value" : "feature-get"
     },
     "serviceProvider.state" : {
       "type" : "string",
@@ -648,14 +320,6 @@
       "type" : "string",
       "value" : "urn:ogc:def:classifier:OGC:1.0:application"
     },
-    "rest.resource.features" : {
-      "type" : "string",
-      "value" : "features"
-    },
-    "procedureDesc.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE" : {
-      "type" : "string",
-      "value" : "The procedure '%s' generates the following output(s): '%s'. The input(s) is/are unknown (this description is generated)."
-    },
     "procedureDesc.USE_SERVICE_CONTACT_AS_SENSOR_CONTACT" : {
       "type" : "boolean",
       "value" : true
@@ -663,6 +327,390 @@
     "misc.includeStackTraceInExceptionReport" : {
       "type" : "boolean",
       "value" : false
+    },
+    "rest.errorMsg.wrongContentType" : {
+      "type" : "string",
+      "value" : "request with wrong content type received."
+    },
+    "geoloc.country_location" : {
+      "type" : "string",
+      "value" : null
+    },
+    "elasticsearch.type_name" : {
+      "type" : "string",
+      "value" : "ogc-type"
+    },
+    "service.transactionalAllowedProxies" : {
+      "type" : "string",
+      "value" : "127.0.0.1"
+    },
+    "sos.prefix.featureOfInterest" : {
+      "type" : "string",
+      "value" : null
+    },
+    "rest.sos.errormessage.operationNotSupported.end" : {
+      "type" : "string",
+      "value" : " is not supported by this service!"
+    },
+    "service.jdbc.deregister" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "elasticsearch.cluster_nodes" : {
+      "type" : "string",
+      "value" : "localhost"
+    },
+    "geoloc.db_downloader" : {
+      "type" : "choice",
+      "value" : "geoloc.db_downloader.auto"
+    },
+    "rest.conformanceClass" : {
+      "type" : "string",
+      "value" : "http://www.opengis.net/spec/SOS/2.0/conf/rest"
+    },
+    "procedureDesc.CLASSIFIER_PROCEDURE_TYPE_DEFINITION" : {
+      "type" : "string",
+      "value" : "urn:ogc:def:classifier:OGC:1.0:procedureType"
+    },
+    "sos.flexibleIdentifier" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "eReporting.procedure.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "rest.errorMsg.HttpMethodNotAllowedForResource" : {
+      "type" : "string",
+      "value" : "HTTP method \"%s\" not allowed for \"%s\" resources."
+    },
+    "procedureDesc.IDENTIFIER_SHORT_NAME_DEFINITION" : {
+      "type" : "string",
+      "value" : "urn:ogc:def:identifier:OGC:1.0:shortname"
+    },
+    "rest.urlpattern" : {
+      "type" : "string",
+      "value" : "/rest"
+    },
+    "misc.srsNamePrefixSosV2" : {
+      "type" : "string",
+      "value" : "http://www.opengis.net/def/crs/EPSG/0/"
+    },
+    "rest.encodingPrefix" : {
+      "type" : "string",
+      "value" : "sosREST"
+    },
+    "misc.srsNamePrefixSosV1" : {
+      "type" : "string",
+      "value" : "urn:ogc:def:crs:EPSG::"
+    },
+    "serviceIdentification.abstract" : {
+      "type" : "multilingual",
+      "value" : {
+        "eng" : "52North Sensor Observation Service - Data Access for the Sensor Web"
+      }
+    },
+    "eReporting.offering.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "procedureDesc.ENRICH_WITH_OFFERINGS" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "serviceProvider.city" : {
+      "type" : "string",
+      "value" : "Münster"
+    },
+    "eReporting.flags.verification" : {
+      "type" : "string",
+      "value" : "1"
+    },
+    "service.defaultEpsg" : {
+      "type" : "integer",
+      "value" : 4326
+    },
+    "sos.prefix.obervableProperty" : {
+      "type" : "string",
+      "value" : null
+    },
+    "rest.http.get.parametername.namespaces" : {
+      "type" : "string",
+      "value" : "namespaces"
+    },
+    "eReporting.samplingPoint.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "sos.flexibleIdentifier.procedure" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "service.response.validate" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "rest.resource.relation.observations.get" : {
+      "type" : "string",
+      "value" : "observations-get"
+    },
+    "rest.http.get.parametername.foi" : {
+      "type" : "string",
+      "value" : "feature"
+    },
+    "serviceProvider.file" : {
+      "type" : "file",
+      "value" : null
+    },
+    "service.streaming.datasource" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "rest.resource.relation.sensor.delete" : {
+      "type" : "string",
+      "value" : "sensor-delete"
+    },
+    "serviceProvider.phone" : {
+      "type" : "string",
+      "value" : "+49(0)251/396 371-0"
+    },
+    "rest.http.get.parametername.offering" : {
+      "type" : "string",
+      "value" : "offering"
+    },
+    "sos.flexibleIdentifier.featureOfInterest" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "profile.hydrology.maxReturnedTimeSeries" : {
+      "type" : "integer",
+      "value" : 0
+    },
+    "rest.sos.version" : {
+      "type" : "string",
+      "value" : "2.0.0"
+    },
+    "exi.fidelity.dtd" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "eReporting.station.prefix" : {
+      "type" : "string",
+      "value" : null
+    },
+    "rest.resource.relation.features.get" : {
+      "type" : "string",
+      "value" : "features-get"
+    },
+    "sos.flexibleIdentifier.obervableProperty" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "service.cachePersistenceDelay" : {
+      "type" : "integer",
+      "value" : 30
+    },
+    "rest.encodingNamspace" : {
+      "type" : "uri",
+      "value" : "http://www.opengis.net/sosREST/1.0"
+    },
+    "rest.sos.capabilities.section.name.contents" : {
+      "type" : "string",
+      "value" : "Contents"
+    },
+    "rest.resource.relation.self" : {
+      "type" : "string",
+      "value" : "self"
+    },
+    "inspire.conformity.title" : {
+      "type" : "string",
+      "value" : "OGC SOS 2.0 for Inspire"
+    },
+    "procedureDesc.ALTITUDE_UOM" : {
+      "type" : "string",
+      "value" : "m"
+    },
+    "eReporting.namespace" : {
+      "type" : "string",
+      "value" : null
+    },
+    "procedureDesc.LAT_LONG_UOM" : {
+      "type" : "string",
+      "value" : "degree"
+    },
+    "exi.fidelity" : {
+      "type" : "choice",
+      "value" : "exi.fidelity.specific"
+    },
+    "exi.alignment" : {
+      "type" : "choice",
+      "value" : "BIT_PACKED"
+    },
+    "statistics.counting-outputstream" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "elasticsearch.cluster_name" : {
+      "type" : "string",
+      "value" : "ogc-statistics-cluster"
+    },
+    "service.encodeFullChildrenInDescribeSensor" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION" : {
+      "type" : "string",
+      "value" : "urn:ogc:def:identifier:OGC:1.0:longname"
+    },
+    "elasticsearch.is_logging_enabled" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "service.SpatialDatasource" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "serviceProvider.positionName" : {
+      "type" : "string",
+      "value" : "TBA"
+    },
+    "rest.errorMsg.badGetRequest.search" : {
+      "type" : "string",
+      "value" : "\"../%s?$SEARCH_REQUEST\". Please refer to the documentation regarding allowed parameters"
+    },
+    "rest.sos.errormessage.operationNotSupported.start" : {
+      "type" : "string",
+      "value" : "The requested operation "
+    },
+    "service.blockGetObservationRequestsWithoutRestriction" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "misc.characterEncoding" : {
+      "type" : "string",
+      "value" : "UTF-8"
+    },
+    "inspire.conformity.dateOfCreation" : {
+      "type" : "string",
+      "value" : "2008-06-01"
+    },
+    "misc.defaultObservablePropertyPrefix" : {
+      "type" : "string",
+      "value" : "http://www.example.org/observableProperty/"
+    },
+    "procedureDesc.ENRICH_WITH_FEATURES" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "service.crsAuthority" : {
+      "type" : "string",
+      "value" : "EPSG"
+    },
+    "procedureDesc.CLASSIFIER_PROCEDURE_TYPE_VALUE" : {
+      "type" : "string",
+      "value" : null
+    },
+    "exi.fidelity.processing.instructions" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "procedureDesc.GENERATE_CLASSIFICATION" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "misc.datasourceNorthingFirst" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "exi.fidelity.lexical.value" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "operation.gda.forceValueCount" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "profile.hydrology.maxReturnedValue" : {
+      "type" : "integer",
+      "value" : 0
+    },
+    "inspire.metadataDate" : {
+      "type" : "string",
+      "value" : "2008-06-01"
+    },
+    "misc.defaultFeaturePrefix" : {
+      "type" : "string",
+      "value" : "http://www.example.org/feature/"
+    },
+    "inspire.metadataUrl.url" : {
+      "type" : "uri",
+      "value" : "http://myserver.org/"
+    },
+    "rest.errorMsg.badGetRequest" : {
+      "type" : "string",
+      "value" : "Received GET request invalid for resource type \"%s\". Try "
+    },
+    "elasticsearch.connection_mode" : {
+      "type" : "choice",
+      "value" : "elasticsearch.connection_mode.transport_client"
+    },
+    "rest.resource.relation.observation.create" : {
+      "type" : "string",
+      "value" : "observation-create"
+    },
+    "sos.flexibleIdentifier.offering" : {
+      "type" : "boolean",
+      "value" : true
+    },
+    "rest.contentType.default" : {
+      "type" : "string",
+      "value" : "application/gml+xml"
+    },
+    "misc.switchCoordinatesForEpsgCodes" : {
+      "type" : "string",
+      "value" : "2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700"
+    },
+    "misc.tokenSeparator" : {
+      "type" : "string",
+      "value" : ","
+    },
+    "service.default3DEpsg" : {
+      "type" : "integer",
+      "value" : 4979
+    },
+    "rest.sml.capability.insertionmetadata.name" : {
+      "type" : "string",
+      "value" : "InsertionMetadata"
+    },
+    "serviceIdentification.title" : {
+      "type" : "multilingual",
+      "value" : {
+        "eng" : "52N SOS"
+      }
+    },
+    "service.streaming.encoding" : {
+      "type" : "boolean",
+      "value" : false
+    },
+    "rest.epsgcode.default" : {
+      "type" : "integer",
+      "value" : 4326
+    },
+    "rest.resource.relation.observation.get" : {
+      "type" : "string",
+      "value" : "observation-get"
+    },
+    "rest.resource.relation.feature.get" : {
+      "type" : "string",
+      "value" : "feature-get"
+    },
+    "rest.resource.features" : {
+      "type" : "string",
+      "value" : "features"
+    },
+    "procedureDesc.PROCESS_METHOD_RULES_DEFINITION_DESCRIPTION_TEMPLATE" : {
+      "type" : "string",
+      "value" : "The procedure '%s' generates the following output(s): '%s'. The input(s) is/are unknown (this description is generated)."
     },
     "rest.http.get.parametername.observedproperty" : {
       "type" : "string",
@@ -672,21 +720,9 @@
       "type" : "string",
       "value" : "procedure"
     },
-    "rest.errorMsg.wrongContentType" : {
-      "type" : "string",
-      "value" : "request with wrong content type received."
-    },
     "inspire.metadataUrl.mediaType" : {
       "type" : "string",
       "value" : "application/xml"
-    },
-    "geoloc.country_location" : {
-      "type" : "string",
-      "value" : null
-    },
-    "elasticsearch.type_name" : {
-      "type" : "string",
-      "value" : "ogc-type"
     },
     "geoloc.enabled" : {
       "type" : "boolean",
@@ -708,17 +744,9 @@
       "type" : "boolean",
       "value" : true
     },
-    "service.transactionalAllowedProxies" : {
-      "type" : "string",
-      "value" : "127.0.0.1"
-    },
     "rest.resource.sensors" : {
       "type" : "string",
       "value" : "sensors"
-    },
-    "sos.prefix.featureOfInterest" : {
-      "type" : "string",
-      "value" : null
     },
     "rest.errorMSg.wrongContentType.inAcceptHeader" : {
       "type" : "string",
@@ -732,37 +760,13 @@
       "type" : "string",
       "value" : "/sensors"
     },
-    "rest.sos.errormessage.operationNotSupported.end" : {
-      "type" : "string",
-      "value" : " is not supported by this service!"
-    },
-    "service.jdbc.deregister" : {
-      "type" : "boolean",
-      "value" : true
-    },
-    "elasticsearch.cluster_nodes" : {
-      "type" : "string",
-      "value" : "localhost"
-    },
-    "geoloc.db_downloader" : {
-      "type" : "choice",
-      "value" : "geoloc.db_downloader.auto"
-    },
     "service.defaultResponseEpsg" : {
       "type" : "integer",
       "value" : 4326
     },
-    "rest.conformanceClass" : {
-      "type" : "string",
-      "value" : "http://www.opengis.net/spec/SOS/2.0/conf/rest"
-    },
     "service.serviceURL" : {
       "type" : "uri",
       "value" : "http://localhost:8080/52n-sos-webapp/service"
-    },
-    "procedureDesc.CLASSIFIER_PROCEDURE_TYPE_DEFINITION" : {
-      "type" : "string",
-      "value" : "urn:ogc:def:classifier:OGC:1.0:procedureType"
     },
     "serviceProvider.site" : {
       "type" : "uri",
@@ -774,6 +778,6 @@
     }
   },
   "users" : {
-    "admin" : "$2a$10$P48X55RAlS84KbNAMpC51.rvq39U7CO9paNk8XlLUfowMPnEWj1e6"
+    "admin" : "$2a$10$kS19zLFle3SrlZsjKyuhSeOz790mAmKhO3fP5x9op3PgqyAUrrAUC"
   }
 }

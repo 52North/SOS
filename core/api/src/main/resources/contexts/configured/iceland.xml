@@ -5,6 +5,8 @@
 
 
     <bean id="exceptionLogger" class="org.n52.iceland.service.ExceptionLogger"/>
+    
+    <bean id="httpUtils" class="org.n52.iceland.util.http.HTTPUtils" />
 
     <bean id="kvpBinding" class="org.n52.iceland.binding.kvp.KvpBinding"/>
     <bean id="poxBinding" class="org.n52.iceland.binding.pox.PoxBinding"/>

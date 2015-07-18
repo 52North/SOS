@@ -43,6 +43,7 @@ import javax.inject.Inject;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
 import org.n52.iceland.event.events.AbstractFlowEvent;
+import org.n52.iceland.event.events.CountingOutputstreamEvent;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.iceland.event.events.RequestEvent;
@@ -50,6 +51,7 @@ import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver;
 import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
 import org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosExceptionEventResolver;
@@ -65,9 +67,10 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(SosStatisticsServiceEventListener.class);
     private static final int THREAD_POOL_SIZE = 2;
+    private static final int EVENTS_ARR_SIZE = 4;
     private final ExecutorService executorService;
     private static final Set<Class<? extends ServiceEvent>> EVENT_TYPES = ImmutableSet.<Class<? extends ServiceEvent>> of(RequestEvent.class,
-            ExceptionEvent.class, ResponseEvent.class, OutgoingResponseEvent.class);
+            ExceptionEvent.class, ResponseEvent.class, OutgoingResponseEvent.class,CountingOutputstreamEvent.class);
 
     private ConcurrentMap<Long, List<AbstractFlowEvent>> eventsCache = new ConcurrentHashMap<>();
 
@@ -100,8 +103,11 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
             // key-value. that is why no synchronization is needed.
             if (serviceEvent instanceof AbstractFlowEvent) {
                 AbstractFlowEvent evt = (AbstractFlowEvent) serviceEvent;
-                List<AbstractFlowEvent> eventList = eventsCache.getOrDefault(evt.getMessageGroupId(), new ArrayList<>(3));
-                eventsCache.put(evt.getMessageGroupId(), eventList);
+                List<AbstractFlowEvent> eventList = eventsCache.get(evt.getMessageGroupId());
+                if(eventList == null) {
+                	eventList = new ArrayList<>(EVENTS_ARR_SIZE);
+                	eventsCache.put(evt.getMessageGroupId(), eventList);
+                }
                 eventList.add(evt);
 
                 // maybe here should use another implementation
@@ -111,7 +117,7 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
                 // request - exception - outgoingResponseEvent
                 if (serviceEvent instanceof OutgoingResponseEvent) {
                     BatchResolver resolvers = new BatchResolver(dataHandler);
-                    eventsCache.get(evt.getMessageGroupId()).stream().forEach(l -> addToResolvers(resolvers, l));
+                    eventList.stream().forEach(l -> addToResolvers(resolvers, l));
                     executorService.execute(resolvers);
                     // resolvers.run();
                 }
@@ -133,7 +139,7 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
         }
     }
 
-    public void addToResolvers(BatchResolver resolver,
+    private void addToResolvers(BatchResolver resolver,
             ServiceEvent event) {
         IStatisticsServiceEventResolver evtResolver = null;
         if (event instanceof RequestEvent) {
@@ -153,6 +159,10 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
             OutgoingResponseEventResolver outgoingResponseEventResolver = getOutgoingResponseEventResolver();
             outgoingResponseEventResolver.setResponse((OutgoingResponseEvent) event);
             evtResolver = outgoingResponseEventResolver;
+        } else if( event instanceof CountingOutputstreamEvent) {
+        	CountingOutputstreamEventResolver countingOutputstreamEventResolver = getCountingOutputstreamEventResolver();
+        	countingOutputstreamEventResolver.setEvent((CountingOutputstreamEvent) event);
+        	evtResolver = countingOutputstreamEventResolver;
         } else {
             throw new IllegalArgumentException("Not a valid class " + event.getClass());
         }
@@ -185,6 +195,10 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
     private OutgoingResponseEventResolver getOutgoingResponseEventResolver() {
         return ctx.getBean(OutgoingResponseEventResolver.class);
     }
+    
+    private CountingOutputstreamEventResolver getCountingOutputstreamEventResolver() {
+        return ctx.getBean(CountingOutputstreamEventResolver.class);
+    }
 
     /**
      * Custom class for persisting the resolved {@link ServiceEvent}s
@@ -194,7 +208,7 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
         private final IStatisticsDataHandler dataHandler;
 
         public BatchResolver(IStatisticsDataHandler dataHandler) {
-            events = new ArrayList<>(3);
+            events = new ArrayList<>(EVENTS_ARR_SIZE);
             this.dataHandler = dataHandler;
         }
 

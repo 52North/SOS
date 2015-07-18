@@ -93,5 +93,7 @@
 	<bean id="defaultServiceEventResolver" class="org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver" scope="prototype" />
 	
 	<bean id="outgoingResponseEventResolver" class="org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver" scope="prototype" />
+	
+	<bean id="countingOutputstreamEventResolver" class="org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver" scope="prototype" />
 
 </beans>

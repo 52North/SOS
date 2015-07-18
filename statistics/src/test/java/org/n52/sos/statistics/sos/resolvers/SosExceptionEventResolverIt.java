@@ -28,52 +28,36 @@
  */
 package org.n52.sos.statistics.sos.resolvers;
 
-import java.util.Arrays;
-
 import javax.inject.Inject;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.request.RequestContext;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.sos.decode.json.JSONDecodingException;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
 import basetest.ElasticsearchAwareTest;
 
-import com.google.common.base.Optional;
-
 //TODO these classes needs to be in the integration test
-public class SosRequestEventResolverTest extends ElasticsearchAwareTest {
+public class SosExceptionEventResolverIt extends ElasticsearchAwareTest {
 
     @Inject
-    private SosRequestEventResolver resolve;
+    private SosExceptionEventResolver resolve;
 
     @Inject
     private IStatisticsDataHandler dataHandler;
 
     @Test
-    public void persistExceptionToDb() throws InterruptedException {
-
-        RequestContext ctx = new RequestContext();
-        ctx.setIPAddress(new IPAddress("172.168.22.53"));
-        ctx.setToken("asdf-asdf-asdf");
-        GetCapabilitiesRequest r = new GetCapabilitiesRequest("SOS");
-        r.setRequestContext(ctx);
-        r.setService("sos service");
-        r.setVersion("1.0.0");
-        r.setAcceptFormats(Arrays.asList("a", "b", "c"));
-        r.setAcceptVersions(Arrays.asList("1.0", "1.1"));
-
-        resolve.setRequest(r);
-        new RequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.53")));
+    public void persistRequestToDb() throws InterruptedException {
+        JSONDecodingException exp = new JSONDecodingException("message");
+        resolve.setException(exp);
 
         dataHandler.persist(resolve.resolve());
         // eventually realtime should be enough
-        Thread.sleep(2000);
+        Thread.sleep(2500);
 
         SearchResponse resp = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
-        Assert.assertEquals(1, resp.getHits().getTotalHits());
+        Assert.assertEquals(1L, resp.getHits().getTotalHits());
+
     }
 }

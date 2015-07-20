@@ -337,7 +337,7 @@ public class SosInsertSensorOperatorV20 extends
                 if (typeOf.isSetTitle()) {
                     String title = typeOf.getTitle();
                     if (!getCache().hasProcedure(title)) {
-                        throw new InvalidParameterValueException("sml:AbstractProcess.typeOf", title);
+                        throw new InvalidParameterValueException("sml:AbstractProcess.typeOf.title", title);
                     } 
                 } else {
                     throw new MissingParameterValueException("sml:AbstractProcess.typeOf.title");

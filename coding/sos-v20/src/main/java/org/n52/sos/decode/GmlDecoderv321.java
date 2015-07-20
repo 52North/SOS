@@ -90,6 +90,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
@@ -319,16 +320,18 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return ti;
     }
 
-    private org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
-        if (referenceType.isSetHref() && !referenceType.getHref().isEmpty()) {
-            org.n52.sos.ogc.gml.ReferenceType sosReferenceType =
-                    new org.n52.sos.ogc.gml.ReferenceType(referenceType.getHref());
-            if (referenceType.isSetTitle() && !referenceType.getTitle().isEmpty()) {
-                sosReferenceType.setTitle(referenceType.getTitle());
-            }
-            return sosReferenceType;
+    private org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType rt) {
+        org.n52.sos.ogc.gml.ReferenceType referenceType = new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+        if (rt.isSetTitle() && !Strings.isNullOrEmpty(rt.getTitle())) {
+            referenceType.setTitle(rt.getTitle());
         }
-        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+        if (rt.isSetHref() && !Strings.isNullOrEmpty(rt.getHref())) {
+            referenceType.setHref(rt.getHref());
+        }
+        if (rt.isSetRole() && !Strings.isNullOrEmpty(rt.getRole())) {
+            referenceType.setRole(rt.getRole());
+        }
+        return referenceType;
     }
 
     private GmlMeasureType parseMeasureType(MeasureType measureType) {

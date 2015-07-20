@@ -37,7 +37,7 @@ public class SingleEsParameter extends AbstractEsParameter {
         setType(type);
     }
 
-    public SingleEsParameter(String name, String description, ElasticsearchType type) {
+    public SingleEsParameter(String name, Description description, ElasticsearchType type) {
         super(name, description);
         setType(type);
     }

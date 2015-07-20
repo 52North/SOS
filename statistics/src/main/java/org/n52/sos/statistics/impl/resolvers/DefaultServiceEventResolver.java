@@ -33,8 +33,8 @@ import java.util.Objects;
 
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

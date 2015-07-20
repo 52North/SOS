@@ -42,8 +42,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.sos.statistics.impl.ElasticsearchDataHandler;
 import org.n52.sos.statistics.impl.StatisticsLocationUtil;
 

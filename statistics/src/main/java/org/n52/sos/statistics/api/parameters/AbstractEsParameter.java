@@ -39,23 +39,23 @@ import org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry.Elasticse
  */
 public abstract class AbstractEsParameter {
     private final String name;
-    private String description;
+    private Description description;
     private ElasticsearchType type = null;
 
     public AbstractEsParameter(String name) {
         this.name = name;
     }
 
-    public AbstractEsParameter(String name, String description) {
+    public AbstractEsParameter(String name, Description description) {
         this.name = name;
         this.description = description;
     }
 
-    public final String getDescription() {
+    public final Description getDescription() {
         return description;
     }
 
-    public final void setDescription(String description) {
+    public final void setDescription(Description description) {
         this.description = description;
     }
 

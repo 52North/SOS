@@ -32,8 +32,8 @@ import java.util.Map;
 
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
 public class OutgoingResponseEventResolver extends AbstractElasticSearchDataHolder implements IStatisticsServiceEventResolver {
 

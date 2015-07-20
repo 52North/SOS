@@ -36,7 +36,7 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.statistics.sos.SosDataMapping;
 

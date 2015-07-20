@@ -35,7 +35,7 @@ import java.util.Objects;
 public class ObjectEsParameter extends AbstractEsParameter {
     private final List<AbstractEsParameter> children;
 
-    public ObjectEsParameter(String name, String description, AbstractEsParameter... abstractEsParameters) {
+    public ObjectEsParameter(String name, Description description, AbstractEsParameter... abstractEsParameters) {
         super(name, description);
         children = Arrays.asList(abstractEsParameters);
     }

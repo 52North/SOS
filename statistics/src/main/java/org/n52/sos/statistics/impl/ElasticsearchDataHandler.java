@@ -49,9 +49,9 @@ import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.datahandler.IAdminDataHandler;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

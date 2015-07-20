@@ -29,6 +29,9 @@
 package org.n52.sos.statistics.sos;
 
 import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
+import org.n52.sos.statistics.api.parameters.Description;
+import org.n52.sos.statistics.api.parameters.Description.InformationOrigin;
+import org.n52.sos.statistics.api.parameters.Description.Operation;
 import org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.statistics.api.parameters.SingleEsParameter;
@@ -37,119 +40,175 @@ public class SosDataMapping {
 
     // --------------- GETCAPABILITIES --------------//
 
-    public static final AbstractEsParameter GC_VERSIONS_FIELD = new SingleEsParameter("getcapabilities-versions",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GC_FORMATS_FIELD =
-            new SingleEsParameter("getcapabilities-formats", ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GC_SECTIONS = new SingleEsParameter("getcapabilities-sections", ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GC_UPDATE_SEQUENCE = new SingleEsParameter("getcapabilities-updatesequence",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GC_VERSIONS_FIELD = new SingleEsParameter("getcapabilities-versions", new Description(
+            InformationOrigin.RequestEvent, Operation.GetCapabilities, "Accept versions"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GC_FORMATS_FIELD = new SingleEsParameter("getcapabilities-formats", new Description(
+            InformationOrigin.RequestEvent, Operation.GetCapabilities, "Accept formats"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GC_SECTIONS = new SingleEsParameter("getcapabilities-sections", new Description(
+            InformationOrigin.RequestEvent, Operation.GetCapabilities, "Sections"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GC_UPDATE_SEQUENCE = new SingleEsParameter("getcapabilities-updatesequence", new Description(
+            InformationOrigin.RequestEvent, Operation.GetCapabilities, "Update sequence"), ElasticsearchTypeRegistry.stringField);
 
     // --------------- DESCRIBE SENSOR --------------//
-    public static final AbstractEsParameter DS_PROCEDURE = new SingleEsParameter("describesensor-procedure", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter DS_PROCEDURE = new SingleEsParameter("describesensor-procedure", new Description(
+            InformationOrigin.RequestEvent, Operation.DescribeSensor, "Procedure to describe"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter DS_PROCEDURE_DESC_FORMAT = new SingleEsParameter("describesensor-procedure-description-format",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter DS_VALID_TIME = new SingleEsParameter("describesensor-validtime", ElasticsearchTypeRegistry.stringField);
+            new Description(InformationOrigin.RequestEvent, Operation.DescribeSensor, "Description format"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter DS_VALID_TIME = new SingleEsParameter("describesensor-validtime", new Description(
+            InformationOrigin.RequestEvent, Operation.DescribeSensor, "Validtime of the request"), ElasticsearchTypeRegistry.dateField);
 
     // --------------- GET OBSERVATION --------------//
-    public static final AbstractEsParameter GO_PROCEDURES = new SingleEsParameter("getobservation-procedures", ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GO_FEATURE_OF_INTERESTS = new SingleEsParameter("getobservation-feature-of-interests",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GO_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getobservation-spatial-filter", null);
-    public static final AbstractEsParameter GO_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getobservation-temporal-filter", null);
-    public static final AbstractEsParameter GO_OBSERVED_PROPERTIES = new SingleEsParameter("getobservation-observed-properties",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GO_OFFERINGS = new SingleEsParameter("getobservation-offerings", ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GO_RESPONSE_FORMAT = new SingleEsParameter("getobservation-response-format",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GO_PROCEDURES = new SingleEsParameter("getobservation-procedures", new Description(
+            InformationOrigin.RequestEvent, Operation.GetObservation, "Procedure of the observation"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GO_FEATURE_OF_INTERESTS = new SingleEsParameter("getobservation-feature-of-interests", new Description(
+            InformationOrigin.RequestEvent, Operation.GetObservation, "Feature of interests"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GO_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getobservation-spatial-filter",
+            new Description(InformationOrigin.RequestEvent, Operation.GetObservation, "Spatial filter"));
+
+    public static final AbstractEsParameter GO_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getobservation-temporal-filter",
+            new Description(InformationOrigin.RequestEvent, Operation.GetObservation, "Temporal filter"));
+
+    public static final AbstractEsParameter GO_OBSERVED_PROPERTIES = new SingleEsParameter("getobservation-observed-properties", new Description(
+            InformationOrigin.RequestEvent, Operation.GetObservation, "Observed properties"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GO_OFFERINGS = new SingleEsParameter("getobservation-offerings", new Description(
+            InformationOrigin.RequestEvent, Operation.GetObservation, "Offerings"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GO_RESPONSE_FORMAT = new SingleEsParameter("getobservation-response-format", new Description(
+            InformationOrigin.RequestEvent, Operation.GetObservation, "Response format"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter GO_IS_MERGED_OBSERVATION_VALUES = new SingleEsParameter("getobservation-merged-observation-values",
-            ElasticsearchTypeRegistry.stringField);
+            new Description(InformationOrigin.RequestEvent, Operation.GetObservation, "Are the observation values merged"),
+            ElasticsearchTypeRegistry.booleanField);
 
     // --------------- GET OBSERVATION BY ID--------------//
     public static final AbstractEsParameter GOBID_OBSERVATION_IDENTIFIER = new SingleEsParameter("getobservationbyid-observation-identifier",
+            new Description(InformationOrigin.RequestEvent, Operation.GetObservationById, "ID of the observation"),
             ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET FEATURE OF INTEREST --------------//
     public static final AbstractEsParameter GFOI_FEATURE_IDENTIFIERS = new SingleEsParameter("getfeatureofinterest-feature-identifiers",
+            new Description(InformationOrigin.RequestEvent, Operation.GetFeatureOfInterest, "Feature identifiers"),
             ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter GFOI_OBSERVED_PROPERTIES = new SingleEsParameter("getfeatureofinterest-observed-properties",
+            new Description(InformationOrigin.RequestEvent, Operation.GetFeatureOfInterest, "Observed properties"),
             ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GFOI_PROCEDURES = new SingleEsParameter("getfeatureofinterest-procedures",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GFOI_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getfeatureofinterest-spatial-filter", null);
+
+    public static final AbstractEsParameter GFOI_PROCEDURES = new SingleEsParameter("getfeatureofinterest-procedures", new Description(
+            InformationOrigin.RequestEvent, Operation.GetFeatureOfInterest, "Procedures"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GFOI_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getfeatureofinterest-spatial-filter",
+            new Description(InformationOrigin.RequestEvent, Operation.GetFeatureOfInterest, "Spatial filter"));
+
     public static final AbstractEsParameter GFOI_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getfeatureofinterest-temporal-filter",
-            null);
+            new Description(InformationOrigin.RequestEvent, Operation.GetFeatureOfInterest, "Temporal filter"));
 
     // --------------- INSERT SENSOR --------------//
-    public static final AbstractEsParameter IS_ASSIGNED_OFFERINGS = new SingleEsParameter("insertsensor-assigned-offerings",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_ASSIGNED_OFFERINGS = new SingleEsParameter("insertsensor-assigned-offerings", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertSensor, "Assigned offerings"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter IS_ASSIGNED_PROCEDURE_IDENTIFIERS = new SingleEsParameter("insertsensor-assigned-procedure-identifiers",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IS_OBSERVABLE_PROPERTY = new SingleEsParameter("insertsensor-observable-property",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IS_PROCEDURE_DESCRIPTION = new SingleEsParameter("insertsensor-procedure-description",
-            ElasticsearchTypeRegistry.stringField);
+            new Description(InformationOrigin.RequestEvent, Operation.InsertSensor, "Procedures"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter IS_OBSERVABLE_PROPERTY = new SingleEsParameter("insertsensor-observable-property", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertSensor, "Observable properties"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter IS_PROCEDURE_DESCRIPTION = new SingleEsParameter("insertsensor-procedure-description", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertSensor, "Description of the procedure"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter IS_PROCEDURE_DESCRIPTION_FORMAT = new SingleEsParameter("insertsensor-description-format",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IS_FEATURE_OF_INTEREST_TYPES = new SingleEsParameter("insertsensor-feature-of-interest-types",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IS_OBSERVATION_TYPES = new SingleEsParameter("insertsensor-observation-types",
+            new Description(InformationOrigin.RequestEvent, Operation.InsertSensor, "Description format of the procedure"),
             ElasticsearchTypeRegistry.stringField);
 
+    public static final AbstractEsParameter IS_FEATURE_OF_INTEREST_TYPES = new SingleEsParameter("insertsensor-feature-of-interest-types",
+            new Description(InformationOrigin.RequestEvent, Operation.InsertSensor, "Feature of interest"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter IS_OBSERVATION_TYPES = new SingleEsParameter("insertsensor-observation-types", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertSensor, "Observation types"), ElasticsearchTypeRegistry.stringField);
+
     // --------------- UPDATE SENSOR --------------//
-    public static final AbstractEsParameter US_PROCEDURE_IDENTIFIER = new SingleEsParameter("updatesensor-procedure-identifier",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter US_PROCEDURE_IDENTIFIER = new SingleEsParameter("updatesensor-procedure-identifier", new Description(
+            InformationOrigin.RequestEvent, Operation.UpdateSensor, "Procedure ID"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter US_PROCEDURE_DESCRIPTION_FORMAT = new SingleEsParameter("updatesensor-description-format",
+            new Description(InformationOrigin.RequestEvent, Operation.UpdateSensor, "Description format of the procedure"),
             ElasticsearchTypeRegistry.stringField);
 
     // --------------- DELETE SENSOR --------------//
-    public static final AbstractEsParameter DELS_PROCEDURE_IDENTIFIER = new SingleEsParameter("deletesensor-procedure-identifier",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter DELS_PROCEDURE_IDENTIFIER = new SingleEsParameter("deletesensor-procedure-identifier", new Description(
+            InformationOrigin.RequestEvent, Operation.DeleteSensor, "Procedure ID"), ElasticsearchTypeRegistry.stringField);
 
     // --------------- INSERT OBSERVATION --------------//
-    public static final AbstractEsParameter IO_ASSIGNED_SENSORID = new SingleEsParameter("insertobservation-assigned-sensorid",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IO_OFFERINGS =
-            new SingleEsParameter("insertobservation-offerings", ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IO_OBSERVATION = ObjectEsParameterFactory.omObservation("insertobservation-observation", null);
+    public static final AbstractEsParameter IO_ASSIGNED_SENSORID = new SingleEsParameter("insertobservation-assigned-sensorid", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertObservation, "Assigned sensor ID"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter IO_OFFERINGS = new SingleEsParameter("insertobservation-offerings", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertObservation, "Offering"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter IO_OBSERVATION = ObjectEsParameterFactory.omObservation("insertobservation-observation", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertObservation, "Observations"));
 
     // --------------- INSERT RESULT TEMPLATE --------------//
-    public static final AbstractEsParameter IRT_IDENTIFIER = new SingleEsParameter("insertresulttemplate-identifier",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IRT_RESULT_ENCODING = new SingleEsParameter("insertresulttemplate-result-encoding",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IRT_IDENTIFIER = new SingleEsParameter("insertresulttemplate-identifier", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertResultTemplate, "ID"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter IRT_OBSERVATION_TEMPLATE = new SingleEsParameter("insertresulttemplate-observation-template",
+            new Description(InformationOrigin.RequestEvent, Operation.InsertResultTemplate, "Observation template ID"),
             ElasticsearchTypeRegistry.stringField);
 
     // --------------- INSERT RESULT --------------//
-    public static final AbstractEsParameter IR_TEMPLATE_IDENTIFIER = new SingleEsParameter("insertresult-template-identifier",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter IR_RESULT_VALUES = new SingleEsParameter("insertresult-result-values",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IR_TEMPLATE_IDENTIFIER = new SingleEsParameter("insertresult-template-identifier", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertResult, "Template ID"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter IR_RESULT_VALUES = new SingleEsParameter("insertresult-result-values", new Description(
+            InformationOrigin.RequestEvent, Operation.InsertResult, "Result values"), ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET RESULT TEMPLATE --------------//
-    public static final AbstractEsParameter GRT_OBSERVED_PROPERTY = new SingleEsParameter("getresulttemplate-observed-property",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GRT_OFFERING = new SingleEsParameter("getresulttemplate-offering", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GRT_OBSERVED_PROPERTY = new SingleEsParameter("getresulttemplate-observed-property", new Description(
+            InformationOrigin.RequestEvent, Operation.GetResultTemplate, "Observed property"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GRT_OFFERING = new SingleEsParameter("getresulttemplate-offering", new Description(
+            InformationOrigin.RequestEvent, Operation.GetResultTemplate, "Offering"), ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET RESULT --------------//
-    public static final AbstractEsParameter GR_FEATURE_IDENTIFIERS = new SingleEsParameter("getresult-feature-identifiers",
-            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GR_FEATURE_IDENTIFIERS = new SingleEsParameter("getresult-feature-identifiers", new Description(
+            InformationOrigin.RequestEvent, Operation.GetResult, "Feature IDs"), ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter GR_OBSERVATION_TEMPLATE_IDENTIFIER = new SingleEsParameter("getresult-observation-template-identifier",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GR_OBSERVATION_PROPERTY = new SingleEsParameter("getresult-observation-property",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GR_OFFERING = new SingleEsParameter("getresult-offering", ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GR_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getresult-spatial-filter", null);
-    public static final AbstractEsParameter GR_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getresult-temporal-filter", null);
+            new Description(InformationOrigin.RequestEvent, Operation.GetResult, "Observation template ID"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GR_OBSERVATION_PROPERTY = new SingleEsParameter("getresult-observation-property", new Description(
+            InformationOrigin.RequestEvent, Operation.GetResult, "Observation property"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GR_OFFERING = new SingleEsParameter("getresult-offering", new Description(InformationOrigin.RequestEvent,
+            Operation.GetResult, "Offering"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GR_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getresult-spatial-filter", new Description(
+            InformationOrigin.RequestEvent, Operation.GetResult, "Spatial filter"));
+
+    public static final AbstractEsParameter GR_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getresult-temporal-filter",
+            new Description(InformationOrigin.RequestEvent, Operation.GetResult, "Temporal filter"));
 
     // --------------- GET DATA AVAILABILITY --------------//
     public static final AbstractEsParameter GDA_FEATURES_OF_INTEREST = new SingleEsParameter("getdataavailability-features-of-interest",
+            new Description(InformationOrigin.RequestEvent, Operation.GetDataAvailability, "Feature of interest"),
             ElasticsearchTypeRegistry.stringField);
+
     public static final AbstractEsParameter GDA_OBSERVED_PROPERTIES = new SingleEsParameter("getdataavailability-observed-properties",
+            new Description(InformationOrigin.RequestEvent, Operation.GetDataAvailability, "Observed property"),
             ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GDA_OFFERINGS = new SingleEsParameter("getdataavailability-offerings",
-            ElasticsearchTypeRegistry.stringField);
-    public static final AbstractEsParameter GDA_PROCEDURES = new SingleEsParameter("getdataavailability-procedures",
-            ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GDA_OFFERINGS = new SingleEsParameter("getdataavailability-offerings", new Description(
+            InformationOrigin.RequestEvent, Operation.GetDataAvailability, "Offering"), ElasticsearchTypeRegistry.stringField);
+
+    public static final AbstractEsParameter GDA_PROCEDURES = new SingleEsParameter("getdataavailability-procedures", new Description(
+            InformationOrigin.RequestEvent, Operation.GetDataAvailability, "Procedure"), ElasticsearchTypeRegistry.stringField);
 }

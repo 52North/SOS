@@ -33,8 +33,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.n52.sos.statistics.api.MetadataDataMapping;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.mappings.MetadataDataMapping;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameter;
 import org.n52.sos.statistics.api.parameters.SingleEsParameter;

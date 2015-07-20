@@ -34,8 +34,8 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.n52.iceland.event.events.CountingOutputstreamEvent;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class CountingOutputstreamEventResolver extends AbstractElasticSearchDataHolder implements IStatisticsServiceEventResolver {

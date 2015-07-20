@@ -32,8 +32,8 @@ import java.util.Map;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
 public class SosCodedExceptionEventResolver extends AbstractElasticSearchDataHolder implements IServiceEventHandler<CodedException> {
 

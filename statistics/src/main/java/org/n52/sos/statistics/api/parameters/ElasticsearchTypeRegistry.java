@@ -81,6 +81,10 @@ public class ElasticsearchTypeRegistry {
                 return false;
             return true;
         }
+
+        public String humanReadableType() {
+            return type.get("type").toString();
+        }
     }
 
 }

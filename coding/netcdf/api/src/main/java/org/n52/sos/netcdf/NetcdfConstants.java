@@ -56,4 +56,6 @@ public interface NetcdfConstants {
     
     MediaType CONTENT_TYPE_NETCDF_4_ZIP = new MediaType("application", "zip", ImmutableListMultimap.of("subtype", "netcdf", PARAM_VERSION, "4"));
     
+    String CONTRIBUTOR_EMAIL = "contributor_email";
+    
 }

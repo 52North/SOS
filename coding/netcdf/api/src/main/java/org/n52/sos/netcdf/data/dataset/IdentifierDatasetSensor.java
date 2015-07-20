@@ -28,34 +28,18 @@
  */
 package org.n52.sos.netcdf.data.dataset;
 
-import java.util.Map;
+public class IdentifierDatasetSensor extends DatasetSensor {
+    
+    private String identifier;
 
-import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-
-import ucar.nc2.constants.CF.FeatureType;
-
-/**
- * Abstract class of {@link AbstractSensorDataset} for {@link String} sensor types.
- * 
- * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
- * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.4.0
- *
- */
-public abstract class AbstractStringSensorDataset extends AbstractSensorDataset<String> {
-
-    public AbstractStringSensorDataset(FeatureType featureType, String sensor,
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues,
-            SosProcedureDescription procedure) {
-        super(featureType, sensor, dataValues, procedure);
+    public IdentifierDatasetSensor(String identifier) {
+        this.identifier = identifier;
     }
-
+    
     @Override
     public String getSensorIdentifier() {
-        return getSensor();
+        return identifier;
     }
+
+   
 }

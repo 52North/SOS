@@ -129,7 +129,7 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
         File tempDir = Files.createTempDir();
 
         for (NetCDFObservation netCDFObs : netCDFObsList) {
-            for (AbstractSensorDataset<?> sensorDataset : netCDFObs.getSensorDatasets()) {
+            for (AbstractSensorDataset sensorDataset : netCDFObs.getSensorDatasets()) {
                 File netcdfFile = new File(tempDir, getFilename(sensorDataset));
                 encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
             }

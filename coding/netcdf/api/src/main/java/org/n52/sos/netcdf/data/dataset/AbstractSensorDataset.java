@@ -57,9 +57,9 @@ import com.google.common.collect.Sets;
  * @param <T>
  *            sensor type
  */
-public abstract class AbstractSensorDataset<T> implements Comparable<AbstractSensorDataset<T>>{
+public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset>{
     private CF.FeatureType featureType;    
-    private T sensor;
+    private DatasetSensor sensor;
     private SosProcedureDescription procedure;
 
     private List<OmObservableProperty> obsProps;
@@ -68,7 +68,7 @@ public abstract class AbstractSensorDataset<T> implements Comparable<AbstractSen
     
     private Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues;
 
-    public AbstractSensorDataset( CF.FeatureType featureType, T sensor,
+    public AbstractSensorDataset( CF.FeatureType featureType, DatasetSensor sensor,
             Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues, SosProcedureDescription procedure){
         this.featureType = featureType;
         this.sensor = sensor;
@@ -109,11 +109,13 @@ public abstract class AbstractSensorDataset<T> implements Comparable<AbstractSen
     }
 
 
-    public T getSensor() {
+    public DatasetSensor getSensor() {
         return sensor;
     }
     
-    public abstract String getSensorIdentifier();
+    public String getSensorIdentifier() {
+       return  getSensor().getSensorIdentifier();
+    }
 
     public CF.FeatureType getFeatureType() {
         return featureType;
@@ -139,14 +141,14 @@ public abstract class AbstractSensorDataset<T> implements Comparable<AbstractSen
         return dataValues;
     }
     
-    public static Set<AbstractSensorDataset<?>> getAbstractAssetDatasets( Set<? extends AbstractSensorDataset<?>> stationDatasets ){
-        Set<AbstractSensorDataset<?>> abstractStationDatasets = new HashSet<AbstractSensorDataset<?>>();
+    public static Set<AbstractSensorDataset> getAbstractAssetDatasets( Set<? extends AbstractSensorDataset> stationDatasets ){
+        Set<AbstractSensorDataset> abstractStationDatasets = new HashSet<AbstractSensorDataset>();
         abstractStationDatasets.addAll( stationDatasets );
         return abstractStationDatasets;
     }
     
     @Override
-    public int compareTo(AbstractSensorDataset<T> o) {
+    public int compareTo(AbstractSensorDataset o) {
         if( sensor == null && o.getSensor() == null ){
             return 0;            
         }

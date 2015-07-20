@@ -28,49 +28,62 @@
  */
 package org.n52.sos.netcdf.data.dataset;
 
-import java.util.Map;
-
-import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-
-import ucar.nc2.constants.CF;
+import org.n52.sos.ogc.sensorML.AbstractSensorML;
 
 /**
- * Implementation of {@link AbstractStringSensorDataset} for time series sensor datasets
- * 
- * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
+ * @param <T>
  */
-public class TimeSeriesSensorDataset extends AbstractSensorDataset implements StaticLocationDataset, StaticAltitudeDataset{
-    private Double lng;
-    private Double lat;
-    private Double alt;
-    
-    public TimeSeriesSensorDataset( DatasetSensor sensor, Double lng, Double lat, Double alt, 
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
-        super( CF.FeatureType.timeSeries, sensor, dataValues, procedure);
-        this.lng = lng;
-        this.lat = lat;
-        this.alt = alt;
+public abstract class DatasetSensor implements Comparable<DatasetSensor> {
+
+    private AbstractSensorML description;
+
+    public abstract String getSensorIdentifier();
+
+    public void setSensorDescription(AbstractSensorML description) {
+        this.description = description;
+    }
+
+    public AbstractSensorML getSensorDescritpion() {
+        return description;
+    }
+
+    public boolean isSetSensorDescription() {
+        return getSensorDescritpion() != null;
+    }
+
+    public boolean equals(Object anObject) {
+        if (this == anObject) {
+            return true;
+        }
+        if (anObject instanceof DatasetSensor) {
+            DatasetSensor anotherAbstractAsset = (DatasetSensor) anObject;
+            if (getSensorIdentifier().equals(anotherAbstractAsset.getSensorIdentifier())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        int h = 0;
+        int len = getSensorIdentifier().length();
+        if (h == 0 && len > 0) {
+            int off = 0;
+            char val[] = getSensorIdentifier().toCharArray();
+
+            for (int i = 0; i < len; i++) {
+                h = 31 * h + val[off++];
+            }
+        }
+        return h;
     }
 
     @Override
-    public Double getLng() {
-        return lng;
-    }
-    
-    @Override
-    public Double getLat() {
-        return lat;
+    public int compareTo(DatasetSensor o) {
+        return getSensorIdentifier().compareTo(o.getSensorIdentifier());
     }
 
-    @Override
-    public Double getAlt() {
-        return alt;
-    }
 }

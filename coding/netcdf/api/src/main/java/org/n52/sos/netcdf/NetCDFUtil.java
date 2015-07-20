@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.netcdf.data.dataset.IdentifierDatasetSensor;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesProfileSensorDataset;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesSensorDataset;
 import org.n52.sos.netcdf.data.dataset.TrajectoryProfileSensorDataset;
@@ -295,7 +296,8 @@ public class NetCDFUtil {
 
         for (Map.Entry<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesEntry : obsValuesMap
                 .entrySet()) {
-            String sensor = obsValuesEntry.getKey();
+            IdentifierDatasetSensor datasetSensor = new IdentifierDatasetSensor(obsValuesEntry.getKey());
+            String sensor  = datasetSensor.getSensorIdentifier();
             Set<Time> sensorTimes = obsValuesEntry.getValue().keySet();
 
             int lngCount = sensorLngs.get(sensor).size();
@@ -351,7 +353,7 @@ public class NetCDFUtil {
             if (!locationVaries && !heightVaries) {
                 // time series
                 timeSeriesSamplingTimePeriod.extendToContain(sensorTimes);
-                timeSeriesSensorDatasets.put(sensor, new TimeSeriesSensorDataset(sensor, staticLng, staticLat,
+                timeSeriesSensorDatasets.put(sensor, new TimeSeriesSensorDataset(datasetSensor, staticLng, staticLat,
                         staticHeight, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 timeSeriesPhenomena.addAll(sensorPhens.get(sensor));
                 if (staticLng != null && staticLat != null) {
@@ -360,7 +362,7 @@ public class NetCDFUtil {
             } else if (!locationVaries && heightVaries) {
                 // time series profile
                 timeSeriesProfileSamplingTimePeriod.extendToContain(sensorTimes);
-                timeSeriesProfileSensorDatasets.put(sensor, new TimeSeriesProfileSensorDataset(sensor, staticLng,
+                timeSeriesProfileSensorDatasets.put(sensor, new TimeSeriesProfileSensorDataset(datasetSensor, staticLng,
                         staticLat, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 timeSeriesProfilePhenomena.addAll(sensorPhens.get(sensor));
                 if (staticLng != null && staticLat != null) {
@@ -370,14 +372,14 @@ public class NetCDFUtil {
                 // trajectory
                 trajectorySamplingTimePeriod.extendToContain(sensorTimes);
                 trajectorySensorDatasets.put(sensor,
-                        new TrajectorySensorDataset(sensor, staticHeight, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
+                        new TrajectorySensorDataset(datasetSensor, staticHeight, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 trajectoryPhenomena.addAll(sensorPhens.get(sensor));
                 expandEnvelopeToInclude(trajectoryEnvelope, sensorLngs.get(sensor), sensorLats.get(sensor));
             } else if (locationVaries && heightVaries) {
                 // trajectory profile
                 trajectoryProfileSamplingTimePeriod.extendToContain(sensorTimes);
                 trajectoryProfileSensorDatasets.put(sensor,
-                        new TrajectoryProfileSensorDataset(sensor, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
+                        new TrajectoryProfileSensorDataset(datasetSensor, obsValuesEntry.getValue(), sensorProcedure.get(sensor)));
                 trajectoryProfilePhenomena.addAll(sensorPhens.get(sensor));
                 expandEnvelopeToInclude(trajectoryProfileEnvelope, sensorLngs.get(sensor), sensorLats.get(sensor));
             }

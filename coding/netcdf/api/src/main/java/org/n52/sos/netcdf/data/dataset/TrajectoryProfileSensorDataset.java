@@ -46,8 +46,8 @@ import ucar.nc2.constants.CF;
  * @since 4.4.0
  *
  */
-public class TrajectoryProfileSensorDataset extends AbstractStringSensorDataset {
-    public TrajectoryProfileSensorDataset( String sensor,  
+public class TrajectoryProfileSensorDataset extends AbstractSensorDataset {
+    public TrajectoryProfileSensorDataset( DatasetSensor sensor,  
             Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
         super( CF.FeatureType.trajectoryProfile, sensor, dataValues, procedure);
     }

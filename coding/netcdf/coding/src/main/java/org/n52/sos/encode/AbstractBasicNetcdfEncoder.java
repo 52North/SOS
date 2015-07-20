@@ -29,7 +29,6 @@
 package org.n52.sos.encode;
 
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
 
 import ucar.nc2.NetcdfFileWriter;
 
@@ -45,7 +44,7 @@ import ucar.nc2.NetcdfFileWriter;
 public abstract class AbstractBasicNetcdfEncoder extends AbstractNetcdfEncoder {
     
     @Override
-    protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset<?> sensorDataset, AbstractSensorML sml) {
+    protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         // TODO Auto-generated method stub
     }
     

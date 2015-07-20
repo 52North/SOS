@@ -137,7 +137,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
             throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null, netCDFObservation.getSensorDatasets().size());
         }
 
-        AbstractSensorDataset<?> sensorDataset = netCDFObservation.getSensorDatasets().get(0);
+        AbstractSensorDataset sensorDataset = netCDFObservation.getSensorDatasets().get(0);
         File tempDir = Files.createTempDir();
         String filename = getFilename(sensorDataset);
         File netcdfFile = new File(tempDir, filename);

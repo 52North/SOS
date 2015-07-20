@@ -47,11 +47,11 @@ import ucar.nc2.constants.CF;
  * @since 4.4.0
  *
  */
-public class TimeSeriesProfileSensorDataset extends AbstractStringSensorDataset implements StaticLocationDataset {
+public class TimeSeriesProfileSensorDataset extends AbstractSensorDataset implements StaticLocationDataset {
     private Double lng;
     private Double lat;
     
-    public TimeSeriesProfileSensorDataset( String sensor, Double lng, Double lat, 
+    public TimeSeriesProfileSensorDataset( DatasetSensor sensor, Double lng, Double lat, 
             Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
         super( CF.FeatureType.timeSeriesProfile, sensor, dataValues, procedure);
         this.lng = lng;

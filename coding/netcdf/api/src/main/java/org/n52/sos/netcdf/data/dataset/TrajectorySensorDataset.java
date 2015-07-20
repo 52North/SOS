@@ -46,10 +46,10 @@ import ucar.nc2.constants.CF;
  * @since 4.4.0
  *
  */
-public class TrajectorySensorDataset extends AbstractStringSensorDataset implements StaticAltitudeDataset{
+public class TrajectorySensorDataset extends AbstractSensorDataset implements StaticAltitudeDataset{
     private Double alt;
     
-    public TrajectorySensorDataset( String sensor, Double alt, 
+    public TrajectorySensorDataset( DatasetSensor sensor, Double alt, 
             Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
         super( CF.FeatureType.trajectory, sensor, dataValues, procedure);
         this.alt = alt;

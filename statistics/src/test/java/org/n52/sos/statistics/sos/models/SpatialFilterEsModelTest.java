@@ -35,7 +35,7 @@ import org.junit.Test;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -49,9 +49,9 @@ public class SpatialFilterEsModelTest {
 
         Map<String, Object> map = SpatialFilterEsModel.convert(filter);
 
-        Assert.assertEquals("value-ref", map.get(SosDataMapping.SPATIAL_FILTER_VALUE_REF));
-        Assert.assertEquals(SpatialOperator.BBOX.toString(), map.get(SosDataMapping.SPATIAL_FILTER_OPERATOR));
-        Assert.assertNotNull(map.get(SosDataMapping.SPATIAL_FILTER_SHAPE));
+        Assert.assertEquals("value-ref", map.get(ObjectEsParameterFactory.SPATIAL_FILTER_VALUE_REF.getName()));
+        Assert.assertEquals(SpatialOperator.BBOX.toString(), map.get(ObjectEsParameterFactory.SPATIAL_FILTER_OPERATOR.getName()));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.SPATIAL_FILTER_SHAPE.getName()));
     }
 
     @Test
@@ -89,7 +89,7 @@ public class SpatialFilterEsModelTest {
 
         Assert.assertNull(map);
     }
-    
+
     @Test
     public void createPointGeometry() throws OwsExceptionReport {
         Geometry geom = JTSHelper.createGeometryFromWKT("POINT (40 40)", 4326);
@@ -99,7 +99,7 @@ public class SpatialFilterEsModelTest {
 
         Assert.assertNotNull(map);
     }
-    
+
     @Test
     public void createPointButItisPologyonGeometry() throws OwsExceptionReport {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);

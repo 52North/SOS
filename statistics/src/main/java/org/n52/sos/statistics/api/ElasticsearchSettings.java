@@ -126,7 +126,7 @@ public class ElasticsearchSettings {
     @Setting(ElasticsearchSettingsKeys.TYPE_NAME)
     public void setTypeId(String typeId) {
         Validation.notNullOrEmpty(ElasticsearchSettingsKeys.TYPE_NAME, typeId);
-        if (typeId.equals(ServiceEventDataMapping.METADATA_TYPE_NAME)) {
+        if (typeId.equals(MetadataDataMapping.METADATA_TYPE_NAME)) {
             throw new ConfigurationError("The %s is reserved. Choose another one.", typeId);
         }
         this.typeId = typeId;

@@ -26,42 +26,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package custom;
+package org.n52.sos.statistics.impl.resolvers;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.inject.Inject;
+import org.apache.commons.io.FileUtils;
+import org.n52.iceland.event.events.CountingOutputstreamEvent;
+import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
-import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
-import org.n52.sos.statistics.sos.SosDataMapping;
-import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
-import org.n52.sos.util.JTSHelper;
+public class CountingOutputstreamEventResolver extends AbstractElasticSearchDataHolder implements IStatisticsServiceEventResolver {
 
-import basetest.SpringBaseTest;
+    private CountingOutputstreamEvent event;
 
-import com.vividsolutions.jts.geom.Geometry;
+    @Override
+    public Map<String, Object> resolve() {
+        Map<String, Object> data = new HashMap<>();
+        data.put(ObjectEsParameterFactory.BYTES.getName(), event.getBytesWritten());
+        data.put(ObjectEsParameterFactory.DISPLAY_BYTES.getName(), FileUtils.byteCountToDisplaySize(event.getBytesWritten()));
+        put(ServiceEventDataMapping.ORE_BYTES_WRITTEN, data);
 
-public class GeoShapeInsert extends SpringBaseTest {
-
-    @Inject
-    IStatisticsDataHandler handler;
-
-    @Test
-    public void insert() throws OwsExceptionReport {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
-
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
-
-        Map<String, Object> root = new HashMap<>();
-        root.put(SosDataMapping.GO_SPATIAL_FILTER.getName(), map);
-        root.put(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName(), "feature of interest");
-
-        handler.persist(root);
+        return dataMap;
     }
+
+    public CountingOutputstreamEvent getEvent() {
+        return event;
+    }
+
+    public void setEvent(CountingOutputstreamEvent event) {
+        this.event = event;
+    }
+
 }

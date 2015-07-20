@@ -26,42 +26,40 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package custom;
+package org.n52.sos.statistics.api.parameters;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
-import javax.inject.Inject;
+public class ObjectEsParameter extends AbstractEsParameter {
+    private final List<AbstractEsParameter> children;
 
-import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
-import org.n52.sos.statistics.sos.SosDataMapping;
-import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
-import org.n52.sos.util.JTSHelper;
-
-import basetest.SpringBaseTest;
-
-import com.vividsolutions.jts.geom.Geometry;
-
-public class GeoShapeInsert extends SpringBaseTest {
-
-    @Inject
-    IStatisticsDataHandler handler;
-
-    @Test
-    public void insert() throws OwsExceptionReport {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
-
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
-
-        Map<String, Object> root = new HashMap<>();
-        root.put(SosDataMapping.GO_SPATIAL_FILTER.getName(), map);
-        root.put(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName(), "feature of interest");
-
-        handler.persist(root);
+    public ObjectEsParameter(String name, String description, AbstractEsParameter... abstractEsParameters) {
+        super(name, description);
+        children = Arrays.asList(abstractEsParameters);
     }
+
+    public ObjectEsParameter(String name, AbstractEsParameter... abstractEsParameters) {
+        super(name);
+        children = Arrays.asList(abstractEsParameters);
+    }
+
+    @Override
+    public List<AbstractEsParameter> getAllChildren() {
+        return children;
+    }
+
+    public ObjectEsParameter addChild(AbstractEsParameter child) {
+        Objects.requireNonNull(child);
+
+        children.add(child);
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
 }

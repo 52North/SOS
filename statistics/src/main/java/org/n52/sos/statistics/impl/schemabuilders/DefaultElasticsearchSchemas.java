@@ -28,9 +28,18 @@
  */
 package org.n52.sos.statistics.impl.schemabuilders;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.n52.sos.statistics.api.MetadataDataMapping;
 import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameter;
+import org.n52.sos.statistics.api.parameters.SingleEsParameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract class for further application specific Elasticsearch schema
@@ -39,55 +48,89 @@ import org.n52.sos.statistics.api.ServiceEventDataMapping;
  */
 public abstract class DefaultElasticsearchSchemas {
 
-    private final ElasticsearchSchemaBuilder schema = ElasticsearchSchemaBuilder.builder();
+    private static final Logger logger = LoggerFactory.getLogger(DefaultElasticsearchSchemas.class);
+
+    protected Map<String, Object> properties;
+    protected Map<String, Object> mappings;
 
     public final Map<String, Object> getSchema() {
-        addDefaultFields(schema);
-        icelandExceptions(schema);
-        extensions(schema);
+        properties = new HashMap<>(1);
+        mappings = new HashMap<>();
+        properties.put("properties", mappings);
 
-        appSpecificSchema(schema);
+        processSchemaClass(ServiceEventDataMapping.class);
+        appSpecificSchema();
 
-        return schema.build();
+        return properties;
     }
 
     /**
-     * Override this method and insert your application specific schemas to
-     * Elasticsearch
+     * Call this method in your subclass and point it to your class where the
+     * mappings exists This class will process the
+     * <code>public static final {@link AbstractEsParameter}</code> fields only.
      * 
-     * @param schema
+     * @param schemaClass
+     *            application specific schema
      */
-    protected abstract void appSpecificSchema(final ElasticsearchSchemaBuilder schema);
-
-    public abstract int getSchemaVersion();
-
-    private void addDefaultFields(ElasticsearchSchemaBuilder schema) {
-        schema.addDateField(ServiceEventDataMapping.TIMESTAMP_FIELD);
-        schema.addStringField(ServiceEventDataMapping.UUID_FIELD);
-        schema.addStringField(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE);
+    protected final void processSchemaClass(Class<?> schemaClass) {
+        for (Field field : schemaClass.getDeclaredFields()) {
+            AbstractEsParameter value = checkField(field);
+            if (value != null) {
+                resolveParameterField(value, mappings);
+            }
+        }
     }
 
-    private void icelandExceptions(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(ServiceEventDataMapping.EX_STATUS);
-        schema.addStringField(ServiceEventDataMapping.EX_VERSION);
-        schema.addStringField(ServiceEventDataMapping.EX_MESSAGE);
-        schema.addStringField(ServiceEventDataMapping.CEX_LOCATOR);
-        schema.addStringField(ServiceEventDataMapping.CEX_SOAP_FAULT);
-        schema.addStringField(ServiceEventDataMapping.OWSEX_NAMESPACE);
+    private void resolveParameterField(AbstractEsParameter value,
+            Map<String, Object> map) {
+        if (value instanceof SingleEsParameter) {
+            SingleEsParameter single = (SingleEsParameter) value;
+            map.put(single.getName(), single.getTypeAsMap());
+        } else if (value instanceof ObjectEsParameter) {
+            ObjectEsParameter object = (ObjectEsParameter) value;
+
+            // loadup all the children
+            // the wrapper properties map is needed to elasticsearch
+            Map<String, Object> subproperties = new HashMap<>(1);
+            Map<String, Object> childrenMap = new HashMap<>(value.getAllChildren().size());
+            subproperties.put("properties", childrenMap);
+
+            for (AbstractEsParameter child : object.getAllChildren()) {
+                resolveParameterField(child, childrenMap);
+            }
+
+            map.put(object.getName(), subproperties);
+
+        } else {
+            throw new IllegalArgumentException("Invalid schema parameter value " + value.toString());
+        }
     }
 
-    private void extensions(ElasticsearchSchemaBuilder schema) {
-        ElasticsearchSchemaBuilder extension =
-                ElasticsearchSchemaBuilder.builder().addStringField(ServiceEventDataMapping.EXT_DEFINITION)
-                        .addStringField(ServiceEventDataMapping.EXT_IDENTIFIER).addStringField(ServiceEventDataMapping.EXT_VALUE);
-
-        schema.addObject(ServiceEventDataMapping.SR_EXTENSIONS, extension.build());
+    private AbstractEsParameter checkField(Field field) {
+        boolean bool = Modifier.isFinal(field.getModifiers()) && Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers());
+        bool = bool && field.getType().isAssignableFrom((AbstractEsParameter.class));
+        if (bool) {
+            try {
+                return (AbstractEsParameter) field.get(null);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+            }
+        }
+        return null;
     }
 
     public final Map<String, Object> getMetadataSchema() {
-        ElasticsearchSchemaBuilder schema = ElasticsearchSchemaBuilder.builder();
-        schema.addIntegerField(ServiceEventDataMapping.METADATA_VERSION_FIELD).addDateField(ServiceEventDataMapping.METADATA_CREATION_TIME_FIELD)
-                .addDateField(ServiceEventDataMapping.METADATA_UPDATE_TIME_FIELD).addStringField(ServiceEventDataMapping.METADATA_UUIDS_FIELD);
-        return schema.build();
+        properties = new HashMap<>(1);
+        mappings = new HashMap<>();
+        properties.put("properties", mappings);
+        processSchemaClass(MetadataDataMapping.class);
+        return properties;
     }
+
+    public abstract int getSchemaVersion();
+
+    /**
+     * @see {@link DefaultElasticsearchSchemas#processSchemaClass(Class)}
+     */
+    protected abstract void appSpecificSchema();
 }

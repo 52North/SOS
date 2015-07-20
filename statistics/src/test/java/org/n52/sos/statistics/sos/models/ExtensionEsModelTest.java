@@ -35,14 +35,14 @@ import org.junit.Test;
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class ExtensionEsModelTest {
 
     @Test
     public void transformExtensionToEsModel() {
-    	SweBoolean bool = new SweBoolean();
-    	bool.setValue(true);
+        SweBoolean bool = new SweBoolean();
+        bool.setValue(true);
         Extension<SweBoolean> ext = new SwesExtension<SweBoolean>(bool);
         ext.setDefinition("definition");
         ext.setIdentifier("identifier");
@@ -50,10 +50,10 @@ public class ExtensionEsModelTest {
 
         Map<String, Object> map = ExtensionEsModel.convert(ext);
 
-        Assert.assertEquals("SweBoolean [value=true; quality=null; simpleType=Boolean]", map.get(ServiceEventDataMapping.EXT_VALUE));
-        Assert.assertEquals("definition", map.get(ServiceEventDataMapping.EXT_DEFINITION));
-        Assert.assertEquals("identifier", map.get(ServiceEventDataMapping.EXT_IDENTIFIER));
-    } 
+        Assert.assertEquals("SweBoolean [value=true; quality=null; simpleType=Boolean]", map.get(ObjectEsParameterFactory.EXTENSION_VALUE.getName()));
+        Assert.assertEquals("definition", map.get(ObjectEsParameterFactory.EXTENSION_DEFINITION.getName()));
+        Assert.assertEquals("identifier", map.get(ObjectEsParameterFactory.EXTENSION_IDENTIFIER.getName()));
+    }
 
     @Test
     public void resultsInNullExtension() {

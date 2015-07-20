@@ -28,122 +28,128 @@
  */
 package org.n52.sos.statistics.sos;
 
+import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
+import org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.sos.statistics.api.parameters.SingleEsParameter;
+
 public class SosDataMapping {
 
     // --------------- GETCAPABILITIES --------------//
 
-    public static final String GC_VERSIONS_FIELD = "getcapabilities-versions";
-    public static final String GC_FORMATS_FIELD = "getcapabilities-formats";
-    public static final String GC_SECTIONS = "getcapabilities-sections";
-    public static final String GC_UPDATE_SEQUENCE = "getcapabilities-updatesequence";
+    public static final AbstractEsParameter GC_VERSIONS_FIELD = new SingleEsParameter("getcapabilities-versions",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GC_FORMATS_FIELD =
+            new SingleEsParameter("getcapabilities-formats", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GC_SECTIONS = new SingleEsParameter("getcapabilities-sections", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GC_UPDATE_SEQUENCE = new SingleEsParameter("getcapabilities-updatesequence",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- DESCRIBE SENSOR --------------//
-    public static final String DS_PROCEDURE = "describesensor-procedure";
-    public static final String DS_PROCEDURE_DESC_FORMAT = "describesensor-procedure-description-format";
-    public static final String DS_VALID_TIME = "describesensor-validtime";
+    public static final AbstractEsParameter DS_PROCEDURE = new SingleEsParameter("describesensor-procedure", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter DS_PROCEDURE_DESC_FORMAT = new SingleEsParameter("describesensor-procedure-description-format",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter DS_VALID_TIME = new SingleEsParameter("describesensor-validtime", ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET OBSERVATION --------------//
-    public static final String GO_PROCEDURES = "getobservation-procedures";
-    public static final String GO_FEATURE_OF_INTERESTS = "getobservation-feature-of-interests";
-    public static final String GO_SPATIAL_FILTER = "getobservation-spatial-filter";
-    public static final String GO_TEMPORAL_FILTER = "getobservation-temporal-filter";
-    public static final String GO_OBSERVED_PROPERTIES = "getobservation-observed-properties";
-    public static final String GO_OFFERINGS = "getobservation-offerings";
-    public static final String GO_RESPONSE_FORMAT = "getobservation-response-format";
-    public static final String GO_IS_MERGED_OBSERVATION_VALUES = "getobservation-merged-observation-values";
+    public static final AbstractEsParameter GO_PROCEDURES = new SingleEsParameter("getobservation-procedures", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GO_FEATURE_OF_INTERESTS = new SingleEsParameter("getobservation-feature-of-interests",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GO_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getobservation-spatial-filter", null);
+    public static final AbstractEsParameter GO_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getobservation-temporal-filter", null);
+    public static final AbstractEsParameter GO_OBSERVED_PROPERTIES = new SingleEsParameter("getobservation-observed-properties",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GO_OFFERINGS = new SingleEsParameter("getobservation-offerings", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GO_RESPONSE_FORMAT = new SingleEsParameter("getobservation-response-format",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GO_IS_MERGED_OBSERVATION_VALUES = new SingleEsParameter("getobservation-merged-observation-values",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET OBSERVATION BY ID--------------//
-    public static final String GOBID_OBSERVATION_IDENTIFIER = "getobservationbyid-observation-identifier";
+    public static final AbstractEsParameter GOBID_OBSERVATION_IDENTIFIER = new SingleEsParameter("getobservationbyid-observation-identifier",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET FEATURE OF INTEREST --------------//
-    public static final String GFOI_FEATURE_IDENTIFIERS = "getfeatureofinterest-feature-identifiers";
-    public static final String GFOI_OBSERVED_PROPERTIES = "getfeatureofinterest-observed-properties";
-    public static final String GFOI_PROCEDURES = "getfeatureofinterest-procedures";
-    public static final String GFOI_SPATIAL_FILTER = "getfeatureofinterest-spatial-filter";
-    public static final String GFOI_TEMPORAL_FILTER = "getfeatureofinterest-temporal-filter";
+    public static final AbstractEsParameter GFOI_FEATURE_IDENTIFIERS = new SingleEsParameter("getfeatureofinterest-feature-identifiers",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GFOI_OBSERVED_PROPERTIES = new SingleEsParameter("getfeatureofinterest-observed-properties",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GFOI_PROCEDURES = new SingleEsParameter("getfeatureofinterest-procedures",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GFOI_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getfeatureofinterest-spatial-filter", null);
+    public static final AbstractEsParameter GFOI_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getfeatureofinterest-temporal-filter",
+            null);
 
     // --------------- INSERT SENSOR --------------//
-    public static final String IS_ASSIGNED_OFFERINGS = "insertsensor-assigned-offerings";
-    public static final String IS_ASSIGNED_PROCEDURE_IDENTIFIERS = "insertsensor-assigned-procedure-identifiers";
-    public static final String IS_OBSERVABLE_PROPERTY = "insertsensor-observable-property";
-    public static final String IS_PROCEDURE_DESCRIPTION = "insertsensor-procedure-description";
-    public static final String IS_PROCEDURE_DESCRIPTION_FORMAT = "insertsensor-description-format";
-    public static final String IS_FEATURE_OF_INTEREST_TYPES = "insertsensor-feature-of-interest-types";
-    public static final String IS_OBSERVATION_TYPES = "insertsensor-observation-types";
+    public static final AbstractEsParameter IS_ASSIGNED_OFFERINGS = new SingleEsParameter("insertsensor-assigned-offerings",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_ASSIGNED_PROCEDURE_IDENTIFIERS = new SingleEsParameter("insertsensor-assigned-procedure-identifiers",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_OBSERVABLE_PROPERTY = new SingleEsParameter("insertsensor-observable-property",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_PROCEDURE_DESCRIPTION = new SingleEsParameter("insertsensor-procedure-description",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_PROCEDURE_DESCRIPTION_FORMAT = new SingleEsParameter("insertsensor-description-format",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_FEATURE_OF_INTEREST_TYPES = new SingleEsParameter("insertsensor-feature-of-interest-types",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IS_OBSERVATION_TYPES = new SingleEsParameter("insertsensor-observation-types",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- UPDATE SENSOR --------------//
-    public static final String US_PROCEDURE_IDENTIFIER = "updatesensor-procedure-identifier";
-    public static final String US_PROCEDURE_DESCRIPTION_FORMAT = "updatesensor-description-format";
+    public static final AbstractEsParameter US_PROCEDURE_IDENTIFIER = new SingleEsParameter("updatesensor-procedure-identifier",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter US_PROCEDURE_DESCRIPTION_FORMAT = new SingleEsParameter("updatesensor-description-format",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- DELETE SENSOR --------------//
-    public static final String DELS_PROCEDURE_IDENTIFIER = "deletesensor-procedure-identifier";
+    public static final AbstractEsParameter DELS_PROCEDURE_IDENTIFIER = new SingleEsParameter("deletesensor-procedure-identifier",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- INSERT OBSERVATION --------------//
-    public static final String IO_ASSIGNED_SENSORID = "insertobservation-assigned-sensorid";
-    public static final String IO_OFFERINGS = "insertobservation-offerings";
-    public static final String IO_OBSERVATION = "insertobservation-observation";
+    public static final AbstractEsParameter IO_ASSIGNED_SENSORID = new SingleEsParameter("insertobservation-assigned-sensorid",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IO_OFFERINGS =
+            new SingleEsParameter("insertobservation-offerings", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IO_OBSERVATION = ObjectEsParameterFactory.omObservation("insertobservation-observation", null);
 
     // --------------- INSERT RESULT TEMPLATE --------------//
-    public static final String IRT_IDENTIFIER = "insertresulttemplate-identifier";
-    public static final String IRT_RESULT_ENCODING = "insertresulttemplate-result-encoding";
-    public static final String IRT_OBSERVATION_TEMPLATE = "insertresulttemplate-observation-template";
+    public static final AbstractEsParameter IRT_IDENTIFIER = new SingleEsParameter("insertresulttemplate-identifier",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IRT_RESULT_ENCODING = new SingleEsParameter("insertresulttemplate-result-encoding",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IRT_OBSERVATION_TEMPLATE = new SingleEsParameter("insertresulttemplate-observation-template",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- INSERT RESULT --------------//
-    public static final String IR_TEMPLATE_IDENTIFIER = "insertresult-template-identifier";
-    public static final String IR_RESULT_VALUES = "insertresult-result-values";
+    public static final AbstractEsParameter IR_TEMPLATE_IDENTIFIER = new SingleEsParameter("insertresult-template-identifier",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter IR_RESULT_VALUES = new SingleEsParameter("insertresult-result-values",
+            ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET RESULT TEMPLATE --------------//
-    public static final String GRT_OBSERVED_PROPERTY = "getresulttemplate-observed-property";
-    public static final String GRT_OFFERING = "getresulttemplate-offering";
+    public static final AbstractEsParameter GRT_OBSERVED_PROPERTY = new SingleEsParameter("getresulttemplate-observed-property",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GRT_OFFERING = new SingleEsParameter("getresulttemplate-offering", ElasticsearchTypeRegistry.stringField);
 
     // --------------- GET RESULT --------------//
-    public static final String GR_FEATURE_IDENTIFIERS = "getresult-feature-identifiers";
-    public static final String GR_OBSERVATION_TEMPLATE_IDENTIFIER = "getresult-observation-template-identifier";
-    public static final String GR_OBSERVATION_PROPERTY = "getresult-observation-property";
-    public static final String GR_OFFERING = "getresult-offering";
-    public static final String GR_SPATIAL_FILTER = "getresult-spatial-filter";
-    public static final String GR_TEMPORAL_FILTER = "getresult-temporal-filter";
+    public static final AbstractEsParameter GR_FEATURE_IDENTIFIERS = new SingleEsParameter("getresult-feature-identifiers",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GR_OBSERVATION_TEMPLATE_IDENTIFIER = new SingleEsParameter("getresult-observation-template-identifier",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GR_OBSERVATION_PROPERTY = new SingleEsParameter("getresult-observation-property",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GR_OFFERING = new SingleEsParameter("getresult-offering", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GR_SPATIAL_FILTER = ObjectEsParameterFactory.spatialFilter("getresult-spatial-filter", null);
+    public static final AbstractEsParameter GR_TEMPORAL_FILTER = ObjectEsParameterFactory.temporalFilter("getresult-temporal-filter", null);
 
     // --------------- GET DATA AVAILABILITY --------------//
-    public static final String GDA_FEATURES_OF_INTEREST = "getdataavailability-features-of-interest";
-    public static final String GDA_NAMESPACE = "getdataavailability-namespace";
-    public static final String GDA_OBSERVED_PROPERTIES = "getdataavailability-observed-properties";
-    public static final String GDA_OFFERINGS = "getdataavailability-offerings";
-    public static final String GDA_PROCEDURES = "getdataavailability-procedures";
-
-    // ----------------- OBJECTS DETEILS -----------------//
-    // --------------- SPATIAL FILTER --------------------//
-    public static final String SPATIAL_FILTER_OPERATOR = "operation";
-    public static final String SPATIAL_FILTER_SHAPE = "shape";
-    public static final String SPATIAL_FILTER_VALUE_REF = "value-reference";
-
-    // --------------- SPATIAL FILTER SHAPE--------------------//
-    // type and coordinates must be given for geo_shape types
-    // // TODO maybe we don't need them.
-    // public static final String GEO_SHAPE_TYPE = "type";
-    // public static final String GEO_SHAPE_COORDINATES = "coordinates";
-
-    // ---------------- TIME -------------------//
-    public static final String TIME_DURARTION = "duration";
-    public static final String TIME_START = "start";
-    public static final String TIME_END = "end";
-    public static final String TIME_TIMEINSTANT = "timeInstant";
-
-    // ---------------- TEMPORAL FILTER INC TIME -------------------//
-    public static final String TEMPORAL_FILTER_OPERATOR = "operator";
-    public static final String TEMPORAL_FILTER_VALUE_REF = "value-reference";
-
-    // ----------- OmObservationConstellation -----------//
-    public static final String OMOCONSTELL_PROCEDURE = "procedure";
-    public static final String OMOCONSTELL_OBSERVABLE_PROPERTY = "observable-property";
-    public static final String OMOCONSTELL_FEATURE_OF_INTEREST = "feature-of-interest";
-    public static final String OMOCONSTELL_OBSERVATION_TYPE = "observation-type";
-
-    // ----------- OmObservation -----------//
-    public static final String OMOBS_CONSTELLATION = "constellation";
-    public static final String OMOBS_SAMPLING_GEOMETRY = "sampling-geometry";
-    public static final String OMOBS_PHENOMENON_TIME = "phenomenon-time";
-    public static final String OMOBS_RESULT_TIME = "result-time";
-    public static final String OMOBS_VALID_TIME = "valid-time";
-
+    public static final AbstractEsParameter GDA_FEATURES_OF_INTEREST = new SingleEsParameter("getdataavailability-features-of-interest",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GDA_OBSERVED_PROPERTIES = new SingleEsParameter("getdataavailability-observed-properties",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GDA_OFFERINGS = new SingleEsParameter("getdataavailability-offerings",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter GDA_PROCEDURES = new SingleEsParameter("getdataavailability-procedures",
+            ElasticsearchTypeRegistry.stringField);
 }

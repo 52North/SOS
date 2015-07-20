@@ -38,7 +38,7 @@ import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class TimeEsModel extends AbstractElasticsearchModel {
 
@@ -94,13 +94,13 @@ public class TimeEsModel extends AbstractElasticsearchModel {
             }
         }
 
-        put(SosDataMapping.TIME_DURARTION, duration);
-        put(SosDataMapping.TIME_START, start);
-        put(SosDataMapping.TIME_END, end);
-        put(SosDataMapping.TIME_TIMEINSTANT, timeInstant);
+        put(ObjectEsParameterFactory.TIME_DURARTION, duration);
+        put(ObjectEsParameterFactory.TIME_START, start);
+        put(ObjectEsParameterFactory.TIME_END, end);
+        put(ObjectEsParameterFactory.TIME_TIMEINSTANT, timeInstant);
         // only by TemporalFilter
-        put(SosDataMapping.TEMPORAL_FILTER_OPERATOR, timeOperator);
-        put(SosDataMapping.TEMPORAL_FILTER_VALUE_REF, valueReference);
+        put(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR, timeOperator);
+        put(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF, valueReference);
         return dataMap;
     }
 

@@ -31,26 +31,40 @@ package org.n52.sos.statistics.sos.schema;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import basetest.ElasticsearchAwareTest;
 
 public class SosElasticsearchSchemasTest extends ElasticsearchAwareTest {
 
-	private String idx = "schema-creator-index";
-	private String type = "mytpe";
+    private String idx = "schema-creator-index";
+    private String type = "mytpe";
 
-	@Test
-	public void createSchema() {
-		try {
-			getEmbeddedClient().admin().indices().prepareDelete(idx).get();
-		} catch (ElasticsearchException e) {
-		}
+    @Before
+    public void setUp() throws InterruptedException {
+        try {
+            getEmbeddedClient().admin().indices().prepareDelete(idx).get();
+            Thread.sleep(3000);
+        } catch (ElasticsearchException e) {
+        }
+    }
 
-		SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
-		getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getSchema()).get();
+    @Test
+    public void createSchema() {
+        SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
+        getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getSchema()).get();
 
-		GetMappingsResponse resp = getEmbeddedClient().admin().indices().prepareGetMappings(idx).addTypes(type).get();
-		Assert.assertNotNull(resp.getMappings());
-	}
+        GetMappingsResponse resp = getEmbeddedClient().admin().indices().prepareGetMappings(idx).addTypes(type).get();
+        Assert.assertNotNull(resp.getMappings());
+    }
+
+    @Test
+    public void createMetaDataSchema() {
+        SosElasticsearchSchemas sch = new SosElasticsearchSchemas();
+        getEmbeddedClient().admin().indices().prepareCreate(idx).addMapping(type, sch.getMetadataSchema()).get();
+
+        GetMappingsResponse resp = getEmbeddedClient().admin().indices().prepareGetMappings(idx).addTypes(type).get();
+        Assert.assertNotNull(resp.getMappings());
+    }
 }

@@ -44,8 +44,8 @@ public class OutgoingResponseEventResolver extends AbstractElasticSearchDataHold
         if (response == null) {
             return null;
         }
-        put(ServiceEventDataMapping.ORE_EXEC_TIME, response.getElapsedTime());
-        put(ServiceEventDataMapping.ORE_COUNT, response.getRequestNumber());
+        put(ServiceEventDataMapping.ORE_EXEC_TIME.getName(), response.getElapsedTime());
+        put(ServiceEventDataMapping.ORE_COUNT.getName(), response.getRequestNumber());
 
         return dataMap;
     }

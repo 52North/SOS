@@ -37,7 +37,7 @@ import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class OmObservationConstellationEsModelTest {
 
@@ -55,10 +55,10 @@ public class OmObservationConstellationEsModelTest {
 
         Map<String, Object> map = OmObservationConstellationEsModel.convert(obs);
 
-        Assert.assertEquals("id", map.get(SosDataMapping.OMOCONSTELL_PROCEDURE));
-        Assert.assertEquals("id", map.get(SosDataMapping.OMOCONSTELL_OBSERVABLE_PROPERTY));
-        Assert.assertEquals("obstype", map.get(SosDataMapping.OMOCONSTELL_OBSERVATION_TYPE));
-        Assert.assertEquals("foi", map.get(SosDataMapping.OMOCONSTELL_FEATURE_OF_INTEREST));
+        Assert.assertEquals("id", map.get(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE.getName()));
+        Assert.assertEquals("id", map.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY.getName()));
+        Assert.assertEquals("obstype", map.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE.getName()));
+        Assert.assertEquals("foi", map.get(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST.getName()));
     }
 
     @Test

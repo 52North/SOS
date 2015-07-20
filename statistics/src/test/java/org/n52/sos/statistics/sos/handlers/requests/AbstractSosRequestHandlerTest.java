@@ -74,13 +74,13 @@ public class AbstractSosRequestHandlerTest extends HandlerBaseTest {
         request.addExtensions(extensions);
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_VERSION_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_SERVICE_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_CONTENT_TYPE));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_ACCEPT_TYPES));
-        Assert.assertEquals(2, ((List<?>) map.get(ServiceEventDataMapping.SR_EXTENSIONS)).size());
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_VERSION_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_SERVICE_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_CONTENT_TYPE.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_ACCEPT_TYPES.getName()));
+        Assert.assertEquals(2, ((List<?>) map.get(ServiceEventDataMapping.SR_EXTENSIONS.getName())).size());
     }
 }

@@ -36,8 +36,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class StatisticsLocationUtilTest {
 
@@ -58,7 +58,7 @@ public class StatisticsLocationUtilTest {
         IPAddress ip = new IPAddress("67.20.172.183");
 
         Map<String, Object> map = loc.ip2SpatialData(ip);
-        Assert.assertEquals("US", map.get(ServiceEventDataMapping.GEO_LOC_COUNTRY_CODE));
+        Assert.assertEquals("US", map.get(ObjectEsParameterFactory.GEOLOC_COUNTRY_CODE.getName()));
     }
 
     @Test
@@ -70,9 +70,9 @@ public class StatisticsLocationUtilTest {
         Map<String, Object> map = loc.ip2SpatialData(ip);
 
         Assert.assertNotNull(map);
-        Assert.assertEquals("US", map.get(ServiceEventDataMapping.GEO_LOC_COUNTRY_CODE));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.GEO_LOC_CITY_CODE));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.GEO_LOC_GEOPOINT));
+        Assert.assertEquals("US", map.get(ObjectEsParameterFactory.GEOLOC_COUNTRY_CODE.getName()));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.GEOLOC_CITY_NAME.getName()));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.GEOLOC_GEO_POINT.getName()));
     }
 
     @Test

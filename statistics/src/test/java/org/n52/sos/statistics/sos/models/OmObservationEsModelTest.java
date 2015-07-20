@@ -46,7 +46,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -91,17 +91,17 @@ public class OmObservationEsModelTest {
 
         Map<String, Object> map = OmObservationEsModel.convert(obs);
 
-        Assert.assertNotNull(map.get(SosDataMapping.OMOBS_RESULT_TIME));
-        Assert.assertNotNull(map.get(SosDataMapping.OMOBS_VALID_TIME));
-        Assert.assertNotNull(map.get(SosDataMapping.OMOBS_PHENOMENON_TIME));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.OMOBS_RESULT_TIME.getName()));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.OMOBS_VALID_TIME.getName()));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.OMOBS_PHENOMENON_TIME.getName()));
 
-        Map<String, Object> constellationMap = (Map<String, Object>) map.get(SosDataMapping.OMOBS_CONSTELLATION);
-        Assert.assertEquals(constellationMap.get(SosDataMapping.OMOCONSTELL_PROCEDURE), "id");
-        Assert.assertEquals(constellationMap.get(SosDataMapping.OMOCONSTELL_OBSERVABLE_PROPERTY), "id");
-        Assert.assertEquals(constellationMap.get(SosDataMapping.OMOCONSTELL_OBSERVATION_TYPE), "obstype");
-        Assert.assertEquals(constellationMap.get(SosDataMapping.OMOCONSTELL_FEATURE_OF_INTEREST), "foi");
+        Map<String, Object> constellationMap = (Map<String, Object>) map.get(ObjectEsParameterFactory.OMOBS_CONSTELLATION.getName());
+        Assert.assertEquals(constellationMap.get(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE.getName()), "id");
+        Assert.assertEquals(constellationMap.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY.getName()), "id");
+        Assert.assertEquals(constellationMap.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE.getName()), "obstype");
+        Assert.assertEquals(constellationMap.get(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST.getName()), "foi");
 
-        Assert.assertNotNull(map.get(SosDataMapping.OMOBS_SAMPLING_GEOMETRY));
+        Assert.assertNotNull(map.get(ObjectEsParameterFactory.OMOBS_SAMPLING_GEOMETRY.getName()));
 
     }
 }

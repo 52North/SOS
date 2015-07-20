@@ -26,42 +26,25 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package custom;
+package org.n52.sos.statistics.api.parameters;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry.ElasticsearchType;
 
-import javax.inject.Inject;
+public class SingleEsParameter extends AbstractEsParameter {
 
-import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
-import org.n52.sos.statistics.sos.SosDataMapping;
-import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
-import org.n52.sos.util.JTSHelper;
-
-import basetest.SpringBaseTest;
-
-import com.vividsolutions.jts.geom.Geometry;
-
-public class GeoShapeInsert extends SpringBaseTest {
-
-    @Inject
-    IStatisticsDataHandler handler;
-
-    @Test
-    public void insert() throws OwsExceptionReport {
-        Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
-        SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
-
-        Map<String, Object> map = SpatialFilterEsModel.convert(filter);
-
-        Map<String, Object> root = new HashMap<>();
-        root.put(SosDataMapping.GO_SPATIAL_FILTER.getName(), map);
-        root.put(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName(), "feature of interest");
-
-        handler.persist(root);
+    public SingleEsParameter(String name, ElasticsearchType type) {
+        super(name);
+        setType(type);
     }
+
+    public SingleEsParameter(String name, String description, ElasticsearchType type) {
+        super(name, description);
+        setType(type);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
 }

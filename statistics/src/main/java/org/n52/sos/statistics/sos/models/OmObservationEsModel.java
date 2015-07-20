@@ -33,9 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class OmObservationEsModel extends AbstractElasticsearchModel {
 
@@ -62,16 +63,17 @@ public class OmObservationEsModel extends AbstractElasticsearchModel {
     @Override
     protected Map<String, Object> getAsMap() {
         Map<String, Object> constellation = OmObservationConstellationEsModel.convert(observation.getObservationConstellation());
-        put(SosDataMapping.OMOBS_CONSTELLATION, constellation);
+        put(ObjectEsParameterFactory.OMOBS_CONSTELLATION, constellation);
 
         if (observation.getSpatialFilteringProfileParameter() != null) {
-            SpatialFilter dummy = new SpatialFilter(null, observation.getSpatialFilteringProfileParameter().getValue().getValue(), null);
-            put(SosDataMapping.OMOBS_SAMPLING_GEOMETRY, SpatialFilterEsModel.convert(dummy));
+            SpatialFilter dummy =
+                    new SpatialFilter(SpatialOperator.BBOX, observation.getSpatialFilteringProfileParameter().getValue().getValue(), null);
+            put(ObjectEsParameterFactory.OMOBS_SAMPLING_GEOMETRY, SpatialFilterEsModel.convert(dummy));
         }
 
-        put(SosDataMapping.OMOBS_PHENOMENON_TIME, TimeEsModel.convert(observation.getPhenomenonTime()));
-        put(SosDataMapping.OMOBS_RESULT_TIME, TimeEsModel.convert(observation.getResultTime()));
-        put(SosDataMapping.OMOBS_VALID_TIME, TimeEsModel.convert(observation.getValidTime()));
+        put(ObjectEsParameterFactory.OMOBS_PHENOMENON_TIME, TimeEsModel.convert(observation.getPhenomenonTime()));
+        put(ObjectEsParameterFactory.OMOBS_RESULT_TIME, TimeEsModel.convert(observation.getResultTime()));
+        put(ObjectEsParameterFactory.OMOBS_VALID_TIME, TimeEsModel.convert(observation.getValidTime()));
 
         return dataMap;
     }

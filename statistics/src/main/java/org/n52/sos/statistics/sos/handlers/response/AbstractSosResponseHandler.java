@@ -41,7 +41,7 @@ public abstract class AbstractSosResponseHandler<T extends AbstractServiceRespon
     protected T response;
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public Map<String, Object> resolveAsMap(AbstractServiceResponse event) {
         this.response = (T) event;
         init();

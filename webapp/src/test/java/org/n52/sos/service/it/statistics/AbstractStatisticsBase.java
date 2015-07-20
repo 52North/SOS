@@ -50,55 +50,58 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AbstractStatisticsBase {
-	
-	protected Logger logger = LoggerFactory.getLogger(getClass());
 
-	public static final String ES_INDEX = "ogc-statistics-index";
-	public static final String ES_TYPE = "ogc-type";
-	public static final int JETTY_PORT = 10101;
-	public static final String SOS_ENDPOINT = "http://localhost:"+JETTY_PORT+"/service";
-	private static final int SLEEP = 3500;
-	
-	private static final CloseableHttpClient httpClient = HttpClients.createDefault();
-	
-	@ClassRule
-	public static RuleChain chain = RuleChain.outerRule(elasticsearch = new ElasticsearchServer()).around(jettyServer = new JettyServer());
-	
-	public static ElasticsearchServer elasticsearch;
-	public static JettyServer jettyServer;
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
-	public SearchResponse getLatestElasticsearchEntries() {
-		return elasticsearch.getClient().prepareSearch(ES_INDEX).setTypes(ES_TYPE).addSort(SortBuilders.fieldSort(ServiceEventDataMapping.TIMESTAMP_FIELD).order(SortOrder.DESC)).get();
-	}
-	
-	public Map<String, Object> getLastElasticsearchEntry() {
-		SearchResponse searchResponse = elasticsearch.getClient().prepareSearch(ES_INDEX).setTypes(ES_TYPE).setSize(1).addSort(SortBuilders.fieldSort(ServiceEventDataMapping.TIMESTAMP_FIELD).order(SortOrder.DESC)).get();
-		if(searchResponse.getHits().hits().length == 0) {
-			return null;
-		}
-		return searchResponse.getHits().hits()[0].getSource();
-	}
-	
-	public void postJsonAsString(String json){
+    public static final String ES_INDEX = "ogc-statistics-index";
+    public static final String ES_TYPE = "ogc-type";
+    public static final int JETTY_PORT = 10101;
+    public static final String SOS_ENDPOINT = "http://localhost:" + JETTY_PORT + "/service";
+    private static final int SLEEP = 3500;
 
-		HttpPost post = new HttpPost(SOS_ENDPOINT);
-		CloseableHttpResponse response = null;
-		try {
-			post.setEntity(new StringEntity(json,ContentType.APPLICATION_JSON));
-			response = httpClient.execute(post);
-			EntityUtils.consume(response.getEntity());
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-		} finally {
-			IOUtils.closeQuietly(response);
-		}
-	}
-	
-	public Map<String, Object> sendAndWaitUntilRequestIsProcessed(String jsonFile) throws URISyntaxException, IOException, InterruptedException {
-		String json = ExampleReaderUtil.readExample(jsonFile);
-		postJsonAsString(json);
-		Thread.sleep(SLEEP);
-		return getLastElasticsearchEntry();
-	}
+    private static final CloseableHttpClient httpClient = HttpClients.createDefault();
+
+    @ClassRule
+    public static RuleChain chain = RuleChain.outerRule(elasticsearch = new ElasticsearchServer()).around(jettyServer = new JettyServer());
+
+    public static ElasticsearchServer elasticsearch;
+    public static JettyServer jettyServer;
+
+    public SearchResponse getLatestElasticsearchEntries() {
+        return elasticsearch.getClient().prepareSearch(ES_INDEX).setTypes(ES_TYPE)
+                .addSort(SortBuilders.fieldSort(ServiceEventDataMapping.TIMESTAMP_FIELD.getName()).order(SortOrder.DESC)).get();
+    }
+
+    public Map<String, Object> getLastElasticsearchEntry() {
+        SearchResponse searchResponse =
+                elasticsearch.getClient().prepareSearch(ES_INDEX).setTypes(ES_TYPE).setSize(1)
+                        .addSort(SortBuilders.fieldSort(ServiceEventDataMapping.TIMESTAMP_FIELD.getName()).order(SortOrder.DESC)).get();
+        if (searchResponse.getHits().hits().length == 0) {
+            return null;
+        }
+        return searchResponse.getHits().hits()[0].getSource();
+    }
+
+    public void postJsonAsString(String json) {
+
+        HttpPost post = new HttpPost(SOS_ENDPOINT);
+        CloseableHttpResponse response = null;
+        try {
+            post.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+            response = httpClient.execute(post);
+            EntityUtils.consume(response.getEntity());
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+        } finally {
+            IOUtils.closeQuietly(response);
+        }
+    }
+
+    public Map<String, Object> sendAndWaitUntilRequestIsProcessed(String jsonFile) throws URISyntaxException, IOException, InterruptedException {
+        String json = ExampleReaderUtil.readExample(jsonFile);
+        postJsonAsString(json);
+        Thread.sleep(SLEEP);
+        return getLastElasticsearchEntry();
+    }
 
 }

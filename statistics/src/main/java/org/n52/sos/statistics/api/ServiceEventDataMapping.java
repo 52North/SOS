@@ -28,64 +28,51 @@
  */
 package org.n52.sos.statistics.api;
 
-public class ServiceEventDataMapping {
-    public static final String UNHANDLED_SERVICEEVENT_TYPE = "unhandled-serviceevent-type";
-    public static final String UUID_FIELD = "instance-uuid";
-    public static final String TIMESTAMP_FIELD = "@timestamp";
+import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
+import org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.sos.statistics.api.parameters.SingleEsParameter;
 
-    // ---- METADATA type ----
-    public static final String METADATA_TYPE_NAME = "mt";
-    public static final String METADATA_CREATION_TIME_FIELD = "mt-creation-time";
-    public static final String METADATA_UPDATE_TIME_FIELD = "mt-update-time";
-    public static final String METADATA_VERSION_FIELD = "mt-version";
-    public static final String METADATA_UUIDS_FIELD = "mt-uuids";
-    public static final String METADATA_ROW_ID = "1";
+public class ServiceEventDataMapping {
+    public static final AbstractEsParameter UNHANDLED_SERVICEEVENT_TYPE = new SingleEsParameter("unhandled-serviceevent-type",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter UUID_FIELD = new SingleEsParameter("instance-uuid", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter TIMESTAMP_FIELD = new SingleEsParameter("@timestamp", ElasticsearchTypeRegistry.dateField);
 
     // --------------- OutgoingResponseEvent --------------//
-    public static final String ORE_EXEC_TIME = "outre-exec-time";
-    public static final String ORE_COUNT = "outre-count";
-    public static final String ORE_BYTES_WRITTEN = "outre-bytes-written";
+    public static final AbstractEsParameter ORE_EXEC_TIME = new SingleEsParameter("outre-exec-time", ElasticsearchTypeRegistry.integerField);
+    public static final AbstractEsParameter ORE_COUNT = new SingleEsParameter("outre-count", ElasticsearchTypeRegistry.longField);
+    public static final AbstractEsParameter ORE_BYTES_WRITTEN = ObjectEsParameterFactory.bytesWritten("outre-bytes-written", null);
 
     // --------------- Iceland Exception --------------//
-    public static final String EX_STATUS = "exception-status";
-    public static final String EX_VERSION = "exception-version";
-    public static final String EX_MESSAGE = "exception-message";
+    public static final AbstractEsParameter EX_STATUS = new SingleEsParameter("exception-status", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter EX_VERSION = new SingleEsParameter("exception-version", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter EX_MESSAGE = new SingleEsParameter("exception-message", ElasticsearchTypeRegistry.stringField);
 
     // --------------- CodedException --------------//
-    public static final String CEX_LOCATOR = "codedexception-locator";
-    public static final String CEX_SOAP_FAULT = "codedexception-soapfault";
+    public static final AbstractEsParameter CEX_LOCATOR = new SingleEsParameter("codedexception-locator", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter CEX_SOAP_FAULT = new SingleEsParameter("codedexception-soapfault", ElasticsearchTypeRegistry.stringField);
 
     // --------------- OwsExceptionReport --------------//
-    public static final String OWSEX_NAMESPACE = "owsexception-namespace";
+    public static final AbstractEsParameter OWSEX_NAMESPACE = new SingleEsParameter("owsexception-namespace", ElasticsearchTypeRegistry.stringField);
 
     // ---------------- DEFAULT VALUES SERVICE REQUESTs--------------//
-    public static final String SR_VERSION_FIELD = "sr-version";
-    public static final String SR_SERVICE_FIELD = "sr-service";
-    public static final String SR_LANGUAGE_FIELD = "sr-language";
-    public static final String SR_OPERATION_NAME_FIELD = "sr-operation-name";
-    public static final String SR_IP_ADDRESS_FIELD = "sr-source-ip-address";
-    public static final String SR_CONTENT_TYPE = "sr-content-type";
-    public static final String SR_ACCEPT_TYPES = "sr-accept-types";
-    public static final String SR_GEO_LOC_FIELD = "sr-source-geolocation";
-    public static final String SR_PROXIED_REQUEST_FIELD = "sr-proxied-request";
-    public static final String SR_EXTENSIONS = "sr-extensions";
+    public static final AbstractEsParameter SR_VERSION_FIELD = new SingleEsParameter("sr-version", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_SERVICE_FIELD = new SingleEsParameter("sr-service", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_LANGUAGE_FIELD = new SingleEsParameter("sr-language", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_OPERATION_NAME_FIELD = new SingleEsParameter("sr-operation-name",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_IP_ADDRESS_FIELD =
+            new SingleEsParameter("sr-source-ip-address", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_CONTENT_TYPE = new SingleEsParameter("sr-content-type", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_ACCEPT_TYPES = new SingleEsParameter("sr-accept-types", ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_GEO_LOC_FIELD = ObjectEsParameterFactory.geoLocation("sr-source-geolocation", null);
+    public static final AbstractEsParameter SR_PROXIED_REQUEST_FIELD = new SingleEsParameter("sr-proxied-request",
+            ElasticsearchTypeRegistry.stringField);
+    public static final AbstractEsParameter SR_EXTENSIONS = ObjectEsParameterFactory.extension("sr-extensions", null);
 
-    // --------------- EXTENSIONS -------------//
-    public static final String EXT_DEFINITION = "extension-definition";
-    public static final String EXT_IDENTIFIER = "extension-identifier";
-    public static final String EXT_VALUE = "extension-value";
-    
     // --------------- DEFAULT RESPONSE EVENTS --------------//
 
-    public static final String SRESP_CONTENT_TYPE = "sresp-content-type";
-    
-    //----------------- BYTES WRITTEN -----------//
-    public static final String BYTES_WRITTEN = "bytes";
-    public static final String BYTES_WRITTEN_DISPLAY = "display";
-    
-    //----------- GEO LOCATION -------------------//
-    public static final String GEO_LOC_COUNTRY_CODE = "country-code";
-    public static final String GEO_LOC_CITY_CODE = "city-name";
-    public static final String GEO_LOC_GEOPOINT = "geopoint";
+    public static final AbstractEsParameter SRESP_CONTENT_TYPE = new SingleEsParameter("sresp-content-type", ElasticsearchTypeRegistry.stringField);
 
 }

@@ -55,8 +55,8 @@ public class InsertResultTemplateRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertEquals("id", map.get(SosDataMapping.IRT_IDENTIFIER));
-        Assert.assertNotNull(map.get(SosDataMapping.IRT_OBSERVATION_TEMPLATE));
+        Assert.assertEquals("id", map.get(SosDataMapping.IRT_IDENTIFIER.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.IRT_OBSERVATION_TEMPLATE.getName()));
         // Assert.assertEquals("xml",
         // map.get(SosDataMapping.IRT_RESULT_ENCODING));
     }

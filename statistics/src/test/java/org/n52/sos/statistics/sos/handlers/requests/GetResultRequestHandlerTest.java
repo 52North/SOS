@@ -59,12 +59,12 @@ public class GetResultRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GR_FEATURE_IDENTIFIERS), CoreMatchers.hasItems("fi1", "fi2"));
-        Assert.assertEquals("template1", map.get(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER));
-        Assert.assertEquals("obp", map.get(SosDataMapping.GR_OBSERVATION_PROPERTY));
-        Assert.assertEquals("off", map.get(SosDataMapping.GR_OFFERING));
-        Assert.assertNotNull(map.get(SosDataMapping.GR_SPATIAL_FILTER));
-        Assert.assertNotNull(map.get(SosDataMapping.GR_TEMPORAL_FILTER));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GR_FEATURE_IDENTIFIERS.getName()), CoreMatchers.hasItems("fi1", "fi2"));
+        Assert.assertEquals("template1", map.get(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER.getName()));
+        Assert.assertEquals("obp", map.get(SosDataMapping.GR_OBSERVATION_PROPERTY.getName()));
+        Assert.assertEquals("off", map.get(SosDataMapping.GR_OFFERING.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.GR_SPATIAL_FILTER.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.GR_TEMPORAL_FILTER.getName()));
     }
 
 }

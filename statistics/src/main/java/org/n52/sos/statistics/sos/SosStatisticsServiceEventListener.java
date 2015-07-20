@@ -70,7 +70,7 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
     private static final int EVENTS_ARR_SIZE = 4;
     private final ExecutorService executorService;
     private static final Set<Class<? extends ServiceEvent>> EVENT_TYPES = ImmutableSet.<Class<? extends ServiceEvent>> of(RequestEvent.class,
-            ExceptionEvent.class, ResponseEvent.class, OutgoingResponseEvent.class,CountingOutputstreamEvent.class);
+            ExceptionEvent.class, ResponseEvent.class, OutgoingResponseEvent.class, CountingOutputstreamEvent.class);
 
     private ConcurrentMap<Long, List<AbstractFlowEvent>> eventsCache = new ConcurrentHashMap<>();
 
@@ -104,9 +104,9 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
             if (serviceEvent instanceof AbstractFlowEvent) {
                 AbstractFlowEvent evt = (AbstractFlowEvent) serviceEvent;
                 List<AbstractFlowEvent> eventList = eventsCache.get(evt.getMessageGroupId());
-                if(eventList == null) {
-                	eventList = new ArrayList<>(EVENTS_ARR_SIZE);
-                	eventsCache.put(evt.getMessageGroupId(), eventList);
+                if (eventList == null) {
+                    eventList = new ArrayList<>(EVENTS_ARR_SIZE);
+                    eventsCache.put(evt.getMessageGroupId(), eventList);
                 }
                 eventList.add(evt);
 
@@ -159,10 +159,10 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
             OutgoingResponseEventResolver outgoingResponseEventResolver = getOutgoingResponseEventResolver();
             outgoingResponseEventResolver.setResponse((OutgoingResponseEvent) event);
             evtResolver = outgoingResponseEventResolver;
-        } else if( event instanceof CountingOutputstreamEvent) {
-        	CountingOutputstreamEventResolver countingOutputstreamEventResolver = getCountingOutputstreamEventResolver();
-        	countingOutputstreamEventResolver.setEvent((CountingOutputstreamEvent) event);
-        	evtResolver = countingOutputstreamEventResolver;
+        } else if (event instanceof CountingOutputstreamEvent) {
+            CountingOutputstreamEventResolver countingOutputstreamEventResolver = getCountingOutputstreamEventResolver();
+            countingOutputstreamEventResolver.setEvent((CountingOutputstreamEvent) event);
+            evtResolver = countingOutputstreamEventResolver;
         } else {
             throw new IllegalArgumentException("Not a valid class " + event.getClass());
         }
@@ -195,7 +195,7 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
     private OutgoingResponseEventResolver getOutgoingResponseEventResolver() {
         return ctx.getBean(OutgoingResponseEventResolver.class);
     }
-    
+
     private CountingOutputstreamEventResolver getCountingOutputstreamEventResolver() {
         return ctx.getBean(CountingOutputstreamEventResolver.class);
     }

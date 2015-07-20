@@ -39,7 +39,7 @@ import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class TimeEsModelTest {
 
@@ -48,7 +48,7 @@ public class TimeEsModelTest {
         TimeInstant instant = new TimeInstant(DateTime.now());
         Map<String, Object> map = TimeEsModel.convert(instant);
 
-        Assert.assertEquals(instant.getValue(), map.get(SosDataMapping.TIME_TIMEINSTANT));
+        Assert.assertEquals(instant.getValue(), map.get(ObjectEsParameterFactory.TIME_TIMEINSTANT.getName()));
     }
 
     @Test
@@ -56,9 +56,9 @@ public class TimeEsModelTest {
         TimePeriod period = new TimePeriod(DateTime.now(), DateTime.now().plusHours(3));
         Map<String, Object> map = TimeEsModel.convert(period);
 
-        Assert.assertEquals(period.getStart(), map.get(SosDataMapping.TIME_START));
-        Assert.assertEquals(period.getEnd(), map.get(SosDataMapping.TIME_END));
-        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), map.get(SosDataMapping.TIME_DURARTION));
+        Assert.assertEquals(period.getStart(), map.get(ObjectEsParameterFactory.TIME_START.getName()));
+        Assert.assertEquals(period.getEnd(), map.get(ObjectEsParameterFactory.TIME_END.getName()));
+        Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), map.get(ObjectEsParameterFactory.TIME_DURARTION.getName()));
     }
 
     @Test
@@ -66,8 +66,8 @@ public class TimeEsModelTest {
         TimePeriod period = new TimePeriod(DateTime.now().plusHours(3), DateTime.now());
         Map<String, Object> map = TimeEsModel.convert(period);
 
-        Assert.assertEquals(period.getStart(), map.get(SosDataMapping.TIME_START));
-        Assert.assertEquals(period.getEnd(), map.get(SosDataMapping.TIME_END));
+        Assert.assertEquals(period.getStart(), map.get(ObjectEsParameterFactory.TIME_START.getName()));
+        Assert.assertEquals(period.getEnd(), map.get(ObjectEsParameterFactory.TIME_END.getName()));
         Assert.assertNull(period.getDuration());
     }
 
@@ -76,8 +76,8 @@ public class TimeEsModelTest {
         TemporalFilter filter = new TemporalFilter(TimeOperator.TM_After, new TimeInstant(DateTime.now()), "val-ref");
         Map<String, Object> map = TimeEsModel.convert(filter);
 
-        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(SosDataMapping.TEMPORAL_FILTER_OPERATOR));
-        Assert.assertEquals("val-ref", map.get(SosDataMapping.TEMPORAL_FILTER_VALUE_REF));
+        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
+        Assert.assertEquals("val-ref", map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TimeEsModelTest {
 
         Map<String, Object> map = list.get(0);
 
-        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(SosDataMapping.TEMPORAL_FILTER_OPERATOR));
-        Assert.assertEquals("val-ref", map.get(SosDataMapping.TEMPORAL_FILTER_VALUE_REF));
+        Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
+        Assert.assertEquals("val-ref", map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
     }
 }

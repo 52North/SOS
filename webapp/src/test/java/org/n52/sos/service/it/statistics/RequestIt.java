@@ -37,88 +37,89 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class RequestIt extends AbstractStatisticsBase {
-	
-	public void checkDefaultFields() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetCapabilitiesRequest.json");	
-		
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_ACCEPT_TYPES));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_CONTENT_TYPE));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_SERVICE_FIELD));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_VERSION_FIELD));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_COUNT));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_EXEC_TIME));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_BYTES_WRITTEN));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.UUID_FIELD));
-		
-		//Assert.assertNotNull(map.get(ServiceEventDataMapping.SRESP_CONTENT_TYPE));
-	}
-	
-	@Test
-	public void checkExceptionMessageFields() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-single.json");	
-		
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.EX_MESSAGE));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.EX_STATUS));
-		Assert.assertNotNull(map.get(ServiceEventDataMapping.EX_VERSION));
-		
-	}
-	
-	@Test
-	public void GetCapabilitiesRequest() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetCapabilitiesRequest.json");	
-		Assert.assertEquals("GetCapabilities",map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD));
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void GetObservationRequestMergeIntoArray() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-merge-into-array.json");	
-		Assert.assertEquals("GetObservation",map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD));
-		
-		List<Map<String,Object>> exts = (List<Map<String,Object>>) map.get(ServiceEventDataMapping.SR_EXTENSIONS);
-		Assert.assertTrue(exts.stream().anyMatch(l -> 
-		l.get(ServiceEventDataMapping.EXT_DEFINITION).equals("MergeObservationsIntoDataArray")));
-	}
-	
-	@Test
-	public void GetObservationRequestsingle() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-single.json");	
-		Assert.assertEquals("GetObservation",map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD));
-		Assert.assertNotNull(map.get(SosDataMapping.GO_SPATIAL_FILTER));
-		Assert.assertNotNull(map.get(SosDataMapping.GO_TEMPORAL_FILTER));
-	}
-	
-	@Test
-	public void GetObservationRequestMultiple() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-multiple.json");	
-		Assert.assertEquals("GetObservation",map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD));
-		Assert.assertNotNull(map.get(SosDataMapping.GO_SPATIAL_FILTER));
-		Assert.assertEquals(2, ((Collection<?>) map.get(SosDataMapping.GO_TEMPORAL_FILTER)).size());
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Test
-	public void InsertObservationRequestSingleObservation() throws URISyntaxException, IOException, InterruptedException {
-		Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("InsertObservationRequest-single-observation.json");
-		Assert.assertNotNull(map);
-		
-		List<Map<String,Object>> observations = (List<Map<String, Object>>) map.get(SosDataMapping.IO_OBSERVATION);
-		Map<String, Object> observation = observations.get(0);
-		Assert.assertNotNull(observation.get(SosDataMapping.OMOBS_RESULT_TIME));
-		Assert.assertNotNull(observation.get(SosDataMapping.OMOBS_PHENOMENON_TIME));
-		
-		Map<String,Object> constellation = (Map<String,Object>) observation.get(SosDataMapping.OMOBS_CONSTELLATION);
-		Assert.assertNotNull(constellation.get(SosDataMapping.OMOCONSTELL_FEATURE_OF_INTEREST));
-		Assert.assertNotNull(constellation.get(SosDataMapping.OMOCONSTELL_OBSERVABLE_PROPERTY));
-		Assert.assertNotNull(constellation.get(SosDataMapping.OMOCONSTELL_OBSERVATION_TYPE));
-		Assert.assertNotNull(constellation.get(SosDataMapping.OMOCONSTELL_PROCEDURE));
-		
-	}
+
+    public void checkDefaultFields() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetCapabilitiesRequest.json");
+
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_ACCEPT_TYPES.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_CONTENT_TYPE.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_SERVICE_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.SR_VERSION_FIELD.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_COUNT.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_EXEC_TIME.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.ORE_BYTES_WRITTEN.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.UUID_FIELD.getName()));
+
+        // Assert.assertNotNull(map.get(ServiceEventDataMapping.SRESP_CONTENT_TYPE));
+    }
+
+    @Test
+    public void checkExceptionMessageFields() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-single.json");
+
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.EX_MESSAGE.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.EX_STATUS.getName()));
+        Assert.assertNotNull(map.get(ServiceEventDataMapping.EX_VERSION.getName()));
+
+    }
+
+    @Test
+    public void GetCapabilitiesRequest() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetCapabilitiesRequest.json");
+        Assert.assertEquals("GetCapabilities", map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD.getName()));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void GetObservationRequestMergeIntoArray() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-merge-into-array.json");
+        Assert.assertEquals("GetObservation", map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD.getName()));
+
+        List<Map<String, Object>> exts = (List<Map<String, Object>>) map.get(ServiceEventDataMapping.SR_EXTENSIONS.getName());
+        Assert.assertTrue(exts.stream().anyMatch(
+                l -> l.get(ObjectEsParameterFactory.EXTENSION_DEFINITION.getName()).equals("MergeObservationsIntoDataArray")));
+    }
+
+    @Test
+    public void GetObservationRequestsingle() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-single.json");
+        Assert.assertEquals("GetObservation", map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.GO_SPATIAL_FILTER.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName()));
+    }
+
+    @Test
+    public void GetObservationRequestMultiple() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("GetObservationRequest-multiple.json");
+        Assert.assertEquals("GetObservation", map.get(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.GO_SPATIAL_FILTER.getName()));
+        Assert.assertEquals(2, ((Collection<?>) map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName())).size());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void InsertObservationRequestSingleObservation() throws URISyntaxException, IOException, InterruptedException {
+        Map<String, Object> map = sendAndWaitUntilRequestIsProcessed("InsertObservationRequest-single-observation.json");
+        Assert.assertNotNull(map);
+
+        List<Map<String, Object>> observations = (List<Map<String, Object>>) map.get(SosDataMapping.IO_OBSERVATION.getName());
+        Map<String, Object> observation = observations.get(0);
+        Assert.assertNotNull(observation.get(ObjectEsParameterFactory.OMOBS_RESULT_TIME.getName()));
+        Assert.assertNotNull(observation.get(ObjectEsParameterFactory.OMOBS_PHENOMENON_TIME.getName()));
+
+        Map<String, Object> constellation = (Map<String, Object>) observation.get(ObjectEsParameterFactory.OMOBS_CONSTELLATION.getName());
+        Assert.assertNotNull(constellation.get(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST.getName()));
+        Assert.assertNotNull(constellation.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY.getName()));
+        Assert.assertNotNull(constellation.get(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE.getName()));
+        Assert.assertNotNull(constellation.get(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE.getName()));
+
+    }
 
 }

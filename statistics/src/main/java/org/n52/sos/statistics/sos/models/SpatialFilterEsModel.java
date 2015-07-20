@@ -37,7 +37,7 @@ import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,11 +73,11 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         try {
             switch (spatialFilter.getSrid()) {
             case 4326:
-            	transform4326(spatialFilter);
+                transform4326(spatialFilter);
                 break;
 
             default:
-                throw new IllegalArgumentException("Unsupported SRID coordination system "+ spatialFilter.getSrid());
+                throw new IllegalArgumentException("Unsupported SRID coordination system " + spatialFilter.getSrid());
             }
             return dataMap;
         } catch (Throwable e) {
@@ -87,44 +87,45 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
     }
 
     private void transform4326(SpatialFilter spatialFilter) {
-		switch (spatialFilter.getOperator()) {
-		case BBOX:
-			createBbox(spatialFilter);
-			break;
-		case Equals:
-			createEquals(spatialFilter);
-			break;
-		default:
-			throw new IllegalArgumentException("Unsupported operator "+spatialFilter.getOperator().toString());
-		}
-		
-	}
-    
-    private void createEquals(SpatialFilter filter) {
-    	Coordinate[] points = filter.getGeometry().getCoordinates();
-    	if(points.length != 1) {
-    		throw new IllegalArgumentException("Invalid number of coordinates in geometry. It should be a point. Got "+points.length);
-    	}
-    	PointBuilder point = PointBuilder.newPoint(points[0].x,points[0].y);
-    	 createSpatialFilter(filter, point);
+        switch (spatialFilter.getOperator()) {
+        case BBOX:
+            createBbox(spatialFilter);
+            break;
+        case Equals:
+            createEquals(spatialFilter);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operator " + spatialFilter.getOperator().toString());
+        }
+
     }
 
-	private void createBbox(SpatialFilter filter) {
+    private void createEquals(SpatialFilter filter) {
+        Coordinate[] points = filter.getGeometry().getCoordinates();
+        if (points.length != 1) {
+            throw new IllegalArgumentException("Invalid number of coordinates in geometry. It should be a point. Got " + points.length);
+        }
+        PointBuilder point = PointBuilder.newPoint(points[0].x, points[0].y);
+        createSpatialFilter(filter, point);
+    }
+
+    private void createBbox(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
         for (Coordinate coord : filter.getGeometry().getCoordinates()) {
             polygon.point(coord);
         }
 
-       createSpatialFilter(filter, polygon);
+        createSpatialFilter(filter, polygon);
 
     }
-	
-	private void createSpatialFilter(SpatialFilter filter,ShapeBuilder builder) {
-		 if (filter.getOperator() != null) {
-	            put(SosDataMapping.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
-	        }
-	        put(SosDataMapping.SPATIAL_FILTER_SHAPE, builder);
-	        put(SosDataMapping.SPATIAL_FILTER_VALUE_REF, filter.getValueReference());
-	}
+
+    private void createSpatialFilter(SpatialFilter filter,
+            ShapeBuilder builder) {
+        if (filter.getOperator() != null) {
+            put(ObjectEsParameterFactory.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
+        }
+        put(ObjectEsParameterFactory.SPATIAL_FILTER_SHAPE, builder);
+        put(ObjectEsParameterFactory.SPATIAL_FILTER_VALUE_REF, filter.getValueReference());
+    }
 
 }

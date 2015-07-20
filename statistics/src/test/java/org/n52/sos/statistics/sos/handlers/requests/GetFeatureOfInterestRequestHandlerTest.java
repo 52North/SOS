@@ -59,10 +59,10 @@ public class GetFeatureOfInterestRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_FEATURE_IDENTIFIERS), CoreMatchers.hasItems("id1", "id2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_OBSERVED_PROPERTIES), CoreMatchers.hasItems("ob1", "ob2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_PROCEDURES), CoreMatchers.hasItems("p1", "p2"));
-        Assert.assertNotNull(map.get(SosDataMapping.GFOI_SPATIAL_FILTER));
-        Assert.assertNotNull(map.get(SosDataMapping.GFOI_TEMPORAL_FILTER));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_FEATURE_IDENTIFIERS.getName()), CoreMatchers.hasItems("id1", "id2"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_OBSERVED_PROPERTIES.getName()), CoreMatchers.hasItems("ob1", "ob2"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GFOI_PROCEDURES.getName()), CoreMatchers.hasItems("p1", "p2"));
+        Assert.assertNotNull(map.get(SosDataMapping.GFOI_SPATIAL_FILTER.getName()));
+        Assert.assertNotNull(map.get(SosDataMapping.GFOI_TEMPORAL_FILTER.getName()));
     }
 }

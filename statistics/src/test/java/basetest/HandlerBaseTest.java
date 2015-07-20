@@ -58,7 +58,7 @@ import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-public class HandlerBaseTest extends MockitoBaseTest {
+public abstract class HandlerBaseTest extends MockitoBaseTest {
 
     protected static RequestContext requestContext;
     protected static SpatialFilter spatialFilter;

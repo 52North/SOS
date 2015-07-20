@@ -32,11 +32,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
+
 public abstract class AbstractElasticSearchDataHolder {
     protected final Map<String, Object> dataMap;
 
     public AbstractElasticSearchDataHolder() {
         dataMap = new HashMap<String, Object>();
+    }
+
+    protected Map<String, Object> put(AbstractEsParameter key,
+            Object value) {
+        return put(key.getName(), value);
     }
 
     protected Map<String, Object> put(String key,

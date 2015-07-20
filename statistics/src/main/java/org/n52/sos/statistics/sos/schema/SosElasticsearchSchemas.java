@@ -28,152 +28,19 @@
  */
 package org.n52.sos.statistics.sos.schema;
 
-import java.util.Map;
-
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.impl.schemabuilders.DefaultElasticsearchSchemas;
-import org.n52.sos.statistics.impl.schemabuilders.ElasticsearchSchemaBuilder;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {
 
     @Override
-    protected void appSpecificSchema(ElasticsearchSchemaBuilder schema) {
-
-        sosDefaultFields(schema);
-        getCapabilities(schema);
-        describeSensor(schema);
-        getObservation(schema);
-        getObservationById(schema);
-        getFeatureOfInterest(schema);
-        insertSensor(schema);
-        updateSensor(schema);
-        deleteSensor(schema);
-        insertObservation(schema);
-        inesertResultTemplate(schema);
-        insertResult(schema);
-        getResultTemplate(schema);
-        getResult(schema);
-        getDataAvailability(schema);
-    }
-
-    private void sosDefaultFields(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(ServiceEventDataMapping.SR_VERSION_FIELD).addStringField(ServiceEventDataMapping.SR_SERVICE_FIELD);
-        schema.addStringField(ServiceEventDataMapping.SR_LANGUAGE_FIELD).addStringField(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD);
-        schema.addStringField(ServiceEventDataMapping.SR_IP_ADDRESS_FIELD).addStringField(ServiceEventDataMapping.SR_CONTENT_TYPE);
-        schema.addStringField(ServiceEventDataMapping.SR_ACCEPT_TYPES).addBooleanField(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD);
-
-        Map<String, Object> geoloc =
-                ElasticsearchSchemaBuilder.builder().addStringField(ServiceEventDataMapping.GEO_LOC_CITY_CODE)
-                        .addStringField(ServiceEventDataMapping.GEO_LOC_COUNTRY_CODE).addGeoPointField(ServiceEventDataMapping.GEO_LOC_GEOPOINT)
-                        .build();
-        schema.addObject(ServiceEventDataMapping.SR_GEO_LOC_FIELD, geoloc);
-    }
-
-    private void getCapabilities(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GC_VERSIONS_FIELD);
-        schema.addStringField(SosDataMapping.GC_FORMATS_FIELD);
-        schema.addStringField(SosDataMapping.GC_SECTIONS);
-        schema.addStringField(SosDataMapping.GC_UPDATE_SEQUENCE);
-    }
-
-    private void describeSensor(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.DS_PROCEDURE);
-        schema.addStringField(SosDataMapping.DS_PROCEDURE_DESC_FORMAT);
-        schema.addStringField(SosDataMapping.GC_SECTIONS);
-
-        schema.addTimeField(SosDataMapping.DS_VALID_TIME);
-    }
-
-    private void getObservation(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GO_PROCEDURES);
-        schema.addStringField(SosDataMapping.GO_OFFERINGS);
-        schema.addStringField(SosDataMapping.GO_OBSERVED_PROPERTIES);
-        schema.addStringField(SosDataMapping.GO_FEATURE_OF_INTERESTS);
-        schema.addBooleanField(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES);
-        schema.addStringField(SosDataMapping.GO_RESPONSE_FORMAT);
-        schema.addSpatialFilterField(SosDataMapping.GO_SPATIAL_FILTER);
-        schema.addTemporalFilterField(SosDataMapping.GO_TEMPORAL_FILTER);
-
-    }
-
-    private void getObservationById(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GOBID_OBSERVATION_IDENTIFIER);
-    }
-
-    private void getFeatureOfInterest(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GFOI_FEATURE_IDENTIFIERS);
-        schema.addStringField(SosDataMapping.GFOI_OBSERVED_PROPERTIES);
-        schema.addStringField(SosDataMapping.GFOI_PROCEDURES);
-        schema.addSpatialFilterField(SosDataMapping.GFOI_SPATIAL_FILTER);
-        schema.addTemporalFilterField(SosDataMapping.GFOI_TEMPORAL_FILTER);
-    }
-
-    private void insertSensor(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.IS_ASSIGNED_OFFERINGS);
-        schema.addStringField(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS);
-        schema.addStringField(SosDataMapping.IS_OBSERVABLE_PROPERTY);
-        schema.addStringField(SosDataMapping.IS_PROCEDURE_DESCRIPTION);
-        schema.addStringField(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT);
-        schema.addStringField(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES);
-        schema.addStringField(SosDataMapping.IS_OBSERVATION_TYPES);
-    }
-
-    private void updateSensor(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.US_PROCEDURE_IDENTIFIER);
-        schema.addStringField(SosDataMapping.US_PROCEDURE_DESCRIPTION_FORMAT);
-    }
-
-    private void deleteSensor(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.DELS_PROCEDURE_IDENTIFIER);
-    }
-
-    private void insertObservation(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.IO_ASSIGNED_SENSORID);
-        schema.addStringField(SosDataMapping.IO_OFFERINGS);
-
-        ElasticsearchSchemaBuilder observationMap = ElasticsearchSchemaBuilder.builder();
-        observationMap.addTimeField(SosDataMapping.OMOBS_PHENOMENON_TIME).addTimeField(SosDataMapping.OMOBS_RESULT_TIME)
-                .addTimeField(SosDataMapping.OMOBS_VALID_TIME).addSpatialFilterField(SosDataMapping.OMOBS_SAMPLING_GEOMETRY);
-        schema.addObject(SosDataMapping.IO_OBSERVATION, observationMap.build());
-    }
-
-    private void inesertResultTemplate(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.IRT_IDENTIFIER);
-        ElasticsearchSchemaBuilder builder = ElasticsearchSchemaBuilder.builder();
-        schema.addObject(SosDataMapping.IRT_OBSERVATION_TEMPLATE, builder.build());
-        // schema.addStringField(SosDataMapping.IRT_RESULT_ENCODING);
-    }
-
-    private void insertResult(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.IR_TEMPLATE_IDENTIFIER);
-    }
-
-    private void getResultTemplate(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GRT_OBSERVED_PROPERTY);
-        schema.addStringField(SosDataMapping.GRT_OFFERING);
-    }
-
-    private void getResult(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GR_FEATURE_IDENTIFIERS);
-        schema.addStringField(SosDataMapping.GR_OBSERVATION_TEMPLATE_IDENTIFIER);
-        schema.addStringField(SosDataMapping.GR_OBSERVATION_PROPERTY);
-        schema.addStringField(SosDataMapping.GR_OFFERING);
-        schema.addSpatialFilterField(SosDataMapping.GR_SPATIAL_FILTER);
-        schema.addTemporalFilterField(SosDataMapping.GR_TEMPORAL_FILTER);
-    }
-
-    private void getDataAvailability(ElasticsearchSchemaBuilder schema) {
-        schema.addStringField(SosDataMapping.GDA_FEATURES_OF_INTEREST);
-        schema.addStringField(SosDataMapping.GDA_NAMESPACE);
-        schema.addStringField(SosDataMapping.GDA_OBSERVED_PROPERTIES);
-        schema.addStringField(SosDataMapping.GDA_OFFERINGS);
-        schema.addStringField(SosDataMapping.GDA_PROCEDURES);
+    public int getSchemaVersion() {
+        return 1;
     }
 
     @Override
-    public int getSchemaVersion() {
-        return 1;
+    protected void appSpecificSchema() {
+        processSchemaClass(SosDataMapping.class);
     }
 
 }

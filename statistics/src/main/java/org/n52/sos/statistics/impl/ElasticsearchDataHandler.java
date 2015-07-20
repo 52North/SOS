@@ -79,8 +79,8 @@ public class ElasticsearchDataHandler implements IStatisticsDataHandler {
             return null;
         }
 
-        dataMap.put(ServiceEventDataMapping.TIMESTAMP_FIELD, Calendar.getInstance(DateTimeZone.UTC.toTimeZone()));
-        dataMap.put(ServiceEventDataMapping.UUID_FIELD, settings.getUuid());
+        dataMap.put(ServiceEventDataMapping.TIMESTAMP_FIELD.getName(), Calendar.getInstance(DateTimeZone.UTC.toTimeZone()));
+        dataMap.put(ServiceEventDataMapping.UUID_FIELD.getName(), settings.getUuid());
         logger.debug("Persisting {}", dataMap);
         IndexResponse response =
                 client.prepareIndex(settings.getIndexId(), settings.getTypeId()).setOperationThreaded(false).setSource(dataMap).get();

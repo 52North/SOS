@@ -55,7 +55,7 @@ public class DefaultServiceEventResolver extends AbstractElasticSearchDataHolder
     public Map<String, Object> resolve() {
         Objects.requireNonNull(event);
 
-        put(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE, event.getClass());
+        put(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE.getName(), event.getClass());
 
         return dataMap;
     }

@@ -64,7 +64,8 @@ public class DefaultServiceEventResolverIt extends ElasticsearchAwareTest {
         Client client = getEmbeddedClient();
         SearchResponse resp =
                 client.prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).setSearchType(SearchType.DFS_QUERY_AND_FETCH)
-                        .setQuery(QueryBuilders.matchQuery(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE, evt.getClass().toString())).get();
+                        .setQuery(QueryBuilders.matchQuery(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE.getName(), evt.getClass().toString()))
+                        .get();
 
         Assert.assertEquals(1, resp.getHits().getTotalHits());
     }

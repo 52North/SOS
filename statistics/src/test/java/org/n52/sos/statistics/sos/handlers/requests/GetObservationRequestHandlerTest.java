@@ -65,13 +65,13 @@ public class GetObservationRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OFFERINGS), CoreMatchers.hasItems("of1", "of2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_PROCEDURES), CoreMatchers.hasItems("p1", "p2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OBSERVED_PROPERTIES), CoreMatchers.hasItems("ob1", "ob2"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_FEATURE_OF_INTERESTS), CoreMatchers.hasItems("id1", "id2"));
-        Assert.assertThat(map.get(SosDataMapping.GO_RESPONSE_FORMAT), CoreMatchers.is("batman arkham night"));
-        Assert.assertThat(map.get(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES), CoreMatchers.is(true));
-        Assert.assertThat(map.get(SosDataMapping.GO_SPATIAL_FILTER), CoreMatchers.notNullValue());
-        Assert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER), CoreMatchers.allOf(CoreMatchers.instanceOf(List.class)));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OFFERINGS.getName()), CoreMatchers.hasItems("of1", "of2"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_PROCEDURES.getName()), CoreMatchers.hasItems("p1", "p2"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_OBSERVED_PROPERTIES.getName()), CoreMatchers.hasItems("ob1", "ob2"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.GO_FEATURE_OF_INTERESTS.getName()), CoreMatchers.hasItems("id1", "id2"));
+        Assert.assertThat(map.get(SosDataMapping.GO_RESPONSE_FORMAT.getName()), CoreMatchers.is("batman arkham night"));
+        Assert.assertThat(map.get(SosDataMapping.GO_IS_MERGED_OBSERVATION_VALUES.getName()), CoreMatchers.is(true));
+        Assert.assertThat(map.get(SosDataMapping.GO_SPATIAL_FILTER.getName()), CoreMatchers.notNullValue());
+        Assert.assertThat(map.get(SosDataMapping.GO_TEMPORAL_FILTER.getName()), CoreMatchers.allOf(CoreMatchers.instanceOf(List.class)));
     }
 }

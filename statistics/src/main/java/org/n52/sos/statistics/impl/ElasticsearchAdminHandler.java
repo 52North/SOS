@@ -42,7 +42,7 @@ import org.elasticsearch.client.IndicesAdminClient;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.MetadataDataMapping;
 import org.n52.sos.statistics.api.interfaces.datahandler.IAdminDataHandler;
 import org.n52.sos.statistics.api.utils.KibanaImporter;
 import org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas;
@@ -83,8 +83,7 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
             Integer version = getCurrentVersion();
             logger.info("Elasticsearch schema version is {}", version);
             if (version == null) {
-                throw new ConfigurationError("Database inconsistency metadata version not found in type %s",
-                        ServiceEventDataMapping.METADATA_TYPE_NAME);
+                throw new ConfigurationError("Database inconsistency metadata version not found in type %s", MetadataDataMapping.METADATA_TYPE_NAME);
             }
             if (version != schemas.getSchemaVersion()) {
                 throw new ConfigurationError(
@@ -96,7 +95,7 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
             logger.info("Index {} not exists creating a new one now.", settings.getIndexId());
             // create metadata table and index table table
 
-            indices.prepareCreate(settings.getIndexId()).addMapping(ServiceEventDataMapping.METADATA_TYPE_NAME, schemas.getMetadataSchema())
+            indices.prepareCreate(settings.getIndexId()).addMapping(MetadataDataMapping.METADATA_TYPE_NAME, schemas.getMetadataSchema())
                     .addMapping(settings.getTypeId(), schemas.getSchema()).get();
             // insert metadata values
             createMetadataType(schemas.getSchemaVersion());
@@ -111,13 +110,13 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
 
     private Integer getCurrentVersion() {
         GetResponse resp =
-                client.prepareGet(settings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID)
+                client.prepareGet(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
                         .setOperationThreaded(false).get();
         if (resp.isExists()) {
-            Object versionString = resp.getSourceAsMap().get(ServiceEventDataMapping.METADATA_VERSION_FIELD);
+            Object versionString = resp.getSourceAsMap().get(MetadataDataMapping.METADATA_VERSION_FIELD.getName());
             if (versionString == null) {
                 throw new ElasticsearchException(String.format("Database inconsistency. Version can't be found in row %s/%s/%s",
-                        settings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID));
+                        settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID));
             }
             return Integer.valueOf(versionString.toString());
         } else {
@@ -125,12 +124,13 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void addUuidToMetadataIfNeeded(String uuid) throws ElasticsearchException {
         GetResponse resp =
-                client.prepareGet(settings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID)
+                client.prepareGet(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
                         .setOperationThreaded(false).get();
 
-        Object retValues = resp.getSourceAsMap().get(ServiceEventDataMapping.METADATA_UUIDS_FIELD);
+        Object retValues = resp.getSourceAsMap().get(MetadataDataMapping.METADATA_UUIDS_FIELD.getName());
         List<String> values;
 
         if (retValues instanceof String) {
@@ -140,29 +140,28 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
             values = (List<String>) retValues;
         } else {
             throw new ConfigurationError("Invalid %s field type %s should have String or java.util.Collection<String>",
-                    ServiceEventDataMapping.METADATA_UUIDS_FIELD, retValues.getClass());
+                    MetadataDataMapping.METADATA_UUIDS_FIELD, retValues.getClass());
         }
 
         // add new uuid if needed
         if (!values.stream().anyMatch(m -> m.equals(uuid))) {
             Map<String, Object> uuids = new HashMap<String, Object>();
             values.add(uuid);
-            uuids.put(ServiceEventDataMapping.METADATA_UUIDS_FIELD, values);
-            uuids.put(ServiceEventDataMapping.METADATA_UPDATE_TIME_FIELD, Calendar.getInstance(DateTimeZone.UTC.toTimeZone()));
-            client.prepareUpdate(settings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, "1").setDoc(uuids).get();
-            logger.info("UUID {} is added to the {} type", uuid, ServiceEventDataMapping.METADATA_TYPE_NAME);
+            uuids.put(MetadataDataMapping.METADATA_UUIDS_FIELD.getName(), values);
+            uuids.put(MetadataDataMapping.METADATA_UPDATE_TIME_FIELD.getName(), Calendar.getInstance(DateTimeZone.UTC.toTimeZone()));
+            client.prepareUpdate(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, "1").setDoc(uuids).get();
+            logger.info("UUID {} is added to the {} type", uuid, MetadataDataMapping.METADATA_TYPE_NAME);
         }
     }
 
     private void createMetadataType(int version) {
         Map<String, Object> data = new HashMap<>();
         Calendar time = Calendar.getInstance(DateTimeZone.UTC.toTimeZone());
-        data.put(ServiceEventDataMapping.METADATA_CREATION_TIME_FIELD, time);
-        data.put(ServiceEventDataMapping.METADATA_UPDATE_TIME_FIELD, time);
-        data.put(ServiceEventDataMapping.METADATA_VERSION_FIELD, version);
-        data.put(ServiceEventDataMapping.METADATA_UUIDS_FIELD, settings.getUuid());
-        client.prepareIndex(settings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID)
-                .setSource(data).get();
-        logger.info("Initial metadata is created ceated in {}/{}", settings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME);
+        data.put(MetadataDataMapping.METADATA_CREATION_TIME_FIELD.getName(), time);
+        data.put(MetadataDataMapping.METADATA_UPDATE_TIME_FIELD.getName(), time);
+        data.put(MetadataDataMapping.METADATA_VERSION_FIELD.getName(), version);
+        data.put(MetadataDataMapping.METADATA_UUIDS_FIELD.getName(), settings.getUuid());
+        client.prepareIndex(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID).setSource(data).get();
+        logger.info("Initial metadata is created ceated in {}/{}", settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME);
     }
 }

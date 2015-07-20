@@ -45,10 +45,10 @@ import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.lifecycle.Destroyable;
 import org.n52.iceland.request.RequestContext;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.StatisticsLocationUtilSettingsKeys;
 import org.n52.sos.statistics.api.interfaces.geolocation.IAdminStatisticsLocation;
 import org.n52.sos.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.statistics.api.utils.FileDownloader;
 import org.n52.sos.statistics.api.utils.GeoLiteFileDownloader;
 import org.slf4j.Logger;
@@ -114,13 +114,13 @@ public class StatisticsLocationUtil implements IStatisticsLocationUtil, IAdminSt
             Map<String, Object> holder = new HashMap<>();
             if (dbType == LocationDatabaseType.COUNTRY) {
                 Country country = reader.country(ip).getCountry();
-                holder.put(ServiceEventDataMapping.GEO_LOC_COUNTRY_CODE, country.getIsoCode());
+                holder.put(ObjectEsParameterFactory.GEOLOC_COUNTRY_CODE.getName(), country.getIsoCode());
             } else {
                 CityResponse city = reader.city(ip);
                 Location loc = city.getLocation();
-                holder.put(ServiceEventDataMapping.GEO_LOC_COUNTRY_CODE, city.getCountry().getIsoCode());
-                holder.put(ServiceEventDataMapping.GEO_LOC_CITY_CODE, city.getCity().getName());
-                holder.put(ServiceEventDataMapping.GEO_LOC_GEOPOINT, new GeoPoint(loc.getLatitude(), loc.getLongitude()));
+                holder.put(ObjectEsParameterFactory.GEOLOC_COUNTRY_CODE.getName(), city.getCountry().getIsoCode());
+                holder.put(ObjectEsParameterFactory.GEOLOC_CITY_NAME.getName(), city.getCity().getName());
+                holder.put(ObjectEsParameterFactory.GEOLOC_GEO_POINT.getName(), new GeoPoint(loc.getLatitude(), loc.getLongitude()));
             }
             return holder;
         } catch (Throwable e) {

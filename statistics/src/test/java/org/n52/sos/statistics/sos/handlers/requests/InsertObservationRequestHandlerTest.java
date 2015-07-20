@@ -56,8 +56,8 @@ public class InsertObservationRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertEquals("sensorId", map.get(SosDataMapping.IO_ASSIGNED_SENSORID));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.IO_OFFERINGS), CoreMatchers.hasItem("of1"));
-        Assert.assertNotNull(map.get(SosDataMapping.IO_OBSERVATION));
+        Assert.assertEquals("sensorId", map.get(SosDataMapping.IO_ASSIGNED_SENSORID.getName()));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.IO_OFFERINGS.getName()), CoreMatchers.hasItem("of1"));
+        Assert.assertNotNull(map.get(SosDataMapping.IO_OBSERVATION.getName()));
     }
 }

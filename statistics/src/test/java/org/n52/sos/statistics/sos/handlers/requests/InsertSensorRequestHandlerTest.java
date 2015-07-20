@@ -66,13 +66,13 @@ public class InsertSensorRequestHandlerTest extends HandlerBaseTest {
 
         Map<String, Object> map = handler.resolveAsMap(request);
 
-        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_OFFERINGS), CoreMatchers.instanceOf(List.class));
-        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS), CoreMatchers.is("proc"));
-        Assert.assertThat((List<String>) map.get(SosDataMapping.IS_OBSERVABLE_PROPERTY), CoreMatchers.hasItems("op1", "op2"));
-        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION), CoreMatchers.instanceOf(SosProcedureDescription.class));
-        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT), CoreMatchers.is("solo-format"));
-        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES), CoreMatchers.hasItems("foi1", "foi2"));
-        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_OBSERVATION_TYPES), CoreMatchers.hasItems("ot1", "ot2"));
+        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_OFFERINGS.getName()), CoreMatchers.instanceOf(List.class));
+        Assert.assertThat(map.get(SosDataMapping.IS_ASSIGNED_PROCEDURE_IDENTIFIERS.getName()), CoreMatchers.is("proc"));
+        Assert.assertThat((List<String>) map.get(SosDataMapping.IS_OBSERVABLE_PROPERTY.getName()), CoreMatchers.hasItems("op1", "op2"));
+        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION.getName()), CoreMatchers.instanceOf(SosProcedureDescription.class));
+        Assert.assertThat(map.get(SosDataMapping.IS_PROCEDURE_DESCRIPTION_FORMAT.getName()), CoreMatchers.is("solo-format"));
+        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_FEATURE_OF_INTEREST_TYPES.getName()), CoreMatchers.hasItems("foi1", "foi2"));
+        Assert.assertThat((Set<String>) map.get(SosDataMapping.IS_OBSERVATION_TYPES.getName()), CoreMatchers.hasItems("ot1", "ot2"));
 
     }
 }

@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.statistics.sos.SosDataMapping;
+import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class OmObservationConstellationEsModel extends AbstractElasticsearchModel {
 
@@ -61,16 +61,16 @@ public class OmObservationConstellationEsModel extends AbstractElasticsearchMode
     @Override
     protected Map<String, Object> getAsMap() {
         if (constellation.getProcedure() != null) {
-            put(SosDataMapping.OMOCONSTELL_PROCEDURE, constellation.getProcedure().getIdentifier());
+            put(ObjectEsParameterFactory.OMOCONSTELL_PROCEDURE, constellation.getProcedure().getIdentifier());
         }
         if (constellation.getObservableProperty() != null) {
-            put(SosDataMapping.OMOCONSTELL_OBSERVABLE_PROPERTY, constellation.getObservableProperty().getIdentifier());
+            put(ObjectEsParameterFactory.OMOCONSTELL_OBSERVABLE_PROPERTY, constellation.getObservableProperty().getIdentifier());
         }
         if (constellation.getFeatureOfInterest() != null) {
-            put(SosDataMapping.OMOCONSTELL_FEATURE_OF_INTEREST, constellation.getFeatureOfInterest().getIdentifier());
+            put(ObjectEsParameterFactory.OMOCONSTELL_FEATURE_OF_INTEREST, constellation.getFeatureOfInterest().getIdentifier());
         }
 
-        put(SosDataMapping.OMOCONSTELL_OBSERVATION_TYPE, constellation.getObservationType());
+        put(ObjectEsParameterFactory.OMOCONSTELL_OBSERVATION_TYPE, constellation.getObservationType());
 
         return dataMap;
     }

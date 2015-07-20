@@ -125,6 +125,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>
+					<reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 					<forkCount>1</forkCount>
 				</configuration>

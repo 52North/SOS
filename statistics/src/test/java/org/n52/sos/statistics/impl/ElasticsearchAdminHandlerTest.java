@@ -39,7 +39,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.sos.statistics.api.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.MetadataDataMapping;
 import org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas;
 
 import basetest.ElasticsearchAwareTest;
@@ -58,11 +58,11 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
 
         GetResponse resp =
                 getEmbeddedClient()
-                        .prepareGet(clientSettings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID)
+                        .prepareGet(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
                         .setOperationThreaded(false).get();
 
         Assert.assertEquals(new SosElasticsearchSchemas().getSchemaVersion(),
-                resp.getSourceAsMap().get(ServiceEventDataMapping.METADATA_VERSION_FIELD));
+                resp.getSourceAsMap().get(MetadataDataMapping.METADATA_VERSION_FIELD.getName()));
     }
 
     @Test
@@ -72,6 +72,7 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
         adminHandler.createSchema();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void addnewUuidOnConnect() {
         ElasticsearchAdminHandler adminHandler = new ElasticsearchAdminHandler(getEmbeddedClient(), clientSettings);
@@ -83,14 +84,15 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
 
         GetResponse resp =
                 getEmbeddedClient()
-                        .prepareGet(clientSettings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID)
+                        .prepareGet(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
                         .setOperationThreaded(false).get();
 
         Map<String, Object> map = resp.getSourceAsMap();
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.METADATA_CREATION_TIME_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.METADATA_UUIDS_FIELD));
-        Assert.assertNotNull(map.get(ServiceEventDataMapping.METADATA_UPDATE_TIME_FIELD));
-        List<String> object = (List<String>) map.get(ServiceEventDataMapping.METADATA_UUIDS_FIELD);
+        Assert.assertNotNull(map.get(MetadataDataMapping.METADATA_CREATION_TIME_FIELD.getName()));
+        Assert.assertNotNull(map.get(MetadataDataMapping.METADATA_UUIDS_FIELD.getName()));
+        Assert.assertNotNull(map.get(MetadataDataMapping.METADATA_UPDATE_TIME_FIELD.getName()));
+
+        List<String> object = (List<String>) map.get(MetadataDataMapping.METADATA_UUIDS_FIELD.getName());
         Assert.assertEquals(2, object.size());
         Assert.assertThat(object, CoreMatchers.hasItem("lofasz janos"));
     }
@@ -100,9 +102,8 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
     public void failOnVersionMismatch() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
             InterruptedException {
         Map<String, Object> data = new HashMap<>();
-        data.put(ServiceEventDataMapping.METADATA_VERSION_FIELD, 123456);
-        getEmbeddedClient()
-                .prepareIndex(clientSettings.getIndexId(), ServiceEventDataMapping.METADATA_TYPE_NAME, ServiceEventDataMapping.METADATA_ROW_ID)
+        data.put(MetadataDataMapping.METADATA_VERSION_FIELD.getName(), 123456);
+        getEmbeddedClient().prepareIndex(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
                 .setSource(data).get();
 
         Thread.sleep(1500);

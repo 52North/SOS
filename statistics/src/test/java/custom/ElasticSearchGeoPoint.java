@@ -84,7 +84,7 @@ public class ElasticSearchGeoPoint extends SpringBaseTest {
     private void insertIp(String ip) throws Exception {
         Map<String, Object> data = new HashMap<>();
         Map<String, Object> geomap = loc.ip2SpatialData(ip);
-        data.put(ServiceEventDataMapping.SR_GEO_LOC_FIELD, geomap);
+        data.put(ServiceEventDataMapping.SR_GEO_LOC_FIELD.getName(), geomap);
 
         handler.persist(data);
     }

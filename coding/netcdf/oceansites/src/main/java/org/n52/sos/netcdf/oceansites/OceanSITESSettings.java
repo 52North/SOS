@@ -80,6 +80,8 @@ public class OceanSITESSettings implements SettingDefinitionProvider {
     public static final String OCEANSITES_PRINCIPAL_INVESTIGATOR = "oceansites.principalInvestigator";
 
     public static final String OCEANSITES_REFERENCES = "oceansites.references";
+    
+    public static final String OCEANSITES_AREA_DEFINITION = "oceansites.area";
 
     private static final SettingDefinitionGroup SETTINGS_GROUP = new SettingDefinitionGroup()
             .setTitle("OceanSITES netCDF").setDescription("Define OceanSITES specific parameter").setOrder(10.22f);
@@ -129,46 +131,46 @@ public class OceanSITESSettings implements SettingDefinitionProvider {
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP)
                                     .setKey(OCEANSITES_PROJECT_DEFINITION).setTitle("OceanSITES project definition")
                                     .setDefaultValue(OceanSITESConstants.PROJECT_DEFINITION)
-                                    .setDescription("The project definition from sensor desription").setOptional(true)
+                                    .setDescription("The project SensorML identifier definition").setOptional(true)
                                     .setOrder(ORDER_4),
 
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP).setKey(OCEANSITES_ARRAY_DEFINITION)
                                     .setTitle("OceanSITES array definition")
                                     .setDefaultValue(OceanSITESConstants.ARRAY_DEFINITION)
-                                    .setDescription("The array definition from sensor desription").setOptional(true)
+                                    .setDescription("The array SensorML identifier definition").setOptional(true)
                                     .setOrder(ORDER_5),
 
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP)
                                     .setKey(OCEANSITES_NETWORK_DEFINITION).setTitle("OceanSITES network definition")
                                     .setDefaultValue(OceanSITESConstants.NETWORK_DEFINITION)
-                                    .setDescription("The network definition from sensor desription").setOptional(true)
+                                    .setDescription("The network definition from sensor desription (SensorML identification)").setOptional(true)
                                     .setOrder(ORDER_6),
 
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP)
                                     .setKey(OCEANSITES_WMO_PLATFORM_CODE_DEFINITION)
                                     .setTitle("OceanSITES WMO platform code definition")
                                     .setDefaultValue(OceanSITESConstants.WMO_PLATFORM_CODE_DEFINITION)
-                                    .setDescription("The WMO platform code identifier definition.").setOptional(true)
+                                    .setDescription("The WMO platform code SensorML identifier definition.").setOptional(true)
                                     .setOrder(ORDER_7),
 
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP).setKey(OCEANSITES_SITE_DEFINITON)
                                     .setTitle("OceanSITES site definition")
                                     .setDefaultValue(OceanSITESConstants.SITE_CODE_DEFINITION)
-                                    .setDescription("The site code identifier definition.").setOptional(false)
+                                    .setDescription("The site code SensorML identifier definition.").setOptional(false)
                                     .setOrder(ORDER_8),
 
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP)
                                     .setKey(OCEANSITES_PLATFORM_DEFINITION)
                                     .setTitle("OceanSITES platform code definition")
                                     .setDefaultValue(OceanSITESConstants.PLATFORM_CODE_DEFINITION)
-                                    .setDescription("The platform code identifier definition.").setOptional(false)
+                                    .setDescription("The platform code SensorML identifier definition.").setOptional(false)
                                     .setOrder(ORDER_9),
 
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP)
                                     .setKey(OCEANSITES_DATA_MODE_DEFINITION)
                                     .setTitle("OceanSITES data mode definition")
                                     .setDefaultValue(OceanSITESConstants.DATA_MODE_DEFINITION)
-                                    .setDescription("The data mode identifier definition.").setOptional(true)
+                                    .setDescription("The data mode SensorML classifier definition.").setOptional(true)
                                     .setOrder(ORDER_10),
 
                             new ChoiceSettingDefinition().addOption(OceanSITESConstants.DataMode.D.name())
@@ -182,7 +184,7 @@ public class OceanSITESSettings implements SettingDefinitionProvider {
                             new StringSettingDefinition().setGroup(SETTINGS_GROUP).setKey(OCEANSITES_FORMAT_VERSION)
                                     .setTitle("OceanSITES data mode definition")
                                     .setDefaultValue(OceanSITESConstants.FORMAT_VERSION_DEFAULT_TEXT)
-                                    .setDescription("The data mode identifier definition.").setOptional(false)
+                                    .setDescription("The data mode SensorML identifier definition.").setOptional(false)
                                     .setOrder(ORDER_12),
 
                             NetcdfSettings.getCiRoleCodeChoiceSettingDefinition().setGroup(SETTINGS_GROUP)
@@ -201,7 +203,13 @@ public class OceanSITESSettings implements SettingDefinitionProvider {
                                             "Published or web-based references that describe the data or "
                                                     + "methods used to produce it. Include a reference to OceanSITES "
                                                     + "and a project-specific reference if appropriate.")
-                                    .setOptional(true).setOrder(ORDER_14)
+                                    .setOptional(true).setOrder(ORDER_14),
+                                    
+                             new StringSettingDefinition().setGroup(SETTINGS_GROUP).setKey(OCEANSITES_AREA_DEFINITION)
+                                    .setTitle("OceanSITES data mode definition")
+                                    .setDefaultValue(OceanSITESConstants.AREA_DEFINITION)
+                                    .setDescription("The area SensorML identifier definition.").setOptional(true)
+                                    .setOrder(ORDER_15)
 
                     );
 

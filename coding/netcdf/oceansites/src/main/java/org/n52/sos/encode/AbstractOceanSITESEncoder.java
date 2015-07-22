@@ -34,7 +34,6 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.iso.CodeList.CiRoleCodes;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.oceansites.OceanSITESConstants;
@@ -80,108 +79,44 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     @Override
     protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset)
             throws OwsExceptionReport {
-        if (sensorDataset.getSensor().isSetSensorDescription()) {
-            AbstractSensorML sml = sensorDataset.getSensor().getSensorDescritpion();
+        // site_code (RECOMMENDED)
+        addSiteCode(writer, sensorDataset);
+        // data_mode (RECOMMENDED)
+        addDataMode(writer, sensorDataset);
+        // data_type (RECOMMENDED)
+        addDataType(writer, sensorDataset);
+        // format_version (RECOMMENDED)
+        addFormatVersion(writer, sensorDataset);
+        // update_interval (RECOMMENDED)
+        addUpdateInterval(writer, sensorDataset);
+        // OPTIONAL
+        // wmo code
+        addWmoCode(writer, sensorDataset);
+        // acknowledgement
+        addAcknowledge(writer, sensorDataset);
+        // array
+        addArray(writer, sensorDataset);
+        // network
+        addNetwork(writer, sensorDataset);
+        // project
+        addProject(writer, sensorDataset);
+        // id
+        addId(writer, sensorDataset);
+        // area
+        addArea(writer, sensorDataset);
+        // citation
+        addCitation(writer, sensorDataset);
+        // processing level
+        addProcessingLevel(writer, sensorDataset);
+        // QC_indicator
+        addQcIndicator(writer, sensorDataset);
+        // netcdf_version
+        addNetcdfVersion(writer);
+        // references
+        addReferences(writer, sensorDataset);
+        // naming_authority
+        addNamingAuthority(writer, sensorDataset);
 
-            // site_code (RECOMMENDED)
-            addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getSiteDefinition(),
-                    OceanSITESConstants.SITE_CODE);
-            // platform_code (RECOMMENDED)
-            addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getPlatformDefinition(),
-                    OceanSITESConstants.PLATFORM_CODE);
-            // data_mode (RECOMMENDED)
-            if (!addAttributeIfClassifierExists(writer, sml, OceanSITESHelper.getInstance().getDataModeDefinition(),
-                    OceanSITESConstants.DATA_MODE)) {
-                String dataModeText = OceanSITESConstants.DataMode.R.toString();
-                if (OceanSITESHelper.getInstance().isSetDataMode()) {
-                    dataModeText = OceanSITESHelper.getInstance().getDataMode().name();
-                }
-                writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
-            }
-            // data_type (RECOMMENDED)
-            writer.addGroupAttribute(null,
-                    new Attribute(OceanSITESConstants.DATA_TYPE, getDataType(sensorDataset.getFeatureType())));
-            // format_version (RECOMMENDED)
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL, OceanSITESHelper
-                    .getInstance().getFormatVersion()));
-
-            // update_interval (RECOMMENDED)
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL,
-                    OceanSITESConstants.UPDATE_INTERVAL_TEXT));
-
-            // OPTIONAL
-            // wmo code
-            addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getWmoPlatformCodeDefinition(),
-                    OceanSITESConstants.WMO_PLATFORM_CODE);
-            // acknowledgement
-            addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getAcknowledgement(),
-                    ACDDConstants.ACKNOWLEDGEMENT);
-            // array
-            addArray(writer, sensorDataset);
-            // network
-            addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getNetworkDefinition(),
-                    OceanSITESConstants.NETWORK);
-            // project
-            if (addAttributeIfIdentifierExists(writer, sml, OceanSITESHelper.getInstance().getProjectDefinition(),
-                    ACDDConstants.PROJECT)) {
-                if (OceanSITESHelper.getInstance().isSetProject()) {
-                    writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROJECT, OceanSITESHelper.getInstance()
-                            .getProject()));
-                }
-            }
-            // id
-            writer.addGroupAttribute(null,
-                    new Attribute(ACDDConstants.ID, getFilename(sensorDataset).replace(".nc", "")));
-            // citation
-            String citationText = OceanSITESConstants.CITATION_DEFAULT_TEXT;
-            if (OceanSITESHelper.getInstance().isSetCitation()) {
-                citationText = OceanSITESHelper.getInstance().getCitation();
-            }
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.CITATION, citationText));
-            // license
-            String licenseText = OceanSITESConstants.LICENSE_DEFAULT_TEXT;
-            if (OceanSITESHelper.getInstance().isSetLicense()) {
-                citationText = OceanSITESHelper.getInstance().getLicense();
-            }
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.LICENSE, licenseText));
-            // processing level
-            // TODO get from ???
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROCESSING_LEVEL, ACDDConstants.NONE));
-            // QC_indicator
-            // TODO get from ???
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.QC_INDICATOR,
-                    OceanSITESConstants.QCIndicator.UNKNOWN.name()));
-            // netcdf_version
-            addNetcdfVersion(writer);
-            // references
-            if (OceanSITESHelper.getInstance().isSetReferences()) {
-                writer.addGroupAttribute(null, new Attribute(CFConstants.REFERENCES, OceanSITESHelper.getInstance()
-                        .getReferences()));
-            }
-            writer.addGroupAttribute(null, new Attribute(ACDDConstants.NAMING_AUTHORITY,
-                    OceanSITESConstants.NAMING_AUTHORITY_TEXT));
-        } else {
-            throw new NoApplicableCodeException().withMessage("Missing required {} in {}",
-                    AbstractSensorML.class.getSimpleName(), this.getClass().getSimpleName());
-        }
-
-    }
-
-    private CDMNode addNetcdfVersion(NetcdfFileWriter writer) {
-        String netCDFVersion = "3.5";
-        if (Version.netcdf4.equals(writer.getVersion())) {
-            netCDFVersion = "4.0";
-        }
-        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.NETCDF_VERSION, netCDFVersion));
-
-    }
-
-    protected boolean addArray(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
-        if (sensorDataset.getSensor().isSetSensorDescription()) {
-            return addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
-                    OceanSITESHelper.getInstance().getArrayDefinition(), OceanSITESConstants.ARRAY);
-        }
-        return false;
     }
 
     @Override
@@ -192,20 +127,15 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     @Override
     protected String getLicenseValue() {
-        return OceanSITESHelper.getInstance().getLicense();
+        if (OceanSITESHelper.getInstance().isSetLicense()) {
+            return OceanSITESHelper.getInstance().getLicense();
+        }
+        return OceanSITESConstants.LICENSE_DEFAULT_TEXT;
     }
 
     @Override
     protected double getTimeValue(Time time) throws CodedException {
         return DateTimeHelper.getDaysSinceWithPrecision(DT_1950, getDateTime(time));
-    }
-
-    protected boolean addPrincipalInvestigator(AbstractSensorML sml, NetcdfFileWriter writer) throws OwsExceptionReport {
-        return addContributor(sml, CiRoleCodes.CI_RoleCode_principalInvestigator, writer);
-    }
-
-    protected boolean addPrincipalInvestigator(AbstractSensorML sml, CiRoleCodes ciRoleCode, NetcdfFileWriter writer) throws OwsExceptionReport {
-        return addContributor(sml, ciRoleCode.getIdentifier(), writer);
     }
 
     @Override
@@ -269,6 +199,169 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
         // sensor, from SensorML?
 
         return variable;
+    }
+
+    protected CDMNode addSiteCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+                    .getInstance().getSiteDefinition(), OceanSITESConstants.SITE_CODE);
+            return getAttribute(writer, OceanSITESConstants.SITE_CODE);
+        }
+        return null;
+    }
+
+    @Override
+    protected CDMNode addPlatform(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        // platform_code (RECOMMENDED)
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+                    .getInstance().getPlatformDefinition(), OceanSITESConstants.PLATFORM_CODE);
+            return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE);
+        }
+        return super.addPlatform(writer, sensorDataset);
+    }
+
+    protected CDMNode addDataMode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            if (!addAttributeIfClassifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+                    OceanSITESHelper.getInstance().getDataModeDefinition(), OceanSITESConstants.DATA_MODE)) {
+                String dataModeText = OceanSITESConstants.DataMode.R.toString();
+                if (OceanSITESHelper.getInstance().isSetDataMode()) {
+                    dataModeText = OceanSITESHelper.getInstance().getDataMode().name();
+                }
+                writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
+            }
+        }
+        return getAttribute(writer, OceanSITESConstants.DATA_MODE);
+    }
+
+    protected CDMNode addDataType(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        return writer.addGroupAttribute(null,
+                new Attribute(OceanSITESConstants.DATA_TYPE, getDataType(sensorDataset.getFeatureType())));
+    }
+
+    protected CDMNode addFormatVersion(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL, OceanSITESHelper
+                .getInstance().getFormatVersion()));
+    }
+
+    protected CDMNode addUpdateInterval(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL,
+                OceanSITESConstants.UPDATE_INTERVAL_TEXT));
+    }
+
+    protected CDMNode addWmoCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+                    .getInstance().getWmoPlatformCodeDefinition(), OceanSITESConstants.WMO_PLATFORM_CODE);
+        }
+        return getAttribute(writer, OceanSITESConstants.WMO_PLATFORM_CODE);
+    }
+
+    protected CDMNode addAcknowledge(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+                    .getInstance().getAcknowledgement(), ACDDConstants.ACKNOWLEDGEMENT);
+
+        }
+        return getAttribute(writer, ACDDConstants.ACKNOWLEDGEMENT);
+
+    }
+
+    protected boolean addArray(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            return addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+                    OceanSITESHelper.getInstance().getArrayDefinition(), OceanSITESConstants.ARRAY);
+        }
+        return false;
+    }
+
+    protected CDMNode addNetwork(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+                    .getInstance().getNetworkDefinition(), OceanSITESConstants.NETWORK);
+
+        }
+        return getAttribute(writer, OceanSITESConstants.NETWORK);
+    }
+
+    protected CDMNode addProject(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            if (addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
+                    OceanSITESHelper.getInstance().getProjectDefinition(), ACDDConstants.PROJECT)) {
+                if (OceanSITESHelper.getInstance().isSetProject()) {
+                    return writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROJECT, OceanSITESHelper
+                            .getInstance().getProject()));
+                }
+            }
+        }
+        return getAttribute(writer, ACDDConstants.PROJECT);
+    }
+
+    @Override
+    protected CDMNode addId(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) throws OwsExceptionReport {
+        return writer.addGroupAttribute(null,
+                new Attribute(ACDDConstants.ID, getFilename(sensorDataset).replace(".nc", "")));
+    }
+
+    protected CDMNode addArea(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (sensorDataset.getSensor().isSetSensorDescription()) {
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+                    .getInstance().getAreaDefinition(), OceanSITESConstants.AREA);
+
+        }
+        return getAttribute(writer, OceanSITESConstants.AREA);
+    }
+
+    protected CDMNode addCitation(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        String citationText = OceanSITESConstants.CITATION_DEFAULT_TEXT;
+        if (OceanSITESHelper.getInstance().isSetCitation()) {
+            citationText = OceanSITESHelper.getInstance().getCitation();
+        }
+        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.CITATION, citationText));
+    }
+
+    protected CDMNode addProcessingLevel(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        // TODO get from ???
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROCESSING_LEVEL, ACDDConstants.NONE));
+    }
+
+    protected CDMNode addQcIndicator(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        // TODO get from ???
+        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.QC_INDICATOR,
+                OceanSITESConstants.QCIndicator.UNKNOWN.name()));
+    }
+
+    protected CDMNode addNetcdfVersion(NetcdfFileWriter writer) {
+        String netCDFVersion = "3.5";
+        if (Version.netcdf4.equals(writer.getVersion())) {
+            netCDFVersion = "4.0";
+        }
+        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.NETCDF_VERSION, netCDFVersion));
+    
+    }
+
+    protected CDMNode addReferences(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        if (OceanSITESHelper.getInstance().isSetReferences()) {
+            return writer.addGroupAttribute(null, new Attribute(CFConstants.REFERENCES, OceanSITESHelper.getInstance()
+                    .getReferences()));
+        }
+        return null;
+    }
+
+    protected CDMNode addNamingAuthority(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+        return writer.addGroupAttribute(null, new Attribute(ACDDConstants.NAMING_AUTHORITY,
+                OceanSITESConstants.NAMING_AUTHORITY_TEXT));
+    }
+
+    protected boolean addPrincipalInvestigator(AbstractSensorML sml, NetcdfFileWriter writer)
+            throws OwsExceptionReport {
+        return addContributor(sml, CiRoleCodes.CI_RoleCode_principalInvestigator, writer);
+    }
+
+    protected boolean addPrincipalInvestigator(AbstractSensorML sml, CiRoleCodes ciRoleCode, NetcdfFileWriter writer)
+            throws OwsExceptionReport {
+        return addContributor(sml, ciRoleCode.getIdentifier(), writer);
     }
 
     protected boolean addPrincipalInvestigator(AbstractSensorML sml, String contactRole, NetcdfFileWriter writer)

@@ -93,6 +93,7 @@ import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.http.MediaType;
@@ -613,7 +614,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     }
 
-    protected CDMNode addId(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
+    protected CDMNode addId(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) throws OwsExceptionReport {
         return writer.addGroupAttribute(null, new Attribute(ACDDConstants.ID, sensorDataset.getSensorIdentifier()));
     }
 
@@ -1268,6 +1269,17 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     protected SosServiceProvider getServiceProvider() throws OwsExceptionReport {
         return Configurator.getInstance().getServiceProvider();
+    }
+    
+    protected Attribute getAttribute(NetcdfFileWriter writer, String name) {
+        if (CollectionHelper.isNotEmpty(writer.getNetcdfFile().getGlobalAttributes())) {
+            for (Attribute attr : writer.getNetcdfFile().getGlobalAttributes()) {
+                if (name.equals(attr.getShortName())) {
+                    return attr;
+                }
+            }
+        }
+        return null;
     }
 
     protected String getPrefixlessIdentifier(String identifier) {

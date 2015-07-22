@@ -315,6 +315,8 @@ public interface OceanSITESConstants {
     String PLATFORM_CODE_DEFINITION = "http://www.nexosproject.eu/dictionary/definitions.html#PLATFORM_ID";
 
     String DATA_MODE_DEFINITION = "http://www.nexosproject.eu/dictionary/definitions.html#DATA_MODE";
+    
+    String AREA_DEFINITION = "http://www.nexosproject.eu/dictionary/definitions.html#AREA";
 
     String REFERENCE = "reference";
 

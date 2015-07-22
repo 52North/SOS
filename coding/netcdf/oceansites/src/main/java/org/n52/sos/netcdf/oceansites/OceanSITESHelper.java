@@ -78,6 +78,8 @@ public class OceanSITESHelper {
 
     private String references;
 
+    private String areaDefinition;
+
     /**
      * @return Returns a singleton instance of the AqdHelper.
      */
@@ -316,6 +318,26 @@ public class OceanSITESHelper {
 
     public boolean isSetReferences() {
         return !Strings.isNullOrEmpty(getReferences());
+    }
+
+    /**
+     * @return the area
+     */
+    public String getAreaDefinition() {
+        return areaDefinition;
+    }
+
+    /**
+     * @param areaDefinition
+     *            the area to set
+     */
+    @Setting(OceanSITESSettings.OCEANSITES_AREA_DEFINITION)
+    public void setAreaDefinition(String areaDefinition) {
+        this.areaDefinition = areaDefinition;
+    }
+
+    public boolean isSetAreaDefinition() {
+        return !Strings.isNullOrEmpty(getAreaDefinition());
     }
 
 }

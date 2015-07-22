@@ -36,18 +36,18 @@ import org.n52.iceland.config.SettingDefinitionGroup;
  */
 public class ElasticsearchSettingsKeys {
 
-    public static final String LOGGING_ENABLED = "elasticsearch.is_logging_enabled";
-    public static final String CLUSTER_NAME = "elasticsearch.cluster_name";
-    public static final String INDEX_NAME = "elasticsearch.index_name";
-    public static final String TYPE_NAME = "elasticsearch.type_name";
-    public static final String UUID = "elasticsearch.uuid";
-    public static final String CLUSTER_NODES = "elasticsearch.cluster_nodes";
+    public static final String LOGGING_ENABLED = "statistics.elasticsearch.is_logging_enabled";
+    public static final String CLUSTER_NAME = "statistics.elasticsearch.cluster_name";
+    public static final String INDEX_NAME = "statistics.elasticsearch.index_name";
+    public static final String TYPE_NAME = "statistics.elasticsearch.type_name";
+    public static final String UUID = "statistics.elasticsearch.uuid";
+    public static final String CLUSTER_NODES = "statistics.elasticsearch.cluster_nodes";
 
     // lanMode vs transportclient mode CHoice
-    public static final String CONNECTION_MODE = "elasticsearch.connection_mode";
-    public static final String CONNECTION_MODE_NODE = "elasticsearch.connection_mode.node";
-    public static final String CONNECTION_MODE_TRANSPORT_CLIENT = "elasticsearch.connection_mode.transport_client";
+    public static final String CONNECTION_MODE = "statistics.elasticsearch.connection_mode";
+    public static final String CONNECTION_MODE_NODE = "statistics.elasticsearch.connection_mode.node";
+    public static final String CONNECTION_MODE_TRANSPORT_CLIENT = "statistics.elasticsearch.connection_mode.transport_client";
 
-    public static final String KIBANA_CONFIG_PATH = "elasticsearch.kibana_config_file";
-    public static final String KIBANA_CONFIG_ENABLE = "elasticsearch.kibana_config_enable";
+    public static final String KIBANA_CONFIG_PATH = "statistics.elasticsearch.kibana_config_file";
+    public static final String KIBANA_CONFIG_ENABLE = "statistics.elasticsearch.kibana_config_enable";
 }

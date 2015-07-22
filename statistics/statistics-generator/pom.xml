@@ -23,10 +23,11 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
 				<executions>
 					<execution>
 						<id>parameter-generator</id>
-						<phase>test</phase>
+						<phase>package</phase>
 						<goals>
 							<goal>java</goal>
 						</goals>
@@ -35,7 +36,7 @@
 				<configuration>
 					<mainClass>org.n52.sos.statistics.api.parameters.generator.ParameterGenerator</mainClass>
 					<arguments>
-						<argument>..\PARAMETERS.MD</argument>
+						<argument>${basedir}\..\PARAMETERS.MD</argument>
 					</arguments>
 				</configuration>
 			</plugin>

@@ -1,0 +1,207 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
+
+	<bean id="statisticsDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
+		<property name="title" value="Statistics" />
+		<property name="description"
+			value="On this settings page you can enable and configure the statistics collection module. You need to have access to an ElasticSearch setup in order to store the collected data about the incoming requests of the client, exceptions and messages and interesting metrics of the response messages.
+			These settings will be change on the next webapplication startup.
+			
+			If you connected your SOS deployment and Elasticsearch cluster then the default Dashboard can be found usually at the address &lt;a href='http://your-host:5601'&gt;your-host:5601&lt;/a&gt;.
+		The Kibana server needs to be configured if the default settings were changed in ElasticSearch. You need to change on your Kibana machine the config/kibana.yml file."></property>
+		<property name="order" value="11.0" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.is_logging_enabled" />
+		<property name="title"
+			value="Enable statistics collection?" />
+		<property name="order" value="1.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="false" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.connection_mode" />
+		<property name="title" value="Connection mode" />
+		<property name="description"
+			value="Connection mode to the Elasticsearch cluster." />
+		<property name="order" value="2.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="statistics.elasticsearch.connection_mode.node" />
+		<property name="options">
+			<map>
+				<entry key="statistics.elasticsearch.connection_mode.node"
+					value="Node" />
+				<entry key="statistics.elasticsearch.connection_mode.transport_client"
+					value="Transport client" />
+			</map>
+		</property>
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.cluster_name" />
+		<property name="title" value="Name of the cluster to join to" />
+		<property name="description" value="Where to store your precious data" />
+		<property name="order" value="3.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="elasticsearch" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.cluster_nodes" />
+		<property name="title" value="Address(es) of the cluster" />
+		<property name="description"
+			value=" It requires a comma seperated list of hosts to use that will act as gossip routers to
+		connect to the cluster. Beware of the port number it MUST be the node-to-node (9300) communication port NOT the HTTP traffic port (9200).
+		The port number can be omitted the defaults will be used.
+		Examples 1: localhost:9300 Example2: masternode1,masternode2:12345" />
+		<property name="order" value="4.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="localhost" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.index_name" />
+		<property name="title" value="Index name of the Elasticsearch index" />
+		<property name="description" value="Where to store your precious data" />
+		<property name="order" value="5.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="ogc-statistics-index" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.type_name" />
+		<property name="title" value="Type name inside your Elasticsearch index" />
+		<property name="description" value="Where to store your precious data" />
+		<property name="order" value="6.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="ogc-type" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.uuid" />
+		<property name="title" value="Unique id of your statistics collections" />
+		<property name="description"
+			value="If you leave it empty we will generate a new one for you" />
+		<property name="optional" value="true" />
+		<property name="order" value="7.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+		<property name="key" value="statistics.counting-outputstream" />
+		<property name="title" value="The response document size is calculated" />
+		<property name="description"
+			value="The size of the response document which is sent back to the client. This could result in a small performance degradation." />
+		<property name="order" value="8.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="false" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+		<property name="key"
+			value="statistics.elasticsearch.kibana_config_enable" />
+		<property name="title"
+			value="Enables installation of preconfigured Kibana settings" />
+		<property name="description"
+			value="If this checkbox is enabled the preconfigured Kibana settings, visualizations and dashboards will be installed.
+		If you point your Kibana instance to this Elasticsearch cluster you can use our deployed configurations. The statistics collection MUST be enabled." />
+		<property name="order" value="9.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="false" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.elasticsearch.kibana_config_file" />
+		<property name="title" value="Kibana config file" />
+		<property name="description"
+			value="Absolute path to the Kibana configuration file which contains some predefined visualizations and dashboard.
+			If you leave this field blank we import the default settings which came with this server deployment.
+			You can export from the Kibana settings with our Kibana exporter tool." />
+		<property name="optional" value="true" />
+		<property name="order" value="10.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+	</bean>
+
+
+
+	<!-- GEOLITE -->
+	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+		<property name="key" value="statistics.geoloc.enabled" />
+		<property name="title" value="Enable the geolocation transformation?" />
+		<property name="description" value="These settings below are for transforming the client's IP address to geolocation format. 
+		This feature use an external database from company Maxmind. These databases comes in two flavor 'City' and 'Country' they 
+ 		differ in accuracy and size. These settings will be change on the next webapplication startup. 
+		
+ 		This product includes GeoLite2 data created by MaxMind, available from 
+   &lt;a href='http://www.maxmind.com'&gt;http://www.maxmind.com&lt;/a&gt;."></property>
+		<property name="order" value="20.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="false" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+		<property name="key" value="statistics.geoloc.db_downloader" />
+		<property name="title" value="Downloading type" />
+		<property name="description"
+			value="If you choose 'AUTO' you MUST Specify the 'Download directory' path. BY 'MANUAL' downloding you MUST point to the extracted database full path location. If you choose 'AUTO' and the 'geolocation transformation' is enabled the databases will be downloaded at the next application startup." />
+		<property name="order" value="21.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="statistics.geoloc.db_downloader.auto" />
+		<property name="options">
+			<map>
+				<entry key="statistics.geoloc.db_downloader.auto" value="Auto download" />
+				<entry key="statistics.geoloc.db_downloader.manual" value="Manual" />
+			</map>
+		</property>
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.geoloc.download_folder" />
+		<property name="title" value="Download directory" />
+		<property name="description"
+			value="If you choose 'AUTO' download this property MUST be specified. Absolute address is needed. The databases will be downloaded to this location so the server must be able to write at this location." />
+		<property name="order" value="22.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="optional" value="true" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.geoloc.city_location" />
+		<property name="title" value="City location" />
+		<property name="description"
+			value="If you choose 'MANUAL' download and the 'GeoLocation database type' is CITY you MUST specify this property. The absolute path of the database is needed." />
+		<property name="order" value="23.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="optional" value="true" />
+	</bean>
+
+	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+		<property name="key" value="statistics.geoloc.country_location" />
+		<property name="title" value="Country location" />
+		<property name="description"
+			value="If you choose 'MANUAL' download and the 'GeoLocation database type' is COUNTRY you MUST specify this property. The absolute path of the database is needed." />
+		<property name="order" value="24.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="optional" value="true" />
+	</bean>
+
+
+	<bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
+		<property name="key" value="statistics.geoloc.db_type" />
+		<property name="title" value="GeoLocation database type" />
+		<property name="description" value="Which database should be used." />
+		<property name="order" value="25.0" />
+		<property name="group" ref="statisticsDefinitionGroup" />
+		<property name="defaultValue" value="geoloc.db_type.city" />
+		<property name="options">
+			<map>
+				<entry key="statistics.geoloc.db_type.city" value="City database" />
+				<entry key="statistics.geoloc.db_type.country" value="Country database" />
+			</map>
+		</property>
+	</bean>
+</beans>

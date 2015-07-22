@@ -53,7 +53,7 @@ public class ParameterGenerator {
 
     private static String outputFilePath = "PARAMETER.MD";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length == 1) {
             outputFilePath = args[0];
             ParameterGenerator gen = new ParameterGenerator();
@@ -65,7 +65,7 @@ public class ParameterGenerator {
 
     private Map<Operation, Map<InformationOrigin, List<AbstractEsParameter>>> parameters;
 
-    public void processClass(Class<?>... classes) {
+    public void processClass(Class<?>... classes) throws IOException {
         parameters = new HashMap<>();
         for (Class<?> klass : classes) {
             organize(klass.getFields());
@@ -78,6 +78,7 @@ public class ParameterGenerator {
             Files.write(printable, new File(outputFilePath), Charset.forName("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
+            throw e;
         }
 
     }

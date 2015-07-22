@@ -26,7 +26,7 @@ The statistics collection module collects information during the whole lifecycle
   - GetResultTemplate, for getting the result structure and encoding for specific parameter constellations
   - GetResult, for getting the raw data for specific parameter constellations
 
-There is one utility request called BatchRequest which is not analyzed and measured by this module.
+There is one utility request called `BatchRequest` which is not analyzed and measured by this module.
 
 ## Usage
 Before you start the webapplication make sure that your Elasticsearch cluster is running and reachable from your server. To start the module go to your SOS deployment administrator's settings page on the Elasticsearch tab.
@@ -75,10 +75,28 @@ The Elasticsearch client API automatically converts the map to a JSON string, in
 You can see an UML sequence diagram of the client calling a `DescribeSensorRequest`
 ![DescribeSensorRequest](https://wiki.52north.org/pub/Projects/GSoC2015Statistics4Ows/DescribeSensorRequest.jpg)
 
-## Extending with new parameters.
-There can be a case in the near future when new parameter needs to be added in the Elasticsearch database.
+#### Extending the module with new parameters
+There can be a time in the near future when new parameters (e.g: some RequestEvent parameter) needs to be stored in Elasticsearch. Most of the primitive parameters can be one-to-one mapped from Java to Elasticsearch types like `String -> String` or `Long to Long` but some of them needs to be transformed like `Geometry -> Geo_Shape`.
+These conversions are located [n52.sos.statistics.sos.models](https://github.com/lestarcdog/SOS/tree/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/sos/models)
 
-- updating version from code if the new schema breaks the changes. new fields or deleting existing fields not breaking. 
+The default mappings for all parameters can be found `ServiceDataMapping class`. The SOS specific parameters are located `SosDataMapping`. The funcionality of the parameters are implemented in the `org.n52.sos.statistics.api.parameters` package.
+
+The parameters are hierarchical e.g: `OmObservation` has the `OmObservationConstellation` object and it has many primitive objects. So the primitive types which don't have any children corresponds to the class [SingleEsParameter](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/SingleEsParameter.java). The hierarchical ones for the [ObjectEsParameter](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/ObjectEsParameter.java)
+
+The Elasticsearch mappings (which in the end will be transformed into JSON strings) can be given in many ways, this module uses the `java.util.Map<String,Object>` way. The [ElasticsearchTypeRegistry](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/ElasticsearchTypeRegistry.java) has the Elasticsearch types definition in that format. These types are rarely modified.
+
+There is a "helper class" [ObjectEsParameterFactory](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/ObjectEsParameterFactory.java) which contains the composite `ObjectEsParameter`s. It is extensible with new methods and definitions.
+
+To have a automatic parameter generation functionality the `Description` class has some parameters which gives indication about the parameter origin (in which Event was it transported), which operation does it fall under (GetCapabilities) and a description message. The `PARAMETER.MD` file generator is at the [misc folder](https://github.com/lestarcdog/SOS/tree/feature/statistics/groupevents/statistics/misc/parameter/org/n52/sos/statistics/api/parameters/generator).
+
+To add a new parameter the following structure is needed. The description can be null.
+
+```java
+public static final AbstractEsParameter GC_FORMATS_FIELD = 
+new SingleEsParameter("getcapabilities-formats", 
+                      new Description(InformationOrigin.RequestEvent, Operation.GetCapabilities, "Accept formats"),
+                      ElasticsearchTypeRegistry.stringField);
+```
 
 
 

@@ -468,11 +468,6 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>split-and-merge</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.n52.sensorweb.sos</groupId>
-			<artifactId>statistics</artifactId>
-			<version>5.0.0-SNAPSHOT</version>
-		</dependency>
 
 		<!-- integration test -->
 		<dependency>
@@ -490,6 +485,11 @@
 
 
 
+		<dependency>
+			<groupId>org.n52.sensorweb.sos</groupId>
+			<artifactId>statistics-core</artifactId>
+			<version>5.0.0-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<profiles>
 		<profile>

@@ -75,6 +75,11 @@ The Elasticsearch client API automatically converts the map to a JSON string, in
 You can see an UML sequence diagram of the client calling a `DescribeSensorRequest`
 ![DescribeSensorRequest](https://wiki.52north.org/pub/Projects/GSoC2015Statistics4Ows/DescribeSensorRequest.jpg)
 
+## Extending with new parameters.
+There can be a case in the near future when new parameter needs to be added in the Elasticsearch database.
+
+- updating version from code if the new schema breaks the changes. new fields or deleting existing fields not breaking. 
+
 
 
 ## Setup

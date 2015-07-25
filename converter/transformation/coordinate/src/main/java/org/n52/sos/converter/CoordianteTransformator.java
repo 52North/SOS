@@ -104,6 +104,7 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.SweHelper;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -470,15 +471,23 @@ public class CoordianteTransformator implements
         }
         if (position.isSetPosition()) {
             position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+            position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
         } else if (position.isSetVector()) {
             SweVector vector = position.getVector();
             vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+            vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
         }
     }
 
-    /**
+    @VisibleForTesting
+    protected String transformReferenceFrame(String referenceFrame, int sourceCrs, int targetCrs) {
+		if (sourceCrs > 0 && targetCrs > 0) {
+			return referenceFrame.replace(Integer.toString(sourceCrs), Integer.toString(targetCrs));
+		}
+		return referenceFrame;
+	}
+
+	/**
      * Transform coordinates
      * 
      * @param position
@@ -573,14 +582,14 @@ public class CoordianteTransformator implements
                                     && !Integer.toString(targetCrs).equals(
                                             ((SweEnvelope) field.getElement()).getReferenceFrame())) {
                                 SweEnvelope envelope = (SweEnvelope) field.getElement();
+                                int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 Envelope transformEnvelope =
                                         getGeomtryHandler().transformEnvelope(envelope.toEnvelope(),
-                                                getCrsFromString(envelope.getReferenceFrame()), targetCrs);
+                                        		sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new SosEnvelope(transformEnvelope, targetCrs),
                                                 ProcedureDescriptionSettings.getInstance().getLatLongUom());
-                                newEnvelope.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix()
-                                        + targetCrs);
+                                newEnvelope.setReferenceFrame(transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
                                 field.setElement(newEnvelope);
                             }
                         }
@@ -678,18 +687,17 @@ public class CoordianteTransformator implements
      * @throws OwsExceptionReport
      *             If an error occurs when parsing
      */
-    private int getCrsFromString(String crs) throws OwsExceptionReport {
+    @VisibleForTesting
+    protected int getCrsFromString(String crs) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(crs) && !"NOT_SET".equalsIgnoreCase(crs)) {
-            if (crs.startsWith(Constants.URN) || crs.startsWith(Constants.HTTP)) {
-                crs =
-                        crs.replace(getConfiguration().getSrsNamePrefix(), Constants.EMPTY_STRING).replace(
-                                getConfiguration().getSrsNamePrefixSosV2(), Constants.EMPTY_STRING);
-            }
-            crs =
-                    crs.replace(EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
-                            EpsgConstants.EPSG_PREFIX, Constants.EMPTY_STRING);
+        	int lastIndex = 0;
+			if (crs.startsWith(Constants.HTTP)) {
+				lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
+			} else if (crs.indexOf(Constants.COLON_STRING) != -1) {
+				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
+			}
             try {
-                return Integer.valueOf(crs);
+                return Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
                 String parameter =
                         new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())
@@ -699,10 +707,7 @@ public class CoordianteTransformator implements
                         .causedBy(nfe)
                         .at(parameter)
                         .withMessage(
-                                "Error while parsing '%s' parameter! Parameter has to match "
-                                        + "pattern '%s', '%s', '%s','%s', with appended EPSG code number", parameter,
-                                getConfiguration().getSrsNamePrefix(), getConfiguration().getSrsNamePrefixSosV2(),
-                                EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, EpsgConstants.EPSG_PREFIX);
+                                "Error while parsing '%s' parameter! Parameter has to contain EPSG code number", parameter);
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);

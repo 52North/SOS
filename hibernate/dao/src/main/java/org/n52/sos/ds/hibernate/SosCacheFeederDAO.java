@@ -45,6 +45,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
@@ -96,8 +97,9 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
             update.execute();
 
             logCacheLoadTime(cacheUpdateStartTime);
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
+        } catch (Exception e) {
+            LOGGER.error("Error while updating ContentCache!", e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
             returnSession(session);
         }
@@ -125,8 +127,9 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
 
         try {
             update.execute();
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
+        } catch (Exception e) {
+            LOGGER.error("Error while updating ContentCache!", e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
             returnSession(session);
         }

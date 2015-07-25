@@ -28,6 +28,7 @@
  */
 package org.n52.sos.converter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -502,50 +503,54 @@ public class CoordianteTransformator implements
      * @throws OwsExceptionReport
      *             if an error occurs
      */
-    private List<SweCoordinate<?>> transformSweCoordinates(List<SweCoordinate<?>> position, int sourceCrs,
-            int targetCrs) throws OwsExceptionReport {
-        SweCoordinate<?> altitude = null;
-        Object easting = null;
-        Object northing = null;
-        for (SweCoordinate<?> coordinate : position) {
-            if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
-                altitude = coordinate;
-            } else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
-                northing = coordinate.getValue().getValue();
-            } else if (SweCoordinateName.easting.name().equals(coordinate.getName())) {
-                easting = coordinate.getValue().getValue();
-            }
-        }
-        List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
-            coordinates.add(northing);
-            coordinates.add(easting);
-        } else {
-            coordinates.add(easting);
-            coordinates.add(northing);
-        }
-        Geometry geom =
-                getGeomtryHandler().transform(
-                        JTSHelper.createGeometryFromWKT(
-                                JTSHelper.createWKTPointFromCoordinateString(Joiner.on(Constants.SPACE_STRING).join(
-                                        coordinates)), sourceCrs), targetCrs);
-        double x, y;
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
-            x = geom.getCoordinate().y;
-            y = geom.getCoordinate().x;
-        } else {
-            x = geom.getCoordinate().x;
-            y = geom.getCoordinate().y;
-        }
-        SweQuantity yq =
-                SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        SweQuantity xq =
-                SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
-    }
+	private List<SweCoordinate<?>> transformSweCoordinates(List<SweCoordinate<?>> position, int sourceCrs,
+			int targetCrs) throws OwsExceptionReport {
+		SweCoordinate<?> altitude = null;
+		Object easting = null;
+		Object northing = null;
+		for (SweCoordinate<?> coordinate : position) {
+			if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
+				altitude = coordinate;
+			} else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
+				northing = coordinate.getValue().getValue();
+			} else if (SweCoordinateName.easting.name().equals(coordinate.getName())) {
+				easting = coordinate.getValue().getValue();
+			}
+		}
+		if (easting != null && northing != null) {
+			List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
+			if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
+				coordinates.add(northing);
+				coordinates.add(easting);
+			} else {
+				coordinates.add(easting);
+				coordinates.add(northing);
+			}
+			Geometry geom = getGeomtryHandler().transform(JTSHelper.createGeometryFromWKT(
+					JTSHelper.createWKTPointFromCoordinateString(Joiner.on(Constants.SPACE_STRING).join(coordinates)),
+					sourceCrs), targetCrs);
+			double x, y;
+			if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
+				x = geom.getCoordinate().y;
+				y = geom.getCoordinate().x;
+			} else {
+				x = geom.getCoordinate().x;
+				y = geom.getCoordinate().y;
+			}
+			SweQuantity yq = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS,
+					ProcedureDescriptionSettings.getInstance().getLatLongUom());
+			SweQuantity xq = SweHelper.createSweQuantity(x, SweConstants.X_AXIS,
+					ProcedureDescriptionSettings.getInstance().getLatLongUom());
+			ArrayList<SweCoordinate<?>> newPosition = Lists.<SweCoordinate<?>> newArrayList(
+					new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
+					new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq));
+			if (altitude != null) {
+				newPosition.add(altitude);
+			}
+			return newPosition;
+		}
+		return position;
+	}
 
     /**
      * Check the {@link SmlLocation} if modifications are required

@@ -45,6 +45,7 @@ import net.opengis.waterml.x20.MonitoringPointType;
 import net.opengis.waterml.x20.ObservationProcessDocument;
 import net.opengis.waterml.x20.ObservationProcessType;
 
+import org.apache.xmlbeans.GDuration;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
@@ -449,6 +450,9 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
      *            SOS ObservationProcess
      */
     private void addAggregatingDuration(ObservationProcessType observationProcess, ObservationProcess procedure) {
+    	if (procedure.isSetAggregationDuration()) {
+    		observationProcess.setAggregationDuration(new GDuration(procedure.getAggregationDuration()));
+    	}
     }
 
     /**
@@ -630,4 +634,5 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
         }
         return new DateTime().minusYears(1000);
     }
+    
 }

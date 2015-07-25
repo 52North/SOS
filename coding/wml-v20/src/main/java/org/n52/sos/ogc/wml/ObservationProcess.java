@@ -29,6 +29,7 @@
 package org.n52.sos.ogc.wml;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -200,7 +201,7 @@ public class ObservationProcess extends SosProcedureDescription {
         return parameters;
     }
 
-    public ObservationProcess setParameters(final List<NamedValue<?>> parameters) {
+    public ObservationProcess setParameters(final Collection<NamedValue<?>> parameters) {
         this.parameters.addAll(parameters);
         return this;
     }

@@ -93,6 +93,7 @@ import net.opengis.gml.x32.TimeInstantType;
 import net.opengis.gml.x32.TimePeriodDocument;
 import net.opengis.gml.x32.TimePeriodType;
 import net.opengis.gml.x32.TimePositionType;
+import net.opengis.gml.x32.VerticalDatumPropertyType;
 
 /**
  * @since 4.0.0
@@ -107,7 +108,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             GmlConstants.NS_GML_32, EnvelopeDocument.class, TimeInstantType.class, TimePeriodType.class,
             TimeInstantDocument.class, TimePeriodDocument.class, ReferenceType.class, MeasureType.class,
             PointType.class, PointDocument.class, LineStringType.class, PolygonType.class, CompositeSurfaceType.class,
-            CodeWithAuthorityType.class, CodeType.class, FeaturePropertyType.class, GeometryPropertyType.class
+            CodeWithAuthorityType.class, CodeType.class, FeaturePropertyType.class, GeometryPropertyType.class,
+            VerticalDatumPropertyType.class
 
     ), CodingHelper.decoderKeysForElements(MeasureType.type.toString(), MeasureType.class));
 
@@ -171,6 +173,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             return parseCodeType((CodeType) xmlObject);
         } else if (xmlObject instanceof GeometryPropertyType) {
             return parseGeometryPropertyType((GeometryPropertyType) xmlObject);
+        } else if (xmlObject instanceof VerticalDatumPropertyType) {
+            return parseVerticalDatumPropertyType((VerticalDatumPropertyType) xmlObject);
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);
         }
@@ -463,7 +467,20 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
         return geom;
     }
 
-    /**
+    private org.n52.sos.ogc.gml.ReferenceType parseVerticalDatumPropertyType(VerticalDatumPropertyType vdpt) {
+    	// TODO parse VerticalDatumType 
+    	if (vdpt.isSetHref() && !vdpt.getHref().isEmpty()) {
+            org.n52.sos.ogc.gml.ReferenceType referenceType =
+                    new org.n52.sos.ogc.gml.ReferenceType(vdpt.getHref());
+            if (vdpt.isSetTitle() && !vdpt.getTitle().isEmpty()) {
+                referenceType.setTitle(vdpt.getTitle());
+            }
+            return referenceType;
+        }
+        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+	}
+
+	/**
      * method parses the passed linearRing(generated thru XmlBEans) and returns
      * a string containing the coordinate values of the passed ring
      * 

@@ -469,13 +469,15 @@ public class CoordianteTransformator implements
         } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
-        if (position.isSetPosition()) {
-            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-            position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
-        } else if (position.isSetVector()) {
-            SweVector vector = position.getVector();
-            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-            vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
+        if (targetCrs != sourceCrs) {
+	        if (position.isSetPosition()) {
+	            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+	            position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
+	        } else if (position.isSetVector()) {
+	            SweVector vector = position.getVector();
+	            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+	            vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
+	        }
         }
     }
 

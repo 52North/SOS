@@ -67,8 +67,12 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.CoordinateHelper;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.AltitudeSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.EastingSweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
@@ -508,12 +512,16 @@ public class CoordianteTransformator implements
 		SweCoordinate<?> altitude = null;
 		Object easting = null;
 		Object northing = null;
+		String eastingName = SweCoordinateName.easting.name();
+		String northingName = SweCoordinateName.northing.name();
 		for (SweCoordinate<?> coordinate : position) {
-			if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
+			if (checkAltitudeName(coordinate.getName())) {
 				altitude = coordinate;
-			} else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
+			} else if (checkNorthingName(coordinate.getName())) {
+				northingName = coordinate.getName();
 				northing = coordinate.getValue().getValue();
-			} else if (SweCoordinateName.easting.name().equals(coordinate.getName())) {
+			} else if (checkEastingName(coordinate.getName())) {
+				eastingName = coordinate.getName();
 				easting = coordinate.getValue().getValue();
 			}
 		}
@@ -542,8 +550,8 @@ public class CoordianteTransformator implements
 			SweQuantity xq = SweHelper.createSweQuantity(x, SweConstants.X_AXIS,
 					ProcedureDescriptionSettings.getInstance().getLatLongUom());
 			ArrayList<SweCoordinate<?>> newPosition = Lists.<SweCoordinate<?>> newArrayList(
-					new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-					new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq));
+					new SweCoordinate<Double>(northingName, yq),
+					new SweCoordinate<Double>(eastingName, xq));
 			if (altitude != null) {
 				newPosition.add(altitude);
 			}
@@ -565,6 +573,51 @@ public class CoordianteTransformator implements
     private void transformLocation(SmlLocation location, int targetCrs) throws OwsExceptionReport {
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
     }
+    
+	/**
+	 * Check if the name is a defined altitude name
+	 * 
+	 * @param name
+	 *            Name to check
+	 * @return <code>true</code>, if the name is an altitude name
+	 */
+    @VisibleForTesting
+	protected boolean checkAltitudeName(String name) {
+		if (AltitudeSweCoordinateName.isAltitudeSweCoordinateName(name)) {
+			return true;
+		}
+		return CoordinateHelper.getInstance().hasAltitudeName(name);
+	}
+
+	/**
+	 * Check if the name is a defined northing name
+	 * 
+	 * @param name
+	 *            Name to check
+	 * @return <code>true</code>, if the name is a northing name
+	 */
+    @VisibleForTesting
+	protected boolean checkNorthingName(String name) {
+		if (NorthingSweCoordinateName.isNorthingSweCoordinateName(name)) {
+			return true;
+		}
+		return CoordinateHelper.getInstance().hasNorthingName(name);
+	}
+
+	/**
+	 * Check if the name is a defined easting name
+	 * 
+	 * @param name
+	 *            Name to check
+	 * @return <code>true</code>, if the name is an easting name
+	 */
+    @VisibleForTesting
+	protected boolean checkEastingName(String name) {
+		if (EastingSweCoordinateName.isEastingSweCoordinateName(name)) {
+			return true;
+		}
+		return CoordinateHelper.getInstance().hasEastingName(name);
+	}
 
     /**
      * Check if the {@link AbstractSensorML} contains {@link SmlCapabilities}

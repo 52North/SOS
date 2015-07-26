@@ -87,25 +87,10 @@ public class ObjectEsParameterFactory {
     public static final SingleEsParameter TIME_TIMEINSTANT = new SingleEsParameter("timeInstant", new Description(InformationOrigin.None,
             Operation.None, "Timestamp if the value is TimeInstant type"), ElasticsearchTypeRegistry.dateField);
 
-    public static final SingleEsParameter TIME_SPAN_AS_MONTHS =
-            new SingleEsParameter(
-                    "span-months",
-                    new Description(
-                            InformationOrigin.None,
-                            Operation.None,
-                            "This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances."
-                                    + "The value is YYYYMM format for each months which are  between the start/end timestamps interval. Interval ends are included."),
-                    ElasticsearchTypeRegistry.stringField);
-
-    public static final SingleEsParameter TIME_SPAN_AS_DAYS =
-            new SingleEsParameter(
-                    "span-days",
-                    new Description(
-                            InformationOrigin.None,
-                            Operation.None,
-                            "This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances."
-                                    + "The value is YYYYMMDD format for each days which are  between the start/end timestamps interval. Intarval ends are included."),
-                    ElasticsearchTypeRegistry.stringField);
+    public static final SingleEsParameter TIME_SPAN_AS_DAYS = new SingleEsParameter("span-days", new Description(InformationOrigin.None,
+            Operation.None, "This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances."
+                    + "The value is the date for each days which are  between the start/end timestamps interval. Intarval ends are included."),
+            ElasticsearchTypeRegistry.dateField);
 
     // ---------------- TEMPORAL FILTER INC TIME -------------------//
     public static final SingleEsParameter TEMPORAL_FILTER_OPERATOR = new SingleEsParameter("operator", new Description(InformationOrigin.None,
@@ -170,15 +155,14 @@ public class ObjectEsParameterFactory {
     public static ObjectEsParameter time(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
-        return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT, TIME_SPAN_AS_DAYS,
-                TIME_SPAN_AS_MONTHS);
+        return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT, TIME_SPAN_AS_DAYS);
     }
 
     public static ObjectEsParameter temporalFilter(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT, TIME_SPAN_AS_DAYS,
-                TIME_SPAN_AS_MONTHS, TEMPORAL_FILTER_OPERATOR, TEMPORAL_FILTER_VALUE_REF);
+                TEMPORAL_FILTER_OPERATOR, TEMPORAL_FILTER_VALUE_REF);
     }
 
     public static ObjectEsParameter omObservationConstellation(String objectName, Description description) {

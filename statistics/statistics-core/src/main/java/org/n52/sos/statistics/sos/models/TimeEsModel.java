@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
@@ -42,10 +43,6 @@ import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class TimeEsModel extends AbstractElasticsearchModel {
-
-    private static final int YEAR_PLACE_IN_MONTH = 100;
-    private static final int YEAR_PLACE_IN_DAYS = 10000;
-    private static final int MONTH_PLACE_IN_DAYS = 100;
     private DateTime timeInstant = null;
     private DateTime start = null;
     private DateTime end = null;
@@ -102,7 +99,8 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         put(ObjectEsParameterFactory.TIME_START, start);
         put(ObjectEsParameterFactory.TIME_END, end);
         put(ObjectEsParameterFactory.TIME_TIMEINSTANT, timeInstant);
-        put(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS, calculateSpanMonths(start, end));
+        // put(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS,
+        // calculateSpanMonths(start, end));
         put(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS, calculateSpanDays(start, end));
         // only by TemporalFilter
         put(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR, timeOperator);
@@ -110,33 +108,40 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         return dataMap;
     }
 
-    private List<Integer> calculateSpanMonths(final DateTime start, DateTime end) {
-        if (!checkDates(start, end)) {
-            return null;
-        }
-        List<Integer> result = new ArrayList<>();
-        DateTime temp = new DateTime(start);
-        while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear()) {
-            result.add(temp.getYear() * YEAR_PLACE_IN_MONTH + temp.getMonthOfYear());
-            temp = temp.plusMonths(1);
-        }
-        // add last month
-        result.add(end.getYear() * YEAR_PLACE_IN_MONTH + end.getMonthOfYear());
-        return result;
-    }
+    // private List<Integer> calculateSpanMonths(final DateTime start, DateTime
+    // end) {
+    // if (!checkDates(start, end)) {
+    // return null;
+    // }
+    // List<Integer> result = new ArrayList<>();
+    // DateTime temp = new DateTime(start);
+    // while (temp.getYear() != end.getYear() || temp.getMonthOfYear() !=
+    // end.getMonthOfYear()) {
+    // result.add(temp.getYear() * YEAR_PLACE_IN_MONTH + temp.getMonthOfYear());
+    // temp = temp.plusMonths(1);
+    // }
+    // // add last month
+    // result.add(end.getYear() * YEAR_PLACE_IN_MONTH + end.getMonthOfYear());
+    // return result;
+    // }
 
-    private List<Integer> calculateSpanDays(final DateTime start, DateTime end) {
+    private List<DateTime> calculateSpanDays(final DateTime start, DateTime end) {
         if (!checkDates(start, end)) {
             return null;
         }
-        List<Integer> result = new ArrayList<>();
-        DateTime temp = new DateTime(start);
+        List<DateTime> result = new ArrayList<>();
+        DateTime temp = new DateTime(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth(), 0, 0, DateTimeZone.UTC);
         while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear() || temp.getDayOfMonth() != end.getDayOfMonth()) {
-            result.add(temp.getYear() * YEAR_PLACE_IN_DAYS + temp.getMonthOfYear() * MONTH_PLACE_IN_DAYS + temp.getDayOfMonth());
+            // result.add(temp.getYear() * YEAR_PLACE_IN_DAYS +
+            // temp.getMonthOfYear() * MONTH_PLACE_IN_DAYS +
+            // temp.getDayOfMonth());
+            result.add(temp);
             temp = temp.plusDays(1);
         }
         // add last day
-        result.add(end.getYear() * YEAR_PLACE_IN_DAYS + end.getMonthOfYear() * MONTH_PLACE_IN_DAYS + end.getDayOfMonth());
+        // result.add(end.getYear() * YEAR_PLACE_IN_DAYS + end.getMonthOfYear()
+        // * MONTH_PLACE_IN_DAYS + end.getDayOfMonth());
+        result.add(temp);
         return result;
     }
 

@@ -97,7 +97,6 @@ public class TimeEsModelTest {
         TimePeriod period = new TimePeriod(new DateTime(2015, 1, 1, 0, 0), new DateTime(2015, 3, 10, 0, 0));
         Map<String, Object> map = TimeEsModel.convert(period);
 
-        Assert.assertEquals(3, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS.getName())).size());
         Assert.assertEquals(69, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS.getName())).size());
 
     }
@@ -107,7 +106,6 @@ public class TimeEsModelTest {
         TimePeriod period = new TimePeriod(new DateTime(2014, 12, 1, 0, 0), new DateTime(2015, 2, 5, 0, 0));
         Map<String, Object> map = TimeEsModel.convert(period);
 
-        Assert.assertEquals(3, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS.getName())).size());
         Assert.assertEquals(67, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS.getName())).size());
 
     }

@@ -61,7 +61,8 @@ public class TimeEsModelTest {
         Assert.assertEquals(Long.valueOf(3 * 60 * 60 * 1000), map.get(ObjectEsParameterFactory.TIME_DURARTION.getName()));
     }
 
-    @Test
+    @Test(
+            expected = IllegalArgumentException.class)
     public void invalidStartEndTimePeriod() {
         TimePeriod period = new TimePeriod(DateTime.now().plusHours(3), DateTime.now());
         Map<String, Object> map = TimeEsModel.convert(period);
@@ -89,5 +90,25 @@ public class TimeEsModelTest {
 
         Assert.assertEquals(TimeOperator.TM_After.toString(), map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR.getName()));
         Assert.assertEquals("val-ref", map.get(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF.getName()));
+    }
+
+    @Test
+    public void spansJanuaryFromMarchConversion() {
+        TimePeriod period = new TimePeriod(new DateTime(2015, 1, 1, 0, 0), new DateTime(2015, 3, 10, 0, 0));
+        Map<String, Object> map = TimeEsModel.convert(period);
+
+        Assert.assertEquals(3, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS.getName())).size());
+        Assert.assertEquals(69, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS.getName())).size());
+
+    }
+
+    @Test
+    public void betweenYearSpanConversion() {
+        TimePeriod period = new TimePeriod(new DateTime(2014, 12, 1, 0, 0), new DateTime(2015, 2, 5, 0, 0));
+        Map<String, Object> map = TimeEsModel.convert(period);
+
+        Assert.assertEquals(3, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS.getName())).size());
+        Assert.assertEquals(67, ((List<?>) map.get(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS.getName())).size());
+
     }
 }

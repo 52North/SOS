@@ -87,6 +87,26 @@ public class ObjectEsParameterFactory {
     public static final SingleEsParameter TIME_TIMEINSTANT = new SingleEsParameter("timeInstant", new Description(InformationOrigin.None,
             Operation.None, "Timestamp if the value is TimeInstant type"), ElasticsearchTypeRegistry.dateField);
 
+    public static final SingleEsParameter TIME_SPAN_AS_MONTHS =
+            new SingleEsParameter(
+                    "span-months",
+                    new Description(
+                            InformationOrigin.None,
+                            Operation.None,
+                            "This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances."
+                                    + "The value is YYYYMM format for each months which are  between the start/end timestamps interval. Interval ends are included."),
+                    ElasticsearchTypeRegistry.stringField);
+
+    public static final SingleEsParameter TIME_SPAN_AS_DAYS =
+            new SingleEsParameter(
+                    "span-days",
+                    new Description(
+                            InformationOrigin.None,
+                            Operation.None,
+                            "This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances."
+                                    + "The value is YYYYMMDD format for each days which are  between the start/end timestamps interval. Intarval ends are included."),
+                    ElasticsearchTypeRegistry.stringField);
+
     // ---------------- TEMPORAL FILTER INC TIME -------------------//
     public static final SingleEsParameter TEMPORAL_FILTER_OPERATOR = new SingleEsParameter("operator", new Description(InformationOrigin.None,
             Operation.None, "Operator"), ElasticsearchTypeRegistry.stringField);
@@ -123,59 +143,52 @@ public class ObjectEsParameterFactory {
     // ---------------------------------------//
     // --------- COMPOSITE PARAMETERS --------//
     // ---------------------------------------//
-    public static ObjectEsParameter geoLocation(String objectName,
-            Description description) {
+    public static ObjectEsParameter geoLocation(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, GEOLOC_COUNTRY_CODE, GEOLOC_CITY_NAME, GEOLOC_GEO_POINT);
     }
 
-    public static ObjectEsParameter bytesWritten(String objectName,
-            Description description) {
+    public static ObjectEsParameter bytesWritten(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, BYTES, DISPLAY_BYTES);
     }
 
-    public static ObjectEsParameter extension(String objectName,
-            Description description) {
+    public static ObjectEsParameter extension(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, EXTENSION_DEFINITION, EXTENSION_IDENTIFIER, EXTENSION_VALUE);
     }
 
-    public static ObjectEsParameter spatialFilter(String objectName,
-            Description description) {
+    public static ObjectEsParameter spatialFilter(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, SPATIAL_FILTER_OPERATOR, SPATIAL_FILTER_SHAPE, SPATIAL_FILTER_VALUE_REF);
     }
 
-    public static ObjectEsParameter time(String objectName,
-            Description description) {
+    public static ObjectEsParameter time(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
-        return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT);
+        return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT, TIME_SPAN_AS_DAYS,
+                TIME_SPAN_AS_MONTHS);
     }
 
-    public static ObjectEsParameter temporalFilter(String objectName,
-            Description description) {
+    public static ObjectEsParameter temporalFilter(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
-        return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT, TEMPORAL_FILTER_OPERATOR,
-                TEMPORAL_FILTER_VALUE_REF);
+        return new ObjectEsParameter(objectName, description, TIME_DURARTION, TIME_START, TIME_END, TIME_TIMEINSTANT, TIME_SPAN_AS_DAYS,
+                TIME_SPAN_AS_MONTHS, TEMPORAL_FILTER_OPERATOR, TEMPORAL_FILTER_VALUE_REF);
     }
 
-    public static ObjectEsParameter omObservationConstellation(String objectName,
-            Description description) {
+    public static ObjectEsParameter omObservationConstellation(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, OMOCONSTELL_PROCEDURE, OMOCONSTELL_OBSERVABLE_PROPERTY,
                 OMOCONSTELL_FEATURE_OF_INTEREST, OMOCONSTELL_OBSERVATION_TYPE);
     }
 
-    public static ObjectEsParameter omObservation(String objectName,
-            Description description) {
+    public static ObjectEsParameter omObservation(String objectName, Description description) {
         Objects.requireNonNull(objectName);
 
         return new ObjectEsParameter(objectName, description, OMOBS_CONSTELLATION, OMOBS_SAMPLING_GEOMETRY, OMOBS_PHENOMENON_TIME, OMOBS_RESULT_TIME,

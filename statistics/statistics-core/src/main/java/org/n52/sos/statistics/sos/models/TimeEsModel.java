@@ -28,6 +28,7 @@
  */
 package org.n52.sos.statistics.sos.models;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +43,9 @@ import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class TimeEsModel extends AbstractElasticsearchModel {
 
+    private static final int YEAR_PLACE_IN_MONTH = 100;
+    private static final int YEAR_PLACE_IN_DAYS = 10000;
+    private static final int MONTH_PLACE_IN_DAYS = 100;
     private DateTime timeInstant = null;
     private DateTime start = null;
     private DateTime end = null;
@@ -98,10 +102,53 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         put(ObjectEsParameterFactory.TIME_START, start);
         put(ObjectEsParameterFactory.TIME_END, end);
         put(ObjectEsParameterFactory.TIME_TIMEINSTANT, timeInstant);
+        put(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS, calculateSpanMonths(start, end));
+        put(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS, calculateSpanDays(start, end));
         // only by TemporalFilter
         put(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR, timeOperator);
         put(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF, valueReference);
         return dataMap;
+    }
+
+    private List<Integer> calculateSpanMonths(final DateTime start, DateTime end) {
+        if (!checkDates(start, end)) {
+            return null;
+        }
+        List<Integer> result = new ArrayList<>();
+        DateTime temp = new DateTime(start);
+        while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear()) {
+            result.add(temp.getYear() * YEAR_PLACE_IN_MONTH + temp.getMonthOfYear());
+            temp = temp.plusMonths(1);
+        }
+        // add last month
+        result.add(end.getYear() * YEAR_PLACE_IN_MONTH + end.getMonthOfYear());
+        return result;
+    }
+
+    private List<Integer> calculateSpanDays(final DateTime start, DateTime end) {
+        if (!checkDates(start, end)) {
+            return null;
+        }
+        List<Integer> result = new ArrayList<>();
+        DateTime temp = new DateTime(start);
+        while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear() || temp.getDayOfMonth() != end.getDayOfMonth()) {
+            result.add(temp.getYear() * YEAR_PLACE_IN_DAYS + temp.getMonthOfYear() * MONTH_PLACE_IN_DAYS + temp.getDayOfMonth());
+            temp = temp.plusDays(1);
+        }
+        // add last day
+        result.add(end.getYear() * YEAR_PLACE_IN_DAYS + end.getMonthOfYear() * MONTH_PLACE_IN_DAYS + end.getDayOfMonth());
+        return result;
+    }
+
+    private boolean checkDates(DateTime start, DateTime end) {
+        if (start == null && end == null) {
+            return false;
+        }
+        if (!start.isBefore(end)) {
+            throw new IllegalArgumentException(String.format("Start date is not before the end date. Start date %s end date %s", start.toString(),
+                    end.toString()));
+        }
+        return true;
     }
 
     public DateTime getTimeInstant() {

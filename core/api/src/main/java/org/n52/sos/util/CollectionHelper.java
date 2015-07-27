@@ -469,5 +469,71 @@ public final class CollectionHelper {
     	}
     	return result;
     }
+    
+	/**
+	 * Parse CSV string to {@link List}
+	 * 
+	 * @param csv
+	 *            CSV string
+	 * @return {@link List} with separated values
+	 */
+    public static List<String> csvStringToList(String csv) {
+    	return svStringToList(csv, Constants.COMMA_STRING);
+    }
+    
+	/**
+	 * Parse separated value string to {@link List}
+	 * 
+	 * @param sv
+	 *            Separated value string
+	 * @param separator
+	 *            Separator character
+	 * @return {@link List} with separated values
+	 */
+	public static List<String> svStringToList(String sv, String separator) {
+		return Lists.newArrayList(sv, separator);
+	}
+
+	/**
+	 * Parse CSV string to {@link Set}
+	 * 
+	 * @param csv
+	 *            CSV string
+	 * @return {@link Set} with separated values
+	 */
+	public static Set<String> csvStringToSet(String csv) {
+		return svStringToSet(csv, Constants.COMMA_STRING);
+	}
+
+	/**
+	 * Parse separated value string to {@link Set}
+	 * 
+	 * @param sv
+	 *            Separated value string
+	 * @param separator
+	 *            Seperator character
+	 * @return {@link Set} with separated values
+	 */
+	public static Set<String> svStringToSet(String sv, String separator) {
+		return Sets.newHashSet(svStringToArray(sv, separator));
+	}
+
+	/**
+	 * Parse separated value string to array with trimmed values
+	 * 
+	 * @param sv
+	 *            Separated value string
+	 * @param separator
+	 *            Separator character
+	 * @return Array with separated values
+	 */
+	public static String[] svStringToArray(String sv, String separator) {
+		String[] split = sv.split(separator);
+		for (int i = 0; i < split.length; i++) {
+			split[i] = split[i].trim();
+		}
+		return split;
+	}
+    
 
 }

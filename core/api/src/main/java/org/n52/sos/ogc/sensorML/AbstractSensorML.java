@@ -160,6 +160,14 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return this;
     }
+    
+    public Optional<SmlCharacteristics> findCharacteristics(Predicate<SmlCharacteristics> predicate) {
+        if (isSetCharacteristics()) {
+            return Iterables.tryFind(this.characteristics, predicate);
+        } else {
+            return Optional.absent();
+        }
+    }
 
     public AbstractSensorML addCharacteristic(final SmlCharacteristics characteristic) {
         characteristics.add(characteristic);

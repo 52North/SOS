@@ -1111,10 +1111,54 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return null;
     }
+    
+    /**
+     * Adds an attribute to {@link NetcdfFileWriter} if the definition was found
+     * in {@link AbstractSensorML}
+     * 
+     * @param writer
+     *            {@link NetcdfFileWriter} to add attribute
+     * @param sml
+     *            {@link AbstractSensorML} to check for
+     * @param identifier
+     *            The definition of the value
+     * @param attributeName
+     *            The attribute name
+     * @return <code>true</code>, if the attribute was added
+     */
+    protected boolean addAttributeIfExists(NetcdfFileWriter writer, AbstractSensorML sml, String identifier,
+            String attributeName) {
+        if (!addAttributeIfIdentifierExists(writer, sml, identifier, attributeName)) {
+            return addAttributeIfClassifierExists(writer, sml, identifier, attributeName);
+        }
+        return false;
+    }
+    
+    /**
+     * Adds an attribute to {@link Variable} if the definition was found in
+     * {@link AbstractSensorML}
+     * 
+     * @param variable
+     *            {@link Variable} to add attribute
+     * @param sml
+     *            {@link AbstractSensorML} to check for
+     * @param identifier
+     *            The definition of the value
+     * @param attributeName
+     *            The attribute name
+     * @return <code>true</code>, if the attribute was added
+     */
+    protected boolean addAttributeIfExists(Variable variable, AbstractSensorML sml, String identifier,
+            String attributeName) {
+        if (!addAttributeIfIdentifierExists(variable, sml, identifier, attributeName)) {
+            return addAttributeIfClassifierExists(variable, sml, identifier, attributeName);
+        }
+        return false;
+    }
 
-    protected boolean addAttributeIfIdentifierExists(NetcdfFileWriter writer, AbstractSensorML system,
+    protected boolean addAttributeIfIdentifierExists(NetcdfFileWriter writer, AbstractSensorML sml,
             String identifierDefinition, String attributeName) {
-        String value = getIdentifier(system, identifierDefinition);
+        String value = getIdentifier(sml, identifierDefinition);
         if (value != null) {
             writer.addGroupAttribute(null, new Attribute(attributeName, value));
             return true;
@@ -1122,9 +1166,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return false;
     }
 
-    protected boolean addAttributeIfIdentifierExists(Variable variable, AbstractSensorML system,
+    protected boolean addAttributeIfIdentifierExists(Variable variable, AbstractSensorML sml,
             String identifierDefinition, String attributeName) {
-        String value = getIdentifier(system, identifierDefinition);
+        String value = getIdentifier(sml, identifierDefinition);
         if (value != null) {
             variable.addAttribute(new Attribute(attributeName, value));
             return true;
@@ -1141,9 +1185,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return null;
     }
 
-    protected boolean addAttributeIfClassifierExists(NetcdfFileWriter writer, AbstractSensorML system,
+    protected boolean addAttributeIfClassifierExists(NetcdfFileWriter writer, AbstractSensorML sml,
             String classifierDefinition, String attributeName) {
-        String value = getClassifierValue(system, classifierDefinition);
+        String value = getClassifierValue(sml, classifierDefinition);
         if (value != null) {
             writer.addGroupAttribute(null, new Attribute(attributeName, value));
             return true;
@@ -1151,9 +1195,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         return false;
     }
 
-    protected boolean addAttributeIfClassifierExists(Variable variable, System system, String classifierDefinition,
+    protected boolean addAttributeIfClassifierExists(Variable variable, AbstractSensorML sml, String classifierDefinition,
             String attributeName) {
-        String value = getClassifierValue(system, classifierDefinition);
+        String value = getClassifierValue(sml, classifierDefinition);
         if (value != null) {
             variable.addAttribute(new Attribute(attributeName, value));
             return true;

@@ -29,7 +29,7 @@
 # Cluster name identifies your cluster for auto-discovery. If you're running
 # multiple clusters on the same network, make sure you're using unique names.
 #
-cluster.name: ogc-statistics-cluster
+cluster.name: elasticsearch
 
 
 #################################### Node #####################################
@@ -37,7 +37,7 @@ cluster.name: ogc-statistics-cluster
 # Node names are generated dynamically on startup, so you're relieved
 # from configuring them manually. You can tie this node to a specific name:
 #
-node.name: "Michael Embedded Jordan"
+node.name: "Embedded Elasticsearch"
 
 # Every node can be configured to allow or deny being eligible as the master,
 # and to allow or deny to store the data.

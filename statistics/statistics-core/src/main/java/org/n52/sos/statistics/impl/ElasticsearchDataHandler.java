@@ -52,6 +52,7 @@ import org.n52.sos.statistics.api.ElasticsearchSettings;
 import org.n52.sos.statistics.api.interfaces.datahandler.IAdminDataHandler;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.sos.statistics.impl.server.EmbeddedElasticsearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,8 @@ public class ElasticsearchDataHandler implements IStatisticsDataHandler {
     private ElasticsearchSettings settings;
     private boolean isLoggingEnabled = false;
     private IAdminDataHandler adminHandler;
+    @Inject
+    private EmbeddedElasticsearch embeddedServer;
 
     public ElasticsearchDataHandler() {
     }
@@ -126,6 +129,11 @@ public class ElasticsearchDataHandler implements IStatisticsDataHandler {
         });
         this.client = cl;
         logger.info("ElasticSearch data handler starting in Remote mode");
+    }
+
+    private void initEmbeddedMode() {
+        embeddedServer.init();
+        node = NodeBuilder.nodeBuilder().client(true).clusterName("elasticsearch").node();
     }
 
     @Override

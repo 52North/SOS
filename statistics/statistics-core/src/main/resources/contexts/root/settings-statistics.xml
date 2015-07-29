@@ -27,16 +27,19 @@
 		<property name="key" value="statistics.elasticsearch.connection_mode" />
 		<property name="title" value="Connection mode" />
 		<property name="description"
-			value="Connection mode to the Elasticsearch cluster." />
+			value="Connection mode to the Elasticsearch cluster. The 'Node client' and the 'Transport client' connects to an external Elasticsearch server.
+			 The 'Embedded Server' mode starts a local elasticsearch server which stores the data in the WEB-INF/elasticsearch directory." />
 		<property name="order" value="2.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />
 		<property name="defaultValue" value="statistics.elasticsearch.connection_mode.node" />
 		<property name="options">
 			<map>
 				<entry key="statistics.elasticsearch.connection_mode.node"
-					value="Node" />
+					value="Node client" />
 				<entry key="statistics.elasticsearch.connection_mode.transport_client"
 					value="Transport client" />
+					<entry key="statistics.elasticsearch.connection_mode.embedded_server"
+					value="Embedded server" />
 			</map>
 		</property>
 	</bean>

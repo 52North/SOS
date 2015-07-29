@@ -43,10 +43,11 @@ public class ElasticsearchSettingsKeys {
     public static final String UUID = "statistics.elasticsearch.uuid";
     public static final String CLUSTER_NODES = "statistics.elasticsearch.cluster_nodes";
 
-    // lanMode vs transportclient mode CHoice
+    // lanMode vs transportclient mode vs embedded elasticsearch server
     public static final String CONNECTION_MODE = "statistics.elasticsearch.connection_mode";
     public static final String CONNECTION_MODE_NODE = "statistics.elasticsearch.connection_mode.node";
     public static final String CONNECTION_MODE_TRANSPORT_CLIENT = "statistics.elasticsearch.connection_mode.transport_client";
+    public static final String CONNECTION_MODE_EMBEDDED_SERVER = "statistics.elasticsearch.connection_mode.embedded_server";
 
     public static final String KIBANA_CONFIG_PATH = "statistics.elasticsearch.kibana_config_file";
     public static final String KIBANA_CONFIG_ENABLE = "statistics.elasticsearch.kibana_config_enable";

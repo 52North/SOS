@@ -48,7 +48,7 @@ public class SosExceptionEventResolverIt extends ElasticsearchAwareTest {
     private IStatisticsDataHandler dataHandler;
 
     @Test
-    public void persistRequestToDb() throws InterruptedException {
+    public void persistRequestToDb() throws Exception {
         JSONDecodingException exp = new JSONDecodingException("message");
         resolve.setException(exp);
 

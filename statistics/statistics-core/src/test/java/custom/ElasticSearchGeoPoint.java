@@ -92,7 +92,6 @@ public class ElasticSearchGeoPoint extends SpringBaseTest {
     @After
     public void down() {
         loc.destroy();
-        handler.destroy();
     }
 
 }

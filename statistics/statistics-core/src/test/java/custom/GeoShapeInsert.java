@@ -34,7 +34,6 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
@@ -42,9 +41,9 @@ import org.n52.sos.statistics.sos.SosDataMapping;
 import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
 import org.n52.sos.util.JTSHelper;
 
-import basetest.SpringBaseTest;
-
 import com.vividsolutions.jts.geom.Geometry;
+
+import basetest.SpringBaseTest;
 
 public class GeoShapeInsert extends SpringBaseTest {
 
@@ -52,7 +51,7 @@ public class GeoShapeInsert extends SpringBaseTest {
     IStatisticsDataHandler handler;
 
     @Test
-    public void insert() throws OwsExceptionReport {
+    public void insert() throws Exception {
         Geometry geom = JTSHelper.createGeometryFromWKT("POLYGON ((30 10, 40 40, 20 40, 10 20, 30 10))", 4326);
         SpatialFilter filter = new SpatialFilter(SpatialOperator.BBOX, geom, "value-ref");
 

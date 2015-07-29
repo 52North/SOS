@@ -47,9 +47,6 @@ import org.n52.sos.statistics.api.mappings.MetadataDataMapping;
 @Configurable
 public class ElasticsearchSettings {
 
-    // private static final Logger logger =
-    // LoggerFactory.getLogger(ElasticsearchSettings.class);
-
     @Inject
     private SettingsService settingsService;
 
@@ -64,9 +61,9 @@ public class ElasticsearchSettings {
     private String clusterName;
 
     /**
-     * Is the connection type Remote or LAN
+     * Is the connection type Remote or LAN or Embedded server
      */
-    private boolean nodeConnectionMode = true;
+    private String nodeConnectionMode = ElasticsearchSettingsKeys.CONNECTION_MODE_NODE;
 
     /**
      * The ElasticSearch indexId of the date to be persisted under
@@ -194,7 +191,7 @@ public class ElasticsearchSettings {
         return true;
     }
 
-    public boolean isNodeConnectionMode() {
+    public String getNodeConnectionMode() {
         return nodeConnectionMode;
     }
 
@@ -205,14 +202,14 @@ public class ElasticsearchSettings {
      * @param choice
      *            {@link ElasticsearchSettingsKeys#CONNECTION_MODE_NODE} or
      *            {@link ElasticsearchSettingsKeys#CONNECTION_MODE_TRANSPORT_CLIENT}
+     *            {@link ElasticsearchSettingsKeys#CONNECTION_MODE_EMBEDDED_SERVER}
      */
     @Setting(ElasticsearchSettingsKeys.CONNECTION_MODE)
     public void setNodeConnectionMode(String choice) {
-        this.nodeConnectionMode = choice.equalsIgnoreCase(ElasticsearchSettingsKeys.CONNECTION_MODE_NODE);
+        nodeConnectionMode = choice;
     }
 
-    private void saveStringValueToConfigFile(String key,
-            String value) {
+    private void saveStringValueToConfigFile(String key, String value) {
         JsonSettingValue<String> newValue = new JsonSettingValue<String>(SettingType.STRING, key, value);
         settingsService.changeSetting(newValue);
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -9,23 +8,21 @@
 	<bean id="elasticsearchSettings" class="org.n52.sos.statistics.api.ElasticsearchSettings" primary="true">
 		<property name="loggingEnabled" value="true"></property>
 		<property name="clusterName" value="elasticsearch"></property>
-		<property name="nodeConnectionMode" value="true"></property>
+		<property name="nodeConnectionMode" value="statistics.elasticsearch.connection_mode.node"></property>
 		<property name="indexId" value="ogc-statistics-index"></property>
 		<property name="typeId" value="ogc-type"></property>
 		<property name="uuid" value="test-uuid"></property>
 		<property name="clusterNodes" value="localhost"></property>
 	</bean>
-	
-		<bean id="elasticsearchDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchDataHandler"
-		scope="singleton" depends-on="elasticsearchSettings" primary="true" init-method="init"></bean>
-		
-	<bean id="statisticsLocationUtil" class="org.n52.sos.statistics.impl.StatisticsLocationUtil" primary="true"
-		scope="singleton" init-method="init"></bean>
 
-    <bean id="settingsService" class="mock.MockSettingsService" />
-    
-    <bean id="serviceBus" class="org.n52.iceland.event.ServiceEventBus"></bean>
-    
-    
+	<bean id="adminDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" primary="true"/>
+
+	<bean id="statisticsLocationUtil" class="org.n52.sos.statistics.impl.StatisticsLocationUtil" primary="true" init-method="init"></bean>
+
+	<bean id="settingsService" class="mock.MockSettingsService" />
+	
+	<bean id="servletContext" class="mock.MockServletContext"></bean>
+
+	<bean id="serviceBus" class="org.n52.iceland.event.ServiceEventBus"></bean>
 
 </beans>

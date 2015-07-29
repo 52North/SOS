@@ -33,61 +33,27 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.ElasticsearchSettingsKeys;
+import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
 import basetest.ElasticsearchAwareTest;
 
 public class ElasticSearchDataHandlerTest extends ElasticsearchAwareTest {
 
     @Inject
-    private ElasticsearchDataHandler handler;
-
-    @Inject
-    private ElasticsearchSettings settings;
+    private IStatisticsDataHandler dataHandler;
 
     @Test
-    public void connectInLanMode() throws Exception {
-        settings.setNodeConnectionMode(ElasticsearchSettingsKeys.CONNECTION_MODE_NODE);
-        handler.init();
-
+    public void persistBasicData() throws InterruptedException {
         Map<String, Object> data = new HashMap<>();
-        data.put("test", "test-string");
-        IndexResponse idx = handler.persist(data);
+        data.put("alma", "körte");
+        dataHandler.persist(data);
 
         Thread.sleep(2000);
 
-        String ret = getEmbeddedClient().prepareGet(idx.getIndex(), idx.getType(), idx.getId()).get().getSourceAsString();
-        Assert.assertNotNull(ret);
-    }
-
-    @Test
-    public void connectInRemoteMode() throws InterruptedException {
-        settings.setNodeConnectionMode(ElasticsearchSettingsKeys.CONNECTION_MODE_TRANSPORT_CLIENT);
-        handler.init();
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("test", "test-string");
-        IndexResponse idx = handler.persist(data);
-
-        Thread.sleep(2000);
-
-        String ret = getEmbeddedClient().prepareGet(idx.getIndex(), idx.getType(), idx.getId()).get().getSourceAsString();
-        Assert.assertNotNull(ret);
-    }
-
-    @Test
-    public void enableKibanaPreConfLoadingFromDefaultFile() throws InterruptedException {
-        settings.setKibanaConfigEnable(true);
-        settings.setKibanaConfPath(null);
-
-        handler.init();
-
-        Thread.sleep(1500);
-
-        Assert.assertTrue(getEmbeddedClient().prepareExists(".kibana").get().exists());
+        SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
+        Assert.assertEquals("körte", response.getHits().getHits()[0].getSource().get("alma"));
     }
 }

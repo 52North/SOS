@@ -66,7 +66,7 @@ public abstract class DefaultElasticsearchSchemas {
 
     /**
      * Call this method in your subclass and point it to your class where the
-     * mappings exists This class will process the
+     * mappings exists. This class will process the
      * <code>public static final {@link AbstractEsParameter}</code> fields only.
      * 
      * @param schemaClass
@@ -81,8 +81,7 @@ public abstract class DefaultElasticsearchSchemas {
         }
     }
 
-    private void resolveParameterField(AbstractEsParameter value,
-            Map<String, Object> map) {
+    private void resolveParameterField(AbstractEsParameter value, Map<String, Object> map) {
         if (value instanceof SingleEsParameter) {
             SingleEsParameter single = (SingleEsParameter) value;
             map.put(single.getName(), single.getTypeAsMap());

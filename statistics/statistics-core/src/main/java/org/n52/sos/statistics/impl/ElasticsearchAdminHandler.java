@@ -28,23 +28,38 @@
  */
 package org.n52.sos.statistics.impl;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+
+import org.apache.commons.io.IOUtils;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.IndicesAdminClient;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.base.Joiner;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.node.Node;
+import org.elasticsearch.node.NodeBuilder;
 import org.joda.time.DateTimeZone;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
+import org.n52.sos.statistics.api.ElasticsearchSettingsKeys;
 import org.n52.sos.statistics.api.interfaces.datahandler.IAdminDataHandler;
 import org.n52.sos.statistics.api.mappings.MetadataDataMapping;
 import org.n52.sos.statistics.api.utils.KibanaImporter;
+import org.n52.sos.statistics.impl.server.EmbeddedElasticsearch;
 import org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,16 +70,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 public class ElasticsearchAdminHandler implements IAdminDataHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchAdminHandler.class);
-    /**
-     * Version of the database schema.
-     */
-    private final Client client;
-    private final ElasticsearchSettings settings;
 
-    public ElasticsearchAdminHandler(Client client, ElasticsearchSettings settings) {
-        this.client = client;
-        this.settings = settings;
-    }
+    private Client client;
+    private Node node;
+    @Inject
+    private ElasticsearchSettings settings;
+    private EmbeddedElasticsearch embeddedServer = null;
+    @Inject
+    private ServletContext context;
 
     @Override
     public synchronized void deleteIndex(String index) {
@@ -83,7 +96,7 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
             Integer version = getCurrentVersion();
             logger.info("Elasticsearch schema version is {}", version);
             if (version == null) {
-                throw new ConfigurationError("Database inconsistency metadata version not found in type %s", MetadataDataMapping.METADATA_TYPE_NAME);
+                throw new ConfigurationError("Database inconsistency. Metadata version not found in type %s", MetadataDataMapping.METADATA_TYPE_NAME);
             }
             if (version != schemas.getSchemaVersion()) {
                 throw new ConfigurationError(
@@ -109,9 +122,8 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
     }
 
     private Integer getCurrentVersion() {
-        GetResponse resp =
-                client.prepareGet(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
-                        .setOperationThreaded(false).get();
+        GetResponse resp = client.prepareGet(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
+                .setOperationThreaded(false).get();
         if (resp.isExists()) {
             Object versionString = resp.getSourceAsMap().get(MetadataDataMapping.METADATA_VERSION_FIELD.getName());
             if (versionString == null) {
@@ -126,9 +138,8 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
 
     @SuppressWarnings("unchecked")
     private void addUuidToMetadataIfNeeded(String uuid) throws ElasticsearchException {
-        GetResponse resp =
-                client.prepareGet(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
-                        .setOperationThreaded(false).get();
+        GetResponse resp = client.prepareGet(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
+                .setOperationThreaded(false).get();
 
         Object retValues = resp.getSourceAsMap().get(MetadataDataMapping.METADATA_UUIDS_FIELD.getName());
         List<String> values;
@@ -164,4 +175,140 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
         client.prepareIndex(settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID).setSource(data).get();
         logger.info("Initial metadata is created ceated in {}/{}", settings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME);
     }
+
+    /**
+     * Starts client mode in local Node mode.
+     */
+    private void initNodeMode() {
+        Objects.requireNonNull(settings.getClusterName());
+        Objects.requireNonNull(settings.getClusterNodes());
+
+        Builder settingsBuilder = ImmutableSettings.settingsBuilder();
+        settingsBuilder.put("discovery.zen.ping.unicast.hosts", Joiner.on(",").join(settings.getClusterNodes()));
+
+        node = NodeBuilder.nodeBuilder().settings(settingsBuilder).client(true).clusterName(settings.getClusterName()).node();
+        client = node.client();
+        logger.info("ElasticSearch data handler starting in LAN mode");
+
+    }
+
+    /**
+     * Starts client mode in {@link TransportClient} remote mode
+     */
+    private void initTransportMode() {
+        Objects.requireNonNull(settings.getClusterName());
+        Objects.requireNonNull(settings.getClusterNodes());
+
+        Builder tcSettings = ImmutableSettings.settingsBuilder();
+        tcSettings.put("cluster.name", settings.getClusterName());
+
+        TransportClient cl = new TransportClient(tcSettings);
+        // nodes has format host[:port]
+        settings.getClusterNodes().stream().forEach(i -> {
+            if (i.contains(":")) {
+                String[] split = i.split(":");
+                cl.addTransportAddress(new InetSocketTransportAddress(split[0], Integer.valueOf(split[1])));
+            } else {
+                // default communication port
+                cl.addTransportAddress(new InetSocketTransportAddress(i, 9300));
+            }
+        });
+        this.client = cl;
+        logger.info("ElasticSearch data handler starting in Remote mode");
+
+    }
+
+    private void initEmbeddedMode() {
+        embeddedServer = new EmbeddedElasticsearch();
+        embeddedServer.setHomePath(context.getRealPath("/WEB-INF").concat("/elasticsearch"));
+        embeddedServer.init();
+        client = embeddedServer.getClient();
+        logger.info("ElasticSearch data handler starting in EMBEDDED mode");
+    }
+
+    @Override
+    public void init() {
+        Objects.requireNonNull(settings);
+
+        logger.info("Initializing ElasticSearch Statatistics connection");
+        logger.info("Settings {}", settings.toString());
+
+        Objects.requireNonNull(settings.getIndexId());
+        Objects.requireNonNull(settings.getTypeId());
+        Objects.requireNonNull(settings.getNodeConnectionMode());
+
+        if (settings.isLoggingEnabled()) {
+            // init client and local node or embedded mode
+            if (settings.getNodeConnectionMode().equalsIgnoreCase(ElasticsearchSettingsKeys.CONNECTION_MODE_NODE)) {
+                initNodeMode();
+            } else if (settings.getNodeConnectionMode().equalsIgnoreCase(ElasticsearchSettingsKeys.CONNECTION_MODE_TRANSPORT_CLIENT)) {
+                initTransportMode();
+            } else {
+                initEmbeddedMode();
+            }
+
+            if (client != null) {
+                // create schema
+                try {
+                    createSchema();
+                } catch (Exception e) {
+                    logger.error("Error during schema creation", e);
+                    destroy();
+                }
+
+                // deploy kibana configurations
+                if (settings.isKibanaConfigEnable()) {
+                    logger.info("Install preconfigured kibana settings");
+                    try {
+                        String json = null;
+                        if (settings.getKibanaConfPath() == null || settings.getKibanaConfPath().trim().isEmpty()) {
+                            logger.info("No path is defined. Use default settings values");
+                            json = IOUtils.toString(this.getClass().getResourceAsStream("/kibana/kibana_config.json"));
+                        } else {
+                            logger.info("Use content of path {}", settings.getKibanaConfPath());
+                            json = IOUtils.toString(new FileInputStream(settings.getKibanaConfPath()));
+                        }
+                        importPreconfiguredKibana(json);
+                    } catch (Exception e) {
+                        logger.error("Error during kibana config deployment", e);
+                    }
+                }
+            }
+        } else {
+            logger.info("Statistics collection is not enabled. Data will not will be collected.");
+        }
+
+    }
+
+    @Override
+    public void destroy() {
+        try {
+            if (embeddedServer != null) {
+                embeddedServer.destroy();
+            }
+            if (client != null) {
+                logger.info("Closing ElasticSearch client");
+                client.close();
+            }
+            if (node != null) {
+                if (!node.isClosed()) {
+                    logger.info("Closing ElasticSearch node");
+                    node.close();
+                }
+            }
+        } catch (ElasticsearchException e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public ElasticsearchSettings getElasticsearchSettings() {
+        return settings;
+    }
+
+    @Override
+    public Client getElasticsearchClient() {
+        return client;
+    }
+
 }

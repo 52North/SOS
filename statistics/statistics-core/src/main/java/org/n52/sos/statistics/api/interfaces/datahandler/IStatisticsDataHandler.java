@@ -30,30 +30,19 @@ package org.n52.sos.statistics.api.interfaces.datahandler;
 
 import java.util.Map;
 
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.lifecycle.Destroyable;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
 
-public interface IStatisticsDataHandler extends Constructable, Destroyable {
+public interface IStatisticsDataHandler {
 
     /**
-     * Perist the date to the database
+     * Persist the date to the database
      * 
      * @param dataMap
      *            keys are property names and the values are the objects
      * @throws Exception
      */
-    public IndexResponse persist(Map<String, Object> dataMap) throws ElasticsearchException;
-
-    /**
-     * Returns the currently active settings
-     * 
-     * @return
-     */
-    public ElasticsearchSettings getCurrentSettings();
+    public IndexResponse persist(Map<String, Object> dataMap);
 
     /**
      * Returns true if the statistics module is enabled otherwise false
@@ -67,6 +56,6 @@ public interface IStatisticsDataHandler extends Constructable, Destroyable {
      * 
      * @return
      */
-    Client getClient();
+    public Client getClient();
 
 }

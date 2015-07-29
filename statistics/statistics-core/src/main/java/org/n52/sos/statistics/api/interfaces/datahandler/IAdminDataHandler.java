@@ -28,12 +28,20 @@
  */
 package org.n52.sos.statistics.api.interfaces.datahandler;
 
+import org.elasticsearch.client.Client;
+import org.n52.iceland.lifecycle.Constructable;
+import org.n52.iceland.lifecycle.Destroyable;
+import org.n52.sos.statistics.api.ElasticsearchSettings;
 
-public interface IAdminDataHandler {
+public interface IAdminDataHandler extends Constructable, Destroyable {
 
     public void deleteIndex(String index);
 
     public void createSchema();
-    
+
     public void importPreconfiguredKibana(String configAsJson) throws Exception;
+
+    public Client getElasticsearchClient();
+
+    public ElasticsearchSettings getElasticsearchSettings();
 }

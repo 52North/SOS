@@ -28,200 +28,55 @@
  */
 package org.n52.sos.statistics.impl;
 
-import java.io.FileInputStream;
-import java.util.Calendar;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import org.apache.commons.io.IOUtils;
-import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.base.Joiner;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.node.NodeBuilder;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
 import org.n52.sos.statistics.api.interfaces.datahandler.IAdminDataHandler;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.sos.statistics.impl.server.EmbeddedElasticsearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Singleton
 public class ElasticsearchDataHandler implements IStatisticsDataHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ElasticsearchDataHandler.class);
 
-    private Node node;
-    private Client client;
     @Inject
     private ElasticsearchSettings settings;
-    private boolean isLoggingEnabled = false;
-    private IAdminDataHandler adminHandler;
-    @Inject
-    private EmbeddedElasticsearch embeddedServer;
 
-    public ElasticsearchDataHandler() {
-    }
+    @Inject
+    private IAdminDataHandler adminHandler;
 
     @Override
-    public IndexResponse persist(Map<String, Object> dataMap) throws ElasticsearchException {
-        if (client == null) {
-            throw new ElasticsearchException("Client is not initialized. Data will not be persisted.");
-        }
+    public IndexResponse persist(Map<String, Object> dataMap) {
         if (!settings.isLoggingEnabled()) {
             return null;
         }
+        if (adminHandler.getElasticsearchClient() == null) {
+            throw new NullPointerException("Client is not initialized. Data will not be persisted.");
+        }
 
-        dataMap.put(ServiceEventDataMapping.TIMESTAMP_FIELD.getName(), Calendar.getInstance(DateTimeZone.UTC.toTimeZone()));
+        dataMap.put(ServiceEventDataMapping.TIMESTAMP_FIELD.getName(), DateTime.now(DateTimeZone.UTC));
         dataMap.put(ServiceEventDataMapping.UUID_FIELD.getName(), settings.getUuid());
         logger.debug("Persisting {}", dataMap);
-        IndexResponse response =
-                client.prepareIndex(settings.getIndexId(), settings.getTypeId()).setOperationThreaded(false).setSource(dataMap).get();
+        IndexResponse response = adminHandler.getElasticsearchClient().prepareIndex(settings.getIndexId(), settings.getTypeId())
+                .setOperationThreaded(false).setSource(dataMap).get();
         return response;
-    }
-
-    /**
-     * Starts client mode in local LAN mode.
-     */
-    private void initLanMode() {
-        Objects.requireNonNull(settings.getClusterName());
-        Objects.requireNonNull(settings.getClusterNodes());
-
-        Builder settingsBuilder = ImmutableSettings.settingsBuilder();
-        settingsBuilder.put("discovery.zen.ping.unicast.hosts", Joiner.on(",").join(settings.getClusterNodes()));
-
-        node = NodeBuilder.nodeBuilder().settings(settingsBuilder).client(true).clusterName(settings.getClusterName()).node();
-        client = node.client();
-        logger.info("ElasticSearch data handler starting in LAN mode");
-
-    }
-
-    /**
-     * Starts client mode in {@link TransportClient} remote mode
-     */
-    private void initRemoteMode() {
-        Objects.requireNonNull(settings.getClusterName());
-        Objects.requireNonNull(settings.getClusterNodes());
-
-        Builder tcSettings = ImmutableSettings.settingsBuilder();
-        tcSettings.put("cluster.name", settings.getClusterName());
-
-        TransportClient cl = new TransportClient(tcSettings);
-        // nodes has format host[:port]
-        settings.getClusterNodes().stream().forEach(i -> {
-            if (i.contains(":")) {
-                String[] split = i.split(":");
-                cl.addTransportAddress(new InetSocketTransportAddress(split[0], Integer.valueOf(split[1])));
-            } else {
-                // default communication port
-                cl.addTransportAddress(new InetSocketTransportAddress(i, 9300));
-            }
-        });
-        this.client = cl;
-        logger.info("ElasticSearch data handler starting in Remote mode");
-    }
-
-    private void initEmbeddedMode() {
-        embeddedServer.init();
-        node = NodeBuilder.nodeBuilder().client(true).clusterName("elasticsearch").node();
-    }
-
-    @Override
-    public void destroy() {
-        try {
-            if (client != null) {
-                logger.info("Closing ElasticSearch client");
-                client.close();
-            }
-            if (node != null) {
-                if (!node.isClosed()) {
-                    logger.info("Closing ElasticSearch node");
-                    node.close();
-                }
-            }
-        } catch (ElasticsearchException e) {
-            logger.error("Error closing client", e);
-        } finally {
-            isLoggingEnabled = false;
-            adminHandler = null;
-        }
     }
 
     @Override
     public boolean isLoggingEnabled() {
-        return isLoggingEnabled && client != null;
-    }
-
-    @Override
-    public ElasticsearchSettings getCurrentSettings() {
-        return settings;
-    }
-
-    @Override
-    public void init() {
-        Objects.requireNonNull(settings);
-
-        isLoggingEnabled = settings.isLoggingEnabled();
-
-        logger.info("Initializing ElasticSearch Statatistics connection");
-        logger.info("Settings {}", settings.toString());
-
-        Objects.requireNonNull(settings.getIndexId());
-        Objects.requireNonNull(settings.getTypeId());
-        Objects.requireNonNull(settings.isNodeConnectionMode());
-
-        if (settings.isLoggingEnabled()) {
-            // init client and local node
-            if (settings.isNodeConnectionMode()) {
-                initLanMode();
-            } else {
-                initRemoteMode();
-            }
-            if (client != null) {
-                // create schema
-                adminHandler = new ElasticsearchAdminHandler(client, settings);
-                try {
-                    adminHandler.createSchema();
-                } catch (Exception e) {
-                    logger.error("Error during schema creation", e);
-                    destroy();
-                }
-
-                // deploy kibana configurations
-                if (settings.isKibanaConfigEnable()) {
-                    logger.info("Install preconfigured kibana settings");
-                    try {
-                        String json = null;
-                        if (settings.getKibanaConfPath() == null || settings.getKibanaConfPath().trim().isEmpty()) {
-                            logger.info("No path is defined. Use default settings values");
-                            json = IOUtils.toString(this.getClass().getResourceAsStream("/kibana/kibana_config.json"));
-                        } else {
-                            logger.info("Use content of path {}", settings.getKibanaConfPath());
-                            json = IOUtils.toString(new FileInputStream(settings.getKibanaConfPath()));
-                        }
-                        adminHandler.importPreconfiguredKibana(json);
-                    } catch (Exception e) {
-                        logger.error("Error during kibana config deployment", e);
-                    }
-                }
-            }
-        } else {
-            logger.info("Statistics collection is not enabled. Data will not will be collected.");
-        }
+        return settings.isLoggingEnabled() && adminHandler.getElasticsearchClient() != null;
     }
 
     @Override
     public Client getClient() {
-        return client;
+        return adminHandler.getElasticsearchClient();
     }
 }

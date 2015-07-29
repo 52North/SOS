@@ -32,13 +32,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.exception.ConfigurationError;
+import org.n52.sos.statistics.api.ElasticsearchSettings;
+import org.n52.sos.statistics.api.ElasticsearchSettingsKeys;
 import org.n52.sos.statistics.api.mappings.MetadataDataMapping;
 import org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas;
 
@@ -46,9 +51,17 @@ import basetest.ElasticsearchAwareTest;
 
 public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
 
+    @Inject
+    private ElasticsearchAdminHandler adminHandler;
+
+    @Inject
+    private ElasticsearchDataHandler dataHandler;
+
+    @Inject
+    private ElasticsearchSettings settings;
+
     @Test
     public void createNewDatabase() throws InterruptedException {
-        ElasticsearchAdminHandler adminHandler = new ElasticsearchAdminHandler(getEmbeddedClient(), clientSettings);
         adminHandler.createSchema();
 
         IndicesAdminClient indices = getEmbeddedClient().admin().indices();
@@ -56,10 +69,9 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
         IndicesExistsResponse index = indices.prepareExists(clientSettings.getIndexId()).get();
         Assert.assertTrue(index.isExists());
 
-        GetResponse resp =
-                getEmbeddedClient()
-                        .prepareGet(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
-                        .setOperationThreaded(false).get();
+        GetResponse resp = getEmbeddedClient()
+                .prepareGet(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
+                .setOperationThreaded(false).get();
 
         Assert.assertEquals(new SosElasticsearchSchemas().getSchemaVersion(),
                 resp.getSourceAsMap().get(MetadataDataMapping.METADATA_VERSION_FIELD.getName()));
@@ -67,7 +79,6 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
 
     @Test
     public void createSchemaTwiceWithoutError() {
-        ElasticsearchAdminHandler adminHandler = new ElasticsearchAdminHandler(getEmbeddedClient(), clientSettings);
         adminHandler.createSchema();
         adminHandler.createSchema();
     }
@@ -75,17 +86,14 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
     @SuppressWarnings("unchecked")
     @Test
     public void addnewUuidOnConnect() {
-        ElasticsearchAdminHandler adminHandler = new ElasticsearchAdminHandler(getEmbeddedClient(), clientSettings);
         adminHandler.createSchema();
         clientSettings.setUuid("lofasz janos");
 
-        adminHandler = new ElasticsearchAdminHandler(getEmbeddedClient(), clientSettings);
         adminHandler.createSchema();
 
-        GetResponse resp =
-                getEmbeddedClient()
-                        .prepareGet(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
-                        .setOperationThreaded(false).get();
+        GetResponse resp = getEmbeddedClient()
+                .prepareGet(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
+                .setOperationThreaded(false).get();
 
         Map<String, Object> map = resp.getSourceAsMap();
         Assert.assertNotNull(map.get(MetadataDataMapping.METADATA_CREATION_TIME_FIELD.getName()));
@@ -97,10 +105,9 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
         Assert.assertThat(object, CoreMatchers.hasItem("lofasz janos"));
     }
 
-    @Test(
-            expected = ConfigurationError.class)
-    public void failOnVersionMismatch() throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException,
-            InterruptedException {
+    @Test(expected = ConfigurationError.class)
+    public void failOnVersionMismatch()
+            throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, InterruptedException {
         Map<String, Object> data = new HashMap<>();
         data.put(MetadataDataMapping.METADATA_VERSION_FIELD.getName(), 123456);
         getEmbeddedClient().prepareIndex(clientSettings.getIndexId(), MetadataDataMapping.METADATA_TYPE_NAME, MetadataDataMapping.METADATA_ROW_ID)
@@ -108,7 +115,48 @@ public class ElasticsearchAdminHandlerTest extends ElasticsearchAwareTest {
 
         Thread.sleep(1500);
 
-        ElasticsearchAdminHandler adminHandler = new ElasticsearchAdminHandler(getEmbeddedClient(), clientSettings);
         adminHandler.createSchema();
+    }
+
+    @Test
+    public void connectNodeMode() throws Exception {
+        settings.setNodeConnectionMode(ElasticsearchSettingsKeys.CONNECTION_MODE_NODE);
+        adminHandler.init();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("test", "test-string");
+        IndexResponse idx = dataHandler.persist(data);
+
+        Thread.sleep(2000);
+
+        String ret = getEmbeddedClient().prepareGet(idx.getIndex(), idx.getType(), idx.getId()).get().getSourceAsString();
+        Assert.assertNotNull(ret);
+    }
+
+    @Test
+    public void connectTransportMode() throws InterruptedException {
+        settings.setNodeConnectionMode(ElasticsearchSettingsKeys.CONNECTION_MODE_TRANSPORT_CLIENT);
+        adminHandler.init();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("test", "test-string");
+        IndexResponse idx = dataHandler.persist(data);
+
+        Thread.sleep(2000);
+
+        String ret = getEmbeddedClient().prepareGet(idx.getIndex(), idx.getType(), idx.getId()).get().getSourceAsString();
+        Assert.assertNotNull(ret);
+    }
+
+    @Test
+    public void enableKibanaPreConfLoadingFromDefaultFile() throws InterruptedException {
+        settings.setKibanaConfigEnable(true);
+        settings.setKibanaConfPath(null);
+
+        adminHandler.init();
+
+        Thread.sleep(1500);
+
+        Assert.assertTrue(getEmbeddedClient().prepareExists(".kibana").get().exists());
     }
 }

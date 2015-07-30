@@ -115,9 +115,16 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
         }
     }
 
-    @Override
-    public void importPreconfiguredKibana(String configAsJson) throws JsonParseException, JsonMappingException, IOException {
-        new KibanaImporter(client, ".kibana", settings.getIndexId()).importJson(configAsJson);
+    public void importPreconfiguredKibana() throws JsonParseException, JsonMappingException, IOException {
+        String json = null;
+        if (settings.getKibanaConfPath() == null || settings.getKibanaConfPath().trim().isEmpty()) {
+            logger.info("No path is defined. Use default settings values");
+            json = IOUtils.toString(this.getClass().getResourceAsStream("/kibana/kibana_config.json"));
+        } else {
+            logger.info("Use content of path {}", settings.getKibanaConfPath());
+            json = IOUtils.toString(new FileInputStream(settings.getKibanaConfPath()));
+        }
+        new KibanaImporter(client, ".kibana", settings.getIndexId()).importJson(json);
 
     }
 
@@ -260,15 +267,7 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
                 if (settings.isKibanaConfigEnable()) {
                     logger.info("Install preconfigured kibana settings");
                     try {
-                        String json = null;
-                        if (settings.getKibanaConfPath() == null || settings.getKibanaConfPath().trim().isEmpty()) {
-                            logger.info("No path is defined. Use default settings values");
-                            json = IOUtils.toString(this.getClass().getResourceAsStream("/kibana/kibana_config.json"));
-                        } else {
-                            logger.info("Use content of path {}", settings.getKibanaConfPath());
-                            json = IOUtils.toString(new FileInputStream(settings.getKibanaConfPath()));
-                        }
-                        importPreconfiguredKibana(json);
+                        importPreconfiguredKibana();
                     } catch (Exception e) {
                         logger.error("Error during kibana config deployment", e);
                     }

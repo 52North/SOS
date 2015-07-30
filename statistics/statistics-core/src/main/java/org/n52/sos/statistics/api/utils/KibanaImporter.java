@@ -45,15 +45,17 @@ public class KibanaImporter {
 
     private static Logger logger = LoggerFactory.getLogger(KibanaImporter.class);
 
+    public static final String INDEX_NEEDLE = "##!NO_SPOON!##";
+
     private final Client client;
     private final String kibanaIndexName;
     private final String statisticsIndexName;
 
-    public KibanaImporter(Client client, String kibanaIndexName,String statisticsIndexName) {
-    	Objects.requireNonNull(client);
+    public KibanaImporter(Client client, String kibanaIndexName, String statisticsIndexName) {
+        Objects.requireNonNull(client);
         Objects.requireNonNull(kibanaIndexName);
         Objects.requireNonNull(statisticsIndexName);
-        
+
         this.kibanaIndexName = kibanaIndexName;
         this.statisticsIndexName = statisticsIndexName;
         this.client = client;
@@ -67,11 +69,16 @@ public class KibanaImporter {
 
         for (KibanaConfigEntryDto dto : holder.getEntries()) {
             logger.debug("Importing {}", dto);
+            dto = processDto(dto);
             client.prepareIndex(kibanaIndexName, dto.getType(), dto.getId()).setSource(dto.getSource()).setOperationThreaded(false).get();
         }
     }
-    
-    private String transformIndexName(KibanaConfigEntryDto dto) {
-    	throw new UnsupportedOperationException();    	
+
+    private KibanaConfigEntryDto processDto(KibanaConfigEntryDto dto) {
+        if (dto.getType().equals("index-pattern")) {
+            dto.setId(statisticsIndexName);
+        }
+        dto.setSource(dto.getSource().replaceAll(INDEX_NEEDLE, statisticsIndexName));
+        return dto;
     }
 }

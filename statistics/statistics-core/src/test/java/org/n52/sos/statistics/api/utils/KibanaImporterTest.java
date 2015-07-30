@@ -32,34 +32,43 @@ import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.search.SearchHit;
 import org.junit.Assert;
 import org.junit.Test;
 
-import basetest.ElasticsearchAwareTest;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
+import basetest.ElasticsearchAwareTest;
 
 public class KibanaImporterTest extends ElasticsearchAwareTest {
 
     @Test
     public void importValidJson() throws IOException, InterruptedException {
         String json = IOUtils.toString(KibanaImporter.class.getResourceAsStream("/kibana/kibana_config.json"));
-        new KibanaImporter(getEmbeddedClient(), ".kibana","").importJson(json);
+        new KibanaImporter(getEmbeddedClient(), ".kibana", "my-index").importJson(json);
         Thread.sleep(1500);
         Assert.assertTrue(getEmbeddedClient().prepareExists(".kibana").get().exists());
 
         SearchResponse resp = getEmbeddedClient().prepareSearch(".kibana").setTypes("visualization").get();
         Assert.assertTrue(resp.getHits().getTotalHits() > 0);
 
+        for (SearchHit hit : resp.getHits().getHits()) {
+            Assert.assertFalse(hit.getSourceAsString().contains(KibanaImporter.INDEX_NEEDLE));
+        }
+
         SearchResponse resp2 = getEmbeddedClient().prepareSearch(".kibana").setTypes("dashboard").get();
         Assert.assertTrue(resp2.getHits().getTotalHits() > 0);
+
+        for (SearchHit hit : resp2.getHits().getHits()) {
+            Assert.assertFalse(hit.getSourceAsString().contains(KibanaImporter.INDEX_NEEDLE));
+        }
     }
 
     @Test(
             expected = JsonParseException.class)
     public void importInvalidJson() throws InterruptedException, JsonParseException, JsonMappingException, IOException {
-        new KibanaImporter(getEmbeddedClient(), "local-index","").importJson("semmi latnivali nincs itt");
+        new KibanaImporter(getEmbeddedClient(), "local-index", "").importJson("semmi latnivali nincs itt");
         Thread.sleep(1500);
         Assert.assertFalse(getEmbeddedClient().prepareExists(".kibana").get().exists());
     }

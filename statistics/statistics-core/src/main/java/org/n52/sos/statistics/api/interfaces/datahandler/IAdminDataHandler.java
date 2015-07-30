@@ -39,8 +39,6 @@ public interface IAdminDataHandler extends Constructable, Destroyable {
 
     public void createSchema();
 
-    public void importPreconfiguredKibana(String configAsJson) throws Exception;
-
     public Client getElasticsearchClient();
 
     public ElasticsearchSettings getElasticsearchSettings();

@@ -3,6 +3,7 @@
 ## Architectural overview
 The main entry point for collection of service statistics is the class `org.n52.sos.statistics.sos.SosStatisticsLoggerListener`. It receives the events from the `ServiceEventBus`.
 Currently the following events are processed in the event listener.
+
  - RequestEvent
  - ExceptionEvent
  - ResponseEvent
@@ -10,8 +11,10 @@ Currently the following events are processed in the event listener.
  - CountingOutputstreamEvent
  
  These events can be fired during any client's request call. The
+ 
  - RequestEvent
  - OutgoingResponseEvent
+ 
  are always fired and the `OutgoingResponseEvent` is always the last event which comes in order.
  
  Based on the Java Servlet architecture every client request is serviced by only one java thread. These events are grouped together based on the `java.lang.Thread#getId`. The events doesn't directly

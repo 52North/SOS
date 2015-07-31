@@ -66,7 +66,7 @@ new SingleEsParameter("getcapabilities-formats",
 If you want to integrate the iceland project based statistics module in a new project it is advised to create the Elasticsearch schema mapping beforehand you insert any data.
 The data mapping creation and consistency check happens automatically on every application start. The information stored in one Elasticsearch index and in two Elasticsearch types:
 - mt : for metadata automatically created client can't modify
-- <user specified> : stores the application data
+- #user specified : stores the application data
 
 the metadata type contains the schema version, connected deployments unique id and additional timestamp information about creation and modification. If the webapplication has a different Elasticsearch schema then in the `mt` type it won't insert any data and the user must resolve manually the migration (probably by creating a new Elasticsearch index.)
 It is the developer responsibility to increment the schema version on breaking schema changes in the subclass by returning `DefaultElasticsearchSchemas#getSchemaVersion` a greater number then before.
@@ -82,4 +82,7 @@ There are properties which are default to all schema those settings are stored i
 The statistics module ships with preconfigured Kibana dashboards and visualizations. Kibana after the 4.x.x version stores it's application data in Elasticsearch defaults to the index name ".kibana"
 The Kibana importer job to parse the configuration file which were created beforehand and saved under the file `/src/main/resources/kibana/kibana_config.json`. It has a custom json schema format because we need more information what the factory Kibana importer exporter provide. The importer activates on the startup if the user enabled the function on the settings page. The importer takes consideration the different Elasticsearch types names between the export development environment and import production environment and it processes the config file before. 
 
-The Kibana exporter is intended for in-house use only! It is a java runnable jar and exports the `kibana_config.json` file.
+**The Kibana exporter is intended for in-house use only!** It is a java runnable jar and exports the `kibana_config.json` file. The input arguments for the main class is the development Elasticsearch cluster address and the cluster name
+```bash
+java -jar kibana-exporter.jar localhost:9300 ogc-statistics-cluster
+```

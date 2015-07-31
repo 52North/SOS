@@ -85,7 +85,7 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
     }
 
     @Override
-    public synchronized void createSchema() throws ElasticsearchException {
+    public synchronized void createSchema() {
         IndicesAdminClient indices = client.admin().indices();
         SosElasticsearchSchemas schemas = new SosElasticsearchSchemas();
 
@@ -270,7 +270,12 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
                         importPreconfiguredKibana();
                     } catch (Exception e) {
                         logger.error("Error during kibana config deployment", e);
+                    } finally {
+                    	//TODO probably the kibana config should be disabled after the import
+                    	//because after every restart it will be imported again
+                    	//the ElasticsearchSettings class has a custom settingsValue insertion template
                     }
+                    
                 }
             }
         } else {

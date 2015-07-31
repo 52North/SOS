@@ -1,1 +1,3 @@
 #Securing your Elasticsearch and Kibana
+
+First, you should not run Elasticsearch as the root user, as this would allow a script to access or do anything on your server, without limitations. Second, you should not expose Elasticsearch directly to users, but instead have a proxy application inbetween. If you do intend to expose Elasticsearch directly to your users, then you have to decide whether you trust them enough to run scripts on your box or not.

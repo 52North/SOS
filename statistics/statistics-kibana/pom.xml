@@ -35,6 +35,15 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>exporter-jar-generator</id>
+						<phase>package</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+					</execution>
+				</executions>
 				<configuration>
 					<ignoreMissingDescriptor>true</ignoreMissingDescriptor>
 					<finalName>${project.artifactId}</finalName>

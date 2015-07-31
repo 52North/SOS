@@ -31,6 +31,8 @@ package org.n52.sos.statistics.sos.handlers.requests;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
+import com.google.common.base.Joiner;
+
 public class GetCapabilitiesRequestHandler extends AbstractSosRequestHandler<GetCapabilitiesRequest> {
 
     @Override
@@ -38,6 +40,7 @@ public class GetCapabilitiesRequestHandler extends AbstractSosRequestHandler<Get
         put(SosDataMapping.GC_VERSIONS_FIELD, request.getAcceptVersions());
         put(SosDataMapping.GC_FORMATS_FIELD, request.getAcceptFormats());
         put(SosDataMapping.GC_SECTIONS, request.getSections());
+        put(SosDataMapping.GC_SECTIONS_CONCAT, Joiner.on("_").join(request.getSections()));
         put(SosDataMapping.GC_UPDATE_SEQUENCE, request.getUpdateSequence());
     }
 }

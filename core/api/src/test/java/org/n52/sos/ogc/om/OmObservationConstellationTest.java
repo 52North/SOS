@@ -35,7 +35,9 @@ import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
+
 
 public class OmObservationConstellationTest {
 
@@ -69,7 +71,32 @@ public class OmObservationConstellationTest {
     @Test
     public void shouldNotBeEqualHashCode() {
         assertThat(getFirstObservationConstellation().hashCode(), not(getSecondObservationConstellation().hashCode()));
-
+    }
+    
+    @Test
+    public void testChecheckObservationTypeForMerging() {
+    	OmObservationConstellation ooc = new OmObservationConstellation();
+    	ooc.setObservationType(OmConstants.OBS_TYPE_MEASUREMENT);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(true));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(true));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_COUNT_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(true));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(true));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_TEXT_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(true));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_TRUTH_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(true));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(false));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(false));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_OBSERVATION);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(false));
+    	ooc.setObservationType(OmConstants.OBS_TYPE_UNKNOWN);
+    	assertThat(ooc.checkObservationTypeForMerging(), is(false));
+    	
     }
 
 }

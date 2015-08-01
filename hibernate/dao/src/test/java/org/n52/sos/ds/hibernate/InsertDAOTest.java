@@ -563,7 +563,7 @@ public class InsertDAOTest extends HibernateTestCase {
         obsVal.setValue(sweDataArrayValue);
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
-        insertObservationOperatorv2.receive(req);
+        insertObservationOperatorv2.receiveRequest(req);
         assertInsertionAftermathBeforeAndAfterCacheReload();
 
         checkObservation(OFFERING3, PROCEDURE3, OBSPROP3, TIME1, PROCEDURE3, OBSPROP3, FEATURE3, VAL1, TEMP_UNIT);

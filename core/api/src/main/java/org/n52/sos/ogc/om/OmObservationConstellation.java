@@ -253,6 +253,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      *            Observation constellation to chek
      * @return true if equals
      */
+    @Deprecated
     public boolean equalsExcludingObsProp(OmObservationConstellation toCheckObsConst) {
         return (procedure.equals(toCheckObsConst.getProcedure())
                 && featureOfInterest.equals(toCheckObsConst.getFeatureOfInterest())
@@ -260,11 +261,17 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     }
 
-    private boolean checkObservationTypeForMerging() {
-        return (!observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
-                && !observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION) && !observationType
-                    .equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION));
-    }
+	/**
+	 * TODO change if currently not supported types could be merged.
+	 * 
+	 * @return <code>true</code>, if the observation can be merged
+	 */
+	public boolean checkObservationTypeForMerging() {
+		return (isSetObservationType() && !OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)
+				&& !OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equals(observationType)
+				&& !OmConstants.OBS_TYPE_OBSERVATION.equals(observationType)
+				&& !OmConstants.OBS_TYPE_UNKNOWN.equals(observationType));
+	}
 
     public boolean isSetObservationType() {
         return observationType != null && !observationType.isEmpty();

@@ -32,8 +32,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -41,11 +39,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
@@ -55,6 +54,8 @@ import com.google.common.base.Joiner;
  */
 public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDatasource {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMySQLDatasource.class);
+	
     protected static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
     protected static final Pattern JDBC_URL_PATTERN
             = Pattern.compile("^jdbc:mysql://([^:]+):([0-9]+)/(.*)$");
@@ -116,32 +117,25 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
 
     @Override
     public void clear(Properties properties) {
-        Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                names.add(table.getName());
-            }
-        }
-        if (!names.isEmpty()) {
-            Connection conn = null;
-            Statement stmt = null;
-            try {
-                conn = openConnection(settings);
-                stmt = conn.createStatement();
-                stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ")
-                        .join(names)));
-            } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
-            } finally {
-                close(stmt);
-                close(conn);
-            }
-        }
-    }
+		Map<String, Object> settings = parseDatasourceProperties(properties);
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = openConnection(settings);
+			List<String> names = getQuotedSchemaTableNames(settings, conn);
+			if (!names.isEmpty()) {
+				stmt = conn.createStatement();
+				String sql = String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names));
+				LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
+				stmt.execute(sql);
+			}
+		} catch (SQLException ex) {
+			throw new ConfigurationException(ex);
+		} finally {
+			close(stmt);
+			close(conn);
+		}
+	}
 
     @Override
     public boolean supportsClear() {

@@ -69,10 +69,10 @@ import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.CoordinateHelper;
 import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
-import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.AltitudeSweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.EastingSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
@@ -475,26 +475,26 @@ public class CoordianteTransformator implements
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
         if (targetCrs != sourceCrs) {
-	        if (position.isSetPosition()) {
-	            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-	            position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
-	        } else if (position.isSetVector()) {
-	            SweVector vector = position.getVector();
-	            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-	            vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
-	        }
+            if (position.isSetPosition()) {
+                position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+                position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
+            } else if (position.isSetVector()) {
+                SweVector vector = position.getVector();
+                vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+                vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
+            }
         }
     }
 
     @VisibleForTesting
     protected String transformReferenceFrame(String referenceFrame, int sourceCrs, int targetCrs) {
-		if (sourceCrs > 0 && targetCrs > 0) {
-			return referenceFrame.replace(Integer.toString(sourceCrs), Integer.toString(targetCrs));
-		}
-		return referenceFrame;
-	}
+        if (sourceCrs > 0 && targetCrs > 0) {
+            return referenceFrame.replace(Integer.toString(sourceCrs), Integer.toString(targetCrs));
+        }
+        return referenceFrame;
+    }
 
-	/**
+    /**
      * Transform coordinates
      * 
      * @param position
@@ -507,58 +507,61 @@ public class CoordianteTransformator implements
      * @throws OwsExceptionReport
      *             if an error occurs
      */
-	private List<SweCoordinate<?>> transformSweCoordinates(List<SweCoordinate<?>> position, int sourceCrs,
-			int targetCrs) throws OwsExceptionReport {
-		SweCoordinate<?> altitude = null;
-		Object easting = null;
-		Object northing = null;
-		String eastingName = SweCoordinateName.easting.name();
-		String northingName = SweCoordinateName.northing.name();
-		for (SweCoordinate<?> coordinate : position) {
-			if (checkAltitudeName(coordinate.getName())) {
-				altitude = coordinate;
-			} else if (checkNorthingName(coordinate.getName())) {
-				northingName = coordinate.getName();
-				northing = coordinate.getValue().getValue();
-			} else if (checkEastingName(coordinate.getName())) {
-				eastingName = coordinate.getName();
-				easting = coordinate.getValue().getValue();
-			}
-		}
-		if (easting != null && northing != null) {
-			List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
-			if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
-				coordinates.add(northing);
-				coordinates.add(easting);
-			} else {
-				coordinates.add(easting);
-				coordinates.add(northing);
-			}
-			Geometry geom = getGeomtryHandler().transform(JTSHelper.createGeometryFromWKT(
-					JTSHelper.createWKTPointFromCoordinateString(Joiner.on(Constants.SPACE_STRING).join(coordinates)),
-					sourceCrs), targetCrs);
-			double x, y;
-			if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
-				x = geom.getCoordinate().y;
-				y = geom.getCoordinate().x;
-			} else {
-				x = geom.getCoordinate().x;
-				y = geom.getCoordinate().y;
-			}
-			SweQuantity yq = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS,
-					ProcedureDescriptionSettings.getInstance().getLatLongUom());
-			SweQuantity xq = SweHelper.createSweQuantity(x, SweConstants.X_AXIS,
-					ProcedureDescriptionSettings.getInstance().getLatLongUom());
-			ArrayList<SweCoordinate<?>> newPosition = Lists.<SweCoordinate<?>> newArrayList(
-					new SweCoordinate<Double>(northingName, yq),
-					new SweCoordinate<Double>(eastingName, xq));
-			if (altitude != null) {
-				newPosition.add(altitude);
-			}
-			return newPosition;
-		}
-		return position;
-	}
+    private List<SweCoordinate<?>> transformSweCoordinates(List<SweCoordinate<?>> position, int sourceCrs,
+            int targetCrs) throws OwsExceptionReport {
+        SweCoordinate<?> altitude = null;
+        Object easting = null;
+        Object northing = null;
+        String eastingName = SweCoordinateName.easting.name();
+        String northingName = SweCoordinateName.northing.name();
+        for (SweCoordinate<?> coordinate : position) {
+            if (checkAltitudeName(coordinate.getName())) {
+                altitude = coordinate;
+            } else if (checkNorthingName(coordinate.getName())) {
+                northingName = coordinate.getName();
+                northing = coordinate.getValue().getValue();
+            } else if (checkEastingName(coordinate.getName())) {
+                eastingName = coordinate.getName();
+                easting = coordinate.getValue().getValue();
+            }
+        }
+        if (easting != null && northing != null) {
+            List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
+                coordinates.add(northing);
+                coordinates.add(easting);
+            } else {
+                coordinates.add(easting);
+                coordinates.add(northing);
+            }
+            Geometry geom =
+                    getGeomtryHandler().transform(
+                            JTSHelper.createGeometryFromWKT(JTSHelper.createWKTPointFromCoordinateString(Joiner.on(
+                                    Constants.SPACE_STRING).join(coordinates)), sourceCrs), targetCrs);
+            double x, y;
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
+                x = geom.getCoordinate().y;
+                y = geom.getCoordinate().x;
+            } else {
+                x = geom.getCoordinate().x;
+                y = geom.getCoordinate().y;
+            }
+            SweQuantity yq =
+                    SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            SweQuantity xq =
+                    SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            ArrayList<SweCoordinate<?>> newPosition =
+                    Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(northingName, yq),
+                            new SweCoordinate<Double>(eastingName, xq));
+            if (altitude != null) {
+                newPosition.add(altitude);
+            }
+            return newPosition;
+        }
+        return position;
+    }
 
     /**
      * Check the {@link SmlLocation} if modifications are required
@@ -574,50 +577,44 @@ public class CoordianteTransformator implements
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
     }
     
-	/**
-	 * Check if the name is a defined altitude name
-	 * 
-	 * @param name
-	 *            Name to check
-	 * @return <code>true</code>, if the name is an altitude name
-	 */
+    /**
+     * Check if the name is a defined altitude name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an altitude name
+     */
     @VisibleForTesting
-	protected boolean checkAltitudeName(String name) {
-		if (AltitudeSweCoordinateName.isAltitudeSweCoordinateName(name)) {
-			return true;
-		}
-		return CoordinateHelper.getInstance().hasAltitudeName(name);
-	}
+    protected boolean checkAltitudeName(String name) {
+        return AltitudeSweCoordinateName.isAltitudeSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasAltitudeName(name);
+    }
 
-	/**
-	 * Check if the name is a defined northing name
-	 * 
-	 * @param name
-	 *            Name to check
-	 * @return <code>true</code>, if the name is a northing name
-	 */
+    /**
+     * Check if the name is a defined northing name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is a northing name
+     */
     @VisibleForTesting
-	protected boolean checkNorthingName(String name) {
-		if (NorthingSweCoordinateName.isNorthingSweCoordinateName(name)) {
-			return true;
-		}
-		return CoordinateHelper.getInstance().hasNorthingName(name);
-	}
+    protected boolean checkNorthingName(String name) {
+        return NorthingSweCoordinateName.isNorthingSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasNorthingName(name);
+    }
 
-	/**
-	 * Check if the name is a defined easting name
-	 * 
-	 * @param name
-	 *            Name to check
-	 * @return <code>true</code>, if the name is an easting name
-	 */
+    /**
+     * Check if the name is a defined easting name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an easting name
+     */
     @VisibleForTesting
-	protected boolean checkEastingName(String name) {
-		if (EastingSweCoordinateName.isEastingSweCoordinateName(name)) {
-			return true;
-		}
-		return CoordinateHelper.getInstance().hasEastingName(name);
-	}
+    protected boolean checkEastingName(String name) {
+        return EastingSweCoordinateName.isEastingSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasEastingName(name);
+    }
 
     /**
      * Check if the {@link AbstractSensorML} contains {@link SmlCapabilities}

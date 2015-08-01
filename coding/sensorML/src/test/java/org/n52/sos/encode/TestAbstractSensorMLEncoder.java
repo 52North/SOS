@@ -26,20 +26,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.event.events;
+package org.n52.sos.encode;
 
-import org.n52.sos.event.SosEvent;
-import org.n52.sos.response.AbstractServiceResponse;
+import java.util.Map;
+import java.util.Set;
 
-public class ResponseEvent implements SosEvent {
-    private final AbstractServiceResponse response;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
-    public ResponseEvent(AbstractServiceResponse response) {
-        this.response = response;
+/**
+ * Test class implementation for {@link AbstractSensorMLEncoder}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
+public class TestAbstractSensorMLEncoder extends AbstractSensorMLEncoder {
+
+    @Override
+    public Set<EncoderKey> getEncoderKeyType() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
-    public AbstractServiceResponse getResponse() {
-        return response;
+    @Override
+    public XmlObject encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport, UnsupportedEncoderInputException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

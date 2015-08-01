@@ -48,9 +48,6 @@ public class SosDataMapping {
 
     public static final AbstractEsParameter GC_SECTIONS = new SingleEsParameter("getcapabilities-sections", new Description(
             InformationOrigin.RequestEvent, Operation.GetCapabilities, "Sections"), ElasticsearchTypeRegistry.stringField);
-    
-    public static final AbstractEsParameter GC_SECTIONS_CONCAT = new SingleEsParameter("getcapabilities-sections-concat", new Description(
-            InformationOrigin.Computed, Operation.GetCapabilities, "Concatanated string of the sections for searching purposes"), ElasticsearchTypeRegistry.stringField);
 
     public static final AbstractEsParameter GC_UPDATE_SEQUENCE = new SingleEsParameter("getcapabilities-updatesequence", new Description(
             InformationOrigin.RequestEvent, Operation.GetCapabilities, "Update sequence"), ElasticsearchTypeRegistry.stringField);

@@ -20,13 +20,13 @@
       "type" : "string",
       "value" : "property-get"
     },
+    "statistics.geoloc.download_folder" : {
+      "type" : "string",
+      "value" : null
+    },
     "rest.kvp.encoding.valuesplitter" : {
       "type" : "string",
       "value" : ","
-    },
-    "geoloc.download_folder" : {
-      "type" : "string",
-      "value" : null
     },
     "rest.http.get.parametername.spatialfilter" : {
       "type" : "string",
@@ -144,29 +144,9 @@
       "type" : "string",
       "value" : "capabilities"
     },
-    "geoloc.city_location" : {
-      "type" : "string",
-      "value" : null
-    },
     "service.useDefaultPrefixes" : {
       "type" : "boolean",
       "value" : false
-    },
-    "elasticsearch.kibana_config_enable" : {
-      "type" : "boolean",
-      "value" : false
-    },
-    "elasticsearch.uuid" : {
-      "type" : "string",
-      "value" : "f7834221-a29b-4f46-98c4-c75910a4fe6f"
-    },
-    "geoloc.db_type" : {
-      "type" : "choice",
-      "value" : "geoloc.db_type.city"
-    },
-    "elasticsearch.index_name" : {
-      "type" : "string",
-      "value" : "ogc-statistics-index"
     },
     "exi.fidelity.prefixes" : {
       "type" : "boolean",
@@ -187,6 +167,10 @@
     "rest.http.operationNotAllowedForResourceType.message.start" : {
       "type" : "string",
       "value" : "operation is not allowed for the resource type"
+    },
+    "statistics.elasticsearch.kibana_config_file" : {
+      "type" : "string",
+      "value" : null
     },
     "rest.resource.relation.sensor.create" : {
       "type" : "string",
@@ -276,13 +260,13 @@
       "type" : "string",
       "value" : "temporalfilter"
     },
+    "statistics.elasticsearch.is_logging_enabled" : {
+      "type" : "boolean",
+      "value" : true
+    },
     "serviceProvider.state" : {
       "type" : "string",
       "value" : "North Rhine-Westphalia"
-    },
-    "elasticsearch.kibana_config_file" : {
-      "type" : "string",
-      "value" : null
     },
     "service.addOutputsToSensorML" : {
       "type" : "boolean",
@@ -320,6 +304,10 @@
       "type" : "string",
       "value" : "urn:ogc:def:classifier:OGC:1.0:application"
     },
+    "statistics.elasticsearch.index_name" : {
+      "type" : "string",
+      "value" : "ogc-statistics-index"
+    },
     "procedureDesc.USE_SERVICE_CONTACT_AS_SENSOR_CONTACT" : {
       "type" : "boolean",
       "value" : true
@@ -328,17 +316,17 @@
       "type" : "boolean",
       "value" : false
     },
+    "statistics.geoloc.enabled" : {
+      "type" : "boolean",
+      "value" : false
+    },
     "rest.errorMsg.wrongContentType" : {
       "type" : "string",
       "value" : "request with wrong content type received."
     },
-    "geoloc.country_location" : {
-      "type" : "string",
-      "value" : null
-    },
-    "elasticsearch.type_name" : {
-      "type" : "string",
-      "value" : "ogc-type"
+    "statistics.elasticsearch.connection_mode" : {
+      "type" : "choice",
+      "value" : "statistics.elasticsearch.connection_mode.transport_client"
     },
     "service.transactionalAllowedProxies" : {
       "type" : "string",
@@ -355,14 +343,6 @@
     "service.jdbc.deregister" : {
       "type" : "boolean",
       "value" : true
-    },
-    "elasticsearch.cluster_nodes" : {
-      "type" : "string",
-      "value" : "localhost"
-    },
-    "geoloc.db_downloader" : {
-      "type" : "choice",
-      "value" : "geoloc.db_downloader.auto"
     },
     "rest.conformanceClass" : {
       "type" : "string",
@@ -450,6 +430,10 @@
       "type" : "boolean",
       "value" : false
     },
+    "statistics.geoloc.city_location" : {
+      "type" : "string",
+      "value" : null
+    },
     "rest.resource.relation.observations.get" : {
       "type" : "string",
       "value" : "observations-get"
@@ -469,6 +453,10 @@
     "rest.resource.relation.sensor.delete" : {
       "type" : "string",
       "value" : "sensor-delete"
+    },
+    "statistics.elasticsearch.kibana_config_enable" : {
+      "type" : "boolean",
+      "value" : false
     },
     "serviceProvider.phone" : {
       "type" : "string",
@@ -546,13 +534,21 @@
       "type" : "choice",
       "value" : "BIT_PACKED"
     },
+    "statistics.geoloc.db_type" : {
+      "type" : "choice",
+      "value" : "statistics.geoloc.db_type.city"
+    },
     "statistics.counting-outputstream" : {
       "type" : "boolean",
       "value" : true
     },
-    "elasticsearch.cluster_name" : {
+    "statistics.elasticsearch.cluster_nodes" : {
       "type" : "string",
-      "value" : "ogc-statistics-cluster"
+      "value" : "localhost"
+    },
+    "statistics.elasticsearch.cluster_name" : {
+      "type" : "string",
+      "value" : "elasticsearch"
     },
     "service.encodeFullChildrenInDescribeSensor" : {
       "type" : "boolean",
@@ -561,10 +557,6 @@
     "procedureDesc.IDENTIFIER_LONG_NAME_DEFINITION" : {
       "type" : "string",
       "value" : "urn:ogc:def:identifier:OGC:1.0:longname"
-    },
-    "elasticsearch.is_logging_enabled" : {
-      "type" : "boolean",
-      "value" : true
     },
     "service.SpatialDatasource" : {
       "type" : "boolean",
@@ -630,9 +622,17 @@
       "type" : "boolean",
       "value" : false
     },
+    "statistics.geoloc.db_downloader" : {
+      "type" : "choice",
+      "value" : "statistics.geoloc.db_downloader.auto"
+    },
     "profile.hydrology.maxReturnedValue" : {
       "type" : "integer",
       "value" : 0
+    },
+    "statistics.elasticsearch.type_name" : {
+      "type" : "string",
+      "value" : "ogc-type"
     },
     "inspire.metadataDate" : {
       "type" : "string",
@@ -642,6 +642,10 @@
       "type" : "string",
       "value" : "http://www.example.org/feature/"
     },
+    "statistics.geoloc.country_location" : {
+      "type" : "string",
+      "value" : null
+    },
     "inspire.metadataUrl.url" : {
       "type" : "uri",
       "value" : "http://myserver.org/"
@@ -649,10 +653,6 @@
     "rest.errorMsg.badGetRequest" : {
       "type" : "string",
       "value" : "Received GET request invalid for resource type \"%s\". Try "
-    },
-    "elasticsearch.connection_mode" : {
-      "type" : "choice",
-      "value" : "elasticsearch.connection_mode.transport_client"
     },
     "rest.resource.relation.observation.create" : {
       "type" : "string",
@@ -669,6 +669,10 @@
     "misc.switchCoordinatesForEpsgCodes" : {
       "type" : "string",
       "value" : "2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;2193;2200;2206-2212;2319;2320-2462;2523-2549;2551-2735;2738-2758;2935-2941;2953;3006-3030;3034-3035;3058-3059;3068;3114-3118;3126-3138;3300-3301;3328-3335;3346;3350-3352;3366;3416;4001-4999;20004-20032;20064-20092;21413-21423;21473-21483;21896-21899;22171;22181-22187;22191-22197;25884;27205-27232;27391-27398;27492;28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700"
+    },
+    "statistics.elasticsearch.uuid" : {
+      "type" : "string",
+      "value" : "3c3117d5-3c4d-4f69-80c6-caa39241063a"
     },
     "misc.tokenSeparator" : {
       "type" : "string",
@@ -724,10 +728,6 @@
       "type" : "string",
       "value" : "application/xml"
     },
-    "geoloc.enabled" : {
-      "type" : "boolean",
-      "value" : false
-    },
     "procedureDesc.CLASSIFIER_INTENDED_APPLICATION_VALUE" : {
       "type" : "string",
       "value" : null
@@ -778,6 +778,6 @@
     }
   },
   "users" : {
-    "admin" : "$2a$10$kS19zLFle3SrlZsjKyuhSeOz790mAmKhO3fP5x9op3PgqyAUrrAUC"
+    "admin" : "$2a$10$tsDeUfgnth/Z90a2HkI/Vuk4lAs.6GItGEs/NM6HbBvmMq9Om6pSa"
   }
 }

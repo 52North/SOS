@@ -33,7 +33,6 @@ public class GetCabailitiesRequestHandlerTest extends HandlerBaseTest {
 		Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_VERSIONS_FIELD.getName()), CoreMatchers.hasItems("ver1","ver2"));
 		Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_FORMATS_FIELD.getName()), CoreMatchers.hasItems("for1","for2"));
 		Assert.assertThat((Collection<String>) map.get(SosDataMapping.GC_SECTIONS.getName()), CoreMatchers.hasItems("a","b","c"));
-		Assert.assertThat(map.get(SosDataMapping.GC_SECTIONS_CONCAT.getName()), CoreMatchers.is("a_b_c"));
 	}
 
 }

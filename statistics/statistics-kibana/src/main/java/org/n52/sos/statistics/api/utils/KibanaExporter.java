@@ -87,7 +87,7 @@ public class KibanaExporter {
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         File f = new File("kibana_config.json");
         if (f.exists()) {
-            System.out.println(f.getAbsolutePath() + "exists it will be deleted.");
+            System.out.println(f.getAbsolutePath() + " exists it will be deleted.");
             f.delete();
         }
         mapper.writeValue(new FileOutputStream(f), holder);

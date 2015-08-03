@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -796,6 +797,28 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     protected String[] checkDropSchema(String[] dropSchema) {
         return checkScriptForGeneratedAndDuplicatedEntries(dropSchema);
+    }
+    
+    /**
+     * Create quoted string with schema.table
+     * @param settings Datasource settings
+     * @param conn SQL connection
+     * @return {@link List} with table names
+     * @throws SQLException If an error occurs while checking catalog/schema
+     */
+    protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn) throws SQLException {
+    	String catalog = checkCatalog(conn);
+        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+        CustomConfiguration config = getConfig(settings);
+        Iterator<Table> tables = config.getTableMappings();
+        List<String> names = new LinkedList<String>();
+        while (tables.hasNext()) {
+            Table table = tables.next();
+            if (table.isPhysicalTable()) {
+                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
+            }
+        }
+        return names;
     }
 
     @Override

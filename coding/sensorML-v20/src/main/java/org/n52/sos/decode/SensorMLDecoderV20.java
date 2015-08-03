@@ -225,13 +225,13 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             sml = parseSimpleProcess(((SimpleProcessDocument) element).getSimpleProcess());
         } else if (element instanceof SimpleProcessPropertyType) {
             sml = parseSimpleProcess(((SimpleProcessPropertyType) element).getSimpleProcess());
-        } else if (element instanceof SimpleProcessPropertyType) {
+        } else if (element instanceof SimpleProcessType) {
             sml = parseSimpleProcess((SimpleProcessType) element);
         } else if (element instanceof AggregateProcessDocument) {
             sml = parseAggregateProcess(((AggregateProcessDocument) element).getAggregateProcess());
         } else if (element instanceof AggregateProcessPropertyType) {
             sml = parseAggregateProcess(((AggregateProcessPropertyType) element).getAggregateProcess());
-        } else if (element instanceof AggregateProcessPropertyType) {
+        } else if (element instanceof AggregateProcessType) {
             sml = parseAggregateProcess((AggregateProcessType) element);
         } else {
             throw new UnsupportedDecoderInputException(this, element);
@@ -243,7 +243,48 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     }
 
     private void setXmlDescription(XmlObject xml, AbstractSensorML sml) {
-        sml.setSensorDescriptionXmlString(xml.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
+       XmlObject xmlToString = null;
+        if (xml.schemaType()!= null && xml.schemaType().isDocumentType()) {
+            xmlToString = xml;
+        } else {
+             // check and create documents if necessary
+             if (xml instanceof PhysicalSystemPropertyType) {
+                 PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                 psd.setPhysicalSystem(((PhysicalSystemPropertyType) xml).getPhysicalSystem());
+                 xmlToString = psd;
+            } else if (xml instanceof PhysicalSystemType) {
+                PhysicalSystemDocument psd = PhysicalSystemDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                psd.setPhysicalSystem((PhysicalSystemType) xml);
+                xmlToString = psd;
+            } else if (xml instanceof PhysicalComponentPropertyType) {
+                PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                pcd.setPhysicalComponent(((PhysicalComponentPropertyType) xml).getPhysicalComponent());
+                xmlToString = pcd;
+            } else if (xml instanceof PhysicalComponentType) {
+                PhysicalComponentDocument pcd = PhysicalComponentDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                pcd.setPhysicalComponent((PhysicalComponentType) xml);
+                xmlToString = pcd;
+            } else if (xml instanceof SimpleProcessPropertyType) {
+                SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                spd.setSimpleProcess(((SimpleProcessPropertyType) xml).getSimpleProcess());
+                xmlToString = spd;
+            } else if (xml instanceof SimpleProcessPropertyType) {
+                SimpleProcessDocument spd = SimpleProcessDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                spd.setSimpleProcess((SimpleProcessType) xml);
+                xmlToString = spd;
+            } else if (xml instanceof AggregateProcessPropertyType) {
+                AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                apd.setAggregateProcess(((AggregateProcessPropertyType) xml).getAggregateProcess());
+                xmlToString = apd;
+            } else if (xml instanceof AggregateProcessType) {
+                AggregateProcessDocument apd = AggregateProcessDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                apd.setAggregateProcess((AggregateProcessType) xml);
+                xmlToString = apd;
+            }
+        }
+        if (xmlToString != null) {
+            sml.setSensorDescriptionXmlString(xmlToString.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
+        }
     }
 
     private DescribedObject parsePhysicalSystem(PhysicalSystemType describedObject) throws OwsExceptionReport {

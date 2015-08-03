@@ -141,7 +141,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         return p;
     }
 
-    protected Map<String, Object> parseDatasourceProperties(final Properties current) {
+    public Map<String, Object> parseDatasourceProperties(final Properties current) {
         final Map<String, Object> settings = new HashMap<String, Object>(current.size());
         if (supportsSchema) {
             settings.put(SCHEMA_KEY, current.getProperty(HibernateConstants.DEFAULT_SCHEMA));

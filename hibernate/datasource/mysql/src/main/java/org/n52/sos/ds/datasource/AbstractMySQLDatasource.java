@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
@@ -117,25 +118,33 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
 
     @Override
     public void clear(Properties properties) {
-		Map<String, Object> settings = parseDatasourceProperties(properties);
-		Connection conn = null;
-		Statement stmt = null;
-		try {
-			conn = openConnection(settings);
-			List<String> names = getQuotedSchemaTableNames(settings, conn);
-			if (!names.isEmpty()) {
-				stmt = conn.createStatement();
-				String sql = String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names));
-				LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
-				stmt.execute(sql);
-			}
-		} catch (SQLException ex) {
-			throw new ConfigurationException(ex);
-		} finally {
-			close(stmt);
-			close(conn);
-		}
-	}
+        Map<String, Object> settings = parseDatasourceProperties(properties);
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            List<String> names = getQuotedSchemaTableNames(settings, conn);
+            if (!names.isEmpty()) {
+                List<String> list = Lists.newArrayList();
+                list.add("SET FOREIGN_KEY_CHECKS=0;");
+                for (String name : names) {
+                    list.add(String.format("truncate %s;", name));
+                }
+                list.add("SET FOREIGN_KEY_CHECKS=1;");
+                stmt = conn.createStatement();
+                for (String sql : list) {
+                    LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
+                    stmt.execute(sql);
+                }
+
+            }
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(stmt);
+            close(conn);
+        }
+    }
 
     @Override
     public boolean supportsClear() {

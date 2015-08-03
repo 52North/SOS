@@ -40,7 +40,7 @@
 						<id>exporter-jar-generator</id>
 						<phase>package</phase>
 						<goals>
-							<goal>java</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>

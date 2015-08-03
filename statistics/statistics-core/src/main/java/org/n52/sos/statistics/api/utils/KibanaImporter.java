@@ -68,8 +68,8 @@ public class KibanaImporter {
         KibanaConfigHolderDto holder = mapper.readValue(jsonString, KibanaConfigHolderDto.class);
 
         for (KibanaConfigEntryDto dto : holder.getEntries()) {
-            logger.debug("Importing {}", dto);
             dto = processDto(dto);
+            logger.debug("Importing {}", dto);
             client.prepareIndex(kibanaIndexName, dto.getType(), dto.getId()).setSource(dto.getSource()).setOperationThreaded(false).get();
         }
     }

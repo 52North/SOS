@@ -234,7 +234,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     @Override
-    protected Map<String, Object> parseDatasourceProperties(final Properties current) {
+    public Map<String, Object> parseDatasourceProperties(final Properties current) {
         super.parseDatasourceProperties(current);
         final Map<String, Object> settings = super.parseDatasourceProperties(current);
         // parse optional instance

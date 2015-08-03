@@ -52,6 +52,8 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -63,6 +65,8 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
+	
     private static final int INSTANCE = 3;
 
     private static final int DATABASE = 4;
@@ -230,7 +234,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
     }
 
     @Override
-    protected Map<String, Object> parseDatasourceProperties(final Properties current) {
+    public Map<String, Object> parseDatasourceProperties(final Properties current) {
         super.parseDatasourceProperties(current);
         final Map<String, Object> settings = super.parseDatasourceProperties(current);
         // parse optional instance
@@ -290,6 +294,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                         statement.append("DBCC SHRINKDATABASE (")
                         .append(settings.get(DATABASE_KEY).toString())
                         .append(");");
+                LOGGER.debug("Executed clear datasource SQL statement: {}", statement);
                 stmt.execute(statement.toString());
             } catch (SQLException ex) {
                 throw new ConfigurationException(ex);

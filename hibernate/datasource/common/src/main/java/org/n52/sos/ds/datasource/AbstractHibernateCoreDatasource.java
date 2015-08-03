@@ -389,15 +389,6 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     }
 
     /**
-     * Parse datasource properties to map
-     *
-     * @param current
-     *            Current datasource properties
-     * @return Map with String key and Object value
-     */
-    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
-
-    /**
      * Converts the given connection settings into a valid JDBC string.
      *
      * @param settings

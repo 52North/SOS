@@ -8,7 +8,7 @@
 	<bean id="elasticsearchSettings" class="org.n52.sos.statistics.api.ElasticsearchSettings" primary="true">
 		<property name="loggingEnabled" value="true"></property>
 		<property name="clusterName" value="elasticsearch"></property>
-		<property name="nodeConnectionMode" value="statistics.elasticsearch.connection_mode.node"></property>
+		<property name="nodeConnectionMode" value="statistics.elasticsearch.connection_mode.transport_client"></property>
 		<property name="indexId" value="ogc-statistics-index"></property>
 		<property name="typeId" value="ogc-type"></property>
 		<property name="uuid" value="test-uuid"></property>

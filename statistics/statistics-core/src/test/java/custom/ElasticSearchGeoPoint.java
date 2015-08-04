@@ -44,6 +44,7 @@ import org.junit.Test;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
 import org.n52.sos.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.sos.statistics.impl.ElasticsearchAdminHandler;
 import org.n52.sos.statistics.impl.ElasticsearchDataHandler;
 import org.n52.sos.statistics.impl.StatisticsLocationUtil;
 
@@ -60,11 +61,16 @@ public class ElasticSearchGeoPoint extends SpringBaseTest {
     @Inject
     private ElasticsearchSettings settings;
 
+    @Inject
+    private ElasticsearchAdminHandler admin;
+
     @Before
     public void init() throws URISyntaxException {
         String absoluteFile = new File(ElasticSearchGeoPoint.class.getResource("/geolite/city.mmdb").toURI()).getAbsolutePath();
         loc.setEnabled(true);
         loc.initDatabase(LocationDatabaseType.CITY, absoluteFile);
+
+        admin.init();
 
         // --- Modify and uncomment this to connect to the remote ES ----
         // settings.getClusterNodes().add("111.222.333.444");

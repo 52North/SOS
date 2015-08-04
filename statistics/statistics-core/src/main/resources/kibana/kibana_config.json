@@ -1,6 +1,5 @@
 {
-  "entries" : [
-  {
+  "entries" : [ {
     "index" : ".kibana",
     "type" : "visualization",
     "id" : "Successfull-vs-erronous-requests",
@@ -28,11 +27,6 @@
   }, {
     "index" : ".kibana",
     "type" : "visualization",
-    "id" : "GetCapabilities-most-requested-sections",
-    "source" : "{\"title\":\"GetCapabilities most requested sections\",\"visState\":\"{\\\"type\\\":\\\"pie\\\",\\\"params\\\":{\\\"shareYAxis\\\":true,\\\"addTooltip\\\":true,\\\"addLegend\\\":true,\\\"isDonut\\\":false},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}},{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"segment\\\",\\\"params\\\":{\\\"field\\\":\\\"getcapabilities-sections\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
-  }, {
-    "index" : ".kibana",
-    "type" : "visualization",
     "id" : "GetCapabilities-Sections",
     "source" : "{\"title\":\"GetCapabilities Sections\",\"visState\":\"{\\\"type\\\":\\\"pie\\\",\\\"params\\\":{\\\"shareYAxis\\\":true,\\\"addTooltip\\\":true,\\\"addLegend\\\":true,\\\"isDonut\\\":false},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}},{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"segment\\\",\\\"params\\\":{\\\"field\\\":\\\"getcapabilities-sections\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
   }, {
@@ -40,11 +34,6 @@
     "type" : "visualization",
     "id" : "Number-of-all-requests",
     "source" : "{\"title\":\"Number of all requests\",\"visState\":\"{\\\"type\\\":\\\"metric\\\",\\\"params\\\":{\\\"fontSize\\\":60},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
-  }, {
-    "index" : ".kibana",
-    "type" : "visualization",
-    "id" : "Webapp-deployments-comparison",
-    "source" : "{\"title\":\"Webapp deployments comparison\",\"visState\":\"{\\\"type\\\":\\\"histogram\\\",\\\"params\\\":{\\\"shareYAxis\\\":true,\\\"addTooltip\\\":true,\\\"addLegend\\\":true,\\\"scale\\\":\\\"linear\\\",\\\"mode\\\":\\\"stacked\\\",\\\"times\\\":[],\\\"addTimeMarker\\\":false,\\\"defaultYExtents\\\":false,\\\"setYExtents\\\":false,\\\"yAxis\\\":{}},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}},{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"segment\\\",\\\"params\\\":{\\\"field\\\":\\\"instance-uuid\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}},{\\\"id\\\":\\\"3\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"group\\\",\\\"params\\\":{\\\"field\\\":\\\"sr-operation-name\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
   }, {
     "index" : ".kibana",
     "type" : "visualization",
@@ -75,5 +64,30 @@
     "type" : "visualization",
     "id" : "Most-requested-observed-properties",
     "source" : "{\"title\":\"Most requested observed properties\",\"visState\":\"{\\\"type\\\":\\\"histogram\\\",\\\"params\\\":{\\\"shareYAxis\\\":true,\\\"addTooltip\\\":true,\\\"addLegend\\\":true,\\\"scale\\\":\\\"linear\\\",\\\"mode\\\":\\\"stacked\\\",\\\"times\\\":[],\\\"addTimeMarker\\\":false,\\\"defaultYExtents\\\":false,\\\"setYExtents\\\":false,\\\"yAxis\\\":{}},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}},{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"segment\\\",\\\"params\\\":{\\\"field\\\":\\\"custom\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\",\\\"json\\\":\\\"{\\\\n\\\\\\\"script\\\\\\\" : \\\\\\\"most_requested_observedproperties\\\\\\\",\\\\n\\\\\\\"lang\\\\\\\" : \\\\\\\"groovy\\\\\\\",\\\\n\\\\\\\"valueType\\\\\\\": \\\\\\\"string\\\\\\\"\\\\n}\\\"}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
+  }, {
+    "index" : ".kibana",
+    "type" : "dashboard",
+    "id" : "52North-Default-Dashboard",
+    "source" : "{\"title\":\"52North Default Dashboard\",\"hits\":0,\"description\":\"\",\"panelsJSON\":\"[{\\\"id\\\":\\\"Number-of-all-requests\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"col\\\":1,\\\"row\\\":1},{\\\"id\\\":\\\"Requests'-origin-density-on-map\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":6,\\\"size_y\\\":5,\\\"col\\\":7,\\\"row\\\":1},{\\\"id\\\":\\\"Requested-content-types\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"col\\\":1,\\\"row\\\":3},{\\\"id\\\":\\\"Successfull-vs-erronous-requests\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"col\\\":4,\\\"row\\\":1}]\",\"version\":1,\"timeRestore\":false,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"filter\\\":[{\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}}}]}\"}}"
+  }, {
+    "index" : ".kibana",
+    "type" : "dashboard",
+    "id" : "GetCapabilities-Dashboard",
+    "source" : "{\"title\":\"GetCapabilities Dashboard\",\"hits\":0,\"description\":\"\",\"panelsJSON\":\"[{\\\"id\\\":\\\"GetCapabilities-most-requested-sections\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"col\\\":1,\\\"row\\\":1},{\\\"id\\\":\\\"GetCapabilities-section-combination\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"col\\\":4,\\\"row\\\":1},{\\\"id\\\":\\\"GetCapabilities-Sections\\\",\\\"type\\\":\\\"visualization\\\",\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"col\\\":7,\\\"row\\\":1}]\",\"version\":1,\"timeRestore\":false,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"filter\\\":[{\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}}}]}\"}}"
+  }, {
+    "index" : ".kibana",
+    "type" : "visualization",
+    "id" : "Instance-operation-comparison",
+    "source" : "{\"title\":\"Instance operation comparison\",\"visState\":\"{\\\"type\\\":\\\"histogram\\\",\\\"params\\\":{\\\"shareYAxis\\\":true,\\\"addTooltip\\\":true,\\\"addLegend\\\":true,\\\"scale\\\":\\\"linear\\\",\\\"mode\\\":\\\"stacked\\\",\\\"times\\\":[],\\\"addTimeMarker\\\":false,\\\"defaultYExtents\\\":false,\\\"setYExtents\\\":false,\\\"yAxis\\\":{}},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}},{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"segment\\\",\\\"params\\\":{\\\"field\\\":\\\"sr-operation-name\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}},{\\\"id\\\":\\\"3\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"group\\\",\\\"params\\\":{\\\"field\\\":\\\"instance-uuid\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
+  }, {
+    "index" : ".kibana",
+    "type" : "dashboard",
+    "id" : "Instance-Comparison-Dashboard",
+    "source" : "{\"title\":\"Instance Comparison Dashboard\",\"hits\":0,\"description\":\"\",\"panelsJSON\":\"[{\\\"col\\\":1,\\\"id\\\":\\\"Webapp-deployments-comparison\\\",\\\"row\\\":1,\\\"size_x\\\":5,\\\"size_y\\\":3,\\\"type\\\":\\\"visualization\\\"},{\\\"col\\\":6,\\\"id\\\":\\\"Instance-operation-comparison\\\",\\\"row\\\":1,\\\"size_x\\\":3,\\\"size_y\\\":2,\\\"type\\\":\\\"visualization\\\"}]\",\"version\":1,\"timeRestore\":false,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"filter\\\":[{\\\"query\\\":{\\\"query_string\\\":{\\\"analyze_wildcard\\\":true,\\\"query\\\":\\\"*\\\"}}}]}\"}}"
+  }, {
+    "index" : ".kibana",
+    "type" : "visualization",
+    "id" : "Instance-comparison:-number-of-requests",
+    "source" : "{\"title\":\"Instance comparison:  number of requests\",\"visState\":\"{\\\"type\\\":\\\"histogram\\\",\\\"params\\\":{\\\"shareYAxis\\\":true,\\\"addTooltip\\\":true,\\\"addLegend\\\":true,\\\"scale\\\":\\\"linear\\\",\\\"mode\\\":\\\"stacked\\\",\\\"times\\\":[],\\\"addTimeMarker\\\":false,\\\"defaultYExtents\\\":false,\\\"setYExtents\\\":false,\\\"yAxis\\\":{}},\\\"aggs\\\":[{\\\"id\\\":\\\"1\\\",\\\"type\\\":\\\"count\\\",\\\"schema\\\":\\\"metric\\\",\\\"params\\\":{}},{\\\"id\\\":\\\"2\\\",\\\"type\\\":\\\"terms\\\",\\\"schema\\\":\\\"segment\\\",\\\"params\\\":{\\\"field\\\":\\\"instance-uuid\\\",\\\"size\\\":5,\\\"order\\\":\\\"desc\\\",\\\"orderBy\\\":\\\"1\\\"}}],\\\"listeners\\\":{}}\",\"description\":\"\",\"version\":1,\"kibanaSavedObjectMeta\":{\"searchSourceJSON\":\"{\\\"index\\\":\\\"##!NO_SPOON!##\\\",\\\"query\\\":{\\\"query_string\\\":{\\\"query\\\":\\\"*\\\",\\\"analyze_wildcard\\\":true}},\\\"filter\\\":[]}\"}}"
   } ]
 }

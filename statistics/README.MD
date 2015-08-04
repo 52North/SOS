@@ -65,14 +65,19 @@ In case the webapplication can't connect to your Elasticsearch cluster the stati
 
 - Checkout this branch.
 - Install Elasticsearch on your local machine in version 1.6.x or later from https://www.elastic.co/downloads/elasticsearch
-- Open up the Elasticsearch config file under the ``config/elasticsearch.yml``. Uncomment and modify existing entry cluster-name to ``ogc-statistics-cluster``, i.e. ``cluster.name: ogc-statistics-cluster`` if you want to change the default settings.
-- Copy the `scripts` folder from the statistics\misc directory containing the `*.groovy` scripts under every Elasticsearch node's `config` directory you have. (If you miss this step a couple of visualizations in Kibana won't be available)
+- Open up the Elasticsearch config file under the ``config/elasticsearch.yml``. Uncomment and modify existing entry cluster-name, e.g. to ``ogc-statistics-cluster``, i.e. ``cluster.name: ogc-statistics-cluster`` if you want to change the default settings.
+- Copy the contents of the `scripts` folder from the ``statistics\misc\scripts``, containing some `*.groovy` script files, to every Elasticsearch node's `..\config\scripts` directory. If you miss this step a couple of visualizations in Kibana won't be available.
 - Install Kibana 4.x on your local machine from https://www.elastic.co/downloads/kibana
-- Run ``mvn clean install -DskipTests=true`` from the SOS root project.
+- Run ``mvn clean install`` from the SOS root project.
 - Deploy the .war file on your Tomcat server.
 - Go to your application's url and set up your SOS deployment, i.e. configure a database. For testing, use "H2/GeoDB (in memory)". 
+  - In the SOS settings, open the page "Statistics".
+    - Activate the checkbox "Enable statistics collection".
+	- Configure the previously set cluster name, e.g. ``ogc-statistics-cluster``
+	- Configure further statistics settings, see instructions on settings page.
+- Run example queries with [SoapUI](http://soapui.org/) using the file ``SOS\statistics\statistics-core\src\test\resources\soapUI\SOSBulkRequests.xml``: File -> Import project, then 
 - Start Elasticsearch with the appropriate executable in ``<Elasticsearch directory>/bin``, e.g. ``bin/elasticsearch.bat`` on Windows. On Linux machines refer to the [official guide here](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-service.html).
-- Start Kibana with the appropriate executable in ``<Kibana directory>/bin``, e.g. ``bin\kibana.bat`` on Windows. The default port is 5601. On Linux machine run the ``bin\kibana.sh`` file or refer to the [official guide here](https://www.elastic.co/guide/en/kibana/current/setup.html)
+- Start Kibana with the appropriate executable in ``<Kibana directory>/bin``, e.g. ``bin\kibana.bat`` on Windows. The default port is 5601. On Linux machine run the ``bin\kibana.sh`` file or refer to the [official guide here](https://www.elastic.co/guide/en/kibana/current/setup.html).
 - Set up the index in Kibana, the default index name is ``ogc-statistics-index``and the timestamp field is ``@timestamp`` or you can import our preconfigured Kibana settings which comes prepackaged with the SOS server. See your Elasticsearch Settings page on the SOS admin Settings page for further details.
 
 ![Kibana set up index](https://wiki.52north.org/pub/Projects/GSoC2015Statistics4Ows/kibana-index-setup.JPG)

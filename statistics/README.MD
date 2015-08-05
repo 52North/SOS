@@ -66,6 +66,8 @@ In case the webapplication can't connect to your Elasticsearch cluster the stati
 - Checkout this branch.
 - Install Elasticsearch on your local machine in version 1.6.x or later from https://www.elastic.co/downloads/elasticsearch
 - Open up the Elasticsearch config file under the ``config/elasticsearch.yml``. Uncomment and modify existing entry cluster-name to ``ogc-statistics-cluster``, i.e. ``cluster.name: ogc-statistics-cluster`` if you want to change the default settings.
+- In prodoction mode it is recommended to turn off multicast discovery, so append this line to the
+elasticsearch.yml `discovery.zen.ping.multicast.enabled: false`
 - Copy the `scripts` folder from the statistics\misc directory containing the `*.groovy` scripts under every Elasticsearch node's `config` directory you have. (If you miss this step a couple of visualizations in Kibana won't be available)
 - Install Kibana 4.x on your local machine from https://www.elastic.co/downloads/kibana
 - Run ``mvn clean install -DskipTests=true`` from the SOS root project.

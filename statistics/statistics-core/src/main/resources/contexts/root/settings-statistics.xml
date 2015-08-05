@@ -6,18 +6,17 @@
 	<bean id="statisticsDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
 		<property name="title" value="Statistics" />
 		<property name="description"
-			value="On this settings page you can enable and configure the statistics collection module. You need to have access to an ElasticSearch setup in order to store the collected data about the incoming requests of the client, exceptions and messages and interesting metrics of the response messages.
-			These settings will be change on the next webapplication startup.
-			
-			If you connected your SOS deployment and Elasticsearch cluster then the default Dashboard can be found usually at the address &lt;a href='http://your-host:5601'&gt;your-host:5601&lt;/a&gt;.
-		The Kibana server needs to be configured if the default settings were changed in ElasticSearch. You need to change on your Kibana machine the config/kibana.yml file."></property>
+			value="On this settings page you can enable and configure the statistics collection module. You need to have access to an Elasticsearch setup in order to store the collected data about the incoming requests of the client, exceptions and messages and interesting metrics of the response messages.
+			These settings will be change on the next webapplication startup. If you connected your SOS deployment and Elasticsearch cluster then the default Dashboard can be found usually at the address &lt;a href='http://your-host:5601'&gt;your-host:5601&lt;/a&gt;. 
+			The Kibana server needs to be configured if the default settings were changed in ElasticSearch. You need to change on your Kibana machine the config/kibana.yml file. 
+			For more information between Node and TransportClient mode visit the 
+			&lt;a href='https://www.elastic.co/guide/en/elasticsearch/guide/current/_transport_client_versus_node_client.html'&gt; official website &lt;/a&gt;"></property>
 		<property name="order" value="11.0" />
 	</bean>
 
 	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.is_logging_enabled" />
-		<property name="title"
-			value="Enable statistics collection?" />
+		<property name="title" value="Enable statistics collection?" />
 		<property name="order" value="1.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />
 		<property name="defaultValue" value="false" />
@@ -31,14 +30,15 @@
 			 The 'Embedded Server' mode starts a local elasticsearch server which stores the data in the WEB-INF/elasticsearch directory." />
 		<property name="order" value="2.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />
-		<property name="defaultValue" value="statistics.elasticsearch.connection_mode.node" />
+		<property name="defaultValue"
+			value="statistics.elasticsearch.connection_mode.node" />
 		<property name="options">
 			<map>
 				<entry key="statistics.elasticsearch.connection_mode.node"
 					value="Node client" />
 				<entry key="statistics.elasticsearch.connection_mode.transport_client"
 					value="Transport client" />
-					<entry key="statistics.elasticsearch.connection_mode.embedded_server"
+				<entry key="statistics.elasticsearch.connection_mode.embedded_server"
 					value="Embedded server" />
 			</map>
 		</property>
@@ -47,7 +47,8 @@
 	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.cluster_name" />
 		<property name="title" value="Name of the cluster to join to" />
-		<property name="description" value="Where to store your precious data" />
+		<property name="description" value="Where to store your data. About the Elasticsearch
+		&lt;a href='https://www.elastic.co/guide/en/elasticsearch/reference/1.6/glossary.html'&gt;terminology&lt;/a&gt;" />
 		<property name="order" value="3.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />
 		<property name="defaultValue" value="elasticsearch" />
@@ -69,7 +70,8 @@
 	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.index_name" />
 		<property name="title" value="Index name of the Elasticsearch index" />
-		<property name="description" value="Where to store your precious data" />
+		<property name="description" value="Where to store your data. About the Elasticsearch
+		&lt;a href='https://www.elastic.co/guide/en/elasticsearch/reference/1.6/glossary.html'&gt;terminology&lt;/a&gt;" />
 		<property name="order" value="5.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />
 		<property name="defaultValue" value="ogc-statistics-index" />
@@ -78,7 +80,8 @@
 	<bean class="org.n52.iceland.config.settings.StringSettingDefinition">
 		<property name="key" value="statistics.elasticsearch.type_name" />
 		<property name="title" value="Type name inside your Elasticsearch index" />
-		<property name="description" value="Where to store your precious data" />
+		<property name="description" value="Where to store your precious data. About the Elasticsearch
+		&lt;a href='https://www.elastic.co/guide/en/elasticsearch/reference/1.6/glossary.html'&gt;terminology&lt;/a&gt;" />
 		<property name="order" value="6.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />
 		<property name="defaultValue" value="ogc-type" />
@@ -135,7 +138,8 @@
 	<bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
 		<property name="key" value="statistics.geoloc.enabled" />
 		<property name="title" value="Enable the geolocation transformation?" />
-		<property name="description" value="These settings below are for transforming the client's IP address to geolocation format. 
+		<property name="description"
+			value="These settings below are for transforming the client's IP address to geolocation format. 
 		This feature use an external database from company Maxmind. These databases comes in two flavor 'City' and 'Country' they 
  		differ in accuracy and size. These settings will be change on the next webapplication startup. 
 		

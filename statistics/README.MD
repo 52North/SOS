@@ -64,10 +64,13 @@ In case the webapplication can't connect to your Elasticsearch cluster the stati
 ## Setup
 
 - Checkout this branch.
-- Install Elasticsearch on your local machine in version 1.6.x or later from https://www.elastic.co/downloads/elasticsearch
+- Install Elasticsearch on your local machine in version 1.7.x from https://www.elastic.co/downloads/elasticsearch
 - Install Kibana 4.x on your local machine from https://www.elastic.co/downloads/kibana
-- Open up the Elasticsearch config file under the ``config/elasticsearch.yml``. Uncomment and modify existing entry cluster-name, e.g. to ``ogc-statistics-cluster``, i.e. ``cluster.name: ogc-statistics-cluster`` if you want to change the default settings.
-- Copy the contents of the `scripts` folder from the ``statistics\misc\scripts``, containing some `*.groovy` script files, to every Elasticsearch node's `..\config\scripts` directory. If you miss this step a couple of visualizations in Kibana won't be available.
+- Elasticsearch configuration
+	- Open up the Elasticsearch config file under the ``config/elasticsearch.yml``. Uncomment and modify existing entry cluster-name, e.g. to ``ogc-statistics-cluster``, i.e. ``cluster.name: ogc-statistics-cluster`` if you want to change the default settings.
+	- In production it is highly advised to disable multicast discovery so insert the line into the config file
+	`discovery.zen.ping.multicast.enabled: false`
+	- Copy the contents of the `scripts` folder from the ``statistics\misc\scripts``, containing some `*.groovy` script files, to every Elasticsearch node's `..\config\scripts` directory. If you miss this step a couple of visualizations in Kibana won't be available.
 - Run ``mvn clean install -DskipTests=true`` from the SOS root project.
 - Deploy the .war file on your Tomcat server.
 - Go to your application's url and set up your SOS deployment, i.e. configure a database. For testing, use "H2/GeoDB (in memory)". 

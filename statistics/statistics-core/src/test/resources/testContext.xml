@@ -15,7 +15,7 @@
 		<property name="clusterNodes" value="localhost"></property>
 	</bean>
 
-	<bean id="adminDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" primary="true"/>
+	<bean id="adminDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" primary="true" init-method="init"/>
 
 	<bean id="statisticsLocationUtil" class="org.n52.sos.statistics.impl.StatisticsLocationUtil" primary="true" init-method="init"></bean>
 

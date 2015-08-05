@@ -51,7 +51,7 @@ public class ElasticSearchDataHandlerTest extends ElasticsearchAwareTest {
         data.put("alma", "körte");
         dataHandler.persist(data);
 
-        Thread.sleep(2000);
+        Thread.sleep(2500);
 
         SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
         Assert.assertEquals("körte", response.getHits().getHits()[0].getSource().get("alma"));

@@ -30,11 +30,15 @@ package org.n52.sos.statistics.api.utils;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.junit.Assert;
 import org.junit.Test;
+import org.n52.sos.statistics.api.ElasticsearchSettings;
+import org.n52.sos.statistics.impl.ElasticsearchAdminHandler;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -42,6 +46,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import basetest.ElasticsearchAwareTest;
 
 public class KibanaImporterTest extends ElasticsearchAwareTest {
+
+    @Inject
+    private ElasticsearchSettings settings;
+
+    @Inject
+    private ElasticsearchAdminHandler admin;
 
     @Test
     public void importValidJson() throws IOException, InterruptedException {
@@ -71,6 +81,14 @@ public class KibanaImporterTest extends ElasticsearchAwareTest {
         new KibanaImporter(getEmbeddedClient(), "local-index", "").importJson("semmi latnivali nincs itt");
         Thread.sleep(1500);
         Assert.assertFalse(getEmbeddedClient().prepareExists(".kibana").get().exists());
+    }
+
+    @Test
+    public void setKibanaImporterFalseAfterRun() {
+        settings.setKibanaConfigEnable(true);
+        admin.init();
+
+        Assert.assertFalse(settings.isKibanaConfigEnable());
     }
 
 }

@@ -31,6 +31,7 @@ package org.n52.sos.statistics.api.utils;
 import java.io.IOException;
 import java.util.Objects;
 
+import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.client.Client;
 import org.n52.sos.statistics.api.utils.dto.KibanaConfigEntryDto;
 import org.n52.sos.statistics.api.utils.dto.KibanaConfigHolderDto;
@@ -63,6 +64,13 @@ public class KibanaImporter {
 
     public void importJson(String jsonString) throws JsonParseException, JsonMappingException, IOException {
         Objects.requireNonNull(jsonString);
+
+        // delete .kibana index
+        try {
+            client.admin().indices().prepareDelete(kibanaIndexName).get();
+        } catch (ElasticsearchException ex) {
+            logger.debug("Tried to delete kibana index " + kibanaIndexName + " but it is not exists", ex);
+        }
 
         ObjectMapper mapper = new ObjectMapper();
         KibanaConfigHolderDto holder = mapper.readValue(jsonString, KibanaConfigHolderDto.class);

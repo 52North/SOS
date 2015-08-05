@@ -209,8 +209,22 @@ public class ElasticsearchSettings {
         nodeConnectionMode = choice;
     }
 
-    private void saveStringValueToConfigFile(String key, String value) {
+    /**
+     * With the settings API saves the new value to the configuration file
+     * 
+     * @param key
+     *            key to save the value
+     * @param value
+     *            value to save under the key
+     */
+    public void saveStringValueToConfigFile(String key, String value) {
         JsonSettingValue<String> newValue = new JsonSettingValue<String>(SettingType.STRING, key, value);
+        settingsService.changeSetting(newValue);
+
+    }
+
+    public void saveBooleanValueToConfigFile(String key, Boolean value) {
+        JsonSettingValue<Boolean> newValue = new JsonSettingValue<Boolean>(SettingType.BOOLEAN, key, value);
         settingsService.changeSetting(newValue);
 
     }

@@ -125,6 +125,9 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
             json = IOUtils.toString(new FileInputStream(settings.getKibanaConfPath()));
         }
         new KibanaImporter(client, ".kibana", settings.getIndexId()).importJson(json);
+        // set to false after successful import
+        settings.saveBooleanValueToConfigFile(ElasticsearchSettingsKeys.KIBANA_CONFIG_ENABLE, false);
+        settings.setKibanaConfigEnable(false);
 
     }
 
@@ -270,12 +273,7 @@ public class ElasticsearchAdminHandler implements IAdminDataHandler {
                         importPreconfiguredKibana();
                     } catch (Exception e) {
                         logger.error("Error during kibana config deployment", e);
-                    } finally {
-                    	//TODO probably the kibana config should be disabled after the import
-                    	//because after every restart it will be imported again
-                    	//the ElasticsearchSettings class has a custom settingsValue insertion template
                     }
-                    
                 }
             }
         } else {

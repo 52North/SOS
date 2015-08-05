@@ -49,7 +49,7 @@ import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractStatisticsBase {
+public abstract class AbstractStatisticsBase {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -73,9 +73,8 @@ public class AbstractStatisticsBase {
     }
 
     public Map<String, Object> getLastElasticsearchEntry() {
-        SearchResponse searchResponse =
-                elasticsearch.getClient().prepareSearch(ES_INDEX).setTypes(ES_TYPE).setSize(1)
-                        .addSort(SortBuilders.fieldSort(ServiceEventDataMapping.TIMESTAMP_FIELD.getName()).order(SortOrder.DESC)).get();
+        SearchResponse searchResponse = elasticsearch.getClient().prepareSearch(ES_INDEX).setTypes(ES_TYPE).setSize(1)
+                .addSort(SortBuilders.fieldSort(ServiceEventDataMapping.TIMESTAMP_FIELD.getName()).order(SortOrder.DESC)).get();
         if (searchResponse.getHits().hits().length == 0) {
             return null;
         }

@@ -1,59 +1,56 @@
 #Developer guide
 
 ## Architectural overview
-The main entry point for collection of service statistics is the class `org.n52.sos.statistics.sos.SosStatisticsLoggerListener`. It receives the events from the `ServiceEventBus`.
-Currently the following events are processed in the event listener.
+The main entry point for collection of service statistics is the class `org.n52.sos.statistics.sos.SosStatisticsServiceEventListener`. It receives the events from the `ServiceEventBus`.
+Currently the following events are processed in the statistics event listener.
 
- - RequestEvent
- - ExceptionEvent
- - ResponseEvent
- - OutgoingResponseEvent
- - CountingOutputstreamEvent
+ - ``RequestEvent``
+ - ``ExceptionEvent``
+ - ``ResponseEvent``
+ - ``OutgoingResponseEvent``
+ - ``CountingOutputstreamEvent``
  
- These events can be fired during any client's request call. The
+These events can be fired _in that order_ during one client's request call. The ``RequestEvent`` and ``OutgoingResponseEvent`` are always fired, and the latter is always the last event.
  
- - RequestEvent
- - OutgoingResponseEvent
+Based on the Java Servlet architecture every client request is serviced by only one Java thread. These events are grouped together based on the `java.lang.Thread#getId`. The events do not directly implement the `org.n52.iceland.event.ServiceEvent` interface but they are subclass of the `org.n52.iceland.event.events.AbstractFlowEvent` class, which contains the thread id.
  
- are always fired and the `OutgoingResponseEvent` is always the last event which comes in order.
- 
- Based on the Java Servlet architecture every client request is serviced by only one java thread. These events are grouped together based on the `java.lang.Thread#getId`. The events doesn't directly
- implement the `org.n52.iceland.event.ServiceEvent` interface but they are subclass of the `org.n52.iceland.event.events.AbstractFlowEvent` class which contains the thread id.
- 
- You can see an UML sequence diagram of one client request spawns multiple events.
+You can see an UML sequence diagram of one client request spawns multiple events.
 ![Statistics Events Processing](https://wiki.52north.org/pub/Projects/GSoC2015Statistics4Ows/Statistics_event_processing.jpg)
 
+
 ##Processing incoming events
-In the `SosStatisticsLoggerListener` event listener, the events are distributed to different **resolver** classes (which implement `org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver` interface) based on the event's concrete class. For example when a `RequestEvent` event is received it will be routed to the `SosRequestEventResolver` resolver. 
+In the `org.n52.sos.statistics.sos.SosStatisticsServiceEventListener` event listener, the events are distributed to different **resolver classes** (which implement `org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver` interface) based on the event's concrete class. For example when a `RequestEvent` event is received it will be routed to the `SosRequestEventResolver` resolver. The resolver map the contents of a service event to a data structure that can be loaded to the statistics database and persists the .
 
-Some of the events' payload don't contain any SOS specific information so they are implemented in a different not sos specific package structure. For example the
-`org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver` which is responsible for processing the `OutgoingResponseEvent`s are Iceland specific classes.
+Some of the events' payloads do not contain any SOS specific information so they are implemented in an independent package structure. For example the
+`org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver`, which is responsible for processing the `OutgoingResponseEvent`s, are Iceland-specific classes.
 
-Within the **XXXResolver** classes for further processing the payload different processing classes are implemented called `XXXHandler`.
-The `RequestEvent` contains payload as `org.n52.iceland.request.AbstractServiceRequest` type instances. The concrete classes of this
-abstract AbstractServiceRequest are application specific (e.g: SOS specific: DescribeSensorRequest,GetCapabilitiesRequest, etc... ).
-For such every concrete class a handler is specified e.g.: GetCapabilitiesRequestHandler which reads the important metrics data.
+Within the **XxxResolver** classes, different processing classes for each possible payload are implemented as `XXXHandler`s. The `RequestEvent` contains payload as instances of `org.n52.iceland.request.AbstractServiceRequest`. The concrete classes of this abstract AbstractServiceRequest are application-specific (e.g. for the SOS these are DescribeSensorRequest, GetCapabilitiesRequest, etc.). For every concrete class a handler is specified, e.g. ``GetCapabilitiesRequestHandler``, which reads the relevant metrics data.
 
-The **XXXHandler** classes must implement the IServiceEventHandler which return type is a `Map<String,Object>` type which is a persistable format for Elasticsearch.
+The **XXXHandler** classes must implement the IServiceEventHandler interface which return type is a `Map<String,Object>` type which is a persistable format for Elasticsearch.
 
 The Elasticsearch client API automatically converts the Java Map to a JSON string, including the nested map objects, e.g. `Map<String,Map<String,Object>>`.
 
 
 ## Extending the module with new parameters
-There can be a time in the near future when new parameters (e.g: some RequestEvent parameter) needs to be stored in Elasticsearch. Most of the primitive parameters can be one-to-one mapped from Java to Elasticsearch types like `String -> String` or `Long to Long` but some of them needs to be transformed like `Geometry -> Geo_Shape`.
-These conversions are located [n52.sos.statistics.sos.models](https://github.com/lestarcdog/SOS/tree/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/sos/models)
+New parameters (e.g: some RequestEvent parameter or service extension) can be stored in Elasticsearch as follows:
 
-The default mappings for all parameters can be found `ServiceDataMapping class`. The SOS specific parameters are located `SosDataMapping`. The funcionality of the parameters are implemented in the `org.n52.sos.statistics.api.parameters` package.
+- If there is a new event class, add a new resolver implementation.
+- If there is a new payload for an event, e.g. a new service request, add a new handler to the respective resolver.
+- If there is a new field in a concrete request, extend the existing handler or implement a new handler, replacing the existing one.
 
-The parameters are hierarchical e.g: `OmObservation` has the `OmObservationConstellation` object and it has many primitive objects. So the primitive types which don't have any children corresponds to the class [SingleEsParameter](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/SingleEsParameter.java). The hierarchical ones for the [ObjectEsParameter](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/ObjectEsParameter.java)
+Within the handlers, you have to "translate" from the service request to an Elasticsearch-compatible data structure. Most of the primitive parameters can be mapped directly from Java classes to Elasticsearch types like `String -> String` or `Long -> Long` but some of them needs to be converted, such as `Geometry -> Geo_Shape`. These conversions are located in ``n52.sos.statistics.sos.models``.
 
-The Elasticsearch mappings (which in the end will be transformed into JSON strings) can be given in many ways, this module uses the `java.util.Map<String,Object>` way. The [ElasticsearchTypeRegistry](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/ElasticsearchTypeRegistry.java) has the Elasticsearch types definition in that format. These types are rarely modified.
+The default mappings for all parameters can be found `org.n52.sos.statistics.api.mappings.ServiceEventDataMapping`. The SOS specific parameters are located in `org.n52.sos.statistics.sos.SosDataMapping`. The different variants of parameters are implemented in the `org.n52.sos.statistics.api.parameters` package.
 
-There is a "helper class" [ObjectEsParameterFactory](https://github.com/lestarcdog/SOS/blob/feature/statistics/groupevents/statistics/src/main/java/org/n52/sos/statistics/api/parameters/ObjectEsParameterFactory.java) which contains the composite `ObjectEsParameter`s. It is extensible with new methods and definitions.
+The parameters are hierarchical. `OmObservation` contains the `OmObservationConstellation` object which has many primitive objects. The primitive types, which don't have any children, correspond to the class ``org.n52.sos.statistics.api.parametersSingleEsParameter``. The hierarchical ones use the ``org.n52.sos.statistics.api.parameters.ObjectEsParameter``.
 
-To have an automatic parameter generation functionality the `Description` class has some parameters which gives indication about the parameter origin (in which Event was it transported), the operation (GetCapabilities) and a description message. The `PARAMETER.MD` file generator is at the separate module called statistics-generator. In the `package phase` the generation is called and the `PARAMETERS.MD` file is created in the `statistics` parent module.
+The Elasticsearch mappings (which in the end will be transformed into JSON strings) can be given in many ways. The current implementation uses a `java.util.Map<String,Object>`. The ``org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry`` provides the Elasticsearch types definition in that format. These types are rarely modified.
 
-To add a new parameter the following structure is needed. The description can be null the other fields are mandatory.
+There is a helper class ``org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory`` which contains construction methods for the composite `ObjectEsParameter`s. It is extensible with new methods and definitions.
+
+To have an automatic parameter generation functionality, the `org.n52.sos.statistics.api.parameters.Description` class has some parameters which gives indication about the parameter origin (i.e. in which event it was provided), the operation (e.g. GetCapabilities) and a description message. The `PARAMETERS.MD` file generator is in a separate Maven module called ``statistics-generator``, which is activated during the ``mvn package`` phase and creates an up-to-date human readable list of the parameter names in the `statistics` parent module.
+
+To add a new parameter the following structure is needed. The description can be null, the other fields are mandatory.
 
 ```java
 public static final AbstractEsParameter GC_FORMATS_FIELD = 
@@ -62,27 +59,36 @@ new SingleEsParameter("getcapabilities-formats",
                       ElasticsearchTypeRegistry.stringField);
 ```
 
-### Elasticsearch Schema creation and Connection
-If you want to integrate the iceland project based statistics module in a new project it is advised to create the Elasticsearch schema mapping beforehand you insert any data.
-The data mapping creation and consistency check happens automatically on every application start. The information stored in one Elasticsearch index and in two Elasticsearch types:
-- mt : for metadata automatically created client can't modify
-- #user specified : stores the application data
+## Elasticsearch connection and schema creation
 
-the metadata type contains the schema version, connected deployments unique id and additional timestamp information about creation and modification. If the webapplication has a different Elasticsearch schema then in the `mt` type it won't insert any data and the user must resolve manually the migration (probably by creating a new Elasticsearch index.)
-It is the developer responsibility to increment the schema version on breaking schema changes in the subclass by returning `DefaultElasticsearchSchemas#getSchemaVersion` a greater number then before.
+The setting up of Elasticsearch connections and schema creation is encapsulated in the class `org.n52.sos.statistics.impl.ElasticsearchAdminHandler`.
+
+If you want to integrate the iceland project based statistics module in a new project, it is advised to create the Elasticsearch schema mapping before you insert any data.
+
+The data mapping creation and consistency check happens automatically on every application start. The information stored in one Elasticsearch index and in two Elasticsearch types:
+- ``mt`` : for metadata that the automatically created client can't modify
+- ``"user specified"`` : stores the application data, the "usage statistics"
+
+The metadata type contains the statistics module _schema version_, the _unique id of connected service instances_ (i.e. deployed services that send their statistics to this Elasticsearch index), and an additional _timestamp_ information about creation and modification. If the webapplication has a different schema version form the one that `mt` type announces, then it _will not insert any data_ and the user must resolve any migration manually, probably by creating a new Elasticsearch index.
+
+### Adding a new schema
+
+It is the developer responsibility to increment the schema version on breaking schema changes by returning a larger number than `DefaultElasticsearchSchemas#getSchemaVersion()*, or any other schemas that might exist.
+
 Breaking changes:
-- Deleting a paremeter
+- Deleting a parameter
 - Changing an existing parameter's type
 
-The setting up the Elasticsearch connections and schema creation happens in the `org.n52.sos.statistics.impl.ElasticsearchAdminHandler` class. 
+There are properties which are default to all schemata. These settings are stored in the `org.n52.sos.statistics.impl.schemabuilders.DefaultElasticsearchSchemas` abstract class. The developer should subclass this class and call the `DefaultElasticsearchSchemas#processSchemaClass` method in her subclass. The input parameter is a list of `Class`s which contains `static public final AbstractEsParameter` class variables. For more information how to set up a data mapping schema file see the chapter "Extending the module with new parameters".
 
-There are properties which are default to all schema those settings are stored in the `org.n52.sos.statistics.impl.schemabuilders.DefaultElasticsearchSchemas` abstract class. The developer should subclass this class and call the `DefaultElasticsearchSchemas#processSchemaClass` method in his/her subclass. The input parameter is a list of `Class`s which contains `static public final AbstractEsParameter` class variables. (For more information how to setup a data mapping schema file see the chapter "Extending the module with new parameters")
+## Kibana exporter/importer
+The statistics module ships with preconfigured Kibana dashboards and visualizations. Kibana (>= 4.x) stores its application data in Elasticsearch by default to the index named ".kibana".
 
-###Kibana exporter/importer
-The statistics module ships with preconfigured Kibana dashboards and visualizations. Kibana after the 4.x.x version stores it's application data in Elasticsearch defaults to the index name ".kibana"
-The Kibana importer job to parse the configuration file which were created beforehand and saved under the file `/src/main/resources/kibana/kibana_config.json`. It has a custom json schema format because we need more information what the factory Kibana importer exporter provide. The importer activates on the startup if the user enabled the function on the settings page. The importer takes consideration the different Elasticsearch types names between the export development environment and import production environment and it processes the config file before. 
+The project contains a Kibana importer job to parse the configuration file, which were created beforehand and saved under the file `/src/main/resources/kibana/kibana_config.json`, and store the predefined dashboards and visualizations in the index to make them directly available to users.
 
-**The Kibana exporter is intended for in-house use only!** It is a java runnable jar and exports the `kibana_config.json` file. The input arguments for the main class is the development Elasticsearch cluster address and the cluster name
+The file has a custom JSON schema format, because we need more information than what the factory Kibana importer exporter provides. The importer activates on startup if the user enabled the function on the settings page. The importer considers the different Elasticsearch types names between the export development environment and import production environment and it processes the config file before. 
+
+**The standalone Kibana exporter is intended for in-house use only!** It is a Java runnable jar, must be executed manually, and creates the `kibana_config.json` file. The input arguments for the main class is the development Elasticsearch cluster address and the cluster name
 ```bash
 java -jar kibana-exporter.jar localhost:9300 ogc-statistics-cluster
 ```

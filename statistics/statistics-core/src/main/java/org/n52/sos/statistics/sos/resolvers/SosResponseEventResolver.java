@@ -30,34 +30,41 @@ package org.n52.sos.statistics.sos.resolvers;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-
+import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
-import org.n52.sos.statistics.sos.handlers.response.DefaultSosResponseHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class SosResponseEventResolver implements IStatisticsServiceEventResolver {
+public class SosResponseEventResolver implements IServiceEventResolver<ResponseEvent> {
 
-    private AbstractServiceResponse response;
-
-    @Inject
-    private DefaultSosResponseHandler defaultSosResponseHandler;
+    private ResponseEvent event;
+    private Map<String, IServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
-    	if(response == null) {
-    		return null;
-    	}
-    	//TODO probably implement more specific event handler
-        return defaultSosResponseHandler.resolveAsMap(response);
+        if (event == null || event.getResponse() == null) {
+            return null;
+        }
+        AbstractServiceResponse response = event.getResponse();
+        IServiceEventHandler<AbstractServiceResponse> handler = EventHandlerFinder.findHandler(response, handlers);
+
+        return handler.resolveAsMap(response);
     }
 
-    public AbstractServiceResponse getResponse() {
-        return response;
+    @Override
+    public void setEvent(ResponseEvent event) {
+        this.event = event;
     }
 
-    public void setResponse(AbstractServiceResponse response) {
-        this.response = response;
+    @Override
+    public ResponseEvent getEvent() {
+        return event;
+    }
+
+    @Override
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+        this.handlers = handlers;
     }
 
 }

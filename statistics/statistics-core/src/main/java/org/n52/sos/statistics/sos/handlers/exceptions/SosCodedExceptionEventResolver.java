@@ -35,10 +35,11 @@ import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
-public class SosCodedExceptionEventResolver extends AbstractElasticSearchDataHolder implements IServiceEventHandler<CodedException> {
+public class SosCodedExceptionEventResolver extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
 
     @Override
-    public Map<String, Object> resolveAsMap(CodedException exception) {
+    public Map<String, Object> resolveAsMap(Exception rawException) {
+        CodedException exception = (CodedException) rawException;
         if (exception.getStatus() != null) {
             put(ServiceEventDataMapping.EX_STATUS, exception.getStatus().getCode());
         }

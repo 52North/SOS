@@ -28,36 +28,41 @@
  */
 package org.n52.sos.statistics.impl.resolvers;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.n52.iceland.event.events.CountingOutputstreamEvent;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class CountingOutputstreamEventResolver extends AbstractElasticSearchDataHolder implements IStatisticsServiceEventResolver {
+public class CountingOutputstreamEventResolver implements IServiceEventResolver<CountingOutputstreamEvent> {
 
     private CountingOutputstreamEvent event;
+    private Map<String, IServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
-        Map<String, Object> data = new HashMap<>();
-        data.put(ObjectEsParameterFactory.BYTES.getName(), event.getBytesWritten());
-        data.put(ObjectEsParameterFactory.DISPLAY_BYTES.getName(), FileUtils.byteCountToDisplaySize(event.getBytesWritten()));
-        put(ServiceEventDataMapping.ORE_BYTES_WRITTEN, data);
+        if (event == null) {
+            return null;
+        }
+        IServiceEventHandler<CountingOutputstreamEvent> handler = EventHandlerFinder.findHandler(event, handlers);
 
-        return dataMap;
+        return handler.resolveAsMap(event);
     }
 
+    @Override
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+        this.handlers = handlers;
+    }
+
+    @Override
+    public void setEvent(CountingOutputstreamEvent payload) {
+        this.event = payload;
+    }
+
+    @Override
     public CountingOutputstreamEvent getEvent() {
         return event;
-    }
-
-    public void setEvent(CountingOutputstreamEvent event) {
-        this.event = event;
     }
 
 }

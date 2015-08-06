@@ -31,31 +31,46 @@ package org.n52.sos.statistics.impl.resolvers;
 import java.util.Map;
 
 import org.n52.iceland.event.events.OutgoingResponseEvent;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class OutgoingResponseEventResolver extends AbstractElasticSearchDataHolder implements IStatisticsServiceEventResolver {
+public class OutgoingResponseEventResolver implements IServiceEventResolver<OutgoingResponseEvent> {
 
-    private OutgoingResponseEvent response;
+    private OutgoingResponseEvent event;
+    private Map<String, IServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
-        if (response == null) {
+        if (event == null) {
             return null;
         }
-        put(ServiceEventDataMapping.ORE_EXEC_TIME.getName(), response.getElapsedTime());
-        put(ServiceEventDataMapping.ORE_COUNT.getName(), response.getRequestNumber());
+        IServiceEventHandler<OutgoingResponseEvent> handler = EventHandlerFinder.findHandler(event, handlers);
 
-        return dataMap;
+        return handler.resolveAsMap(event);
     }
 
     public OutgoingResponseEvent getResponse() {
-        return response;
+        return event;
     }
 
     public void setResponse(OutgoingResponseEvent response) {
-        this.response = response;
+        this.event = response;
+    }
+
+    @Override
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+        this.handlers = handlers;
+    }
+
+    @Override
+    public void setEvent(OutgoingResponseEvent event) {
+        this.event = event;
+    }
+
+    @Override
+    public OutgoingResponseEvent getEvent() {
+        return event;
     }
 
 }

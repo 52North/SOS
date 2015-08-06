@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- exception event handlers -->
+	<bean id="sosCodedExceptionEventResolver" class="org.n52.sos.statistics.sos.handlers.exceptions.SosCodedExceptionEventResolver" scope="prototype" />
+	<bean id="sosOwsExceptionEventResolver" class="org.n52.sos.statistics.sos.handlers.exceptions.SosOwsExceptionEventResolver" scope="prototype" />
+
+	<!-- exception resolver -->
+	<bean id="sosExceptionEventResolver" class="org.n52.sos.statistics.sos.resolvers.SosExceptionEventResolver" scope="prototype">
+		<property name="handlers">
+			<map>
+				<entry key="CodedException" value-ref="sosCodedExceptionEventResolver"></entry>
+				<entry key="OwsException" value-ref="sosOwsExceptionEventResolver"></entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>

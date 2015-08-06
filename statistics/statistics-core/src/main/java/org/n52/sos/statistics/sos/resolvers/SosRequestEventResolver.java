@@ -29,49 +29,50 @@
 package org.n52.sos.statistics.sos.resolvers;
 
 import java.util.Map;
-import java.util.Objects;
 
+import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
-import org.n52.sos.statistics.sos.handlers.requests.AbstractSosRequestHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class SosRequestEventResolver implements IStatisticsServiceEventResolver {
+public class SosRequestEventResolver implements IServiceEventResolver<RequestEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(SosRequestEventResolver.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(SosRequestEventResolver.class);
 
-    private AbstractServiceRequest<?> request;
+    private RequestEvent event;
 
-    private Map<String, AbstractSosRequestHandler<?>> handlers;
+    private Map<String, IServiceEventHandler<?>> handlers;
 
     public SosRequestEventResolver() {
     }
 
-    public void setHandlers(Map<String, AbstractSosRequestHandler<?>> handlers) {
+    @Override
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
         this.handlers = handlers;
     }
 
     @Override
     public Map<String, Object> resolve() {
-        //Objects.requireNonNull(request);
-    	if(request == null) {
-    		return null;
-    	}
-        String requestName = request.getClass().getSimpleName();
-        AbstractSosRequestHandler<?> handler = handlers.get(requestName);
-        Objects.requireNonNull(handler, "Processing handler not found for type: " + request.getClass().getName());
+        if (event == null || event.getRequest() == null) {
+            return null;
+        }
+        AbstractServiceRequest<?> request = event.getRequest();
+        IServiceEventHandler<AbstractServiceRequest<?>> handler = EventHandlerFinder.findHandler(request, handlers);
 
         return handler.resolveAsMap(request);
 
     }
 
-    public AbstractServiceRequest<?> getRequest() {
-        return request;
+    @Override
+    public void setEvent(RequestEvent event) {
+        this.event = event;
     }
 
-    public void setRequest(AbstractServiceRequest<?> request) {
-        this.request = request;
+    @Override
+    public RequestEvent getEvent() {
+        return event;
     }
 
 }

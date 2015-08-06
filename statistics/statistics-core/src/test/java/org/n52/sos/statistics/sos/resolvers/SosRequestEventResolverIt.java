@@ -35,14 +35,15 @@ import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
+import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.request.RequestContext;
 import org.n52.iceland.util.net.IPAddress;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
-import basetest.ElasticsearchAwareTest;
-
 import com.google.common.base.Optional;
+
+import basetest.ElasticsearchAwareTest;
 
 //TODO these classes needs to be in the integration test
 public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
@@ -66,7 +67,7 @@ public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
         r.setAcceptFormats(Arrays.asList("a", "b", "c"));
         r.setAcceptVersions(Arrays.asList("1.0", "1.1"));
 
-        resolve.setRequest(r);
+        resolve.setEvent(new RequestEvent(r));
         new RequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.53")));
 
         dataHandler.persist(resolve.resolve());

@@ -36,24 +36,25 @@ import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
 import basetest.ElasticsearchAwareTest;
 
 public class ElasticSearchDataHandlerTest extends ElasticsearchAwareTest {
 
     @Inject
-    private IStatisticsDataHandler dataHandler;
+    private ElasticsearchDataHandler dataHandler;
 
     @Test
     public void persistBasicData() throws InterruptedException {
+        Thread.sleep(2000);
         Map<String, Object> data = new HashMap<>();
-        data.put("alma", "körte");
+        data.put("alma", "korte");
         dataHandler.persist(data);
 
-        Thread.sleep(2500);
+        logger.debug("Waiting 3s");
+        Thread.sleep(2000);
 
         SearchResponse response = getEmbeddedClient().prepareSearch(clientSettings.getIndexId()).setTypes(clientSettings.getTypeId()).get();
-        Assert.assertEquals("körte", response.getHits().getHits()[0].getSource().get("alma"));
+        Assert.assertEquals("korte", response.getHits().getHits()[0].getSource().get("alma"));
     }
 }

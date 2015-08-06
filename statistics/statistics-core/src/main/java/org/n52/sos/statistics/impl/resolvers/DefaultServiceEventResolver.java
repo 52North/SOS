@@ -29,35 +29,42 @@
 package org.n52.sos.statistics.impl.resolvers;
 
 import java.util.Map;
-import java.util.Objects;
 
 import org.n52.iceland.event.ServiceEvent;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class DefaultServiceEventResolver extends AbstractElasticSearchDataHolder implements IStatisticsServiceEventResolver {
+public class DefaultServiceEventResolver implements IServiceEventResolver<ServiceEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultServiceEventResolver.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(DefaultServiceEventResolver.class);
     private ServiceEvent event;
+    private Map<String, IServiceEventHandler<?>> handlers;
 
+    @Override
+    public Map<String, Object> resolve() {
+        if (event == null) {
+            return null;
+        }
+        IServiceEventHandler<ServiceEvent> handler = EventHandlerFinder.findHandler(event, handlers);
+
+        return handler.resolveAsMap(event);
+    }
+
+    @Override
+    public void setEvent(ServiceEvent payload) {
+        this.event = payload;
+    }
+
+    @Override
     public ServiceEvent getEvent() {
         return event;
     }
 
-    public void setEvent(ServiceEvent event) {
-        this.event = event;
-    }
-
     @Override
-    public Map<String, Object> resolve() {
-        Objects.requireNonNull(event);
-
-        put(ServiceEventDataMapping.UNHANDLED_SERVICEEVENT_TYPE.getName(), event.getClass());
-
-        return dataMap;
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+        this.handlers = handlers;
     }
 
 }

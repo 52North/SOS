@@ -35,12 +35,11 @@ import java.util.stream.Collectors;
 
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExtensionEsModel extends AbstractElasticsearchModel {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExtensionEsModel.class);
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(ExtensionEsModel.class);
 
     private final Extension<?> extension;
 

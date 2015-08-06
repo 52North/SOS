@@ -30,53 +30,45 @@ package org.n52.sos.statistics.sos.resolvers;
 
 import java.util.Map;
 
-import javax.inject.Inject;
+import org.n52.iceland.event.events.ExceptionEvent;
+import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver;
-import org.n52.sos.statistics.sos.handlers.exceptions.SosCodedExceptionEventResolver;
-import org.n52.sos.statistics.sos.handlers.exceptions.SosOwsExceptionEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class SosExceptionEventResolver implements IServiceEventResolver<ExceptionEvent> {
 
-public class SosExceptionEventResolver implements IStatisticsServiceEventResolver {
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(SosExceptionEventResolver.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(SosExceptionEventResolver.class);
+    private ExceptionEvent event;
 
-    private Exception exception;
-
-    @Inject
-    private SosCodedExceptionEventResolver codedExceptionEventResolver;
-
-    @Inject
-    private SosOwsExceptionEventResolver owsExceptionEventResolver;
+    private Map<String, IServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
-        //Objects.requireNonNull(exception);
-    	if(exception == null) {
-    		return null;
-    	}
-
-        Map<String, Object> dataMap = null;
-        if (exception instanceof CodedException) {
-            dataMap = codedExceptionEventResolver.resolveAsMap((CodedException) exception);
-        } else if (exception instanceof OwsExceptionReport) {
-            dataMap = owsExceptionEventResolver.resolveAsMap((OwsExceptionReport) exception);
-        } else {
-            logger.warn("No appropriate ExceptionEventResolver for type {}", exception.getClass());
+        if (event == null || event.getException() == null) {
             return null;
         }
-        return dataMap;
+
+        Exception exception = event.getException();
+        IServiceEventHandler<Exception> handler = EventHandlerFinder.findHandler(exception, handlers);
+
+        return handler.resolveAsMap(exception);
     }
 
-    public Exception getException() {
-        return exception;
+    @Override
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+        this.handlers = handlers;
     }
 
-    public void setException(Exception exception) {
-        this.exception = exception;
+    @Override
+    public void setEvent(ExceptionEvent event) {
+        this.event = event;
+    }
+
+    @Override
+    public ExceptionEvent getEvent() {
+        return event;
     }
 
 }

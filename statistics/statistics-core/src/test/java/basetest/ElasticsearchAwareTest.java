@@ -44,6 +44,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.n52.sos.statistics.api.ElasticsearchSettings;
+import org.n52.sos.statistics.impl.ElasticsearchAdminHandler;
 
 public abstract class ElasticsearchAwareTest extends SpringBaseTest {
 
@@ -51,6 +52,9 @@ public abstract class ElasticsearchAwareTest extends SpringBaseTest {
 
     @Inject
     protected ElasticsearchSettings clientSettings;
+
+    @Inject
+    protected ElasticsearchAdminHandler adminHandler;
 
     @BeforeClass
     public static void init() throws IOException, InterruptedException {

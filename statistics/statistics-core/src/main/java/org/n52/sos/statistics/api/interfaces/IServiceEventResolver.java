@@ -30,6 +30,29 @@ package org.n52.sos.statistics.api.interfaces;
 
 import java.util.Map;
 
-public interface IStatisticsServiceEventResolver {
+public interface IServiceEventResolver<T> {
+    /**
+     * Resolves the the request to Elasticsearch format
+     * 
+     * @return
+     */
     Map<String, Object> resolve();
+
+    /**
+     * before the processing the Handlers can be added to the resolver via
+     * spring xml
+     * 
+     * @param handlers
+     */
+    void setHandlers(Map<String, IServiceEventHandler<?>> handlers);
+
+    /**
+     * Sets the payload to the Resolver class. Before the {@link #resolve()}
+     * method is called.
+     * 
+     * @param event
+     */
+    void setEvent(T event);
+
+    T getEvent();
 }

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<!-- HANDLERS -->
+	<bean id="defaultServiceEventHandler" class="org.n52.sos.statistics.impl.handlers.DefaultServiceEventHandler" scope="prototype" />
+
+
+	<!-- RESOLVERS -->
+	<bean id="defaultServiceEventResolver" class="org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver" scope="prototype" >
+		<property name="handlers">
+			<map>
+				<entry key="ServiceEvent" value-ref="defaultServiceEventHandler"></entry>
+			</map>
+		</property>
+	</bean>
+</beans>

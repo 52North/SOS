@@ -10,71 +10,14 @@
 	<bean id="elasticsearchSettings" class="org.n52.sos.statistics.api.ElasticsearchSettings" />
 	<bean id="adminDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" />
 	<bean id="elasticsearchDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchDataHandler" depends-on="adminDataHandler"></bean>
-
 	<bean id="sosStatisticsServiceEventListener" class="org.n52.sos.statistics.sos.SosStatisticsServiceEventListener"></bean>
 	<bean id="statisticsLocationUtil" class="org.n52.sos.statistics.impl.StatisticsLocationUtil"></bean>
-
-
-
-	<!-- HANDLERS -->
-	<!-- exception event -->
-	<bean id="sosCodedExceptionEventResolver" class="org.n52.sos.statistics.sos.handlers.exceptions.SosCodedExceptionEventResolver" scope="prototype" />
-	<bean id="sosOwsExceptionEventResolver" class="org.n52.sos.statistics.sos.handlers.exceptions.SosOwsExceptionEventResolver" scope="prototype" />
-
-	<!-- request events -->
-	<bean id="batchRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.BatchRequestHandler" scope="prototype" />
-	<bean id="deleteSensorRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.DeleteSensorRequestHandler" scope="prototype" />
-	<bean id="describeSensorRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.DescribeSensorRequestHandler" scope="prototype" />
-	<bean id="getCapabilitiesRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetCapabilitiesRequestHandler" scope="prototype" />
-	<bean id="getDataAvailabilityRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetDataAvailabilityRequestHandler" scope="prototype" />
-	<bean id="getFeatureOfInterestRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetFeatureOfInterestRequestHandler" scope="prototype" />
-	<bean id="getObservationByIdRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetObservationByIdRequestHandler" scope="prototype" />
-	<bean id="getObservationRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetObservationRequestHandler" scope="prototype" />
-	<bean id="getResultRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetResultRequestHandler" scope="prototype" />
-	<bean id="getResultTemplateRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.GetResultTemplateRequestHandler" scope="prototype" />
-	<bean id="insertObservationRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.InsertObservationRequestHandler" scope="prototype" />
-	<bean id="insertResultRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.InsertResultRequestHandler" scope="prototype" />
-	<bean id="insertResultTemplateRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.InsertResultTemplateRequestHandler" scope="prototype" />
-	<bean id="insertSensorRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.InsertSensorRequestHandler" scope="prototype" />
-	<bean id="updateSensorRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.UpdateSensorRequestHandler" scope="prototype" />
-
-	<!-- RESPONSE HANDLERS -->
-	<bean id="defaultSosResponseHandler" class="org.n52.sos.statistics.sos.handlers.response.DefaultSosResponseHandler" scope="prototype" />
-
-
-
-	<!-- RESOLVERS -->
-	<bean id="sosRequestEventResolver" class="org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver" scope="prototype">
-		<property name="handlers">
-			<map>
-				<!-- <entry key="BatchRequest" value-ref="batchRequestHandler" /> -->
-				<entry key="DeleteSensorRequest" value-ref="deleteSensorRequestHandler" />
-				<entry key="DescribeSensorRequest" value-ref="describeSensorRequestHandler" />
-				<entry key="GetCapabilitiesRequest" value-ref="getCapabilitiesRequestHandler" />
-				<entry key="GetDataAvailabilityRequest" value-ref="getDataAvailabilityRequestHandler" />
-				<entry key="GetFeatureOfInterestRequest" value-ref="getFeatureOfInterestRequestHandler" />
-				<entry key="GetObservationByIdRequest" value-ref="getObservationByIdRequestHandler" />
-				<entry key="GetObservationRequest" value-ref="getObservationRequestHandler" />
-				<entry key="GetResultRequest" value-ref="getResultRequestHandler" />
-				<entry key="GetResultTemplateRequest" value-ref="getResultTemplateRequestHandler" />
-				<entry key="InsertObservationRequest" value-ref="insertObservationRequestHandler" />
-				<entry key="InsertResultRequest" value-ref="insertResultRequestHandler" />
-				<entry key="InsertResultTemplateRequest" value-ref="insertResultTemplateRequestHandler" />
-				<entry key="InsertSensorRequest" value-ref="insertSensorRequestHandler" />
-				<entry key="UpdateSensorRequest" value-ref="updateSensorRequestHandler" />
-			</map>
-		</property>
-	</bean>
-
-	<bean id="sosResponseEventResolver" class="org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver" scope="prototype"></bean>
-
-
-	<bean id="sosExceptionEventResolver" class="org.n52.sos.statistics.sos.resolvers.SosExceptionEventResolver" scope="prototype"></bean>
-
-	<bean id="defaultServiceEventResolver" class="org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver" scope="prototype" />
-
-	<bean id="outgoingResponseEventResolver" class="org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver" scope="prototype" />
-
-	<bean id="countingOutputstreamEventResolver" class="org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver" scope="prototype" />
-
+	<bean id="sosStatisticsResolverFactory" class="org.n52.sos.statistics.SosStatisticsResolverFactory"></bean>
+	
+	<import resource="imports/countingoutputstrem-event.xml"/>
+	<import resource="imports/default-event.xml"/>
+	<import resource="imports/exception-event.xml"/>
+	<import resource="imports/outgoingresponse-event.xml"/>
+	<import resource="imports/request-event.xml"/>
+	<import resource="imports/response-event.xml"/>
 </beans>

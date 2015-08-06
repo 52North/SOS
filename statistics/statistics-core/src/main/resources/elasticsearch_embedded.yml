@@ -31,9 +31,6 @@
 #
 cluster.name: elasticsearch
 
-script.groovy.sandbox.enabled: true
-
-
 #################################### Node #####################################
 
 # Node names are generated dynamically on startup, so you're relieved

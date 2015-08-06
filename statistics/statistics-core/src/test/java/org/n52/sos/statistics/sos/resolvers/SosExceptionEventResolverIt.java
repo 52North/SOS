@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
+import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.sos.decode.json.JSONDecodingException;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
@@ -50,7 +51,7 @@ public class SosExceptionEventResolverIt extends ElasticsearchAwareTest {
     @Test
     public void persistRequestToDb() throws Exception {
         JSONDecodingException exp = new JSONDecodingException("message");
-        resolve.setException(exp);
+        resolve.setEvent(new ExceptionEvent(exp));
 
         dataHandler.persist(resolve.resolve());
         // eventually realtime should be enough

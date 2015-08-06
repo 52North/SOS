@@ -36,6 +36,7 @@ import org.junit.Test;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.sos.decode.json.JSONDecodingException;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.sos.statistics.impl.resolvers.SosExceptionEventResolver;
 
 import basetest.ElasticsearchAwareTest;
 

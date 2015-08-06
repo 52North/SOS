@@ -77,9 +77,13 @@ public class EmbeddedElasticsearch {
         setting.put("path.home", homePath);
 
         try {
-            FileUtils.forceMkdir(new File(homePath));
-            copyScriptFiles();
-            downlaodGroovyLibrary();
+            if (!new File(homePath).exists()) {
+                FileUtils.forceMkdir(new File(homePath));
+                copyScriptFiles();
+                downlaodGroovyLibrary();
+            } else {
+                logger.info("Path " + homePath + "for embedded elasticsearch is exsits. Continue.");
+            }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }

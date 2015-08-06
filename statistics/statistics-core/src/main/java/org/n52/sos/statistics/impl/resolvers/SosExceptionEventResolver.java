@@ -26,26 +26,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.statistics.sos.handlers.exceptions;
+package org.n52.sos.statistics.impl.resolvers;
 
 import java.util.Map;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class SosOwsExceptionEventResolver extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
+public class SosExceptionEventResolver implements IServiceEventResolver<ExceptionEvent> {
+
+    // private static final Logger logger =
+    // LoggerFactory.getLogger(SosExceptionEventResolver.class);
+
+    private ExceptionEvent event;
+
+    private Map<String, IServiceEventHandler<?>> handlers;
 
     @Override
-    public Map<String, Object> resolveAsMap(Exception rawException) {
-        OwsExceptionReport exception = (OwsExceptionReport) rawException;
-        if (exception.getStatus() != null) {
-            put(ServiceEventDataMapping.EX_STATUS, exception.getStatus().getCode());
+    public Map<String, Object> resolve() {
+        if (event == null || event.getException() == null) {
+            return null;
         }
-        put(ServiceEventDataMapping.EX_VERSION, exception.getVersion());
-        put(ServiceEventDataMapping.OWSEX_NAMESPACE, exception.getNamespace());
-        put(ServiceEventDataMapping.EX_MESSAGE, exception.getMessage());
-        return dataMap;
+
+        Exception exception = event.getException();
+        IServiceEventHandler<Exception> handler = EventHandlerFinder.findHandler(exception, handlers);
+
+        return handler.resolveAsMap(exception);
     }
+
+    @Override
+    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+        this.handlers = handlers;
+    }
+
+    @Override
+    public void setEvent(ExceptionEvent event) {
+        this.event = event;
+    }
+
+    @Override
+    public ExceptionEvent getEvent() {
+        return event;
+    }
+
 }

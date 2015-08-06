@@ -54,7 +54,7 @@ import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver;
 import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
 import org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver;
-import org.n52.sos.statistics.sos.resolvers.SosExceptionEventResolver;
+import org.n52.sos.statistics.impl.resolvers.SosExceptionEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver;
 import org.slf4j.Logger;

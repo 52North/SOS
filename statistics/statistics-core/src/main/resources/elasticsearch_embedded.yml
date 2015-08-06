@@ -31,6 +31,8 @@
 #
 cluster.name: elasticsearch
 
+script.groovy.sandbox.enabled: true
+
 
 #################################### Node #####################################
 

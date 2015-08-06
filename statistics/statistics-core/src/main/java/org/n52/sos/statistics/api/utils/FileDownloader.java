@@ -57,13 +57,13 @@ public class FileDownloader {
      * @throws FileNotFoundException
      * @throws IOException
      */
-    public static void downloadFile(String url,
-            String outfilePath) throws FileNotFoundException, IOException {
+    public static void downloadFile(String url, String outfilePath) throws FileNotFoundException, IOException {
         Objects.requireNonNull(url);
         Objects.requireNonNull(outfilePath);
 
         URL fileUrl = new URL(url);
         File out = new File(outfilePath);
+        logger.info("Downloading file {} to {}", fileUrl, out);
         FileUtils.copyURLToFile(fileUrl, out);
     }
 

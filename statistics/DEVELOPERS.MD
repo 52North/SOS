@@ -31,8 +31,8 @@ The **XXXHandler** classes must implement the IServiceEventHandler interface whi
 The Elasticsearch client API automatically converts the Java Map to a JSON string, including the nested map objects, e.g. `Map<String,Map<String,Object>>`.
 
 ##Adding new statistics Resolvers and Handlers
-- The resolvers processing the `ServiceEvent` that it routes the event's payload to the appropriate handler. The Resolvers must implement the `IServiceEventResolver<T extends ServiceEvent>` interface. 
-- The handlers processing the payload of the `ServiceEvent`. The Handlers must implement the `IServiceEventHandler<T>`.
+- The resolvers processing a `ServiceEvent` subclass and then it routes the event's payload to the appropriate handler. The Resolvers must implement the `IServiceEventResolver<T extends ServiceEvent>` interface. 
+- The handlers processing the payload. The Handlers must implement the `IServiceEventHandler<T>`.
 
 Finding your appropriate **handler** in your **resolver** have a helping utility called `EventHandlerFinder#findHandler`.
 

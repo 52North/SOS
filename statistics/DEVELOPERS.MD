@@ -125,6 +125,17 @@ The data mapping creation and consistency check happens automatically on every a
 
 The metadata type contains the statistics module _schema version_, the _unique id of connected service instances_ (i.e. deployed services that send their statistics to this Elasticsearch index), and an additional _timestamp_ information about creation and modification. If the webapplication has a different schema version form the one that `mt` type announces, then it _will not insert any data_ and the user must resolve any migration manually, probably by creating a new Elasticsearch index.
 
+There is always only one id called `1` in the `mt` type. An example entry would look like the following.
+```json
+"hits" : [ {
+      "_index" : "ogc-statistics-index",
+      "_type" : "mt",
+      "_id" : "1",
+      "_score" : 1.0,
+      "_source":{"mt-update-time":"2015-08-06T21:07:09.681Z","mt-version":1,"mt-creation-time":"2015-08-06T20:25:24.514Z","mt-uuids":["f4090d4c-3765-4c72-9c3c-24aba8cec130","3c3117d5-3c4d-4f69-80c6-caa39241063a"]}
+    } ]
+```
+
 ### Adding a new schema
 
 It is the developer responsibility to increment the schema version on breaking schema changes by returning a larger number than `DefaultElasticsearchSchemas#getSchemaVersion()*, or any other schemas that might exist.

@@ -31,23 +31,30 @@ The **XXXHandler** classes must implement the IServiceEventHandler interface whi
 The Elasticsearch client API automatically converts the Java Map to a JSON string, including the nested map objects, e.g. `Map<String,Map<String,Object>>`.
 
 ##Adding new statistics Resolvers and Handlers
-- The resolvers processing a `ServiceEvent` subclass and then it routes the event's payload to the appropriate handler. The Resolvers must implement the `IServiceEventResolver<T extends ServiceEvent>` interface. 
-- The handlers processing the payload. The Handlers must implement the `IServiceEventHandler<T>`.
+- The **resolvers** processing a `ServiceEvent` subclass and then it routes the event's payload to the appropriate handler. The Resolvers must implement the `IServiceEventResolver<T extends ServiceEvent>` interface. 
+- The **handlers** processing the payload (or in some cases the event class itself). The Handlers must implement the `IServiceEventHandler<T>`.
 
-Finding your appropriate **handler** in your **resolver** have a helping utility called `EventHandlerFinder#findHandler`.
+Finding your appropriate **handler** in your Java **resolver** class have a helping utility class called `EventHandlerFinder#findHandler`.
+use it like this:
+```java
+//handlers is a `Map<String,IServiceEventHandler<T>>` and are previously injected vis SpringFramework
+//response is the payload of the event (or in some cases the event class itself)
+IServiceEventHandler<AbstractServiceResponse> handler = EventHandlerFinder.findHandler(response, handlers);
+```
 
 ####Registering the handler for an existing resolver
-If you would like to process an event payload in a new way you can register a handler to an event resolver the following way.
+If you would like to process an event's payload in a new way you can register a handler to an event resolver the following way.
 
 - Open up the appropriate event configuration xml file `src/main/resources/imports/`.
 - Instantiate your handler as Spring bean `prototype`.
-- Add your handler to the resolvers handler property as a map
+- Add your handler to the resolvers handler property as a map entry
 	- **Key :** The key must be exactly match the simple name of the payload's class (the generic type of your `IServiceEventHandler<T>`)
-	e.g.: processing the `org.n52.sos.request.DescribeSensorRequest` data in a handler would look like this
+	e.g.: processing the `org.n52.sos.request.DescribeSensorRequest` data in a handler would look like this as a map entry
 	```xml
+	<!-- describeSensorRequestHandler is the handler class previously initiated as a prototype bean -->
 	<entry key="DescribeSensorRequest" value-ref="describeSensorRequestHandler" />
 	```
-	**There is one special key `default`** if no handlers found it will be a backupp handler for processing the data. If no handlers found for the data NPE is thrown and the processing is stopped.
+	**There is one special key `default`** if no handlers found it will be a backup handler for processing the data. If no handlers found for the data NPE is thrown and the processing is stopped.
 	- **Value :** your newly created handler.
 
 

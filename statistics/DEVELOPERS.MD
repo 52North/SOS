@@ -30,6 +30,53 @@ The **XXXHandler** classes must implement the IServiceEventHandler interface whi
 
 The Elasticsearch client API automatically converts the Java Map to a JSON string, including the nested map objects, e.g. `Map<String,Map<String,Object>>`.
 
+##Adding new statistics Resolvers and Handlers
+- The resolvers processing the `ServiceEvent` that it routes the event's payload to the appropriate handler. The Resolvers must implement the `IServiceEventResolver<T extends ServiceEvent>` interface. 
+- The handlers processing the payload of the `ServiceEvent`. The Handlers must implement the `IServiceEventHandler<T>`.
+
+Finding your appropriate **handler** in your **resolver** have a helping utility called `EventHandlerFinder#findHandler`.
+
+####Registering the handler for an existing resolver
+If you would like to process an event payload in a new way you can register a handler to an event resolver the following way.
+
+- Open up the appropriate event configuration xml file `src/main/resources/imports/`.
+- Instantiate your handler as Spring bean `prototype`.
+- Add your handler to the resolvers handler property as a map
+	- **Key :** The key must be exactly match the simple name of the payload's class (the generic type of your `IServiceEventHandler<T>`)
+	e.g.: processing the `org.n52.sos.request.DescribeSensorRequest` data in a handler would look like this
+	```xml
+	<entry key="DescribeSensorRequest" value-ref="describeSensorRequestHandler" />
+	```
+	**There is one special key `default`** if no handlers found it will be a backupp handler for processing the data. If no handlers found for the data NPE is thrown and the processing is stopped.
+	- **Value :** your newly created handler.
+
+
+####Registering the new resolver
+This is only necessary when you want to process a new event type which extends the `ServiceEvent` class.
+
+- First register the new event class that will be returned in the `SosStatisticsServiceEventListener#getTypes`
+- Add a new spring configuration xml file under the `src/main/resources/imports/` folder with the name of your event (or any name you want).
+- Initiate your resolver bean as a `prototype` Spring bean
+- Add your handlers as described in the previous chapter.
+- Go to the `configured-context.xml` under `src/main/resources` and import your newly created xml file e.g:
+```xml
+	<import resource="imports/countingoutputstrem-event.xml"/>
+``` 
+- Create a new method which returns your new resolver bean in the `SosStatisticsResolverFactory` class. e.g.:
+```java
+    public SosResponseEventResolver getMyNewEventResolver() {
+        return ctx.getBean(MyNewEventResolver.class);
+    }
+```
+- Finally add a new if-else branch in `SosStatisticsServiceEventListener#addEventToResolver` class where you test for your new event class. e.g
+```java
+ } else if (event instanceof MyNewEvent) {
+            MyNewEventResolver responseEventResolver = resolverFactory.getMyNewEventResolverResolver();
+            myNewEventResolver.setEvent((MyNewEvent) event);
+            evtResolver = myNewEventResolver;
+}
+```
+
 
 ## Extending the module with new parameters
 New parameters (e.g: some RequestEvent parameter or service extension) can be stored in Elasticsearch as follows:

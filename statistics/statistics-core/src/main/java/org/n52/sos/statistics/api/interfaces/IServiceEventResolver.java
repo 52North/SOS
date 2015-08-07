@@ -30,7 +30,9 @@ package org.n52.sos.statistics.api.interfaces;
 
 import java.util.Map;
 
-public interface IServiceEventResolver<T> {
+import org.n52.iceland.event.ServiceEvent;
+
+public interface IServiceEventResolver<T extends ServiceEvent> {
     /**
      * Resolves the the request to Elasticsearch format
      * 

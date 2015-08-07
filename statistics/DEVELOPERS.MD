@@ -159,6 +159,7 @@ java -jar kibana-exporter.jar localhost:9300 ogc-statistics-cluster
 ```
 
 ##Example GetObservation input/output
+The following input message generates an exception because of the missing procedure.
 ```json
 {
   "request": "GetObservation",
@@ -196,7 +197,7 @@ java -jar kibana-exporter.jar localhost:9300 ogc-statistics-cluster
   }
 }
 ```
-
+And the Elasticsearch output for the incoming request
 ```json
 "hits" : [ {
       "_index" : "ogc-statistics-index",

@@ -218,6 +218,9 @@ And the Elasticsearch output for the incoming request
       "exception-message":"The value 'http://www.52north.org/test/offering/6' of the parameter 'offering' is invalid\nThe value 'http://www.52north.org/test/observableProperty/6' of the parameter 'observedProperty' is invalid\nThe value 'http://www.52north.org/test/procedure/6' of the parameter 'procedure' is invalid\nThe value 'http://www.52north.org/test/featureOfInterest/6' of the parameter 'featureOfInterest' is invalid",
       "sr-operation-name":"GetObservation",
       "getobservation-offerings":["http://www.52north.org/test/offering/6"],
-      "getobservation-response-format":"http://www.opengis.net/om/2.0","exception-status":400,
-      "sr-accept-types":["application/json"],"outre-exec-time":643,"sr-proxied-request":false},
+      "getobservation-response-format":"http://www.opengis.net/om/2.0",
+      "exception-status":400,
+      "sr-accept-types":["application/json"],
+      "outre-exec-time":643,
+      "sr-proxied-request":false},
 ```

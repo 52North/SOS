@@ -37,9 +37,9 @@ The Elasticsearch client API automatically converts the Java Map to a JSON strin
 Finding your appropriate **handler** in your Java **resolver** class have a helping utility class called `EventHandlerFinder#findHandler`.
 use it like this:
 ```java
-//handlers is a `Map<String,IServiceEventHandler<T>>` and are previously injected vis SpringFramework
-//response is the payload of the event (or in some cases the event class itself)
-IServiceEventHandler<AbstractServiceResponse> handler = EventHandlerFinder.findHandler(response, handlers);
+//"handlers" is a `Map<String,IServiceEventHandler<T>>` and are previously injected via SpringFramework
+//"payload" is the payload of the event (or in some cases the event class itself)
+IServiceEventHandler<AbstractServiceResponse> handler = EventHandlerFinder.findHandler(payload, handlers);
 ```
 
 ####Registering the handler for an existing resolver

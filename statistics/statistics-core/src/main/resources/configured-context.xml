@@ -12,7 +12,7 @@
 	<bean id="elasticsearchDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchDataHandler" depends-on="adminDataHandler"></bean>
 	<bean id="sosStatisticsServiceEventListener" class="org.n52.sos.statistics.sos.SosStatisticsServiceEventListener"></bean>
 	<bean id="statisticsLocationUtil" class="org.n52.sos.statistics.impl.StatisticsLocationUtil"></bean>
-	<bean id="sosStatisticsResolverFactory" class="org.n52.sos.statistics.SosStatisticsResolverFactory"></bean>
+	<bean id="sosStatisticsResolverFactory" class="org.n52.sos.statistics.sos.SosStatisticsResolverFactory"></bean>
 	
 	<import resource="imports/countingoutputstrem-event.xml"/>
 	<import resource="imports/default-event.xml"/>

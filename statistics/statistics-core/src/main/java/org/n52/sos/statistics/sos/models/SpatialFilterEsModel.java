@@ -64,6 +64,16 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         return filters.stream().map(SpatialFilterEsModel::convert).collect(Collectors.toList());
     }
 
+    /**
+     * Transform the geomtry to Elatisearch geo_shape type.
+     * {@linkplain https://www.elastic.co/guide/en/elasticsearch/reference/1.6/mapping-geo-shape-type.html}
+     * 
+     * If other the 4326 SRID coordinates are present it needed to be
+     * transformed before conver in to Elasticsearch geo_shape
+     * 
+     * {@linkplain}
+     * 
+     */
     @Override
     protected Map<String, Object> getAsMap() {
         if (spatialFilter == null || spatialFilter.getGeometry() == null) {
@@ -109,6 +119,12 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
         createSpatialFilter(filter, point);
     }
 
+    /**
+     * A closed polygon whose first and last point must match, thus requiring n
+     * + 1 vertices to create an n-sided polygon and a minimum of 4 vertices.
+     * 
+     * @param filter
+     */
     private void createBbox(SpatialFilter filter) {
         PolygonBuilder polygon = PolygonBuilder.newPolygon();
         for (Coordinate coord : filter.getGeometry().getCoordinates()) {
@@ -119,8 +135,7 @@ public class SpatialFilterEsModel extends AbstractElasticsearchModel {
 
     }
 
-    private void createSpatialFilter(SpatialFilter filter,
-            ShapeBuilder builder) {
+    private void createSpatialFilter(SpatialFilter filter, ShapeBuilder builder) {
         if (filter.getOperator() != null) {
             put(ObjectEsParameterFactory.SPATIAL_FILTER_OPERATOR, filter.getOperator().toString());
         }

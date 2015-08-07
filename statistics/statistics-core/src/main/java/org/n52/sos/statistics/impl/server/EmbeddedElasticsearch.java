@@ -79,7 +79,8 @@ public class EmbeddedElasticsearch {
         try {
             if (!new File(homePath).exists()) {
                 FileUtils.forceMkdir(new File(homePath));
-                copyScriptFiles();
+                // FIXME groovy scripts not enabled
+                // copyScriptFiles();
                 downlaodGroovyLibrary();
             } else {
                 logger.info("Path " + homePath + "for embedded elasticsearch is exsits. Continue.");

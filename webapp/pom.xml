@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>52n-sos</artifactId>
 		<groupId>org.n52.sensorweb.sos</groupId>
@@ -90,8 +89,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -483,8 +481,6 @@
 			<scope>test</scope>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>org.n52.sensorweb.sos</groupId>
 			<artifactId>statistics-core</artifactId>
@@ -494,52 +490,8 @@
 	<profiles>
 		<profile>
 			<id>statistics-it-test</id>
-			<dependencies>
-				<dependency>
-					<groupId>org.elasticsearch</groupId>
-					<artifactId>elasticsearch</artifactId>
-					<version>1.7.1</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.apache.httpcomponents</groupId>
-					<artifactId>httpclient</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>ch.qos.logback</groupId>
-					<artifactId>logback-classic</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.slf4j</groupId>
-					<artifactId>slf4j-api</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.vividsolutions</groupId>
-					<artifactId>jts</artifactId>
-					<version>1.13</version>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>commons-io</groupId>
-					<artifactId>commons-io</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>com.google.guava</groupId>
-					<artifactId>guava</artifactId>
-					<scope>test</scope>
-				</dependency>
-				<dependency>
-					<groupId>org.n52.sensorweb.sos</groupId>
-					<artifactId>statistics</artifactId>
-					<version>${project.version}</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
 			<build>
+				<finalName>statistics-it-test</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -552,6 +504,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-war-plugin</artifactId>
 						<configuration>
+							<outputDirectory>${basedir}/target/it</outputDirectory>
 							<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
 							<webResources>
 								<resource>
@@ -575,18 +528,14 @@
 									<directory>src/test/resources</directory>
 									<filtering>false</filtering>
 									<includes>
-										<include>
-											**configuration.json
-										</include>
+										<include>**configuration.json</include>
 									</includes>
 								</resource>
 								<resource>
 									<directory>src/test/resources</directory>
 									<filtering>false</filtering>
 									<includes>
-										<include>
-											**datasource.properties
-										</include>
+										<include>**datasource.properties</include>
 									</includes>
 									<targetPath>WEB-INF</targetPath>
 								</resource>
@@ -612,10 +561,10 @@
 							</execution>
 						</executions>
 						<configuration>
+							<forkCount>1</forkCount>
 							<includes>
 								<include>**/statistics/*It.java</include>
 							</includes>
-							<classpathDependencyScopeExclude>compile</classpathDependencyScopeExclude>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -781,8 +730,7 @@
 									<goal>deployer-redeploy</goal>
 								</goals>
 							</execution>
-							<!-- <execution> <id>clean-undeploy</id> <phase>pre-clean</phase> 
-								<goals> <goal>deployer-undeploy</goal> </goals> </execution> -->
+							<!-- <execution> <id>clean-undeploy</id> <phase>pre-clean</phase> <goals> <goal>deployer-undeploy</goal> </goals> </execution> -->
 						</executions>
 						<configuration>
 							<!-- Container Configuration -->
@@ -793,8 +741,8 @@
 							</container>
 							<configuration>
 								<type>runtime</type>
-								<!-- <cargo.hostname>${remote.server}</cargo.hostname> <cargo.servlet.port>${remote.port}</cargo.servlet.port> 
-									<cargo.remote.username>${remote.user}</cargo.remote.username> <cargo.remote.password>${remote.password}</cargo.remote.password> -->
+								<!-- <cargo.hostname>${remote.server}</cargo.hostname> <cargo.servlet.port>${remote.port}</cargo.servlet.port> <cargo.remote.username>${remote.user}</cargo.remote.username> 
+									<cargo.remote.password>${remote.password}</cargo.remote.password> -->
 							</configuration>
 							<deployables>
 								<deployable>
@@ -812,12 +760,10 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- ################################################################################ 
-			######################## Profiles to preconfigure the webapp ######################## 
+		<!-- ################################################################################ ######################## Profiles to preconfigure the webapp ######################## 
 			################################################################################# -->
 
-		<!-- ########## Profile to use a specified database configuration file 
-			########## -->
+		<!-- ########## Profile to use a specified database configuration file ########## -->
 		<profile>
 			<id>configure-datasource</id>
 			<build>
@@ -834,8 +780,7 @@
 								</goals>
 								<configuration>
 									<tasks>
-										<copy file="${databaseConfigurationFile}"
-											tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
+										<copy file="${databaseConfigurationFile}" tofile="${project.build.directory}/${project.build.finalName}/WEB-INF/datasource.properties" />
 									</tasks>
 								</configuration>
 							</execution>

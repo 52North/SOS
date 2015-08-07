@@ -35,33 +35,31 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.rules.ExternalResource;
 
 public class JettyServer extends ExternalResource {
-	
-	Server server;
 
-	@Override
-	protected void before() throws Throwable {
-		server = new Server(AbstractStatisticsBase.JETTY_PORT);
-		WebAppContext webapp = new WebAppContext();
+    Server server;
+
+    @Override
+    protected void before() throws Throwable {
+        server = new Server(AbstractStatisticsBase.JETTY_PORT);
+        WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/");
-        //TODO get from property
-        File warFile = new File("target/52n-sos-webapp##5.0.0-SNAPSHOT.war");
+
+        File warFile = new File("target/it/statistics-it-test.war");
         webapp.setAllowDuplicateFragmentNames(true);
         webapp.setWar(warFile.getAbsolutePath());
-        
-        server.setHandler(webapp); 
-        server.start();        
-	}
 
-	@Override
-	protected void after() {
-		try {
-			server.stop();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	
+        server.setHandler(webapp);
+        server.start();
+    }
+
+    @Override
+    protected void after() {
+        try {
+            server.stop();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 
 }

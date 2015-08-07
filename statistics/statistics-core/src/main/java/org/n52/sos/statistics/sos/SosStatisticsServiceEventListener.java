@@ -48,7 +48,6 @@ import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
-import org.n52.sos.statistics.SosStatisticsResolverFactory;
 import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
 import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver;

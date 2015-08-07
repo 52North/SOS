@@ -65,8 +65,8 @@ public class ElasticsearchDataHandler implements IStatisticsDataHandler {
         dataMap.put(ServiceEventDataMapping.TIMESTAMP_FIELD.getName(), DateTime.now(DateTimeZone.UTC));
         dataMap.put(ServiceEventDataMapping.UUID_FIELD.getName(), settings.getUuid());
         logger.debug("Persisting {}", dataMap);
-        IndexResponse response = adminHandler.getElasticsearchClient().prepareIndex(settings.getIndexId(), settings.getTypeId())
-                .setOperationThreaded(false).setSource(dataMap).get();
+        IndexResponse response =
+                adminHandler.getElasticsearchClient().prepareIndex(settings.getIndexId(), settings.getTypeId()).setSource(dataMap).get();
         return response;
     }
 

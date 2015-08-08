@@ -101,21 +101,20 @@ public class ObservationProcess extends SosProcedureDescription {
      */
     private final List<NamedValue<?>> parameters = new ArrayList<NamedValue<?>>(0);
 
-    private Set<SosOffering> offeringIdentifiers;
 
     @Override
     public Set<SosOffering> getOfferings() {
-        return offeringIdentifiers;
+        return super.getOfferings();
     }
 
     public ObservationProcess setOfferingIdentifiers(final Set<SosOffering> offeringIdentifiers) {
-        this.offeringIdentifiers = offeringIdentifiers;
+    	addOfferings(offeringIdentifiers);
         return this;
     }
 
     @Override
     public boolean isSetOfferings() {
-        return offeringIdentifiers != null && !offeringIdentifiers.isEmpty();
+        return super.isSetOfferings();
     }
 
     @Override

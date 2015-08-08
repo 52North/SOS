@@ -34,17 +34,24 @@ import java.util.Set;
 
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -58,8 +65,12 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(WmlObservationProcessDecoderv20.class);
 
-	private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20,
-			ObservationProcessDocument.class, ObservationProcessPropertyType.class, ObservationProcessType.class);
+	@SuppressWarnings("unchecked")
+	private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
+			CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+					ObservationProcessDocument.class, ObservationProcessPropertyType.class, ObservationProcessType.class),
+			CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20,
+					ObservationProcessDocument.class, ObservationProcessPropertyType.class, ObservationProcessType.class));
 
 	private static final Set<String> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS = Collections
 			.singleton(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING);
@@ -124,7 +135,15 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
 		parseProcessReference(opt, observationProcess);
 		parseInput(opt, observationProcess);
 		parseParameter(opt, observationProcess);
+		setDescriptionXml(opt, observationProcess);
 		return observationProcess;
+	}
+
+	private void setDescriptionXml(ObservationProcessType opt, ObservationProcess observationProcess) {
+		ObservationProcessDocument doc = ObservationProcessDocument.Factory
+				.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+		doc.setObservationProcess(opt);
+		observationProcess.setSensorDescriptionXmlString(doc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
 	}
 
 	private void parseProcessType(ObservationProcessType opt, ObservationProcess observationProcess) {
@@ -175,6 +194,42 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
 		if (CollectionHelper.isNotNullOrEmpty(opt.getParameterArray())) {
 			observationProcess.setParameters(parseNamedValueTypeArray(opt.getParameterArray()));
 		}
+		checkForOffering(observationProcess);
+	}
+
+	@VisibleForTesting
+	protected void checkForOffering(ObservationProcess observationProcess) {
+		if (observationProcess.isSetParameters()) {
+			for (NamedValue<?> namedValue : observationProcess.getParameters()) {
+				if (checkNameForOffering(namedValue) && namedValue.isSetValue()) {
+					if (namedValue.getValue() instanceof TextValue) {
+						TextValue value = (TextValue) namedValue.getValue();
+						observationProcess.addOffering(new SosOffering(value.getValue(), true));
+					} else if (namedValue.getValue() instanceof ReferenceValue) {
+						ReferenceValue refValue = (ReferenceValue) namedValue.getValue();
+						if (refValue.isSetValue()) {
+							ReferenceType value = refValue.getValue();
+							if (value.isSetHref()) {
+								if (value.isSetTitle()) {
+									observationProcess.addOffering(new SosOffering(value.getHref(), value.getTitle()));
+								} else {
+									observationProcess.addOffering(new SosOffering(value.getHref(), true));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private boolean checkNameForOffering(NamedValue<?> namedValue) {
+		if (namedValue.isSetName()) {
+			ReferenceType name = namedValue.getName();
+			return (name.isSetHref() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getHref())) || 
+					(name.isSetTitle() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getTitle()));
+		}
+		return false;
 	}
 
 }

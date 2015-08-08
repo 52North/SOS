@@ -35,16 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.samplingSpatial.x20.ShapeType;
-import net.opengis.waterml.x20.CollectionDocument;
-import net.opengis.waterml.x20.CollectionType;
-import net.opengis.waterml.x20.MonitoringPointDocument;
-import net.opengis.waterml.x20.MonitoringPointType;
-import net.opengis.waterml.x20.ObservationProcessDocument;
-import net.opengis.waterml.x20.ObservationProcessType;
-
 import org.apache.xmlbeans.GDuration;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -80,11 +70,23 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
+
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.samplingSpatial.x20.ShapeType;
+import net.opengis.waterml.x20.CollectionDocument;
+import net.opengis.waterml.x20.CollectionType;
+import net.opengis.waterml.x20.MonitoringPointDocument;
+import net.opengis.waterml.x20.MonitoringPointType;
+import net.opengis.waterml.x20.ObservationProcessDocument;
+import net.opengis.waterml.x20.ObservationProcessType;
 
 /**
  * Abstract encoder class for WaterML 2.0
@@ -93,6 +95,8 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 implements ProcedureEncoder<XmlObject, Object> {
 
+	 private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWmlEncoderv20.class);
+	 
     @SuppressWarnings("unchecked")
     protected static final Set<EncoderKey> DEFAULT_ENCODER_KEYS = CollectionHelper.union(CodingHelper.encoderKeysForElements(
             WaterMLConstants.NS_WML_20, AbstractFeature.class), CodingHelper.encoderKeysForElements(
@@ -359,45 +363,62 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20 impleme
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        ObservationProcessDocument observationProcessDoc = ObservationProcessDocument.Factory.newInstance();
-        ObservationProcessType observationProcess = observationProcessDoc.addNewObservationProcess();
-        if (additionalValues.containsKey(HelperValues.GMLID)) {
-            observationProcess.setId("process." + additionalValues.get(HelperValues.GMLID));
-        } else {
-            observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
-        }
-        if (procedure.isSetIdentifier()) {
-            CodeWithAuthority codeWithAuthority = procedure.getIdentifierCodeWithAuthority();
-            Encoder<?, CodeWithAuthority> encoder =
-                    CodingRepository.getInstance().getEncoder(
-                            CodingHelper.getEncoderKey(GmlConstants.NS_GML_32,codeWithAuthority));
-            if (encoder != null) {
-                XmlObject xmlObject = (XmlObject) encoder.encode(codeWithAuthority);
-                observationProcess.addNewIdentifier().set(xmlObject);
-            } else {
-                throw new NoApplicableCodeException()
-                        .withMessage("Error while encoding geometry value, needed encoder is missing!");
-            }
-        }
-        if (procedure.isSetName()) {
-            for (final CodeType sosName : procedure.getName()) {
-                observationProcess.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
-            }
-        }
-        addProcessType(observationProcess, procedure);
-        addOriginatingProcess(observationProcess, procedure);
-        addAggregatingDuration(observationProcess, procedure);
-        addVerticalDatum(observationProcess, procedure);
-        addComment(observationProcess, procedure);
-        addProcessReference(observationProcess, procedure);
-        addInput(observationProcess, procedure);
-        addParameter(observationProcess, procedure);
-        return observationProcessDoc;
-    }
+	protected XmlObject createObservationProcess(ObservationProcess procedure,
+			Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+		XmlObject encodedObject = null;
+		try {
+			if (procedure.isSetSensorDescriptionXmlString()) {
+				encodedObject = XmlObject.Factory
+						.parse(procedure.getSensorDescriptionXmlString());
+				checkAndAddIdentifier(procedure,((ObservationProcessDocument)encodedObject).getObservationProcess());
+			} else {
+				encodedObject = ObservationProcessDocument.Factory.newInstance();
+				ObservationProcessType observationProcess = ((ObservationProcessDocument)encodedObject).addNewObservationProcess();
+				if (additionalValues.containsKey(HelperValues.GMLID)) {
+					observationProcess.setId("process." + additionalValues.get(HelperValues.GMLID));
+				} else {
+					observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
+				}
+				
+				if (procedure.isSetName()) {
+					for (final CodeType sosName : procedure.getName()) {
+						observationProcess.addNewName()
+								.set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
+					}
+				}
+				addProcessType(observationProcess, procedure);
+				addOriginatingProcess(observationProcess, procedure);
+				addAggregatingDuration(observationProcess, procedure);
+				addVerticalDatum(observationProcess, procedure);
+				addComment(observationProcess, procedure);
+				addProcessReference(observationProcess, procedure);
+				addInput(observationProcess, procedure);
+				addParameter(observationProcess, procedure);
+			}
+		} catch (final XmlException xmle) {
+			throw new NoApplicableCodeException().causedBy(xmle);
+		}
+		LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+				XmlHelper.validateDocument(encodedObject));
+		return encodedObject;
+	}
 
-    /**
+    private void checkAndAddIdentifier(ObservationProcess op, ObservationProcessType opt) throws OwsExceptionReport {
+    	if (op.isSetIdentifier() && !opt.isSetIdentifier()) {
+			CodeWithAuthority codeWithAuthority = op.getIdentifierCodeWithAuthority();
+			Encoder<?, CodeWithAuthority> encoder = CodingRepository.getInstance()
+					.getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, codeWithAuthority));
+			if (encoder != null) {
+				XmlObject xmlObject = (XmlObject) encoder.encode(codeWithAuthority);
+				opt.addNewIdentifier().set(xmlObject);
+			} else {
+				throw new NoApplicableCodeException()
+						.withMessage("Error while encoding geometry value, needed encoder is missing!");
+			}
+		}
+	}
+
+	/**
      * Adds processType value to WaterML 2.0 ObservationProcess XML object
      * 
      * @param observationProcess

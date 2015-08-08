@@ -100,7 +100,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     private static final Set<EncoderKey> ENCODER_KEYS = createEncoderKeys();
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));;
+            SupportedTypeKey.ObservationType, Collections.singleton(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -114,7 +114,8 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     @SuppressWarnings("unchecked")
     private static Set<EncoderKey> createEncoderKeys() {
         return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
-                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class, SingleObservationValue.class, MultiObservationValues.class));
+                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class, 
+                SingleObservationValue.class, MultiObservationValues.class));
     }
 
     @Override

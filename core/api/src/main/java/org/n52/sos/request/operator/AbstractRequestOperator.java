@@ -208,7 +208,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
             AbstractServiceResponse response) throws OwsExceptionReport {
         if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultModifier =
                     new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
             List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
                     new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
@@ -221,7 +221,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
                 } else if (modifier.getFacilitator().isAdderRemover()) {
                     remover.add(modifier);
                 } else {
-                    defaultMofifier.add(modifier);
+                    defaultModifier.add(modifier);
                 }
 
             }
@@ -230,7 +230,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
                 modifier.modifyResponse(request, response);
             }
             // execute default
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultModifier) {
                 modifier.modifyResponse(request, response);
             }
 

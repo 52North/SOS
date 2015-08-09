@@ -689,6 +689,11 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             final XmlObject substituteElement =
                     XmlHelper.substituteElement(xbCapabilities.addNewAbstractDataRecord(), encodedDataRecord);
             substituteElement.set(encodedDataRecord);
+        } else if (capabilities.isSetHref()) {
+        	xbCapabilities.setHref(capabilities.getHref());
+        	if (capabilities.isSetTitle()) {
+        		xbCapabilities.setTitle(capabilities.getTitle());
+        	}
         }
         return xbCapabilities;
     }
@@ -852,9 +857,12 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         final List<Characteristics> characteristicsList =
                 Lists.newArrayListWithExpectedSize(smlCharacteristics.size());
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
+        	final Characteristics xbCharacteristics =
+                    Characteristics.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        	 if (sosSMLCharacteristics.isSetName()) {
+             	xbCharacteristics.setName(sosSMLCharacteristics.getName());
+            }
             if (sosSMLCharacteristics.isSetAbstractDataRecord()) {
-                final Characteristics xbCharacteristics =
-                        Characteristics.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 if (sosSMLCharacteristics.getDataRecord() instanceof SweSimpleDataRecord) {
                     final SimpleDataRecordType xbSimpleDataRecord =
                             (SimpleDataRecordType) xbCharacteristics.addNewAbstractDataRecord().substitute(
@@ -880,8 +888,16 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                                     "The SWE characteristics type '%s' is not supported by this SOS for SensorML characteristics!",
                                     sosSMLCharacteristics.getDataRecord().getClass().getName());
                 }
-                characteristicsList.add(xbCharacteristics);
+            } else if (sosSMLCharacteristics.isSetHref()) {
+            	if (sosSMLCharacteristics.isSetName()) {
+            		xbCharacteristics.setName(sosSMLCharacteristics.getName());
+                }
+            	xbCharacteristics.setHref(sosSMLCharacteristics.getHref());
+            	if (sosSMLCharacteristics.isSetTitle()) {
+            		xbCharacteristics.setTitle(sosSMLCharacteristics.getTitle());
+            	}
             }
+            characteristicsList.add(xbCharacteristics);
         }
         return characteristicsList.toArray(new Characteristics[characteristicsList.size()]);
     }

@@ -516,17 +516,24 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                 CharacteristicListType clt = clpt.getCharacteristicList();
                 if (CollectionHelper.isNotNullOrEmpty(clt.getCharacteristicArray())) {
                     for (Characteristic c : clt.getCharacteristicArray()) {
-                        final Object o = CodingHelper.decodeXmlElement(c.getAbstractDataComponent());
-                        if (o instanceof SweAbstractDataComponent) {
-                            final SmlCharacteristic characteristic =
-                                    new SmlCharacteristic(c.getName(), (SweAbstractDataComponent) o);
-                            sosCharacteristics.addCharacteristic(characteristic);
-                        } else {
-                            throw new InvalidParameterValueException()
-                                    .at(XmlHelper.getLocalName(clpt))
-                                    .withMessage(
-                                            "Error while parsing the characteristics of the SensorML (the characteristics' data record is not of type DataRecordPropertyType)!");
-                        }
+                    	final SmlCharacteristic characteristic = new SmlCharacteristic(c.getName());
+                    	if (c.isSetAbstractDataComponent()) {
+                    		final Object o = CodingHelper.decodeXmlElement(c.getAbstractDataComponent());
+                            if (o instanceof SweAbstractDataComponent) {
+                                characteristic.setAbstractDataComponent((SweAbstractDataComponent) o);
+                            } else {
+                                throw new InvalidParameterValueException()
+                                        .at(XmlHelper.getLocalName(clpt))
+                                        .withMessage(
+                                                "Error while parsing the characteristics of the SensorML (the characteristics' data record is not of type DataRecordPropertyType)!");
+                            }
+                    	} else if (c.isSetHref()) {
+                    		characteristic.setHref(c.getHref());
+                    		if (c.isSetTitle()) {
+                    			characteristic.setTitle(c.getTitle());
+                    		}
+                    	}
+                    	sosCharacteristics.addCharacteristic(characteristic);
                     }
                 }
             }
@@ -556,11 +563,11 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                 CapabilityListType cl = cs.getCapabilityList();
                 if (CollectionHelper.isNotNullOrEmpty(cl.getCapabilityArray())) {
                     for (Capability c : cl.getCapabilityArray()) {
+                    	final SmlCapability capability = new SmlCapability(c.getName());
                         if (c.isSetAbstractDataComponent()) {
                             final Object o = CodingHelper.decodeXmlElement(c.getAbstractDataComponent());
                             if (o instanceof SweAbstractDataComponent) {
-                                final SmlCapability capability =
-                                        new SmlCapability(c.getName(), (SweAbstractDataComponent) o);
+                                capability.setAbstractDataComponent((SweAbstractDataComponent) o);
                                 // check if this capabilities is insertion
                                 // metadata
                                 if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(cs.getName())) {
@@ -588,6 +595,11 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                                                 + "the SensorML (the capabilities data record "
                                                 + "is not of type DataRecordPropertyType)!");
                             }
+                        } else if (c.isSetHref()) {
+                        	capability.setHref(c.getHref());
+                        	if (c.isSetTitle()) {
+                        		capability.setTitle(c.getTitle());
+                        	}
                         }
                     }
                 }

@@ -1,25 +1,41 @@
 
-###InsertSensor
+###GetObservationById
 
 ####RequestEvent
- - **insertsensor-assigned-offerings** - Assigned offerings. Type: string
- - **insertsensor-assigned-procedure-identifiers** - Procedures. Type: string
- - **insertsensor-observable-property** - Observable properties. Type: string
- - **insertsensor-procedure-description** - Description of the procedure. Type: string
- - **insertsensor-description-format** - Description format of the procedure. Type: string
- - **insertsensor-feature-of-interest-types** - Feature of interest. Type: string
- - **insertsensor-observation-types** - Observation types. Type: string
+ - **getobservationbyid-observation-identifier** - ID of the observation. Type: string
 
-###GetResultTemplate
+###Metadata
 
-####RequestEvent
- - **getresulttemplate-observed-property** - Observed property. Type: string
- - **getresulttemplate-offering** - Offering. Type: string
+####Computed
+ - **mt-creation-time** - Creation time of the Elasticsearch index. Type: date
+ - **mt-update-time** - Update time of the Elasticsearch metadata type. Type: date
+ - **mt-version** - Monoton increasing version field. The deployment schema and the Elasticsearch schema version must match. Type: integer
+ - **mt-uuids** - List of unique user IDs. Type: string
 
 ###DeleteSensor
 
 ####RequestEvent
  - **deletesensor-procedure-identifier** - Procedure ID. Type: string
+
+###GetDataAvailability
+
+####RequestEvent
+ - **getdataavailability-features-of-interest** - Feature of interest. Type: string
+ - **getdataavailability-observed-properties** - Observed property. Type: string
+ - **getdataavailability-offerings** - Offering. Type: string
+ - **getdataavailability-procedures** - Procedure. Type: string
+
+###DescribeSensor
+
+####RequestEvent
+ - **describesensor-procedure** - Procedure to describe. Type: string
+ - **describesensor-procedure-description-format** - Description format. Type: string
+ - **describesensor-validtime** - Validtime of the request.
+	 - **duration** - Duration between the END-START timestamp in milliseconds. Type: long
+	 - **start** - Start timestamp. Type: date
+	 - **end** - End timestamp. Type: date
+	 - **timeInstant** - Timestamp if the value is TimeInstant type. Type: date
+	 - **span-days** - This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances.The value is the date for each days which are  between the start/end timestamps interval. Intarval ends are included.. Type: date
 
 ###GetResult
 
@@ -40,6 +56,35 @@
 	 - **span-days** - This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances.The value is the date for each days which are  between the start/end timestamps interval. Intarval ends are included.. Type: date
 	 - **operator** - Operator. Type: string
 	 - **value-reference** - Value reference. Type: string
+
+###GetResultTemplate
+
+####RequestEvent
+ - **getresulttemplate-observed-property** - Observed property. Type: string
+ - **getresulttemplate-offering** - Offering. Type: string
+
+###UpdateSensor
+
+####RequestEvent
+ - **updatesensor-procedure-identifier** - Procedure ID. Type: string
+ - **updatesensor-description-format** - Description format of the procedure. Type: string
+
+###InsertResult
+
+####RequestEvent
+ - **insertresult-template-identifier** - Template ID. Type: string
+ - **insertresult-result-values** - Result values. Type: string
+
+###InsertSensor
+
+####RequestEvent
+ - **insertsensor-assigned-offerings** - Assigned offerings. Type: string
+ - **insertsensor-assigned-procedure-identifiers** - Procedures. Type: string
+ - **insertsensor-observable-property** - Observable properties. Type: string
+ - **insertsensor-procedure-description** - Description of the procedure. Type: string
+ - **insertsensor-description-format** - Description format of the procedure. Type: string
+ - **insertsensor-feature-of-interest-types** - Feature of interest. Type: string
+ - **insertsensor-observation-types** - Observation types. Type: string
 
 ###InsertObservation
 
@@ -75,51 +120,32 @@
 		 - **timeInstant** - Timestamp if the value is TimeInstant type. Type: date
 		 - **span-days** - This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances.The value is the date for each days which are  between the start/end timestamps interval. Intarval ends are included.. Type: date
 
-###GetFeatureOfInterest
+###InsertResultTemplate
 
 ####RequestEvent
- - **getfeatureofinterest-feature-identifiers** - Feature identifiers. Type: string
- - **getfeatureofinterest-observed-properties** - Observed properties. Type: string
- - **getfeatureofinterest-procedures** - Procedures. Type: string
- - **getfeatureofinterest-spatial-filter** - Spatial filter.
-	 - **operation** - Operator. Type: string
-	 - **shape** - Elasticsearch shape. Type: geo_shape
-	 - **value-reference** - Value reference. Type: string
- - **getfeatureofinterest-temporal-filter** - Temporal filter.
-	 - **duration** - Duration between the END-START timestamp in milliseconds. Type: long
-	 - **start** - Start timestamp. Type: date
-	 - **end** - End timestamp. Type: date
-	 - **timeInstant** - Timestamp if the value is TimeInstant type. Type: date
-	 - **span-days** - This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances.The value is the date for each days which are  between the start/end timestamps interval. Intarval ends are included.. Type: date
-	 - **operator** - Operator. Type: string
-	 - **value-reference** - Value reference. Type: string
+ - **insertresulttemplate-identifier** - ID. Type: string
+ - **insertresulttemplate-observation-template** - Observation template ID. Type: string
 
-###GetObservationById
+###GetCapabilities
 
 ####RequestEvent
- - **getobservationbyid-observation-identifier** - ID of the observation. Type: string
-
-###InsertResult
-
-####RequestEvent
- - **insertresult-template-identifier** - Template ID. Type: string
- - **insertresult-result-values** - Result values. Type: string
-
-###GetDataAvailability
-
-####RequestEvent
- - **getdataavailability-features-of-interest** - Feature of interest. Type: string
- - **getdataavailability-observed-properties** - Observed property. Type: string
- - **getdataavailability-offerings** - Offering. Type: string
- - **getdataavailability-procedures** - Procedure. Type: string
+ - **getcapabilities-versions** - Accept versions. Type: string
+ - **getcapabilities-formats** - Accept formats. Type: string
+ - **getcapabilities-sections** - Sections. Type: string
+ - **getcapabilities-updatesequence** - Update sequence. Type: string
 
 ###Default
 
-####RequestEvent
- - **sr-version** - Version of the deployment. Type: string
- - **sr-service** - Name of deployment. E.g: SOS. Type: string
- - **sr-language** - Language of the deployment if specified. Type: string
- - **sr-operation-name** - Name of the requested operation. E.g: GetCapabilities. Type: string
+####ResponseEvent
+ - **sresp-content-type** - Response content type. Type: string
+
+####ExceptionEvent
+ - **exception-status** - HTTP status of the exception if any. Type: string
+ - **exception-version** - Version of the exception. Type: string
+ - **exception-message** - Text of the exception. Type: string
+ - **codedexception-locator** - CodedException locator. Type: string
+ - **codedexception-soapfault** - CodedException SOAP fault message. Type: string
+ - **owsexception-namespace** - OWSException namespace. Type: string
 
 ####Computed
  - **unhandled-serviceevent-type** - If no processing handler is defined this field stores the Java class full name of the event. Type: string
@@ -138,6 +164,12 @@
 	 - **extension-identifier** - Identifier. Type: string
 	 - **extension-value** - Value object `toString()` version. Type: string
 
+####RequestEvent
+ - **sr-version** - Version of the deployment. Type: string
+ - **sr-service** - Name of deployment. E.g: SOS. Type: string
+ - **sr-language** - Language of the deployment if specified. Type: string
+ - **sr-operation-name** - Name of the requested operation. E.g: GetCapabilities. Type: string
+
 ####OutgoingResponseEvent
  - **outre-exec-time** - The execution time of processing the request-response. Type: integer
  - **outre-count** - An incremental number since the start of the webapplication. This field indicates the serial number of the request. Type: long
@@ -145,56 +177,24 @@
 	 - **bytes** - Size in bytes. Type: long
 	 - **display** - Size in human readable form. Type: string
 
-####ResponseEvent
- - **sresp-content-type** - Response content type. Type: string
-
-####ExceptionEvent
- - **exception-status** - HTTP status of the exception if any. Type: string
- - **exception-version** - Version of the exception. Type: string
- - **exception-message** - Text of the exception. Type: string
- - **codedexception-locator** - CodedException locator. Type: string
- - **codedexception-soapfault** - CodedException SOAP fault message. Type: string
- - **owsexception-namespace** - OWSException namespace. Type: string
-
-###GetCapabilities
+###GetFeatureOfInterest
 
 ####RequestEvent
- - **getcapabilities-versions** - Accept versions. Type: string
- - **getcapabilities-formats** - Accept formats. Type: string
- - **getcapabilities-sections** - Sections. Type: string
- - **getcapabilities-updatesequence** - Update sequence. Type: string
-
-###Metadata
-
-####Computed
- - **mt-creation-time** - Creation time of the Elasticsearch index. Type: date
- - **mt-update-time** - Update time of the Elasticsearch metadata type. Type: date
- - **mt-version** - Monoton increasing version field. The deployment schema and the Elasticsearch schema version must match. Type: integer
- - **mt-uuids** - List of unique user IDs. Type: string
-
-###UpdateSensor
-
-####RequestEvent
- - **updatesensor-procedure-identifier** - Procedure ID. Type: string
- - **updatesensor-description-format** - Description format of the procedure. Type: string
-
-###InsertResultTemplate
-
-####RequestEvent
- - **insertresulttemplate-identifier** - ID. Type: string
- - **insertresulttemplate-observation-template** - Observation template ID. Type: string
-
-###DescribeSensor
-
-####RequestEvent
- - **describesensor-procedure** - Procedure to describe. Type: string
- - **describesensor-procedure-description-format** - Description format. Type: string
- - **describesensor-validtime** - Validtime of the request.
+ - **getfeatureofinterest-feature-identifiers** - Feature identifiers. Type: string
+ - **getfeatureofinterest-observed-properties** - Observed properties. Type: string
+ - **getfeatureofinterest-procedures** - Procedures. Type: string
+ - **getfeatureofinterest-spatial-filter** - Spatial filter.
+	 - **operation** - Operator. Type: string
+	 - **shape** - Elasticsearch shape. Type: geo_shape
+	 - **value-reference** - Value reference. Type: string
+ - **getfeatureofinterest-temporal-filter** - Temporal filter.
 	 - **duration** - Duration between the END-START timestamp in milliseconds. Type: long
 	 - **start** - Start timestamp. Type: date
 	 - **end** - End timestamp. Type: date
 	 - **timeInstant** - Timestamp if the value is TimeInstant type. Type: date
 	 - **span-days** - This is a computed field based on the start timestamp and end timestamp of the TimePeriod instances.The value is the date for each days which are  between the start/end timestamps interval. Intarval ends are included.. Type: date
+	 - **operator** - Operator. Type: string
+	 - **value-reference** - Value reference. Type: string
 
 ###GetObservation
 

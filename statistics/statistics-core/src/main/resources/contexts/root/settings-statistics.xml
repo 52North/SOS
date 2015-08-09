@@ -31,7 +31,8 @@
 		<property name="title" value="Elasticsearch: Connection mode" />
 		<property name="description"
 			value="Connection mode to the Elasticsearch cluster. The 'Node client' and the 'Transport client' connects to an external Elasticsearch server.
-			 The 'Embedded Server' mode starts a local elasticsearch server which stores the data in the WEB-INF/elasticsearch directory it is recommended only for testing purposes.
+			 The 'Embedded Server' mode starts a local elasticsearch server which stores the data in the WEB-INF/elasticsearch directory it is recommended only for testing purposes 
+			 (some preconfigured visualizations are not available with embedded server).
 			 &lt;br /&gt;
 			 For more information between Node and TransportClient mode visit the 
 			&lt;a href='https://www.elastic.co/guide/en/elasticsearch/guide/current/_transport_client_versus_node_client.html'&gt; official website &lt;/a&gt;

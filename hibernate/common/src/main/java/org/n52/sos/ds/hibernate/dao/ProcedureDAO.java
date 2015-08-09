@@ -607,8 +607,8 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         if (isProcedureTimeExtremaNamedQuerySupported(session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
             namedQuery.setParameter(PROCEDURE, procedureIdentifier);
-            LOGGER.debug("QUERY getProcedureTimeExtrema(procedure) with NamedQuery: {}",
-                    SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA);
+            LOGGER.debug("QUERY getProcedureTimeExtrema({}) with NamedQuery '{}': {}", procedureIdentifier,
+                    SQL_QUERY_GET_PROCEDURE_TIME_EXTREMA, namedQuery.getQueryString());
             result = (Object[]) namedQuery.uniqueResult();
         }
         return parseProcedureTimeExtremaResult(result);

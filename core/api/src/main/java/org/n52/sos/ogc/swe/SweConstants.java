@@ -209,10 +209,59 @@ public interface SweConstants {
     }
 
     /**
-     * Enum for coordinate names
+     * Enum for coordinate names (default)
      */
     enum SweCoordinateName {
         easting, northing, altitude
+    }
+    
+    /**
+     * Enum for coordinate names for easting
+     */
+    enum EastingSweCoordinateName {
+    	easting, westing, longitude;
+    	
+    	public static boolean isEastingSweCoordinateName(String name) {
+			for (EastingSweCoordinateName eastingSweCoordinateName : EastingSweCoordinateName.values()) {
+				if (eastingSweCoordinateName.name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
+    	
+    }
+    
+    /**
+     * Enum for coordinate names for northing
+     */
+    enum NorthingSweCoordinateName {
+    	northing, southing, latitude;
+    	
+    	public static boolean isNorthingSweCoordinateName(String name) {
+			for (NorthingSweCoordinateName northingSweCoordinateName : NorthingSweCoordinateName.values()) {
+				if (northingSweCoordinateName.name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
+    }
+    
+    /**
+     * Enum for coordinate names for altitude
+     */
+    enum AltitudeSweCoordinateName {
+    	altitude, height, depth;
+    	
+    	public static boolean isAltitudeSweCoordinateName(String name) {
+			for (AltitudeSweCoordinateName altitudeSweCoordinateName : AltitudeSweCoordinateName.values()) {
+				if (altitudeSweCoordinateName.name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
     }
 
     /**

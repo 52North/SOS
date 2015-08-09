@@ -122,9 +122,14 @@ public class AdminDatasourceController extends AbstractDatasourceController {
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_DATABASE_CLEAR, method = RequestMethod.POST)
     public void clearDatasource() throws OwsExceptionReport, ConnectionProviderException {
         if (getDatasource().supportsClear()) {
-            LOG.info("Clearing database contents.");
+            LOG.info("Clearing database contents by calling clear method.");
             getDatasource().clear(getSettings());
-            updateCache();
+        } else {
+        	LOG.info("Clearing database contents by deleting and recreating the SOS database schema.");
+        	Map<String, Object> settings = getDatasource().parseDatasourceProperties(getSettings());
+        	getDatasource().dropSchema(settings);
+        	getDatasource().createSchema(settings);
         }
+        updateCache();
     }
 }

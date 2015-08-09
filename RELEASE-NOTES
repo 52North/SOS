@@ -19,6 +19,19 @@ RELEASE NOTES
   
   --- Fixed issues ---
   
+      * Issue #258: SQL-Server 2012 Express: Can not clean datasource via 
+      				admin/datasource -> clear datasource
+         * https://github.com/52North/SOS/pull/260
+      * Issue #266: Reload CapabilitiesExtensionProvider in CapabilitiesExtensionRepository 
+                   after changing operations status
+      * Issue #267: Capabilities shows procedureDescriptionFormats in transactional 
+                   operations which are not supported
+      * Issue #277: Check for not null/empty coordinates in CoordinateTransformer.transformSweCoordinates() 
+                   before joining
+      * Issue #279: Extend the supported coordinate names
+      * Issue #285: Client problem with feature capabilities in DescribeSensor 
+      				response with SensorML 1.0.1 encoded procedure
+  
   
   
   Release 52n-sensorweb-sos-4.3.0

@@ -515,7 +515,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
         insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+                .getSupportedTransactionalProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
         return insertionCapabilities;

@@ -584,33 +584,33 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             throw new InvalidParameterValueException(parameterName, resultTemplate);
         }
     }
-    
+
     protected void checkReservedCharacter(Collection<String> values, Enum<?> parameterName) throws OwsExceptionReport {
-    	checkReservedCharacter(values, parameterName.name());
+        checkReservedCharacter(values, parameterName.name());
     }
-    
+
     protected void checkReservedCharacter(Collection<String> values, String parameterName) throws OwsExceptionReport {
-    	 CompositeOwsException exceptions = new CompositeOwsException();
-    	for (String value : values) {
-    		try {
-    			checkReservedCharacter(value, parameterName);
-			} catch (OwsExceptionReport owse) {
-				exceptions.add(owse);
-			}
-		}
-    	exceptions.throwIfNotEmpty();
+        CompositeOwsException exceptions = new CompositeOwsException();
+        for (String value : values) {
+            try {
+                checkReservedCharacter(value, parameterName);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+        }
+        exceptions.throwIfNotEmpty();
     }
-    
-	protected void checkReservedCharacter(String value, Enum<?> parameterName) throws OwsExceptionReport {
-		checkReservedCharacter(value, parameterName.name());
-	}
-    
-	protected void checkReservedCharacter(String value, String parameterName) throws OwsExceptionReport {
-		if (value != null && value.contains(Constants.COMMA_STRING)) {
-			throw new InvalidParameterValueException(parameterName, value)
-					.withMessage("The value '%s' contains the reserved parameter ','", value);
-		}
-	}
+
+    protected void checkReservedCharacter(String value, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(value, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(String value, String parameterName) throws OwsExceptionReport {
+        if (value != null && value.contains(Constants.COMMA_STRING)) {
+            throw new InvalidParameterValueException(parameterName, value)
+                    .withMessage("The value '%s' contains the reserved parameter ','", value);
+        }
+    }
 
     protected List<String> addChildProcedures(final Collection<String> procedures) {
         final Set<String> allProcedures = Sets.newHashSet();

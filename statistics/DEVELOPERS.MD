@@ -19,7 +19,7 @@ You can see an UML sequence diagram of one client request spawns multiple events
 
 
 ##Processing incoming events
-In the `org.n52.sos.statistics.sos.SosStatisticsServiceEventListener` event listener, the events are distributed to different **resolver classes** (which implement `org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver` interface) based on the event's concrete class. For example when a `RequestEvent` event is received it will be routed to the `SosRequestEventResolver` resolver. The resolver map the contents of a service event to a data structure that can be loaded to the statistics database and persists the .
+In the `org.n52.sos.statistics.sos.SosStatisticsServiceEventListener` event listener, the events are distributed to different **resolver classes** (which implement `org.n52.sos.statistics.api.interfaces.IStatisticsServiceEventResolver` interface) based on the event's concrete class. For example when a `RequestEvent` event is received it will be routed to the `SosRequestEventResolver` resolver. The resolver maps the contents of a service event to a data structure that can be loaded to the database and persists the statistics.
 
 Some of the events' payloads do not contain any SOS specific information so they are implemented in an independent package structure. For example the
 `org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver`, which is responsible for processing the `OutgoingResponseEvent`s, are Iceland-specific classes.
@@ -127,13 +127,23 @@ The metadata type contains the statistics module _schema version_, the _unique i
 
 There is always only one id called `1` in the `mt` type. An example entry would look like the following.
 ```json
-"hits" : [ {
-      "_index" : "ogc-statistics-index",
-      "_type" : "mt",
-      "_id" : "1",
-      "_score" : 1.0,
-      "_source":{"mt-update-time":"2015-08-06T21:07:09.681Z","mt-version":1,"mt-creation-time":"2015-08-06T20:25:24.514Z","mt-uuids":["f4090d4c-3765-4c72-9c3c-24aba8cec130","3c3117d5-3c4d-4f69-80c6-caa39241063a"]}
-    } ]
+"hits": [
+    {
+        "_index": "ogc-statistics-index",
+        "_type": "mt",
+        "_id": "1",
+        "_score": 1.0,
+        "_source": {
+            "mt-update-time": "2015-08-06T21:07:09.681Z",
+            "mt-version": 1,
+            "mt-creation-time": "2015-08-06T20:25:24.514Z",
+            "mt-uuids": [
+                "f4090d4c-3765-4c72-9c3c-24aba8cec130",
+                "3c3117d5-3c4d-4f69-80c6-caa39241063a"
+            ]
+        }
+    }
+]
 ```
 
 ### Adding a new schema
@@ -151,7 +161,7 @@ The statistics module ships with preconfigured Kibana dashboards and visualizati
 
 The project contains a Kibana importer job to parse the configuration file, which were created beforehand and saved under the file `/src/main/resources/kibana/kibana_config.json`, and store the predefined dashboards and visualizations in the index to make them directly available to users.
 
-The file has a custom JSON schema format, because we need more information than what the factory Kibana importer exporter provides. The importer activates on startup if the user enabled the function on the settings page. The importer considers the different Elasticsearch types names between the export development environment and import production environment and it processes the config file before. 
+The file has a custom JSON schema format, because we need more information than what the factory Kibana importer exporter provides. The importer activates on startup if the user enabled the function on the settings page. The importer considers the different Elasticsearch type names between the export development environment and import production environment and it processes the config file before. 
 
 **The standalone Kibana exporter is intended for in-house use only!** It is a Java runnable jar, must be executed manually, and creates the `kibana_config.json` file. The input arguments for the main class is the development Elasticsearch cluster address and the cluster name
 ```bash
@@ -199,28 +209,73 @@ The following input message generates an exception because of the missing proced
 ```
 And the Elasticsearch output for the incoming request
 ```json
-"hits" : [ {
-      "_index" : "ogc-statistics-index",
-      "_type" : "ogc-type",
-      "_id" : "AU8HBdwf5zvF5dDOdj2l",
-      "_score" : null,
-      "_source":{
-      "getobservation-procedures":["http://www.52north.org/test/procedure/6"],
-      "getobservation-spatial-filter":{"shape":{"type":"polygon","coordinates":[[[50.0,7.0],[53.0,7.0],[53.0,10.0],[50.0,10.0],[50.0,7.0]]]},"operation":"BBOX","value-reference":"om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape"},"owsexception-namespace":"http://www.opengis.net/ows/1.1","sr-service":"SOS",
-      "getobservation-observed-properties":["http://www.52north.org/test/observableProperty/6"],
-      "getobservation-feature-of-interests":["http://www.52north.org/test/featureOfInterest/6"],
-      "getobservation-merged-observation-values":false,
-      "outre-count":1,
-      "instance-uuid":"c94e58ad-b98f-454a-9575-07b38e87dcc2",
-      "sr-version":"2.0.0","sr-content-type":"application/json",
-      "getobservation-temporal-filter":[{"duration":3600000,"span-days":["2012-11-19T00:00:00.000Z"],"start":"2012-11-19T14:00:00.000+01:00","end":"2012-11-19T15:00:00.000+01:00","value-reference":"om:phenomenonTime","operator":"TM_During"}],"sr-source-ip-address":"127.0.0.1","exception-version":"2.0.0",
-      "@timestamp":"2015-08-07T07:17:48.692Z",
-      "exception-message":"The value 'http://www.52north.org/test/offering/6' of the parameter 'offering' is invalid\nThe value 'http://www.52north.org/test/observableProperty/6' of the parameter 'observedProperty' is invalid\nThe value 'http://www.52north.org/test/procedure/6' of the parameter 'procedure' is invalid\nThe value 'http://www.52north.org/test/featureOfInterest/6' of the parameter 'featureOfInterest' is invalid",
-      "sr-operation-name":"GetObservation",
-      "getobservation-offerings":["http://www.52north.org/test/offering/6"],
-      "getobservation-response-format":"http://www.opengis.net/om/2.0",
-      "exception-status":400,
-      "sr-accept-types":["application/json"],
-      "outre-exec-time":643,
-      "sr-proxied-request":false},
+"hits": [
+    {
+        "_index": "ogc-statistics-index",
+        "_type": "ogc-type",
+        "_id": "AU8HBdwf5zvF5dDOdj2l",
+        "_score": null,
+        "_source": {
+            "getobservation-procedures": [
+                "http://www.52north.org/test/procedure/6"
+            ],
+            "getobservation-spatial-filter": {
+                "shape": {
+                    "type": "polygon",
+                    "coordinates": [
+                        [
+                            [ 50.0, 7.0 ],
+                            [ 53.0, 7.0 ],
+                            [ 53.0, 10.0 ],
+                            [ 50.0, 10.0 ],
+                            [ 50.0, 7.0 ]
+                        ]
+                    ]
+                },
+                "operation": "BBOX",
+                "value-reference": "om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape"
+            },
+            "owsexception-namespace": "http://www.opengis.net/ows/1.1",
+            "sr-service": "SOS",
+            "getobservation-observed-properties": [
+                "http://www.52north.org/test/observableProperty/6"
+            ],
+            "getobservation-feature-of-interests": [
+                "http://www.52north.org/test/featureOfInterest/6"
+            ],
+            "getobservation-merged-observation-values": false,
+            "outre-count": 1,
+            "instance-uuid": "c94e58ad-b98f-454a-9575-07b38e87dcc2",
+            "sr-version": "2.0.0",
+            "sr-content-type": "application/json",
+            "getobservation-temporal-filter": [
+                {
+                    "duration": 3600000,
+                    "span-days": [
+                        "2012-11-19T00:00:00.000Z"
+                    ],
+                    "start": "2012-11-19T14:00:00.000+01:00",
+                    "end": "2012-11-19T15:00:00.000+01:00",
+                    "value-reference": "om:phenomenonTime",
+                    "operator": "TM_During"
+                }
+            ],
+            "sr-source-ip-address": "127.0.0.1",
+            "exception-version": "2.0.0",
+            "@timestamp": "2015-08-07T07:17:48.692Z",
+            "exception-message": "The value 'http://www.52north.org/test/offering/6' of the parameter 'offering' is invalid\nThe value 'http://www.52north.org/test/observableProperty/6' of the parameter 'observedProperty' is invalid\nThe value 'http://www.52north.org/test/procedure/6' of the parameter 'procedure' is invalid\nThe value 'http://www.52north.org/test/featureOfInterest/6' of the parameter 'featureOfInterest' is invalid",
+            "sr-operation-name": "GetObservation",
+            "getobservation-offerings": [
+                "http://www.52north.org/test/offering/6"
+            ],
+            "getobservation-response-format": "http://www.opengis.net/om/2.0",
+            "exception-status": 400,
+            "sr-accept-types": [
+                "application/json"
+            ],
+            "outre-exec-time": 643,
+            "sr-proxied-request": false
+        }
+    }
+]
 ```

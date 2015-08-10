@@ -88,7 +88,7 @@ public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object
             sosNamedValue.setName(referenceType);
             return sosNamedValue;
         } else if (namedValueProperty.isSetHref()) {
-            NamedValue<?> sosNamedValue = new NamedValue<ReferenceType>();
+            NamedValue<ReferenceType> sosNamedValue = new NamedValue<ReferenceType>();
             ReferenceType referenceType = new ReferenceType(namedValueProperty.getHref());
             if (namedValueProperty.isSetTitle()) {
                 referenceType.setTitle(namedValueProperty.getTitle());

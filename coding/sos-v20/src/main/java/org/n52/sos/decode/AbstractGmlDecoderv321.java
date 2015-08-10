@@ -46,92 +46,92 @@ import net.opengis.gml.x32.ReferenceType;
 
 public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
 
-	protected AbstractGML parseAbstractGMLType(AbstractGMLType agmlt, AbstractGML abstractGML)
-			throws OwsExceptionReport {
-		parseIdentifier(agmlt, abstractGML);
-		parseNames(agmlt, abstractGML);
-		paresDescription(agmlt, abstractGML);
-		parseMetaDataProperty(agmlt, abstractGML);
-		return null;
-	}
+    protected AbstractGML parseAbstractGMLType(AbstractGMLType agmlt, AbstractGML abstractGML)
+            throws OwsExceptionReport {
+        parseIdentifier(agmlt, abstractGML);
+        parseNames(agmlt, abstractGML);
+        paresDescription(agmlt, abstractGML);
+        parseMetaDataProperty(agmlt, abstractGML);
+        return null;
+    }
 
-	protected AbstractFeature parseAbstractFeatureType(AbstractFeatureType aft, AbstractFeature abstractFeature)
-			throws OwsExceptionReport {
-		parseAbstractGMLType(aft, abstractFeature);
-		parseBoundedBy(aft, abstractFeature);
-		parseLocation(aft, abstractFeature);
-		return abstractFeature;
-	}
+    protected AbstractFeature parseAbstractFeatureType(AbstractFeatureType aft, AbstractFeature abstractFeature)
+            throws OwsExceptionReport {
+        parseAbstractGMLType(aft, abstractFeature);
+        parseBoundedBy(aft, abstractFeature);
+        parseLocation(aft, abstractFeature);
+        return abstractFeature;
+    }
 
-	protected AbstractGML parseIdentifier(AbstractGMLType agmlt, AbstractGML abstractGML) throws OwsExceptionReport {
-		if (agmlt.isSetIdentifier()) {
-			abstractGML.setIdentifier(parseCodeWithAuthorityTye(agmlt.getIdentifier()));
-		}
-		return abstractGML;
-	}
+    protected AbstractGML parseIdentifier(AbstractGMLType agmlt, AbstractGML abstractGML) throws OwsExceptionReport {
+        if (agmlt.isSetIdentifier()) {
+            abstractGML.setIdentifier(parseCodeWithAuthorityTye(agmlt.getIdentifier()));
+        }
+        return abstractGML;
+    }
 
-	protected AbstractGML parseNames(AbstractGMLType agmlt, AbstractGML abstractGML) throws OwsExceptionReport {
-		if (CollectionHelper.isNotNullOrEmpty(agmlt.getNameArray())) {
-			for (CodeType ct : agmlt.getNameArray()) {
-				abstractGML.addName(parseCodeType(ct));
-			}
-		}
-		return abstractGML;
-	}
+    protected AbstractGML parseNames(AbstractGMLType agmlt, AbstractGML abstractGML) throws OwsExceptionReport {
+        if (CollectionHelper.isNotNullOrEmpty(agmlt.getNameArray())) {
+            for (CodeType ct : agmlt.getNameArray()) {
+                abstractGML.addName(parseCodeType(ct));
+            }
+        }
+        return abstractGML;
+    }
 
-	protected AbstractGML paresDescription(AbstractGMLType agmlt, AbstractGML abstractGML) {
-		if (agmlt.isSetDescription()) {
-			if (agmlt.getDescription().isSetHref()) {
-				abstractGML.setDescription(agmlt.getDescription().getHref());
-			} else {
-				abstractGML.setDescription(agmlt.getDescription().getStringValue());
-			}
-		} else if (agmlt.isSetDescriptionReference()) {
-			// TODO
-		}
-		return abstractGML;
+    protected AbstractGML paresDescription(AbstractGMLType agmlt, AbstractGML abstractGML) {
+        if (agmlt.isSetDescription()) {
+            if (agmlt.getDescription().isSetHref()) {
+                abstractGML.setDescription(agmlt.getDescription().getHref());
+            } else {
+                abstractGML.setDescription(agmlt.getDescription().getStringValue());
+            }
+        } else if (agmlt.isSetDescriptionReference()) {
+            // TODO
+        }
+        return abstractGML;
 
-	}
+    }
 
-	protected AbstractGML parseMetaDataProperty(AbstractGMLType agmlt, AbstractGML abstractGML) {
-		if (CollectionHelper.isNotNullOrEmpty(agmlt.getMetaDataPropertyArray())) {
-			// TODO
-		}
-		return abstractGML;
-	}
+    protected AbstractGML parseMetaDataProperty(AbstractGMLType agmlt, AbstractGML abstractGML) {
+        if (CollectionHelper.isNotNullOrEmpty(agmlt.getMetaDataPropertyArray())) {
+            // TODO
+        }
+        return abstractGML;
+    }
 
-	protected AbstractFeature parseBoundedBy(AbstractFeatureType aft, AbstractFeature abstractFeature) {
-		if (aft.isSetBoundedBy()) {
-			// TODO
-		}
-		return abstractFeature;
-	}
+    protected AbstractFeature parseBoundedBy(AbstractFeatureType aft, AbstractFeature abstractFeature) {
+        if (aft.isSetBoundedBy()) {
+            // TODO
+        }
+        return abstractFeature;
+    }
 
-	protected AbstractFeature parseLocation(AbstractFeatureType aft, AbstractFeature abstractFeature) {
-		if (aft.isSetLocation()) {
-			// TODO
-		}
-		return abstractFeature;
-	}
+    protected AbstractFeature parseLocation(AbstractFeatureType aft, AbstractFeature abstractFeature) {
+        if (aft.isSetLocation()) {
+            // TODO
+        }
+        return abstractFeature;
+    }
 
-	protected CodeWithAuthority parseCodeWithAuthorityTye(CodeWithAuthorityType xbCodeWithAuthority) {
-		if (xbCodeWithAuthority.getStringValue() != null && !xbCodeWithAuthority.getStringValue().isEmpty()) {
-			CodeWithAuthority sosCodeWithAuthority = new CodeWithAuthority(xbCodeWithAuthority.getStringValue());
-			sosCodeWithAuthority.setCodeSpace(xbCodeWithAuthority.getCodeSpace());
-			return sosCodeWithAuthority;
-		}
-		return null;
-	}
+    protected CodeWithAuthority parseCodeWithAuthorityTye(CodeWithAuthorityType xbCodeWithAuthority) {
+        if (xbCodeWithAuthority.getStringValue() != null && !xbCodeWithAuthority.getStringValue().isEmpty()) {
+            CodeWithAuthority sosCodeWithAuthority = new CodeWithAuthority(xbCodeWithAuthority.getStringValue());
+            sosCodeWithAuthority.setCodeSpace(xbCodeWithAuthority.getCodeSpace());
+            return sosCodeWithAuthority;
+        }
+        return null;
+    }
 
-	protected org.n52.sos.ogc.gml.CodeType parseCodeType(CodeType element) {
-		org.n52.sos.ogc.gml.CodeType codeType = new org.n52.sos.ogc.gml.CodeType(element.getStringValue());
-		if (element.isSetCodeSpace()) {
-			codeType.setCodeSpace(element.getCodeSpace());
-		}
-		return codeType;
-	}
-	
-	protected org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
+    protected org.n52.sos.ogc.gml.CodeType parseCodeType(CodeType element) {
+        org.n52.sos.ogc.gml.CodeType codeType = new org.n52.sos.ogc.gml.CodeType(element.getStringValue());
+        if (element.isSetCodeSpace()) {
+            codeType.setCodeSpace(element.getCodeSpace());
+        }
+        return codeType;
+    }
+
+    protected org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
         if (referenceType.isSetHref() && !referenceType.getHref().isEmpty()) {
             org.n52.sos.ogc.gml.ReferenceType sosReferenceType =
                     new org.n52.sos.ogc.gml.ReferenceType(referenceType.getHref());
@@ -142,14 +142,14 @@ public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
         }
         return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
     }
-	
-	protected List<org.n52.sos.ogc.gml.ReferenceType> parseReferenceType(ReferenceType[] referenceTypes) {
-		List<org.n52.sos.ogc.gml.ReferenceType> list = Lists.newArrayList();
-		if (CollectionHelper.isNotNullOrEmpty(referenceTypes)) {
-			for (ReferenceType referenceType : referenceTypes) {
-				list.add(parseReferenceType(referenceType));
-			}
-		}
-		return list;
-	}
+
+    protected List<org.n52.sos.ogc.gml.ReferenceType> parseReferenceType(ReferenceType[] referenceTypes) {
+        List<org.n52.sos.ogc.gml.ReferenceType> list = Lists.newArrayList();
+        if (CollectionHelper.isNotNullOrEmpty(referenceTypes)) {
+            for (ReferenceType referenceType : referenceTypes) {
+                list.add(parseReferenceType(referenceType));
+            }
+        }
+        return list;
+    }
 }

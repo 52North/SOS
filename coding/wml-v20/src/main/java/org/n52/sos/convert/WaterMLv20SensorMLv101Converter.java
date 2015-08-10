@@ -85,21 +85,22 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
         return null;
     }
 
-    private SosProcedureDescription convertSensorML101ToWML2ObservationProcess(final SosProcedureDescription objectToConvert) {
+    private SosProcedureDescription convertSensorML101ToWML2ObservationProcess(
+            final SosProcedureDescription objectToConvert) {
         final ObservationProcess observationProcess = new ObservationProcess();
 
         if (objectToConvert instanceof SensorML) {
             final SensorML sensorML = (SensorML) objectToConvert;
             if (sensorML.isWrapper()) {
                 for (final AbstractProcess member : sensorML.getMembers()) {
-                	convertSensorMLToObservationProcess(observationProcess, member);
+                    convertSensorMLToObservationProcess(observationProcess, member);
                     if (member.isSetIdentifier()) {
                         observationProcess.setIdentifier(member.getIdentifierCodeWithAuthority());
                     }
                     if (member instanceof System) {
-                    	 observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_SENSOR));
+                        observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_SENSOR));
                     } else if (member instanceof ProcessModel) {
-                    	observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
+                        observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
                     }
                 }
             }
@@ -112,7 +113,8 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
         return observationProcess;
     }
 
-    private SosProcedureDescription convertWML2ObservationProcessToSensorML101(final SosProcedureDescription objectToConvert) {
+    private SosProcedureDescription convertWML2ObservationProcessToSensorML101(
+            final SosProcedureDescription objectToConvert) {
         final SensorML sensorML = new SensorML();
         if (objectToConvert instanceof ObservationProcess) {
             final ObservationProcess observationProcess = new ObservationProcess();

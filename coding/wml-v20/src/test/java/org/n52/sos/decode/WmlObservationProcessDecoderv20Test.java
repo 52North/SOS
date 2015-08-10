@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -43,52 +42,53 @@ import org.n52.sos.ogc.wml.ObservationProcess;
 
 /**
  * Test class for {@link WmlObservationProcessDecoderv20}
+ * 
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 public class WmlObservationProcessDecoderv20Test {
-	
-	WmlObservationProcessDecoderv20 decoder = new WmlObservationProcessDecoderv20();
-	
-	final String REF_OFFERING = "refOffering";
-	
-	final String TEXT_OFFERING = "textOffering";
-	
-	@Test
-	public void testCheckForOffering() {
-		ObservationProcess observationProcess = getObservationProcess();
-		decoder.checkForOffering(observationProcess);
-		assertThat(observationProcess.isSetOfferings(), is(true));
-		assertThat(observationProcess.getOfferings().size(), is(2));
-		for (SosOffering offering : observationProcess.getOfferings()) {
-			assertThat(offering.getIdentifier(), anyOf(is(REF_OFFERING), is(TEXT_OFFERING)));
-		}
-		
-	}
-	
-	private ObservationProcess getObservationProcess() {
-		ObservationProcess op = new ObservationProcess();
-		op.addParameter(getReferencedNamedValue());
-		op.addParameter(getTextNamedValue());
-		return op;
-	}
 
-	private NamedValue<ReferenceType> getReferencedNamedValue() {
-		NamedValue<ReferenceType> nv = new NamedValue<ReferenceType>();
-		nv.setName(getNameValueOfferingName());
-		nv.setValue(new ReferenceValue(new ReferenceType(REF_OFFERING)));
-		return nv;
-	}
-	
-	private NamedValue<String> getTextNamedValue() {
-		NamedValue<String> nv = new NamedValue<String>();
-		nv.setName(getNameValueOfferingName());
-		nv.setValue(new TextValue(TEXT_OFFERING));
-		return nv;
-	}
+    WmlObservationProcessDecoderv20 decoder = new WmlObservationProcessDecoderv20();
 
-	private ReferenceType getNameValueOfferingName() {
-		return new ReferenceType(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
-	}
+    final String REF_OFFERING = "refOffering";
+
+    final String TEXT_OFFERING = "textOffering";
+
+    @Test
+    public void testCheckForOffering() {
+        ObservationProcess observationProcess = getObservationProcess();
+        decoder.checkForOffering(observationProcess);
+        assertThat(observationProcess.isSetOfferings(), is(true));
+        assertThat(observationProcess.getOfferings().size(), is(2));
+        for (SosOffering offering : observationProcess.getOfferings()) {
+            assertThat(offering.getIdentifier(), anyOf(is(REF_OFFERING), is(TEXT_OFFERING)));
+        }
+
+    }
+
+    private ObservationProcess getObservationProcess() {
+        ObservationProcess op = new ObservationProcess();
+        op.addParameter(getReferencedNamedValue());
+        op.addParameter(getTextNamedValue());
+        return op;
+    }
+
+    private NamedValue<ReferenceType> getReferencedNamedValue() {
+        NamedValue<ReferenceType> nv = new NamedValue<ReferenceType>();
+        nv.setName(getNameValueOfferingName());
+        nv.setValue(new ReferenceValue(new ReferenceType(REF_OFFERING)));
+        return nv;
+    }
+
+    private NamedValue<String> getTextNamedValue() {
+        NamedValue<String> nv = new NamedValue<String>();
+        nv.setName(getNameValueOfferingName());
+        nv.setValue(new TextValue(TEXT_OFFERING));
+        return nv;
+    }
+
+    private ReferenceType getNameValueOfferingName() {
+        return new ReferenceType(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
+    }
 }

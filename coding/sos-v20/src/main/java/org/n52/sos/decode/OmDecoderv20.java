@@ -136,10 +136,6 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         // XmlHelper.validateDocument((XmlObject) object);
         if (object instanceof OMObservationType) {
             return parseOmObservation((OMObservationType) object);
-//        } else if (object instanceof NamedValuePropertyType) {
-//            return parseNamedValueType((NamedValuePropertyType) object);
-//        } else if (object instanceof NamedValuePropertyType[]) {
-//            return parseNamedValueTypeArray((NamedValuePropertyType[]) object);
         }
         return super.decode(object);
     }

@@ -63,173 +63,176 @@ import net.opengis.waterml.x20.ObservationProcessType;
 
 public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 implements ProcedureDecoder<Object, Object> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WmlObservationProcessDecoderv20.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WmlObservationProcessDecoderv20.class);
 
-	@SuppressWarnings("unchecked")
-	private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
-			CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
-					ObservationProcessDocument.class, ObservationProcessPropertyType.class, ObservationProcessType.class),
-			CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20,
-					ObservationProcessDocument.class, ObservationProcessPropertyType.class, ObservationProcessType.class));
+    @SuppressWarnings("unchecked")
+    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
+            CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
+                    ObservationProcessDocument.class, ObservationProcessPropertyType.class,
+                    ObservationProcessType.class),
+            CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20, ObservationProcessDocument.class,
+                    ObservationProcessPropertyType.class, ObservationProcessType.class));
 
-	private static final Set<String> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS = Collections
-			.singleton(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING);
+    private static final Set<String> SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS =
+            Collections.singleton(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING);
 
-	private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS = ImmutableMap
-			.of(SosConstants.SOS, ImmutableMap.<String, Set<String>> builder()
-					.put(Sos2Constants.SERVICEVERSION, ImmutableSet.of(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
-					.build());
+    private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
+            ImmutableMap.of(SosConstants.SOS, ImmutableMap.<String, Set<String>> builder()
+                    .put(Sos2Constants.SERVICEVERSION, ImmutableSet.of(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+                    .build());
 
-	public WmlObservationProcessDecoderv20() {
-		LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
-				Joiner.on(", ").join(DECODER_KEYS));
-	}
+    public WmlObservationProcessDecoderv20() {
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(DECODER_KEYS));
+    }
 
-	@Override
-	public Set<DecoderKey> getDecoderKeyTypes() {
-		return Collections.unmodifiableSet(DECODER_KEYS);
-	}
+    @Override
+    public Set<DecoderKey> getDecoderKeyTypes() {
+        return Collections.unmodifiableSet(DECODER_KEYS);
+    }
 
-	@Override
-	public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-		return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
-				SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
-	}
+    @Override
+    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
+        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
+                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    }
 
-	@Override
-	public Set<String> getConformanceClasses() {
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<String> getConformanceClasses() {
+        return Collections.emptySet();
+    }
 
-	@Override
-	public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
-		if (SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
-				&& SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
-			return SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
-		}
-		return Collections.emptySet();
-	}
+    @Override
+    public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
+        if (SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
+                && SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
+            return SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
+        }
+        return Collections.emptySet();
+    }
 
-	@Override
-	public Object decode(Object object) throws OwsExceptionReport, UnsupportedDecoderInputException {
-		if (object instanceof ObservationProcessDocument) {
-			return parseObservationProcess(((ObservationProcessDocument) object).getObservationProcess());
-		} else if (object instanceof ObservationProcessPropertyType) {
-			return parseObservationProcess(((ObservationProcessPropertyType) object).getObservationProcess());
-		} else if (object instanceof ObservationProcessType) {
-			return parseObservationProcess((ObservationProcessType) object);
-		}
-		return super.decode(object);
-	}
+    @Override
+    public Object decode(Object object) throws OwsExceptionReport, UnsupportedDecoderInputException {
+        if (object instanceof ObservationProcessDocument) {
+            return parseObservationProcess(((ObservationProcessDocument) object).getObservationProcess());
+        } else if (object instanceof ObservationProcessPropertyType) {
+            return parseObservationProcess(((ObservationProcessPropertyType) object).getObservationProcess());
+        } else if (object instanceof ObservationProcessType) {
+            return parseObservationProcess((ObservationProcessType) object);
+        }
+        return super.decode(object);
+    }
 
-	private Object parseObservationProcess(ObservationProcessType opt) throws OwsExceptionReport {
-		ObservationProcess observationProcess = new ObservationProcess();
-		observationProcess.setGmlId(opt.getId());
-		// parse identifier, names, description, locations
-		parseAbstractFeatureType(opt, observationProcess);
-		parseProcessType(opt, observationProcess);
-		parseOriginatingProcess(opt, observationProcess);
-		parseAggregatingDuration(opt, observationProcess);
-		parseVerticalDatum(opt, observationProcess);
-		parseComment(opt, observationProcess);
-		parseProcessReference(opt, observationProcess);
-		parseInput(opt, observationProcess);
-		parseParameter(opt, observationProcess);
-		setDescriptionXml(opt, observationProcess);
-		return observationProcess;
-	}
+    private Object parseObservationProcess(ObservationProcessType opt) throws OwsExceptionReport {
+        ObservationProcess observationProcess = new ObservationProcess();
+        observationProcess.setGmlId(opt.getId());
+        // parse identifier, names, description, locations
+        parseAbstractFeatureType(opt, observationProcess);
+        parseProcessType(opt, observationProcess);
+        parseOriginatingProcess(opt, observationProcess);
+        parseAggregatingDuration(opt, observationProcess);
+        parseVerticalDatum(opt, observationProcess);
+        parseComment(opt, observationProcess);
+        parseProcessReference(opt, observationProcess);
+        parseInput(opt, observationProcess);
+        parseParameter(opt, observationProcess);
+        setDescriptionXml(opt, observationProcess);
+        return observationProcess;
+    }
 
-	private void setDescriptionXml(ObservationProcessType opt, ObservationProcess observationProcess) {
-		ObservationProcessDocument doc = ObservationProcessDocument.Factory
-				.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-		doc.setObservationProcess(opt);
-		observationProcess.setSensorDescriptionXmlString(doc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
-	}
+    private void setDescriptionXml(ObservationProcessType opt, ObservationProcess observationProcess) {
+        ObservationProcessDocument doc =
+                ObservationProcessDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        doc.setObservationProcess(opt);
+        observationProcess.setSensorDescriptionXmlString(doc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
+    }
 
-	private void parseProcessType(ObservationProcessType opt, ObservationProcess observationProcess) {
-		observationProcess.setProcessType(parseReferenceType(opt.getProcessType()));
-	}
+    private void parseProcessType(ObservationProcessType opt, ObservationProcess observationProcess) {
+        observationProcess.setProcessType(parseReferenceType(opt.getProcessType()));
+    }
 
-	private void parseOriginatingProcess(ObservationProcessType opt, ObservationProcess observationProcess)
-			throws OwsExceptionReport {
-		if (opt.isSetOriginatingProcess()) {
-			observationProcess.setOriginatingProcess(parseReferenceType(opt.getOriginatingProcess()));
-		}
-	}
+    private void parseOriginatingProcess(ObservationProcessType opt, ObservationProcess observationProcess)
+            throws OwsExceptionReport {
+        if (opt.isSetOriginatingProcess()) {
+            observationProcess.setOriginatingProcess(parseReferenceType(opt.getOriginatingProcess()));
+        }
+    }
 
-	private void parseAggregatingDuration(ObservationProcessType opt, ObservationProcess observationProcess) {
-		if (opt.isSetAggregationDuration()) {
-			observationProcess.setAggregationDuration(opt.getAggregationDuration().toString());
-		}
-	}
+    private void parseAggregatingDuration(ObservationProcessType opt, ObservationProcess observationProcess) {
+        if (opt.isSetAggregationDuration()) {
+            observationProcess.setAggregationDuration(opt.getAggregationDuration().toString());
+        }
+    }
 
-	private void parseVerticalDatum(ObservationProcessType opt, ObservationProcess observationProcess) throws OwsExceptionReport {
-		if (opt.isSetVerticalDatum()) {
-			Object decodeXmlElement = CodingHelper.decodeXmlElement(opt.getVerticalDatum());
-			if (decodeXmlElement instanceof ReferenceType) {
-				observationProcess.setVerticalDatum((ReferenceType) decodeXmlElement);
-			}
-		}
-	}
+    private void parseVerticalDatum(ObservationProcessType opt, ObservationProcess observationProcess)
+            throws OwsExceptionReport {
+        if (opt.isSetVerticalDatum()) {
+            Object decodeXmlElement = CodingHelper.decodeXmlElement(opt.getVerticalDatum());
+            if (decodeXmlElement instanceof ReferenceType) {
+                observationProcess.setVerticalDatum((ReferenceType) decodeXmlElement);
+            }
+        }
+    }
 
-	private void parseComment(ObservationProcessType opt, ObservationProcess observationProcess) {
-		if (CollectionHelper.isNotNullOrEmpty(opt.getCommentArray())) {
-			observationProcess.setComments(Lists.newArrayList(opt.getCommentArray()));
-		}
-	}
+    private void parseComment(ObservationProcessType opt, ObservationProcess observationProcess) {
+        if (CollectionHelper.isNotNullOrEmpty(opt.getCommentArray())) {
+            observationProcess.setComments(Lists.newArrayList(opt.getCommentArray()));
+        }
+    }
 
-	private void parseProcessReference(ObservationProcessType opt, ObservationProcess observationProcess) {
-		if (opt.isSetProcessReference()) {
-			observationProcess.setProcessReference(parseReferenceType(opt.getProcessReference()));
-		}
-	}
+    private void parseProcessReference(ObservationProcessType opt, ObservationProcess observationProcess) {
+        if (opt.isSetProcessReference()) {
+            observationProcess.setProcessReference(parseReferenceType(opt.getProcessReference()));
+        }
+    }
 
-	private void parseInput(ObservationProcessType opt, ObservationProcess observationProcess) {
-		if (CollectionHelper.isNotNullOrEmpty(opt.getInputArray())) {
-			parseReferenceType(opt.getInputArray());
-		}
-	}
+    private void parseInput(ObservationProcessType opt, ObservationProcess observationProcess) {
+        if (CollectionHelper.isNotNullOrEmpty(opt.getInputArray())) {
+            parseReferenceType(opt.getInputArray());
+        }
+    }
 
-	private void parseParameter(ObservationProcessType opt, ObservationProcess observationProcess) throws OwsExceptionReport {
-		if (CollectionHelper.isNotNullOrEmpty(opt.getParameterArray())) {
-			observationProcess.setParameters(parseNamedValueTypeArray(opt.getParameterArray()));
-		}
-		checkForOffering(observationProcess);
-	}
+    private void parseParameter(ObservationProcessType opt, ObservationProcess observationProcess)
+            throws OwsExceptionReport {
+        if (CollectionHelper.isNotNullOrEmpty(opt.getParameterArray())) {
+            observationProcess.setParameters(parseNamedValueTypeArray(opt.getParameterArray()));
+        }
+        checkForOffering(observationProcess);
+    }
 
-	@VisibleForTesting
-	protected void checkForOffering(ObservationProcess observationProcess) {
-		if (observationProcess.isSetParameters()) {
-			for (NamedValue<?> namedValue : observationProcess.getParameters()) {
-				if (checkNameForOffering(namedValue) && namedValue.isSetValue()) {
-					if (namedValue.getValue() instanceof TextValue) {
-						TextValue value = (TextValue) namedValue.getValue();
-						observationProcess.addOffering(new SosOffering(value.getValue(), true));
-					} else if (namedValue.getValue() instanceof ReferenceValue) {
-						ReferenceValue refValue = (ReferenceValue) namedValue.getValue();
-						if (refValue.isSetValue()) {
-							ReferenceType value = refValue.getValue();
-							if (value.isSetHref()) {
-								if (value.isSetTitle()) {
-									observationProcess.addOffering(new SosOffering(value.getHref(), value.getTitle()));
-								} else {
-									observationProcess.addOffering(new SosOffering(value.getHref(), true));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
+    @VisibleForTesting
+    protected void checkForOffering(ObservationProcess observationProcess) {
+        if (observationProcess.isSetParameters()) {
+            for (NamedValue<?> namedValue : observationProcess.getParameters()) {
+                if (checkNameForOffering(namedValue) && namedValue.isSetValue()) {
+                    if (namedValue.getValue() instanceof TextValue) {
+                        TextValue value = (TextValue) namedValue.getValue();
+                        observationProcess.addOffering(new SosOffering(value.getValue(), true));
+                    } else if (namedValue.getValue() instanceof ReferenceValue) {
+                        ReferenceValue refValue = (ReferenceValue) namedValue.getValue();
+                        if (refValue.isSetValue()) {
+                            ReferenceType value = refValue.getValue();
+                            if (value.isSetHref()) {
+                                if (value.isSetTitle()) {
+                                    observationProcess.addOffering(new SosOffering(value.getHref(), value.getTitle()));
+                                } else {
+                                    observationProcess.addOffering(new SosOffering(value.getHref(), true));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	private boolean checkNameForOffering(NamedValue<?> namedValue) {
-		if (namedValue.isSetName()) {
-			ReferenceType name = namedValue.getName();
-			return (name.isSetHref() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getHref())) || 
-					(name.isSetTitle() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getTitle()));
-		}
-		return false;
-	}
+    private boolean checkNameForOffering(NamedValue<?> namedValue) {
+        if (namedValue.isSetName()) {
+            ReferenceType name = namedValue.getName();
+            return (name.isSetHref() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getHref()))
+                    || (name.isSetTitle() && SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(name.getTitle()));
+        }
+        return false;
+    }
 
 }

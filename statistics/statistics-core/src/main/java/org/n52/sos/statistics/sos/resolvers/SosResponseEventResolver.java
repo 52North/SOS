@@ -32,14 +32,14 @@ import java.util.Map;
 
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class SosResponseEventResolver implements IServiceEventResolver<ResponseEvent> {
+public class SosResponseEventResolver implements StatisticsServiceEventResolver<ResponseEvent> {
 
     private ResponseEvent event;
-    private Map<String, IServiceEventHandler<?>> handlers;
+    private Map<String, StatisticsServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
@@ -47,7 +47,7 @@ public class SosResponseEventResolver implements IServiceEventResolver<ResponseE
             return null;
         }
         AbstractServiceResponse response = event.getResponse();
-        IServiceEventHandler<AbstractServiceResponse> handler = EventHandlerFinder.findHandler(response, handlers);
+        StatisticsServiceEventHandler<AbstractServiceResponse> handler = EventHandlerFinder.findHandler(response, handlers);
 
         return handler.resolveAsMap(response);
     }
@@ -63,7 +63,7 @@ public class SosResponseEventResolver implements IServiceEventResolver<ResponseE
     }
 
     @Override
-    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+    public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
         this.handlers = handlers;
     }
 

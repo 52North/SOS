@@ -31,23 +31,23 @@ package org.n52.sos.statistics.impl.resolvers;
 import java.util.Map;
 
 import org.n52.iceland.event.ServiceEvent;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class DefaultServiceEventResolver implements IServiceEventResolver<ServiceEvent> {
+public class DefaultServiceEventResolver implements StatisticsServiceEventResolver<ServiceEvent> {
 
     // private static final Logger logger =
     // LoggerFactory.getLogger(DefaultServiceEventResolver.class);
     private ServiceEvent event;
-    private Map<String, IServiceEventHandler<?>> handlers;
+    private Map<String, StatisticsServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
         if (event == null) {
             return null;
         }
-        IServiceEventHandler<ServiceEvent> handler = EventHandlerFinder.findHandler(event, handlers);
+        StatisticsServiceEventHandler<ServiceEvent> handler = EventHandlerFinder.findHandler(event, handlers);
 
         return handler.resolveAsMap(event);
     }
@@ -63,7 +63,7 @@ public class DefaultServiceEventResolver implements IServiceEventResolver<Servic
     }
 
     @Override
-    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+    public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
         this.handlers = handlers;
     }
 

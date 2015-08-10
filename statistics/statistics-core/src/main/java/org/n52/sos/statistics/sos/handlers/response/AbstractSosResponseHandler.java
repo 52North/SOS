@@ -32,11 +32,11 @@ import java.util.Map;
 
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
 public abstract class AbstractSosResponseHandler<T extends AbstractServiceResponse> extends AbstractElasticSearchDataHolder implements
-        IServiceEventHandler<AbstractServiceResponse> {
+        StatisticsServiceEventHandler<AbstractServiceResponse> {
 
     protected T response;
 

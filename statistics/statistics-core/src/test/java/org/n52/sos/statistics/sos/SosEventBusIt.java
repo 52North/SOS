@@ -46,6 +46,7 @@ import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.net.IPAddress;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.sos.statistics.impl.AbstractStatisticsServiceEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import basetest.ElasticsearchAwareTest;
@@ -53,7 +54,7 @@ import basetest.ElasticsearchAwareTest;
 public class SosEventBusIt extends ElasticsearchAwareTest {
 
     @Autowired
-    private SosStatisticsServiceEventListener listener;
+    private AbstractStatisticsServiceEventListener listener;
 
     @Autowired
     private ServiceEventBus serviceBus;

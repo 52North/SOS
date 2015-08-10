@@ -30,6 +30,6 @@ package org.n52.sos.statistics.api.interfaces;
 
 import java.util.Map;
 
-public interface IServiceEventHandler<T> {
+public interface StatisticsServiceEventHandler<T> {
     public Map<String, Object> resolveAsMap(T event);
 }

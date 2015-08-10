@@ -26,33 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.statistics.sos;
+package org.n52.sos.statistics.impl;
 
 import javax.inject.Inject;
 
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver;
 import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
-import org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver;
 import org.n52.sos.statistics.impl.resolvers.ExceptionEventResolver;
-import org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver;
-import org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver;
+import org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver;
 import org.springframework.context.ApplicationContext;
 
-public class SosStatisticsResolverFactory {
+public class StatisticsResolverFactory {
 
     @Inject
     private ApplicationContext ctx;
 
     // prototype instance dependencies
-    public SosRequestEventResolver getSosRequestEventResolver() {
-        return ctx.getBean(SosRequestEventResolver.class);
+    public <T extends StatisticsServiceEventResolver<?>> T getPrototypeBean(Class<T> resolverClass) {
+        return ctx.getBean(resolverClass);
     }
 
-    public SosResponseEventResolver getSosResponseEventResolver() {
-        return ctx.getBean(SosResponseEventResolver.class);
-    }
-
-    public ExceptionEventResolver getSosExceptionEventResolver() {
+    public ExceptionEventResolver getExceptionEventResolver() {
         return ctx.getBean(ExceptionEventResolver.class);
     }
 

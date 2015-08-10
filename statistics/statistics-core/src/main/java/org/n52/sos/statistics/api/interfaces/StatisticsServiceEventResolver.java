@@ -32,7 +32,7 @@ import java.util.Map;
 
 import org.n52.iceland.event.ServiceEvent;
 
-public interface IServiceEventResolver<T extends ServiceEvent> {
+public interface StatisticsServiceEventResolver<T extends ServiceEvent> {
     /**
      * Resolves the the request to Elasticsearch format
      * 
@@ -46,7 +46,7 @@ public interface IServiceEventResolver<T extends ServiceEvent> {
      * 
      * @param handlers
      */
-    void setHandlers(Map<String, IServiceEventHandler<?>> handlers);
+    void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers);
 
     /**
      * Sets the payload to the Resolver class. Before the {@link #resolve()}

@@ -31,27 +31,27 @@ package org.n52.sos.statistics.impl.resolvers;
 import java.util.Map;
 
 import org.n52.iceland.event.events.CountingOutputstreamEvent;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class CountingOutputstreamEventResolver implements IServiceEventResolver<CountingOutputstreamEvent> {
+public class CountingOutputstreamEventResolver implements StatisticsServiceEventResolver<CountingOutputstreamEvent> {
 
     private CountingOutputstreamEvent event;
-    private Map<String, IServiceEventHandler<?>> handlers;
+    private Map<String, StatisticsServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
         if (event == null) {
             return null;
         }
-        IServiceEventHandler<CountingOutputstreamEvent> handler = EventHandlerFinder.findHandler(event, handlers);
+        StatisticsServiceEventHandler<CountingOutputstreamEvent> handler = EventHandlerFinder.findHandler(event, handlers);
 
         return handler.resolveAsMap(event);
     }
 
     @Override
-    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+    public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
         this.handlers = handlers;
     }
 

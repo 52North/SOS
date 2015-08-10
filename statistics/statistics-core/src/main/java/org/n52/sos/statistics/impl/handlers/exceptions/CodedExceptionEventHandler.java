@@ -32,10 +32,10 @@ import java.util.Map;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
-public class CodedExceptionEventHandler extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
+public class CodedExceptionEventHandler extends AbstractElasticSearchDataHolder implements StatisticsServiceEventHandler<Exception> {
 
     @Override
     public Map<String, Object> resolveAsMap(Exception rawException) {

@@ -32,24 +32,24 @@ import java.util.Map;
 
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class SosRequestEventResolver implements IServiceEventResolver<RequestEvent> {
+public class SosRequestEventResolver implements StatisticsServiceEventResolver<RequestEvent> {
 
     // private static final Logger logger =
     // LoggerFactory.getLogger(SosRequestEventResolver.class);
 
     private RequestEvent event;
 
-    private Map<String, IServiceEventHandler<?>> handlers;
+    private Map<String, StatisticsServiceEventHandler<?>> handlers;
 
     public SosRequestEventResolver() {
     }
 
     @Override
-    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+    public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
         this.handlers = handlers;
     }
 
@@ -59,7 +59,7 @@ public class SosRequestEventResolver implements IServiceEventResolver<RequestEve
             return null;
         }
         AbstractServiceRequest<?> request = event.getRequest();
-        IServiceEventHandler<AbstractServiceRequest<?>> handler = EventHandlerFinder.findHandler(request, handlers);
+        StatisticsServiceEventHandler<AbstractServiceRequest<?>> handler = EventHandlerFinder.findHandler(request, handlers);
 
         return handler.resolveAsMap(request);
 

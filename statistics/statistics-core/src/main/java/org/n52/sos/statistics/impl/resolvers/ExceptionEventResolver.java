@@ -31,18 +31,18 @@ package org.n52.sos.statistics.impl.resolvers;
 import java.util.Map;
 
 import org.n52.iceland.event.events.ExceptionEvent;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.sos.statistics.api.utils.EventHandlerFinder;
 
-public class ExceptionEventResolver implements IServiceEventResolver<ExceptionEvent> {
+public class ExceptionEventResolver implements StatisticsServiceEventResolver<ExceptionEvent> {
 
     // private static final Logger logger =
     // LoggerFactory.getLogger(ExceptionEventResolver.class);
 
     private ExceptionEvent event;
 
-    private Map<String, IServiceEventHandler<?>> handlers;
+    private Map<String, StatisticsServiceEventHandler<?>> handlers;
 
     @Override
     public Map<String, Object> resolve() {
@@ -51,13 +51,13 @@ public class ExceptionEventResolver implements IServiceEventResolver<ExceptionEv
         }
 
         Exception exception = event.getException();
-        IServiceEventHandler<Exception> handler = EventHandlerFinder.findHandler(exception, handlers);
+        StatisticsServiceEventHandler<Exception> handler = EventHandlerFinder.findHandler(exception, handlers);
 
         return handler.resolveAsMap(exception);
     }
 
     @Override
-    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
+    public void setHandlers(Map<String, StatisticsServiceEventHandler<?>> handlers) {
         this.handlers = handlers;
     }
 

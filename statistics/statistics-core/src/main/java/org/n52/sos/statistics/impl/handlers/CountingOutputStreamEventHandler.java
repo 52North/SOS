@@ -34,11 +34,11 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.n52.iceland.event.events.CountingOutputstreamEvent;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
-public class CountingOutputStreamEventHandler extends AbstractElasticSearchDataHolder implements IServiceEventHandler<CountingOutputstreamEvent> {
+public class CountingOutputStreamEventHandler extends AbstractElasticSearchDataHolder implements StatisticsServiceEventHandler<CountingOutputstreamEvent> {
 
     @Override
     public Map<String, Object> resolveAsMap(CountingOutputstreamEvent event) {

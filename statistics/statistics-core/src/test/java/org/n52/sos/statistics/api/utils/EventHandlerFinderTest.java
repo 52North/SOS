@@ -35,7 +35,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.exception.ows.OperationNotSupportedException;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.sos.statistics.impl.handlers.exceptions.CodedExceptionEventHandler;
 import org.n52.sos.statistics.sos.handlers.requests.GetCapabilitiesRequestHandler;
 
@@ -43,7 +43,7 @@ public class EventHandlerFinderTest {
 
     @Test
     public void findDirectGetCapabilitiesHandler() {
-        Map<String, IServiceEventHandler<?>> handlers = new HashMap<>();
+        Map<String, StatisticsServiceEventHandler<?>> handlers = new HashMap<>();
         GetCapabilitiesRequestHandler handler = new GetCapabilitiesRequestHandler();
 
         GetCapabilitiesRequest request = new GetCapabilitiesRequest("SOS");
@@ -55,7 +55,7 @@ public class EventHandlerFinderTest {
     @Test(
             expected = NullPointerException.class)
     public void findNoHandlers() {
-        Map<String, IServiceEventHandler<?>> handlers = new HashMap<>();
+        Map<String, StatisticsServiceEventHandler<?>> handlers = new HashMap<>();
         GetCapabilitiesRequestHandler handler = new GetCapabilitiesRequestHandler();
 
         handlers.put("morpheus", handler);
@@ -66,7 +66,7 @@ public class EventHandlerFinderTest {
 
     @Test
     public void findSubclassAsHandler() {
-        Map<String, IServiceEventHandler<?>> handlers = new HashMap<>();
+        Map<String, StatisticsServiceEventHandler<?>> handlers = new HashMap<>();
         CodedExceptionEventHandler handler = new CodedExceptionEventHandler();
 
         OperationNotSupportedException exception = new OperationNotSupportedException("GetCapabilities");

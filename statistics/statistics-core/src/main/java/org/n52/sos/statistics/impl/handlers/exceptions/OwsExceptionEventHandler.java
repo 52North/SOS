@@ -32,10 +32,10 @@ import java.util.Map;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
+import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
-public class OwsExceptionEventHandler extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
+public class OwsExceptionEventHandler extends AbstractElasticSearchDataHolder implements StatisticsServiceEventHandler<Exception> {
 
     @Override
     public Map<String, Object> resolveAsMap(Exception rawException) {

@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.binding.HandleOwsExceptionReport;
+import org.n52.sos.binding.OwsExceptionReportHandler;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @since 4.0.0
  */
-public class SosAdminService extends ConfiguratedHttpServlet implements HandleOwsExceptionReport {
+public class SosAdminService extends ConfiguratedHttpServlet implements OwsExceptionReportHandler {
     private static final long serialVersionUID = -3279981432309569992L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosAdminService.class);

@@ -42,7 +42,7 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.n52.sos.binding.HandleOwsExceptionReport;
+import org.n52.sos.binding.OwsExceptionReportHandler;
 import org.n52.sos.encode.ResponseProxy;
 import org.n52.sos.encode.ResponseWriter;
 import org.n52.sos.encode.ResponseWriterRepository;
@@ -122,40 +122,16 @@ public class HTTPUtils {
         }
     }
 
-    /**
-     * @param request
-     * @param response
-     * @param contentType
-     * @param object
-     * @throws IOException
-     * @throws HTTPException
-     */
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
             Object object) throws IOException, HTTPException {
         writeObject(request, response, contentType, new GenericWritable(object, contentType), null);
     }
-    
-    /**
-     * @param request
-     * @param response
-     * @param contentType
-     * @param object
-     * @param owserHandler
-     * @throws IOException
-     * @throws HTTPException
-     */
+
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
-            Object object, HandleOwsExceptionReport owserHandler) throws IOException, HTTPException {
+            Object object, OwsExceptionReportHandler owserHandler) throws IOException, HTTPException {
         writeObject(request, response, contentType, new GenericWritable(object, contentType), owserHandler);
     }
 
-    /**
-     * @param request
-     * @param response
-     * @param sr
-     * @throws IOException
-     * @throws HTTPException
-     */
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr)
             throws IOException, HTTPException {
         response.setStatus(sr.getStatus().getCode());
@@ -169,15 +145,7 @@ public class HTTPUtils {
         }
     }
     
-    /**
-     * @param request
-     * @param response
-     * @param sr
-     * @param owserHandler
-     * @throws IOException
-     * @throws HTTPException
-     */
-    public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr, HandleOwsExceptionReport owserHandler)
+    public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr, OwsExceptionReportHandler owserHandler)
             throws IOException, HTTPException {
         response.setStatus(sr.getStatus().getCode());
 
@@ -190,17 +158,8 @@ public class HTTPUtils {
         }
     }
 
-    /**
-     * @param request
-     * @param response
-     * @param contentType
-     * @param writable
-     * @param owserHandler
-     * @throws IOException
-     * @throws HTTPException
-     */
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
-            Writable writable, HandleOwsExceptionReport owserHandler) throws IOException, HTTPException {
+            Writable writable, OwsExceptionReportHandler owserHandler) throws IOException, HTTPException {
         OutputStream out = null;
         response.setContentType(writable.getEncodedContentType().toString());
 
@@ -213,19 +172,18 @@ public class HTTPUtils {
 
             writable.write(out, new ResponseProxy(response));
             out.flush();
-		} catch (OwsExceptionReport owser) {
-			Object writeOwsExceptionReport = owserHandler.handleOwsExceptionReport(request, response, owser);
-			if (writeOwsExceptionReport != null) {
-				Writable owserWritable = getWritable(writeOwsExceptionReport,
-						contentType);
-				try {
-					owserWritable.write(out, new ResponseProxy(response));
-					out.flush();
-				} catch (OwsExceptionReport oer) {
-					throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, oer);
-				}
-			}
-		} finally {
+        } catch (OwsExceptionReport owser) {
+            Object writeOwsExceptionReport = owserHandler.handleOwsExceptionReport(request, response, owser);
+            if (writeOwsExceptionReport != null) {
+                Writable owserWritable = getWritable(writeOwsExceptionReport, contentType);
+                try {
+                    owserWritable.write(out, new ResponseProxy(response));
+                    out.flush();
+                } catch (OwsExceptionReport oer) {
+                    throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, oer);
+                }
+            }
+        } finally {
             if (out != null) {
                 out.close();
             }
@@ -288,7 +246,7 @@ public class HTTPUtils {
 
         @Override
         public void write(OutputStream out, ResponseProxy responseProxy) throws IOException {
-            //set content length if not gzipped
+            // set content length if not gzipped
             if (!(out instanceof GZIPOutputStream) && response.getContentLength() > -1) {
                 responseProxy.setContentLength(response.getContentLength());
             }
@@ -300,10 +258,10 @@ public class HTTPUtils {
             return response.supportsGZip();
         }
 
-		@Override
-		public MediaType getEncodedContentType() {
-			return response.getContentType();
-		}
+        @Override
+        public MediaType getEncodedContentType() {
+            return response.getContentType();
+        }
     }
 
     public interface Writable {

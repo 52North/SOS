@@ -53,7 +53,7 @@ import org.n52.sos.util.http.MediaType;
  * 
  * @since 4.0.0
  */
-public abstract class Binding implements ConformanceClass, HandleOwsExceptionReport {
+public abstract class Binding implements ConformanceClass, OwsExceptionReportHandler {
     /**
      * HTTP DELETE request handling method
      * 

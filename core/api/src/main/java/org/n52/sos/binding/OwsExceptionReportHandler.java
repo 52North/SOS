@@ -39,9 +39,9 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * @since 4.4.0
  *
  */
-public interface HandleOwsExceptionReport {
-	
-    public abstract Object handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
-            OwsExceptionReport oer) throws HTTPException;
+public interface OwsExceptionReportHandler {
+
+    Object handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response, OwsExceptionReport oer)
+            throws HTTPException;
 
 }

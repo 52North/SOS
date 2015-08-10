@@ -26,49 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.statistics.impl.resolvers;
+package org.n52.sos.statistics.impl.handlers.exceptions;
 
 import java.util.Map;
 
-import org.n52.iceland.event.events.ExceptionEvent;
+import org.n52.iceland.exception.CodedException;
+import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.IServiceEventResolver;
-import org.n52.sos.statistics.api.utils.EventHandlerFinder;
+import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
-public class SosExceptionEventResolver implements IServiceEventResolver<ExceptionEvent> {
-
-    // private static final Logger logger =
-    // LoggerFactory.getLogger(SosExceptionEventResolver.class);
-
-    private ExceptionEvent event;
-
-    private Map<String, IServiceEventHandler<?>> handlers;
+public class CodedExceptionEventHandler extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
 
     @Override
-    public Map<String, Object> resolve() {
-        if (event == null || event.getException() == null) {
-            return null;
+    public Map<String, Object> resolveAsMap(Exception rawException) {
+        CodedException exception = (CodedException) rawException;
+        put(ServiceEventDataMapping.EX_CLASSTYPE, exception.getClass().getSimpleName());
+        if (exception.getStatus() != null) {
+            put(ServiceEventDataMapping.EX_STATUS, exception.getStatus().getCode());
         }
-
-        Exception exception = event.getException();
-        IServiceEventHandler<Exception> handler = EventHandlerFinder.findHandler(exception, handlers);
-
-        return handler.resolveAsMap(exception);
+        put(ServiceEventDataMapping.CEX_LOCATOR, exception.getLocator());
+        put(ServiceEventDataMapping.EX_VERSION, exception.getVersion());
+        if (exception.getCode() != null) {
+            put(ServiceEventDataMapping.CEX_SOAP_FAULT, exception.getCode().getSoapFaultReason());
+        }
+        put(ServiceEventDataMapping.EX_MESSAGE, exception.getMessage());
+        return dataMap;
     }
-
-    @Override
-    public void setHandlers(Map<String, IServiceEventHandler<?>> handlers) {
-        this.handlers = handlers;
-    }
-
-    @Override
-    public void setEvent(ExceptionEvent event) {
-        this.event = event;
-    }
-
-    @Override
-    public ExceptionEvent getEvent() {
-        return event;
-    }
-
 }

@@ -77,6 +77,13 @@
 								<include>**/*.sql</include>
 							</includes>
 						</resource>
+						<webResource>
+							<targetPath>WEB-INF/classes/embedded</targetPath>
+							<directory>../statistics/statistics-core/src/main/resources/embedded</directory>
+							<includes>
+								<include>**</include>
+							</includes>
+						</webResource>
 					</webResources>
 					<overlays>
 						<overlay>

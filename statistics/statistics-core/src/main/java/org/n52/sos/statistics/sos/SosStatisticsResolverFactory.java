@@ -33,7 +33,7 @@ import javax.inject.Inject;
 import org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver;
 import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
 import org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver;
-import org.n52.sos.statistics.impl.resolvers.SosExceptionEventResolver;
+import org.n52.sos.statistics.impl.resolvers.ExceptionEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver;
 import org.springframework.context.ApplicationContext;
@@ -52,8 +52,8 @@ public class SosStatisticsResolverFactory {
         return ctx.getBean(SosResponseEventResolver.class);
     }
 
-    public SosExceptionEventResolver getSosExceptionEventResolver() {
-        return ctx.getBean(SosExceptionEventResolver.class);
+    public ExceptionEventResolver getSosExceptionEventResolver() {
+        return ctx.getBean(ExceptionEventResolver.class);
     }
 
     public DefaultServiceEventResolver getDefaultServiceEventResolver() {

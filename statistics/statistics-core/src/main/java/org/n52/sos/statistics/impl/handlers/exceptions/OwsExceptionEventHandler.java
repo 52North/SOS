@@ -30,24 +30,22 @@ package org.n52.sos.statistics.impl.handlers.exceptions;
 
 import java.util.Map;
 
-import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.sos.statistics.api.interfaces.IServiceEventHandler;
 import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
-public class SosCodedExceptionEventResolver extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
+public class OwsExceptionEventHandler extends AbstractElasticSearchDataHolder implements IServiceEventHandler<Exception> {
 
     @Override
     public Map<String, Object> resolveAsMap(Exception rawException) {
-        CodedException exception = (CodedException) rawException;
+        OwsExceptionReport exception = (OwsExceptionReport) rawException;
+        put(ServiceEventDataMapping.EX_CLASSTYPE, exception.getClass().getSimpleName());
         if (exception.getStatus() != null) {
             put(ServiceEventDataMapping.EX_STATUS, exception.getStatus().getCode());
         }
-        put(ServiceEventDataMapping.CEX_LOCATOR, exception.getLocator());
         put(ServiceEventDataMapping.EX_VERSION, exception.getVersion());
-        if (exception.getCode() != null) {
-            put(ServiceEventDataMapping.CEX_SOAP_FAULT, exception.getCode().getSoapFaultReason());
-        }
+        put(ServiceEventDataMapping.OWSEX_NAMESPACE, exception.getNamespace());
         put(ServiceEventDataMapping.EX_MESSAGE, exception.getMessage());
         return dataMap;
     }

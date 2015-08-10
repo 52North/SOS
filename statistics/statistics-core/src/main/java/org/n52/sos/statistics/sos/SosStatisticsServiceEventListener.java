@@ -53,7 +53,7 @@ import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.statistics.impl.resolvers.CountingOutputstreamEventResolver;
 import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
 import org.n52.sos.statistics.impl.resolvers.OutgoingResponseEventResolver;
-import org.n52.sos.statistics.impl.resolvers.SosExceptionEventResolver;
+import org.n52.sos.statistics.impl.resolvers.ExceptionEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver;
 import org.slf4j.Logger;
@@ -140,7 +140,7 @@ public class SosStatisticsServiceEventListener implements ServiceEventListener {
             sosRequestEventResolver.setEvent((RequestEvent) event);
             evtResolver = sosRequestEventResolver;
         } else if (event instanceof ExceptionEvent) {
-            SosExceptionEventResolver sosExceptionEventResolver = resolverFactory.getSosExceptionEventResolver();
+            ExceptionEventResolver sosExceptionEventResolver = resolverFactory.getSosExceptionEventResolver();
             sosExceptionEventResolver.setEvent((ExceptionEvent) event);
             evtResolver = sosExceptionEventResolver;
         } else if (event instanceof ResponseEvent) {

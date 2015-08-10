@@ -36,7 +36,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
@@ -92,8 +91,8 @@ public class EmbeddedElasticsearch {
 
         Builder setting = ImmutableSettings.settingsBuilder().loadFromClasspath("embedded/elasticsearch_embedded.yml");
         setting.put("path.home", homePath);
-        setting.put("path.logs", homePath +"/logs");
-        
+        setting.put("path.logs", homePath + "/logs");
+
         Settings esSettings = setting.build();
         LogConfigurator.configure(esSettings);
         embeddedNode = NodeBuilder.nodeBuilder().settings(esSettings).build();
@@ -108,32 +107,26 @@ public class EmbeddedElasticsearch {
     }
 
     private void copyLoggingFile() throws FileNotFoundException, IOException {
-    	InputStream inputLogigng = EmbeddedElasticsearch.class.getResourceAsStream("/embedded/logging.yml");
-    	FileOutputStream out = new FileOutputStream(new File(homePath + "/config/logging.yml"));
-    	IOUtils.copy(inputLogigng, out);
-		out.close();
-	}
+        InputStream inputLogigng = EmbeddedElasticsearch.class.getResourceAsStream("/embedded/logging.yml");
+        FileOutputStream out = new FileOutputStream(new File(homePath + "/config/logging.yml"));
+        IOUtils.copy(inputLogigng, out);
+        out.close();
+    }
 
-	private void downlaodGroovyLibrary() throws IOException {
+    private void downlaodGroovyLibrary() throws IOException {
         String groovyDir = homePath + "/plugins/groovy";
         FileUtils.forceMkdir(new File(groovyDir));
         FileDownloader.downloadFile("http://central.maven.org/maven2/org/codehaus/groovy/groovy-all/2.4.4/groovy-all-2.4.4.jar",
                 groovyDir + "/groovy-all-2.4.4.jar");
     }
 
-    /**
-     * I don't now if this as a hack or no. The directories read as files give
-     * back the content Every line represents the name of the file.
-     * 
-     * @throws IOException
-     */
     private void copyScriptFiles() throws IOException {
         File scripts = new File(homePath + "/config/scripts");
         FileUtils.forceMkdir(scripts);
 
         InputStream folder = EmbeddedElasticsearch.class.getResourceAsStream("/embedded/scripts");
         // write file content
-        File contents = File.createTempFile(UUID.randomUUID().toString(), "tmp");
+        File contents = File.createTempFile("scripts", ".tmp");
         FileOutputStream out = new FileOutputStream(contents);
         IOUtils.copy(folder, out);
         out.close();

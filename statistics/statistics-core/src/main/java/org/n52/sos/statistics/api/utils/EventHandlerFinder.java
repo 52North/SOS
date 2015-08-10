@@ -41,22 +41,38 @@ public class EventHandlerFinder {
 
     @SuppressWarnings("unchecked")
     public static <T> IServiceEventHandler<T> findHandler(Object object, Map<String, IServiceEventHandler<?>> handlers) {
+        // Find concrete class
         String key = object.getClass().getSimpleName();
-
-        IServiceEventHandler<T> handler = (IServiceEventHandler<T>) handlers.get(key);
         logger.debug("Searching handler for object by key {} ", key);
+        IServiceEventHandler<T> handler = (IServiceEventHandler<T>) handlers.get(key);
+
+        // Find super class as handler
+        if (handler == null) {
+            Class<?> superclass = object.getClass().getSuperclass();
+            while (superclass != null) {
+                key = superclass.getSimpleName();
+                logger.debug("Try super class as key {}", key);
+                handler = (IServiceEventHandler<T>) handlers.get(key);
+                if (handler != null) {
+                    break;
+                } else {
+                    superclass = superclass.getSuperclass();
+                }
+            }
+        }
+
+        // Find default handler
         if (handler == null) {
             logger.debug("Not found using default handler by key 'default' if registered.");
-            handler = (IServiceEventHandler<T>) handlers.get("default");
-        } else {
-            logger.debug("Key {} found.", key);
+            key = "default";
+            handler = (IServiceEventHandler<T>) handlers.get(key);
         }
 
         Objects.requireNonNull(handler, "Can not find handler for object: " + key);
+        logger.debug("Key {} found.", key);
         return handler;
     }
 
     private EventHandlerFinder() {
     }
-
 }

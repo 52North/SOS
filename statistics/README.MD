@@ -81,7 +81,7 @@ In case the webapplication can't connect to your Elasticsearch cluster the stati
 - Run example queries with [SoapUI](http://soapui.org/) using the file ``SOS\statistics\statistics-core\src\test\resources\soapUI\SOSBulkRequests.xml``: File -> Import project, then 
 - Start Elasticsearch with the appropriate executable in ``<Elasticsearch directory>/bin``, e.g. ``bin/elasticsearch.bat`` on Windows. On Linux machines refer to the [official guide here](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-service.html).
 - Start Kibana with the appropriate executable in ``<Kibana directory>/bin``, e.g. ``bin\kibana.bat`` on Windows. The default port is 5601. On Linux machine run the ``bin\kibana.sh`` file or refer to the [official guide here](https://www.elastic.co/guide/en/kibana/current/setup.html).
-- If you have not imported the preconfigured Kibana settings which come with the application you need to do it manually. Set up the index in Kibana, the default index name is ``ogc-statistics-index``and the timestamp field is ``@timestamp``. See your *Statistics Settings* page on the SOS admin Settings page for further details.
+- If you have not imported the preconfigured Kibana settings which come with the application you need to do the index setup manually. Set up the index in Kibana, the default index name is ``ogc-statistics-index``and the timestamp field is ``@timestamp``. See your *Statistics Settings* page on the SOS admin Settings page for further details.
 
 ![Kibana set up index](https://wiki.52north.org/pub/Projects/GSoC2015Statistics4Ows/kibana-index-setup.JPG)
 

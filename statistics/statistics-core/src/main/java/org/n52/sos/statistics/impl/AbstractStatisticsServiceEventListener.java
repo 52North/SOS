@@ -65,8 +65,8 @@ public abstract class AbstractStatisticsServiceEventListener implements ServiceE
     private static final int EVENTS_ARR_SIZE = 4;
     private final ExecutorService executorService;
     @SuppressWarnings("unchecked")
-    private final Set<Class<? extends ServiceEvent>> eventTypes = Sets.newHashSet(ExceptionEvent.class, OutgoingResponseEvent.class,
-            CountingOutputstreamEvent.class);
+    private final Set<Class<? extends ServiceEvent>> eventTypes =
+            Sets.newHashSet(ExceptionEvent.class, OutgoingResponseEvent.class, CountingOutputstreamEvent.class);
     private ConcurrentMap<Long, List<AbstractFlowEvent>> eventsCache = new ConcurrentHashMap<>();
 
     @Inject
@@ -104,9 +104,9 @@ public abstract class AbstractStatisticsServiceEventListener implements ServiceE
                 if (serviceEvent instanceof RequestEvent) {
                     eventList = new ArrayList<>(EVENTS_ARR_SIZE);
                     eventsCache.put(evt.getMessageGroupId(), eventList);
-                } else {
-                    eventsCache.get(evt.getMessageGroupId()).add(evt);
                 }
+
+                eventsCache.get(evt.getMessageGroupId()).add(evt);
 
                 // received last event process eventsResolvers on a new thread
                 if (serviceEvent instanceof OutgoingResponseEvent) {
@@ -160,6 +160,13 @@ public abstract class AbstractStatisticsServiceEventListener implements ServiceE
 
     }
 
+    /**
+     * Call this method in the constructor to register additional event types to
+     * your listener
+     * 
+     * @param types
+     *            additional ServiceEvent to listener for
+     */
     protected void registerEventType(Set<Class<? extends ServiceEvent>> types) {
         eventTypes.addAll(types);
     }
@@ -171,6 +178,13 @@ public abstract class AbstractStatisticsServiceEventListener implements ServiceE
 
     // ---------- ABSTRACT METHODS ------------ //
 
+    /**
+     * Returns the application specific resolver
+     * {@link StatisticsServiceEventResolver} based on the {@link ServiceEvent}
+     * 
+     * @param serviceEvent
+     * @return
+     */
     protected abstract StatisticsServiceEventResolver<?> findResolver(ServiceEvent serviceEvent);
 
     /**

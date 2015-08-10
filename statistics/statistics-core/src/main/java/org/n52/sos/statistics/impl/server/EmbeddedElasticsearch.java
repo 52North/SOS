@@ -39,7 +39,6 @@ import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.logging.log4j.LogConfigurator;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.ImmutableSettings.Builder;
 import org.elasticsearch.common.settings.Settings;
@@ -94,7 +93,7 @@ public class EmbeddedElasticsearch {
         setting.put("path.logs", homePath + "/logs");
 
         Settings esSettings = setting.build();
-        LogConfigurator.configure(esSettings);
+        // LogConfigurator.configure(esSettings);
         embeddedNode = NodeBuilder.nodeBuilder().settings(esSettings).build();
         embeddedNode.start();
         try {

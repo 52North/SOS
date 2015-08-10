@@ -51,7 +51,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import basetest.ElasticsearchAwareTest;
 
-public class SosEventBusIt extends ElasticsearchAwareTest {
+@Deprecated
+public class ServiceEventBusIt extends ElasticsearchAwareTest {
 
     @Autowired
     private AbstractStatisticsServiceEventListener listener;
@@ -82,7 +83,7 @@ public class SosEventBusIt extends ElasticsearchAwareTest {
         ResponseEvent respEvent = new ResponseEvent(resp);
 
         OutgoingResponseEvent outgoingResponseEvent = new OutgoingResponseEvent(null, null, 100L, 1234L);
-        
+
         CountingOutputstreamEvent countingEvent = new CountingOutputstreamEvent(1234L);
 
         serviceBus.submit(evt);

@@ -60,11 +60,7 @@
 </xml-fragment>]]></con:setting></con:settings><con:interface xsi:type="con:RestService" id="b36f872d-e3fb-47c9-96c3-530a3b098646" wadlVersion="http://wadl.dev.java.net/2009/02" name="SOS deployment" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>${#Project#host}</con:endpoint></con:endpoints><con:resource name="Service" path="/${#Project#context}" id="c0cb2c50-44d7-4a22-8551-1f8a0d7294ba"><con:settings/><con:parameters><con:parameter><con:name>service</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>version</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>request</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>temporalFilter</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>MergeObservationsIntoDataArray</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>procedure</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>offering</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>observedProperty</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>namespaces</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter><con:parameter><con:name>spatialFilter</con:name><con:value/><con:style>QUERY</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="JSON" id="55d3c316-1033-4bb5-a59b-0ce622c0e65a" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType>application/json;charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ser="http://localhost/service">ser:Response</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="REQUEST"><con:mediaType>application/soap+xml</con:mediaType><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/soap+xml;charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/xml;charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ns="http://www.opengis.net/sos/2.0">ns:Capabilities</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404 500</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:ser="http://localhost/52n-sos-webapp/service">ser:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>text/html;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="JSON GetCapabilities minimal" id="deffa09b-7521-407d-9fb8-fa5ee98ef497" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#host}</con:endpoint><con:request>{
   "request": "GetCapabilities",
   "service": "SOS"
-}</con:request><con:originalUri>http://localhost/service</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
-  <con:entry key="request" value="GetObservation"/>
-  <con:entry key="service" value="AQD"/>
-  <con:entry key="version" value="1.0.0"/>
-</con:parameters><con:parameterOrder><con:entry>service</con:entry><con:entry>version</con:entry><con:entry>request</con:entry><con:entry>temporalFilter</con:entry><con:entry>MergeObservationsIntoDataArray</con:entry><con:entry>procedure</con:entry><con:entry>offering</con:entry><con:entry>observedProperty</con:entry><con:entry>namespaces</con:entry><con:entry>spatialFilter</con:entry></con:parameterOrder></con:request><con:request name="JSON DescribeSensor w TimeInstant" id="ca6ca0d7-7154-40fe-bd88-9a978e939221" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#host}</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/service</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>service</con:entry><con:entry>version</con:entry><con:entry>request</con:entry><con:entry>temporalFilter</con:entry><con:entry>MergeObservationsIntoDataArray</con:entry><con:entry>procedure</con:entry><con:entry>offering</con:entry><con:entry>observedProperty</con:entry><con:entry>namespaces</con:entry><con:entry>spatialFilter</con:entry></con:parameterOrder></con:request><con:request name="JSON DescribeSensor w TimeInstant" id="ca6ca0d7-7154-40fe-bd88-9a978e939221" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#host}</con:endpoint><con:request>{
   "request": "DescribeSensor",
   "service": "SOS",
   "version": "2.0.0",
@@ -91,7 +87,7 @@
     "FilterCapabilities",
     "Contents"
   ]
-}</con:request><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>service</con:entry><con:entry>version</con:entry><con:entry>request</con:entry><con:entry>temporalFilter</con:entry><con:entry>MergeObservationsIntoDataArray</con:entry><con:entry>procedure</con:entry><con:entry>offering</con:entry><con:entry>observedProperty</con:entry><con:entry>namespaces</con:entry><con:entry>spatialFilter</con:entry></con:parameterOrder></con:request><con:request name="JSON GetObservation Simple" id="4def1ee3-a4ee-46ec-ac83-c8987c3837af" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#host}</con:endpoint><con:request>{
+}</con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>service</con:entry><con:entry>version</con:entry><con:entry>request</con:entry><con:entry>temporalFilter</con:entry><con:entry>MergeObservationsIntoDataArray</con:entry><con:entry>procedure</con:entry><con:entry>offering</con:entry><con:entry>observedProperty</con:entry><con:entry>namespaces</con:entry><con:entry>spatialFilter</con:entry></con:parameterOrder></con:request><con:request name="JSON GetObservation Simple" id="4def1ee3-a4ee-46ec-ac83-c8987c3837af" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>${#Project#host}</con:endpoint><con:request>{
   "request": "GetObservation",
   "service": "SOS",
   "version": "2.0.0",
@@ -205,15 +201,9 @@
       "during": {
         "ref": "om:phenomenonTime",
         "value": [
-          "2012-11-19T14:00:00+01:00",
-          "2012-11-19T14:05:00+01:00"
+          "2014-05-08T14:00:00+01:00",
+          "2014-07-19T14:05:00+01:00"
         ]
-      }
-    },
-    {
-      "equals": {
-        "ref": "om:phenomenonTime",
-        "value": "2012-11-19T14:08:00+01:00"
       }
     }
   ]
@@ -1917,8 +1907,6 @@
   "request": "GetCapabilities",
   "service": "SOS",
   "sections": [
-    "ServiceIdentification",
-    "ServiceProvider",
     "Contents"
   ]
 }</con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="SOAP" id="55d3c316-1033-4bb5-a59b-0ce622c0e65a" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/soap+xml</con:mediaType><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/soap+xml;charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/xml;charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ns="http://www.opengis.net/sos/2.0">ns:Capabilities</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>404 415</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ns="http://www.opengis.net/ows/1.1">ns:ExceptionReport</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/soap+xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/x-www-form-urlencoded</con:mediaType><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="SOAP GetCapabilities" id="729f153c-7e6e-4253-8b16-33a72a2dff4d" mediaType="application/soap+xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding/><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
@@ -2295,7 +2283,23 @@
             </swes:metadata>
         </swes:InsertSensor>
     </env:Body>
-</env:Envelope>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>service</con:entry><con:entry>version</con:entry><con:entry>request</con:entry><con:entry>temporalFilter</con:entry><con:entry>MergeObservationsIntoDataArray</con:entry><con:entry>procedure</con:entry><con:entry>offering</con:entry><con:entry>observedProperty</con:entry><con:entry>namespaces</con:entry><con:entry>spatialFilter</con:entry></con:parameterOrder></con:request></con:method><con:method name="Test Basic Data Insert" id="a6f23d6f-ad9f-4bc2-8e8e-2736f929d4b5" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:ser="http://gsoc.dev.52north.org/52n-sos-webapp/service">ser:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ns="http://www.opengis.net/ows/1.1">ns:ExceptionReport</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/swes/2.0">ns:InsertSensor</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/soap+xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/soap+xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/swes/2.0">ns:InsertSensor</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>500 404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>text/xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/swes/2.0">ns:InsertSensor</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ser="http://gsoc.dev.52north.org/52n-sos-webapp/service">ser:Response</con:element></con:representation><con:request name="InsertObservation Barometer" id="c40e1fc1-0340-4756-8979-341c248def30" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request>{
+</env:Envelope>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:username xsi:nil="true"/><con:password xsi:nil="true"/><con:domain xsi:nil="true"/><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/><con:parameterOrder><con:entry>service</con:entry><con:entry>version</con:entry><con:entry>request</con:entry><con:entry>temporalFilter</con:entry><con:entry>MergeObservationsIntoDataArray</con:entry><con:entry>procedure</con:entry><con:entry>offering</con:entry><con:entry>observedProperty</con:entry><con:entry>namespaces</con:entry><con:entry>spatialFilter</con:entry></con:parameterOrder></con:request><con:request name="SOAP GetObservationById" id="f807f270-a003-426a-9678-713729cbb06a" mediaType="application/soap+xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<env:Envelope
+    xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sos="http://www.opengis.net/sos/1.0"
+    xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/1.0" xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope http://www.opengis.net/sos/1.0    http://schemas.opengis.net/sos/1.0.0/sosGetObservationById.xsd">
+    <env:Body>
+        <sos:GetObservationById
+            xmlns:sos="http://www.opengis.net/sos/1.0"
+            xmlns:ows="http://www.opengis.net/ows/1.1" service="SOS" version="1.0.0" srsName="urn:ogc:def:crs:EPSG::4326">
+            <sos:ObservationId>http://www.52north.org/test/observation/1</sos:ObservationId>
+            <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
+        </sos:GetObservationById>
+    </env:Body>
+</env:Envelope>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="Test Basic Data Insert" id="a6f23d6f-ad9f-4bc2-8e8e-2736f929d4b5" method="POST"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>400</con:status><con:params/><con:element xmlns:ser="http://gsoc.dev.52north.org/52n-sos-webapp/service">ser:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ns="http://www.opengis.net/ows/1.1">ns:ExceptionReport</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/swes/2.0">ns:InsertSensor</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/soap+xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:soap="http://www.w3.org/2003/05/soap-envelope">soap:Envelope</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/soap+xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/swes/2.0">ns:InsertSensor</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>500 404</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>0</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>text/xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/swes/2.0">ns:InsertSensor</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:ser="http://gsoc.dev.52north.org/52n-sos-webapp/service">ser:Response</con:element></con:representation><con:request name="InsertObservation Barometer" id="c40e1fc1-0340-4756-8979-341c248def30" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request>{
     "request":"InsertObservation",
     "service":"SOS",
     "version":"2.0.0",
@@ -27807,7 +27811,72 @@
     "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation"
   ],
   "featureOfInterestType": "http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"
-}]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="3061e08b-c522-4438-b0a5-f4250844d2f8" name="Performance Test"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="1efcb67f-061a-4d55-a6a8-07daa2b651b1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Requests" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Test Data request - GetObservation no filter temperature" id="4fae1e85-271f-4017-b849-5278109454a9"><con:settings/><con:config service="SOS deployment" resourcePath="/${#Project#context}" methodName="Test Data request" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Test Data request - GetObservation no filter temperature" id="32ca24a2-6652-4e66-b6e3-47a20c5df3d2" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request>{
+}]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="POX" id="060f81ad-14ce-4917-acae-0ed7416adb2b" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/xml</con:mediaType><con:params/><con:element xmlns:ns="http://www.opengis.net/sos/1.0">ns:GetFeatureOfInterest</con:element></con:representation><con:representation type="FAULT"><con:mediaType>text/html;charset=utf-8</con:mediaType><con:status>500</con:status><con:params/><con:element>html</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/xml;charset=UTF-8</con:mediaType><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="POX GetFeatureOfInterests filter" id="d0e6cb92-8799-4768-8650-588de6732e95" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<GetFeatureOfInterest
+    xmlns="http://www.opengis.net/sos/1.0"
+    xmlns:ows="http://www.opengeospatial.net/ows"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0  http://schemas.opengis.net/sos/1.0.0/sosGetFeatureOfInterest.xsd">
+    <!-- mandatory -->
+    <location>
+        <ogc:BBOX>
+            <ogc:PropertyName>urn:ogc:data:location</ogc:PropertyName>
+            <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+                <gml:lowerCorner>50.0 7.0</gml:lowerCorner>
+                <gml:upperCorner>53.0 10.0</gml:upperCorner>
+            </gml:Envelope>
+        </ogc:BBOX>
+    </location>
+</GetFeatureOfInterest>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="POX GetObservationById" id="925f89b9-1cf4-41ce-9c5b-b8aebb3a2d39" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetObservationById
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+    <sos:observation>http://www.52north.org/test/observation/1</sos:observation>
+    <sos:observation>http://www.52north.org/test/observation/2</sos:observation>
+</sos:GetObservationById>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request><con:request name="POX InsertObservation" id="bb67bc40-5107-4a21-95b3-d9f8cf7cb3de" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<sos:InsertObservation
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+    xmlns:sf="http://www.opengis.net/sampling/2.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd            http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd">
+    <!-- multiple offerings are possible -->
+    <sos:offering>http://www.52north.org/test/offering/9</sos:offering>
+    <sos:observation>
+        <om:OM_Observation gml:id="o1">
+            <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2012-11-19T13:45:15.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime xlink:href="#phenomenonTime"/>
+            <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+            <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_1"/>
+            <om:featureOfInterest>
+                <sams:SF_SpatialSamplingFeature gml:id="ssf_test_feature_9">
+                    <gml:identifier codeSpace="">http://www.52north.org/test/featureOfInterest/9</gml:identifier>
+                    <gml:name>52°North</gml:name>
+                    <sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/>
+                    <sf:sampledFeature xlink:href="http://www.52north.org/test/featureOfInterest/1"/>
+                    <sams:shape>
+                        <gml:Point gml:id="test_feature_9">
+                            <gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">51.935101100104916 7.651968812254194</gml:pos>
+                        </gml:Point>
+                    </sams:shape>
+                </sams:SF_SpatialSamplingFeature>
+            </om:featureOfInterest>
+            <om:result xsi:type="gml:ReferenceType" xlink:href="test_category_9_1"/>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="3061e08b-c522-4438-b0a5-f4250844d2f8" name="Performance Test"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="1efcb67f-061a-4d55-a6a8-07daa2b651b1" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Requests" searchProperties="true"><con:settings/><con:testStep type="restrequest" name="Test Data request - GetObservation no filter temperature" id="4fae1e85-271f-4017-b849-5278109454a9"><con:settings/><con:config service="SOS deployment" resourcePath="/${#Project#context}" methodName="Test Data request" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Test Data request - GetObservation no filter temperature" id="32ca24a2-6652-4e66-b6e3-47a20c5df3d2" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request>{
   "request": "GetObservation",
   "service": "SOS",
   "version": "2.0.0",
@@ -54892,4 +54961,85 @@
     "ServiceProvider",
     "Contents"
   ]
-}</con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:loadTest id="338c93ba-2547-4d30-9cd0-ee8d192dc1cf" name="Start this and watch the Kibana"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>90</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type><con:config><testDelay>1000</testDelay><randomFactor>0.5</randomFactor></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>host</con:name><con:value>http://localhost:8080</con:value></con:property><con:property><con:name>context</con:name><con:value>52n-sos-webapp/service</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>
+}</con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="POX - POX GetFeatureOfInterests filter" id="c6909f85-a361-4e67-8e5c-d3c094dcdeaa"><con:settings/><con:config service="SOS deployment" resourcePath="/${#Project#context}" methodName="POX" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="POX - POX GetFeatureOfInterests filter" id="d0e6cb92-8799-4768-8650-588de6732e95" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<GetFeatureOfInterest
+    xmlns="http://www.opengis.net/sos/1.0"
+    xmlns:ows="http://www.opengeospatial.net/ows"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="1.0.0" xsi:schemaLocation="http://www.opengis.net/sos/1.0  http://schemas.opengis.net/sos/1.0.0/sosGetFeatureOfInterest.xsd">
+    <!-- mandatory -->
+    <location>
+        <ogc:BBOX>
+            <ogc:PropertyName>urn:ogc:data:location</ogc:PropertyName>
+            <gml:Envelope srsName="urn:ogc:def:crs:EPSG::4326">
+                <gml:lowerCorner>50.0 7.0</gml:lowerCorner>
+                <gml:upperCorner>53.0 10.0</gml:upperCorner>
+            </gml:Envelope>
+        </ogc:BBOX>
+    </location>
+</GetFeatureOfInterest>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="POX - POX GetObservationById" id="9bb22a6d-4aed-485f-a6c4-27e7f99be8db"><con:settings/><con:config service="SOS deployment" resourcePath="/${#Project#context}" methodName="POX" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="POX - POX GetObservationById" id="925f89b9-1cf4-41ce-9c5b-b8aebb3a2d39" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<sos:GetObservationById
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
+    <sos:observation>http://www.52north.org/test/observation/1</sos:observation>
+    <sos:observation>http://www.52north.org/test/observation/2</sos:observation>
+</sos:GetObservationById>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="POX - POX InsertObservation" id="9ae4c0fb-5b5c-4a2c-8a83-7e22176a7aa6"><con:settings/><con:config service="SOS deployment" resourcePath="/${#Project#context}" methodName="POX" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="POX - POX InsertObservation" id="bb67bc40-5107-4a21-95b3-d9f8cf7cb3de" mediaType="application/xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<sos:InsertObservation
+    xmlns:sos="http://www.opengis.net/sos/2.0"
+    xmlns:swes="http://www.opengis.net/swes/2.0"
+    xmlns:swe="http://www.opengis.net/swe/2.0"
+    xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
+    xmlns:gml="http://www.opengis.net/gml/3.2"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:om="http://www.opengis.net/om/2.0"
+    xmlns:sams="http://www.opengis.net/samplingSpatial/2.0"
+    xmlns:sf="http://www.opengis.net/sampling/2.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" service="SOS" version="2.0.0" xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd            http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd">
+    <!-- multiple offerings are possible -->
+    <sos:offering>http://www.52north.org/test/offering/9</sos:offering>
+    <sos:observation>
+        <om:OM_Observation gml:id="o1">
+            <om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation"/>
+            <om:phenomenonTime>
+                <gml:TimeInstant gml:id="phenomenonTime">
+                    <gml:timePosition>2012-11-19T13:45:15.000+00:00</gml:timePosition>
+                </gml:TimeInstant>
+            </om:phenomenonTime>
+            <om:resultTime xlink:href="#phenomenonTime"/>
+            <om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
+            <om:observedProperty xlink:href="http://www.52north.org/test/observableProperty/9_1"/>
+            <om:featureOfInterest>
+                <sams:SF_SpatialSamplingFeature gml:id="ssf_test_feature_9">
+                    <gml:identifier codeSpace="">http://www.52north.org/test/featureOfInterest/9</gml:identifier>
+                    <gml:name>52°North</gml:name>
+                    <sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/>
+                    <sf:sampledFeature xlink:href="http://www.52north.org/test/featureOfInterest/1"/>
+                    <sams:shape>
+                        <gml:Point gml:id="test_feature_9">
+                            <gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">51.935101100104916 7.651968812254194</gml:pos>
+                        </gml:Point>
+                    </sams:shape>
+                </sams:SF_SpatialSamplingFeature>
+            </om:featureOfInterest>
+            <om:result xsi:type="gml:ReferenceType" xlink:href="test_category_9_1"/>
+        </om:OM_Observation>
+    </sos:observation>
+</sos:InsertObservation>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="SOAP - SOAP GetObservationById" id="111412dd-7382-4bea-b9a1-4f29f0dd23ba"><con:settings/><con:config service="SOS deployment" resourcePath="/${#Project#context}" methodName="SOAP" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="SOAP - SOAP GetObservationById" id="f807f270-a003-426a-9678-713729cbb06a" mediaType="application/soap+xml" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>${#Project#host}</con:endpoint><con:request><![CDATA[<env:Envelope
+    xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:sos="http://www.opengis.net/sos/1.0"
+    xmlns:ows="http://www.opengis.net/ows/1.1"
+    xmlns:gml="http://www.opengis.net/gml"
+    xmlns:ogc="http://www.opengis.net/ogc"
+    xmlns:om="http://www.opengis.net/om/1.0" xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope http://www.opengis.net/sos/1.0    http://schemas.opengis.net/sos/1.0.0/sosGetObservationById.xsd">
+    <env:Body>
+        <sos:GetObservationById
+            xmlns:sos="http://www.opengis.net/sos/1.0"
+            xmlns:ows="http://www.opengis.net/ows/1.1" service="SOS" version="1.0.0" srsName="urn:ogc:def:crs:EPSG::4326">
+            <sos:ObservationId>http://www.52north.org/test/observation/1</sos:ObservationId>
+            <sos:responseFormat>text/xml;subtype="om/1.0.0"</sos:responseFormat>
+        </sos:GetObservationById>
+    </env:Body>
+</env:Envelope>]]></con:request><con:originalUri>http://localhost/52n-sos-webapp/service</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:restRequest></con:config></con:testStep><con:loadTest id="338c93ba-2547-4d30-9cd0-ee8d192dc1cf" name="Start this and watch the Kibana"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>90</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type><con:config><testDelay>1000</testDelay><randomFactor>0.5</randomFactor></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties><con:property><con:name>host</con:name><con:value>http://localhost:8080</con:value></con:property><con:property><con:name>context</con:name><con:value>52n-sos-webapp/service</con:value></con:property></con:properties><con:wssContainer/><con:oAuth2ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

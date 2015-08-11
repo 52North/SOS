@@ -34,9 +34,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class OmObservationEsModel extends AbstractElasticsearchModel {
 

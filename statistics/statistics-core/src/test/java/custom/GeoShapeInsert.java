@@ -35,8 +35,8 @@ import javax.inject.Inject;
 
 import org.junit.Test;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.sos.statistics.sos.SosDataMapping;
 import org.n52.sos.statistics.sos.models.SpatialFilterEsModel;
 import org.n52.sos.util.JTSHelper;

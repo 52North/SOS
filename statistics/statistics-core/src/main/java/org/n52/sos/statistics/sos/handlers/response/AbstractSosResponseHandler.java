@@ -31,9 +31,9 @@ package org.n52.sos.statistics.sos.handlers.response;
 import java.util.Map;
 
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 
 public abstract class AbstractSosResponseHandler<T extends AbstractServiceResponse> extends AbstractElasticSearchDataHolder implements
         StatisticsServiceEventHandler<AbstractServiceResponse> {

@@ -36,8 +36,10 @@ import javax.inject.Inject;
 import org.elasticsearch.action.index.IndexResponse;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.ElasticsearchSettingsKeys;
+import org.n52.iceland.statistics.api.ElasticsearchSettings;
+import org.n52.iceland.statistics.api.ElasticsearchSettingsKeys;
+import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
+import org.n52.iceland.statistics.impl.ElasticsearchDataHandler;
 
 import basetest.SpringBaseTest;
 

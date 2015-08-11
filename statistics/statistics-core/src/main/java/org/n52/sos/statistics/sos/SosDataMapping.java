@@ -28,13 +28,13 @@
  */
 package org.n52.sos.statistics.sos;
 
-import org.n52.sos.statistics.api.parameters.AbstractEsParameter;
-import org.n52.sos.statistics.api.parameters.Description;
-import org.n52.sos.statistics.api.parameters.Description.InformationOrigin;
-import org.n52.sos.statistics.api.parameters.Description.Operation;
-import org.n52.sos.statistics.api.parameters.ElasticsearchTypeRegistry;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.sos.statistics.api.parameters.SingleEsParameter;
+import org.n52.iceland.statistics.api.parameters.AbstractEsParameter;
+import org.n52.iceland.statistics.api.parameters.Description;
+import org.n52.iceland.statistics.api.parameters.ElasticsearchTypeRegistry;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.iceland.statistics.api.parameters.SingleEsParameter;
+import org.n52.iceland.statistics.api.parameters.Description.InformationOrigin;
+import org.n52.iceland.statistics.api.parameters.Description.Operation;
 
 public class SosDataMapping {
 

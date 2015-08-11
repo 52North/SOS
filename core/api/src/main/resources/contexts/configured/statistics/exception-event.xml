@@ -6,11 +6,11 @@
         http://www.springframework.org/schema/context/spring-context.xsd">
 
 	<!-- exception event handlers -->
-	<bean id="codedExceptionEventHandler" class="org.n52.sos.statistics.impl.handlers.exceptions.CodedExceptionEventHandler" scope="prototype" />
-	<bean id="owsExceptionEventHandler" class="org.n52.sos.statistics.impl.handlers.exceptions.OwsExceptionEventHandler" scope="prototype" />
+	<bean id="codedExceptionEventHandler" class="org.n52.iceland.statistics.impl.handlers.exceptions.CodedExceptionEventHandler" scope="prototype" />
+	<bean id="owsExceptionEventHandler" class="org.n52.iceland.statistics.impl.handlers.exceptions.OwsExceptionEventHandler" scope="prototype" />
 
 	<!-- exception resolver -->
-	<bean id="exceptionEventResolver" class="org.n52.sos.statistics.impl.resolvers.ExceptionEventResolver" scope="prototype">
+	<bean id="exceptionEventResolver" class="org.n52.iceland.statistics.impl.resolvers.ExceptionEventResolver" scope="prototype">
 		<property name="handlers">
 			<map>
 				<entry key="CodedException" value-ref="codedExceptionEventHandler"></entry>

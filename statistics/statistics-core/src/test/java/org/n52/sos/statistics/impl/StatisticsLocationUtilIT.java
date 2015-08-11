@@ -33,7 +33,8 @@ import java.io.File;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.n52.sos.statistics.api.StatisticsLocationUtilSettingsKeys;
+import org.n52.iceland.statistics.api.StatisticsLocationUtilSettingsKeys;
+import org.n52.iceland.statistics.impl.StatisticsLocationUtil;
 import org.springframework.util.Assert;
 
 //TODO these classes needs to be in the integration test

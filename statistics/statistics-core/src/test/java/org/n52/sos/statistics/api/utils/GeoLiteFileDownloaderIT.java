@@ -36,6 +36,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.n52.iceland.statistics.api.utils.GeoLiteFileDownloader;
 
 //TODO these classes needs to be in the integration test
 public class GeoLiteFileDownloaderIT {

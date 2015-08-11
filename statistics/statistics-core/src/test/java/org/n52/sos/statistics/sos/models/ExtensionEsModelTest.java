@@ -34,8 +34,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class ExtensionEsModelTest {
 

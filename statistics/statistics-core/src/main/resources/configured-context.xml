@@ -5,19 +5,8 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:annotation-config></context:annotation-config>
+	<bean id="sosElasticsearchSchemas" class="org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas"></bean>
 
-	<bean id="elasticsearchSettings" class="org.n52.sos.statistics.api.ElasticsearchSettings" />
-	<bean id="adminDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" />
-	<bean id="elasticsearchDataHandler" class="org.n52.sos.statistics.impl.ElasticsearchDataHandler" depends-on="adminDataHandler"></bean>
-	<bean id="statisticsServiceEventListener" class="org.n52.sos.statistics.sos.SosStatisticsServiceEventListener"></bean>
-	<bean id="statisticsLocationUtil" class="org.n52.sos.statistics.impl.StatisticsLocationUtil"></bean>
-	<bean id="statisticsResolverFactory" class="org.n52.sos.statistics.impl.StatisticsResolverFactory"></bean>
-	
-	<import resource="imports/countingoutputstrem-event.xml"/>
-	<import resource="imports/default-event.xml"/>
-	<import resource="imports/exception-event.xml"/>
-	<import resource="imports/outgoingresponse-event.xml"/>
 	<import resource="imports/request-event.xml"/>
 	<import resource="imports/response-event.xml"/>
 </beans>

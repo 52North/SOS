@@ -38,8 +38,8 @@ import org.junit.Test;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class TimeEsModelTest {
 

@@ -39,8 +39,8 @@ import org.mockito.Mockito;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 
 import basetest.HandlerBaseTest;
 

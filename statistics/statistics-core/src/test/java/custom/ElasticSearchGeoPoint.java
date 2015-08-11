@@ -41,12 +41,12 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.sos.statistics.impl.ElasticsearchAdminHandler;
-import org.n52.sos.statistics.impl.ElasticsearchDataHandler;
-import org.n52.sos.statistics.impl.StatisticsLocationUtil;
+import org.n52.iceland.statistics.api.ElasticsearchSettings;
+import org.n52.iceland.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
+import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
+import org.n52.iceland.statistics.impl.ElasticsearchDataHandler;
+import org.n52.iceland.statistics.impl.StatisticsLocationUtil;
 
 import basetest.SpringBaseTest;
 

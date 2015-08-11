@@ -37,6 +37,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -46,7 +47,6 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;

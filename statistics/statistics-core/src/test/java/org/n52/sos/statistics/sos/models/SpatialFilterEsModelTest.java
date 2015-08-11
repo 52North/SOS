@@ -34,8 +34,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;

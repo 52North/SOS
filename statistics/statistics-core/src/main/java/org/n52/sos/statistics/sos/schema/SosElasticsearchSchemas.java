@@ -28,7 +28,7 @@
  */
 package org.n52.sos.statistics.sos.schema;
 
-import org.n52.sos.statistics.impl.schemabuilders.DefaultElasticsearchSchemas;
+import org.n52.iceland.statistics.impl.schemabuilders.DefaultElasticsearchSchemas;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class SosElasticsearchSchemas extends DefaultElasticsearchSchemas {

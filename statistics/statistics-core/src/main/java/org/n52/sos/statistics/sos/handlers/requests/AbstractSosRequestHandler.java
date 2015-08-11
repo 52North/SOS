@@ -33,11 +33,11 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.iceland.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
+import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
-import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.sos.statistics.sos.models.ExtensionEsModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

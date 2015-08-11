@@ -30,7 +30,7 @@ package org.n52.sos.statistics.sos.models;
 
 import java.util.Map;
 
-import org.n52.sos.statistics.api.AbstractElasticSearchDataHolder;
+import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
 
 public abstract class AbstractElasticsearchModel extends AbstractElasticSearchDataHolder {
 

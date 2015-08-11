@@ -39,8 +39,8 @@ import org.joda.time.DateTimeZone;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class TimeEsModel extends AbstractElasticsearchModel {
     private DateTime timeInstant = null;

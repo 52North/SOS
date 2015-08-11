@@ -43,8 +43,8 @@ import org.elasticsearch.node.NodeBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.impl.ElasticsearchAdminHandler;
+import org.n52.iceland.statistics.api.ElasticsearchSettings;
+import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
 
 public abstract class ElasticsearchAwareTest extends SpringBaseTest {
 

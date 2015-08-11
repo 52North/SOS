@@ -37,9 +37,9 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.event.events.ExceptionEvent;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
-import org.n52.sos.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver;
+import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
+import org.n52.iceland.statistics.impl.resolvers.DefaultServiceEventResolver;
 
 import basetest.ElasticsearchAwareTest;
 

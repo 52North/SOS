@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 import org.elasticsearch.common.geo.builders.PointBuilder;
 import org.elasticsearch.common.geo.builders.PolygonBuilder;
 import org.elasticsearch.common.geo.builders.ShapeBuilder;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

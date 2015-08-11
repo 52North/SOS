@@ -33,11 +33,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class OmObservationConstellationEsModelTest {
 

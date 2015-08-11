@@ -33,9 +33,9 @@ import javax.inject.Inject;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
-import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
-import org.n52.sos.statistics.impl.AbstractStatisticsServiceEventListener;
-import org.n52.sos.statistics.impl.StatisticsResolverFactory;
+import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventResolver;
+import org.n52.iceland.statistics.impl.AbstractStatisticsServiceEventListener;
+import org.n52.iceland.statistics.impl.StatisticsResolverFactory;
 import org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver;
 import org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver;
 

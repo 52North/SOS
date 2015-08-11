@@ -40,6 +40,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.request.RequestContext;
+import org.n52.iceland.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.net.IPAddress;
 import org.n52.sos.ogc.filter.SpatialFilter;
@@ -53,7 +54,6 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;

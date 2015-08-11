@@ -42,9 +42,11 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.api.ElasticsearchSettingsKeys;
-import org.n52.sos.statistics.api.mappings.MetadataDataMapping;
+import org.n52.iceland.statistics.api.ElasticsearchSettings;
+import org.n52.iceland.statistics.api.ElasticsearchSettingsKeys;
+import org.n52.iceland.statistics.api.mappings.MetadataDataMapping;
+import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
+import org.n52.iceland.statistics.impl.ElasticsearchDataHandler;
 import org.n52.sos.statistics.sos.schema.SosElasticsearchSchemas;
 
 import basetest.ElasticsearchAwareTest;

@@ -35,9 +35,10 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.n52.iceland.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
+import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
+import org.n52.iceland.statistics.impl.StatisticsLocationUtil;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.statistics.api.interfaces.geolocation.IAdminStatisticsLocation.LocationDatabaseType;
-import org.n52.sos.statistics.api.parameters.ObjectEsParameterFactory;
 
 public class StatisticsLocationUtilTest {
 

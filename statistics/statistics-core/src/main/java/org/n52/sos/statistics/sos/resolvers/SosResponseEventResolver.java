@@ -32,9 +32,9 @@ import java.util.Map;
 
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventHandler;
-import org.n52.sos.statistics.api.interfaces.StatisticsServiceEventResolver;
-import org.n52.sos.statistics.api.utils.EventHandlerFinder;
+import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
+import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventResolver;
+import org.n52.iceland.statistics.api.utils.EventHandlerFinder;
 
 public class SosResponseEventResolver implements StatisticsServiceEventResolver<ResponseEvent> {
 

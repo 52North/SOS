@@ -37,8 +37,9 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.sos.statistics.api.ElasticsearchSettings;
-import org.n52.sos.statistics.impl.ElasticsearchAdminHandler;
+import org.n52.iceland.statistics.api.ElasticsearchSettings;
+import org.n52.iceland.statistics.api.utils.KibanaImporter;
+import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;

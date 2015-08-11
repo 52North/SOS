@@ -7,11 +7,11 @@
 
 
 	<!-- HANDLERS -->
-	<bean id="defaultServiceEventHandler" class="org.n52.sos.statistics.impl.handlers.DefaultServiceEventHandler" scope="prototype" />
+	<bean id="defaultServiceEventHandler" class="org.n52.iceland.statistics.impl.handlers.DefaultServiceEventHandler" scope="prototype" />
 
 
 	<!-- RESOLVERS -->
-	<bean id="defaultServiceEventResolver" class="org.n52.sos.statistics.impl.resolvers.DefaultServiceEventResolver" scope="prototype" >
+	<bean id="defaultServiceEventResolver" class="org.n52.iceland.statistics.impl.resolvers.DefaultServiceEventResolver" scope="prototype" >
 		<property name="handlers">
 			<map>
 				<entry key="ServiceEvent" value-ref="defaultServiceEventHandler"></entry>

@@ -38,8 +38,8 @@ import org.junit.Test;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.request.RequestContext;
+import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 
 import com.google.common.base.Optional;
 

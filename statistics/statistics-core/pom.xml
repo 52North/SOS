@@ -9,12 +9,6 @@
 	<artifactId>statistics-core</artifactId>
 
 	<dependencies>
-		<!-- MaxMind geo database -->
-		<dependency>
-			<groupId>com.maxmind.geoip2</groupId>
-			<artifactId>geoip2</artifactId>
-		</dependency>
-
 		<!-- spring dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -32,12 +26,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
-		</dependency>
-
-		<!-- elasticsearch -->
-		<dependency>
-			<groupId>org.elasticsearch</groupId>
-			<artifactId>elasticsearch</artifactId>
 		</dependency>
 
 		<dependency>
@@ -58,17 +46,6 @@
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 		</dependency>
-
-		<!-- apache commons -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-compress</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-
 
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -101,15 +78,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.n52.iceland</groupId>
-			<artifactId>iceland</artifactId>
+			<artifactId>iceland-core</artifactId>
 		</dependency>
-
-<!-- 		<dependency> -->
-<!-- 			<groupId>log4j</groupId> -->
-<!-- 			<artifactId>log4j</artifactId> -->
-<!-- 			<version>1.2.17</version> -->
-<!-- 		</dependency> -->
-
 
 	</dependencies>
 
@@ -129,17 +99,4 @@
 
 	<name>52°North SOS - OGC Statistics Core</name>
 	<description>52°North SOS - OGC Statistics Core</description>
-
-	<repositories>
-		<repository>
-			<id>elasticsearch-releases</id>
-			<url>http://maven.elasticsearch.org/releases</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 </project>

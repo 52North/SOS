@@ -12,36 +12,7 @@
 	<name>52°North SOS - OGC Statistics</name>
 	<description>52°North SOS - OGC Statistics</description>
 
-
-	<properties>
-		<elasticsearch-version>1.7.1</elasticsearch-version>
-	</properties>
-
 	<modules>
 		<module>statistics-core</module>
-		<module>statistics-generator</module>
-		<module>statistics-kibana</module>
 	</modules>
-
-	<dependencyManagement>
-		<dependencies>
-			<!-- MaxMind geo database -->
-			<dependency>
-				<groupId>com.maxmind.geoip2</groupId>
-				<artifactId>geoip2</artifactId>
-				<version>2.2.0</version>
-			</dependency>
-			<!-- Elasticsearch -->
-			<dependency>
-				<groupId>org.elasticsearch</groupId>
-				<artifactId>elasticsearch</artifactId>
-				<version>${elasticsearch-version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-compress</artifactId>
-				<version>1.9</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 </project>

@@ -26,47 +26,22 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.binding;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
-
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
+import org.n52.sos.exception.HTTPException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
- * Writer for {@link SOAPMessage} objects
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
  */
-public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
+public interface OwsExceptionReportHandler {
 
-    @Override
-    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
-        try {
-            t.writeTo(out);
-        } catch (SOAPException soapex) {
-        	 throw new NoApplicableCodeException().causedBy(soapex);
-        }
-    }
+    Object handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response, OwsExceptionReport oer)
+            throws HTTPException;
 
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_SOAP_XML;
-    }
-
-    @Override
-    public void setContentType(MediaType contentType) {
-    }
-
-    @Override
-    public boolean supportsGZip(SOAPMessage t) {
-        return false;
-    }
 }

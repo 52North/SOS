@@ -82,7 +82,24 @@ public abstract class SimpleBinding extends Binding {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleBinding.class);
     public static final String QUALITY = "q";
 
-    protected boolean isUseHttpResponseCodes() {
+    public Object handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+	        OwsExceptionReport oer) throws HTTPException {
+	    try {
+	        SosEventBus.fire(new ExceptionEvent(oer));
+	        MediaType contentType =
+	                chooseResponseContentTypeForExceptionReport(HTTPUtils.getAcceptHeader(request),
+	                        getDefaultContentType());
+	        Object encoded = encodeOwsExceptionReport(oer, contentType);
+	        if (isUseHttpResponseCodes() && oer.hasStatus()) {
+	            response.setStatus(oer.getStatus().getCode());
+	        }
+	        return encoded;
+	    } catch (OwsExceptionReport e) {
+	        throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+	    }
+	}
+
+	protected boolean isUseHttpResponseCodes() {
         return ServiceConfiguration.getInstance().isUseHttpStatusCodesInKvpAndPoxBinding();
     }
 
@@ -257,7 +274,7 @@ public abstract class SimpleBinding extends Binding {
             AbstractServiceResponse serviceResponse) throws HTTPException, IOException {
         MediaType contentType =
                 chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request), getDefaultContentType());
-        HTTPUtils.writeObject(request, response, contentType, serviceResponse);
+		HTTPUtils.writeObject(request, response, contentType, serviceResponse, this);
     }
 
     protected Object encodeResponse(AbstractServiceResponse response, MediaType contentType) throws OwsExceptionReport {
@@ -272,18 +289,12 @@ public abstract class SimpleBinding extends Binding {
     protected void writeOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
             OwsExceptionReport oer) throws HTTPException {
         try {
-            SosEventBus.fire(new ExceptionEvent(oer));
-            MediaType contentType =
-                    chooseResponseContentTypeForExceptionReport(HTTPUtils.getAcceptHeader(request),
-                            getDefaultContentType());
-            Object encoded = encodeOwsExceptionReport(oer, contentType);
-            if (isUseHttpResponseCodes() && oer.hasStatus()) {
-                response.setStatus(oer.getStatus().getCode());
-            }
+        	MediaType contentType =
+                  chooseResponseContentTypeForExceptionReport(HTTPUtils.getAcceptHeader(request),
+                          getDefaultContentType());
+            Object encoded = handleOwsExceptionReport(request, response, oer);
             HTTPUtils.writeObject(request, response, contentType, encoded);
         } catch (IOException e) {
-            throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
-        } catch (OwsExceptionReport e) {
             throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
         }
     }

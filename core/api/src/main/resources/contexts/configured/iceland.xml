@@ -62,8 +62,11 @@
 	<bean id="elasticsearchSettings" class="org.n52.iceland.statistics.api.ElasticsearchSettings" />
 	<bean id="adminDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchAdminHandler" depends-on="elasticsearchSettings" />
 	<bean id="elasticsearchDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchDataHandler" depends-on="adminDataHandler"></bean>
-	<bean id="statisticsServiceEventListener" class="org.n52.iceland.statistics.sos.SosStatisticsServiceEventListener"></bean>
 	<bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.StatisticsLocationUtil"></bean>
 	<bean id="statisticsResolverFactory" class="org.n52.iceland.statistics.impl.StatisticsResolverFactory"></bean>
-
+	
+	<import resource="statistics/countingoutputstream-event.xml"/>
+	<import resource="statistics/default-event.xml"/>
+	<import resource="statistics/exception-event.xml"/>
+	<import resource="statistics/outgoingresponse-event.xml"/>
 </beans>

@@ -35,7 +35,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.n52.iceland.event.ServiceEventBus;
-import org.n52.iceland.event.events.CountingOutputstreamEvent;
+import org.n52.iceland.event.events.CountingOutputStreamEvent;
 import org.n52.iceland.event.events.ExceptionEvent;
 import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.iceland.event.events.RequestEvent;
@@ -84,7 +84,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
 
         OutgoingResponseEvent outgoingResponseEvent = new OutgoingResponseEvent(null, null, 100L, 1234L);
 
-        CountingOutputstreamEvent countingEvent = new CountingOutputstreamEvent(1234L);
+        CountingOutputStreamEvent countingEvent = new CountingOutputStreamEvent(1234L);
 
         serviceBus.submit(evt);
         serviceBus.submit(respEvent);

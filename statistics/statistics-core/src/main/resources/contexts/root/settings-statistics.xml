@@ -130,7 +130,7 @@
 			value="Kibana: Install preconfigured Kibana dashboards/visualizations" />
 		<property name="description"
 			value="If this checkbox is enabled the preconfigured Kibana settings, visualizations and dashboards will be installed.
-			&lt;strong&gt;The .kibana index will be deleted before import export your current settings before import &lt;/strong&gt;
+			&lt;strong&gt;The .kibana index will be deleted in Elasticsearch before the import. &lt;/strong&gt;
 		If you point your Kibana instance to this Elasticsearch cluster you can use our deployed configurations. The statistics collection MUST be enabled." />
 		<property name="order" value="9.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />

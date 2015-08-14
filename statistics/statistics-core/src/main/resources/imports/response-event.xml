@@ -11,7 +11,7 @@
 	<bean id="defaultSosResponseHandler" class="org.n52.sos.statistics.sos.handlers.response.DefaultSosResponseHandler" scope="prototype" />
 
 	<!-- response event resolver -->
-	<bean id="sosResponseEventResolver" class="org.n52.sos.statistics.sos.handlers.SosResponseEventResolver" scope="prototype">
+	<bean id="sosResponseEventResolver" class="org.n52.sos.statistics.sos.resolvers.SosResponseEventResolver" scope="prototype">
 		<property name="handlers">
 			<map>
 				<entry key="default" value-ref="defaultSosResponseHandler"></entry>

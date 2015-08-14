@@ -12,10 +12,10 @@
 
 
 	<!-- RESOLVERS -->
-	<bean id="countingOutputstreamEventResolver" class="org.n52.iceland.statistics.impl.resolvers.CountingOutputstreamEventResolver" scope="prototype">
+	<bean id="countingOutputstreamEventResolver" class="org.n52.iceland.statistics.impl.resolvers.CountingOutputStreamEventResolver" scope="prototype">
 	<property name="handlers">
 		<map>
-			<entry key="CountingOutputstreamEvent" value-ref="countingOutputStreamEventHandler"></entry>
+			<entry key="CountingOutputStreamEvent" value-ref="countingOutputStreamEventHandler"></entry>
 		</map>
 	</property>
 	</bean>

@@ -24,7 +24,7 @@
 	<bean id="updateSensorRequestHandler" class="org.n52.sos.statistics.sos.handlers.requests.UpdateSensorRequestHandler" scope="prototype" />
 
 	<!-- request event resolver -->
-	<bean id="sosRequestEventResolver" class="org.n52.statistics.sos.resolvers.SosRequestEventResolver" scope="prototype">
+	<bean id="sosRequestEventResolver" class="org.n52.sos.statistics.sos.resolvers.SosRequestEventResolver" scope="prototype">
 		<property name="handlers">
 			<map>
 				<!-- <entry key="BatchRequest" value-ref="batchRequestHandler" /> -->

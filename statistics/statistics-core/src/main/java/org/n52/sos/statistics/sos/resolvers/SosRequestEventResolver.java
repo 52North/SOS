@@ -38,9 +38,6 @@ import org.n52.iceland.statistics.api.utils.EventHandlerFinder;
 
 public class SosRequestEventResolver implements StatisticsServiceEventResolver<RequestEvent> {
 
-    // private static final Logger logger =
-    // LoggerFactory.getLogger(SosRequestEventResolver.class);
-
     private RequestEvent event;
 
     private Map<String, StatisticsServiceEventHandler<?>> handlers;

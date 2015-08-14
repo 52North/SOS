@@ -99,31 +99,12 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         put(ObjectEsParameterFactory.TIME_START, start);
         put(ObjectEsParameterFactory.TIME_END, end);
         put(ObjectEsParameterFactory.TIME_TIMEINSTANT, timeInstant);
-        // put(ObjectEsParameterFactory.TIME_SPAN_AS_MONTHS,
-        // calculateSpanMonths(start, end));
         put(ObjectEsParameterFactory.TIME_SPAN_AS_DAYS, calculateSpanDays(start, end));
         // only by TemporalFilter
         put(ObjectEsParameterFactory.TEMPORAL_FILTER_OPERATOR, timeOperator);
         put(ObjectEsParameterFactory.TEMPORAL_FILTER_VALUE_REF, valueReference);
         return dataMap;
     }
-
-    // private List<Integer> calculateSpanMonths(final DateTime start, DateTime
-    // end) {
-    // if (!checkDates(start, end)) {
-    // return null;
-    // }
-    // List<Integer> result = new ArrayList<>();
-    // DateTime temp = new DateTime(start);
-    // while (temp.getYear() != end.getYear() || temp.getMonthOfYear() !=
-    // end.getMonthOfYear()) {
-    // result.add(temp.getYear() * YEAR_PLACE_IN_MONTH + temp.getMonthOfYear());
-    // temp = temp.plusMonths(1);
-    // }
-    // // add last month
-    // result.add(end.getYear() * YEAR_PLACE_IN_MONTH + end.getMonthOfYear());
-    // return result;
-    // }
 
     private List<DateTime> calculateSpanDays(final DateTime start, DateTime end) {
         if (!checkDates(start, end)) {
@@ -132,15 +113,9 @@ public class TimeEsModel extends AbstractElasticsearchModel {
         List<DateTime> result = new ArrayList<>();
         DateTime temp = new DateTime(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth(), 0, 0, DateTimeZone.UTC);
         while (temp.getYear() != end.getYear() || temp.getMonthOfYear() != end.getMonthOfYear() || temp.getDayOfMonth() != end.getDayOfMonth()) {
-            // result.add(temp.getYear() * YEAR_PLACE_IN_DAYS +
-            // temp.getMonthOfYear() * MONTH_PLACE_IN_DAYS +
-            // temp.getDayOfMonth());
             result.add(temp);
             temp = temp.plusDays(1);
         }
-        // add last day
-        // result.add(end.getYear() * YEAR_PLACE_IN_DAYS + end.getMonthOfYear()
-        // * MONTH_PLACE_IN_DAYS + end.getDayOfMonth());
         result.add(temp);
         return result;
     }
@@ -150,8 +125,8 @@ public class TimeEsModel extends AbstractElasticsearchModel {
             return false;
         }
         if (!start.isBefore(end)) {
-            throw new IllegalArgumentException(String.format("Start date is not before the end date. Start date %s end date %s", start.toString(),
-                    end.toString()));
+            throw new IllegalArgumentException(
+                    String.format("Start date is not before the end date. Start date %s end date %s", start.toString(), end.toString()));
         }
         return true;
     }

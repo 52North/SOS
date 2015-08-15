@@ -395,6 +395,8 @@ public class SosInsertObservationOperatorV20 extends
 
         checkProcedureID(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure);
         checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
+        checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(),
+                Sos2Constants.InsertObservationParams.featureOfInterest);
     }
 
     private boolean hasObservations(String observableProperty) {

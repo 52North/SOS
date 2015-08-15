@@ -32,12 +32,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.om.x20.NamedValuePropertyType;
-import net.opengis.om.x20.NamedValueType;
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.om.x20.TimeObjectPropertyType;
-
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlInteger;
@@ -51,10 +45,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.AbstractGeometry;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -63,7 +54,6 @@ import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -75,10 +65,8 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
@@ -92,20 +80,23 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
-import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
+
+import net.opengis.om.x20.NamedValuePropertyType;
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.TimeObjectPropertyType;
 
 /**
  * @since 4.0.0
  *
  */
-public class OmDecoderv20 implements Decoder<Object, Object> {
+public class OmDecoderv20 extends AbstractOmDecoderv20 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OmDecoderv20.class);
 
@@ -161,26 +152,19 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         // validate document
         // XmlHelper.validateDocument((XmlObject) object);
         if (object instanceof OMObservationDocument) {
-            OMObservationDocument omObservationDocument
-                    = (OMObservationDocument) object;
+            OMObservationDocument omObservationDocument = (OMObservationDocument) object;
             return parseOmObservation(omObservationDocument.getOMObservation());
         } else if (object instanceof OMObservationType) {
             return parseOmObservation((OMObservationType) object);
-        } else if (object instanceof NamedValuePropertyType) {
-            return parseNamedValueType((NamedValuePropertyType) object);
-        } else if (object instanceof NamedValuePropertyType[]) {
-            return parseNamedValueTypeArray((NamedValuePropertyType[]) object);
         }
-        throw new UnsupportedDecoderInputException(this, object);
+        return super.decode(object);
     }
 
     private OmObservation parseOmObservation(OMObservationType omObservation) throws OwsExceptionReport {
         Map<String, AbstractFeature> featureMap = Maps.newHashMap();
         OmObservation sosObservation = new OmObservation();
-        sosObservation.setIdentifier(getIdentifier(omObservation));
-        if (omObservation.isSetDescription()) {
-            sosObservation.setDescription(omObservation.getDescription().getStringValue());
-        }
+        // parse identifier, description
+        parseAbstractFeatureType(omObservation, sosObservation);
         OmObservationConstellation observationConstallation = getObservationConstellation(omObservation);
         sosObservation.setObservationConstellation(observationConstallation);
         sosObservation.setResultTime(getResultTime(omObservation));
@@ -214,68 +198,6 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         // omObservation.getParameterArray();
 
         return sosObservation;
-    }
-
-    private Set<NamedValue<?>> parseNamedValueTypeArray(NamedValuePropertyType[] namedValuePropertyArray)
-            throws OwsExceptionReport {
-        Set<NamedValue<?>> parameters = Sets.newHashSet();
-        for (NamedValuePropertyType namedValueProperty : namedValuePropertyArray) {
-            parameters.add(parseNamedValueType(namedValueProperty));
-        }
-        return parameters;
-    }
-
-    private NamedValue<?> parseNamedValueType(NamedValuePropertyType namedValueProperty) throws OwsExceptionReport {
-        if (namedValueProperty.isSetNamedValue()) {
-            NamedValueType namedValue = namedValueProperty.getNamedValue();
-            NamedValue<?> sosNamedValue = parseNamedValueValue(namedValue.getValue());
-            ReferenceType referenceType = (ReferenceType) CodingHelper.decodeXmlObject(namedValue.getName());
-            sosNamedValue.setName(referenceType);
-            return sosNamedValue;
-        } else if (namedValueProperty.isSetHref()) {
-            NamedValue<?> sosNamedValue = new NamedValue<>();
-            ReferenceType referenceType = new ReferenceType(namedValueProperty.getHref());
-            if (namedValueProperty.isSetTitle()) {
-                referenceType.setTitle(namedValueProperty.getTitle());
-            }
-            sosNamedValue.setName(referenceType);
-            return sosNamedValue;
-        } else {
-            throw new UnsupportedDecoderInputException(this, namedValueProperty);
-        }
-    }
-
-    @SuppressWarnings( { "rawtypes", "unchecked" })
-    private NamedValue<?> parseNamedValueValue(XmlObject xmlObject) throws OwsExceptionReport {
-        if (xmlObject.schemaType() == XmlAnyTypeImpl.type) {
-            try {
-                xmlObject = XmlObject.Factory.parse(xmlObject.xmlText().trim());
-            } catch (XmlException e) {
-                LOGGER.error("Error while parsing NamedValueValue", e);
-            }
-        }
-        Object value = CodingHelper.decodeXmlObject(xmlObject);
-        if (value instanceof Value) {
-            return new NamedValue((Value) value);
-        } else if (value instanceof AbstractGeometry) {
-            return new NamedValue<>(new GeometryValue((AbstractGeometry) value));
-        } else if (value instanceof ReferenceType) {
-            return new NamedValue<>(new ReferenceValue((ReferenceType)value));
-        } else if (value instanceof W3CHrefAttribute) {
-            return new NamedValue<>(new HrefAttributeValue((W3CHrefAttribute)value));
-        } else {
-            throw new UnsupportedDecoderInputException(this, xmlObject);
-        }
-    }
-
-    private CodeWithAuthority getIdentifier(OMObservationType omObservation) throws OwsExceptionReport {
-        if (omObservation.getIdentifier() != null) {
-            Object decodedObject = CodingHelper.decodeXmlObject(omObservation.getIdentifier());
-            if (decodedObject instanceof CodeWithAuthority) {
-                return (CodeWithAuthority) decodedObject;
-            }
-        }
-        return null;
     }
 
     private OmObservationConstellation getObservationConstellation(OMObservationType omObservation)

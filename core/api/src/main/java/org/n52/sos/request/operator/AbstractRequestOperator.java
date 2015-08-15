@@ -53,11 +53,8 @@ import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -74,7 +71,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
-
+import org.n52.sos.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,7 +113,6 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         this(service, version, operationName, true, requestType);
     }
     
-    @SuppressWarnings("unchecked")
     public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
         this.operationName = operationName;
         this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName, defaultActive);
@@ -621,6 +617,33 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             throw new MissingParameterValueException(parameterName);
         } else if (!getCache().hasResultTemplate(resultTemplate)) {
             throw new InvalidParameterValueException(parameterName, resultTemplate);
+        }
+    }
+
+    protected void checkReservedCharacter(Collection<String> values, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(values, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(Collection<String> values, String parameterName) throws OwsExceptionReport {
+        CompositeOwsException exceptions = new CompositeOwsException();
+        for (String value : values) {
+            try {
+                checkReservedCharacter(value, parameterName);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+        }
+        exceptions.throwIfNotEmpty();
+    }
+
+    protected void checkReservedCharacter(String value, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(value, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(String value, String parameterName) throws OwsExceptionReport {
+        if (value != null && value.contains(Constants.COMMA_STRING)) {
+            throw new InvalidParameterValueException(parameterName, value)
+                    .withMessage("The value '%s' contains the reserved parameter ','", value);
         }
     }
 

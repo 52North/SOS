@@ -26,47 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode;
+package org.n52.sos.decode;
 
-import java.io.IOException;
-import java.io.OutputStream;
+public abstract class AbstractWmlDecoderv20 extends AbstractOmDecoderv20 {
 
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-
-/**
- * Writer for {@link SOAPMessage} objects
- * 
- * @author Christian Autermann <c.autermann@52north.org>
- * @since 4.0.0
- */
-public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
-
-    @Override
-    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
-        try {
-            t.writeTo(out);
-        } catch (SOAPException soapex) {
-        	 throw new NoApplicableCodeException().causedBy(soapex);
-        }
-    }
-
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.APPLICATION_SOAP_XML;
-    }
-
-    @Override
-    public void setContentType(MediaType contentType) {
-    }
-
-    @Override
-    public boolean supportsGZip(SOAPMessage t) {
-        return false;
-    }
 }

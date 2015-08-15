@@ -38,26 +38,53 @@ import org.joda.time.DateTime;
  *
  */
 public class TimeExtrema {
-    private DateTime minTime;
-    private DateTime maxTime;
+    
+    private DateTime minPhenomenonTime;
+    private DateTime maxPhenomenonTime;
+    private DateTime minResultTime;
+    private DateTime maxResultTime;
 
-    public DateTime getMinTime() {
-        return minTime;
+    public DateTime getMinPhenomenonTime() {
+        return minPhenomenonTime;
     }
 
-    public void setMinTime(DateTime minTime) {
-        this.minTime = minTime;
+    public void setMinPhenomenonTime(DateTime minPhenomenonTime) {
+        this.minPhenomenonTime = minPhenomenonTime;
     }
 
-    public DateTime getMaxTime() {
-        return maxTime;
+    public DateTime getMaxPhenomenonTime() {
+        return maxPhenomenonTime;
     }
 
-    public void setMaxTime(DateTime maxTime) {
-        this.maxTime = maxTime;
+    public void setMaxPhenomenonTime(DateTime maxPhenomenonTime) {
+        this.maxPhenomenonTime = maxPhenomenonTime;
+    }
+
+    public DateTime getMinResultTime() {
+        return minResultTime;
+    }
+
+    public void setMinResultTime(DateTime minResultTime) {
+        this.minResultTime = minResultTime;
+    }
+
+    public DateTime getMaxResultTime() {
+        return maxResultTime;
+    }
+
+    public void setMaxResultTime(DateTime maxResultTime) {
+        this.maxResultTime = maxResultTime;
+    }
+    
+    public boolean isSetPhenomenonTimes() {
+        return getMinPhenomenonTime() != null && getMaxPhenomenonTime() != null;
+    }
+
+    public boolean isSetResultTimes() {
+        return getMinResultTime()!= null && getMaxResultTime() != null;
     }
     
     public boolean isSetTimes() {
-        return getMinTime() != null && getMaxTime() != null;
+        return isSetPhenomenonTimes() && isSetResultTimes();
     }
 }

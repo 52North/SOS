@@ -1074,21 +1074,27 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         final List<Characteristics> characteristicsList =
                 Lists.newArrayListWithExpectedSize(smlCharacteristics.size());
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
-            if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
-                Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
-                CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
-                if (sosSMLCharacteristics.isSetCharacteristics()) {
-                    for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
-                        if (characteristic.isSetAbstractDataComponent()) {
-                            XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, characteristic.getAbstractDataComponent());
-                            Characteristic c = characteristicList.addNewCharacteristic();
-                            c.setName(NcNameResolver.fixNcName(characteristic.getName()));
-                            XmlObject substituteElement =
-                                    XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
-                            substituteElement.set(encodeObjectToXml);
-                        }
+        	Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
+            CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
+            if (sosSMLCharacteristics.isSetCharacteristics()) {
+            	for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
+            		Characteristic c = characteristicList.addNewCharacteristic();
+            		c.setName(NcNameResolver.fixNcName(characteristic.getName()));
+            		if (characteristic.isSetAbstractDataComponent()) {
+                        XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, characteristic.getAbstractDataComponent());
+                        XmlObject substituteElement =
+                                XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
+                        substituteElement.set(encodeObjectToXml);
+                    } else if (characteristic.isSetHref()) {
+                    	c.setHref(characteristic.getHref());
+                    	if (characteristic.isSetTitle()) {
+                    		c.setTitle(characteristic.getTitle());
+                    	}
                     }
-                } else if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
+                }
+            }
+            if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
+                if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                     for (SweAbstractDataComponent component : sosSMLCharacteristics.getAbstractDataComponents()) {
                         XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, component);
                         Characteristic c = characteristicList.addNewCharacteristic();
@@ -1098,8 +1104,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                         substituteElement.set(encodeObjectToXml);
                     }
                 }
-                characteristicsList.add(xbCharacteristics);
-            }
+                
+            } 
+            characteristicsList.add(xbCharacteristics);
         }
         return characteristicsList.toArray(new Characteristics[characteristicsList.size()]);
     }

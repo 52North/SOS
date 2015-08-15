@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.exi.EXISettings;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -62,7 +64,7 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
 	private final static EXIUtils EXI_UTILS = EXIUtils.getInstance(); 
 
     @Override
-    public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
         try (InputStream is =
                 new ByteArrayInputStream(exiObject.getDoc().xmlText(XmlOptionsHelper.getInstance().getXmlOptions())
                         .getBytes("UTF-8"))) {
@@ -75,7 +77,7 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
             xmlReader.setContentHandler(exiResult.getHandler());
             xmlReader.parse(new InputSource(is));
         } catch (EXIException | SAXException e) {
-            throw new IOException(e);
+        	throw new NoApplicableCodeException().causedBy(e);
         }
     }
 

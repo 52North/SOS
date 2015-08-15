@@ -34,34 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.gml.x32.AbstractGeometryType;
-import net.opengis.gml.x32.AbstractRingPropertyType;
-import net.opengis.gml.x32.AbstractRingType;
-import net.opengis.gml.x32.AbstractSurfaceType;
-import net.opengis.gml.x32.CodeType;
-import net.opengis.gml.x32.CodeWithAuthorityType;
-import net.opengis.gml.x32.CompositeSurfaceType;
-import net.opengis.gml.x32.CoordinatesType;
-import net.opengis.gml.x32.DirectPositionListType;
-import net.opengis.gml.x32.DirectPositionType;
-import net.opengis.gml.x32.EnvelopeDocument;
-import net.opengis.gml.x32.EnvelopeType;
-import net.opengis.gml.x32.FeaturePropertyType;
-import net.opengis.gml.x32.GeometryPropertyType;
-import net.opengis.gml.x32.LineStringType;
-import net.opengis.gml.x32.LinearRingType;
-import net.opengis.gml.x32.MeasureType;
-import net.opengis.gml.x32.PointDocument;
-import net.opengis.gml.x32.PointType;
-import net.opengis.gml.x32.PolygonType;
-import net.opengis.gml.x32.ReferenceType;
-import net.opengis.gml.x32.SurfacePropertyType;
-import net.opengis.gml.x32.TimeInstantDocument;
-import net.opengis.gml.x32.TimeInstantType;
-import net.opengis.gml.x32.TimePeriodDocument;
-import net.opengis.gml.x32.TimePeriodType;
-import net.opengis.gml.x32.TimePositionType;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -94,11 +66,40 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Polygon;
 
+import net.opengis.gml.x32.AbstractGeometryType;
+import net.opengis.gml.x32.AbstractRingPropertyType;
+import net.opengis.gml.x32.AbstractRingType;
+import net.opengis.gml.x32.AbstractSurfaceType;
+import net.opengis.gml.x32.CodeType;
+import net.opengis.gml.x32.CodeWithAuthorityType;
+import net.opengis.gml.x32.CompositeSurfaceType;
+import net.opengis.gml.x32.CoordinatesType;
+import net.opengis.gml.x32.DirectPositionListType;
+import net.opengis.gml.x32.DirectPositionType;
+import net.opengis.gml.x32.EnvelopeDocument;
+import net.opengis.gml.x32.EnvelopeType;
+import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.gml.x32.GeometryPropertyType;
+import net.opengis.gml.x32.LineStringType;
+import net.opengis.gml.x32.LinearRingType;
+import net.opengis.gml.x32.MeasureType;
+import net.opengis.gml.x32.PointDocument;
+import net.opengis.gml.x32.PointType;
+import net.opengis.gml.x32.PolygonType;
+import net.opengis.gml.x32.ReferenceType;
+import net.opengis.gml.x32.SurfacePropertyType;
+import net.opengis.gml.x32.TimeInstantDocument;
+import net.opengis.gml.x32.TimeInstantType;
+import net.opengis.gml.x32.TimePeriodDocument;
+import net.opengis.gml.x32.TimePeriodType;
+import net.opengis.gml.x32.TimePositionType;
+import net.opengis.gml.x32.VerticalDatumPropertyType;
+
 /**
  * @since 4.0.0
  * 
  */
-public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
+public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GmlDecoderv321.class);
 
@@ -107,7 +108,8 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
             GmlConstants.NS_GML_32, EnvelopeDocument.class, TimeInstantType.class, TimePeriodType.class,
             TimeInstantDocument.class, TimePeriodDocument.class, ReferenceType.class, MeasureType.class,
             PointType.class, PointDocument.class, LineStringType.class, PolygonType.class, CompositeSurfaceType.class,
-            CodeWithAuthorityType.class, CodeType.class, FeaturePropertyType.class, GeometryPropertyType.class
+            CodeWithAuthorityType.class, CodeType.class, FeaturePropertyType.class, GeometryPropertyType.class,
+            VerticalDatumPropertyType.class
 
     ), CodingHelper.decoderKeysForElements(MeasureType.type.toString(), MeasureType.class));
 
@@ -171,6 +173,8 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
             return parseCodeType((CodeType) xmlObject);
         } else if (xmlObject instanceof GeometryPropertyType) {
             return parseGeometryPropertyType((GeometryPropertyType) xmlObject);
+        } else if (xmlObject instanceof VerticalDatumPropertyType) {
+            return parseVerticalDatumPropertyType((VerticalDatumPropertyType) xmlObject);
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);
         }
@@ -319,18 +323,6 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return ti;
     }
 
-    private org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
-        if (referenceType.isSetHref() && !referenceType.getHref().isEmpty()) {
-            org.n52.sos.ogc.gml.ReferenceType sosReferenceType =
-                    new org.n52.sos.ogc.gml.ReferenceType(referenceType.getHref());
-            if (referenceType.isSetTitle() && !referenceType.getTitle().isEmpty()) {
-                sosReferenceType.setTitle(referenceType.getTitle());
-            }
-            return sosReferenceType;
-        }
-        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
-    }
-
     private GmlMeasureType parseMeasureType(MeasureType measureType) {
         GmlMeasureType sosMeasureType = new GmlMeasureType(measureType.getDoubleValue());
         sosMeasureType.setUnit(measureType.getUom());
@@ -341,25 +333,11 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return parseAbstractGeometryType(geometryPropertyType.getAbstractGeometry());
     }
 
-    private AbstractGeometry parseAbstractGeometryType(AbstractGeometryType abstractGeometry) throws OwsExceptionReport {
-        AbstractGeometry gmlAbstractGeometry = new AbstractGeometry(abstractGeometry.getId());
-        if (abstractGeometry.isSetIdentifier()) {
-            gmlAbstractGeometry.setIdentifier(parseCodeWithAuthorityTye(abstractGeometry.getIdentifier()));
-        }
-        if (abstractGeometry.getNameArray() != null) {
-            for (CodeType codeType : abstractGeometry.getNameArray()) {
-                gmlAbstractGeometry.addName(parseCodeType(codeType));
-            }
-        }
-        if (abstractGeometry.isSetDescription()) {
-            if (abstractGeometry.getDescription().isSetHref()) {
-                gmlAbstractGeometry.setDescription(abstractGeometry.getDescription().getHref());
-            } else {
-                gmlAbstractGeometry.setDescription(abstractGeometry.getDescription().getStringValue());
-            }
-        }
-        gmlAbstractGeometry.setGeometry((Geometry)decode(abstractGeometry));
-        return gmlAbstractGeometry;
+    private AbstractGeometry parseAbstractGeometryType(AbstractGeometryType agt) throws OwsExceptionReport {
+        AbstractGeometry abstractGeometry = new AbstractGeometry(agt.getId());
+        parseAbstractGMLType(agt, abstractGeometry);
+        abstractGeometry.setGeometry((Geometry)decode(agt));
+        return abstractGeometry;
     }
 
     private Object parsePointType(PointType xbPointType) throws OwsExceptionReport {
@@ -489,24 +467,20 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         return geom;
     }
 
-    private CodeWithAuthority parseCodeWithAuthorityTye(CodeWithAuthorityType xbCodeWithAuthority) {
-        if (xbCodeWithAuthority.getStringValue() != null && !xbCodeWithAuthority.getStringValue().isEmpty()) {
-            CodeWithAuthority sosCodeWithAuthority = new CodeWithAuthority(xbCodeWithAuthority.getStringValue());
-            sosCodeWithAuthority.setCodeSpace(xbCodeWithAuthority.getCodeSpace());
-            return sosCodeWithAuthority;
+    private org.n52.sos.ogc.gml.ReferenceType parseVerticalDatumPropertyType(VerticalDatumPropertyType vdpt) {
+    	// TODO parse VerticalDatumType 
+    	if (vdpt.isSetHref() && !vdpt.getHref().isEmpty()) {
+            org.n52.sos.ogc.gml.ReferenceType referenceType =
+                    new org.n52.sos.ogc.gml.ReferenceType(vdpt.getHref());
+            if (vdpt.isSetTitle() && !vdpt.getTitle().isEmpty()) {
+                referenceType.setTitle(vdpt.getTitle());
+            }
+            return referenceType;
         }
-        return null;
-    }
+        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+	}
 
-    private org.n52.sos.ogc.gml.CodeType parseCodeType(CodeType element) {
-        org.n52.sos.ogc.gml.CodeType codeType = new org.n52.sos.ogc.gml.CodeType(element.getStringValue());
-        if (element.isSetCodeSpace()) {
-            codeType.setCodeSpace(element.getCodeSpace());
-        }
-        return codeType;
-    }
-
-    /**
+	/**
      * method parses the passed linearRing(generated thru XmlBEans) and returns
      * a string containing the coordinate values of the passed ring
      * 

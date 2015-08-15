@@ -89,9 +89,9 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
                 observation = observationTemplate.cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
                 if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
-                	observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
                 } else {
-                	observations.put(nextEntity.getDiscriminator(), observation);
+                    observations.put(nextEntity.getDiscriminator(), observation);
                 }
             }
             nextEntity.mergeValueToObservation(observation, getResponseFormat());
@@ -101,10 +101,11 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
     }
 
     private boolean checkForMergability(AbstractValue nextEntity) {
-		return !(nextEntity instanceof SweDataArrayValue);
-	}
+        return !(nextEntity instanceof SweDataArrayValue);
+    }
 
-	private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value,
+            SwesExtensions swesExtensions) {
         boolean newSession = false;
         try {
             if (session == null) {

@@ -70,8 +70,8 @@ public class SosInsertObservationOperatorV20 extends
 
     private static final String OPERATION_NAME = SosConstants.Operations.InsertObservation.name();
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
 
     public SosInsertObservationOperatorV20() {
         super(OPERATION_NAME, InsertObservationRequest.class);
@@ -121,7 +121,7 @@ public class SosInsertObservationOperatorV20 extends
         }
         exceptions.throwIfNotEmpty();
     }
-    
+
     /**
      * Check if the observation contains more than one sampling geometry
      * definitions.
@@ -136,7 +136,8 @@ public class SosInsertObservationOperatorV20 extends
             if (observation.isSetParameter()) {
                 int count = 0;
                 for (NamedValue<?> namedValue : observation.getParameter()) {
-                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE
+                            .equals(namedValue.getName().getHref())) {
                         count++;
                     }
                 }
@@ -146,7 +147,6 @@ public class SosInsertObservationOperatorV20 extends
                 }
             }
         }
-
     }
 
     private void checkAndAddOfferingToObservationConstallation(final InsertObservationRequest request)
@@ -188,10 +188,11 @@ public class SosInsertObservationOperatorV20 extends
                     for (final String offeringID : obsConstallation.getOfferings()) {
                         final Collection<String> allowedObservationTypes =
                                 cache.getAllowedObservationTypesForOffering(offeringID);
-                        if ((allowedObservationTypes == null || !allowedObservationTypes.contains(obsConstallation
-                                .getObservationType())) && !request.isSetExtensionSplitDataArrayIntoObservations()) {
-                            exceptions.add(new InvalidObservationTypeForOfferingException(obsConstallation
-                                    .getObservationType(), offeringID));
+                        if ((allowedObservationTypes == null
+                                || !allowedObservationTypes.contains(obsConstallation.getObservationType()))
+                                && !request.isSetExtensionSplitDataArrayIntoObservations()) {
+                            exceptions.add(new InvalidObservationTypeForOfferingException(
+                                    obsConstallation.getObservationType(), offeringID));
                         }
                     }
                 }
@@ -201,20 +202,18 @@ public class SosInsertObservationOperatorV20 extends
     }
 
     private boolean isSplitObservations(final SwesExtensions swesExtensions) {
-        return swesExtensions != null
-                && !swesExtensions.isEmpty()
-                && swesExtensions
-                        .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
+        return swesExtensions != null && !swesExtensions.isEmpty() && swesExtensions
+                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 
     private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation)
             throws OwsExceptionReport {
-		checkProcedureID(obsConstallation.getProcedure().getIdentifier(),
-				Sos2Constants.InsertObservationParams.procedure.name());
-		checkObservedProperty(obsConstallation.getObservableProperty().getIdentifier(),
-				Sos2Constants.InsertObservationParams.observedProperty.name());
-		checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(), 
-				Sos2Constants.InsertObservationParams.featureOfInterest);
+        checkProcedureID(obsConstallation.getProcedure().getIdentifier(),
+                Sos2Constants.InsertObservationParams.procedure.name());
+        checkObservedProperty(obsConstallation.getObservableProperty().getIdentifier(),
+                Sos2Constants.InsertObservationParams.observedProperty.name());
+        checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(),
+                Sos2Constants.InsertObservationParams.featureOfInterest);
     }
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)
@@ -226,10 +225,9 @@ public class SosInsertObservationOperatorV20 extends
                     Sos2Constants.InsertObservationParams.observationType.name());
             if (obsTypeFromValue != null
                     && !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
-                throw new NoApplicableCodeException()
-                        .withMessage(
-                                "The requested observation is invalid! The result element does not comply with the defined type (%s)!",
-                                sosObservation.getObservationConstellation().getObservationType());
+                throw new NoApplicableCodeException().withMessage(
+                        "The requested observation is invalid! The result element does not comply with the defined type (%s)!",
+                        sosObservation.getObservationConstellation().getObservationType());
             }
         } else if (!isSplitObservations) {
             sosObservation.getObservationConstellation().setObservationType(obsTypeFromValue);

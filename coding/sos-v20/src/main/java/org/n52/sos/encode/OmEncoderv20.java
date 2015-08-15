@@ -487,8 +487,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
             throw new NoApplicableCodeException().withMessage(
                     "Encoding of observation value of type \"%s\" failed. Result: %s",
                     observationValue.getValue() != null ? observationValue.getValue().getClass().getName()
-                            : observationValue.getValue(), encodedObj != null ? encodedObj.getClass().getName()
-                            : encodedObj);
+                            : observationValue.getValue(),
+                    encodedObj != null ? encodedObj.getClass().getName() : encodedObj);
         }
     }
 

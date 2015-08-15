@@ -82,10 +82,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-public class SplitMergeObservations implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
+public class SplitMergeObservations
+        implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
@@ -106,8 +106,8 @@ public class SplitMergeObservations implements
             for (String version : versions) {
                 for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
                     keys.add(new RequestResponseModifierKeyType(service, version, request));
-                    keys.add(new RequestResponseModifierKeyType(service, version, request, requestResponseMap
-                            .get(request)));
+                    keys.add(new RequestResponseModifierKeyType(service, version, request,
+                            requestResponseMap.get(request)));
                 }
             }
         }
@@ -122,18 +122,18 @@ public class SplitMergeObservations implements
     @Override
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request instanceof InsertObservationRequest) {
-        	splitObservations((InsertObservationRequest)request);
+            splitObservations((InsertObservationRequest) request);
         }
         return request;
     }
-    
+
     private void splitObservations(InsertObservationRequest request) throws OwsExceptionReport {
-    	if (request.isSetExtensionSplitDataArrayIntoObservations()) {
+        if (request.isSetExtensionSplitDataArrayIntoObservations()) {
             splitDataArrayIntoObservations(request);
         }
-	}
+    }
 
-	private void splitDataArrayIntoObservations(final InsertObservationRequest request) throws OwsExceptionReport {
+    private void splitDataArrayIntoObservations(final InsertObservationRequest request) throws OwsExceptionReport {
         LOGGER.debug("Start splitting observations. Count: {}", request.getObservations().size());
         final Collection<OmObservation> finalObservationCollection = Sets.newHashSet();
         for (final OmObservation observation : request.getObservations()) {
@@ -172,27 +172,27 @@ public class SplitMergeObservations implements
                     }
                     // result time
                     if (resultTimeIndex == -1) {
-                        // use phenomenon time if outer observation's resultTime value
+                        // use phenomenon time if outer observation's resultTime
+                        // value
                         // or nilReason is "template"
-                        if ((!observation.isSetResultTime()
-                                || observation.isTemplateResultTime())
+                        if ((!observation.isSetResultTime() || observation.isTemplateResultTime())
                                 && phenomenonTime instanceof TimeInstant) {
                             newObservation.setResultTime((TimeInstant) phenomenonTime);
                         } else {
                             newObservation.setResultTime(observation.getResultTime());
                         }
                     } else {
-                        newObservation.setResultTime(new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block
-                                .get(resultTimeIndex))));
+                        newObservation.setResultTime(
+                                new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block.get(resultTimeIndex))));
                     }
                     if (observation.isSetParameter()) {
-                    	newObservation.setParameter(observation.getParameter());
+                        newObservation.setParameter(observation.getParameter());
                     }
                     // value
-                    final ObservationValue<?> value =
-                            createObservationResultValue(observationConstellation.getObservationType(),
-                                    block.get(resultValueIndex), phenomenonTime, ((SweDataRecord) sweDataArrayValue
-                                            .getValue().getElementType()).getFields().get(resultValueIndex));
+                    final ObservationValue<?> value = createObservationResultValue(
+                            observationConstellation.getObservationType(), block.get(resultValueIndex), phenomenonTime,
+                            ((SweDataRecord) sweDataArrayValue.getValue().getElementType()).getFields()
+                                    .get(resultValueIndex));
                     newObservation.setValue(value);
                     finalObservationCollection.add(newObservation);
                 }
@@ -203,7 +203,7 @@ public class SplitMergeObservations implements
         }
         request.setObservation(Lists.newArrayList(finalObservationCollection));
     }
-    
+
     private ObservationValue<?> createObservationResultValue(final String observationType, final String valueString,
             final Time phenomenonTime, final SweField resultDefinitionField) throws OwsExceptionReport {
         ObservationValue<?> value = null;
@@ -274,15 +274,16 @@ public class SplitMergeObservations implements
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
         if (request instanceof GetObservationRequest && response instanceof GetObservationResponse) {
-            return mergeObservations((GetObservationRequest)request, (GetObservationResponse) response); 
+            return mergeObservations((GetObservationRequest) request, (GetObservationResponse) response);
         }
         if (response instanceof GetObservationResponse) {
             return mergeObservations((GetObservationResponse) response);
         }
         return response;
     }
-    
-    private AbstractServiceResponse mergeObservations(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport {
+
+    private AbstractServiceResponse mergeObservations(GetObservationRequest request, GetObservationResponse response)
+            throws OwsExceptionReport {
         boolean checkForMergeObservationsInResponse = checkForMergeObservationsInResponse(request);
         request.setMergeObservationValues(checkForMergeObservationsInResponse);
         boolean checkEncoderForMergeObservations = checkEncoderForMergeObservations(response);
@@ -291,10 +292,10 @@ public class SplitMergeObservations implements
                 mergeObservationsWithSameConstellation(response);
             }
             response.setMergeObservations(true);
-        }        
+        }
         return response;
     }
-    
+
     private void mergeObservationsWithSameConstellation(GetObservationResponse response) {
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
@@ -329,8 +330,8 @@ public class SplitMergeObservations implements
     private boolean checkEncoderForMergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         if (response.isSetResponseFormat()) {
             ObservationEncoder<XmlObject, OmObservation> encoder =
-                    (ObservationEncoder<XmlObject, OmObservation>) CodingHelper.getEncoder(
-                            response.getResponseFormat(), new OmObservation());
+                    (ObservationEncoder<XmlObject, OmObservation>) CodingHelper
+                            .getEncoder(response.getResponseFormat(), new OmObservation());
             if (encoder.shouldObservationsWithSameXBeMerged()) {
                 return true;
             }
@@ -348,7 +349,7 @@ public class SplitMergeObservations implements
         }
         return response;
     }
-    
+
     private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
         if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
             return true;
@@ -357,11 +358,10 @@ public class SplitMergeObservations implements
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {
-        return sosRequest.isSetExtensions()
-                && sosRequest.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
+        return sosRequest.isSetExtensions() && sosRequest.getExtensions()
+                .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
-    
+
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();
     }

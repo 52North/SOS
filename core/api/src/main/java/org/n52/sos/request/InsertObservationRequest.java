@@ -141,10 +141,9 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
     public InsertObservationResponse getResponse() throws OwsExceptionReport {
         return (InsertObservationResponse) new InsertObservationResponse().set(this);
     }
-    
+
     public boolean isSetExtensionSplitDataArrayIntoObservations() {
-        return isSetExtensions()
-                && getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
+        return isSetExtensions() && getExtensions()
+                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 }

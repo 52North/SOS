@@ -1,1 +1,4 @@
+*geolite/
+/data/
 /target/
+/elasticsearch/

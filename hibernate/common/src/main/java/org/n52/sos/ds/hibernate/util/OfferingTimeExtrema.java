@@ -28,40 +28,34 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import org.joda.time.DateTime;
+import com.google.common.base.Strings;
 
 /**
- * Holder for observation time extrema. Contains phenomenon, result and valid
- * time.
+ * Hold min and max obs time for offering
  * 
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.3.0
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
  *
  */
-public class ObservationTimeExtrema extends TimeExtrema {
+public class OfferingTimeExtrema extends TimeExtrema {
+    private String offering;
 
-    private DateTime minValidTime;
-
-    private DateTime maxValidTime;
-
-    public DateTime getMinValidTime() {
-        return minValidTime;
+    /**
+     * @return the offering
+     */
+    public String getOffering() {
+        return offering;
     }
 
-    public void setMinValidTime(DateTime minValidTime) {
-        this.minValidTime = minValidTime;
+    /**
+     * @param offering
+     *            the offering to set
+     */
+    public void setOffering(String offering) {
+        this.offering = offering;
     }
 
-    public DateTime getMaxValidTime() {
-        return maxValidTime;
+    public boolean isSetOffering() {
+        return !Strings.isNullOrEmpty(getOffering());
     }
-
-    public void setMaxValidTime(DateTime maxValidTime) {
-        this.maxValidTime = maxValidTime;
-    }
-
-    public boolean isSetValidTime() {
-        return getMinValidTime() != null && getMaxValidTime() != null;
-    }
-
 }

@@ -30,6 +30,8 @@ package org.n52.sos.ds.hibernate.util;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Strings;
+
 /**
  * Hold min and max obs time for procedure 
  * 
@@ -37,27 +39,25 @@ import org.joda.time.DateTime;
  * @since 4.0.0
  *
  */
-public class ProcedureTimeExtrema {
-    private DateTime minTime;
-    private DateTime maxTime;
-
-    public DateTime getMinTime() {
-        return minTime;
+public class ProcedureTimeExtrema extends TimeExtrema {
+    private String procedure;
+    
+    /**
+     * @return the procedure
+     */
+    public String getProcedure() {
+        return procedure;
     }
 
-    public void setMinTime(DateTime minTime) {
-        this.minTime = minTime;
-    }
-
-    public DateTime getMaxTime() {
-        return maxTime;
-    }
-
-    public void setMaxTime(DateTime maxTime) {
-        this.maxTime = maxTime;
+    /**
+     * @param procedure
+     *            the procedure to set
+     */
+    public void setProcedure(String procedure) {
+        this.procedure = procedure;
     }
     
-    public boolean isSetTimes() {
-        return getMinTime() != null && getMaxTime() != null;
+    public boolean isSetProcedure() {
+        return !Strings.isNullOrEmpty(getProcedure());
     }
 }

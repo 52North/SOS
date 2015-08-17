@@ -58,6 +58,7 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
         put(ServiceEventDataMapping.SR_SERVICE_FIELD, request.getOperationKey().getService());
         put(ServiceEventDataMapping.SR_VERSION_FIELD, request.getOperationKey().getVersion());
         put(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD, request.getOperationKey().getOperation());
+        put(ServiceEventDataMapping.SR_LANGUAGE_FIELD, request.getRequestedLanguage());
 
         // requestcontext
         IPAddress ip = locationUtil.resolveOriginalIpAddress(request.getRequestContext());

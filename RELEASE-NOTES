@@ -6,6 +6,19 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+    Release 52n-sensorweb-sos-4.3.3
+==================================
+
+  --- New features ---
+  
+  
+  --- Changes ---
+  
+  
+  --- Fixed issues ---
+  
+      * Issue #310: Invalid prefix in om:parameter of .../SamplingPoint
+ 
    Release 52n-sensorweb-sos-4.3.2
 ==================================
 

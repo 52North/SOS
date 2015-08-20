@@ -1,0 +1,30 @@
+{
+  "request": "GetObservation",
+  "service": "SOS",
+  "version": "2.0.0",
+  "procedure": "procedure1",
+  "offering": "offering1",
+  "observedProperty": "observedProperty1",
+  "featureOfInterest": "featureOfInterest1",
+  "spatialFilter": {
+    "equals": {
+      "ref": "om:featureOfInterest/sams:SF_SpatialSamplingFeature/sams:shape",
+      "value": {
+        "type": "Point",
+        "coordinates": [
+          51,
+          8
+        ]
+      }
+    }
+  },
+  "temporalFilter": {
+    "equals": {
+      "ref": "om:phenomenonTime",
+      "value": [
+        "2013-01-01T00:00:00+02:00",
+        "2013-01-01T01:00:00+02:00"
+      ]
+    }
+  }
+}

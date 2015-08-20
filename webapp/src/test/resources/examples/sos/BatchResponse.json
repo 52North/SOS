@@ -1,0 +1,121 @@
+{
+  "request": "Batch",
+  "version": "2.0.0",
+  "service": "SOS",
+  "responses": [
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/1",
+      "assignedOffering": "http://www.52north.org/test/offering/1"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/2",
+      "assignedOffering": "http://www.52north.org/test/offering/2"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/3",
+      "assignedOffering": "http://www.52north.org/test/offering/3"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/4",
+      "assignedOffering": "http://www.52north.org/test/offering/4"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/5",
+      "assignedOffering": "http://www.52north.org/test/offering/5"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/6",
+      "assignedOffering": "http://www.52north.org/test/offering/6"
+    },
+    {
+      "request": "InsertResultTemplate",
+      "version": "2.0.0",
+      "service": "SOS",
+      "acceptedTemplate": "http://www.52north.org/test/procedure/6/template/1"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/7",
+      "assignedOffering": "http://www.52north.org/test/offering/7"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/8",
+      "assignedOffering": "http://www.52north.org/test/offering/8"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    },
+    {
+      "request": "InsertSensor",
+      "version": "2.0.0",
+      "service": "SOS",
+      "assignedProcedure": "http://www.52north.org/test/procedure/developer",
+      "assignedOffering": "http://www.52north.org/test/offering/developer"
+    },
+    {
+      "request": "InsertObservation",
+      "version": "2.0.0",
+      "service": "SOS"
+    }
+  ]
+}

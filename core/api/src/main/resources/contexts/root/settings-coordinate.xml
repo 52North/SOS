@@ -13,7 +13,7 @@
     </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
         <property name="key" value="swe.coordinate.easting" />
-        <property name="title" value="SweCoordinate names for easting/longitude"" />
+        <property name="title" value="SweCoordinate names for easting/longitude" />
         <property name="description" value="Comma separated definitions for easting/longitude. By default, support easting, longitude, westing" />
         <property name="order" value="18.0" />
         <property name="optional" value="true" />

@@ -33,10 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.opengis.sensorML.x101.SystemDocument;
-import net.opengis.swe.x20.DataRecordDocument;
-import net.opengis.swe.x20.TextEncodingDocument;
-
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -113,10 +109,13 @@ import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import net.opengis.sensorML.x101.SystemDocument;
+import net.opengis.swe.x20.DataRecordDocument;
+import net.opengis.swe.x20.TextEncodingDocument;
 
 /**
  * Test various Insert*DAOs using a common set of test data with hierarchical
@@ -563,7 +562,7 @@ public class InsertDAOTest extends HibernateTestCase {
         obsVal.setValue(sweDataArrayValue);
         obs.setValue(obsVal);
         req.setObservation(Lists.newArrayList(obs));
-        insertObservationOperatorv2.receive(req);
+        insertObservationOperatorv2.receiveRequest(req);
         assertInsertionAftermathBeforeAndAfterCacheReload();
 
         checkObservation(OFFERING3, PROCEDURE3, OBSPROP3, TIME1, PROCEDURE3, OBSPROP3, FEATURE3, VAL1, TEMP_UNIT);

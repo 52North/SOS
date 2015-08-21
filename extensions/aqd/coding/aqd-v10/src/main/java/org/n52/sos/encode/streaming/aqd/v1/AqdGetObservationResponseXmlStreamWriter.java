@@ -272,8 +272,10 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
                 .getInstance().getXmlOptions());
         // TODO check for better solutions
+        xmlText = xmlText.replace("ns:ReferenceType", "gml:ReferenceType");
+        xmlText = xmlText.replace(":ns=\"http://www.opengis.net/gml/3.2\"", ":gml=\"http://www.opengis.net/gml/3.2\"");
         xmlText = xmlText.replace("ns:DataArrayPropertyType", "swe:DataArrayPropertyType");
-        xmlText = xmlText.replace(":ns=", ":swe=");
+        xmlText = xmlText.replace(":ns=\"http://www.opengis.net/swe/2.0\"", ":swe=\"http://www.opengis.net/swe/2.0\"");
         xmlText = xmlText.replace("<ns:", "<swe:");
         xmlText = xmlText.replace("</ns:", "</swe:");
         return xmlText;

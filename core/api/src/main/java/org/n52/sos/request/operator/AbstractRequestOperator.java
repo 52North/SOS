@@ -71,6 +71,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,7 +111,6 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         this(service, version, operationName, true, requestType);
     }
     
-    @SuppressWarnings("unchecked")
     public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
         this.operationName = operationName;
         this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName, defaultActive);
@@ -205,7 +205,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
             AbstractServiceResponse response) throws OwsExceptionReport {
         if (RequestResponseModifierRepository.getInstance().hasRequestResponseModifier(request, response)) {
-            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultMofifier =
+            List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> defaultModifier =
                     new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
             List<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>> remover =
                     new ArrayList<RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse>>();
@@ -218,7 +218,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
                 } else if (modifier.getFacilitator().isAdderRemover()) {
                     remover.add(modifier);
                 } else {
-                    defaultMofifier.add(modifier);
+                    defaultModifier.add(modifier);
                 }
 
             }
@@ -227,7 +227,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
                 modifier.modifyResponse(request, response);
             }
             // execute default
-            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultMofifier) {
+            for (RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> modifier : defaultModifier) {
                 modifier.modifyResponse(request, response);
             }
 
@@ -631,6 +631,33 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
     
+    protected void checkReservedCharacter(Collection<String> values, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(values, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(Collection<String> values, String parameterName) throws OwsExceptionReport {
+        CompositeOwsException exceptions = new CompositeOwsException();
+        for (String value : values) {
+            try {
+                checkReservedCharacter(value, parameterName);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+        }
+        exceptions.throwIfNotEmpty();
+    }
+
+    protected void checkReservedCharacter(String value, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(value, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(String value, String parameterName) throws OwsExceptionReport {
+        if (value != null && value.contains(Constants.COMMA_STRING)) {
+            throw new InvalidParameterValueException(parameterName, value)
+                    .withMessage("The value '%s' contains the reserved parameter ','", value);
+        }
+    }
+
     protected List<String> addChildProcedures(final Collection<String> procedures) {
         final Set<String> allProcedures = Sets.newHashSet();
         if (procedures != null) {

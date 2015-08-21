@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
+import org.n52.sos.util.Constants;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 
 /**
@@ -49,6 +50,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public static final String ID = "procedureId";
 
     public static final String DESCRIPTION_URL = "descriptionUrl";
+    
+    public static final String ALIAS = "proc";
+    
+    public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long procedureId;
 

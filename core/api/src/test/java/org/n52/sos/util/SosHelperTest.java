@@ -52,6 +52,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  */
 public class SosHelperTest extends SosHelper {
+	
     public static final int EPSG4326 = 4326;
 
     public static final int EPSG31466 = 31466;

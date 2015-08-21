@@ -111,6 +111,17 @@ public class RestBinding extends Binding implements Constructable {
     private DecoderRepository decoderRepository;
 
     private Producer<XmlOptions> xmlOptions;
+    
+    private HTTPUtils httpUtils;
+
+    public HTTPUtils getHttpUtils() {
+        return httpUtils;
+    }
+
+    @Inject
+    public void setHttpUtils(HTTPUtils httpUtils) {
+        this.httpUtils = httpUtils;
+    }
 
     public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
         this.xmlOptions = xmlOptions;
@@ -239,7 +250,7 @@ public class RestBinding extends Binding implements Constructable {
             this.eventBus.submit(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
-        HTTPUtils.writeObject(request, response, serviceResponse);
+        getHttpUtils().writeObject(request, response, serviceResponse);
     }
 
     private ServiceResponse encodeOwsExceptionReport(OwsExceptionReport oer) throws HTTPException, IOException {

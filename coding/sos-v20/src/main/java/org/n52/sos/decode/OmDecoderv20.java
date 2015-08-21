@@ -459,7 +459,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
         else {
             Object decodedObject = CodingHelper.decodeXmlObject(xbResult);
             if (decodedObject instanceof ObservationValue) {
-                return (ObservationValue) decodedObject;
+                return (ObservationValue<?>) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
                 SingleObservationValue<Double> result = new SingleObservationValue<Double>();
                 GmlMeasureType measureType = (GmlMeasureType) decodedObject;

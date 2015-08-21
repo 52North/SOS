@@ -35,6 +35,13 @@ package org.n52.sos.ogc.gml;
  * 
  */
 public class ReferenceType extends AbstractReferenceType {
+    
+    
+    /**
+     * constructor
+     */
+    public ReferenceType() {
+    }
 
     /**
      * constructor
@@ -44,6 +51,19 @@ public class ReferenceType extends AbstractReferenceType {
      */
     public ReferenceType(String href) {
         setHref(href);
+    }
+
+    /**
+     * constructor
+     * 
+     * @param href
+     *            Href
+     * @param title
+     *            Title
+     */
+    public ReferenceType(String href, String title) {
+        setHref(href);
+        setTitle(title);
     }
 
     @Override

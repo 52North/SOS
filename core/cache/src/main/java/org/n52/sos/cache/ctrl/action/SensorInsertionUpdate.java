@@ -30,6 +30,7 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Collection;
 
+import org.n52.sos.cache.ContentCache;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
@@ -87,54 +88,70 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         if (request.getProcedureDescription().isSetParentProcedures()) {
             cache.addParentProcedures(procedure, request.getProcedureDescription().getParentProcedures());
         }
-        // TODO child procedures
-
-        // offerings
-        for (SosOffering sosOffering : request.getAssignedOfferings()) {
-            if (sosOffering.isParentOffering()) {
-                cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
-            } else {
-                cache.addOffering(sosOffering.getIdentifier());
-                cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
-                if (sosOffering.isSetName()) {
-                    cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
-                    cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(), sosOffering.getOfferingName());
-                }
-            }
-
-            // add offering for procedure whether it's a normal offering or
-            // hidden child
-            cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());
-
-            // allowed observation types
-            cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(), request.getMetadata()
-                    .getObservationTypes());
-            // allowed featureOfInterest types
-            cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(), request
-                    .getMetadata().getFeatureOfInterestTypes());
-        }
-
-        // related features
-        final Collection<SwesFeatureRelationship> relatedFeatures = request.getRelatedFeatures();
-        if (CollectionHelper.isNotEmpty(relatedFeatures)) {
-            for (SwesFeatureRelationship relatedFeature : relatedFeatures) {
-                final String identifier = relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue();
-                for (SosOffering sosOffering : request.getAssignedOfferings()) {
-                    // TODO check if check for parent offering is necessary;
-                    cache.addRelatedFeatureForOffering(sosOffering.getIdentifier(), identifier);
-                }
-                cache.addRoleForRelatedFeature(identifier, relatedFeature.getRole());
-            }
-        }
-
-        // observable property relations
-        for (String observableProperty : request.getObservableProperty()) {
-            cache.addProcedureForObservableProperty(observableProperty, procedure);
-            cache.addObservablePropertyForProcedure(procedure, observableProperty);
+        // if the inserted procedure is not a type, add values to cache
+        if (!request.isType()) {
+            // TODO child procedures
+            // offerings
             for (SosOffering sosOffering : request.getAssignedOfferings()) {
-                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
-                cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
+                if (sosOffering.isParentOffering()) {
+                    cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
+                } else {
+                    cache.addOffering(sosOffering.getIdentifier());
+                    cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
+                    if (sosOffering.isSetName()) {
+                        cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
+                        cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(), sosOffering.getOfferingName());
+                    }
+                }
+    
+                // add offering for procedure whether it's a normal offering or
+                // hidden child
+                cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());
+    
+                // allowed observation types
+                cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(), request.getMetadata()
+                        .getObservationTypes());
+                // allowed featureOfInterest types
+                cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(), request
+                        .getMetadata().getFeatureOfInterestTypes());
             }
+    
+            // related features
+            final Collection<SwesFeatureRelationship> relatedFeatures = request.getRelatedFeatures();
+            if (CollectionHelper.isNotEmpty(relatedFeatures)) {
+                for (SwesFeatureRelationship relatedFeature : relatedFeatures) {
+                    final String identifier = relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue();
+                    for (SosOffering sosOffering : request.getAssignedOfferings()) {
+                        // TODO check if check for parent offering is necessary;
+                        cache.addRelatedFeatureForOffering(sosOffering.getIdentifier(), identifier);
+                    }
+                    cache.addRoleForRelatedFeature(identifier, relatedFeature.getRole());
+                }
+            }
+    
+            // observable property relations
+            for (String observableProperty : request.getObservableProperty()) {
+                cache.addProcedureForObservableProperty(observableProperty, procedure);
+                cache.addObservablePropertyForProcedure(procedure, observableProperty);
+                for (SosOffering sosOffering : request.getAssignedOfferings()) {
+                    cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
+                    cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
+                }
+            }
+        }
+        // procedure type/instance metadata
+        if (request.isType()) {
+            cache.addTypeInstanceProcedure(ContentCache.TypeInstance.TYPE, response.getAssignedProcedure());
+        } else {
+            cache.addTypeInstanceProcedure(ContentCache.TypeInstance.INSTANCE, response.getAssignedProcedure());
+        }
+        if (request.getProcedureDescription().isAggragation()) {
+            cache.addComponentAggregationProcedure(ContentCache.ComponentAggregation.AGGREGATION, response.getAssignedProcedure());
+        } else {
+            cache.addComponentAggregationProcedure(ContentCache.ComponentAggregation.COMPONENT, response.getAssignedProcedure());
+        }
+        if (request.getProcedureDescription().isSetTypeOf()) {
+            cache.addTypeOfProcedure(request.getProcedureDescription().getTypeOf().getTitle(), response.getAssignedProcedure());
         }
     }
 }

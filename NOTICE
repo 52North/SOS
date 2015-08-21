@@ -2,7 +2,7 @@ Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source Software
 
 Licensed under GNU General Public License, Version 2.0
 
-This project includes:
+This project includes: 
 
   52North Sensor Web Client PDF report structure under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
   52North SOS Integration and Compliance 2.0 under Eclipse Public License 1.0
@@ -155,9 +155,10 @@ This project includes:
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
-  JavaServer Pages(TM) API under CDDL 1.1 or GPL2 w/ CPE
   JavaScript SOS Client under GNU GENERAL PUBLIC LICENSE Version 2, June 1991
+  JavaServer Pages(TM) API under CDDL 1.1 or GPL2 w/ CPE
   Javassist under MPL 1.1 or LGPL 2.1 or Apache License 2.0
+  javax.inject under The Apache Software License, Version 2.0
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
@@ -224,18 +225,16 @@ This project includes:
   Spring Context under The Apache Software License, Version 2.0
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
+  Spring JDBC under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
+  Spring Transaction under The Apache Software License, Version 2.0
   Spring Web under The Apache Software License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
-  spring-aop under The Apache Software License, Version 2.0
-  spring-asm under The Apache Software License, Version 2.0
-  spring-jdbc under The Apache Software License, Version 2.0
   spring-security-acl under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  spring-tx under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
   sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0
@@ -244,7 +243,7 @@ This project includes:
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   xalan under The Apache Software License, Version 2.0
-  Xerces2 Java Parser under The Apache Software License, Version 2.0
+  Xerces2-j under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0

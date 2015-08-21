@@ -55,7 +55,6 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
-import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.ogc.sos.SosOffering;
@@ -152,8 +151,16 @@ public class SosInsertSensorOperatorV20 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        checkAndSetAssignedProcedureID(request);
-        checkAndSetAssignedOfferings(request);
+        try {
+        	 checkAndSetAssignedProcedureID(request);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+		try {
+			checkAndSetAssignedOfferings(request);
+		} catch (OwsExceptionReport owse) {
+			exceptions.add(owse);
+		}
         try {
             checkProcedureAndOfferingCombination(request);
         } catch (OwsExceptionReport owse) {
@@ -188,6 +195,7 @@ public class SosInsertSensorOperatorV20 extends
 //        } else {
             // TODO: check with existing and/or defined in outputs
         }
+        checkReservedCharacter(observableProperty, Sos2Constants.InsertSensorParams.observableProperty.name());
     }
 
     private void checkFeatureOfInterestTypes(Set<String> featureOfInterestTypes) throws OwsExceptionReport {
@@ -222,16 +230,18 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) {
+    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) throws OwsExceptionReport {
         if (request.getProcedureDescription().isSetIdentifier()) {
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
             request.setAssignedProcedureIdentifier(getDefaultProcedurePrefix()
                     + JavaHelper.generateID(request.getProcedureDescription().toString()));
         }
+        // check for reserved character
+        checkReservedCharacter(request.getAssignedProcedureIdentifier(), Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws InvalidOfferingParameterException {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
         SosContentCache cache = Configurator.getInstance().getCache();
 
@@ -254,6 +264,10 @@ public class SosInsertSensorOperatorV20 extends
             sosOfferings = new HashSet<SosOffering>(0);
             sosOfferings.add(new SosOffering(getDefaultOfferingPrefix() + request.getAssignedProcedureIdentifier()));
         }
+        // check for reserved character
+        for (SosOffering offering : sosOfferings) {
+        	checkReservedCharacter(offering.getIdentifier(), Sos2Constants.InsertSensorParams.offeringIdentifier);
+		}
         request.setAssignedOfferings(new ArrayList<SosOffering>(sosOfferings));
     }
 

@@ -38,41 +38,11 @@ import org.joda.time.DateTime;
  * @since 4.3.0
  *
  */
-public class ObservationTimeExtrema {
-
-    private DateTime minPhenTime;
-
-    private DateTime maxPhenTime;
-
-    private DateTime maxResultTime;
+public class ObservationTimeExtrema extends TimeExtrema {
 
     private DateTime minValidTime;
 
     private DateTime maxValidTime;
-
-    public DateTime getMinPhenTime() {
-        return minPhenTime;
-    }
-
-    public void setMinPhenTime(DateTime minPhenTime) {
-        this.minPhenTime = minPhenTime;
-    }
-
-    public DateTime getMaxPhenTime() {
-        return maxPhenTime;
-    }
-
-    public void setMaxPhenTime(DateTime maxPhenTime) {
-        this.maxPhenTime = maxPhenTime;
-    }
-
-    public DateTime getMaxResultTime() {
-        return maxResultTime;
-    }
-
-    public void setMaxResultTime(DateTime maxResultTime) {
-        this.maxResultTime = maxResultTime;
-    }
 
     public DateTime getMinValidTime() {
         return minValidTime;
@@ -88,14 +58,6 @@ public class ObservationTimeExtrema {
 
     public void setMaxValidTime(DateTime maxValidTime) {
         this.maxValidTime = maxValidTime;
-    }
-
-    public boolean isSetPhenomenonTime() {
-        return getMinPhenTime() != null && getMaxPhenTime() != null;
-    }
-
-    public boolean isSetResultTime() {
-        return getMaxResultTime() != null;
     }
 
     public boolean isSetValidTime() {

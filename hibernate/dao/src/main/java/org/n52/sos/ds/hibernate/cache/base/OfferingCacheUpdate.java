@@ -52,7 +52,6 @@ import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.dao.OfferingDAO.OfferingTimeExtrema;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -62,6 +61,7 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 
 import com.google.common.collect.Lists;
 
@@ -151,13 +151,13 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             getErrors().add(ce);
         }
         if (!CollectionHelper.isEmpty(offeringTimeExtrema)) {
-            for (Entry<String,OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
+            for (Entry<String, OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
                 String offeringId = entry.getKey();
                 OfferingTimeExtrema ote = entry.getValue();
-                cache.setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
-                cache.setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
-                cache.setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
-                cache.setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
+                getCache().setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
+                getCache().setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
+                getCache().setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
+                getCache().setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
             }
         }
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());

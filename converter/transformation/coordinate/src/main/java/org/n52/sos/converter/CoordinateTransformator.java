@@ -28,12 +28,14 @@
  */
 package org.n52.sos.converter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
@@ -41,12 +43,16 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.ogc.swe.SweConstants.AltitudeSweCoordinateName;
+import org.n52.iceland.ogc.swe.SweConstants.EastingSweCoordinateName;
+import org.n52.iceland.ogc.swe.SweConstants.NorthingSweCoordinateName;
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
@@ -77,6 +83,7 @@ import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.CoordinateSettingsProvider;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.ogc.swe.SweField;
@@ -104,7 +111,9 @@ import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SweHelper;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -122,15 +131,19 @@ import com.vividsolutions.jts.geom.Point;
  * @since 4.1.0
  *
  */
-public class CoordinateTransformator implements RequestResponseModifier {
+public class CoordinateTransformator implements RequestResponseModifier, Constructable {
 
     private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
     private static final int NOT_SET_EPSG = -1;
     private static final String EPSG = "EPSG";
     private static final String EPSG_PREFIX = EPSG + Constants.COLON_STRING;
     private static final String EPSG_PREFIX_DOUBLE_COLON = EPSG_PREFIX + Constants.COLON_STRING;
-
+    private Set<String> northingNames = Collections.emptySet();
+    private Set<String> eastingNames = Collections.emptySet();
+    private Set<String> altitudeNames = Collections.emptySet();
+    
     /**
+     * 
      * Get the keys
      *
      * @return Set of keys
@@ -470,14 +483,24 @@ public class CoordinateTransformator implements RequestResponseModifier {
         } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
-        if (position.isSetPosition()) {
-            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
-        } else if (position.isSetVector()) {
-            SweVector vector = position.getVector();
-            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        if (targetCrs != sourceCrs) {
+            if (position.isSetPosition()) {
+                position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+                position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
+            } else if (position.isSetVector()) {
+                SweVector vector = position.getVector();
+                vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+                vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
+            }
         }
+    }
+
+    @VisibleForTesting
+    protected String transformReferenceFrame(String referenceFrame, int sourceCrs, int targetCrs) {
+        if (sourceCrs > 0 && targetCrs > 0) {
+            return referenceFrame.replace(Integer.toString(sourceCrs), Integer.toString(targetCrs));
+        }
+        return referenceFrame;
     }
 
     /**
@@ -498,44 +521,55 @@ public class CoordinateTransformator implements RequestResponseModifier {
         SweCoordinate<?> altitude = null;
         Object easting = null;
         Object northing = null;
+        String eastingName = SweCoordinateName.easting.name();
+        String northingName = SweCoordinateName.northing.name();
         for (SweCoordinate<?> coordinate : position) {
-            if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
+            if (checkAltitudeName(coordinate.getName())) {
                 altitude = coordinate;
-            } else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
+            } else if (checkNorthingName(coordinate.getName())) {
+                northingName = coordinate.getName();
                 northing = coordinate.getValue().getValue();
-            } else if (SweCoordinateName.easting.name().equals(coordinate.getName())) {
+            } else if (checkEastingName(coordinate.getName())) {
+                eastingName = coordinate.getName();
                 easting = coordinate.getValue().getValue();
             }
         }
-        List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
-            coordinates.add(northing);
-            coordinates.add(easting);
-        } else {
-            coordinates.add(easting);
-            coordinates.add(northing);
+        if (easting != null && northing != null) {
+            List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
+                coordinates.add(northing);
+                coordinates.add(easting);
+            } else {
+                coordinates.add(easting);
+                coordinates.add(northing);
+            }
+            Geometry geom =
+                    getGeomtryHandler().transform(
+                            JTSHelper.createGeometryFromWKT(JTSHelper.createWKTPointFromCoordinateString(Joiner.on(
+                                    Constants.SPACE_STRING).join(coordinates)), sourceCrs), targetCrs);
+            double x, y;
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
+                x = geom.getCoordinate().y;
+                y = geom.getCoordinate().x;
+            } else {
+                x = geom.getCoordinate().x;
+                y = geom.getCoordinate().y;
+            }
+            SweQuantity yq =
+                    SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            SweQuantity xq =
+                    SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            ArrayList<SweCoordinate<?>> newPosition =
+                    Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(northingName, yq),
+                            new SweCoordinate<Double>(eastingName, xq));
+            if (altitude != null) {
+                newPosition.add(altitude);
+            }
+            return newPosition;
         }
-        Geometry geom =
-                getGeomtryHandler().transform(
-                        JTSHelper.createGeometryFromWKT(
-                                JTSHelper.createWKTPointFromCoordinateString(Joiner.on(Constants.SPACE_STRING).join(
-                                        coordinates)), sourceCrs), targetCrs);
-        double x, y;
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
-            x = geom.getCoordinate().y;
-            y = geom.getCoordinate().x;
-        } else {
-            x = geom.getCoordinate().x;
-            y = geom.getCoordinate().y;
-        }
-        SweQuantity yq =
-                SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        SweQuantity xq =
-                SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
+        return (List<SweCoordinate<?>>) position;
     }
 
     /**
@@ -550,6 +584,45 @@ public class CoordinateTransformator implements RequestResponseModifier {
      */
     private void transformLocation(SmlLocation location, int targetCrs) throws OwsExceptionReport {
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
+    }
+    
+    /**
+     * Check if the name is a defined altitude name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an altitude name
+     */
+    @VisibleForTesting
+    protected boolean checkAltitudeName(String name) {
+        return AltitudeSweCoordinateName.isAltitudeSweCoordinateName(name)
+                || hasAltitudeName(name);
+    }
+
+    /**
+     * Check if the name is a defined northing name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is a northing name
+     */
+    @VisibleForTesting
+    protected boolean checkNorthingName(String name) {
+        return NorthingSweCoordinateName.isNorthingSweCoordinateName(name)
+                || hasNorthingName(name);
+    }
+
+    /**
+     * Check if the name is a defined easting name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an easting name
+     */
+    @VisibleForTesting
+    protected boolean checkEastingName(String name) {
+        return EastingSweCoordinateName.isEastingSweCoordinateName(name)
+                || hasEastingName(name);
     }
 
     /**
@@ -575,14 +648,14 @@ public class CoordinateTransformator implements RequestResponseModifier {
                                     && !Integer.toString(targetCrs).equals(
                                             ((SweEnvelope) field.getElement()).getReferenceFrame())) {
                                 SweEnvelope envelope = (SweEnvelope) field.getElement();
+                                int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 Envelope transformEnvelope =
                                         getGeomtryHandler().transformEnvelope(envelope.toEnvelope(),
-                                                getCrsFromString(envelope.getReferenceFrame()), targetCrs);
+                                        		sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new SosEnvelope(transformEnvelope, targetCrs),
                                                 ProcedureDescriptionSettings.getInstance().getLatLongUom());
-                                newEnvelope.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix()
-                                        + targetCrs);
+                                newEnvelope.setReferenceFrame(transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
                                 field.setElement(newEnvelope);
                             }
                         }
@@ -680,18 +753,17 @@ public class CoordinateTransformator implements RequestResponseModifier {
      * @throws OwsExceptionReport
      *             If an error occurs when parsing
      */
-    private int getCrsFromString(String crs) throws OwsExceptionReport {
+    @VisibleForTesting
+    protected int getCrsFromString(String crs) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(crs) && !"NOT_SET".equalsIgnoreCase(crs)) {
-            if (crs.startsWith(Constants.URN) || crs.startsWith(Constants.HTTP)) {
-                crs =
-                        crs.replace(getConfiguration().getSrsNamePrefix(), Constants.EMPTY_STRING).replace(
-                                getConfiguration().getSrsNamePrefixSosV2(), Constants.EMPTY_STRING);
-            }
-            crs =
-                    crs.replace(EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
-                            EPSG_PREFIX, Constants.EMPTY_STRING);
+        	int lastIndex = 0;
+			if (crs.startsWith(Constants.HTTP)) {
+				lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
+			} else if (crs.indexOf(Constants.COLON_STRING) != -1) {
+				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
+			}
             try {
-                return Integer.valueOf(crs);
+                return Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
                 String parameter =
                         new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())
@@ -701,10 +773,7 @@ public class CoordinateTransformator implements RequestResponseModifier {
                         .causedBy(nfe)
                         .at(parameter)
                         .withMessage(
-                                "Error while parsing '%s' parameter! Parameter has to match "
-                                        + "pattern '%s', '%s', '%s','%s', with appended EPSG code number", parameter,
-                                getConfiguration().getSrsNamePrefix(), getConfiguration().getSrsNamePrefixSosV2(),
-                                EPSG_PREFIX_DOUBLE_COLON, EPSG_PREFIX);
+                                "Error while parsing '%s' parameter! Parameter has to contain EPSG code number", parameter);
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);
@@ -884,10 +953,110 @@ public class CoordinateTransformator implements RequestResponseModifier {
     private ServiceConfiguration getConfiguration() {
         return ServiceConfiguration.getInstance();
     }
+    
+    /**
+     * @return the northingNames
+     */
+    public Set<String> getNorthingNames() {
+        return northingNames;
+    }
+
+    /**
+     * @param northingNames
+     *            the northingNames to set
+     */
+    @Setting(CoordinateSettingsProvider.NORTHING_COORDINATE_NAME)
+    public void setNorthingNames(String northingNames) {
+        if (!Strings.isNullOrEmpty(northingNames)) {
+            this.northingNames = CollectionHelper.csvStringToSet(northingNames);
+        }
+    }
+
+    /**
+     * Check if northing names contains name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is defined.
+     */
+    public boolean hasNorthingName(String name) {
+        return check(getNorthingNames(), name);
+    }
+
+    /**
+     * @return the eastingNames
+     */
+    public Set<String> getEastingNames() {
+        return eastingNames;
+    }
+
+    /**
+     * @param eastingNames
+     *            the eastingNames to set
+     */
+    @Setting(CoordinateSettingsProvider.EASTING_COORDINATE_NAME)
+    public void setEastingNames(String eastingNames) {
+        if (!Strings.isNullOrEmpty(eastingNames)) {
+            this.eastingNames = CollectionHelper.csvStringToSet(eastingNames);
+        }
+    }
+
+    /**
+     * Check if easting names contains name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is defined.
+     */
+    public boolean hasEastingName(String name) {
+        return check(getEastingNames(), name);
+    }
+
+    /**
+     * @return the altitudeNames
+     */
+    public Set<String> getAltitudeNames() {
+        return altitudeNames;
+    }
+
+    /**
+     * @param altitudeNames
+     *            the altitudeNames to set
+     */
+    @Setting(CoordinateSettingsProvider.ALTITUDE_COORDINATE_NAME)
+    public void setAltitudeNames(String altitudeNames) {
+        if (!Strings.isNullOrEmpty(altitudeNames)) {
+            this.altitudeNames = CollectionHelper.csvStringToSet(altitudeNames);
+        }
+    }
+
+    /**
+     * Check if altitude names contains name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is defined.
+     */
+    public boolean hasAltitudeName(String name) {
+        return check(getAltitudeNames(), name);
+    }
+
+    private boolean check(Set<String> set, String name) {
+        for (String string : set) {
+            if (string.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return new RequestResponseModifierFacilitator();
+    }
+
+    @Override
+    public void init() {
     }
 
 }

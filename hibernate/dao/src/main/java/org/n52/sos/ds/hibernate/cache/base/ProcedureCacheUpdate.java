@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.internal.util.collections.CollectionHelper;
@@ -50,6 +51,7 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+import org.n52.sos.ds.hibernate.util.TimeExtrema;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -111,7 +113,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
-
+    
     @Override
     public void execute() {
         //single threaded updates
@@ -159,6 +161,25 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().addParentProcedures(procedureIdentifier, parentProcedures);
             }
         }
+        //time ranges
+        //TODO querying procedure time extrema in a single query is definitely faster for a properly
+        //     indexed Postgres db, but may not be true for all platforms. move back to multithreaded execution
+        //     in ProcedureCacheUpdateTask if needed
+        Map<String, TimeExtrema> procedureTimeExtrema = null;
+        try {
+            procedureTimeExtrema = procedureDAO.getProcedureTimeExtrema(getSession());
+        } catch (OwsExceptionReport ce) {
+            LOGGER.error("Error while querying offering time ranges!", ce);
+            getErrors().add(ce);
+        }
+        if (!CollectionHelper.isEmpty(procedureTimeExtrema)) {
+            for (Entry<String, TimeExtrema> entry : procedureTimeExtrema.entrySet()) {
+                String procedureId = entry.getKey();
+                TimeExtrema te = entry.getValue();
+                getCache().setMinPhenomenonTimeForProcedure(procedureId, te.getMinPhenomenonTime());
+                getCache().setMaxPhenomenonTimeForProcedure(procedureId, te.getMaxPhenomenonTime());
+            }
+        }
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
 
         //multi-threaded execution
@@ -167,4 +188,5 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         super.execute();
         LOGGER.debug("Finished executing ProcedureCacheUpdate (Multi-Threaded Tasks) ({})", getStopwatchResult());
     }
+
 }

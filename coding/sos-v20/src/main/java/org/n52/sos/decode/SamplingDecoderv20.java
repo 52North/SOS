@@ -33,18 +33,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import net.opengis.gml.x32.FeaturePropertyType;
-import net.opengis.gml.x32.ReferenceType;
-import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
-import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
-import net.opengis.samplingSpatial.x20.ShapeType;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -64,6 +54,8 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -74,11 +66,17 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.gml.x32.ReferenceType;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
+import net.opengis.samplingSpatial.x20.ShapeType;
+
 /**
  * @since 4.0.0
  *
  */
-public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
+public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingDecoderv20.class);
 
@@ -94,7 +92,6 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
             ConformanceClasses.OM_V2_SAMPLING_POINT, ConformanceClasses.OM_V2_SAMPLING_CURVE,
             ConformanceClasses.OM_V2_SAMPLING_SURFACE);
 
-    @SuppressWarnings("unchecked")
     private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
             SfConstants.NS_SF, SFSpatialSamplingFeatureDocument.class, SFSpatialSamplingFeatureType.class),
             CodingHelper.decoderKeysForElements(SfConstants.NS_SAMS, SFSpatialSamplingFeatureDocument.class,
@@ -140,19 +137,8 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     private AbstractFeature parseSpatialSamplingFeature(final SFSpatialSamplingFeatureType spatialSamplingFeature)
             throws OwsExceptionReport {
         final SamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
-        if (spatialSamplingFeature.getIdentifier() != null
-                && spatialSamplingFeature.getIdentifier().getStringValue() != null
-                && !spatialSamplingFeature.getIdentifier().getStringValue().isEmpty()) {
-            final CodeWithAuthority identifier =
-                    (CodeWithAuthority) CodingHelper.decodeXmlElement(spatialSamplingFeature.getIdentifier());
-            sosFeat.setIdentifier(identifier);
-        }
-        if (spatialSamplingFeature.getNameArray() != null) {
-            sosFeat.setName(getNames(spatialSamplingFeature));
-        }
-        if (spatialSamplingFeature.isSetDescription()) {
-            sosFeat.setDescription(spatialSamplingFeature.getDescription().getStringValue());
-        }
+        // parse identifier, names, description
+        parseAbstractFeatureType(spatialSamplingFeature, sosFeat);
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
         sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeatureArray()));
         sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));
@@ -167,19 +153,6 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
                 SFSpatialSamplingFeatureDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         featureDoc.setSFSpatialSamplingFeature(spatialSamplingFeature);
         return featureDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
-    }
-
-    private List<CodeType> getNames(final SFSpatialSamplingFeatureType spatialSamplingFeature)
-            throws OwsExceptionReport {
-        final int length = spatialSamplingFeature.getNameArray().length;
-        final List<CodeType> names = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            final Object decodedElement = CodingHelper.decodeXmlObject(spatialSamplingFeature.getNameArray(i));
-            if (decodedElement instanceof CodeType) {
-                names.add((CodeType) decodedElement);
-            }
-        }
-        return names;
     }
 
     private String getFeatureType(final ReferenceType type) {

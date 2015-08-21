@@ -63,12 +63,16 @@ import org.n52.iceland.ds.Datasource;
  *
  */
 public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDatasource {
+	
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
 
     protected static final String ORACLE_DRIVER_CLASS = "oracle.jdbc.OracleDriver";
 
     protected static final Pattern JDBC_THIN_URL_PATTERN = Pattern
             .compile("^jdbc:oracle:thin:@//([^:]+):([0-9]+)/(.*)$");
+    
+    protected static final Pattern JDBC_THIN_SID_URL_PATTERN = Pattern
+            .compile("^jdbc:oracle:thin:@([^:]+):([0-9]+):(.*)$");
 
     protected static final Pattern JDBC_OCI_URL_PATTERN = Pattern.compile("^jdbc:oracle:oci:@([^:]+):([0-9]+)/(.*)$");
 
@@ -98,7 +102,13 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
         THIN, OCI
     }
 
+    protected enum Syntax {
+        SID, SERVICE
+    }
+
     private Mode mode = Mode.OCI;
+    
+    private Syntax syntax = Syntax.SERVICE;
 
     public AbstractOracleDatasource() {
         super();
@@ -164,22 +174,12 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
-
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-
-            Iterator<Table> tables = config.getTableMappings();
-            List<String> names = new ArrayList<String>();
-            while (tables.hasNext()) {
-                Table table = tables.next();
-                if (table.isPhysicalTable()) {
-                    names.add(table.getName());
-                }
-            }
+            List<String> names = getQuotedSchemaTableNames(settings, conn);
 
             while (names.size() > 0) {
                 int clearedThisPass = 0;
@@ -266,7 +266,16 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
                 mode = Mode.THIN;
             }
         }
-
+        
+        try {
+            return driver.connect(toThinUrl(settings), props);
+        } catch (SQLException e) {
+            if (e.getMessage().contains("ORA-12514")) {
+                syntax = Syntax.SID;
+            } else {
+                throw e;
+            }
+        }
         return driver.connect(toThinUrl(settings), props);
     }
 
@@ -280,8 +289,13 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     }
 
     private String toThinUrl(Map<String, Object> settings) {
-        return String.format("jdbc:oracle:thin:@//%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
-                settings.get(DATABASE_KEY));
+        if (syntax.equals(Syntax.SERVICE)) {
+            return String.format("jdbc:oracle:thin:@//%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
+                    settings.get(DATABASE_KEY));
+        } else {
+            return String.format("jdbc:oracle:thin:@%s:%d:%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
+                    settings.get(DATABASE_KEY));
+        }
     }
 
     private String toOciUrl(Map<String, Object> settings) {
@@ -297,8 +311,13 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
             return new String[] { matcher.group(1), matcher.group(2), matcher.group(3) };
         } else {
             // If OCI fails, use THIN
-            matcher = JDBC_THIN_URL_PATTERN.matcher(url);
-            matcher.find();
+            // check for SID URL
+            matcher = JDBC_THIN_SID_URL_PATTERN.matcher(url);
+            if (matcher.find() && matcher.groupCount() != 3) {
+                // use SERVICE URL
+                matcher = JDBC_THIN_URL_PATTERN.matcher(url);
+                matcher.find();
+            }
             return new String[] { matcher.group(1), matcher.group(2), matcher.group(3) };
         }
     }

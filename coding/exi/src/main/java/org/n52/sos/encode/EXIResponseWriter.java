@@ -37,19 +37,24 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+
+import org.n52.sos.exi.EXIObject;
+import org.n52.sos.exi.EXISettings;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.utils.EXIUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
-
+import org.n52.iceland.binding.OwsExceptionReportHandler;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.exi.EXIObject;
-import org.n52.sos.exi.EXISettings;
 
 import com.google.common.base.Charsets;
 import com.siemens.ct.exi.EXIFactory;
@@ -82,9 +87,8 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
     public Set<ResponseWriterKey> getKeys() {
         return Collections.singleton(KEY);
     }
+    public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
 
-    @Override
-    public void write(EXIObject exiObject, OutputStream out, ResponseProxy responseProxy) throws IOException {
         byte[] bytes = getBytes(exiObject);
         try (InputStream is = new ByteArrayInputStream(bytes)) {
             EXIResult result = new EXIResult(this.exiFactory.get());
@@ -93,7 +97,7 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
             xmlReader.setContentHandler(result.getHandler());
             xmlReader.parse(new InputSource(is));
         } catch (EXIException | SAXException e) {
-            throw new IOException(e);
+        	throw new NoApplicableCodeException().causedBy(e);
         }
     }
 

@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -72,37 +73,13 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  * @since 4.0.0
  */
 public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants {
+	
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
-
-    // protected static final String USERNAME_TITLE = "User Name";
-    //
-    // protected static final String PASSWORD_TITLE = "Password";
-    //
-    // protected static final String DATABASE_KEY = "jdbc.database";
-    //
-    // protected static final String DATABASE_TITLE = "Database";
-    //
-    // protected static final String DATABASE_DESCRIPTION =
-    // "Set this to the name of the database you want to use for SOS.";
-    //
-    // protected static final String DATABASE_DEFAULT_VALUE = "sos";
-    //
-    // protected static final String HOST_KEY = "jdbc.host";
-    //
-    // protected static final String HOST_TITLE = "Host";
-    //
-    // protected static final String HOST_DESCRIPTION =
-    // "Set this to the IP/net location of the database server. The default value for is \"localhost\".";
-    //
-    // protected static final String HOST_DEFAULT_VALUE = "localhost";
-    //
-    // protected static final String PORT_KEY = "jdbc.port";
-    //
-    // protected static final String PORT_TITLE = "Database Port";
 
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
 
@@ -112,15 +89,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             "Qualifies unqualified table names with the given schema in generated SQL.";
 
     protected static final String SCHMEA_DEFAULT_VALUE = "public";
-
-//    protected static final String OLD_CONCEPT_TITLE = "Old observation concept";
-//
-//    protected static final String OLD_CONCEPT_DESCRIPTION =
-//            "Should the database support the old observation concept or exists the older database model? The new default concept uses series in the observation table instead of direct relations to procedure, observedProperty and featureOfInterest!";
-//
-//    protected static final String OLD_CONCEPT_KEY = "sos.oldConcept";
-//
-//    protected static final boolean OLD_CONCEPT_DEFAULT_VALUE = false;
 
     protected static final String DATABASE_CONCEPT_TITLE = "Database concept";
 
@@ -167,8 +135,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     private Dialect dialect;
 
-//    private final BooleanSettingDefinition oldConceptDefiniton = createOldConceptDefinition();
-
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
 
     private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
@@ -189,63 +155,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
     }
 
-    // /**
-    // * Create settings definition for username
-    // *
-    // * @return Username settings definition
-    // */
-    // protected StringSettingDefinition createUsernameDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
-    // .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
-    // }
-    //
-    // /**
-    // * Create settings definition for password
-    // *
-    // * @return Password settings definition
-    // */
-    // protected StringSettingDefinition createPasswordDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
-    // .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
-    // }
-    //
-    // /**
-    // * Create settings definition for database name
-    // *
-    // * @return database name settings definition
-    // */
-    // protected StringSettingDefinition createDatabaseDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
-    // .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
-    // .setDefaultValue(DATABASE_DEFAULT_VALUE);
-    // }
-    //
-    // /**
-    // * Create settings definition for host
-    // *
-    // * @return Host settings definition
-    // */
-    // protected StringSettingDefinition createHostDefinition() {
-    // return new
-    // StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
-    // .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
-    // .setDefaultValue(HOST_DEFAULT_VALUE);
-    // }
-    //
-    // /**
-    // * Create settings definition for port
-    // *
-    // * @return Port settings definition
-    // */
-    // protected IntegerSettingDefinition createPortDefinition() {
-    // return new
-    // IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
-    // .setKey(PORT_KEY).setTitle(PORT_TITLE);
-    // }
-
     /**
      * Create settings definition for database schema
      *
@@ -256,18 +165,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setKey(SCHEMA_KEY).setTitle(SCHEMA_TITLE).setDescription(SCHEMA_DESCRIPTION)
                 .setDefaultValue(SCHMEA_DEFAULT_VALUE);
     }
-
-    // /**
-    // * Create settings definition for old concept
-    // *
-    // * @return Old concept settings definition
-    // */
-    // protected BooleanSettingDefinition createOldConceptDefinition() {
-    // return new
-    // BooleanSettingDefinition().setDefaultValue(OLD_CONCEPT_DEFAULT_VALUE).setTitle(OLD_CONCEPT_TITLE)
-    // .setDescription(OLD_CONCEPT_DESCRIPTION).setGroup(ADVANCED_GROUP)
-    // .setOrder(SettingDefinitionProvider.ORDER_2).setKey(OLD_CONCEPT_KEY);
-    // }
 
     protected ChoiceSettingDefinition createDatabaseConceptDefinition() {
         ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
@@ -311,30 +208,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
                 .setOrder(5).setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
-
-    // /**
-    // * Create settings definition for minimal connection pool size
-    // *
-    // * @return Minimal connection pool size settings definition
-    // */
-    // protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-    // return new
-    // IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
-    // .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
-    // .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
-    // }
-    //
-    // /**
-    // * Create settings definition for maximal connection pool size
-    // *
-    // * @return Maximal connection pool size settings definition
-    // */
-    // protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-    // return new
-    // IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
-    // .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
-    // .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
-    // }
 
     /**
      * Create settings definition for JDBC batch size
@@ -391,6 +264,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     private void addDatabaseConceptMappingDirectory(CustomConfiguration config, Map<String, Object> settings) {
         String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
+        if (concept == null || concept.isEmpty()) {
+        	String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+        	concept = DatabaseConcept.SERIES_CONCEPT.name();
+        	if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+        		concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+        	} else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+        		concept = DatabaseConcept.OLD_CONCEPT.name();
+        	}
+        	LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+        			+ " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+        			databaseConceptDefinition.getKey(),
+        			HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+        			concept,
+        			databaseConceptDefinition.getKey(),
+        			concept);
+        }
         switch (DatabaseConcept.valueOf(concept)) {
         case SERIES_CONCEPT:
             config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_CONCEPT_BASE_PATH));
@@ -803,21 +692,12 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return multilingualismDefinition;
     }
 
-    /**
-     * Concatenate two arrays
-     *
-     * @param first
-     *            First array
-     * @param rest
-     *            The other array
-     * @return Concatenated array
-     */
-    private <T> T[] concat(T[] first, T[]... rest) {
-        int length = first.length;
+    private String[] concat(String[] first, String[]... rest) {
+		int length = first.length;
         for (int i = 0; i < rest.length; ++i) {
             length += rest[i].length;
         }
-        T[] result = Arrays.copyOf(first, length);
+        String[] result = Arrays.copyOf(first, length);
         int offset = first.length;
         for (int i = 0; i < rest.length; ++i) {
             System.arraycopy(rest[i], 0, result, offset, rest[i].length);
@@ -965,6 +845,28 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected String[] checkDropSchema(String[] dropSchema) {
         return checkScriptForGeneratedAndDuplicatedEntries(dropSchema);
     }
+    
+    /**
+     * Create quoted string with schema.table
+     * @param settings Datasource settings
+     * @param conn SQL connection
+     * @return {@link List} with table names
+     * @throws SQLException If an error occurs while checking catalog/schema
+     */
+    protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn) throws SQLException {
+    	String catalog = checkCatalog(conn);
+        String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+        CustomConfiguration config = getConfig(settings);
+        Iterator<Table> tables = config.getTableMappings();
+        List<String> names = new LinkedList<String>();
+        while (tables.hasNext()) {
+            Table table = tables.next();
+            if (table.isPhysicalTable()) {
+                names.add(table.getQualifiedName(getDialectInternal(), catalog, schema));
+            }
+        }
+        return names;
+    }
 
     @Override
     public DatasourceCallback getCallback() {
@@ -1001,16 +903,6 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @return the driver class.
      */
     protected abstract String getDriverClass();
-
-    // /**
-    // * Parse datasource properties to map
-    // *
-    // * @param current
-    // * Current datasource properties
-    // * @return Map with String key and Object value
-    // */
-    // protected abstract Map<String, Object>
-    // parseDatasourceProperties(Properties current);
 
     /**
      * Check if the required extensions are available

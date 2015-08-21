@@ -57,7 +57,7 @@ public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOpe
         addProcedureParameter(opsMeta);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
-                    this.procedureDescriptionFormatRepository.getSupportedProcedureDescriptionFormats(service, version));
+                    this.procedureDescriptionFormatRepository.getSupportedTransactionalProcedureDescriptionFormats(service, version));
         }
         opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
     }

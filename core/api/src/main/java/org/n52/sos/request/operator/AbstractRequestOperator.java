@@ -71,6 +71,7 @@ import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.Constants;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
@@ -286,7 +287,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest<?> request,
             AbstractServiceResponse response) throws OwsExceptionReport {
         if (this.requestResponseModifierRepository.hasRequestResponseModifier(request, response)) {
-            List<RequestResponseModifier> defaultMofifier = new ArrayList<>();
+            List<RequestResponseModifier> defaultModifier = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
             List<RequestResponseModifier> merger = new ArrayList<>();
             for (RequestResponseModifier modifier : this.requestResponseModifierRepository.getRequestResponseModifier(request, response)) {
@@ -295,7 +296,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 } else if (modifier.getFacilitator().isAdderRemover()) {
                     remover.add(modifier);
                 } else {
-                    defaultMofifier.add(modifier);
+                    defaultModifier.add(modifier);
                 }
 
             }
@@ -304,7 +305,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
                 modifier.modifyResponse(request, response);
             }
             // execute default
-            for (RequestResponseModifier modifier : defaultMofifier) {
+            for (RequestResponseModifier modifier : defaultModifier) {
                 modifier.modifyResponse(request, response);
             }
 
@@ -653,6 +654,33 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             throw new MissingParameterValueException(parameterName);
         } else if (!getCache().hasResultTemplate(resultTemplate)) {
             throw new InvalidParameterValueException(parameterName, resultTemplate);
+        }
+    }
+
+    protected void checkReservedCharacter(Collection<String> values, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(values, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(Collection<String> values, String parameterName) throws OwsExceptionReport {
+        CompositeOwsException exceptions = new CompositeOwsException();
+        for (String value : values) {
+            try {
+                checkReservedCharacter(value, parameterName);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+        }
+        exceptions.throwIfNotEmpty();
+    }
+
+    protected void checkReservedCharacter(String value, Enum<?> parameterName) throws OwsExceptionReport {
+        checkReservedCharacter(value, parameterName.name());
+    }
+
+    protected void checkReservedCharacter(String value, String parameterName) throws OwsExceptionReport {
+        if (value != null && value.contains(Constants.COMMA_STRING)) {
+            throw new InvalidParameterValueException(parameterName, value)
+                    .withMessage("The value '%s' contains the reserved parameter ','", value);
         }
     }
 

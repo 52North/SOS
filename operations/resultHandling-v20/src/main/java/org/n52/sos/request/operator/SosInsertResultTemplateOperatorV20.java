@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
@@ -122,6 +121,13 @@ public class SosInsertResultTemplateOperatorV20
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
+        // check for observed character of featureOfInterest
+        try {
+	        checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(), 
+	        		Sos2Constants.InsertResultTemplateParams.featureOfInterest);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
         String identifier = request.getObservationTemplate().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
         if (identifier.isEmpty()) {
             exceptions.add(new MissingParameterValueException(
@@ -188,7 +194,8 @@ public class SosInsertResultTemplateOperatorV20
         if (getCache().hasResultTemplate(identifier)) {
             throw new DuplicateIdentifierException("resultTemplate", identifier);
         }
-
+        // check for reserved character
+        checkReservedCharacter(identifier, "resultTemplateIdentifier");
     }
 
     private void checkObservationType(InsertResultTemplateRequest request) throws OwsExceptionReport {

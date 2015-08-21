@@ -36,52 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.sensorml.x20.AbstractPhysicalProcessType;
-import net.opengis.sensorml.x20.AbstractProcessType;
-import net.opengis.sensorml.x20.AbstractProcessType.FeaturesOfInterest;
-import net.opengis.sensorml.x20.AbstractProcessType.Inputs;
-import net.opengis.sensorml.x20.AbstractProcessType.Outputs;
-import net.opengis.sensorml.x20.AggregateProcessDocument;
-import net.opengis.sensorml.x20.AggregateProcessPropertyType;
-import net.opengis.sensorml.x20.AggregateProcessType;
-import net.opengis.sensorml.x20.CapabilityListType;
-import net.opengis.sensorml.x20.CapabilityListType.Capability;
-import net.opengis.sensorml.x20.CharacteristicListType;
-import net.opengis.sensorml.x20.CharacteristicListType.Characteristic;
-import net.opengis.sensorml.x20.ClassifierListPropertyType;
-import net.opengis.sensorml.x20.ClassifierListType;
-import net.opengis.sensorml.x20.ClassifierListType.Classifier;
-import net.opengis.sensorml.x20.ComponentListPropertyType;
-import net.opengis.sensorml.x20.ComponentListType;
-import net.opengis.sensorml.x20.ComponentListType.Component;
-import net.opengis.sensorml.x20.ContactListType;
-import net.opengis.sensorml.x20.DescribedObjectType;
-import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
-import net.opengis.sensorml.x20.DescribedObjectType.Characteristics;
-import net.opengis.sensorml.x20.DocumentListPropertyType;
-import net.opengis.sensorml.x20.DocumentListType;
-import net.opengis.sensorml.x20.FeatureListType;
-import net.opengis.sensorml.x20.IdentifierListPropertyType;
-import net.opengis.sensorml.x20.IdentifierListType;
-import net.opengis.sensorml.x20.IdentifierListType.Identifier;
-import net.opengis.sensorml.x20.InputListType;
-import net.opengis.sensorml.x20.InputListType.Input;
-import net.opengis.sensorml.x20.ObservablePropertyType;
-import net.opengis.sensorml.x20.OutputListType;
-import net.opengis.sensorml.x20.OutputListType.Output;
-import net.opengis.sensorml.x20.PhysicalComponentDocument;
-import net.opengis.sensorml.x20.PhysicalComponentPropertyType;
-import net.opengis.sensorml.x20.PhysicalComponentType;
-import net.opengis.sensorml.x20.PhysicalSystemDocument;
-import net.opengis.sensorml.x20.PhysicalSystemPropertyType;
-import net.opengis.sensorml.x20.PhysicalSystemType;
-import net.opengis.sensorml.x20.PositionUnionPropertyType;
-import net.opengis.sensorml.x20.ProcessMethodType;
-import net.opengis.sensorml.x20.SimpleProcessDocument;
-import net.opengis.sensorml.x20.SimpleProcessPropertyType;
-import net.opengis.sensorml.x20.SimpleProcessType;
-import net.opengis.sensorml.x20.TermType;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
@@ -157,6 +111,52 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import net.opengis.sensorml.x20.AbstractPhysicalProcessType;
+import net.opengis.sensorml.x20.AbstractProcessType;
+import net.opengis.sensorml.x20.AbstractProcessType.FeaturesOfInterest;
+import net.opengis.sensorml.x20.AbstractProcessType.Inputs;
+import net.opengis.sensorml.x20.AbstractProcessType.Outputs;
+import net.opengis.sensorml.x20.AggregateProcessDocument;
+import net.opengis.sensorml.x20.AggregateProcessPropertyType;
+import net.opengis.sensorml.x20.AggregateProcessType;
+import net.opengis.sensorml.x20.CapabilityListType;
+import net.opengis.sensorml.x20.CapabilityListType.Capability;
+import net.opengis.sensorml.x20.CharacteristicListType;
+import net.opengis.sensorml.x20.CharacteristicListType.Characteristic;
+import net.opengis.sensorml.x20.ClassifierListPropertyType;
+import net.opengis.sensorml.x20.ClassifierListType;
+import net.opengis.sensorml.x20.ClassifierListType.Classifier;
+import net.opengis.sensorml.x20.ComponentListPropertyType;
+import net.opengis.sensorml.x20.ComponentListType;
+import net.opengis.sensorml.x20.ComponentListType.Component;
+import net.opengis.sensorml.x20.ContactListType;
+import net.opengis.sensorml.x20.DescribedObjectType;
+import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
+import net.opengis.sensorml.x20.DescribedObjectType.Characteristics;
+import net.opengis.sensorml.x20.DocumentListPropertyType;
+import net.opengis.sensorml.x20.DocumentListType;
+import net.opengis.sensorml.x20.FeatureListType;
+import net.opengis.sensorml.x20.IdentifierListPropertyType;
+import net.opengis.sensorml.x20.IdentifierListType;
+import net.opengis.sensorml.x20.IdentifierListType.Identifier;
+import net.opengis.sensorml.x20.InputListType;
+import net.opengis.sensorml.x20.InputListType.Input;
+import net.opengis.sensorml.x20.ObservablePropertyType;
+import net.opengis.sensorml.x20.OutputListType;
+import net.opengis.sensorml.x20.OutputListType.Output;
+import net.opengis.sensorml.x20.PhysicalComponentDocument;
+import net.opengis.sensorml.x20.PhysicalComponentPropertyType;
+import net.opengis.sensorml.x20.PhysicalComponentType;
+import net.opengis.sensorml.x20.PhysicalSystemDocument;
+import net.opengis.sensorml.x20.PhysicalSystemPropertyType;
+import net.opengis.sensorml.x20.PhysicalSystemType;
+import net.opengis.sensorml.x20.PositionUnionPropertyType;
+import net.opengis.sensorml.x20.ProcessMethodType;
+import net.opengis.sensorml.x20.SimpleProcessDocument;
+import net.opengis.sensorml.x20.SimpleProcessPropertyType;
+import net.opengis.sensorml.x20.SimpleProcessType;
+import net.opengis.sensorml.x20.TermType;
 
 
 /**
@@ -1073,21 +1073,27 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         final List<Characteristics> characteristicsList =
                 Lists.newArrayListWithExpectedSize(smlCharacteristics.size());
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
-            if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
-                Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
-                CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
-                if (sosSMLCharacteristics.isSetCharacteristics()) {
-                    for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
-                        if (characteristic.isSetAbstractDataComponent()) {
-                            XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, characteristic.getAbstractDataComponent());
-                            Characteristic c = characteristicList.addNewCharacteristic();
-                            c.setName(NcNameResolver.fixNcName(characteristic.getName()));
-                            XmlObject substituteElement =
-                                    XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
-                            substituteElement.set(encodeObjectToXml);
-                        }
+        	Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
+            CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
+            if (sosSMLCharacteristics.isSetCharacteristics()) {
+            	for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
+            		Characteristic c = characteristicList.addNewCharacteristic();
+            		c.setName(NcNameResolver.fixNcName(characteristic.getName()));
+            		if (characteristic.isSetAbstractDataComponent()) {
+                        XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, characteristic.getAbstractDataComponent());
+                        XmlObject substituteElement =
+                                XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
+                        substituteElement.set(encodeObjectToXml);
+                    } else if (characteristic.isSetHref()) {
+                    	c.setHref(characteristic.getHref());
+                    	if (characteristic.isSetTitle()) {
+                    		c.setTitle(characteristic.getTitle());
+                    	}
                     }
-                } else if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
+                }
+            }
+            if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
+                if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                     for (SweAbstractDataComponent component : sosSMLCharacteristics.getAbstractDataComponents()) {
                         XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, component);
                         Characteristic c = characteristicList.addNewCharacteristic();
@@ -1097,8 +1103,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                         substituteElement.set(encodeObjectToXml);
                     }
                 }
-                characteristicsList.add(xbCharacteristics);
-            }
+                
+            } 
+            characteristicsList.add(xbCharacteristics);
         }
         return characteristicsList.toArray(new Characteristics[characteristicsList.size()]);
     }

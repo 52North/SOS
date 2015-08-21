@@ -35,28 +35,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.opengis.gml.AbstractFeatureCollectionType;
-import net.opengis.gml.AbstractRingPropertyType;
-import net.opengis.gml.AbstractRingType;
-import net.opengis.gml.CodeType;
-import net.opengis.gml.DirectPositionListType;
-import net.opengis.gml.DirectPositionType;
-import net.opengis.gml.EnvelopeType;
-import net.opengis.gml.FeatureCollectionDocument2;
-import net.opengis.gml.FeaturePropertyType;
-import net.opengis.gml.LineStringType;
-import net.opengis.gml.LinearRingType;
-import net.opengis.gml.MeasureType;
-import net.opengis.gml.PointType;
-import net.opengis.gml.PolygonType;
-import net.opengis.gml.ReferenceType;
-import net.opengis.gml.TimeIndeterminateValueType;
-import net.opengis.gml.TimeInstantDocument;
-import net.opengis.gml.TimeInstantType;
-import net.opengis.gml.TimePeriodDocument;
-import net.opengis.gml.TimePeriodType;
-import net.opengis.gml.TimePositionType;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlRuntimeException;
@@ -104,6 +82,28 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.PolygonExtracter;
+
+import net.opengis.gml.AbstractFeatureCollectionType;
+import net.opengis.gml.AbstractRingPropertyType;
+import net.opengis.gml.AbstractRingType;
+import net.opengis.gml.CodeType;
+import net.opengis.gml.DirectPositionListType;
+import net.opengis.gml.DirectPositionType;
+import net.opengis.gml.EnvelopeType;
+import net.opengis.gml.FeatureCollectionDocument2;
+import net.opengis.gml.FeaturePropertyType;
+import net.opengis.gml.LineStringType;
+import net.opengis.gml.LinearRingType;
+import net.opengis.gml.MeasureType;
+import net.opengis.gml.PointType;
+import net.opengis.gml.PolygonType;
+import net.opengis.gml.ReferenceType;
+import net.opengis.gml.TimeIndeterminateValueType;
+import net.opengis.gml.TimeInstantDocument;
+import net.opengis.gml.TimeInstantType;
+import net.opengis.gml.TimePeriodDocument;
+import net.opengis.gml.TimePeriodType;
+import net.opengis.gml.TimePositionType;
 
 /**
  * @since 4.0.0

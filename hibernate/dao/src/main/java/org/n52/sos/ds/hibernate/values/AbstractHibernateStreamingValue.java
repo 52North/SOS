@@ -41,6 +41,7 @@ import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
+import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
@@ -96,18 +97,29 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValue nextEntity = nextEntity();
+            boolean mergableObservationValue = checkForMergability(nextEntity);
             OmObservation observation = null;
-            if (observations.containsKey(nextEntity.getDiscriminator())) {
+            if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
                 observation = observations.get(nextEntity.getDiscriminator());
             } else {
                 observation = observationTemplate.cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
-                observations.put(nextEntity.getDiscriminator(), observation);
+                if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
+                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                } else {
+                    observations.put(nextEntity.getDiscriminator(), observation);
+                }
             }
             nextEntity.mergeValueToObservation(observation, getResponseFormat());
             sessionHolder.getSession().evict(nextEntity);
         }
         return observations.values();
+    }
+
+
+
+    private boolean checkForMergability(AbstractValue nextEntity) {
+        return !(nextEntity instanceof SweDataArrayValue);
     }
 
     private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, Extensions extensions) {

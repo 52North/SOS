@@ -49,6 +49,7 @@ import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.CompositeOwsException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
@@ -141,8 +142,9 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
             update.execute();
 
             logCacheLoadTime(cacheUpdateStartTime);
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
+        } catch (Exception e) {
+            LOGGER.error("Error while updating ContentCache!", e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
             this.sessionHolder.returnSession(session);
         }
@@ -175,8 +177,9 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
 
         try {
             update.execute();
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
+        } catch (Exception e) {
+            LOGGER.error("Error while updating ContentCache!", e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
             this.sessionHolder.returnSession(session);
         }

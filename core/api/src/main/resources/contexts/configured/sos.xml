@@ -24,9 +24,6 @@
     <bean id="geometryHandler"
           class="org.n52.sos.util.GeometryHandler" />
           
-    <bean id="coordinateHelper"
-          class="CollectionHelper.CoordinateHelper" />
-
     <bean id="encoderRepository"
           class="org.n52.sos.coding.encode.SosEncoderRepository" />
 

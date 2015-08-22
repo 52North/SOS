@@ -40,8 +40,15 @@ import org.n52.sos.service.Configurator;
  * 
  */
 public class HibernateSessionHolder {
+    
+    private final ConnectionProvider connectionProvider;
 
     public HibernateSessionHolder() {
+        this.connectionProvider = Configurator.getInstance().getDataConnectionProvider();
+    }
+    
+    public HibernateSessionHolder(ConnectionProvider connectionProvider) {
+        this.connectionProvider = connectionProvider;
     }
     
     public static Session getSession(Object connection) throws OwsExceptionReport {
@@ -64,6 +71,9 @@ public class HibernateSessionHolder {
     }
     
     private ConnectionProvider getConnectionProvider() {
-        return Configurator.getInstance().getDataConnectionProvider();
+        if (Configurator.getInstance() != null) {
+            return Configurator.getInstance().getDataConnectionProvider();
+        }
+        return connectionProvider;
     }
 }

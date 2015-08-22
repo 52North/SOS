@@ -885,6 +885,13 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         final SmlIo<?> sosIo = new SmlIo();
         sosIo.setIoName(xbIoCompPropType.getName());
         XmlObject toDecode = null;
+        if (xbIoCompPropType.isSetHref()) {
+            sosIo.setHref(xbIoCompPropType.getHref());
+            if (xbIoCompPropType.isSetTitle()) {
+                sosIo.setTitle(xbIoCompPropType.getTitle());
+            }
+            return sosIo;
+        }
         if (xbIoCompPropType.isSetBoolean()) {
             toDecode = xbIoCompPropType.getBoolean();
         } else if (xbIoCompPropType.isSetCategory()) {

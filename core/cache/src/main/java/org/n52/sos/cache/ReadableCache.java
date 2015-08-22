@@ -30,6 +30,7 @@ package org.n52.sos.cache;
 
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -37,7 +38,10 @@ import org.joda.time.DateTime;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.request.ProcedureRequestSettings;
 import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Sets;
 
 /**
  * {@code ContentCache} implementation that offers a readable interface to the
@@ -100,6 +104,17 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public Set<String> getOfferingsForProcedure(final String procedure) {
         return copyOf(getOfferingsForProceduresMap().get(procedure));
+    }
+    
+    @Override
+    public Set<String> getOfferingsForProcedures(Set<String> procedures) {
+        HashSet<String> offerings = Sets.newHashSet();
+        if (procedures != null) {
+            for (String procedure : procedures) {
+                offerings.addAll(getOfferingsForProcedure(procedure));   
+            }
+        }
+        return offerings;
     }
 
     @Override
@@ -597,5 +612,56 @@ public class ReadableCache extends AbstractContentCache {
     		return getOfferingHumanReadableNameForIdentifier().get(identifier);
     	}
     	return identifier;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<String> getTransactionalObservationProcedures() {
+        return CollectionHelper.union(copyOf(getHiddenChildProceduresForOfferingsMap().values()), copyOf(getProceduresForOfferingsMap().values()));
+    }
+    
+    @Override
+    public boolean hasTransactionalObservationProcedure(String procedureID) {
+        return getTransactionalObservationProcedures().contains(procedureID);
+    }
+
+    @Override
+    public Set<String> getQueryableProcedures() {
+        Set<String> procedures = getProcedures();
+        // allowQueryingForInstancesOnly
+        if (ProcedureRequestSettings.getInstance().isAllowQueryingForInstancesOnly()) {
+            procedures = CollectionHelper.conjunctCollectionsToSet(procedures, getTypeInstanceProcedure(TypeInstance.INSTANCE));
+        }
+        // showOnlyAggregatedProcedures
+        if (ProcedureRequestSettings.getInstance().isShowOnlyAggregatedProcedures()) {
+            procedures = CollectionHelper.conjunctCollectionsToSet(procedures, getComponentAggregationProcedure(ComponentAggregation.AGGREGATION));
+            
+        }
+        return procedures;
+    }
+
+    @Override
+    public boolean hasQueryableProcedure(String procedureID) {
+        return getQueryableProcedures().contains(procedureID);
+    }
+
+    @Override
+    public Set<String> getTypeInstanceProcedure(TypeInstance typeInstance) {
+        return copyOf(getTypeIntanceProcedureMap().get(typeInstance));
+    }
+
+    @Override
+    public Set<String> getComponentAggregationProcedure(ComponentAggregation componentAggregation) {
+        return copyOf(getComponentAggregationProcedureMap().get(componentAggregation));
+    }
+
+    @Override
+    public Set<String> getInstancesForProcedure(String identifier) {
+        return copyOf(getTypeOfProcedureMap().get(identifier));
+    }
+
+    @Override
+    public boolean hasInstancesForProcedure(String identifier) {
+        return getTypeOfProcedureMap().containsKey(identifier);
     }
 }

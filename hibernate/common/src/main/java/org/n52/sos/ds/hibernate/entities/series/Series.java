@@ -33,6 +33,7 @@ import java.util.Date;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
+import org.n52.sos.util.Constants;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -51,6 +52,10 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
     
     public static String LAST_TIME_STAMP = "lastTimeStamp";
+    
+    public static final String ALIAS = "s";
+    
+    public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long seriesId;
 

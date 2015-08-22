@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sos:InsertObservation service="SOS" version="2.0.0" 
+	xmlns:sos="http://www.opengis.net/sos/2.0"
+	xmlns:swes="http://www.opengis.net/swes/2.0" 
+	xmlns:swe="http://www.opengis.net/swe/2.0"
+	xmlns:sml="http://www.opengis.net/sensorML/1.0.1" 
+	xmlns:gml="http://www.opengis.net/gml/3.2"
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:om="http://www.opengis.net/om/2.0"
+	xmlns:sams="http://www.opengis.net/samplingSpatial/2.0" 
+	xmlns:sf="http://www.opengis.net/sampling/2.0"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd
+									http://www.opengis.net/samplingSpatial/2.0 http://schemas.opengis.net/samplingSpatial/2.0/spatialSamplingFeature.xsd">
+	<sos:offering>ExampleHydrophone1Offering</sos:offering>
+	<sos:observation>
+		<om:OM_Observation gml:id="o1">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime">
+					<gml:timePosition>2015-07-20T10:00:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest>
+				<sams:SF_SpatialSamplingFeature gml:id="ssf_ExampleHydrophone1Feature"> 
+					<gml:identifier codeSpace="">ExampleHydrophone1Feature</gml:identifier> 
+					<gml:name>Rainwater retention basin</gml:name>
+					<sf:type xlink:href="http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint"/> 
+					<sf:sampledFeature xlink:href="http://www.52north.org/test/featureOfInterest/1"/> 
+					<sams:shape> 
+						<gml:Point gml:id="test_ExampleHydrophone1Feature"> 
+							<gml:pos srsName="http://www.opengis.net/def/crs/EPSG/0/4326">51.9361481 7.6525181</gml:pos> 
+						</gml:Point> 
+					</sams:shape> 
+				</sams:SF_SpatialSamplingFeature>
+			</om:featureOfInterest>
+			<om:result xsi:type="gml:MeasureType" uom="V">2.5</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o2">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_2">
+					<gml:timePosition>2015-07-20T10:01:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_2"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">2.7</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o3">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_3">
+					<gml:timePosition>2015-07-20T10:02:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_3"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">2.9</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o4">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_4">
+					<gml:timePosition>2015-07-20T10:03:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_4"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">3.1</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o5">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_5">
+					<gml:timePosition>2015-07-20T10:04:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_5"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">2.8</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o6">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_6">
+					<gml:timePosition>2015-07-20T10:05:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_6"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">2.7</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o7">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_7">
+					<gml:timePosition>2015-07-20T10:06:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_7"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">2.7</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o8">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_8">
+					<gml:timePosition>2015-07-20T10:07:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_8"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">2.5</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o9">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_9">
+					<gml:timePosition>2015-07-20T10:08:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_9"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">3.0</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+	<sos:observation>
+		<om:OM_Observation gml:id="o10">
+			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"/>
+			<om:phenomenonTime>
+				<gml:TimeInstant gml:id="phenomenonTime_10">
+					<gml:timePosition>2015-07-20T10:09:00.000+00:00</gml:timePosition>
+				</gml:TimeInstant>
+			</om:phenomenonTime>
+			<om:resultTime xlink:href="#phenomenonTime_10"/>
+			<om:procedure xlink:href="pressureDetector_of_ExampleHydrophone1"/>
+			<om:observedProperty xlink:href="http://www.nexosproject.eu/dictionary/definitions.html#voltage"/>
+			<om:featureOfInterest xlink:href="#ssf_ExampleHydrophone1Feature" />
+			<om:result xsi:type="gml:MeasureType" uom="V">3.1</om:result>
+		</om:OM_Observation>
+	</sos:observation>
+</sos:InsertObservation>

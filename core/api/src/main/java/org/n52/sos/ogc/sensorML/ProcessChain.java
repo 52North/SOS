@@ -67,4 +67,9 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
         return components != null && !components.isEmpty();
     }
 
+    @Override
+    public boolean isAggragation() {
+        return true;
+    }
+    
 }

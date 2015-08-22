@@ -60,7 +60,7 @@ public class TransactionalSecuritySettings implements SettingDefinitionProvider 
                     .setDescription(
                             "Simple security settings to restrict access to transactional methods (InsertSensor, InsertObservation, etc.)."
                                     + " Users requiring more control over security should use "
-                                    + "<a href=\"http://52north.org/communities/security/wss/2.2/\">52&deg;North <abbr title=\"Web Security Service\">WSS</abbr></a>.")
+                                    + "<a href=\"http://52north.org/communities/security/wss/2.2/\" target=\"_blank\">52&deg;North <abbr title=\"Web Security Service\">WSS</abbr></a>.")
                     .setOrder(1);
 
     public static final BooleanSettingDefinition TRANSACTIONAL_SECURITY_ACTIVE_DEFINITION =

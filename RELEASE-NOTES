@@ -11,11 +11,9 @@ RELEASE NOTES
  
   --- New features ---
   
-    
   
   --- Changes ---
   
-    
   
   --- Fixed issues ---
   
@@ -34,6 +32,20 @@ RELEASE NOTES
   
   
   
+    Release 52n-sensorweb-sos-4.3.3
+==================================
+
+  --- New features ---
+  
+  
+  --- Changes ---
+  
+  
+  --- Fixed issues ---
+  
+      * Issue #310: Invalid prefix in om:parameter of .../SamplingPoint
+ 
+ 
    Release 52n-sensorweb-sos-4.3.2
 ==================================
 
@@ -48,6 +60,7 @@ RELEASE NOTES
   
       * Issue #299: SOS does not start on a system with Turkish language
 
+	  
    Release 52n-sensorweb-sos-4.3.1
 ==================================
 

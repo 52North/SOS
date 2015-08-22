@@ -1756,6 +1756,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_PressureDetector.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertObservation",
+			"title":"Multiple observations for pressure detector",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Split_SweArray.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1883,12 +1896,64 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_SML20_ComponentType.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a component type",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_WML20.xml",
 			"service":"SOS",
 			"version":"2.0.0",
 			"binding": "application/xml",
 			"operation":"InsertSensor",
 			"title":"with WaterML 2.0 description",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_SML20_ComponentInstance.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a component instance",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_SML20_SystemType.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a system type",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_SML20_SystemInstance.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a system instance",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"
@@ -2249,6 +2314,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_PressureDetector.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertObservation",
+			"title":"Multiple observations for pressure detector",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_Split_SweArray.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2382,6 +2460,58 @@
 			"binding": "application/soap+xml",
 			"operation":"InsertSensor",
 			"title":"with WaterML 2.0",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor_SML20_ComponentType.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a component type",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor_SML20_ComponentInstance.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a component instance",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor_SML20_SystemType.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a system type",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor_SML20_SystemInstance.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description of a system instance",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"

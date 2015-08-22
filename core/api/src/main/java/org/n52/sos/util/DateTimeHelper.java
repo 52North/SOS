@@ -28,14 +28,19 @@
  */
 package org.n52.sos.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.format.ISOPeriodFormat;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.DateTimeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
@@ -47,6 +52,7 @@ import org.n52.sos.ogc.gml.time.TimePosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 /**
@@ -87,6 +93,8 @@ public final class DateTimeHelper {
     private static final String Z = "Z";
 
     private static final String UTC_OFFSET = "+00:00";
+    
+    private static final double SECONDS_OF_DAY = 86400; 
 
     /**
      * lease value
@@ -460,5 +468,18 @@ public final class DateTimeHelper {
      * Hide utility constructor
      */
     private DateTimeHelper() {
+    }
+
+    public static int getDaysSince(DateTime start, DateTime end) {
+        return Days.daysBetween(start, end).getDays();
+    }
+    
+    public static double getDaysSinceWithPrecision(DateTime start, DateTime end) {
+        double value = Days.daysBetween(start, end).getDays() + end.getSecondOfDay()/SECONDS_OF_DAY;
+        return new BigDecimal(value).doubleValue();
+    }
+    
+    public static double getSecondsSinceEpoch(DateTime time) throws CodedException{
+        return time.getMillis() / 1000;        
     }
 }

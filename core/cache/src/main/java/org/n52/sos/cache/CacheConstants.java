@@ -41,7 +41,15 @@ public interface CacheConstants {
     String PROCEDURE = "procedure";
 
     String PROCEDURES = "procedures";
+    
+    String TYPE_PROCEDURE = "type " + PROCEDURE;
 
+    String AGGREGATED_PROCEDURE = "aggregated " + PROCEDURE;
+
+    String PROCEDURE_INSTANCE = PROCEDURE + " instance";
+
+    String PROCEDURE_INSTANCES = PROCEDURE + " instances";
+    
     String EPSG_CODE = "epsgCode";
 
     String EPSG_CODES = "epsgCodes";

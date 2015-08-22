@@ -89,7 +89,10 @@ public class NetcdfSettings implements SettingDefinitionProvider {
             setKey(NETCDF_VERSION).
             setTitle("NetCDF version").
             setDefaultValue(NetcdfFileWriter.Version.netcdf4.name()).
-            setDescription("Set the NetCDF version for the encoding").
+            setDescription("Set the NetCDF version for the encoding. "
+                    + "Notice: NetCDF 4 requires the installation of the native netCDF4 c library."
+                    + "Inforamtion about the installation of the native netCDF4 c library can be found here: "
+                    + "<a href=\"https://www.unidata.ucar.edu/software/thredds/v4.3/netcdf-java/reference/netcdf4Clibrary.html\" target=\"_blank\"/>").
             setOptional(false).
             setOrder(ORDER_0),
             

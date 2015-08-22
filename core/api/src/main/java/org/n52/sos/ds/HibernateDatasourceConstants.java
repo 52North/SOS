@@ -78,6 +78,8 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_DEFAULT_OGM_PACKAGE = "org.n52.sos.ds.hibernate.ogm.entities";
     
+    String HIBERNATE_DATASOURCE_TIMEZONE = "hibernate.datasource.timezone";
+    
     public enum DatabaseConcept {
         OLD_CONCEPT("Old concept"),
         SERIES_CONCEPT("Series concept"),

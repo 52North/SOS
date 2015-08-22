@@ -40,7 +40,6 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -48,7 +47,6 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -108,7 +106,7 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check procedure
         try {
-            checkProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
+            checkTransactionalProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
                     Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
@@ -117,6 +115,13 @@ public class SosInsertResultTemplateOperatorV20
         try {
             checkObservedProperty(request.getObservationTemplate().getObservableProperty().getIdentifier(),
                     Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        // check for observed character of featureOfInterest
+        try {
+	        checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(), 
+	        		Sos2Constants.InsertResultTemplateParams.featureOfInterest);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -186,7 +191,8 @@ public class SosInsertResultTemplateOperatorV20
         if (getCache().hasResultTemplate(identifier)) {
             throw new DuplicateIdentifierException("resultTemplate", identifier);
         }
-
+        // check for reserved character
+        checkReservedCharacter(identifier, "resultTemplateIdentifier");
     }
 
     private void checkObservationType(InsertResultTemplateRequest request) throws OwsExceptionReport {

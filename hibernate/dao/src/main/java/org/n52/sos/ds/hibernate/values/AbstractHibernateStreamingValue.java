@@ -38,6 +38,7 @@ import org.hibernate.criterion.Criterion;
 import org.joda.time.DateTime;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
+import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -80,13 +81,18 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValue nextEntity = nextEntity();
+            boolean mergableObservationValue = checkForMergability(nextEntity);
             OmObservation observation = null;
-            if (observations.containsKey(nextEntity.getDiscriminator())) {
+            if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
                 observation = observations.get(nextEntity.getDiscriminator());
             } else {
                 observation = observationTemplate.cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
-                observations.put(nextEntity.getDiscriminator(), observation);
+                if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
+                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                } else {
+                    observations.put(nextEntity.getDiscriminator(), observation);
+                }
             }
             nextEntity.mergeValueToObservation(observation, getResponseFormat());
             sessionHolder.getSession().evict(nextEntity);
@@ -94,7 +100,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return observations.values();
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value, SwesExtensions swesExtensions) {
+    private boolean checkForMergability(AbstractValue nextEntity) {
+        return !(nextEntity instanceof SweDataArrayValue);
+    }
+
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValue value,
+            SwesExtensions swesExtensions) {
         boolean newSession = false;
         try {
             if (session == null) {

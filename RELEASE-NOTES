@@ -11,11 +11,9 @@ RELEASE NOTES
  
   --- New features ---
   
-    
   
   --- Changes ---
   
-    
   
   --- Fixed issues ---
   
@@ -34,6 +32,48 @@ RELEASE NOTES
   
   
   
+    Release 52n-sensorweb-sos-4.3.3
+==================================
+
+  --- New features ---
+  
+  
+  --- Changes ---
+  
+  
+  --- Fixed issues ---
+  
+      * Issue #310: Invalid prefix in om:parameter of .../SamplingPoint
+ 
+ 
+   Release 52n-sensorweb-sos-4.3.2
+==================================
+
+  --- New features ---
+  
+  
+  --- Changes ---
+  
+      * Use Hibernate 4.3.11
+  
+  --- Fixed issues ---
+  
+      * Issue #299: SOS does not start on a system with Turkish language
+
+	  
+   Release 52n-sensorweb-sos-4.3.1
+==================================
+
+  --- New features ---
+  
+    * Add support for Oracle SID
+     
+  --- Changes ---
+  
+  
+  --- Fixed issues ---
+  
+ 
   Release 52n-sensorweb-sos-4.3.0
 ==================================
  

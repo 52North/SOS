@@ -28,8 +28,6 @@
  */
 package org.n52.sos.service;
 
-import static org.n52.sos.config.SettingDefinitionProvider.ORDER_0;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -56,13 +54,9 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     public static final String USE_DEFAULT_PREFIXES = "service.useDefaultPrefixes";
 
-    public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
-
     public static final String MAX_GET_OBSERVATION_RESULTS = "service.maxGetObservationResults";
 
     public static final String DEREGISTER_JDBC_DRIVER = "service.jdbc.deregister";
-
-    public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
     public static final String STRICT_SPATIAL_FILTERING_PROFILE = "service.strictSpatialFilteringProfile";
 
@@ -120,16 +114,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
             .setTitle("Use default prefixes for offering, procedure, features")
             .setDescription("Use default prefixes for offering, procedure, features.");
 
-    public static final BooleanSettingDefinition ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_12)
-                    .setKey(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
-                    .setDefaultValue(true)
-                    .setTitle("Encode full for child procedure SensorML in parent DescribeSensor responses")
-                    .setDescription(
-                            "Whether to encode full SensorML for each child procedures in a DescribeSensor response for a parent procedure.");
-
     public static final BooleanSettingDefinition DEREGISTER_JDBC_DRIVER_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
@@ -140,15 +124,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "Should the service deregister all used JDBC driver (SQLite, PostgreSQL or H2) during shutdown process.");
 
-    public static final BooleanSettingDefinition ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_14)
-                    .setKey(ADD_OUTPUTS_TO_SENSOR_ML)
-                    .setDefaultValue(true)
-                    .setTitle("Add outputs to DescribeSensor SensorML responses")
-                    .setDescription(
-                            "Whether to query example observations and dynamically add outputs to DescribeSensor SensorML responses.");
 
     public static final BooleanSettingDefinition STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION =
             new BooleanSettingDefinition()
@@ -175,8 +150,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
 //            MAX_GET_OBSERVATION_RESULTS_DEFINITION,
             // SUPPORTS_QUALITY_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,
-            ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION, DEREGISTER_JDBC_DRIVER_DEFINITION,
-            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
+            DEREGISTER_JDBC_DRIVER_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
             VALIDATE_RESPONSE_DEFINITION);
 
     @Override

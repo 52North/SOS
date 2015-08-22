@@ -43,8 +43,6 @@ public class AbstractProcessV20 extends AbstractProcess {
 
     private static final long serialVersionUID = 1L;
 
-    private ReferenceType typeOf;
-
     private AbstractSettings configuration;
 
     private SmlFeatureOfInterest featureOfInterest;
@@ -83,6 +81,63 @@ public class AbstractProcessV20 extends AbstractProcess {
 
     public boolean isSetSmlFeatureOfInterest() {
         return (featureOfInterest != null && featureOfInterest.isSetFeatures()) || isSetFeatures();
+    }
+
+    @Override
+    public ReferenceType getTypeOf() {
+        return super.getTypeOf();
+    }
+
+    @Override
+    public void setTypeOf(ReferenceType typeOf) {
+        super.setTypeOf(typeOf);
+    }
+
+    @Override
+    public boolean isSetTypeOf() {
+        return super.isSetTypeOf();
+    }
+
+    /**
+     * @return the configuration
+     */
+    public AbstractSettings getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * @param configuration the configuration to set
+     */
+    public void setConfiguration(AbstractSettings configuration) {
+        this.configuration = configuration;
+    }
+
+    /**
+     * @return the modes
+     */
+    public AbstractModes getModes() {
+        return modes;
+    }
+
+    /**
+     * @param modes the modes to set
+     */
+    public void setModes(AbstractModes modes) {
+        this.modes = modes;
+    }
+
+    /**
+     * @return the definition
+     */
+    public String getDefinition() {
+        return definition;
+    }
+
+    /**
+     * @param definition the definition to set
+     */
+    public void setDefinition(String definition) {
+        this.definition = definition;
     }
 
 }

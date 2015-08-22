@@ -467,19 +467,32 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
             throws OwsExceptionReport {
         final List<SmlCharacteristics> sosCharacteristicsList =
                 new ArrayList<SmlCharacteristics>(characteristicsArray.length);
-        final SmlCharacteristics sosCharacteristics = new SmlCharacteristics();
         for (final Characteristics xbCharacteristics : characteristicsArray) {
-            final Object decodedObject = CodingHelper.decodeXmlElement(xbCharacteristics.getAbstractDataRecord());
-            if (decodedObject instanceof DataRecord) {
-                sosCharacteristics.setDataRecord((DataRecord) decodedObject);
-            } else {
-                throw new InvalidParameterValueException()
-                        .at(XmlHelper.getLocalName(xbCharacteristics))
-                        .withMessage(
-                                "Error while parsing the characteristics of the SensorML (the characteristics' data record is not of type DataRecordPropertyType)!");
-            }
+        	final SmlCharacteristics sosCharacteristics = new SmlCharacteristics();
+        	if (xbCharacteristics.isSetName()) {
+        		sosCharacteristics.setName(xbCharacteristics.getName());
+        	}
+        	if (xbCharacteristics.isSetAbstractDataRecord()) {
+        		final Object decodedObject = CodingHelper.decodeXmlElement(xbCharacteristics.getAbstractDataRecord());
+                if (decodedObject instanceof DataRecord) {
+                    sosCharacteristics.setDataRecord((DataRecord) decodedObject);
+                } else {
+                    throw new InvalidParameterValueException()
+                            .at(XmlHelper.getLocalName(xbCharacteristics))
+                            .withMessage(
+                                    "Error while parsing the characteristics of the SensorML (the characteristics' data record is not of type DataRecordPropertyType)!");
+                }
+        	} else if (xbCharacteristics.isSetHref()) {
+        		sosCharacteristics.setHref(xbCharacteristics.getHref());
+        		if (xbCharacteristics.isSetTitle()) {
+        			sosCharacteristics.setTitle(xbCharacteristics.getTitle());
+        		}
+         	}
+        	if (sosCharacteristics.isSetName()) {
+        		sosCharacteristicsList.add(sosCharacteristics);
+        	}
         }
-        sosCharacteristicsList.add(sosCharacteristics);
+        
         return sosCharacteristicsList;
     }
 
@@ -499,25 +512,37 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
     private void parseCapabilities(final AbstractProcess abstractProcess, final Capabilities[] capabilitiesArray)
             throws OwsExceptionReport {
         for (final Capabilities xbcaps : capabilitiesArray) {
-            final Object o = CodingHelper.decodeXmlElement(xbcaps.getAbstractDataRecord());
-            if (o instanceof DataRecord) {
-                final DataRecord record = (DataRecord) o;
-                final SmlCapabilities caps = new SmlCapabilities();
-                caps.setDataRecord(record).setName(xbcaps.getName());
-                abstractProcess.addCapabilities(caps);
-                // check if this capabilities is insertion metadata
-                if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {
-                    abstractProcess.addOfferings(SosOffering.fromSet(caps.getDataRecord().getSweAbstractSimpleTypeFromFields(SweText.class)));
-                } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(caps.getName())) {
-                    abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps, xbcaps).keySet());
-                } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(caps.getName())) {
-                    abstractProcess.addFeaturesOfInterest(parseCapabilitiesMetadata(caps, xbcaps).keySet());
-                }
-            } else {
-                throw new InvalidParameterValueException().at(XmlHelper.getLocalName(xbcaps)).withMessage(
-                        "Error while parsing the capabilities of " + "the SensorML (the capabilities data record "
-                                + "is not of type DataRecordPropertyType)!");
-            }
+        	final SmlCapabilities caps = new SmlCapabilities();
+        	if (xbcaps.isSetName()) {
+				caps.setName(xbcaps.getName());
+			}
+        	if (xbcaps.isSetAbstractDataRecord()) {
+        		 final Object o = CodingHelper.decodeXmlElement(xbcaps.getAbstractDataRecord());
+                 if (o instanceof DataRecord) {
+                     final DataRecord record = (DataRecord) o;
+                     caps.setDataRecord(record).setName(xbcaps.getName());
+                     // check if this capabilities is insertion metadata
+                     if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {
+                         abstractProcess.addOfferings(SosOffering.fromSet(caps.getDataRecord().getSweAbstractSimpleTypeFromFields(SweText.class)));
+                     } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(caps.getName())) {
+                         abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps, xbcaps).keySet());
+                     } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(caps.getName())) {
+                         abstractProcess.addFeaturesOfInterest(parseCapabilitiesMetadata(caps, xbcaps).keySet());
+                     }
+                 } else {
+                     throw new InvalidParameterValueException().at(XmlHelper.getLocalName(xbcaps)).withMessage(
+                             "Error while parsing the capabilities of " + "the SensorML (the capabilities data record "
+                                     + "is not of type DataRecordPropertyType)!");
+                 }
+			} else if (xbcaps.isSetHref()) {
+				caps.setHref(xbcaps.getHref());
+				if (xbcaps.isSetTitle()) {
+					caps.setTitle(xbcaps.getTitle());
+				}
+			}
+        	if (caps.isSetName()) {
+        		abstractProcess.addCapabilities(caps);
+        	}
         }
     }
 
@@ -860,6 +885,13 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         final SmlIo<?> sosIo = new SmlIo();
         sosIo.setIoName(xbIoCompPropType.getName());
         XmlObject toDecode = null;
+        if (xbIoCompPropType.isSetHref()) {
+            sosIo.setHref(xbIoCompPropType.getHref());
+            if (xbIoCompPropType.isSetTitle()) {
+                sosIo.setTitle(xbIoCompPropType.getTitle());
+            }
+            return sosIo;
+        }
         if (xbIoCompPropType.isSetBoolean()) {
             toDecode = xbIoCompPropType.getBoolean();
         } else if (xbIoCompPropType.isSetCategory()) {

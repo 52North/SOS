@@ -226,8 +226,8 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     private ObservationTimeExtrema parseMinMaxTime(Object[] result) {
         ObservationTimeExtrema ote = new ObservationTimeExtrema();
         if (result != null) {
-            ote.setMinPhenTime(DateTimeHelper.makeDateTime(result[0]));
-            ote.setMaxPhenTime(DateTimeHelper.makeDateTime(result[1]));
+            ote.setMinPhenomenonTime(DateTimeHelper.makeDateTime(result[0]));
+            ote.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(result[1]));
             ote.setMaxResultTime(DateTimeHelper.makeDateTime(result[2]));
             if (result.length == 5) {
                 ote.setMinValidTime(DateTimeHelper.makeDateTime(result[3]));

@@ -42,10 +42,12 @@ import java.util.zip.GZIPOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.n52.sos.binding.OwsExceptionReportHandler;
 import org.n52.sos.encode.ResponseProxy;
 import org.n52.sos.encode.ResponseWriter;
 import org.n52.sos.encode.ResponseWriterRepository;
 import org.n52.sos.exception.HTTPException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.ServiceResponse;
 import org.slf4j.Logger;
@@ -121,12 +123,17 @@ public class HTTPUtils {
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
-            Object object) throws IOException {
-        writeObject(request, response, contentType, new GenericWritable(object, contentType));
+            Object object) throws IOException, HTTPException {
+        writeObject(request, response, contentType, new GenericWritable(object, contentType), null);
+    }
+
+    public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
+            Object object, OwsExceptionReportHandler owserHandler) throws IOException, HTTPException {
+        writeObject(request, response, contentType, new GenericWritable(object, contentType), owserHandler);
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr)
-            throws IOException {
+            throws IOException, HTTPException {
         response.setStatus(sr.getStatus().getCode());
 
         for (Entry<String, String> header : sr.getHeaderMap().entrySet()) {
@@ -134,12 +141,25 @@ public class HTTPUtils {
         }
 
         if (!sr.isContentLess()) {
-            writeObject(request, response, sr.getContentType(), new ServiceResponseWritable(sr));
+            writeObject(request, response, sr.getContentType(), new ServiceResponseWritable(sr), null);
+        }
+    }
+    
+    public static void writeObject(HttpServletRequest request, HttpServletResponse response, ServiceResponse sr, OwsExceptionReportHandler owserHandler)
+            throws IOException, HTTPException {
+        response.setStatus(sr.getStatus().getCode());
+
+        for (Entry<String, String> header : sr.getHeaderMap().entrySet()) {
+            response.addHeader(header.getKey(), header.getValue());
+        }
+
+        if (!sr.isContentLess()) {
+            writeObject(request, response, sr.getContentType(), new ServiceResponseWritable(sr), owserHandler);
         }
     }
 
     public static void writeObject(HttpServletRequest request, HttpServletResponse response, MediaType contentType,
-            Writable writable) throws IOException {
+            Writable writable, OwsExceptionReportHandler owserHandler) throws IOException, HTTPException {
         OutputStream out = null;
         response.setContentType(writable.getEncodedContentType().toString());
 
@@ -152,6 +172,17 @@ public class HTTPUtils {
 
             writable.write(out, new ResponseProxy(response));
             out.flush();
+        } catch (OwsExceptionReport owser) {
+            Object writeOwsExceptionReport = owserHandler.handleOwsExceptionReport(request, response, owser);
+            if (writeOwsExceptionReport != null) {
+                Writable owserWritable = getWritable(writeOwsExceptionReport, contentType);
+                try {
+                    owserWritable.write(out, new ResponseProxy(response));
+                    out.flush();
+                } catch (OwsExceptionReport oer) {
+                    throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, oer);
+                }
+            }
         } finally {
             if (out != null) {
                 out.close();
@@ -159,7 +190,14 @@ public class HTTPUtils {
         }
     }
 
-    private static class GenericWritable implements Writable {
+    private static Writable getWritable(Object writeOwsExceptionReport, MediaType contentType) {
+		if (writeOwsExceptionReport instanceof ServiceResponse) {
+			return new ServiceResponseWritable((ServiceResponse)writeOwsExceptionReport);
+		}
+		return new GenericWritable(writeOwsExceptionReport, contentType);
+	}
+
+	private static class GenericWritable implements Writable {
         private final Object o;
 
         private ResponseWriter<Object> writer;
@@ -187,7 +225,7 @@ public class HTTPUtils {
         }
 
         @Override
-        public void write(OutputStream out, ResponseProxy responseProxy) throws IOException {
+        public void write(OutputStream out, ResponseProxy responseProxy) throws IOException, OwsExceptionReport {
             writer.write(o, out, responseProxy);
         }
 
@@ -208,7 +246,7 @@ public class HTTPUtils {
 
         @Override
         public void write(OutputStream out, ResponseProxy responseProxy) throws IOException {
-            //set content length if not gzipped
+            // set content length if not gzipped
             if (!(out instanceof GZIPOutputStream) && response.getContentLength() > -1) {
                 responseProxy.setContentLength(response.getContentLength());
             }
@@ -220,14 +258,14 @@ public class HTTPUtils {
             return response.supportsGZip();
         }
 
-		@Override
-		public MediaType getEncodedContentType() {
-			return response.getContentType();
-		}
+        @Override
+        public MediaType getEncodedContentType() {
+            return response.getContentType();
+        }
     }
 
     public interface Writable {
-        void write(OutputStream out, ResponseProxy responseProxy) throws IOException;
+        void write(OutputStream out, ResponseProxy responseProxy) throws IOException, OwsExceptionReport;
 
         boolean supportsGZip();        
         

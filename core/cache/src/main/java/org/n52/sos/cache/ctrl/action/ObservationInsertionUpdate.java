@@ -31,7 +31,6 @@ package org.n52.sos.cache.ctrl.action;
 import java.util.List;
 
 import org.n52.sos.cache.WritableContentCache;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -41,7 +40,6 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.util.Action;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -35,11 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.OperationEncoderKey;
+import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
@@ -71,7 +73,9 @@ import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
-import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.http.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.http.HTTPStatus;
@@ -329,12 +333,33 @@ public class SplitMergeObservations
 
     private boolean checkEncoderForMergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         if (response.isSetResponseFormat()) {
-            ObservationEncoder<XmlObject, OmObservation> encoder =
-                    (ObservationEncoder<XmlObject, OmObservation>) CodingHelper
-                            .getEncoder(response.getResponseFormat(), new OmObservation());
-            if (encoder.shouldObservationsWithSameXBeMerged()) {
-                return true;
+            // check for XML encoder
+            ObservationEncoder<Object, Object> encoder =
+                    (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
+                            new XmlEncoderKey(response.getResponseFormat(), new OmObservation().getClass()));
+            // check for response contentType
+            if (encoder == null && response.isSetContentType()) {
+                encoder =
+                        (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
+                                new OperationEncoderKey(response.getService(), response.getVersion(), response
+                                        .getOperationName(), response.getContentType()));
             }
+            // check for responseFormat as MediaType
+            if (encoder == null && response.isSetResponseFormat()) {
+                try {
+                    encoder =
+                            (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
+                                    new OperationEncoderKey(response.getService(), response.getVersion(), response
+                                            .getOperationName(), MediaType.parse(response.getResponseFormat())));
+                } catch (IllegalArgumentException iae) {
+                    LOGGER.debug("ResponseFormat isNot a XML response format");
+                }
+            }
+
+            if (encoder != null) {
+                return encoder.shouldObservationsWithSameXBeMerged();
+            }
+
         }
         return false;
     }

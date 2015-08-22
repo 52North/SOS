@@ -470,6 +470,27 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
         </dependency>
+        <!-- netCDF -->
+		<dependency>
+	        <groupId>com.axiomalaska</groupId>
+	        <artifactId>cf4j</artifactId>
+      	</dependency>
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>api-netcdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>coding-netcdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-oceansites</artifactId>
+		</dependency>
     </dependencies>
     <profiles>
         <profile>

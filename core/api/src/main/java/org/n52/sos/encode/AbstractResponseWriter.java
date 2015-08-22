@@ -85,8 +85,7 @@ public abstract class AbstractResponseWriter<T> implements ResponseWriter<T> {
 			MediaType contentTypeFromResponseFormat = null;
 			try {
 				contentTypeFromResponseFormat = MediaType.parse(
-						responseFormat.getResponseFormat())
-						.withoutParameters();
+						responseFormat.getResponseFormat());
 			} catch (IllegalArgumentException iae) {
 				LOGGER.debug("Requested responseFormat {} is not a MediaType",
 						responseFormat.getResponseFormat());

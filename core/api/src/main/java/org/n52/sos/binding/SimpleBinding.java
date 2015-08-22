@@ -274,8 +274,10 @@ public abstract class SimpleBinding extends Binding {
             AbstractServiceResponse serviceResponse) throws HTTPException, IOException {
         MediaType contentType =
                 chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request), getDefaultContentType());
-		HTTPUtils.writeObject(request, response, contentType, serviceResponse, this);
-    }
+        if (!serviceResponse.isSetContentType()) {
+            serviceResponse.setContentType(contentType);
+        }
+		HTTPUtils.writeObject(request, response, contentType, serviceResponse, this);    }
 
     protected Object encodeResponse(AbstractServiceResponse response, MediaType contentType) throws OwsExceptionReport {
         OperationEncoderKey key = new OperationEncoderKey(response.getOperationKey(), contentType);

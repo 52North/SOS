@@ -21,5 +21,6 @@
 		<module>json</module>
 		<module>json-common</module>
 		<module>exi</module>
+		<module>netcdf</module>
     </modules>
 </project>

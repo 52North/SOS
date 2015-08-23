@@ -46,6 +46,7 @@ import net.opengis.swe.x20.DataArrayDocument;
 import net.opengis.swe.x20.DataArrayPropertyType;
 import net.opengis.swe.x20.DataArrayType;
 import net.opengis.swe.x20.DataArrayType.ElementType;
+import net.opengis.swe.x20.DataArrayType.Encoding;
 import net.opengis.swe.x20.DataRecordDocument;
 import net.opengis.swe.x20.DataRecordPropertyType;
 import net.opengis.swe.x20.DataRecordType;
@@ -303,9 +304,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                 elementType.getAbstractDataComponent().substitute(SweConstants.QN_DATA_RECORD_SWE_200, DataRecordType.type);
             }
             if (sosDataArray.isSetEncoding()) {
-                AbstractEncodingType xbAbstractEncoding = xbDataArray.addNewEncoding().addNewAbstractEncoding();
-                xbAbstractEncoding.set(createAbstractEncoding(sosDataArray.getEncoding()));
-                xbAbstractEncoding.substitute(SweConstants.QN_TEXT_ENCODING_SWE_200, TextEncodingType.type);
+                Encoding xbEncoding = xbDataArray.addNewEncoding();
+                xbEncoding.setAbstractEncoding(createAbstractEncoding(sosDataArray.getEncoding()));
+                xbEncoding.getAbstractEncoding().substitute(SweConstants.QN_TEXT_ENCODING_SWE_200, TextEncodingType.type);
             }
             if (sosDataArray.isSetValues()) {
                 xbDataArray.addNewValues().set(createValues(sosDataArray.getValues(), sosDataArray.getEncoding()));

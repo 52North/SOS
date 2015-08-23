@@ -106,7 +106,7 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check procedure
         try {
-            checkProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
+            checkTransactionalProcedureID(request.getObservationTemplate().getProcedure().getIdentifier(),
                     Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);

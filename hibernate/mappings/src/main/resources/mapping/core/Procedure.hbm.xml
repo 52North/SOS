@@ -99,5 +99,20 @@
             	<comment>Flag to indicate that this procedure is a reference procedure of another procedure. Not used by the SOS but by the Sensor Web REST-API</comment>
             </column>
         </property>
+		<many-to-one name="typeOf" class="org.n52.sos.ds.hibernate.entities.Procedure" not-null="false" fetch="select" lazy="no-proxy" foreign-key="typeOfFk">
+            <column name="typeOf" not-null="false">
+            	<comment>Relation/foreign key to procedure table. Optional, contains procedureId if this procedure is typeOf another procedure</comment>
+            </column>
+        </many-to-one>
+        <property name="isType" type="org.hibernate.type.TrueFalseType">
+        	<column name="isType" default="'F'" check="isType in ('T','F')">
+            	<comment>Flag to indicate that this procedure is a type description, has no observations.</comment>
+            </column>
+        </property>
+        <property name="isAggregation" type="org.hibernate.type.TrueFalseType">
+        	<column name="isAggregation" default="'T'" check="isAggregation in ('T','F')">
+            	<comment>Flag to indicate that this procedure is an aggregation (e.g. System, PhysicalSystem).</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

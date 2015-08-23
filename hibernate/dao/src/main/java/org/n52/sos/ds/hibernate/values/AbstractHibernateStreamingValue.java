@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -98,13 +99,18 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
+            boolean mergableObservationValue = checkForMergability(nextEntity);
             OmObservation observation = null;
-            if (observations.containsKey(nextEntity.getDiscriminator())) {
+            if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
                 observation = observations.get(nextEntity.getDiscriminator());
             } else {
                 observation = observationTemplate.cloneTemplate();
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
-                observations.put(nextEntity.getDiscriminator(), observation);
+                if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
+                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                } else {
+                    observations.put(nextEntity.getDiscriminator(), observation);
+                }
             }
             nextEntity.mergeValueToObservation(observation, getResponseFormat());
             sessionHolder.getSession().evict(nextEntity);
@@ -112,7 +118,12 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return observations.values();
     }
 
-    private void addSpecificValuesToObservation(OmObservation observation, AbstractValuedLegacyObservation<?> value, SwesExtensions swesExtensions) {
+    private boolean checkForMergability(AbstractValuedLegacyObservation<?> nextEntity) {
+        return !(nextEntity instanceof SweDataArrayValuedLegacyObservation);
+    }
+
+    private void addSpecificValuesToObservation(OmObservation observation, AbstractValuedLegacyObservation<?> value,
+            SwesExtensions swesExtensions) {
         boolean newSession = false;
         try {
             if (session == null) {

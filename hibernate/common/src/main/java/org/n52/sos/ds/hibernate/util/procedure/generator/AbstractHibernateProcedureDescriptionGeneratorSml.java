@@ -68,6 +68,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.request.ProcedureRequestSettings;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
@@ -128,7 +129,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
-        if (getServiceConfig().isAddOutputsToSensorML()
+        if (ProcedureRequestSettings.getInstance().isAddOutputsToSensorML()
                 && !"hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
                         .getIdentifier())) {
             TreeSet<String> obsProps = Sets.newTreeSet(Arrays.asList(observableProperties));

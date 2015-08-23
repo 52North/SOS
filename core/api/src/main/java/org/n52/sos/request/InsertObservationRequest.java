@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.util.CollectionHelper;
@@ -139,5 +140,10 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
     @Override
     public InsertObservationResponse getResponse() throws OwsExceptionReport {
         return (InsertObservationResponse) new InsertObservationResponse().set(this);
+    }
+
+    public boolean isSetExtensionSplitDataArrayIntoObservations() {
+        return isSetExtensions() && getExtensions()
+                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 }

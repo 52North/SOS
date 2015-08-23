@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -45,6 +46,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -156,6 +158,29 @@ public abstract class AbstractStaticContentCache implements ContentCache {
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(new HashSet<>(set));
+        }
+    }
+    
+    /**
+     * Creates a unmodifiable copy of the specified collection of sets.
+     *
+     * @param <T>
+     *            the element type
+     * @param set
+     *            the set
+     *
+     * @return a unmodifiable copy
+     */
+    protected static <T> Set<T> copyOf(Collection<Set<T>> set) {
+        if (set == null) {
+            return Collections.emptySet();
+        } else {
+            HashSet<T> newHashSet = Sets.newHashSet();
+            Iterator<Set<T>> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                newHashSet.addAll((Set<T>) iterator.next());
+            }
+            return Collections.unmodifiableSet(newHashSet);
         }
     }
 
@@ -332,6 +357,26 @@ public abstract class AbstractStaticContentCache implements ContentCache {
             return new TimePeriod(instant, instant);
         } else {
             return (TimePeriod) time;
+        }
+    }
+    
+    /**
+     * Remove value from map or complete entry if values for key are empty
+     * 
+     * @param map
+     *            Map to check
+     * @param value
+     *            Value to remove
+     */
+    protected static <K, V> void removeValue(Map<K, Set<String>> map, String value) {
+        for (K key : map.keySet()) {
+            if (map.get(key).contains(value)) {
+                if (map.get(key).size() > 1) {
+                    map.get(key).remove(value);
+                } else {
+                    map.remove(key);
+                }
+            }
         }
     }
 }

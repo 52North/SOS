@@ -36,8 +36,6 @@ import static org.n52.sos.service.MiscSettings.DEFAULT_PROCEDURE_PREFIX;
 import static org.n52.sos.service.MiscSettings.HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V1;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
-import static org.n52.sos.service.ServiceSettings.ADD_OUTPUTS_TO_SENSOR_ML;
-import static org.n52.sos.service.ServiceSettings.ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR;
 import static org.n52.sos.service.ServiceSettings.SENSOR_DIRECTORY;
 import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
 import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
@@ -52,6 +50,7 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.i18n.I18NSettings;
+import org.n52.sos.request.ProcedureRequestSettings;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlOptionsHelper;
 
@@ -80,10 +79,6 @@ public class ServiceConfiguration {
     private String defaultFeaturePrefix;
 
     private boolean useDefaultPrefixes;
-
-    private boolean encodeFullChildrenInDescribeSensor;
-
-    private boolean addOutputsToSensorML;
 
     private boolean strictSpatialFilteringProfile;
 
@@ -258,22 +253,36 @@ public class ServiceConfiguration {
         useDefaultPrefixes = prefix;
     }
 
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#isEncodeFullChildrenInDescribeSensor()}
+     */
+    @Deprecated
     public boolean isEncodeFullChildrenInDescribeSensor() {
-        return encodeFullChildrenInDescribeSensor;
+        return ProcedureRequestSettings.getInstance().isEncodeFullChildrenInDescribeSensor();
     }
 
-    @Setting(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#setEncodeFullChildrenInDescribeSensor(boolean)}
+     */
+    @Deprecated
     public void setEncodeFullChildrenInDescribeSensor(final boolean encodeFullChildrenInDescribeSensor) {
-        this.encodeFullChildrenInDescribeSensor = encodeFullChildrenInDescribeSensor;
+        ProcedureRequestSettings.getInstance().setEncodeFullChildrenInDescribeSensor(encodeFullChildrenInDescribeSensor);;;
     }
 
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#isAddOutputsToSensorML()}
+     */
+    @Deprecated
     public boolean isAddOutputsToSensorML() {
-        return addOutputsToSensorML;
+        return ProcedureRequestSettings.getInstance().isAddOutputsToSensorML();
     }
 
-    @Setting(ADD_OUTPUTS_TO_SENSOR_ML)
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#setAddOutputsToSensorML(boolean)}
+     */
+    @Deprecated
     public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
-        this.addOutputsToSensorML = addOutputsToSensorML;
+        ProcedureRequestSettings.getInstance().setAddOutputsToSensorML(addOutputsToSensorML);;;
     }
 
     public boolean isStrictSpatialFilteringProfile() {

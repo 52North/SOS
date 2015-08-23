@@ -53,6 +53,10 @@ import junit.framework.TestCase;
  */
 public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
+    
+    private static final int CHANGEABLE_COUNT = 10;
+    
+    private static final int MAX_COUNT = 15;
 
     @Override
     protected void setUp() throws Exception {
@@ -125,10 +129,9 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
 
         if (changeable) {
-            assertEquals(9, keys.size());
+            assertEquals(CHANGEABLE_COUNT, keys.size());
         } else {
-            final int maxCount = 14;
-            int counter = maxCount;
+            int counter = MAX_COUNT;
             if (!transactional) { counter--; }
             if (!concept) { counter--; }
             if (!multiLanguage){ counter--; }

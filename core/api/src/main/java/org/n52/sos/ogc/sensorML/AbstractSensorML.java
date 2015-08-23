@@ -135,12 +135,13 @@ public class AbstractSensorML extends SosProcedureDescription {
             return Optional.absent();
         }
     }
+    
 
     public AbstractSensorML addClassification(final SmlClassifier classifier) {
         classifications.add(classifier);
         return this;
     }
-
+    
     @Override
     public AbstractSensorML setValidTime(final Time validTime) {
         super.setValidTime(validTime);
@@ -158,6 +159,14 @@ public class AbstractSensorML extends SosProcedureDescription {
             this.characteristics = characteristics;
         }
         return this;
+    }
+    
+    public Optional<SmlCharacteristics> findCharacteristics(Predicate<SmlCharacteristics> predicate) {
+        if (isSetCharacteristics()) {
+            return Iterables.tryFind(this.characteristics, predicate);
+        } else {
+            return Optional.absent();
+        }
     }
 
     public AbstractSensorML addCharacteristic(final SmlCharacteristics characteristic) {
@@ -199,24 +208,49 @@ public class AbstractSensorML extends SosProcedureDescription {
     }
 
     public AbstractSensorML setContact(final List<SmlContact> contacts) {
-        if (isSetContacts()) {
+        if (isSetContact()) {
             this.contacts.addAll(contacts);
         } else {
             this.contacts = contacts;
         }
         return this;
     }
-
-    private boolean isSetContacts() {
-        return contacts != null && !contacts.isEmpty();
-    }
-
+    
     public AbstractSensorML addContact(final SmlContact contact) {
         if (this.contacts == null) {
             this.contacts = new LinkedList<SmlContact>();
         }
         this.contacts.add(contact);
         return this;
+    }
+
+    /**
+     * Get {@link SmlContact} for a specific role
+     * 
+     * @param contactRole
+     *            Role to get {@link SmlContact} for
+     * @return The {@link SmlContact} or null if not defined
+     */
+    public SmlContact getContact(String contactRole) {
+        if (isSetContact()) {
+            return getContact(getContact(), contactRole);
+        }
+        return null;
+    }
+
+    private SmlContact getContact(List<SmlContact> contacts, String contactRole) {
+        for (SmlContact contact : contacts) {
+            if (contact instanceof SmlContactList) {
+                SmlContact cont = getContact(((SmlContactList) contact).getMembers(), contactRole);
+                if (cont != null) {
+                    return cont;
+                }
+            } else if (contact.getRole() != null && contact.getRole().equals(contactRole)
+                    && contact instanceof SmlResponsibleParty) {
+                return (SmlResponsibleParty) contact;
+            }
+        }
+        return null;
     }
 
     public List<AbstractSmlDocumentation> getDocumentation() {
@@ -274,7 +308,7 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetContact() {
         return contacts != null && !contacts.isEmpty();
     }
-
+    
     public boolean isSetHistory() {
         return history != null && !history.isEmpty();
     }

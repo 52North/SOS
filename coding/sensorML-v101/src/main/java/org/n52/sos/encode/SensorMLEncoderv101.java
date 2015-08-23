@@ -1076,13 +1076,12 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             if (sosSMLComponent.getName() != null) {
                 component.setName(sosSMLComponent.getName());
             }
-            if (sosSMLComponent.getTitle() != null) {
-                component.setTitle(sosSMLComponent.getTitle());
-            }
             if (sosSMLComponent.getHref() != null) {
                 component.setHref(sosSMLComponent.getHref());
-            }
-            if (sosSMLComponent.getProcess() != null) {
+                if (sosSMLComponent.getTitle() != null) {
+                    component.setTitle(sosSMLComponent.getTitle());
+                }
+            } else if (sosSMLComponent.getProcess() != null) {
                 XmlObject xmlObject = null;
                 if (sosSMLComponent.getProcess().getSensorDescriptionXmlString() != null
                         && !sosSMLComponent.getProcess().getSensorDescriptionXmlString().isEmpty()) {
@@ -1190,55 +1189,58 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     private void addIoComponentPropertyType(final IoComponentPropertyType ioComponentPropertyType,
             final SmlIo<?> sosSMLIO) throws OwsExceptionReport {
         ioComponentPropertyType.setName(sosSMLIO.getIoName());
-        final XmlObject encodeObjectToXml =
-                CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, sosSMLIO.getIoValue());
-        switch (sosSMLIO.getIoValue().getDataComponentType()) {
-        case Boolean:
-            ioComponentPropertyType.addNewBoolean().set(encodeObjectToXml);
-            break;
-        case Category:
-            ioComponentPropertyType.addNewCategory().set(encodeObjectToXml);
-            break;
-        case Count:
-            ioComponentPropertyType.addNewCount().set(encodeObjectToXml);
-            break;
-        case CountRange:
-            ioComponentPropertyType.addNewCountRange().set(encodeObjectToXml);
-            break;
-        case ObservableProperty:
-            ioComponentPropertyType.addNewObservableProperty().set(encodeObjectToXml);
-            break;
-        case Quantity:
-            ioComponentPropertyType.addNewQuantity().set(encodeObjectToXml);
-            break;
-        case QuantityRange:
-            ioComponentPropertyType.addNewQuantityRange().set(encodeObjectToXml);
-            break;
-        case Text:
-            ioComponentPropertyType.addNewText().set(encodeObjectToXml);
-            break;
-        case Time:
-            ioComponentPropertyType.addNewTime().set(encodeObjectToXml);
-            break;
-        case TimeRange:
-            ioComponentPropertyType.addNewTimeRange().set(encodeObjectToXml);
-            break;
-        case DataArray:
-            if (encodeObjectToXml instanceof DataArrayDocument) {
-                ioComponentPropertyType.addNewAbstractDataArray1()
-                        .set(((DataArrayDocument) encodeObjectToXml).getDataArray1())
-                        .substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
-            } else {
-                ioComponentPropertyType.addNewAbstractDataArray1().set(encodeObjectToXml)
-                        .substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+        if (sosSMLIO.isSetHref()) {
+            ioComponentPropertyType.setHref(sosSMLIO.getTitle());
+            if (sosSMLIO.isSetTitle()) {
+                ioComponentPropertyType.setTitle(sosSMLIO.getTitle());
             }
-            break;
-        case DataRecord:
-            ioComponentPropertyType.addNewAbstractDataRecord().set(encodeObjectToXml)
-                    .substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
-            break;
-        default:
-
+        } else {
+            final XmlObject encodeObjectToXml =
+                    CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, sosSMLIO.getIoValue());
+            switch (sosSMLIO.getIoValue().getDataComponentType()) {
+            case Boolean:
+                ioComponentPropertyType.addNewBoolean().set(encodeObjectToXml);
+                break;
+            case Category:
+                ioComponentPropertyType.addNewCategory().set(encodeObjectToXml);
+                break;
+            case Count:
+                ioComponentPropertyType.addNewCount().set(encodeObjectToXml);
+                break;
+            case CountRange:
+                ioComponentPropertyType.addNewCountRange().set(encodeObjectToXml);
+                break;
+            case ObservableProperty:
+                ioComponentPropertyType.addNewObservableProperty().set(encodeObjectToXml);
+                break;
+            case Quantity:
+                ioComponentPropertyType.addNewQuantity().set(encodeObjectToXml);
+                break;
+            case QuantityRange:
+                ioComponentPropertyType.addNewQuantityRange().set(encodeObjectToXml);
+                break;
+            case Text:
+                ioComponentPropertyType.addNewText().set(encodeObjectToXml);
+                break;
+            case Time:
+                ioComponentPropertyType.addNewTime().set(encodeObjectToXml);
+                break;
+            case TimeRange:
+                ioComponentPropertyType.addNewTimeRange().set(encodeObjectToXml);
+                break;
+            case DataArray:
+            	if (encodeObjectToXml instanceof DataArrayDocument) {
+            		ioComponentPropertyType.addNewAbstractDataArray1().set(((DataArrayDocument)encodeObjectToXml).getDataArray1()).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+            	} else {
+            		ioComponentPropertyType.addNewAbstractDataArray1().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+            	}
+                break;
+            case DataRecord:
+                ioComponentPropertyType.addNewAbstractDataRecord().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
+                break;
+            default:
+    
+            }
         }
     }
 

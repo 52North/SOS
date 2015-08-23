@@ -36,6 +36,7 @@ import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 import net.opengis.gml.x32.AbstractFeatureType;
@@ -131,17 +132,20 @@ public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
         return codeType;
     }
 
-    protected org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType referenceType) {
-        if (referenceType.isSetHref() && !referenceType.getHref().isEmpty()) {
-            org.n52.sos.ogc.gml.ReferenceType sosReferenceType =
-                    new org.n52.sos.ogc.gml.ReferenceType(referenceType.getHref());
-            if (referenceType.isSetTitle() && !referenceType.getTitle().isEmpty()) {
-                sosReferenceType.setTitle(referenceType.getTitle());
-            }
-            return sosReferenceType;
+    protected org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType rt) {
+        org.n52.sos.ogc.gml.ReferenceType referenceType = new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+        if (rt.isSetTitle() && !Strings.isNullOrEmpty(rt.getTitle())) {
+            referenceType.setTitle(rt.getTitle());
         }
-        return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+        if (rt.isSetHref() && !Strings.isNullOrEmpty(rt.getHref())) {
+            referenceType.setHref(rt.getHref());
+        }
+        if (rt.isSetRole() && !Strings.isNullOrEmpty(rt.getRole())) {
+            referenceType.setRole(rt.getRole());
+        }
+        return referenceType;
     }
+
 
     protected List<org.n52.sos.ogc.gml.ReferenceType> parseReferenceType(ReferenceType[] referenceTypes) {
         List<org.n52.sos.ogc.gml.ReferenceType> list = Lists.newArrayList();

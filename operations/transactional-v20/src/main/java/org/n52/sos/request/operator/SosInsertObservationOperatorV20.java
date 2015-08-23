@@ -30,7 +30,6 @@ package org.n52.sos.request.operator;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -48,9 +47,6 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingExcep
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -82,25 +78,18 @@ import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 
 public class SosInsertObservationOperatorV20 extends
         AbstractV2TransactionalRequestOperator<AbstractInsertObservationDAO, InsertObservationRequest, InsertObservationResponse> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SosInsertObservationOperatorV20.class);
-
     private static final String OPERATION_NAME = SosConstants.Operations.InsertObservation.name();
 
-    private static final Set<String> CONFORMANCE_CLASSES = Collections
-            .singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
+    private static final Set<String> CONFORMANCE_CLASSES =
+            Collections.singleton(ConformanceClasses.SOS_V2_OBSERVATION_INSERTION);
 
     public SosInsertObservationOperatorV20() {
         super(OPERATION_NAME, InsertObservationRequest.class);
@@ -113,155 +102,9 @@ public class SosInsertObservationOperatorV20 extends
 
     @Override
     public InsertObservationResponse receive(final InsertObservationRequest request) throws OwsExceptionReport {
-        if (isSetExtensionSplitDataArrayIntoObservations(request)) {
-            splitDataArrayIntoObservations(request);
-        }
         InsertObservationResponse response = getDao().insertObservation(request);
         SosEventBus.fire(new ObservationInsertion(request, response));
         return response;
-    }
-
-    private void splitDataArrayIntoObservations(final InsertObservationRequest request) throws OwsExceptionReport {
-        LOGGER.debug("Start splitting observations. Count: {}", request.getObservations().size());
-        final Collection<OmObservation> finalObservationCollection = Sets.newHashSet();
-        for (final OmObservation observation : request.getObservations()) {
-            if (isSweArrayObservation(observation)) {
-                LOGGER.debug("Found SweArrayObservation to split.");
-                final SweDataArrayValue sweDataArrayValue = (SweDataArrayValue) observation.getValue().getValue();
-                final OmObservationConstellation observationConstellation = observation.getObservationConstellation();
-                int counter = 0;
-                final int resultTimeIndex =
-                        getResultTimeIndex((SweDataRecord) sweDataArrayValue.getValue().getElementType());
-                final int phenomenonTimeIndex =
-                        getPhenomenonTimeIndex((SweDataRecord) sweDataArrayValue.getValue().getElementType());
-                final int resultValueIndex =
-                        getResultValueIndex((SweDataRecord) sweDataArrayValue.getValue().getElementType(),
-                                observationConstellation.getObservableProperty());
-                observationConstellation.setObservationType(getObservationTypeFromElementType(
-                        (SweDataRecord) sweDataArrayValue.getValue().getElementType(),
-                        observationConstellation.getObservableProperty()));
-                // split into single observation
-                for (final List<String> block : sweDataArrayValue.getValue().getValues()) {
-                    LOGGER.debug("Processing block {}/{}", ++counter, sweDataArrayValue.getValue().getValues().size());
-                    final OmObservation newObservation = new OmObservation();
-                    newObservation.setObservationConstellation(observationConstellation);
-                    // identifier
-                    if (observation.isSetIdentifier()) {
-                        final CodeWithAuthority identifier = observation.getIdentifierCodeWithAuthority();
-                        identifier.setValue(identifier.getValue() + counter);
-                        newObservation.setIdentifier(identifier);
-                    }
-                    // phen time
-                    Time phenomenonTime;
-                    if (phenomenonTimeIndex == -1) {
-                        phenomenonTime = observation.getPhenomenonTime();
-                    } else {
-                        phenomenonTime = DateTimeHelper.parseIsoString2DateTime2Time(block.get(phenomenonTimeIndex));
-                    }
-                    // result time
-                    if (resultTimeIndex == -1) {
-                        // use phenomenon time if outer observation's resultTime value
-                        // or nilReason is "template"
-                        if ((!observation.isSetResultTime()
-                                || observation.isTemplateResultTime())
-                                && phenomenonTime instanceof TimeInstant) {
-                            newObservation.setResultTime((TimeInstant) phenomenonTime);
-                        } else {
-                            newObservation.setResultTime(observation.getResultTime());
-                        }
-                    } else {
-                        newObservation.setResultTime(new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block
-                                .get(resultTimeIndex))));
-                    }
-                    if (observation.isSetParameter()) {
-                    	newObservation.setParameter(observation.getParameter());
-                    }
-                    // value
-                    final ObservationValue<?> value =
-                            createObservationResultValue(observationConstellation.getObservationType(),
-                                    block.get(resultValueIndex), phenomenonTime, ((SweDataRecord) sweDataArrayValue
-                                            .getValue().getElementType()).getFields().get(resultValueIndex));
-                    newObservation.setValue(value);
-                    finalObservationCollection.add(newObservation);
-                }
-            } else {
-                LOGGER.debug("Found non splittable observation");
-                finalObservationCollection.add(observation);
-            }
-        }
-        request.setObservation(Lists.newArrayList(finalObservationCollection));
-    }
-
-    private ObservationValue<?> createObservationResultValue(final String observationType, final String valueString,
-            final Time phenomenonTime, final SweField resultDefinitionField) throws OwsExceptionReport {
-        ObservationValue<?> value = null;
-
-        if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_TRUTH_OBSERVATION)) {
-            value = new SingleObservationValue<>(new BooleanValue(Boolean.parseBoolean(valueString)));
-        } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
-            value = new SingleObservationValue<>(new CountValue(Integer.parseInt(valueString)));
-        } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_MEASUREMENT)) {
-            final QuantityValue quantity = new QuantityValue(Double.parseDouble(valueString));
-            quantity.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<Double>(quantity);
-        } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
-            final CategoryValue cat = new CategoryValue(valueString);
-            cat.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<>(cat);
-        } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_TEXT_OBSERVATION)) {
-            value = new SingleObservationValue<>(new TextValue(valueString));
-        }
-        // TODO Check for missing types
-        if (value != null) {
-            value.setPhenomenonTime(phenomenonTime);
-        } else {
-            throw new NoApplicableCodeException().withMessage("Observation type '{}' not supported.", observationType)
-                    .setStatus(HTTPStatus.BAD_REQUEST);
-        }
-        return value;
-    }
-
-    private String getUom(final SweField resultDefinitionField) {
-        return ((SweAbstractUomType<?>) resultDefinitionField.getElement()).getUom();
-    }
-
-    private int getResultValueIndex(final SweDataRecord elementTypeDataRecord,
-            final AbstractPhenomenon observableProperty) {
-        return elementTypeDataRecord.getFieldIndexByIdentifier(observableProperty.getIdentifier());
-    }
-
-    private int getPhenomenonTimeIndex(final SweDataRecord elementTypeDataRecord) {
-        return elementTypeDataRecord.getFieldIndexByIdentifier(OmConstants.PHENOMENON_TIME);
-    }
-
-    private int getResultTimeIndex(final SweDataRecord elementTypeDataRecord) {
-        return elementTypeDataRecord.getFieldIndexByIdentifier(OmConstants.PHEN_SAMPLING_TIME);
-    }
-
-    private String getObservationTypeFromElementType(final SweDataRecord elementTypeDataRecord,
-            final AbstractPhenomenon observableProperty) throws OwsExceptionReport {
-        for (final SweField sweField : elementTypeDataRecord.getFields()) {
-            if (sweField.getElement() != null && sweField.getElement().isSetDefinition()
-                    && sweField.getElement().getDefinition().equalsIgnoreCase(observableProperty.getIdentifier())) {
-                return OMHelper.getObservationTypeFrom(sweField.getElement());
-            }
-        }
-        throw new NoApplicableCodeException().withMessage(
-                "Not able to derive observation type from elementType element '{}' for observable property '{}'.",
-                elementTypeDataRecord, observableProperty).setStatus(HTTPStatus.BAD_REQUEST);
-    }
-
-    private boolean isSweArrayObservation(final OmObservation observation) {
-        return observation.getObservationConstellation().getObservationType()
-                .equalsIgnoreCase(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)
-                && observation.getValue().getValue() instanceof SweDataArrayValue
-                && ((SweDataArrayValue) observation.getValue().getValue()).isSetValue();
-    }
-
-    private boolean isSetExtensionSplitDataArrayIntoObservations(final InsertObservationRequest request) {
-        return request.isSetExtensions()
-                && request.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 
     @Override
@@ -312,7 +155,8 @@ public class SosInsertObservationOperatorV20 extends
             if (observation.isSetParameter()) {
                 int count = 0;
                 for (NamedValue<?> namedValue : observation.getParameter()) {
-                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                    if (Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE
+                            .equals(namedValue.getName().getHref())) {
                         count++;
                     }
                 }
@@ -322,7 +166,6 @@ public class SosInsertObservationOperatorV20 extends
                 }
             }
         }
-
     }
 
     private void checkAndAddOfferingToObservationConstallation(final InsertObservationRequest request)
@@ -364,10 +207,11 @@ public class SosInsertObservationOperatorV20 extends
                     for (final String offeringID : obsConstallation.getOfferings()) {
                         final Collection<String> allowedObservationTypes =
                                 cache.getAllowedObservationTypesForOffering(offeringID);
-                        if ((allowedObservationTypes == null || !allowedObservationTypes.contains(obsConstallation
-                                .getObservationType())) && !isSetExtensionSplitDataArrayIntoObservations(request)) {
-                            exceptions.add(new InvalidObservationTypeForOfferingException(obsConstallation
-                                    .getObservationType(), offeringID));
+                        if ((allowedObservationTypes == null
+                                || !allowedObservationTypes.contains(obsConstallation.getObservationType()))
+                                && !request.isSetExtensionSplitDataArrayIntoObservations()) {
+                            exceptions.add(new InvalidObservationTypeForOfferingException(
+                                    obsConstallation.getObservationType(), offeringID));
                         }
                     }
                 }
@@ -377,10 +221,8 @@ public class SosInsertObservationOperatorV20 extends
     }
 
     private boolean isSplitObservations(final SwesExtensions swesExtensions) {
-        return swesExtensions != null
-                && !swesExtensions.isEmpty()
-                && swesExtensions
-                        .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
+        return swesExtensions != null && !swesExtensions.isEmpty() && swesExtensions
+                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 
     private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation)
@@ -417,10 +259,9 @@ public class SosInsertObservationOperatorV20 extends
                     Sos2Constants.InsertObservationParams.observationType.name());
             if (obsTypeFromValue != null
                     && !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
-                throw new NoApplicableCodeException()
-                        .withMessage(
-                                "The requested observation is invalid! The result element does not comply with the defined type (%s)!",
-                                sosObservation.getObservationConstellation().getObservationType());
+                throw new NoApplicableCodeException().withMessage(
+                        "The requested observation is invalid! The result element does not comply with the defined type (%s)!",
+                        sosObservation.getObservationConstellation().getObservationType());
             }
         } else if (!isSplitObservations) {
             sosObservation.getObservationConstellation().setObservationType(obsTypeFromValue);

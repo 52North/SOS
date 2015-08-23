@@ -595,4 +595,5 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     public String toString() {
         return "SosObservationOffering [offering=" + offering + "]";
     }
+
 }

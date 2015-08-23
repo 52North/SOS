@@ -255,8 +255,8 @@ public abstract class AbstractSeriesDAO {
      *            ObservableProperty identifier to add
      */
     public void addObservablePropertyToCriteria(Criteria c, String observedProperty) {
-        c.createCriteria(Series.OBSERVABLE_PROPERTY).add(
-                Restrictions.eq(ObservableProperty.IDENTIFIER, observedProperty));
+        c.createCriteria(Series.OBSERVABLE_PROPERTY)
+                .add(Restrictions.eq(ObservableProperty.IDENTIFIER, observedProperty));
     }
 
     /**
@@ -280,8 +280,8 @@ public abstract class AbstractSeriesDAO {
      *            ObservableProperty identifiers to add
      */
     public void addObservablePropertyToCriteria(Criteria c, Collection<String> observedProperties) {
-        c.createCriteria(Series.OBSERVABLE_PROPERTY).add(
-                Restrictions.in(ObservableProperty.IDENTIFIER, observedProperties));
+        c.createCriteria(Series.OBSERVABLE_PROPERTY)
+                .add(Restrictions.in(ObservableProperty.IDENTIFIER, observedProperties));
     }
 
     /**
@@ -456,8 +456,8 @@ public abstract class AbstractSeriesDAO {
 
         TimeExtrema pte = new TimeExtrema();
         if (result != null) {
-            pte.setMinTime(DateTimeHelper.makeDateTime(result[0]));
-            pte.setMaxTime(DateTimeHelper.makeDateTime(result[1]));
+            pte.setMinPhenomenonTime(DateTimeHelper.makeDateTime(result[0]));
+            pte.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(result[1]));
         }
         return pte;
     }

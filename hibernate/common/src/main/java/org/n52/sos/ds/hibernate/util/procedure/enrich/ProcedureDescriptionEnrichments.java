@@ -57,6 +57,8 @@ public class ProcedureDescriptionEnrichments {
     private HibernateProcedureConverter converter;
     private TimePeriod validTime;
     private Locale language = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private String typeOfIdentifier;
+    private String typeOfFormat;
 
     private ProcedureDescriptionEnrichments() {
     }
@@ -112,6 +114,16 @@ public class ProcedureDescriptionEnrichments {
         }
         return this;
     }
+    
+    public ProcedureDescriptionEnrichments setTypeOfIdentifier(String typeOfIdentifier) {
+        this.typeOfIdentifier = typeOfIdentifier;
+        return this;
+    }
+    
+    public ProcedureDescriptionEnrichments setTypeOfFormat(String typeOfFormat) {
+        this.typeOfFormat = typeOfFormat;
+        return this;
+    }
 
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
@@ -126,7 +138,8 @@ public class ProcedureDescriptionEnrichments {
                         createContactsEnrichment(),
                         createKeywordEnrichment(),
                         createValidTimeEnrichment(),
-                        createObservablePropertyEnrichment()),
+                        createObservablePropertyEnrichment(),
+                        createTypeOfEnrichmentEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -179,6 +192,10 @@ public class ProcedureDescriptionEnrichments {
         return setValues(new ObservablePropertyEnrichment());
     }
 
+    private TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
+        return setValues(new TypeOfEnrichment()).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
+    }
+    
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)

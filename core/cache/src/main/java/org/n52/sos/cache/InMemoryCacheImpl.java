@@ -33,6 +33,7 @@ import static org.n52.sos.util.MultiMaps.newSynchronizedSetMultiMap;
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.request.ProcedureRequestSettings;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.DateTimeHelper;
@@ -53,6 +55,7 @@ import org.n52.sos.util.SetMultiMap;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
 
@@ -116,6 +119,9 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private Set<String> requestableProcedureDescriptionFormats = newSynchronizedSet();
     private int defaultEpsgCode = Constants.EPSG_WGS84;
     private SosEnvelope globalEnvelope = new SosEnvelope(null, defaultEpsgCode);
+    private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
+    private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
+    private Map<String, Set<String>> typeOfProcedures = newSynchronizedMap();
 
     /**
      * @param envelope
@@ -195,7 +201,10 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                                 compositePhenomenonsForProcedure,
                                 compositePhenomenonsForOffering,
                                 observablePropertiesForCompositePhenomenon,
-                                compositePhenomenonForObservableProperty);
+                                compositePhenomenonForObservableProperty,
+                                typeInstanceProcedures,
+                                componentAggregationProcedures,
+                                typeOfProcedures);
     }
 
     @Override
@@ -253,7 +262,10 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                     && Objects.equal(this.compositePhenomenonsForProcedure, other.compositePhenomenonsForProcedure)
                     && Objects.equal(this.compositePhenomenonsForOffering, other.compositePhenomenonsForOffering)
                     && Objects.equal(this.observablePropertiesForCompositePhenomenon, other.observablePropertiesForCompositePhenomenon)
-                    && Objects.equal(this.compositePhenomenonForObservableProperty, other.compositePhenomenonForObservableProperty);
+                    && Objects.equal(this.compositePhenomenonForObservableProperty, other.compositePhenomenonForObservableProperty)
+                    && Objects.equal(this.typeInstanceProcedures, other.typeInstanceProcedures)
+                    && Objects.equal(this.componentAggregationProcedures, other.componentAggregationProcedures)
+                    && Objects.equal(this.typeOfProcedures, other.typeOfProcedures);
             }
         return false;
     }
@@ -2502,6 +2514,204 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
         LOG.trace("Adding requestable procedureDescriptionFormat");
         getRequestableProcedureDescriptionFormat().addAll(formats);
+    }//#################
+    
+    @Override
+    public Set<String> getOfferingsForProcedures(Set<String> procedures) {
+        HashSet<String> offerings = Sets.newHashSet();
+        if (procedures != null) {
+            for (String procedure : procedures) {
+                offerings.addAll(getOfferingsForProcedure(procedure));   
+            }
+        }
+        return offerings;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Set<String> getTransactionalObservationProcedures() {
+        return CollectionHelper.union(
+                CollectionHelper.union(copyOf(hiddenChildProceduresForOfferings.values())),
+                CollectionHelper.union(copyOf(proceduresForOfferings.values())));
+    }
+    
+    @Override
+    public boolean hasTransactionalObservationProcedure(String procedureID) {
+        return getTransactionalObservationProcedures().contains(procedureID);
+    }
+
+    @Override
+    public Set<String> getQueryableProcedures() {
+        Set<String> procedures = getProcedures();
+        // allowQueryingForInstancesOnly
+        if (ProcedureRequestSettings.getInstance().isAllowQueryingForInstancesOnly()) {
+            procedures = CollectionHelper.conjunctCollectionsToSet(procedures, getTypeInstanceProcedure(TypeInstance.INSTANCE));
+        }
+        // showOnlyAggregatedProcedures
+        if (ProcedureRequestSettings.getInstance().isShowOnlyAggregatedProcedures()) {
+            procedures = CollectionHelper.conjunctCollectionsToSet(procedures, getComponentAggregationProcedure(ComponentAggregation.AGGREGATION));
+            
+        }
+        return procedures;
+    }
+
+    @Override
+    public boolean hasQueryableProcedure(String procedureID) {
+        return getQueryableProcedures().contains(procedureID);
+    }
+
+    @Override
+    public Set<String> getTypeInstanceProcedure(TypeInstance typeInstance) {
+        return copyOf(typeInstanceProcedures.get(typeInstance));
+    }
+
+    @Override
+    public Set<String> getComponentAggregationProcedure(ComponentAggregation componentAggregation) {
+        return copyOf(componentAggregationProcedures.get(componentAggregation));
+    }
+
+    @Override
+    public Set<String> getInstancesForProcedure(String identifier) {
+        
+        return copyOf(typeOfProcedures.get(identifier));
+    }
+
+    @Override
+    public boolean hasInstancesForProcedure(String identifier) {
+        return typeOfProcedures.containsKey(identifier);
+    }
+
+    @Override
+    public void addTypeInstanceProcedure(TypeInstance typeInstance, String identifier) {
+        notNullOrEmpty(TYPE_PROCEDURE, identifier);
+        logAdding(TYPE_PROCEDURE, identifier);
+        if (typeInstanceProcedures.containsKey(typeInstance)) {
+            typeInstanceProcedures.get(typeInstance).add(identifier);
+        } else {
+            typeInstanceProcedures.put(typeInstance, Sets.newHashSet(identifier));
+        }
+    }
+
+    @Override
+    public void removeTypeInstanceProcedure(String identifier) {
+        notNullOrEmpty(TYPE_PROCEDURE, identifier);
+        logRemoving(TYPE_PROCEDURE, identifier);
+        removeValue(typeInstanceProcedures, identifier);
+    }
+
+    @Override
+    public void clearTypeInstanceProcedure() {
+        logClearing(TYPE_PROCEDURE);
+        typeInstanceProcedures.clear();
+    }
+
+    @Override
+    public void addComponentAggregationProcedure(ComponentAggregation componentAggregation, String identifier) {
+        notNullOrEmpty(AGGREGATED_PROCEDURE, identifier);
+        logAdding(AGGREGATED_PROCEDURE, identifier);
+        if (componentAggregationProcedures.containsKey(componentAggregation)) {
+            componentAggregationProcedures.get(componentAggregation).add(identifier);
+        } else {
+            componentAggregationProcedures.put(componentAggregation, Sets.newHashSet(identifier));
+        }
+    }
+
+    @Override
+    public void removeComponentAggregationProcedure(String identifier) {
+        notNullOrEmpty(AGGREGATED_PROCEDURE, identifier);
+        logRemoving(AGGREGATED_PROCEDURE, identifier);
+        removeValue(componentAggregationProcedures, identifier);
+    }
+
+    @Override
+    public void clearComponentAggregationProcedure() {
+        logClearing(AGGREGATED_PROCEDURE);
+        componentAggregationProcedures.clear();
+    }
+
+    @Override
+    public void addTypeOfProcedure(String type , String instance) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        notNullOrEmpty(PROCEDURE_INSTANCE, instance);
+        LOG.trace("Adding instance '{}' to type '{}'", instance, type);
+        if (hasInstancesForProcedure(type)) {
+            typeOfProcedures.get(type).add(instance);
+        } else {
+            typeOfProcedures.put(type, Sets.newHashSet(instance));
+        }
+    }
+
+    @Override
+    public void addTypeOfProcedure(String type, Set<String> instances) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        noNullValues(PROCEDURE_INSTANCES, instances);
+        LOG.trace("Adding instances {} to type '{}'", instances, type);
+        if (hasInstancesForProcedure(type)) {
+            typeOfProcedures.get(type).addAll(instances);
+        } else {
+            typeOfProcedures.put(type, instances);
+        }
+    }
+
+    @Override
+    public void removeTypeOfProcedure(String type) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        LOG.trace("Removing type '{}'", type);
+        if (hasInstancesForProcedure(type)) {
+            typeOfProcedures.remove(type);
+        }
+        // check for values
+        removeValue(typeOfProcedures, type);
+    }
+
+    @Override
+    public void removeTypeOfProcedure(String type, String instance) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        notNullOrEmpty(PROCEDURE_INSTANCE, instance);
+        LOG.trace("Removing instance '{}' of type '{}'", type);
+        if (hasInstancesForProcedure(type)) {
+            typeOfProcedures.get(type).remove(instance);
+        }
+    }
+
+    @Override
+    public void clearTypeOfProcedure() {
+       logClearing("Clearing type instance procedure map");
+       typeOfProcedures.clear();
+    }
+
+    /**
+     * Logs to trace: "Adding 'value' to 'type'".
+     * 
+     * @param type
+     *            Add to
+     * @param value
+     *            Value to add
+     */
+    protected void logAdding(String type, String value) {
+        LOG.trace("Adding '{}' to '{}'", value, type);
+    }
+
+    /**
+     * Logs to trace: "Removing 'value' from 'type'".
+     * 
+     * @param type
+     *            Remove from
+     * @param value
+     *            Value to remove
+     */
+    protected void logRemoving(String type, String value) {
+        LOG.trace("Removing '{}' from '{}'", value, type);
+    }
+
+    /**
+     * Logs to trace: "Clearing 'type'
+     * 
+     * @param type
+     *            Type to clear
+     */
+    protected void logClearing(String type) {
+        LOG.trace("Clearing '{}'", type);
     }
     
 }

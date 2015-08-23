@@ -45,6 +45,7 @@ import com.vividsolutions.jts.geom.Envelope;
 /**
  * TODO add log statements to all protected methods! TODO extract sub classes
  * for insertion updates
+ * 
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>

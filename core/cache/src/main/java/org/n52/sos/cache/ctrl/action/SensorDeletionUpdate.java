@@ -140,5 +140,9 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         cache.recalculatePhenomenonTime();
         cache.recalculateResultTime();
         cache.recalculateGlobalEnvelope();
+        
+        cache.removeComponentAggregationProcedure(procedure);
+        cache.removeTypeInstanceProcedure(procedure);
+        cache.removeTypeOfProcedure(procedure);
     }
 }

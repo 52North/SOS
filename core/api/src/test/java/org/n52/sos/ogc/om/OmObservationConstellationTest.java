@@ -33,6 +33,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;

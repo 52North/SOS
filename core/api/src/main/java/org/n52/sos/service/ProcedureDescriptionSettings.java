@@ -48,7 +48,7 @@ import org.n52.iceland.util.Validation;
 @Configurable
 public class ProcedureDescriptionSettings implements Constructable {
 
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description")
+    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description Enrichment")
             .setDescription("Settings to configure the procedure description generation and enrichment feature.")
             .setOrder(4.2023f);
 
@@ -110,7 +110,7 @@ public class ProcedureDescriptionSettings implements Constructable {
     public void init() {
         ProcedureDescriptionSettings.instance = this;
     }
-
+    
     @Deprecated
     public static ProcedureDescriptionSettings getInstance() {
         return instance;

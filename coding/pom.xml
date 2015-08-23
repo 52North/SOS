@@ -23,5 +23,5 @@
 		<module>exi</module>
 		<module>kvp</module>
 		<module>soap</module>
-    </modules>
+		<module>netcdf</module>    </modules>
 </project>

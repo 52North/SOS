@@ -52,6 +52,7 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
+import org.n52.sos.cache.SosContentCache;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -102,6 +103,29 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
 
     private void getProcedureDescriptionFormat() {
         getCache().setRequestableProcedureDescriptionFormat(new ProcedureDescriptionFormatDAO().getProcedureDescriptionFormat(getSession()));
+    }
+
+
+    private void setTypeProcedure(Procedure procedure) {
+        if (procedure.isType()) {
+            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.TYPE, procedure.getIdentifier());
+        } else {
+            getCache().addTypeInstanceProcedure(SosContentCache.TypeInstance.INSTANCE, procedure.getIdentifier());
+        }
+    }
+
+    private void setAggregatedProcedure(Procedure procedure) {
+        if (procedure.isAggregation()) {
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.AGGREGATION, procedure.getIdentifier());
+        } else {
+            getCache().addComponentAggregationProcedure(SosContentCache.ComponentAggregation.COMPONENT, procedure.getIdentifier());
+        }
+    }
+
+    private void setTypeInstanceProcedure(Procedure procedure) {
+        if (procedure.isSetTypeOf()) {
+            getCache().addTypeOfProcedure(procedure.getTypeOf().getIdentifier(), procedure.getIdentifier());
+        }
     }
 
     @Override
@@ -156,6 +180,10 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
                         observablePropertyDAO.getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
             }
+            
+            setTypeProcedure(procedure);
+            setAggregatedProcedure(procedure);
+            setTypeInstanceProcedure(procedure);
 
             if (!CollectionHelper.isEmpty(parentProcedures)) {
                 getCache().addParentProcedures(procedureIdentifier, parentProcedures);

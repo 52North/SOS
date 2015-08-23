@@ -207,6 +207,10 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     protected void addProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getProcedures());
     }
+    
+    protected void addQueryableProcedureParameter(OwsOperation opsMeta) {
+        addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
+    }
 
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
         if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {

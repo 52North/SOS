@@ -79,9 +79,11 @@ import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.slf4j.Logger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
@@ -841,7 +843,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *
      * @param identifier
      *            Procedure identifier
-     * @param procedureDecriptionFormat
+     * @param procedureDescriptionFormat
      *            Procedure description format object
      * @param parentProcedures
      *            Parent procedure identifiers
@@ -850,16 +852,50 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      * @return Procedure object
      */
     public Procedure getOrInsertProcedure(final String identifier,
-            final ProcedureDescriptionFormat procedureDecriptionFormat, final Collection<String> parentProcedures,
+            final ProcedureDescriptionFormat procedureDescriptionFormat, final Collection<String> parentProcedures,
             final Session session) {
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat, parentProcedures, null, false, true, session);
+    }
+
+    /**
+     * Insert and get procedure object
+     *
+     * @param identifier
+     *            Procedure identifier
+     * @param procedureDescriptionFormat
+     *            Procedure description format object
+     * @param procedureDescription
+     *            {@link SosProcedureDescription} to insert
+     * @param isType 
+     * @param session
+     *            Hibernate session
+     * @return Procedure object
+     */
+    public Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
+            SosProcedureDescription procedureDescription, boolean isType, Session session) {
+        return getOrInsertProcedure(identifier, procedureDescriptionFormat,
+                procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), isType,
+                procedureDescription.isAggragation(), session);
+    }
+    
+    private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
+            Collection<String> parentProcedures, ReferenceType typeOf, boolean isType, boolean isAggregation, Session session) {
         Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
         if (procedure == null) {
             final TProcedure tProcedure = new TProcedure();
-            tProcedure.setProcedureDescriptionFormat(procedureDecriptionFormat);
+            tProcedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
             tProcedure.setIdentifier(identifier);
             if (CollectionHelper.isNotEmpty(parentProcedures)) {
                 tProcedure.setParents(Sets.newHashSet(getProceduresForIdentifiers(parentProcedures, session)));
             }
+            if (typeOf != null && !tProcedure.isSetTypeOf()) {
+                Procedure typeOfProc = getProcedureForIdentifier(typeOf.getTitle(), session);
+                if (typeOfProc != null) {
+                    tProcedure.setTypeOf(typeOfProc);
+                }
+            }
+            tProcedure.setIsType(isType);
+            tProcedure.setIsAggregation(isAggregation);
             procedure = tProcedure;
         }
         procedure.setDeleted(false);

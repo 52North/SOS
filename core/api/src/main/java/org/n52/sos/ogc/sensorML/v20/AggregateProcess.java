@@ -83,5 +83,10 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
     }
+    
+    @Override
+    public boolean isAggragation() {
+        return true;
+    }
 
 }

@@ -30,6 +30,7 @@ package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -537,7 +538,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             SchemaType schemaType = result.schemaType();
             if (schemaType.getName() != null) {
                 QName name = schemaType.getName();
-                if (name.getLocalPart() != null && name.getLocalPart().toLowerCase().contains("propertytype")) {
+                if (name.getLocalPart() != null && name.getLocalPart().toLowerCase(Locale.ROOT).contains("propertytype")) {
                     return true;
                 }
             }

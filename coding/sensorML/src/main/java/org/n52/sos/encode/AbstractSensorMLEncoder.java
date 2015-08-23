@@ -68,6 +68,7 @@ import org.n52.sos.ogc.swe.DataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
@@ -387,7 +388,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
             final SmlComponent component = new SmlComponent("component" + childCount);
             component.setTitle(childProcedure.getIdentifier());
 
-            if (ServiceConfiguration.getInstance().isEncodeFullChildrenInDescribeSensor()
+            if (ProcedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor()
                     && childProcedure instanceof AbstractSensorML) {
                 component.setProcess((AbstractSensorML) childProcedure);
             } else {

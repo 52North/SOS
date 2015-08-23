@@ -34,7 +34,7 @@
 
     <bean id="serviceConfiguration" class="org.n52.iceland.service.ServiceConfiguration"/>
     
-    <bean id="hTTPUtils" class="org.n52.iceland.util.http.HTTPUtils"/>
+    <bean id="httpUtils" class="org.n52.iceland.util.http.HttpUtils"/>
 
     <bean id="icelandServlet" class="org.n52.iceland.service.Service" />
     <bean id="eventListenerRegistrator" class="org.n52.iceland.event.ServiceEventListenerRegistrator">

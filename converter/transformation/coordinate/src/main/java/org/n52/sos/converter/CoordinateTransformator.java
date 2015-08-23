@@ -478,9 +478,10 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
      */
     private void transformPosition(SmlPosition position, int targetCrs) throws OwsExceptionReport {
         int sourceCrs = targetCrs;
-        if (position.isSetReferenceFrame()) {
+        if (position.isSetReferenceFrame() && checkReferenceFrame(position.getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getReferenceFrame());
-        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
+        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()
+                && checkReferenceFrame(position.getVector().getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
         if (targetCrs != sourceCrs) {
@@ -777,6 +778,16 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);
+    }
+
+    private boolean checkReferenceFrame(String referenceFrame) {
+        char[] charArray = referenceFrame.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            if (Character.isDigit(referenceFrame.toCharArray()[i])){
+                return true;
+            }
+        } 
+        return false;
     }
 
     /**

@@ -30,6 +30,7 @@ package org.n52.sos.converter;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -203,9 +204,9 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
             StringBuilder builder = new StringBuilder();
             builder.append(getEReportingPrefixedIdentifierHelper().getNamespacePrefix());
-            if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase().startsWith("http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.SLASH_STRING)) {
+            if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.SLASH_STRING)) {
                 builder.append(Constants.SLASH_STRING);
-            } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase().startsWith("urn") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.COLON_STRING)) {
+            } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.COLON_STRING)) {
                 builder.append(Constants.COLON_STRING) ;
             }
             return parameterValue.replace(builder.toString(), "");
@@ -253,9 +254,9 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         if (getEReportingPrefixedIdentifierHelper().isSetNamespacePrefix()) {
                StringBuilder builder = new StringBuilder();
                builder.append(getEReportingPrefixedIdentifierHelper().getNamespacePrefix());
-               if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase().startsWith("http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.SLASH_STRING)) {
+               if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("http") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.SLASH_STRING)) {
                    builder.append(Constants.SLASH_STRING);
-               } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase().startsWith("urn") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.COLON_STRING)) {
+               } else if (getEReportingPrefixedIdentifierHelper().getNamespacePrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !getEReportingPrefixedIdentifierHelper().getNamespacePrefix().endsWith(Constants.COLON_STRING)) {
                    builder.append(Constants.COLON_STRING) ;
                }
                builder.append(identifier);

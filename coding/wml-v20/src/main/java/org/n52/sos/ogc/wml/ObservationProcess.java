@@ -241,5 +241,4 @@ public class ObservationProcess extends SosProcedureDescription {
     public boolean isSetParameters() {
         return parameters != null && !parameters.isEmpty();
     }
-
 }

@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -831,7 +832,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      *         "FK + table name hasCode()"
      */
     private String getGeneratedForeignKeyFor(String tableName) {
-        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase()).toString();
+        return new StringBuilder("FK").append(Integer.toHexString(tableName.hashCode()).toUpperCase(Locale.ROOT)).toString();
     }
 
     /**

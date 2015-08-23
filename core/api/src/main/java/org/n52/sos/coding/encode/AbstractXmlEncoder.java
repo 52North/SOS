@@ -35,12 +35,12 @@ import javax.inject.Provider;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-
 import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
+import org.n52.sos.util.XmlHelper;
 
 /**
  * @since 4.0.0
@@ -69,6 +69,12 @@ public abstract class AbstractXmlEncoder<S> extends AbstractDelegatingEncoder<Xm
     @Override
     public MediaType getContentType() {
         return MediaTypes.TEXT_XML;
+    }
+    
+    protected XmlObject substitute(XmlObject elementToSubstitute, XmlObject substitutionElement) {
+        XmlObject substituteElement = XmlHelper.substituteElement(elementToSubstitute, substitutionElement);
+        substituteElement.set(substitutionElement);
+        return substituteElement;
     }
 
 }

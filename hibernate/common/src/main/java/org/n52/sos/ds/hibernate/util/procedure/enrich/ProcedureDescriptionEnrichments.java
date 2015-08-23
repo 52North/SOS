@@ -60,6 +60,8 @@ public class ProcedureDescriptionEnrichments {
     private TimePeriod validTime;
     private final Locale language;
     private final LocalizedProducer<OwsServiceProvider> serviceProvider;
+    private String typeOfIdentifier;
+    private String typeOfFormat;
 
     private ProcedureDescriptionEnrichments(Locale locale, LocalizedProducer<OwsServiceProvider> serviceProvider) {
         this.serviceProvider = serviceProvider;
@@ -111,6 +113,16 @@ public class ProcedureDescriptionEnrichments {
         return this;
     }
 
+    public ProcedureDescriptionEnrichments setTypeOfIdentifier(String typeOfIdentifier) {
+        this.typeOfIdentifier = typeOfIdentifier;
+        return this;
+    }
+    
+    public ProcedureDescriptionEnrichments setTypeOfFormat(String typeOfFormat) {
+        this.typeOfFormat = typeOfFormat;
+        return this;
+    }
+
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
                 Lists.newArrayList(
@@ -124,7 +136,8 @@ public class ProcedureDescriptionEnrichments {
                         createContactsEnrichment(),
                         createKeywordEnrichment(),
                         createValidTimeEnrichment(),
-                        createObservablePropertyEnrichment()),
+                        createObservablePropertyEnrichment(),
+                        createTypeOfEnrichmentEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -177,6 +190,10 @@ public class ProcedureDescriptionEnrichments {
         return setValues(new ObservablePropertyEnrichment());
     }
 
+    private TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
+        return setValues(new TypeOfEnrichment()).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
+    }
+    
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)

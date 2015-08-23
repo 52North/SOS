@@ -43,4 +43,5 @@ public class SosProcedureDescriptionUnknowType extends SosProcedureDescription {
         setDescriptionFormat(procedureDescriptionFormat);
         setSensorDescriptionXmlString(xmlDescription);
     }
+
 }

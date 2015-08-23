@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import org.hibernate.cfg.Configuration;
@@ -232,7 +233,7 @@ public class SQLScriptGenerator {
 
     private List<String> checkSchema(Dialect dia, String[] create) {
         String hexStringToCheck =
-                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
+                new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase(Locale.ROOT))
                         .toString();
         boolean duplicate = false;
         List<String> checkedSchema = Lists.newLinkedList();

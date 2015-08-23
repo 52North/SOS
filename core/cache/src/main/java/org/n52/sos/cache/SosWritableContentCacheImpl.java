@@ -46,6 +46,7 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sos.SosEnvelope;
 
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
 
@@ -1636,4 +1637,136 @@ public class SosWritableContentCacheImpl extends SosContentCacheImpl implements 
         getOfferingIdentifierForHumanReadableName().clear();
     }
 
+    @Override
+    public void addTypeInstanceProcedure(TypeInstance typeInstance, String identifier) {
+        notNullOrEmpty(TYPE_PROCEDURE, identifier);
+        logAdding(TYPE_PROCEDURE, identifier);
+        if (getTypeIntanceProcedureMap().containsKey(typeInstance)) {
+            getTypeIntanceProcedureMap().get(typeInstance).add(identifier);
+        } else {
+            getTypeIntanceProcedureMap().put(typeInstance, Sets.newHashSet(identifier));
+        }
+    }
+
+    @Override
+    public void removeTypeInstanceProcedure(String identifier) {
+        notNullOrEmpty(TYPE_PROCEDURE, identifier);
+        logRemoving(TYPE_PROCEDURE, identifier);
+        removeValue(getTypeIntanceProcedureMap(), identifier);
+    }
+
+    @Override
+    public void clearTypeInstanceProcedure() {
+        logClearing(TYPE_PROCEDURE);
+        getTypeIntanceProcedureMap().clear();
+    }
+
+    @Override
+    public void addComponentAggregationProcedure(ComponentAggregation componentAggregation, String identifier) {
+        notNullOrEmpty(AGGREGATED_PROCEDURE, identifier);
+        logAdding(AGGREGATED_PROCEDURE, identifier);
+        if (getComponentAggregationProcedureMap().containsKey(componentAggregation)) {
+            getComponentAggregationProcedureMap().get(componentAggregation).add(identifier);
+        } else {
+            getComponentAggregationProcedureMap().put(componentAggregation, Sets.newHashSet(identifier));
+        }
+    }
+
+    @Override
+    public void removeComponentAggregationProcedure(String identifier) {
+        notNullOrEmpty(AGGREGATED_PROCEDURE, identifier);
+        logRemoving(AGGREGATED_PROCEDURE, identifier);
+        removeValue(getComponentAggregationProcedureMap(), identifier);
+    }
+
+    @Override
+    public void clearComponentAggregationProcedure() {
+        logClearing(AGGREGATED_PROCEDURE);
+        getComponentAggregationProcedureMap().clear();
+    }
+
+    @Override
+    public void addTypeOfProcedure(String type , String instance) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        notNullOrEmpty(PROCEDURE_INSTANCE, instance);
+        LOG.trace("Adding instance '{}' to type '{}'", instance, type);
+        if (hasInstancesForProcedure(type)) {
+            getTypeOfProcedureMap().get(type).add(instance);
+        } else {
+            getTypeOfProcedureMap().put(type, Sets.newHashSet(instance));
+        }
+    }
+
+    @Override
+    public void addTypeOfProcedure(String type, Set<String> instances) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        noNullValues(PROCEDURE_INSTANCES, instances);
+        LOG.trace("Adding instances {} to type '{}'", instances, type);
+        if (hasInstancesForProcedure(type)) {
+            getTypeOfProcedureMap().get(type).addAll(instances);
+        } else {
+            getTypeOfProcedureMap().put(type, instances);
+        }
+    }
+
+    @Override
+    public void removeTypeOfProcedure(String type) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        LOG.trace("Removing type '{}'", type);
+        if (hasInstancesForProcedure(type)) {
+            getTypeOfProcedureMap().remove(type);
+        }
+        // check for values
+        removeValue(getTypeOfProcedureMap(), type);
+    }
+
+    @Override
+    public void removeTypeOfProcedure(String type, String instance) {
+        notNullOrEmpty(TYPE_PROCEDURE, type);
+        notNullOrEmpty(PROCEDURE_INSTANCE, instance);
+        LOG.trace("Removing instance '{}' of type '{}'", type);
+        if (hasInstancesForProcedure(type)) {
+            getTypeOfProcedureMap().get(type).remove(instance);
+        }
+    }
+
+    @Override
+    public void clearTypeOfProcedure() {
+       logClearing("Clearing type instance procedure map");
+       getTypeOfProcedureMap().clear();
+    }
+
+    /**
+     * Logs to trace: "Adding 'value' to 'type'".
+     * 
+     * @param type
+     *            Add to
+     * @param value
+     *            Value to add
+     */
+    protected void logAdding(String type, String value) {
+        LOG.trace("Adding '{}' to '{}'", value, type);
+    }
+
+    /**
+     * Logs to trace: "Removing 'value' from 'type'".
+     * 
+     * @param type
+     *            Remove from
+     * @param value
+     *            Value to remove
+     */
+    protected void logRemoving(String type, String value) {
+        LOG.trace("Removing '{}' from '{}'", value, type);
+    }
+
+    /**
+     * Logs to trace: "Clearing 'type'
+     * 
+     * @param type
+     *            Type to clear
+     */
+    protected void logClearing(String type) {
+        LOG.trace("Clearing '{}'", type);
+    }
 }

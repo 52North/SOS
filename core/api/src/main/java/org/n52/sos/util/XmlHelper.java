@@ -61,7 +61,7 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.FileIOHelper;
 import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.http.HTTPUtils;
+import org.n52.iceland.util.http.HttpUtils;
 import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.exception.swes.InvalidRequestException;
 import org.slf4j.Logger;
@@ -105,7 +105,7 @@ public final class XmlHelper {
         try {
             if (request.getParameterMap().isEmpty()) {
                 final String requestContent =
-                        StringHelper.convertStreamToString(HTTPUtils.getInputStream(request),
+                        StringHelper.convertStreamToString(HttpUtils.getInputStream(request),
                                 request.getCharacterEncoding());
                 doc = parseXmlString(requestContent);
             } else {

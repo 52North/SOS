@@ -64,8 +64,11 @@
 	<bean id="elasticsearchDataHandler" class="org.n52.iceland.statistics.impl.ElasticsearchDataHandler" depends-on="adminDataHandler"></bean>
 	<bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.StatisticsLocationUtil"></bean>
 	<bean id="statisticsResolverFactory" class="org.n52.iceland.statistics.impl.StatisticsResolverFactory"></bean>
-	
-	
+
+	<import resource="classpath:statistics/countingoutputstream-event.xml" />
+	<import resource="classpath:statistics/default-event.xml" />
+	<import resource="classpath:statistics/exception-event.xml" />
+	<import resource="classpath:statistics/outgoingresponse-event.xml" />
 
 
 

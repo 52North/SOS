@@ -1,0 +1,1 @@
+new ArrayList<String>(doc["getcapabilities-sections"].values).join("_")

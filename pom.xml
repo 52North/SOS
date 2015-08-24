@@ -32,6 +32,7 @@
 		<module>hibernate</module>
 		<module>extensions</module>
 		<module>spring</module>
+		<module>statistics</module>
 		<module>third-party</module>
 		<module>webapp</module>
 		<module>webapp-bundle</module>
@@ -102,6 +103,11 @@
 				<version>1.0.0-SNAPSHOT</version>
 				<scope>test</scope>
 				<classifier>tests</classifier>
+			</dependency>
+			<dependency>
+				<groupId>org.n52.iceland</groupId>
+				<artifactId>statistics-core</artifactId>
+				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
@@ -396,6 +402,12 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>split-and-merge</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<!-- Statistics -->
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>statistics</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

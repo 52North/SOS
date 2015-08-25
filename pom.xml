@@ -1270,49 +1270,6 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!-- m2e fix – Plugin execution not covered by lifecycle configuration -->
-				<!-- See http://sourcevirtues.wordpress.com/2012/02/01/m2e-fix-plugin-execution-lifecycle-configuration/ -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.groovy.maven</groupId>
-										<artifactId>gmaven-plugin</artifactId>
-										<versionRange>[1.0,)</versionRange>
-										<goals>
-											<goal>execute</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<runOnIncremental>false</runOnIncremental>
-										</execute>
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.jasig.maven</groupId>
-										<artifactId>maven-notice-plugin</artifactId>
-										<versionRange>[1.0.6.1,)</versionRange>
-										<goals>
-											<goal>check</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<runOnIncremental>false</runOnIncremental>
-										</execute>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>xmlbeans-maven-plugin</artifactId>

@@ -32,9 +32,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 
 /**
  * Test class implementation for {@link AbstractSensorMLEncoder}
@@ -46,7 +47,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 public class TestAbstractSensorMLEncoder extends AbstractSensorMLEncoder {
 
     @Override
-    public Set<EncoderKey> getEncoderKeyType() {
+    public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -59,9 +60,10 @@ public class TestAbstractSensorMLEncoder extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
+    public Set<EncoderKey> getKeys() {
         // TODO Auto-generated method stub
         return null;
     }
+
 
 }

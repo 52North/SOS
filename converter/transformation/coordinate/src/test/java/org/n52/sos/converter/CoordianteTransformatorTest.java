@@ -31,10 +31,16 @@ package org.n52.sos.converter;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+import javax.naming.ConfigurationException;
+
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.n52.iceland.config.SettingsServiceImpl;
+import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.swe.SweConstants.AltitudeSweCoordinateName;
+import org.n52.iceland.ogc.swe.SweConstants.EastingSweCoordinateName;
+import org.n52.iceland.ogc.swe.SweConstants.NorthingSweCoordinateName;
 
 /**
  * Test class for {@link CoordianteTransformator}
@@ -45,7 +51,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
  */
 public class CoordianteTransformatorTest {
 
-	private final CoordianteTransformator transformer = new CoordianteTransformator();
+	private final CoordinateTransformator transformer = new CoordinateTransformator();
 
 	private final int EPSG = 4326;
 
@@ -113,7 +119,7 @@ public class CoordianteTransformatorTest {
 		assertThat(transformer.checkAltitudeName(AltitudeSweCoordinateName.depth.name()), is(true));
 		assertThat(transformer.checkAltitudeName("IamAltitude"), is(false));
 		// Add value to setting
-		CoordinateHelper.getInstance().setAltitudeNames("testAltitude, secondTestAltitude");
+		transformer.setAltitudeNames("testAltitude, secondTestAltitude");
 		assertThat(transformer.checkAltitudeName("testAltitude"), is(true));
 	}
 
@@ -125,7 +131,7 @@ public class CoordianteTransformatorTest {
 		assertThat(transformer.checkNorthingName(NorthingSweCoordinateName.latitude.name()), is(true));
 		assertThat(transformer.checkNorthingName("IamNorthing"), is(false));
 		// Add value to setting
-		CoordinateHelper.getInstance().setNorthingNames("testNorthing, secondTestNorthing");
+		transformer.setNorthingNames("testNorthing, secondTestNorthing");
 		assertThat(transformer.checkNorthingName("testNorthing"), is(true));
 	}
 
@@ -137,7 +143,7 @@ public class CoordianteTransformatorTest {
 		assertThat(transformer.checkEastingName(EastingSweCoordinateName.longitude.name()), is(true));
 		assertThat(transformer.checkEastingName("IamEasting"), is(false));
 		// Add value to setting
-		CoordinateHelper.getInstance().setEastingNames("testEasting, secondTestEasting");
+		transformer.setEastingNames("testEasting, secondTestEasting");
 		assertThat(transformer.checkEastingName("testEasting"), is(true));
 	}
 

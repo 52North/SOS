@@ -33,14 +33,8 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.AfterClass;
 import org.junit.Test;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.CoordinateHelper;
-import org.n52.sos.ogc.swe.SweConstants.AltitudeSweCoordinateName;
-import org.n52.sos.ogc.swe.SweConstants.EastingSweCoordinateName;
-import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
+import org.n52.iceland.config.SettingsServiceImpl;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 
 /**
  * Test class for {@link CoordianteTransformator}
@@ -63,10 +57,10 @@ public class CoordianteTransformatorTest {
 
 	private final String EPSG_PREFIX = "EPSG::";
 
-	@AfterClass
-	public static void cleanUp() {
-		SettingsManager.getInstance().cleanup();
-	}
+//	@AfterClass
+//	public static void cleanUp() {
+//		SettingsServiceImpl.getInstance().cleanup();
+//	}
 
 	@Test
 	public void testGetCrsFromStringHttp() throws OwsExceptionReport {

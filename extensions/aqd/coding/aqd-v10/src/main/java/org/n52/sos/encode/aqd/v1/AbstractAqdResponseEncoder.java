@@ -38,7 +38,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
@@ -135,10 +135,10 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
      */
     protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getContentType());
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getContentType());
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
+            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
                     getContentType())));
         }
         return encoder;

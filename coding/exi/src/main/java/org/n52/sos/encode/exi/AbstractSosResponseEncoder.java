@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -86,7 +86,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
      */
     public AbstractSosResponseEncoder(Class<T> type, String operation, String version) {
         OperationKey key = new OperationKey(SosConstants.SOS, version, operation);
-        this.encoderKeys = Sets.<EncoderKey>newHashSet(new OperationEncoderKey(key, MediaTypes.APPLICATION_EXI));
+        this.encoderKeys = Sets.<EncoderKey>newHashSet(new OperationResponseEncoderKey(key, MediaTypes.APPLICATION_EXI));
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
     }
 
@@ -164,10 +164,10 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
      */
     protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
+            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
                     MediaTypes.APPLICATION_XML)));
         }
         return encoder;

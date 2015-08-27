@@ -37,7 +37,7 @@ import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
@@ -118,10 +118,11 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
      */
     private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
+            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
                     getContentType())));
         }
         return encoder;

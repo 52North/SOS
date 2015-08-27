@@ -19,6 +19,10 @@
 			<groupId>org.n52.iceland</groupId>
 			<artifactId>iceland</artifactId>
 		</dependency>
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-ows-v110</artifactId>
+        </dependency>
         <!-- XML Beans Generated Classes -->
         <dependency>
             <groupId>org.n52.sensorweb</groupId>

@@ -31,13 +31,13 @@ package org.n52.sos.coding.encode;
 import java.util.EnumMap;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.util.XmlHelper;
@@ -49,14 +49,14 @@ import org.n52.sos.util.XmlHelper;
  */
 public abstract class AbstractXmlEncoder<S> extends AbstractDelegatingEncoder<XmlObject, S> {
 
-    private Provider<XmlOptions> xmlOptions;
+    private Producer<XmlOptions> xmlOptions;
 
     public XmlOptions getXmlOptions() {
         return xmlOptions.get();
     }
 
     @Inject
-    public void setXmlOptions(Provider<XmlOptions> xmlOptions) {
+    public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
         this.xmlOptions = xmlOptions;
     }
 

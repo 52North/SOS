@@ -32,16 +32,15 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
+import org.n52.iceland.coding.encode.OperationRequestEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,16 +48,12 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
 /**
- * TODO JavaDoc
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 5.0.0
  *
  * @param <T>
- *            the response type
- * @author Christian Autermann <c.autermann@52north.org>
- *
- * @since 4.0.0
  */
-public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractEncoder<T>
-        implements StreamingEncoder<XmlObject, T>  {
+public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest<? extends AbstractServiceResponse>> extends AbstractEncoder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
     
@@ -82,13 +77,14 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      * @param validate
      *            Indicator if the created/encoded object should be validated
      */
-    public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType, boolean validate) {
+    public AbstractRequestEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType, boolean validate) {
         super(service, version, operation, namespace, prefix, responseType, validate);
         OperationKey key = new OperationKey(service, version, operation);
-        this.encoderKeys =
-                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationResponseEncoderKey(key,
-                        MediaTypes.TEXT_XML), new OperationResponseEncoderKey(key, MediaTypes.APPLICATION_XML));
-        LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
+        this.encoderKeys = Sets.newHashSet(new XmlEncoderKey(namespace, responseType),
+                new OperationRequestEncoderKey(key, MediaTypes.TEXT_XML),
+                new OperationRequestEncoderKey(key, MediaTypes.APPLICATION_XML));
+        LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(encoderKeys));
     }
 
     /**
@@ -107,7 +103,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      * @param responseType
      *            Response type
      */
-    public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
+    public AbstractRequestEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
         this(service, version, operation, namespace, prefix, responseType, false);
     }
     
@@ -133,5 +129,4 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     public boolean forceStreaming() {
         return false;
     }
-
 }

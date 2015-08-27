@@ -56,6 +56,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.Constants;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
@@ -119,7 +120,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             ConformanceClasses.OM_V2_CATEGORY_OBSERVATION,
             ConformanceClasses.OM_V2_COUNT_OBSERVATION,
             ConformanceClasses.OM_V2_TRUTH_OBSERVATION,
-            // ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
+            ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
             ConformanceClasses.OM_V2_TEXT_OBSERVATION);
 
     public OmDecoderv20() {
@@ -364,6 +365,10 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
                 SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
                 result.setValue(new GeometryValue((Geometry) decodedObject));
                 return result;
+            } else if (decodedObject instanceof AbstractGeometry) {
+                SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
+                result.setValue(new GeometryValue(((AbstractGeometry) decodedObject).getGeometry()));
+                return result;
             } else if (decodedObject instanceof SweDataArray) {
                 SweDataArrayValue value = new SweDataArrayValue();
                 value.setValue((SweDataArray) decodedObject);
@@ -372,7 +377,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
                 return result;
             }
             throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
-                    .withMessage("The requested result type is not supported by this service!");
+                    .withMessage("The requested result type '{}' is not supported by this service!", decodedObject.getClass().getSimpleName());
         }
     }
 

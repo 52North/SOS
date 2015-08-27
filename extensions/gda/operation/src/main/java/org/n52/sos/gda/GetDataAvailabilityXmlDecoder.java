@@ -73,7 +73,6 @@ public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetData
     private static final String BASE_PATH_GDA = getBasePath(GetDataAvailabilityConstants.XPATH_PREFIXES_GDA,
             GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
-    @SuppressWarnings("unchecked")
     private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
             Sos2Constants.NS_SOS_20, XmlObject.class), CodingHelper.decoderKeysForElements(
             GetDataAvailabilityConstants.NS_GDA, XmlObject.class), CodingHelper.xmlDecoderKeysForOperation(

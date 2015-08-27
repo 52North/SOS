@@ -68,6 +68,10 @@ public class SosCapabilities extends OwsCapabilities {
     public SosCapabilities(String version) {
         super(SosConstants.SOS, version);
     }
+    
+    public SosCapabilities(OwsCapabilities owsCapabilities) {
+        super(SosConstants.SOS, owsCapabilities);
+    }
 
     /**
      * Get filter capabilities

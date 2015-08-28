@@ -48,6 +48,8 @@ import com.google.common.collect.Lists;
  * 
  */
 public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResponse> {
+    
+    private static final String SENSOR_TYPE_FLAG = "isType";
 
     private String procedureDescriptionFormat;
 
@@ -205,5 +207,15 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     @Override
     public InsertSensorResponse getResponse() throws OwsExceptionReport {
         return (InsertSensorResponse) new InsertSensorResponse().set(this);
+    }
+    
+    /**
+     * @return <code>true</code>, if the sensor type flag is set
+     */
+    public boolean isType() {
+        if (hasExtension(SENSOR_TYPE_FLAG)) {
+            return getExtensions().isBooleanExtensionSet(SENSOR_TYPE_FLAG);
+        }
+        return false;
     }
 }

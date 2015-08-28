@@ -79,7 +79,7 @@ public abstract class AbstractGetObservationHandler extends AbstractOperationHan
 
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
         addOfferingParameter(opsMeta);
-        addProcedureParameter(opsMeta);
+        addQueryableProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat,
                                            getResponseFormatRepository().getSupportedResponseFormats(SosConstants.SOS, version));
 

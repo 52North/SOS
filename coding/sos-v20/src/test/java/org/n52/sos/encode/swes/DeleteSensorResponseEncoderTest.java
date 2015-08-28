@@ -48,7 +48,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -76,9 +76,9 @@ public class DeleteSensorResponseEncoderTest {
         Set<EncoderKey> returnedKeySet = new DeleteSensorResponseEncoder().getKeys();
         assertThat(returnedKeySet.size(), is(3));
         assertThat(returnedKeySet, hasItem(new XmlEncoderKey(SwesConstants.NS_SWES_20, DeleteSensorResponse.class)));
-        assertThat(returnedKeySet, hasItem(new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+        assertThat(returnedKeySet, hasItem(new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                 Sos2Constants.Operations.DeleteSensor, MediaTypes.TEXT_XML)));
-        assertThat(returnedKeySet, hasItem(new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+        assertThat(returnedKeySet, hasItem(new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                 Sos2Constants.Operations.DeleteSensor, MediaTypes.APPLICATION_XML)));
     }
 

@@ -650,7 +650,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 || (!isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator())) {
             merge = false;
         }
-        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge;
+        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge && getObservationConstellation().checkObservationTypeForMerging();
     }
-
+    
 }

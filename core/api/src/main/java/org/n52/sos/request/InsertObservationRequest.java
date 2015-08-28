@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.CollectionHelper;
@@ -140,5 +141,10 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
     @Override
     public InsertObservationResponse getResponse() throws OwsExceptionReport {
         return (InsertObservationResponse) new InsertObservationResponse().set(this);
+    }
+
+    public boolean isSetExtensionSplitDataArrayIntoObservations() {
+        return isSetExtensions() && getExtensions()
+                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 }

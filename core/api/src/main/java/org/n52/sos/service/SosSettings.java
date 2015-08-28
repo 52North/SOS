@@ -31,11 +31,8 @@ package org.n52.sos.service;
 public interface SosSettings {
 
     String SENSOR_DIRECTORY = "service.sensorDirectory";
-    String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR
-            = "service.encodeFullChildrenInDescribeSensor";
     String MAX_GET_OBSERVATION_RESULTS = "service.maxGetObservationResults";
     String DEREGISTER_JDBC_DRIVER = "service.jdbc.deregister";
-    String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
     String STRICT_SPATIAL_FILTERING_PROFILE
             = "service.strictSpatialFilteringProfile";
 

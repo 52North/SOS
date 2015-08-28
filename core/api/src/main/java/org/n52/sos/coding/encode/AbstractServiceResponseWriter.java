@@ -37,7 +37,7 @@ import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
@@ -79,29 +79,28 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     }
 
     @Override
-    public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy) throws IOException {
-        try {
-            Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
-            if (encoder != null) {
-                if (isStreaming(asr)) {
-                    ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
-                } else {
-                    if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
-                        ((StreamingDataResponse)asr).mergeStreamingData();
+    public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy)
+            throws IOException, OwsExceptionReport {
+        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+        if (encoder != null) {
+            if (isStreaming(asr)) {
+                ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
+            } else {
+                if (asr instanceof StreamingDataResponse && ((StreamingDataResponse) asr).hasStreamingData()
+                        && !(encoder instanceof StreamingDataEncoder)) {
+                    ((StreamingDataResponse) asr).mergeStreamingData();
+                }
+                // use encoded Object specific writer, e.g. XmlResponseWriter
+                Object encode = encoder.encode(asr);
+                if (encode != null) {
+                    ResponseWriter<Object> writer =
+                            this.responseWriterRepository.getWriter(encode.getClass());
+                    if (writer == null) {
+                        throw new RuntimeException("no writer for " + encode.getClass() + " found!");
                     }
-                    // use encoded Object specific writer, e.g. XmlResponseWriter
-                    Object encode = encoder.encode(asr);
-                    if (encode != null) {
-                        ResponseWriter<Object> writer = this.responseWriterRepository.getWriter(encode.getClass());
-                        if (writer == null) {
-                            throw new RuntimeException("no writer for " + encode.getClass() + " found!");
-                        }
-                        writer.write(encode, out, responseProxy);
-                    }
+                    writer.write(encode, out, responseProxy);
                 }
             }
-        } catch (OwsExceptionReport owsex) {
-            throw new IOException(owsex);
         }
     }
 
@@ -119,10 +118,11 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
      */
     private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
+            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
                     getContentType())));
         }
         return encoder;

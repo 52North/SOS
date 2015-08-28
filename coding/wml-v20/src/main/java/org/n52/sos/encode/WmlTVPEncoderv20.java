@@ -125,7 +125,8 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     @SuppressWarnings("unchecked")
     private static Set<EncoderKey> createEncoderKeys() {
         return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
-                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class, SingleObservationValue.class, MultiObservationValues.class));
+                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class, 
+                SingleObservationValue.class, MultiObservationValues.class));
     }
 
     @Override

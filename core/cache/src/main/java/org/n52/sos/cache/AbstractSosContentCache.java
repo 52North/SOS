@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -52,7 +53,10 @@ import com.google.common.base.Objects;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
+
+import org.slf4j.Logger;
 
 /**
  * Abstract {@code ContentCache} implementation that encapsulates the needed
@@ -187,6 +191,29 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             return Collections.emptySet();
         } else {
             return Collections.unmodifiableSet(new HashSet<T>(set));
+        }
+    }
+    
+    /**
+     * Creates a unmodifiable copy of the specified collection of sets.
+     *
+     * @param <T>
+     *            the element type
+     * @param set
+     *            the set
+     *
+     * @return a unmodifiable copy
+     */
+    protected static <T> Set<T> copyOf(Collection<Set<T>> set) {
+        if (set == null) {
+            return Collections.emptySet();
+        } else {
+            HashSet<T> newHashSet = Sets.newHashSet();
+            Iterator<Set<T>> iterator = set.iterator();
+            while (iterator.hasNext()) {
+                newHashSet.addAll((Set<T>) iterator.next());
+            }
+            return Collections.unmodifiableSet(newHashSet);
         }
     }
 
@@ -336,7 +363,27 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             throw new NullPointerException(name + " may not be null!");
         }
     }
-
+    
+    /**
+     * Remove value from map or complete entry if values for key are empty
+     * 
+     * @param map
+     *            Map to check
+     * @param value
+     *            Value to remove
+     */
+    protected static <K, V> void removeValue(Map<K, Set<String>> map, String value) {
+        for (K key : map.keySet()) {
+            if (map.get(key).contains(value)) {
+                if (map.get(key).size() > 1) {
+                    map.get(key).remove(value);
+                } else {
+                    map.remove(key);
+                }
+            }
+        }
+    }
+    
     private int defaultEpsgCode = Constants.EPSG_WGS84;
 
     private Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
@@ -446,6 +493,17 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
 
+    private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
+    
+    private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
+    
+    private Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
+    
+    protected static Logger getLogger() {
+        return null;
+    }
+    
+    
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -797,6 +855,18 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
     	return offeringIdentifierHumanReadableName.inverse();
     }
+    
+    protected Map<TypeInstance, Set<String>> getTypeIntanceProcedureMap() {
+        return typeInstanceProcedures;
+    }
+    
+    protected Map<ComponentAggregation, Set<String>> getComponentAggregationProcedureMap() {
+        return componentAggregationProcedures;
+    }
+    
+    protected Map<String, Set<String>> getTypeOfProcedureMap() {
+        return typeOfProceduresMap;
+    }
 
     /**
      * @param defaultEpsgCode
@@ -828,7 +898,8 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
+		procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
+		typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
     }
 
     @Override
@@ -880,7 +951,10 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                     && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
                     && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
                     && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
-                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName())
+                    && Objects.equal(this.typeInstanceProcedures, other.getTypeIntanceProcedureMap())
+                    && Objects.equal(this.componentAggregationProcedures, other.getComponentAggregationProcedureMap())
+                    && Objects.equal(this.typeOfProceduresMap, other.getTypeOfProcedureMap());
         }
         return false;
     }

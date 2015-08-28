@@ -37,7 +37,6 @@ import java.util.Set;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
@@ -46,7 +45,6 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
@@ -55,17 +53,19 @@ import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
-import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -76,17 +76,17 @@ import com.google.common.collect.Sets;
 public class SosInsertSensorOperatorV20 extends
         AbstractV2TransactionalRequestOperator<AbstractInsertSensorHandler, InsertSensorRequest, InsertSensorResponse> {
 
-
-    private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet(
-            ConformanceClasses.SOS_V2_INSERTION_CAPABILITIES,
-            ConformanceClasses.SOS_V2_SENSOR_INSERTION);
+    private static final Set<String> CONFORMANCE_CLASSES = Sets
+            .newHashSet(ConformanceClasses.SOS_V2_INSERTION_CAPABILITIES, ConformanceClasses.SOS_V2_SENSOR_INSERTION);
 
     private String defaultOfferingPrefix;
 
     private String defaultProcedurePrefix;
 
+    private static SosOffering sensorTypeDummyOffering = new SosOffering("sensorTypeDummyOffering", "");
+
     public SosInsertSensorOperatorV20() {
-        super( Sos2Constants.Operations.InsertSensor.name(), InsertSensorRequest.class);
+        super(Sos2Constants.Operations.InsertSensor.name(), InsertSensorRequest.class);
     }
 
     public String getDefaultOfferingPrefix() {
@@ -142,42 +142,59 @@ public class SosInsertSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkObservableProperty(request.getObservableProperty());
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
-        }
-        try {
             SosHelper.checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(),
                     request.getService(), request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        checkAndSetAssignedProcedureID(request);
-        checkAndSetAssignedOfferings(request);
         try {
-            checkProcedureAndOfferingCombination(request);
+            checkAndSetAssignedProcedureID(request);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        try {
-            checkParentChildProcedures(request.getProcedureDescription(), request.getAssignedProcedureIdentifier());
-        } catch (OwsExceptionReport owse) {
-            exceptions.add(owse);
-        }
-        if (request.getMetadata() != null) {
-            try {
-                checkObservationTypes(request.getMetadata().getObservationTypes());
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-            try {
-                checkFeatureOfInterestTypes(request.getMetadata().getFeatureOfInterestTypes());
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
+        /*
+         * If the sensor to insert is a sensor type which does not make any
+         * observations, set the dummy offering and do not any further checks.
+         */
+        if (request.isType()) {
+            request.setAssignedOfferings(Lists.newArrayList(sensorTypeDummyOffering));
         } else {
-            exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.observationType));
-            exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
+            try {
+                checkObservableProperty(request.getObservableProperty());
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            checkAndSetAssignedOfferings(request);
+            try {
+                checkProcedureAndOfferingCombination(request);
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            try {
+                checkParentChildProcedures(request.getProcedureDescription(), request.getAssignedProcedureIdentifier());
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            try {
+                checkTypeOf(request.getProcedureDescription());
+            } catch (OwsExceptionReport owse) {
+                exceptions.add(owse);
+            }
+            if (request.getMetadata() != null) {
+                try {
+                    checkObservationTypes(request.getMetadata().getObservationTypes());
+                } catch (OwsExceptionReport owse) {
+                    exceptions.add(owse);
+                }
+                try {
+                    checkFeatureOfInterestTypes(request.getMetadata().getFeatureOfInterestTypes());
+                } catch (OwsExceptionReport owse) {
+                    exceptions.add(owse);
+                }
+            } else {
+                exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.observationType));
+                exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
+            }
         }
         exceptions.throwIfNotEmpty();
     }
@@ -185,9 +202,10 @@ public class SosInsertSensorOperatorV20 extends
     private void checkObservableProperty(List<String> observableProperty) throws OwsExceptionReport {
         if (observableProperty == null || observableProperty.isEmpty()) {
             throw new MissingObservedPropertyParameterException();
-//        } else {
+            // } else {
             // TODO: check with existing and/or defined in outputs
         }
+        checkReservedCharacter(observableProperty, Sos2Constants.InsertSensorParams.observableProperty.name());
     }
 
     private void checkFeatureOfInterestTypes(Set<String> featureOfInterestTypes) throws OwsExceptionReport {
@@ -222,16 +240,19 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) {
+    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) throws OwsExceptionReport {
         if (request.getProcedureDescription().isSetIdentifier()) {
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
-            request.setAssignedProcedureIdentifier(getDefaultProcedurePrefix()
-                    + JavaHelper.generateID(request.getProcedureDescription().toString()));
+            request.setAssignedProcedureIdentifier(
+                    getDefaultProcedurePrefix() + JavaHelper.generateID(request.getProcedureDescription().toString()));
         }
+        // check for reserved character
+        checkReservedCharacter(request.getAssignedProcedureIdentifier(),
+                Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws InvalidOfferingParameterException {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
         SosContentCache cache = Configurator.getInstance().getCache();
 
@@ -242,9 +263,12 @@ public class SosInsertSensorOperatorV20 extends
             for (String parentProcedure : allParentProcedures) {
                 for (String offering : cache.getOfferingsForProcedure(parentProcedure)) {
                     // TODO I18N
-                    SosOffering sosOffering = new SosOffering(offering, Constants.EMPTY_STRING);
-                    sosOffering.setParentOfferingFlag(true);
-                    sosOfferings.add(sosOffering);
+                    if (!checkOfferingsForOffering(sosOfferings, offering)) {
+                        SosOffering sosOffering = new SosOffering(offering, Constants.EMPTY_STRING);
+                        sosOffering.setParentOfferingFlag(true);
+                        sosOfferings.add(sosOffering);
+                    }
+
                 }
             }
         }
@@ -254,14 +278,27 @@ public class SosInsertSensorOperatorV20 extends
             sosOfferings = new HashSet<SosOffering>(0);
             sosOfferings.add(new SosOffering(getDefaultOfferingPrefix() + request.getAssignedProcedureIdentifier()));
         }
+        // check for reserved character
+        for (SosOffering offering : sosOfferings) {
+            checkReservedCharacter(offering.getIdentifier(), Sos2Constants.InsertSensorParams.offeringIdentifier);
+        }
         request.setAssignedOfferings(new ArrayList<SosOffering>(sosOfferings));
+    }
+
+    private boolean checkOfferingsForOffering(Set<SosOffering> sosOfferings, String offering) {
+        for (SosOffering sosOffering : sosOfferings) {
+            if (sosOffering.getIdentifier().equals(offering)) {
+                sosOffering.setParentOfferingFlag(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
             if (!offering.isParentOffering() && getCache().getOfferings().contains(offering.getIdentifier())) {
-                throw new InvalidParameterValueException()
-                        .at(Sos2Constants.InsertSensorParams.offeringIdentifier)
+                throw new InvalidParameterValueException().at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
                                 "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",
                                 offering.getIdentifier());
@@ -273,9 +310,7 @@ public class SosInsertSensorOperatorV20 extends
         if (procedureDescription.isSetChildProcedures()) {
             for (SosProcedureDescription child : procedureDescription.getChildProcedures()) {
                 if (child.getIdentifier().equalsIgnoreCase(assignedIdentifier)) {
-                    throw new InvalidParameterValueException()
-                    .at("childProcdureIdentifier")
-                    .withMessage(
+                    throw new InvalidParameterValueException().at("childProcdureIdentifier").withMessage(
                             "The procedure with the identifier '%s' is linked to itself as child procedure !",
                             procedureDescription.getIdentifier());
                 }
@@ -283,14 +318,37 @@ public class SosInsertSensorOperatorV20 extends
         }
         if (procedureDescription.isSetParentProcedures()) {
             if (procedureDescription.getParentProcedures().contains(assignedIdentifier)) {
-                throw new InvalidParameterValueException()
-                .at("parentProcdureIdentifier")
-                .withMessage(
+                throw new InvalidParameterValueException().at("parentProcdureIdentifier").withMessage(
                         "The procedure with the identifier '%s' is linked to itself as parent procedure !",
                         procedureDescription.getIdentifier());
             }
         }
 
+    }
+
+    private void checkTypeOf(SosProcedureDescription procedureDescription) throws OwsExceptionReport {
+        // if href is URL, remove typeOf
+        // else href empty/title.xml/PREFIX/title.xml check title if exists
+        if (procedureDescription.isSetTypeOf()) {
+            ReferenceType typeOf = procedureDescription.getTypeOf();
+            boolean referenced = false;
+            if (typeOf.isSetHref()) {
+                if (typeOf.getHref().startsWith(Constants.HTTP) && !typeOf.getHref().equals(typeOf.getTitle())) {
+                    procedureDescription.setTypeOf(null);
+                    referenced = true;
+                }
+            }
+            if (!referenced) {
+                if (typeOf.isSetTitle()) {
+                    String title = typeOf.getTitle();
+                    if (!getCache().hasProcedure(title)) {
+                        throw new InvalidParameterValueException("sml:AbstractProcess.typeOf.title", title);
+                    }
+                } else {
+                    throw new MissingParameterValueException("sml:AbstractProcess.typeOf.title");
+                }
+            }
+        }
     }
 
     private void getChildProcedures() {

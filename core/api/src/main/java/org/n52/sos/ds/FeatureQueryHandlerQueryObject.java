@@ -45,8 +45,6 @@ public class FeatureQueryHandlerQueryObject {
 
     private Object connection;
 
-//    private int requestedSrid = Integer.MIN_VALUE;
-
     private Locale i18n;
 
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
@@ -63,15 +61,6 @@ public class FeatureQueryHandlerQueryObject {
         this.connection = connection;
                 return this;
     }
-
-//    public int getRequestedSrid() {
-//        return requestedSrid;
-//    }
-//
-//    public FeatureQueryHandlerQueryObject setRequestedSrid(int requestedSrid) {
-//        this.requestedSrid = requestedSrid;
-//        return this;
-//    }
 
     public Locale getI18N() {
         return i18n;

@@ -29,6 +29,7 @@
 package org.n52.sos.converter;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,9 +120,9 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         if (getPrefixedIdentifierHelper().isSetGlobalPrefix()) {
             StringBuilder builder = new StringBuilder();
             builder.append(getPrefixedIdentifierHelper().getGlobalPrefix());
-            if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase().startsWith("http") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.SLASH_STRING)) {
+            if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase(Locale.ROOT).startsWith("http") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.SLASH_STRING)) {
                 builder.append(Constants.SLASH_STRING);
-            } else if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase().startsWith("urn") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.COLON_STRING)) {
+            } else if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.COLON_STRING)) {
                 builder.append(Constants.COLON_STRING) ;
             }
             return parameterValue.replace(builder.toString(), "");
@@ -169,9 +170,9 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         if (getPrefixedIdentifierHelper().isSetGlobalPrefix()) {
                StringBuilder builder = new StringBuilder();
                builder.append(getPrefixedIdentifierHelper().getGlobalPrefix());
-               if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase().startsWith("http") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.SLASH_STRING)) {
+               if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase(Locale.ROOT).startsWith("http") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.SLASH_STRING)) {
                    builder.append(Constants.SLASH_STRING);
-               } else if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase().startsWith("urn") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.COLON_STRING)) {
+               } else if (getPrefixedIdentifierHelper().getGlobalPrefix().toLowerCase(Locale.ROOT).startsWith("urn") && !getPrefixedIdentifierHelper().getGlobalPrefix().endsWith(Constants.COLON_STRING)) {
                    builder.append(Constants.COLON_STRING) ;
                }
                builder.append(identifier);

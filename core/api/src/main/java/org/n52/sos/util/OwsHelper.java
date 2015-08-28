@@ -28,6 +28,8 @@
  */
 package org.n52.sos.util;
 
+import java.util.Locale;
+
 import javax.xml.namespace.QName;
 
 import org.n52.iceland.ogc.ows.OWSConstants;
@@ -48,7 +50,7 @@ public final class OwsHelper {
      * @return Modified string.
      */
     public static String refactorOpsName(String name) {
-        return name.substring(0, 1).toUpperCase() + name.substring(1);
+        return name.substring(0, 1).toUpperCase(Locale.ROOT) + name.substring(1);
 
     }
 

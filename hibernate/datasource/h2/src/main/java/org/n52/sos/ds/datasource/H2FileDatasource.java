@@ -105,7 +105,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected Map<String, Object> parseDatasourceProperties(Properties current) {
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = new HashMap<>(2);
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();

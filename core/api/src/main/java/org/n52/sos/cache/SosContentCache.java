@@ -416,6 +416,17 @@ public interface SosContentCache extends ContentCache {
      * @return the offerings
      */
     Set<String> getOfferingsForProcedure(String procedure);
+    
+    
+    /**
+     * Get the offerings associated with the specified procedures.
+     *
+     * @param procedures
+     *            the procedures
+     *
+     * @return the offerings
+     */
+    Set<String> getOfferingsForProcedures(Set<String> procedures);
 
     /**
      * @return all offerings that are associated with a result template
@@ -423,7 +434,7 @@ public interface SosContentCache extends ContentCache {
     Set<String> getOfferingsWithResultTemplate();
 
     /**
-     * @return all procedures
+     * @return procedures
      */
     Set<String> getProcedures();
 
@@ -436,7 +447,7 @@ public interface SosContentCache extends ContentCache {
      * @return {@code true} if it exists
      */
     boolean hasProcedure(String procedure);
-
+    
     /**
      * Get the procedures associated with the specified feature of interest.
      *
@@ -885,8 +896,59 @@ public interface SosContentCache extends ContentCache {
 
     String getProcedureHumanReadableNameForIdentifier(String identifier);
 
-	String getOfferingIdentifierForHumanReadableName(String humanReadableName);
+    String getOfferingIdentifierForHumanReadableName(String humanReadableName);
 
     String getOfferingHumanReadableNameForIdentifier(String identifier);
+
+    /**
+     * Get procedures usable for transactional insert observation operations
+     * (InsertObservation, InsertResultTemplate).
+     * 
+     * @return the procedures
+     */
+    Set<String> getTransactionalObservationProcedures();
+    
+    /**
+     * Checks whether the specified procedure exists for transactional insert
+     * observation operations (InsertObservation, InsertResultTemplate).
+     *
+     * @param procedure
+     *            the procedure
+     *
+     * @return {@code true} if it exists
+     */
+    boolean hasTransactionalObservationProcedure(String procedureID);
+
+    /**
+     * Get procedures usable for querying.
+     * 
+     * @return the procedures
+     */
+    Set<String> getQueryableProcedures();
+
+    /**
+     * Checks whether the specified procedure exists for querying.
+     * 
+     * @param procedureID
+     *            the procedure
+     * @return {@code true} if it exists
+     */
+    boolean hasQueryableProcedure(String procedureID);
+
+    Set<String> getTypeInstanceProcedure(TypeInstance typeInstance);
+
+    Set<String> getComponentAggregationProcedure(ComponentAggregation componentAggregation);
+    
+    Set<String> getInstancesForProcedure(String identifier);
+
+    boolean hasInstancesForProcedure(String identifier);
+
+    enum TypeInstance {
+        TYPE, INSTANCE;
+    }
+    
+    enum ComponentAggregation {
+        COMPONENT, AGGREGATION;
+    }
 
 }

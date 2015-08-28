@@ -58,7 +58,7 @@ public abstract class AbstractInsertSensorHandler extends AbstractOperationHandl
         } else {
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
             opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                getProcedureDescriptionFormatRepository().getSupportedProcedureDescriptionFormats(service, version));
+                    getProcedureDescriptionFormatRepository().getSupportedTransactionalProcedureDescriptionFormats(service, version));
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
             opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
             opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,

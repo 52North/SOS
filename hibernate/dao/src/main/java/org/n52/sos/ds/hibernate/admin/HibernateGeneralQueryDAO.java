@@ -35,6 +35,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -88,7 +89,7 @@ public class HibernateGeneralQueryDAO implements GeneralQueryDAO {
      */
     @Override
     public QueryResult query(final String query) throws SQLException {
-        String q = query.toLowerCase();
+        String q = query.toLowerCase(Locale.ROOT);
         if (contains(MODIFY_COMMANDS, q)) {
             return doTransactionalWork(new ModifyWork(), query);
         } else if (contains(UPDATE_COMMANDS, q)) {

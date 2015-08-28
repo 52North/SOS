@@ -28,14 +28,26 @@
  */
 package org.n52.sos.ogc.sos;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.iceland.binding.BindingConstants;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Maps;
@@ -56,6 +68,16 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<String> parentProcedures = Sets.newLinkedHashSet();
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
+    private ReferenceType typeOf;
+    
+    /**
+     * Is it an aggregation procedure, e.g. System, PhysicalSystem
+     * 
+     * @return <code>true</code>, if this is an aggregation procedure
+     */
+    public boolean isAggragation() {
+        return false;
+    }
 
     @Override
     public SosProcedureDescription setIdentifier(String identifier) {
@@ -164,7 +186,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
 
     public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
     	this.parentProcedures.clear();
-        this.parentProcedures.addAll(parentProcedures);
+    	addParentProcedures(parentProcedures);
         return this;
     }
     
@@ -284,10 +306,52 @@ public abstract class SosProcedureDescription extends AbstractFeature {
         copyOf.setOffetrings(getOfferings());
         copyOf.setParentProcedures(getParentProcedures());
         copyOf.setChildProcedures(getChildProcedures());
+        copyOf.setTypeOf(getTypeOf());
     }
     
     public boolean isSetFeatures() {
         return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
+    }
+
+    /**
+     * @return the typeOf
+     */
+    public ReferenceType getTypeOf() {
+        return typeOf;
+    }
+
+    /**
+     * @param typeOf the typeOf to set
+     */
+    public void setTypeOf(ReferenceType typeOf) {
+        this.typeOf = typeOf;
+    }
+    
+    
+    /**
+     * @return <code>true</code>, if typeOf is not null
+     */
+    public boolean isSetTypeOf() {
+        return getTypeOf() != null;
+    }
+
+    public String createKvpDescribeSensorOrReturnIdentifier(String identifier) throws CodedException {
+        String href = identifier;
+        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
+            final String version =
+                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
+                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
+                            : Sos1Constants.SERVICEVERSION;
+            try {
+                href =
+                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
+                                identifier, BindingConstants.KVP_BINDING_ENDPOINT, getDescriptionFormat());
+            } catch (final UnsupportedEncodingException uee) {
+                throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL").causedBy(
+                        uee);
+            }
+        }
+        return href;
     }
 
     private void setFeatureOfInterest(Set<String> featuresOfInterest) {

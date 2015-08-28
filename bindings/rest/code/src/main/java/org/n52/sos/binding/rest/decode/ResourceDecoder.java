@@ -178,7 +178,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         while (parameterNames.hasMoreElements()) {
             // all key names to lower case
             final String key = (String) parameterNames.nextElement();
-            kvp.put(key.toLowerCase(), httpRequest.getParameter(key));
+            kvp.put(key.toLowerCase(Locale.ROOT), httpRequest.getParameter(key));
         }
         return kvp;
     }

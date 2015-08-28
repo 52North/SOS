@@ -51,7 +51,7 @@ import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.iceland.util.http.HTTPUtils;
+import org.n52.iceland.util.http.HttpUtils;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.RestBinding;
@@ -113,7 +113,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
     private boolean isAcceptHeaderOk(final HttpServletRequest httpRequest) throws OwsExceptionReport {
         List<MediaType> request;
         try {
-            request = HTTPUtils.getAcceptHeader(httpRequest);
+            request = HttpUtils.getAcceptHeader(httpRequest);
         } catch (HTTPException e) {
             throw new InvalidParameterValueException().causedBy(e)
                     .at(HTTPHeaders.ACCEPT)

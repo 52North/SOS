@@ -4,6 +4,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <!-- Decoder implementations from coding/sos-v20 -->
+    <!-- request decoder -->
     <bean class="org.n52.sos.decode.FesDecoderv20"/>
     <bean class="org.n52.sos.decode.GmlDecoderv321"/>
     <bean class="org.n52.sos.decode.SosDecoderv20"/>
@@ -15,8 +16,14 @@
     <bean class="org.n52.sos.decode.SamplingDecoderv20"/>
     <bean class="org.n52.sos.decode.SwesExtensionDecoderv20"/>
     <bean class="org.n52.sos.decode.XlinkDecoderv1999"/>
+    <!-- response decoder -->
+    <bean class="org.n52.sos.decode.sos.v2.CapabilitiesDocumentDecoder"/>
+    <bean class="org.n52.sos.decode.sos.v2.CapabilitiesTypeDecoder"/>
+    <bean class="org.n52.sos.decode.sos.v2.GetObservationResponseDocumentDecoder"/>
+    
 
     <!-- Encoder implementations from coding/sos-v20 -->
+    <!-- response encoder -->
     <bean class="org.n52.sos.encode.FesEncoderv20"/>
     <bean class="org.n52.sos.encode.GmlEncoderv321"/>
     <bean class="org.n52.sos.encode.OmEncoderv20"/>
@@ -37,5 +44,10 @@
     <bean class="org.n52.sos.encode.sos.v2.InsertObservationResponseEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.InsertResultResponseEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.InsertResultTemplateResponseEncoder"/>
+    
+    <!-- request encoder -->
+    <bean class="org.n52.sos.encode.sos.v2.GetCapabilitiesRequestEncoder"/>
+    <bean class="org.n52.sos.encode.sos.v2.GetObservationRequestEncoder"/>
+     
 
 </beans>

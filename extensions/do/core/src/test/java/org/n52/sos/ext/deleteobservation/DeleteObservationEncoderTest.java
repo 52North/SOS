@@ -49,7 +49,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -107,11 +107,11 @@ public class DeleteObservationEncoderTest {
         EncoderKey key = new XmlEncoderKey(NS_SOSDO_1_0, DeleteObservationResponse.class);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
         key =
-                new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.TEXT_XML);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
         key =
-                new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                         DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.APPLICATION_XML);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getKeys().contains(key));
     }

@@ -119,6 +119,45 @@ import org.n52.sos.util.XmlOptionsHelper;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
+import net.opengis.swe.x101.AbstractDataArrayType.ElementCount;
+import net.opengis.swe.x101.AbstractDataComponentType;
+import net.opengis.swe.x101.AbstractDataRecordDocument;
+import net.opengis.swe.x101.AbstractDataRecordType;
+import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.BlockEncodingPropertyType;
+import net.opengis.swe.x101.BooleanDocument;
+import net.opengis.swe.x101.CategoryDocument;
+import net.opengis.swe.x101.CategoryDocument.Category;
+import net.opengis.swe.x101.CountDocument;
+import net.opengis.swe.x101.CountDocument.Count;
+import net.opengis.swe.x101.CountRangeDocument;
+import net.opengis.swe.x101.CountRangeDocument.CountRange;
+import net.opengis.swe.x101.DataArrayDocument;
+import net.opengis.swe.x101.DataArrayType;
+import net.opengis.swe.x101.DataComponentPropertyType;
+import net.opengis.swe.x101.DataRecordPropertyType;
+import net.opengis.swe.x101.DataRecordType;
+import net.opengis.swe.x101.EnvelopeType;
+import net.opengis.swe.x101.ObservablePropertyDocument;
+import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
+import net.opengis.swe.x101.PositionType;
+import net.opengis.swe.x101.QualityPropertyType;
+import net.opengis.swe.x101.QuantityDocument;
+import net.opengis.swe.x101.QuantityDocument.Quantity;
+import net.opengis.swe.x101.QuantityRangeDocument;
+import net.opengis.swe.x101.QuantityRangeDocument.QuantityRange;
+import net.opengis.swe.x101.SimpleDataRecordType;
+import net.opengis.swe.x101.TextBlockDocument.TextBlock;
+import net.opengis.swe.x101.TextDocument;
+import net.opengis.swe.x101.TextDocument.Text;
+import net.opengis.swe.x101.TimeDocument;
+import net.opengis.swe.x101.TimeDocument.Time;
+import net.opengis.swe.x101.TimeRangeDocument;
+import net.opengis.swe.x101.TimeRangeDocument.TimeRange;
+import net.opengis.swe.x101.VectorPropertyType;
+import net.opengis.swe.x101.VectorType;
+import net.opengis.swe.x101.VectorType.Coordinate;
+
 /**
  * @since 4.0.0
  *

@@ -39,6 +39,8 @@ import javax.xml.soap.SOAPMessage;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 
@@ -56,12 +58,11 @@ public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
         return Collections.singleton(KEY);
     }
 
-    @Override
-    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
         try {
             t.writeTo(out);
-        } catch (SOAPException ex) {
-            throw new IOException(ex);
+        } catch (SOAPException soapex) {
+        	 throw new NoApplicableCodeException().causedBy(soapex);
         }
     }
 

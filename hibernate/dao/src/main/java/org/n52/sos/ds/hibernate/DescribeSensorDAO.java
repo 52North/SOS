@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate;
 import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -258,7 +259,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
      */
     private String getProcedureDescriptionFormatMatchingString(String procedureDescriptionFormat) {
         // match against lowercase string, ignoring whitespace
-        return procedureDescriptionFormat.toLowerCase().replaceAll("\\s", "");
+        return procedureDescriptionFormat.toLowerCase(Locale.ROOT).replaceAll("\\s", "");
     }
 
 

@@ -120,11 +120,12 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
-            // add child procedures to request
+            checkQueryableProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            // add instance and child procedures to request
             if (sosRequest.isSetProcedure()) {
-                sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));
+                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
             }
+           
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

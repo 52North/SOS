@@ -63,6 +63,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.TextObservation;
+import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.request.GetObservationRequest;
@@ -393,6 +394,12 @@ public class ObservationDAO extends AbstractObservationDAO {
         c.add(Restrictions.not(Restrictions.in("p." + Procedure.ID, procedureIds)));
         c.add(Restrictions.not(Restrictions.in("op." + ObservableProperty.ID, observablePropertyIds)));
         c.add(Restrictions.not(Restrictions.in("f." + FeatureOfInterest.ID, featureIds)));
+    }
+    
+    @Override
+    public String addProcedureAlias(Criteria criteria) {
+        criteria.createAlias(Observation.PROCEDURE, Procedure.ALIAS);
+        return Procedure.ALIAS_DOT;
     }
 
     @Override

@@ -49,6 +49,7 @@ import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.DatabaseSettingsHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.service.DriverCleanupListener;
@@ -119,8 +120,7 @@ public abstract class UnspecifiedSessionFactoryProvider
     protected DatasourceCallback getDatasourceCallback(Properties properties) {
         if (properties.containsKey(Datasource.class.getName())) {
             try {
-                Class<?> c = Class.forName((String) properties
-                        .get(Datasource.class.getName()));
+                Class<?> c = Class.forName((String) properties.get(Datasource.class.getName()));
                 Datasource datasource = (Datasource) c.newInstance();
                 DatasourceCallback callback = datasource.getCallback();
                 if (callback != null) {
@@ -147,17 +147,18 @@ public abstract class UnspecifiedSessionFactoryProvider
 
     private void initialize(Properties properties) throws ConfigurationError {
 
-        final DatasourceCallback datasourceCallback
-                = getDatasourceCallback(properties);
+        final DatasourceCallback datasourceCallback = getDatasourceCallback(properties);
         datasourceCallback.onInit(properties);
         try {
             LOGGER.debug("Instantiating configuration and session factory");
             configuration = getConfiguration(properties);
             configuration.mergeProperties(properties);
 
-            // set timestamp mapping to a special type to ensure time is always
-            // queried in UTC
-            configuration.registerTypeOverride(new UtcTimestampType());
+            /*
+             * set timestamp mapping to a special type to ensure time is always
+             * queried in defined time zone
+             */
+            registerTimestampMapping(configuration, properties);
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -173,6 +174,16 @@ public abstract class UnspecifiedSessionFactoryProvider
             LOGGER.error(exceptionText, he);
             destroy();
             throw new ConfigurationError(exceptionText, he);
+        }
+    }
+
+    private void registerTimestampMapping(Configuration configuration, Properties properties) {
+        if (properties.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)
+                && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE).isEmpty()) {
+            configuration.registerTypeOverride(
+                    new ConfigurableTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
+        } else {
+            configuration.registerTypeOverride(new UtcTimestampType());
         }
     }
 

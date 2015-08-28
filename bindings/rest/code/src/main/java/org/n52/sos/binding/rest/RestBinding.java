@@ -70,7 +70,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.iceland.util.http.HTTPUtils;
+import org.n52.iceland.util.http.HttpUtils;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.binding.rest.decode.RestDecoder;
 import org.n52.sos.binding.rest.encode.RestEncoder;
@@ -112,14 +112,14 @@ public class RestBinding extends Binding implements Constructable {
 
     private Producer<XmlOptions> xmlOptions;
     
-    private HTTPUtils httpUtils;
+    private HttpUtils httpUtils;
 
-    public HTTPUtils getHttpUtils() {
+    public HttpUtils getHttpUtils() {
         return httpUtils;
     }
 
     @Inject
-    public void setHttpUtils(HTTPUtils httpUtils) {
+    public void setHttpUtils(HttpUtils httpUtils) {
         this.httpUtils = httpUtils;
     }
 
@@ -226,7 +226,17 @@ public class RestBinding extends Binding implements Constructable {
         doOperation(request, response);
     }
 
-     /*
+    @Override
+	public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+			OwsExceptionReport oer) throws HTTPException {
+		try {
+			 return encodeOwsExceptionReport(oer);
+		} catch (IOException e) {
+			throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+		}
+	}
+
+	/*
      * (non-Javadoc)
      *
      * @see org.n52.sos.binding.rest.Binding#doGetOperation(javax.servlet.http.
@@ -250,7 +260,7 @@ public class RestBinding extends Binding implements Constructable {
             this.eventBus.submit(new ExceptionEvent(oer));
             serviceResponse = encodeOwsExceptionReport(oer);
         }
-        getHttpUtils().writeObject(request, response, serviceResponse);
+        getHttpUtils().writeObject(request, response, serviceResponse, this);
     }
 
     private ServiceResponse encodeOwsExceptionReport(OwsExceptionReport oer) throws HTTPException, IOException {

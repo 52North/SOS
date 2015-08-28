@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.ows.x11.AcceptVersionsType;
 import net.opengis.ows.x11.AddressType;
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.ows.x11.CodeType;
@@ -56,6 +57,7 @@ import net.opengis.ows.x11.OperationsMetadataDocument.OperationsMetadata;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.RequestMethodType;
 import net.opengis.ows.x11.ResponsiblePartySubsetType;
+import net.opengis.ows.x11.SectionsType;
 import net.opengis.ows.x11.ServiceIdentificationDocument;
 import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
 import net.opengis.ows.x11.ServiceProviderDocument;
@@ -81,6 +83,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.LocalizedString;
+import org.n52.iceland.ogc.ows.AcceptVersions;
 import org.n52.iceland.ogc.ows.Constraint;
 import org.n52.iceland.ogc.ows.DCP;
 import org.n52.iceland.ogc.ows.OWSConstants;
@@ -103,6 +106,7 @@ import org.n52.iceland.ogc.ows.OwsRange;
 import org.n52.iceland.ogc.ows.OwsServiceIdentification;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.ows.OwsValuesRererence;
+import org.n52.iceland.ogc.ows.Sections;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.iceland.util.http.HTTPMethods;
@@ -127,7 +131,6 @@ import com.google.common.collect.Sets;
 public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OwsEncoderv110.class);
 
-    @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(Sets.<EncoderKey> newHashSet(
             new ExceptionEncoderKey(MediaTypes.TEXT_XML), new ExceptionEncoderKey(MediaTypes.APPLICATION_XML)),
             CodingHelper.encoderKeysForElements(OWSConstants.NS_OWS, OwsServiceIdentification.class,
@@ -179,6 +182,10 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             return encodeOwsMetadata((OwsMetadata) element);
         } else if (element instanceof OwsDomainType) {
             return encodeDomainType((OwsDomainType) element);
+        } else if (element instanceof AcceptVersions) {
+            return encodeAcceptVersions((AcceptVersions) element);
+        } else if (element instanceof Sections) {
+            return encodeSections((Sections) element);
         }
         throw new UnsupportedEncoderInputException(this, element);
     }
@@ -698,5 +705,21 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         lst.setStringValue(ls.getText());
         lst.setLang(LocaleHelper.toString(ls.getLang()));
         return lst;
+    }
+
+    private AcceptVersionsType encodeAcceptVersions(AcceptVersions acceptVersions) {
+        AcceptVersionsType avt = AcceptVersionsType.Factory.newInstance(getXmlOptions());
+        for (String acceptVersion : acceptVersions.getAcceptVersions()) {
+            avt.addVersion(acceptVersion);
+        }
+        return avt;
+    }
+
+    private SectionsType encodeSections(Sections sections) {
+        SectionsType st = SectionsType.Factory.newInstance(getXmlOptions());
+        for (String section : sections.getSections()) {
+            st.addSection(section);
+        }
+        return st;
     }
 }

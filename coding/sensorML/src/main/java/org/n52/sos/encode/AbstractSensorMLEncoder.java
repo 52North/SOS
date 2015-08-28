@@ -68,6 +68,7 @@ import org.n52.sos.ogc.swe.DataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
@@ -93,7 +94,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLEncoder.class);
     
     private static final String OUTPUT_PREFIX = "output#";
-
+    
     /**
      * Add special capabilities to abstract process:
      * <ul>
@@ -195,14 +196,13 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
                 // update the name of present field
                 if (field.getElement() instanceof SweText) {
                     final SweText sweText = (SweText) field.getElement();
+                 // update the definition if not present
+                    if (!sweText.isSetDefinition()) {
+                        sweText.setDefinition(definition);
+                    }
                     Set<SweText> fieldsToRemove = Sets.newHashSet();
                     for (SweText sweTextField : sweTextFieldSet) {
                         if (sweText.getValue().equals(sweTextField.getValue())) {
-                            if (sweTextField.isSetName()) {
-                                field.setName(sweTextField.getName().getValue());
-                            } else {
-                                field.setName(fieldName);
-                            }
                             // we don't need to add it any more
                             fieldsToRemove.add(sweTextField);
                         }
@@ -388,7 +388,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
             final SmlComponent component = new SmlComponent("component" + childCount);
             component.setTitle(childProcedure.getIdentifier());
 
-            if (ServiceConfiguration.getInstance().isEncodeFullChildrenInDescribeSensor()
+            if (ProcedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor()
                     && childProcedure instanceof AbstractSensorML) {
                 component.setProcess((AbstractSensorML) childProcedure);
             } else {
@@ -502,6 +502,4 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
     protected XmlOptions getOptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
-    
-    
 }

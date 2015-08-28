@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import net.opengis.gml.x32.FeaturePropertyType;
@@ -357,7 +358,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     }
 
     private boolean checkForRequestUrl(final String href) {
-        return href.toLowerCase().contains("request=");
+        return href.toLowerCase(Locale.ROOT).contains("request=");
     }
 
     private Node getNodeFromNodeList(final NodeList nodeList) {

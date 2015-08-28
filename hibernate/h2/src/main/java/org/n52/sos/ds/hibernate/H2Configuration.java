@@ -37,6 +37,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
 
@@ -341,7 +342,7 @@ public class H2Configuration {
         Set<String> nonDuplicateCreate = Sets.newHashSet();
         for (final String s : generateSchemaCreationScript) {
             if (!nonDublicates.contains(s)) {
-                if (s.toLowerCase().startsWith("create table")) {
+                if (s.toLowerCase(Locale.ROOT).startsWith("create table")) {
                     String substring = s.substring(0, s.indexOf('('));
                     if (!nonDuplicateCreate.contains(substring)) {
                         nonDuplicateCreate.add(substring);

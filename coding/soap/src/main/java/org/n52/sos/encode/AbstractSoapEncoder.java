@@ -47,7 +47,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationEncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionCode;
@@ -189,8 +189,8 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
      *             supported or an error occurs during the encoding
      */
     protected XmlObject getBodyContent(SoapResponse response) throws OwsExceptionReport {
-        OperationEncoderKey key =
-                new OperationEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
+        OperationResponseEncoderKey key =
+                new OperationResponseEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
         Encoder<Object, AbstractServiceResponse> encoder = CodingRepository.getInstance().getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);

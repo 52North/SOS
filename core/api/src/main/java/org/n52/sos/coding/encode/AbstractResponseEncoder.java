@@ -28,46 +28,22 @@
  */
 package org.n52.sos.coding.encode;
 
-import org.n52.iceland.coding.encode.OperationEncoderKey;
-
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Stream.concat;
-
-import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Stream;
-
-import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.SchemaRepository;
 import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
 import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -81,18 +57,12 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
+public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractEncoder<T>
         implements StreamingEncoder<XmlObject, T>  {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
-
+    
     private final Set<EncoderKey> encoderKeys;
-    private final String namespace;
-    private final String prefix;
-    private final String version;
-    private final Class<T> responseType;
-    private boolean validate;
-    private SchemaRepository schemaRepository;
 
     /**
      * constructor
@@ -113,16 +83,12 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      *            Indicator if the created/encoded object should be validated
      */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType, boolean validate) {
+        super(service, version, operation, namespace, prefix, responseType, validate);
         OperationKey key = new OperationKey(service, version, operation);
         this.encoderKeys =
-                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationEncoderKey(key,
-                        MediaTypes.TEXT_XML), new OperationEncoderKey(key, MediaTypes.APPLICATION_XML));
+                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationResponseEncoderKey(key,
+                        MediaTypes.TEXT_XML), new OperationResponseEncoderKey(key, MediaTypes.APPLICATION_XML));
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
-        this.namespace = namespace;
-        this.prefix = prefix;
-        this.version = version;
-        this.responseType = responseType;
-        this.validate = validate;
     }
 
     /**
@@ -144,62 +110,12 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
         this(service, version, operation, namespace, prefix, responseType, false);
     }
-
-    @Inject
-    public void setSchemaRepository(SchemaRepository schemaRepository) {
-        this.schemaRepository = schemaRepository;
-    }
-
-    public SchemaRepository getSchemaRepository() {
-        return schemaRepository;
-    }
-
-    @Setting(ServiceSettings.VALIDATE_RESPONSE)
-    public void setValidate(boolean validate) {
-        this.validate = validate;
-    }
-
+    
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
-
-    @Override
-    public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap) {
-        if (nameSpacePrefixMap != null) {
-            nameSpacePrefixMap.put(this.namespace, this.prefix);
-        }
-    }
-
-    @Override
-    public XmlObject encode(T response) throws OwsExceptionReport {
-        if (response == null) {
-            throw new UnsupportedEncoderInputException(this, response);
-        }
-        final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-        additionalValues.put(HelperValues.VERSION, this.version);
-        return encode(response, additionalValues);
-    }
-
-    @Override
-    public XmlObject encode(T response, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        if (response == null) {
-            throw new UnsupportedEncoderInputException(this, response);
-        }
-        XmlObject xml = create(response);
-        setSchemaLocations(xml);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
-                    XmlHelper.validateDocument(xml));
-        } else {
-            if (validate) {
-                LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
-                        XmlHelper.validateDocument(xml));
-            }
-        }
-        return xml;
-    }
-
+    
     @Override
     public void encode(T element, OutputStream outputStream) throws OwsExceptionReport {
         encode(element, outputStream, new EncodingValues());
@@ -215,92 +131,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     @Override
     public boolean forceStreaming() {
-    	return false;
-    }
-
-    private void setSchemaLocations(XmlObject document) {
-        Collection<SchemaLocation> schemaLocations
-                = concat(getSchemaLocations(document),
-                         concat(getSchemaLocations().stream(),
-                                getConcreteSchemaLocations().stream()))
-                .collect(toMap(SchemaLocation::getNamespace, identity())).values();
-        N52XmlHelper.setSchemaLocationsToDocument(document, schemaLocations);
-    }
-
-    private Stream<SchemaLocation> getSchemaLocations(XmlObject document) {
-        return N52XmlHelper.getNamespaces(document).stream()
-                .map(this.schemaRepository::getSchemaLocation)
-                .filter(Objects::nonNull).flatMap(Set::stream);
-    }
-
-    /**
-     * Get the concrete schema locations for this
-     * {@link AbstractServiceResponse} encoder
-     *
-     * @return the concrete schema locations
-     */
-    protected abstract Set<SchemaLocation> getConcreteSchemaLocations();
-
-    /**
-     * Create an {@link XmlObject} from the {@link AbstractServiceResponse}
-     * object
-     *
-     * @param response
-     *            {@link AbstractServiceResponse} to encode
-     * @return XML encoded {@link AbstractServiceResponse}
-     * @throws OwsExceptionReport
-     *             If an error occurs during the encoding
-     */
-    protected abstract XmlObject create(T response) throws OwsExceptionReport;
-
-    /**
-     * Override this method in concrete response encoder if streaming is
-     * supported for this operations.
-     *
-     * @param response
-     *            Implementation of {@link AbstractServiceResponse}
-     * @param outputStream
-     *            {@link OutputStream} to write
-     * @param encodingValues
-     *            {@link EncodingValues} with additional indicators for encoding
-     * @throws OwsExceptionReport
-     *             If an error occurs during encoding/writing to stream
-     */
-    protected void create(T response, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
-        try {
-            XmlOptions xmlOptions = new XmlOptions(getXmlOptions());
-            if (encodingValues.isEmbedded()) {
-                xmlOptions.setSaveNoXmlDecl();
-            }
-            writeIndent(encodingValues.getIndent(), outputStream);
-            XmlObject xmlObject = create(response);
-            setSchemaLocations(xmlObject);
-            xmlObject.save(outputStream, xmlOptions);
-        } catch (IOException ioe) {
-            throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
-        }
-    }
-
-    /**
-     * Write indent to stream if the response is encoded with XmlBeans
-     *
-     * @param level
-     *            Level of indent
-     * @param outputStream
-     *            {@link OutputStream} to write indent
-     * @throws IOException
-     *             If an error occurs when writing to stream
-     */
-    protected void writeIndent(int level, OutputStream outputStream) throws IOException {
-        byte[] indent = "  ".getBytes();
-        for (int i = 0; i < level; i++) {
-            outputStream.write(indent);
-        }
-    }
-
-    protected Class<T> getResponseType() {
-        return responseType;
+        return false;
     }
 
 }

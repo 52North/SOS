@@ -60,7 +60,7 @@ public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperat
 
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
 
-        addProcedureParameter(opsMeta);
+        addQueryableProcedureParameter(opsMeta);
         addFeatureOfInterestParameter(opsMeta, version);
         addObservablePropertyParameter(opsMeta);
 
@@ -90,7 +90,7 @@ public abstract class AbstractGetFeatureOfInterestHandler extends AbstractOperat
     }
 
     protected Set<String> getFeatureIdentifiers(final List<String> featureIdentifiers) {
-        final Set<String> allFeatureIdentifiers = new HashSet<>();
+        final Set<String> allFeatureIdentifiers = new HashSet<String>();
         for (final String featureIdentifier : featureIdentifiers) {
             if (isRelatedFeature(featureIdentifier)) {
                 allFeatureIdentifiers.addAll(getCache().getChildFeatures(featureIdentifier, true, true));

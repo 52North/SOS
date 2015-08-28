@@ -42,6 +42,10 @@ public class SmlClassifierPredicates {
     public static Predicate<SmlClassifier> name(String name) {
         return new NamePredicate(name);
     }
+    
+    public static Predicate<SmlClassifier> definition(String definition) {
+        return new DefinitionPredicate(definition);
+    }
 
     private static class NamePredicate implements Predicate<SmlClassifier> {
         private final String name;
@@ -53,6 +57,19 @@ public class SmlClassifierPredicates {
         @Override
         public boolean apply(SmlClassifier input) {
             return name.equals(input.getName());
+        }
+    }
+
+    private static class DefinitionPredicate implements Predicate<SmlClassifier> {
+        private final String definition;
+
+        DefinitionPredicate(String definition) {
+            this.definition = definition;
+        }
+
+        @Override
+        public boolean apply(SmlClassifier input) {
+            return definition.equals(input.getDefinition());
         }
     }
 }

@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate;
 
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -271,9 +272,9 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler {
     private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(message)) {
             String exceptionMsg = null;
-            if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
+            if (message.toLowerCase(Locale.ROOT).contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase(Locale.ROOT))) {
                 exceptionMsg = "Observation with same values already contained in database";
-            } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
+            } else if (message.toLowerCase(Locale.ROOT).contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase(Locale.ROOT))) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
             if (StringHelper.isNotEmpty(exceptionMsg)) {

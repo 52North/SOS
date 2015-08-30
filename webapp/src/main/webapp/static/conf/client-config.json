@@ -1795,6 +1795,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_ComplexObservation.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertObservation",
+			"title":"ComplexObservation",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertObservation_Text.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2346,6 +2359,19 @@
 			"binding": "application/soap+xml",
 			"operation":"InsertObservation",
 			"title":"SweArray",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertObservation_ComplexObservation.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertObservation",
+			"title":"ComplexObservation",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"

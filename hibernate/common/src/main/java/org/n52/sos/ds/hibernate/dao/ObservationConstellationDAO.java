@@ -248,8 +248,7 @@ public class ObservationConstellationDAO {
                         .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                         .add(Restrictions.eq(ObservationConstellation.OFFERING, offering))
                         .add(Restrictions.eq(ObservationConstellation.OBSERVABLE_PROPERTY, observableProperty))
-                        .add(Restrictions.eq(ObservationConstellation.PROCEDURE, procedure))
-                        .add(Restrictions.eq(ObservationConstellation.HIDDEN_CHILD, hiddenChild));
+                        .add(Restrictions.eq(ObservationConstellation.PROCEDURE, procedure));
         LOGGER.debug(
                 "QUERY checkOrInsertObservationConstellation(procedure, observableProperty, offering, hiddenChild): {}",
                 HibernateHelper.getSqlString(criteria));

@@ -539,15 +539,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             if (!getCache().hasObservableProperty(observedProperty)) {
                 throw new InvalidParameterValueException(parameterName, observedProperty);
             }
-        } else if (ServiceConfiguration.getInstance()
-                .isIncludeChildObservableProperties()) {
+        } else if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
             if (getCache().isCompositePhenomenon(observedProperty) ||
                 !(getCache().isCompositePhenomenonComponent(observedProperty) ||
                   getCache().hasObservableProperty(observedProperty))) {
                 throw new InvalidParameterValueException(parameterName, observedProperty);
             }
-        } else if (getCache().isCompositePhenomenonComponent(observedProperty) ||
-                   !getCache().hasObservableProperty(observedProperty)) {
+        } else if (!getCache().hasObservableProperty(observedProperty)) {
             throw new InvalidParameterValueException(parameterName, observedProperty);
         }
 

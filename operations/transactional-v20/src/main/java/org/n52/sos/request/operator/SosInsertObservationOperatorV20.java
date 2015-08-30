@@ -32,9 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.AbstractInsertObservationDAO;
 import org.n52.sos.event.SosEventBus;
@@ -49,20 +46,12 @@ import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -70,9 +59,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
@@ -230,7 +217,7 @@ public class SosInsertObservationOperatorV20 extends
         AbstractPhenomenon observableProperty = obsConstallation.getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
-        if (hasObservations(observablePropertyIdentifier) &&
+        if (hasObservations(observablePropertyIdentifier, obsConstallation.getOfferings()) &&
             observableProperty.isComposite() != getCache().isCompositePhenomenon(observablePropertyIdentifier)) {
             throw new InvalidParameterValueException(Sos2Constants.InsertObservationParams.observedProperty, observablePropertyIdentifier);
         }
@@ -241,9 +228,9 @@ public class SosInsertObservationOperatorV20 extends
                 Sos2Constants.InsertObservationParams.featureOfInterest);
     }
 
-    private boolean hasObservations(String observableProperty) {
+    private boolean hasObservations(String observableProperty, Set<String> offerings) {
         for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-            if (getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+            if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
                 return true;
             }
         }

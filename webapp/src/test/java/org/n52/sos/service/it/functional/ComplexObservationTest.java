@@ -244,7 +244,13 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     @Test
     public void testInsertComplexThenNumericObservation() throws OwsExceptionReport {
         assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
-        assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(ExceptionReportDocument.class)));
+        assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
+    }
+    
+    @Test
+    public void testInsertComplexThenNumericObservationSameOffering() throws OwsExceptionReport {
+        assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
+        assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
     }
 
     @Test
@@ -253,7 +259,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
         assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
-        assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(ExceptionReportDocument.class)));
+        assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
     }
 
     private void checkObservationCount(int count, XmlObject response) {

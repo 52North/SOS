@@ -64,7 +64,7 @@ comment on table public.compositeObservation is 'Relation table for complex pare
 comment on column public.compositeObservation.observationId is 'Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid';
 comment on column public.compositeObservation.childObservationId is 'Foreign Key (FK) to the related child complex observation. Contains "observation".observationid';
 create table public.compositePhenomenon (parentObservablePropertyId int8 not null, childObservablePropertyId int8 not null, primary key (childObservablePropertyId, parentObservablePropertyId));
-comment on table public.compositePhenomenon is 'NOT YET USED! Relation table to store observableProperty hierarchies, aka compositePhenomenon. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TObservableProperty.hbm.xml';
+comment on table public.compositePhenomenon is 'Relation table to store observableProperty hierarchies, aka compositePhenomenon. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TObservableProperty.hbm.xml';
 comment on column public.compositePhenomenon.parentObservablePropertyId is 'Foreign Key (FK) to the related parent observableProperty. Contains "observableProperty".observablePropertyid';
 comment on column public.compositePhenomenon.childObservablePropertyId is 'Foreign Key (FK) to the related child observableProperty. Contains "observableProperty".observablePropertyid';
 create table public.countValue (observationId int8 not null, value int4, primary key (observationId));

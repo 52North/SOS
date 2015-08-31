@@ -32,6 +32,8 @@ drop table if exists public.blobValue cascade;
 drop table if exists public.booleanValue cascade;
 drop table if exists public.categoryValue cascade;
 drop table if exists public.codespace cascade;
+drop table if exists public.complexValue cascade;
+drop table if exists public.compositeObservation cascade;
 drop table if exists public.compositePhenomenon cascade;
 drop table if exists public.countValue cascade;
 drop table if exists public.featureOfInterest cascade;

@@ -55,16 +55,11 @@
             <artifactId>sqlite-config</artifactId>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>  
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-        	<groupId>xmlunit</groupId>
-        	<artifactId>xmlunit</artifactId>
-        	<scope>test</scope>
         </dependency>
     </dependencies>
 </project>

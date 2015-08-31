@@ -30,7 +30,7 @@ package org.n52.sos.ogc.swe.encoding;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweTextEncoding extends SweAbstractEncoding {
 

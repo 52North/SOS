@@ -32,7 +32,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -41,7 +43,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class SweAbstractDataComponent {
 
@@ -226,6 +228,8 @@ public abstract class SweAbstractDataComponent {
     }
 
     public abstract SweDataComponentType getDataComponentType();
+    public abstract <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport;
+    public abstract void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport;
 
     /**
      * Copies all values from this {@link SweAbstractDataComponent} to the

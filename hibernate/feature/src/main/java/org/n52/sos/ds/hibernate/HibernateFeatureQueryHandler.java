@@ -47,6 +47,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
+
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
@@ -81,6 +82,7 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +93,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
 
 @Configurable
@@ -571,14 +574,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                             lastGeoemtry = geometry;
                         }
                     }
-                    Geometry geom = null;
+                    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), srid);
                     if (coordinates.size() == 1) {
-                        geom = new GeometryFactory().createPoint(coordinates.iterator().next());
+                        return geometryFactory.createPoint(coordinates.iterator().next());
                     } else {
-                        geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
+                        return geometryFactory.createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                     }
-                    geom.setSRID(srid);
-                    return geom;
                 }
             }
         }
@@ -588,7 +589,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     protected Map<String, AbstractFeature> getFeaturesForNonSpatialDatasource(
             FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
-        final Map<String, AbstractFeature> featureMap = new HashMap<String, AbstractFeature>(0);
+        final Map<String, AbstractFeature> featureMap = new HashMap<>(0);
         List<Geometry> envelopes = null;
         boolean hasSpatialFilter = false;
         if (queryObject.isSetSpatialFilters()) {

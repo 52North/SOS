@@ -39,6 +39,7 @@ import org.apache.xmlbeans.GDuration;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
@@ -90,7 +91,7 @@ import net.opengis.waterml.x20.ObservationProcessType;
 
 /**
  * Abstract encoder class for WaterML 2.0
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
@@ -130,7 +131,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
         if (SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
-                && SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
+            && SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
             return SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
         }
         return Collections.emptySet();
@@ -152,8 +153,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
         }
     }
 
-    private XmlObject encodeAbstractFeature(AbstractFeature abstractFeature,
-            Map<HelperValues, String> additionalValues) throws UnsupportedEncoderInputException, OwsExceptionReport {
+    private XmlObject encodeAbstractFeature(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues) throws UnsupportedEncoderInputException, OwsExceptionReport {
         if (abstractFeature instanceof OmObservation) {
             return super.encode(abstractFeature, additionalValues);
         } else {
@@ -180,31 +180,28 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     /**
      * Encodes a SOS GetObservationResponse to a single WaterML 2.0 observation
      * or to a WaterML 1.0 ObservationCollection
-     * 
+     *
      * @param getObservationResonse
      *            SOS GetObservationResponse
      * @return Encoded response
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected XmlObject createWmlGetObservationResponse(GetObservationResponse getObservationResonse)
-            throws OwsExceptionReport {
+    protected XmlObject createWmlGetObservationResponse(GetObservationResponse getObservationResonse) throws OwsExceptionReport {
         // TODO: set schemaLocation if final
-        Map<String, String> gmlID4sfIdentifier = Maps.newHashMap();
+        Map<CodeWithAuthority, String> gmlID4sfIdentifier = Maps.newHashMap();
         int sfIdCounter = 1;
         if (getObservationResonse.getObservationCollection() != null
-                && !getObservationResonse.getObservationCollection().isEmpty()) {
+            && !getObservationResonse.getObservationCollection().isEmpty()) {
             Collection<OmObservation> sosObservations = getObservationResonse.getObservationCollection();
             if (sosObservations.size() == 1) {
                 OMObservationDocument omObservationDoc =
                         OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper =
-                            new EnumMap<SosConstants.HelperValues, String>(SosConstants.HelperValues.class);
+                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
                     String gmlId = "sf_" + sfIdCounter;
                     foiHelper.put(HelperValues.GMLID, gmlId);
-                    omObservationDoc
-                            .setOMObservation((OMObservationType) createOmObservation(sosObservation, foiHelper));
+                    omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
                 }
                 return omObservationDoc;
             } else {
@@ -212,8 +209,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         CollectionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
                 CollectionType wmlCollection = xmlCollectionDoc.addNewCollection();
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper =
-                            new EnumMap<SosConstants.HelperValues, String>(SosConstants.HelperValues.class);
+                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
                     String gmlId;
                     // FIXME CodeWithAuthority VS. String keys
                     if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
@@ -224,12 +220,12 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                     } else {
                         gmlId = "sf_" + sfIdCounter;
                         gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
-                                .getIdentifierCodeWithAuthority().getValue(), gmlId);
+                                .getIdentifierCodeWithAuthority(), gmlId);
                         foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
                     }
                     foiHelper.put(HelperValues.GMLID, gmlId);
-                    wmlCollection.addNewObservationMember()
-                            .setOMObservation((OMObservationType) createOmObservation(sosObservation, foiHelper));
+                    wmlCollection.addNewObservationMember().setOMObservation(
+                            (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
                 }
                 return xmlCollectionDoc;
             }
@@ -242,14 +238,15 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Creates a WaterML 2.0 MonitoringPoint XML object from SOS feature object
-     * 
+     *
      * @param absFeature
      *            SOS feature
      * @return WaterML 2.0 MonitoringPoint XML object
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected XmlObject createMonitoringPoint(AbstractFeature absFeature) throws OwsExceptionReport {
+    protected XmlObject createMonitoringPoint(AbstractFeature absFeature)
+            throws OwsExceptionReport {
         if (absFeature instanceof SamplingFeature) {
             SamplingFeature sampFeat = (SamplingFeature) absFeature;
             StringBuilder builder = new StringBuilder();
@@ -280,10 +277,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             // set gml:id
             monitoringPoint.setId(absFeature.getGmlId());
 
-            if (sampFeat.isSetIdentifier() && SosHelper.checkFeatureOfInterestIdentifierForSosV2(
-                    sampFeat.getIdentifierCodeWithAuthority().getValue(), Sos2Constants.SERVICEVERSION)) {
-                XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
-                        sampFeat.getIdentifierCodeWithAuthority());
+            if (sampFeat.isSetIdentifier()
+                && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
+                                                                          Sos2Constants.SERVICEVERSION)) {
+                XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifierCodeWithAuthority());
                 if (xmlObject != null) {
                     monitoringPoint.addNewIdentifier().set(xmlObject);
                 }
@@ -329,7 +326,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             Encoder<XmlObject, Geometry> encoder = CodingRepository.getInstance()
                     .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
             if (encoder != null) {
-                Map<HelperValues, String> gmlAdditionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+                Map<HelperValues, String> gmlAdditionalValues = new EnumMap<>(HelperValues.class);
                 gmlAdditionalValues.put(HelperValues.GMLID, absFeature.getGmlId());
                 XmlObject xmlObject = encoder.encode(sampFeat.getGeometry(), gmlAdditionalValues);
                 xbShape.addNewAbstractGeometry().set(xmlObject);
@@ -346,7 +343,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     /**
      * Creates an WaterML 2.0 ObservationProcess XML object from SOS
      * ObservationProcess object
-     * 
+     *
      * @param procedure
      *            SOS ObservationProcess
      * @param additionalValues
@@ -355,8 +352,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    protected XmlObject createObservationProcess(ObservationProcess procedure,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         XmlObject encodedObject = null;
         try {
             if (procedure.isSetSensorDescriptionXmlString()) {
@@ -392,7 +388,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
         }
         LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                 XmlHelper.validateDocument(encodedObject));
-        return encodedObject;
+        return (ObservationProcessDocument) encodedObject;
     }
 
     private void checkAndAddIdentifier(ObservationProcess op, ObservationProcessType opt) throws OwsExceptionReport {
@@ -412,7 +408,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Adds processType value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -420,8 +416,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void addProcessType(ObservationProcessType observationProcess, ObservationProcess procedure)
-            throws OwsExceptionReport {
+    private void addProcessType(ObservationProcessType observationProcess, ObservationProcess procedure) throws OwsExceptionReport {
         if (procedure.isSetProcessType() && procedure.getProcessType().isSetHref()) {
             XmlObject referenceType = encodeReferenceType(procedure.getProcessType());
             if (referenceType != null) {
@@ -435,7 +430,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     /**
      * Adds OriginatingProcess value to WaterML 2.0 ObservationProcess XML
      * object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -456,7 +451,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     /**
      * Adds AggregatingDuration value to WaterML 2.0 ObservationProcess XML
      * object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -470,7 +465,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Adds VerticalDatum value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -478,8 +473,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void addVerticalDatum(ObservationProcessType observationProcess, ObservationProcess procedure)
-            throws OwsExceptionReport {
+    private void addVerticalDatum(ObservationProcessType observationProcess, ObservationProcess procedure) throws OwsExceptionReport {
         if (procedure.isSetVerticalDatum()) {
             XmlObject referenceType = encodeReferenceType(procedure.getVerticalDatum());
             if (referenceType != null) {
@@ -490,7 +484,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Adds Comment value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -508,7 +502,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Adds ProcessReference value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -516,8 +510,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void addProcessReference(ObservationProcessType observationProcess, ObservationProcess procedure)
-            throws OwsExceptionReport {
+    private void addProcessReference(ObservationProcessType observationProcess, ObservationProcess procedure) throws OwsExceptionReport {
         if (procedure.isSetProcessReference()) {
             XmlObject referenceType = encodeReferenceType(procedure.getProcessReference());
             if (referenceType != null) {
@@ -528,7 +521,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Adds Input value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -550,7 +543,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Adds Parameter value to WaterML 2.0 ObservationProcess XML object
-     * 
+     *
      * @param observationProcess
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
@@ -573,14 +566,15 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Creates a XML ReferenceType object from SOS ReferenceType object
-     * 
+     *
      * @param sosReferenceType
      *            SOS ReferenceType object
      * @return XML ReferenceType object
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private XmlObject encodeReferenceType(ReferenceType sosReferenceType) throws OwsExceptionReport {
+    private XmlObject encodeReferenceType(ReferenceType sosReferenceType)
+            throws OwsExceptionReport {
         Encoder<XmlObject, ReferenceType> encoder = CodingRepository.getInstance()
                 .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sosReferenceType));
         if (encoder != null) {
@@ -595,7 +589,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     /**
      * Adds parameter values to WaterML 2.0 XML MonitoringPoint object from
      * SosSamplingFeature
-     * 
+     *
      * @param monitoringPoint
      *            WaterML 2.0 XML MonitoringPoint object
      * @param sampFeat
@@ -615,7 +609,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Parses the ITime object to a time representation as String
-     * 
+     *
      * @param time
      *            SOS ITime object
      * @return Time as String
@@ -629,7 +623,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
     /**
      * Get the time representation from ITime object
-     * 
+     *
      * @param time
      *            ITime object
      * @return Time as DateTime

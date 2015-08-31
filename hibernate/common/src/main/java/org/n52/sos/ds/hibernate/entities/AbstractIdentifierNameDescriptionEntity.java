@@ -28,13 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.io.Serializable;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespaceName;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -42,12 +35,7 @@ import org.n52.sos.util.StringHelper;
  *
  */
 public abstract class AbstractIdentifierNameDescriptionEntity
-        implements Serializable,
-                   HasIdentifier,
-                   HasCodespace,
-                   HasName,
-                   HasCodespaceName,
-                   HasDescription {
+        implements IdentifierNameDescriptionEntity {
 
     private static final long serialVersionUID = -5784528065957127968L;
     private String identifier;
@@ -62,10 +50,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setIdentifier(
-            final String identifier) {
+    public void setIdentifier(String identifier) {
         this.identifier = identifier;
-        return this;
     }
 
     @Override
@@ -79,10 +65,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setCodespace(
-            Codespace codespace) {
+    public void setCodespace(Codespace codespace) {
         this.codespace = codespace;
-        return this;
     }
 
     @Override
@@ -96,9 +80,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     @Override
@@ -112,10 +95,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setCodespaceName(
-            Codespace codespaceName) {
+    public void setCodespaceName(Codespace codespaceName) {
         this.codespaceName = codespaceName;
-        return this;
     }
 
     @Override
@@ -129,10 +110,8 @@ public abstract class AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public AbstractIdentifierNameDescriptionEntity setDescription(
-            String description) {
+    public void setDescription(String description) {
         this.decription = description;
-        return this;
     }
 
     @Override

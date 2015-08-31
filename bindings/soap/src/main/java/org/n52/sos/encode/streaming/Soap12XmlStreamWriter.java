@@ -58,7 +58,7 @@ import com.google.common.collect.Sets;
 
 /**
  * {@link XmlStreamWriter} implementation for SOAP 1.2
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -76,7 +76,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * constructor
-     * 
+     *
      * @param response
      *            Service internal SOAP response to encode
      */
@@ -100,7 +100,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
     }
 
     @Override
-    public void write(SoapResponse element, OutputStream out, EncodingValues encodingValues) throws 
+    public void write(SoapResponse element, OutputStream out, EncodingValues encodingValues) throws
             OwsExceptionReport {
         try {
             init(out);
@@ -115,7 +115,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Set the response element to encode and write to stream
-     * 
+     *
      * @param response
      *            Service internal response
      */
@@ -125,7 +125,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Get the response element to encode and write to stream
-     * 
+     *
      * @return The response element to encode and write to stream
      */
     protected SoapResponse getResponse() {
@@ -134,7 +134,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Write the SOAP 1.2. envelope element
-     * 
+     *
      * @param response
      *            The response element to encode and write to stream
      * @throws XMLStreamException
@@ -170,7 +170,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Write the SOAP 1.2 body element
-     * 
+     *
      * @param response
      *            The response element to encode and write to stream
      * @throws XMLStreamException
@@ -198,7 +198,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Encode and write the {@link AbstractServiceResponse} to stream
-     * 
+     *
      * @param bodyResponse
      *            The service internal response to encode and write
      * @throws XMLStreamException
@@ -225,7 +225,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Encode and write SOAP 1.2 fault element to SOAP 1.2 body element
-     * 
+     *
      * @param fault
      *            Service internal SOAP fault representation
      * @throws OwsExceptionReport
@@ -235,7 +235,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
      */
     protected void writeSoapFault(SoapFault fault) throws OwsExceptionReport, XMLStreamException {
         Encoder<XmlObject, SoapFault> encoder = CodingHelper.getEncoder(SoapConstants.NS_SOAP_12, fault);
-        String soapFault = ((XmlObject) encoder.encode(fault)).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
+        String soapFault = encoder.encode(fault).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
         if (soapFault.startsWith("<?xml")) {
             soapFault = soapFault.substring(soapFault.indexOf(Constants.GREATER_THAN_SIGN_STRING));
         }
@@ -245,7 +245,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
     /**
      * Encode and write {@link OwsExceptionReport} element to SOAP 1.2 body
      * element
-     * 
+     *
      * @param exception
      *            Service internal {@link OwsExceptionReport}
      * @throws OwsExceptionReport
@@ -257,7 +257,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
             XMLStreamException {
         Encoder<XmlObject, OwsExceptionReport> encoder = CodingHelper.getEncoder(SoapConstants.NS_SOAP_12, exception);
         String soapFault =
-                ((XmlObject) encoder.encode(exception)).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
+                encoder.encode(exception).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
         if (soapFault.startsWith("<?xml")) {
             soapFault = soapFault.substring(soapFault.indexOf(Constants.GREATER_THAN_SIGN_STRING));
         }
@@ -270,7 +270,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
 
     /**
      * Get encoder for {@link EncoderKey}
-     * 
+     *
      * @param key
      *            Encoder key to get encoder for
      * @return Matching encoder

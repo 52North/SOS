@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
@@ -36,20 +37,15 @@ import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
 public class TFeatureOfInterest extends FeatureOfInterest implements
-        HasParentChilds<FeatureOfInterest, TFeatureOfInterest> {
+        HasParentChilds<FeatureOfInterest> {
     private static final long serialVersionUID = -880472749711995015L;
 
     private Set<FeatureOfInterest> childs = Sets.newHashSet();
-
     private Set<FeatureOfInterest> parents = Sets.newHashSet();
-
-    public TFeatureOfInterest() {
-        super();
-    }
 
     @Override
     public Set<FeatureOfInterest> getParents() {
@@ -57,9 +53,8 @@ public class TFeatureOfInterest extends FeatureOfInterest implements
     }
 
     @Override
-    public TFeatureOfInterest setParents(final Set<FeatureOfInterest> parents) {
+    public void setParents(final Set<FeatureOfInterest> parents) {
         this.parents = parents;
-        return this;
     }
 
     @Override
@@ -68,8 +63,29 @@ public class TFeatureOfInterest extends FeatureOfInterest implements
     }
 
     @Override
-    public TFeatureOfInterest setChilds(final Set<FeatureOfInterest> childs) {
+    public void setChilds(final Set<FeatureOfInterest> childs) {
         this.childs = childs;
-        return this;
+    }
+
+    @Override
+    public void addParent(FeatureOfInterest parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(FeatureOfInterest child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
     }
 }

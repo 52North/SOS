@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -99,7 +100,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     }
 
     private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions) {
-        final List<String> keys = new ArrayList<String>();
+        final List<String> keys = new ArrayList<>();
         final Iterator<SettingDefinition<?, ?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());

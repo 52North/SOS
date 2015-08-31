@@ -43,9 +43,12 @@ import java.util.Set;
 import net.opengis.sosdo.x10.DeleteObservationDocument;
 
 import org.apache.xmlbeans.XmlObject;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import org.n52.sos.config.SettingsManager;
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;

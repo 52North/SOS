@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * <li>'Result template identifier' &rarr; 'observable property' relation</li>
  * <li>'Result template identifier' &rarr; 'feature of interest' relation</li>
  * </ul>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>

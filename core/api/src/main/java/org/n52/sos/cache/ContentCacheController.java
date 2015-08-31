@@ -54,7 +54,7 @@ public interface ContentCacheController extends Cleanupable {
     void update(ContentCacheUpdate update) throws OwsExceptionReport;
 
     /**
-     * Renew the content cache completly.
+     * Renew the content cache completely.
      *
      * @throws OwsExceptionReport
      *             if an error occurs while updating the cache

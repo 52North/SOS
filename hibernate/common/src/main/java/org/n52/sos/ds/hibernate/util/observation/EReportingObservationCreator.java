@@ -28,51 +28,53 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCategoryObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingCountObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingGeometryObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingNumericObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSweDataArrayObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingTextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingBooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingCountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingGeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingSweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingTextObservation;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.util.CollectionHelper;
 
 public class EReportingObservationCreator implements AdditionalObservationCreator<EReportingSeries> {
 
-    @SuppressWarnings("unchecked")
-    private static final Set<AdditionalObservationCreatorKey> KEYS = CollectionHelper.union(
-            AdditionalObservationCreatorRepository.encoderKeysForElements(AqdConstants.NS_AQD,
-                    EReportingObservation.class, EReportingBlobObservation.class, EReportingBooleanObservation.class,
-                    EReportingCategoryObservation.class, EReportingCountObservation.class,
-                    EReportingGeometryObservation.class, EReportingNumericObservation.class,
-                    EReportingSweDataArrayObservation.class, EReportingTextObservation.class, EReportingSeries.class),
-            AdditionalObservationCreatorRepository.encoderKeysForElements(null, EReportingObservation.class,
-                    EReportingBlobObservation.class, EReportingBooleanObservation.class,
-                    EReportingCategoryObservation.class, EReportingCountObservation.class,
-                    EReportingGeometryObservation.class, EReportingNumericObservation.class,
-                    EReportingSweDataArrayObservation.class, EReportingTextObservation.class));
+    private static final Set<AdditionalObservationCreatorKey> KEYS
+            = AdditionalObservationCreatorRepository
+            .encoderKeysForElements(AqdConstants.NS_AQD,
+                                    AbstractEReportingObservation.class,
+                                    EReportingBlobObservation.class,
+                                    EReportingBooleanObservation.class,
+                                    EReportingCategoryObservation.class,
+                                    EReportingCountObservation.class,
+                                    EReportingGeometryObservation.class,
+                                    EReportingNumericObservation.class,
+                                    EReportingSweDataArrayObservation.class,
+                                    EReportingTextObservation.class);
 
-    private final EReportingObservationHelper helper = new EReportingObservationHelper();
+    private final EReportingObservationHelper helper
+            = new EReportingObservationHelper();
 
     @Override
     public Set<AdditionalObservationCreatorKey> getKeys() {
-        return KEYS;
+        return Collections.unmodifiableSet(KEYS);
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, AbstractObservation observation) {
+    public OmObservation create(OmObservation omObservation, Observation<?> observation) {
         if (observation instanceof EReportingObservation) {
-            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+            EReportingObservation<?> eReportingObservation = (EReportingObservation<?>) observation;
             create(omObservation, eReportingObservation.getEReportingSeries());
             add(omObservation, observation);
             omObservation.setValue(EReportingHelper.createSweDataArrayValue(omObservation, eReportingObservation));
@@ -80,7 +82,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         }
         return omObservation;
     }
-
+    
     @Override
     public OmObservation create(OmObservation omObservation, EReportingSeries series) {
         for (NamedValue<?> namedValue : helper.createOmParameterForEReporting(series)) {
@@ -90,12 +92,115 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
-    public OmObservation add(OmObservation omObservation, AbstractObservation observation) {
+    public OmObservation add(OmObservation omObservation, Observation<?> observation) {
         if (observation instanceof EReportingObservation) {
-            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+            EReportingObservation<?> eReportingObservation = (EReportingObservation<?>) observation;
             omObservation.setAdditionalMergeIndicator(eReportingObservation.getPrimaryObservation());
         }
         return omObservation;
     }
+
+//    @Override
+//    public OmObservation add(OmObservation omObservation, AbstractObservation observation) {
+//        if (observation instanceof EReportingObservation) {
+//            EReportingObservation eReportingObservation = (EReportingObservation) observation;
+//            omObservation.setAdditionalMergeIndicator(eReportingObservation.getPrimaryObservation());
+//        }
+//        return omObservation;
+//    }
+//
+//    private void addQualityFlags(SingleObservationValue<?> value, AbstractEReportingObservation<?> observation) {
+//        value.addQuality(new SosQuality(ElementType.Validation.name(), null, Integer.toString(observation
+//                .getValidation()), ElementType.Validation.getDefinition(), QualityType.category));
+//        value.addQuality(new SosQuality(ElementType.Verification.name(), null, Integer.toString(observation
+//                .getVerification()), ElementType.Verification.getDefinition(), QualityType.category));
+//    }
+//
+//    @SuppressWarnings({ "rawtypes", "unchecked" })
+//    private SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
+//            AbstractEReportingObservation observation) {
+//        SweDataArray sweDataArray = new SweDataArray();
+//        sweDataArray.setElementCount(createElementCount(omObservation));
+//        sweDataArray.setElementType(createElementType(omObservation.getValue().getValue().getUnit()));
+//        sweDataArray.setEncoding(createEncoding(omObservation));
+//        sweDataArray.setValues(createValue(omObservation, observation));
+//        SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
+//        sweDataArrayValue.setValue(sweDataArray);
+//        SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
+//        observationValue.setPhenomenonTime(omObservation.getPhenomenonTime());
+//        return observationValue;
+//    }
+//
+//    private SweCount createElementCount(OmObservation omObservation) {
+//        return new SweCount().setValue(1);
+//    }
+//
+//    private SweAbstractDataComponent createElementType(String unit) {
+//        SweDataRecord dataRecord = new SweDataRecord();
+//        dataRecord.setDefinition(AqdConstants.NAME_FIXED_OBSERVATIONS);
+//        dataRecord.addField(createField(ElementType.StartTime, createSweTimeSamplingTime(ElementType.StartTime)));
+//        dataRecord.addField(createField(ElementType.EndTime, createSweTimeSamplingTime(ElementType.EndTime)));
+//        dataRecord.addField(createField(ElementType.Verification, createSweCatagory(ElementType.Verification)));
+//        dataRecord.addField(createField(ElementType.Validation, createSweCatagory(ElementType.Validation)));
+//        dataRecord.addField(createField(ElementType.Pollutant, createSweQuantity(ElementType.Pollutant, unit)));
+//        return dataRecord;
+//    }
+//
+//    private SweField createField(ElementType elementType, SweAbstractDataComponent content) {
+//        return new SweField(elementType.name(), content);
+//    }
+//
+//    private SweAbstractDataComponent createSweTimeSamplingTime(ElementType elementType) {
+//        SweTime time = new SweTime();
+//        time.setDefinition(elementType.getDefinition());
+//        if (elementType.isSetUOM()) {
+//            time.setUom(elementType.getUOM());
+//        }
+//        return omObservation;
+//    }
+//
+//    private SweAbstractEncoding createEncoding(OmObservation omObservation) {
+//        return SweHelper.createTextEncoding(omObservation);
+//    }
+//
+//    private List<List<String>> createValue(OmObservation omObservation, AbstractEReportingObservation<?> observation) {
+//        List<String> value = Lists.newArrayListWithCapacity(5);
+//        addTimes(value, omObservation.getPhenomenonTime());
+//        addIntegerValue(value, observation.getVerification());
+//        addIntegerValue(value, observation.getValidation());
+//        addPollutant(value, omObservation);
+//        List<List<String>> list = Lists.newArrayList();
+//        list.add(value);
+//        return list;
+//    }
+//
+//    private void addIntegerValue(List<String> list, Integer value) {
+//        if (value != null) {
+//            list.add(Integer.toString(value));
+//        } else {
+//            list.add(Constants.EMPTY_STRING);
+//        }
+//    }
+//
+//    private void addPollutant(List<String> value, OmObservation omObservation) {
+//        if (omObservation.getValue() instanceof SingleObservationValue<?>) {
+//            value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
+//        } else {
+//            value.add(Constants.EMPTY_STRING);
+//        }
+//    }
+//
+//    private void addTimes(List<String> value, Time time) {
+//        if (time instanceof TimeInstant) {
+//            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
+//            value.add(DateTimeHelper.formatDateTime2IsoString(((TimeInstant) time).getValue()));
+//        } else if (time instanceof TimePeriod) {
+//            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getStart()));
+//            value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getEnd()));
+//        } else {
+//            value.add(Constants.EMPTY_STRING);
+//            value.add(Constants.EMPTY_STRING);
+//        }
+//    }
 
 }

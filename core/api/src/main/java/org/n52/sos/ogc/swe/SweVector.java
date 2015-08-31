@@ -31,14 +31,16 @@ package org.n52.sos.ogc.swe;
 import java.util.Arrays;
 import java.util.List;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Objects;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SweVector extends SweAbstractDataComponent {
     private List<SweCoordinate<?>> coordinates;
@@ -128,4 +130,15 @@ public class SweVector extends SweAbstractDataComponent {
         return StringHelper.isNotEmpty(localFrame);
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

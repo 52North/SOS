@@ -36,9 +36,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -52,7 +52,7 @@ import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Abstract class for streaming observations
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.1.0
  *
@@ -79,7 +79,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      */
@@ -120,7 +120,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             if (resultObject instanceof SeriesObservation) {
                 observation =
                         HibernateGetObservationHelper.toSosObservation(
-                                checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]),
+                                checkShowMetadataOfEmptyObservations((SeriesObservation) result.get()[0]),
                                 request, LocaleHelper.fromRequest(request), session);
             } else if (resultObject instanceof Series) {
                 observation =
@@ -148,7 +148,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
 
     /**
      * Set the scrollable result
-     * 
+     *
      * @param result
      *            {@link ScrollableResults} to set
      */
@@ -158,7 +158,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
 
     /**
      * Set the valid featureOfInterest identifiers
-     * 
+     *
      * @param features
      *            featureOfInterest identifiers to set
      */
@@ -168,7 +168,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
 
     /**
      * Set the temporal filter {@link Criterion}
-     * 
+     *
      * @param temporalFilterCriterion
      *            Temporal filter {@link Criterion}
      */
@@ -179,16 +179,16 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
     /**
      * Check if metadata fo emtpy observations should be show in the response
      * and store required information
-     * 
+     *
      * @param abstractObservation
      *            Observation to check
      * @return Checked observation
      */
-    protected abstract AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation);
+    protected abstract Observation<?> checkShowMetadataOfEmptyObservations(Observation<?> abstractObservation);
 
     /**
      * Get the next {@link ScrollableResults} from database
-     * 
+     *
      * @throws OwsExceptionReport
      *             If an error occurs when querying the database
      */

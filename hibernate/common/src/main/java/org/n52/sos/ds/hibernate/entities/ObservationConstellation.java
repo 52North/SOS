@@ -40,39 +40,35 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class ObservationConstellation implements Serializable, HasProcedure, HasObservableProperty, HasOffering,
-        HasObservationType, HasHiddenChildFlag, HasDeletedFlag, HasDisabledFlag {
+public class ObservationConstellation
+        implements Serializable,
+                   HasProcedure,
+                   HasObservableProperty,
+                   HasOffering,
+                   HasObservationType,
+                   HasHiddenChildFlag,
+                   HasDeletedFlag,
+                   HasDisabledFlag {
 
     public static final String ID = "observationConstellationId";
 
     private static final long serialVersionUID = -3890149740562709928L;
-
     private long observationConstellationId;
-
     private ObservableProperty observableProperty;
-
     private Procedure procedure;
-
     private ObservationType observationType;
-
     private Offering offering;
-
     private Boolean deleted = false;
-    
     private Boolean disabled = false;
-
     private Boolean hiddenChild = false;
-
-    public ObservationConstellation() {
-    }
 
     public long getObservationConstellationId() {
         return observationConstellationId;
     }
 
-    public void setObservationConstellationId(final long observationConstellationId) {
+    public void setObservationConstellationId(long observationConstellationId) {
         this.observationConstellationId = observationConstellationId;
     }
 
@@ -82,7 +78,7 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     }
 
     @Override
-    public void setObservableProperty(final ObservableProperty observableProperty) {
+    public void setObservableProperty(ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
     }
 
@@ -92,7 +88,7 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     }
 
     @Override
-    public void setProcedure(final Procedure procedure) {
+    public void setProcedure(Procedure procedure) {
         this.procedure = procedure;
     }
 
@@ -102,7 +98,7 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     }
 
     @Override
-    public void setObservationType(final ObservationType observationType) {
+    public void setObservationType(ObservationType observationType) {
         this.observationType = observationType;
     }
 
@@ -112,29 +108,28 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     }
 
     @Override
-    public void setOffering(final Offering offering) {
+    public void setOffering(Offering offering) {
         this.offering = offering;
     }
 
+    @Override
     public boolean getDeleted() {
         return deleted;
     }
 
     @Override
-    public ObservationConstellation setDeleted(final boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        return this;
     }
 
     @Override
     public boolean isDeleted() {
         return deleted;
     }
-    
+
     @Override
-    public HasDisabledFlag setDisabled(final boolean  disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-        return this;
     }
 
     @Override
@@ -148,9 +143,8 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     }
 
     @Override
-    public ObservationConstellation setHiddenChild(final boolean hiddenChild) {
+    public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
-        return this;
     }
 
     public boolean getHiddenChild() {
@@ -163,6 +157,12 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     }
 
     @Override
+    public boolean isSetObservationType() {
+        return getObservationType() != null &&
+               getObservationType().isSetObservationType();
+    }
+
+    @Override
     public String toString() {
         return String
                 .format("ObservationConstellation [observationConstellationId=%s, observableProperty=%s, procedure=%s, observationType=%s, offering=%s, deleted=%s, hiddenChild=%s]",
@@ -170,7 +170,4 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
                         hiddenChild);
     }
 
-    public boolean isSetObservationType() {
-        return getObservationType() != null && getObservationType().isSetObservationType();
-    }
 }

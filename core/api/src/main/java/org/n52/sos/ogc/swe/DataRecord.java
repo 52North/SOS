@@ -35,7 +35,7 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface DataRecord {
 
@@ -53,7 +53,7 @@ public interface DataRecord {
 
     /**
      * Adds field to field list
-     * 
+     *
      * @param field
      *            Field to add
      * @return this
@@ -62,7 +62,7 @@ public interface DataRecord {
 
     /**
      * Check if there are field elements
-     * 
+     *
      * @return Fields not empty
      */
     boolean isSetFields();
@@ -70,7 +70,7 @@ public interface DataRecord {
     /**
      * Return the index of the first field with the given
      * <tt>fieldNameOrElementDefinition</tt> or -1 if not found.
-     * 
+     *
      * @param fieldNameOrElementDefinition
      *            a definition identifying a {@link SweField} in this
      *            {@link DataRecord}.
@@ -79,7 +79,6 @@ public interface DataRecord {
      */
     int getFieldIndexByIdentifier(String fieldNameOrElementDefinition);
 
-    @SuppressWarnings("rawtypes")
-    Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz);
+    Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class<?> clazz);
 
 }

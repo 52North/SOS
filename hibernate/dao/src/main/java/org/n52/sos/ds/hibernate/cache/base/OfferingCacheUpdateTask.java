@@ -41,11 +41,11 @@ import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.cache.ProcedureFlag;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -133,8 +133,10 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Procedures
         final Map<ProcedureFlag, Set<String>> procedureIdentifiers = getProcedureIdentifier(session);
         getCache().setProceduresForOffering(prefixedOfferingId, procedureIdentifiers.get(ProcedureFlag.PARENT));
-        getCache().setHiddenChildProceduresForOffering(prefixedOfferingId,
-                procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD));
+        Set<String> hiddenChilds = procedureIdentifiers.get(ProcedureFlag.HIDDEN_CHILD);
+        if (!hiddenChilds.isEmpty()) {
+            getCache().setHiddenChildProceduresForOffering(prefixedOfferingId, hiddenChilds);
+        }
 
         // Observable properties
         getCache().setObservablePropertiesForOffering(prefixedOfferingId, getObservablePropertyIdentifier(session));

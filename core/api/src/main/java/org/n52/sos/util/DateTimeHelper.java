@@ -40,8 +40,9 @@ import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.format.ISOPeriodFormat;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.concrete.DateTimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.n52.sos.exception.CodedException;import org.n52.sos.exception.ows.concrete.DateTimeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
@@ -49,17 +50,15 @@ import org.n52.sos.ogc.gml.time.Time.TimeFormat;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.gml.time.TimePosition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 
 /**
  * Utility class for Time formatting and parsing. Uses Joda Time.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class DateTimeHelper {
 
@@ -103,7 +102,7 @@ public final class DateTimeHelper {
 
     /**
      * Parses a time String to a Joda Time DateTime object
-     * 
+     *
      * @param timeString
      *            Time String
      * @return DateTime object
@@ -130,7 +129,7 @@ public final class DateTimeHelper {
     /**
      * Parses the given ISO 8601 String to a {@link Time} including
      * {@link TimeInstant} and {@link TimePeriod}
-     * 
+     *
      * @param timeString
      *            a ISO 8601 formatted time string
      * @return a Time object
@@ -154,7 +153,7 @@ public final class DateTimeHelper {
 
     /**
      * Formats the given Time to ISO 8601 string.
-     * 
+     *
      * @param time
      *            an {@link Time} object to be formatted
      * @return an ISO 8601 conform {@link String}.
@@ -184,7 +183,7 @@ public final class DateTimeHelper {
 
     /**
      * Formats a DateTime to a ISO-8601 String
-     * 
+     *
      * @param dateTime
      *            Time object
      * @return ISO-8601 formatted time String
@@ -198,11 +197,11 @@ public final class DateTimeHelper {
 
     /**
      * Formats a DateTime to a String using the response format
-     * 
+     *
      * @param dateTime
      *            Time object
      * @return Response formatted time String
-     * 
+     *
      * @throws DateTimeFormatException
      *             If an error occurs.
      */
@@ -229,7 +228,7 @@ public final class DateTimeHelper {
             return formatDateTime2ResponseString(dateTime);
         }
     }
-    
+
     /**
      * @param timePosition
      * @return
@@ -251,14 +250,14 @@ public final class DateTimeHelper {
 
     /**
      * Formats a DateTime to a String using specified format
-     * 
+     *
      * @param dateTime
      *            Time object
      * @param dateFormat
      *            the date time format
-     * 
+     *
      * @return Specified formatted time String
-     * 
+     *
      * @throws DateTimeFormatException
      *             If an error occurs.
      */
@@ -280,11 +279,11 @@ public final class DateTimeHelper {
 
     /**
      * formats a DateTime to a string with year-month-day.
-     * 
+     *
      * @param dateTime
      *            The DateTime.
      * @return Returns formatted time String.
-     * 
+     *
      * @throws DateTimeFormatException
      */
     public static String formatDateTime2YearMonthDayDateStringYMD(final DateTime dateTime)
@@ -299,11 +298,11 @@ public final class DateTimeHelper {
 
     /**
      * formats a DateTime to a string with year-month.
-     * 
+     *
      * @param dateTime
      *            The DateTime.
      * @return Returns formatted time String.
-     * 
+     *
      * @throws DateTimeFormatException
      */
     public static String formatDateTime2YearMonthDateString(final DateTime dateTime) throws DateTimeFormatException {
@@ -317,11 +316,11 @@ public final class DateTimeHelper {
 
     /**
      * formats a DateTime to a string with year.
-     * 
+     *
      * @param dateTime
      *            The DateTime.
      * @return Returns formatted time String.
-     * 
+     *
      * @throws DateTimeFormatException
      */
     public static String formatDateTime2YearDateString(final DateTime dateTime) throws DateTimeFormatException {
@@ -361,7 +360,7 @@ public final class DateTimeHelper {
     /**
      * Set the time object to the end values (seconds, minutes, hours, days,..)
      * if the time Object has not all values
-     * 
+     *
      * @param dateTime
      *            Time object
      * @param isoTimeLength
@@ -396,7 +395,7 @@ public final class DateTimeHelper {
 
     /**
      * Parse a duration from a String representation
-     * 
+     *
      * @param stringDuration
      *            Duration as String
      * @return Period object of duration
@@ -407,7 +406,7 @@ public final class DateTimeHelper {
 
     /**
      * Calculates the expire time for a time object
-     * 
+     *
      * @param start
      *            Time object
      * @return Expire time
@@ -418,7 +417,7 @@ public final class DateTimeHelper {
 
     /**
      * Set the response format
-     * 
+     *
      * @param responseFormat
      *            Defined response format
      */
@@ -428,7 +427,7 @@ public final class DateTimeHelper {
 
     /**
      * Set the lease value
-     * 
+     *
      * @param lease
      *            Defined lease value
      */
@@ -437,18 +436,27 @@ public final class DateTimeHelper {
     }
 
     /**
-     * Make a new UTC DateTime from an object 
-     * 
+     * Make a new UTC DateTime from an object
+     *
      * @param object
      * @return DateTime, or null if object was null
      */
     public static DateTime makeDateTime(Object object) {
-        return object == null ? null : new DateTime(object, DateTimeZone.UTC);         
+        return object == null ? null : new DateTime(object, DateTimeZone.UTC);
+    }
+
+    /**
+     * Transforms the supplied {@code DateTime} to UTC.
+     * @param datetime the date time (may be {@code null})
+     * @return the UTC time (or {@code null}
+     */
+    public static DateTime toUTC(DateTime datetime) {
+        return datetime == null ? null : new DateTime(datetime.getMillis(), DateTimeZone.UTC);
     }
 
     /**
      * Find the max of two dates (null safe)
-     * 
+     *
      * @param dt1
      * @param dt2
      * @return Max of two dates
@@ -463,7 +471,7 @@ public final class DateTimeHelper {
         }
         return dt1;
     }
-    
+
     /**
      * Hide utility constructor
      */

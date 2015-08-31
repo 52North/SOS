@@ -109,6 +109,7 @@ import net.opengis.sensorml.x20.CharacteristicListPropertyType;
 import net.opengis.sensorml.x20.CharacteristicListType;
 import net.opengis.sensorml.x20.CharacteristicListType.Characteristic;
 import net.opengis.sensorml.x20.ClassifierListPropertyType;
+import net.opengis.sensorml.x20.ClassifierListType;
 import net.opengis.sensorml.x20.ClassifierListType.Classifier;
 import net.opengis.sensorml.x20.ComponentListPropertyType;
 import net.opengis.sensorml.x20.ComponentListType;
@@ -497,12 +498,16 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     private List<SmlClassifier> parseClassification(final ClassifierListPropertyType[] clpts) {
         final List<SmlClassifier> sosClassifiers = new ArrayList<SmlClassifier>(clpts.length);
         for (final ClassifierListPropertyType clpt : clpts) {
-            for (final Classifier c : clpt.getClassifierList().getClassifierArray()) {
-                final TermType term = c.getTerm();
-                final SmlClassifier smlClassifier =
-                        new SmlClassifier(term.getLabel(), term.isSetDefinition() ? term.getDefinition() : null,
-                                term.isSetCodeSpace() ? term.getCodeSpace().getHref() : null, term.getValue());
-                sosClassifiers.add(smlClassifier);
+            if (clpt.isSetClassifierList()) {
+                ClassifierListType clt = clpt.getClassifierList();
+                if (CollectionHelper.isNotNullOrEmpty(clt.getClassifierArray()))
+                for (final Classifier c : clt.getClassifierArray()) {
+                    final TermType term = c.getTerm();
+                    final SmlClassifier smlClassifier =
+                            new SmlClassifier(term.getLabel(), term.isSetDefinition() ? term.getDefinition() : null,
+                                    term.isSetCodeSpace() ? term.getCodeSpace().getHref() : null, term.getValue());
+                    sosClassifiers.add(smlClassifier);
+                }
             }
         }
         return sosClassifiers;

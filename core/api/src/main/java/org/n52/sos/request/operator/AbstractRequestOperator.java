@@ -75,6 +75,8 @@ import org.n52.sos.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.sos.service.ServiceConfiguration;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -88,7 +90,7 @@ import com.google.common.collect.Sets;
  * @param <A>
  *            the response type
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
@@ -254,13 +256,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * method checks whether this SOS supports the requested versions
-     * 
+     *
      * @param service
      *            requested service
-     * 
+     *
      * @param versions
      *            the requested versions of the SOS
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -289,11 +291,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * method checks whether this SOS supports the single requested version
-     * 
+     *
      * @param request
      *            the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
@@ -314,13 +316,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
     /**
      * method checks, whether the passed string containing the requested
      * versions of the SOS contains the versions, the 52n SOS supports
-     * 
+     *
      * @param service
      *            requested service
      * @param versionsString
      *            comma seperated list of requested service versions
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the versions list is empty or no matching version is *
      *             contained
@@ -338,11 +340,11 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * checks whether the required service parameter is correct
-     * 
+     *
      * @param service
      *            service parameter of the request
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if service parameter is incorrect
      */
@@ -357,13 +359,13 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     /**
      * checks whether the requested sensor ID is valid
-     * 
+     *
      * @param procedureID
      *            the sensor ID which should be checked
      * @param parameterName
      *            the parameter name
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if the value of the sensor ID parameter is incorrect
      */
@@ -389,6 +391,21 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         } else if (!getCache().hasQueryableProcedure(procedureID)) {
             throw new InvalidParameterValueException(parameterName, procedureID);
         }
+    }
+
+    /**
+     * checks whether the requested sensor ID is valid
+     *
+     * @param procedureID
+     *            the sensor ID which should be checked
+     * @param parameterName
+     *            the parameter name
+     *
+     * @throws OwsExceptionReport
+     *             * if the value of the sensor ID parameter is incorrect
+     */
+    protected void checkProcedureID(final String procedureID, final Enum<?> parameterName) throws OwsExceptionReport {
+        checkProcedureID(procedureID, parameterName.name());
     }
 
     protected void checkProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
@@ -493,13 +510,18 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
-    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName)
+    protected void checkObservedProperties(final List<String> observedProperties, final Enum<?> parameterName, boolean insertion)
+            throws OwsExceptionReport {
+        checkObservedProperties(observedProperties, parameterName.name(), insertion);
+    }
+
+    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String observedProperty : observedProperties) {
                 try {
-                    checkObservedProperty(observedProperty, parameterName);
+                    checkObservedProperty(observedProperty, parameterName, insertion);
                 } catch (final OwsExceptionReport e) {
                     exceptions.add(e);
                 }
@@ -508,19 +530,30 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
-    protected void checkObservedProperty(final String observedProperty, final String parameterName)
+    protected void checkObservedProperty(String observedProperty, String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         }
-        if (!getCache().hasObservableProperty(observedProperty)) {
+        if (insertion) {
+            if (!getCache().hasObservableProperty(observedProperty)) {
+                throw new InvalidParameterValueException(parameterName, observedProperty);
+            }
+        } else if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
+            if (getCache().isCompositePhenomenon(observedProperty) ||
+                !(getCache().isCompositePhenomenonComponent(observedProperty) ||
+                  getCache().hasObservableProperty(observedProperty))) {
+                throw new InvalidParameterValueException(parameterName, observedProperty);
+            }
+        } else if (!getCache().hasObservableProperty(observedProperty)) {
             throw new InvalidParameterValueException(parameterName, observedProperty);
         }
+
     }
 
-    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName)
+    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName, boolean insertion)
             throws OwsExceptionReport {
-        checkObservedProperty(observedProperty, parameterName.name());
+        checkObservedProperty(observedProperty, parameterName.name(), insertion);
     }
 
     protected void checkOfferings(final Collection<String> offerings, final String parameterName)
@@ -760,7 +793,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            return getCache().hasRequstableProcedureDescriptionFormat(format);
+            return getCache().hasRequestableProcedureDescriptionFormat(format);
         }
     }
 

@@ -87,72 +87,41 @@ public class SQLScriptGenerator {
         }
     }
 
-    private void setDirectoriesForModelSelection(int selection, boolean oldConcept, Configuration configuration)
+    private void setDirectoriesForModelSelection(int selection, int concept, Configuration configuration)
             throws Exception {
         switch (selection) {
         case 1:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
-                        .toURI()));
-            } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class
-                        .getResource("/mapping/series/observation").toURI()));
-            }
             break;
         case 2:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
-                        .toURI()));
-            } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class
-                        .getResource("/mapping/series/observation").toURI()));
-            }
             configuration
                     .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             break;
         case 3:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
-                        .toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
-                        "/mapping/old/spatialFilteringProfile").toURI()));
-            } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class
-                        .getResource("/mapping/series/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
-                        "/mapping/series/spatialFilteringProfile").toURI()));
-            }
-            break;
-        case 4:
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
             configuration
                     .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
-            if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
-                        .toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
-                        "/mapping/old/spatialFilteringProfile").toURI()));
-            } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class
-                        .getResource("/mapping/series/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource(
-                        "/mapping/series/spatialFilteringProfile").toURI()));
-            }
-            break;
-        case 5:
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
-            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/i18n").toURI()));
-            if (oldConcept) {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/spatialFilteringProfile").toURI()));
-            } else {
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation").toURI()));
-                configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/spatialFilteringProfile").toURI()));
-            }
+            break;
+        default:
+            throw new Exception("The entered value is invalid!");
+        }
+        addConceptDirectories(concept, configuration);
+    }
+
+    private void addConceptDirectories(int concept, Configuration configuration) throws Exception {
+        switch (concept) {
+        case 1:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/old/observation")
+                    .toURI()));
+            break;
+        case 2:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/series/observation")
+                    .toURI()));
+            break;
+        case 3:
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/ereporting").toURI()));
             break;
         default:
             throw new Exception("The entered value is invalid!");
@@ -179,9 +148,7 @@ public class SQLScriptGenerator {
         printToScreen("Which database model should be created:");
         printToScreen("1   Core");
         printToScreen("2   Transcational");
-        printToScreen("3   Spatial Filtering Profile");
-        printToScreen("4   Core/Transactional/Spatial Filtering Profile");
-        printToScreen("5   Core/Transactional/Spatial Filtering Profile/Multi Language");
+        printToScreen("3   Core/Transactional/Multi Language");
         printToScreen("");
         printToScreen("Enter your selection: ");
 
@@ -195,6 +162,7 @@ public class SQLScriptGenerator {
         printToScreen("Which observation concept should be created:");
         printToScreen("1   old");
         printToScreen("2   series");
+        printToScreen("3   ereporting");
         printToScreen("");
         printToScreen("Enter your selection: ");
 
@@ -202,17 +170,6 @@ public class SQLScriptGenerator {
         String selection = null;
         selection = br.readLine();
         return Integer.parseInt(selection);
-    }
-
-    private boolean isOldConcept(int selection) throws Exception {
-        switch (selection) {
-        case 1:
-            return true;
-        case 2:
-            return false;
-        default:
-            throw new Exception("The entered value is invalid!");
-        }
     }
 
     private String getSchema() throws IOException {
@@ -256,14 +213,14 @@ public class SQLScriptGenerator {
             int dialectSelection = sqlScriptGenerator.getDialectSelection();
             Dialect dia = sqlScriptGenerator.getDialect(dialectSelection);
             int modelSelection = sqlScriptGenerator.getModelSelection();
-            boolean oldConcept = sqlScriptGenerator.isOldConcept(sqlScriptGenerator.getConceptSelection());
+            int concept = sqlScriptGenerator.getConceptSelection();
             String schema = sqlScriptGenerator.getSchema();
             if (schema != null && !schema.isEmpty()) {
                 Properties p = new Properties();
                 p.put("hibernate.default_schema", schema);
                 configuration.addProperties(p);
             }
-            sqlScriptGenerator.setDirectoriesForModelSelection(modelSelection, oldConcept, configuration);
+            sqlScriptGenerator.setDirectoriesForModelSelection(modelSelection, concept, configuration);
             // create script
             String[] create = configuration.generateSchemaCreationScript(dia);
             List<String> checkedSchema = sqlScriptGenerator.checkSchema(dia, create);

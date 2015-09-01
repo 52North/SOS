@@ -81,8 +81,7 @@ public class CodingRepository {
 	private static class LazyHolder {
 		private static final CodingRepository INSTANCE = new CodingRepository();
 
-		private LazyHolder() {
-		};
+		private LazyHolder() {};
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -383,7 +382,7 @@ public class CodingRepository {
 		}
 		return Collections.unmodifiableSet(Activatable.filter(typeMap.get(key)));
 	}
-
+	
 	private void generateTypeMap() {
 		final List<Map<SupportedTypeKey, Set<String>>> list = new LinkedList<Map<SupportedTypeKey, Set<String>>>();
 		for (final Decoder<?, ?> decoder : getDecoders()) {
@@ -616,6 +615,34 @@ public class CodingRepository {
 		return map;
 	}
 
+    public void setActive(final ProcedureDescriptionFormatKey pdfk, final boolean active) {
+        if (procedureDescriptionFormatsStatus.containsKey(pdfk)) {
+            procedureDescriptionFormatsStatus.put(pdfk, active);
+        }
+    }
+
+    public String getNamespaceFor(String prefix) {
+        Map<String, String> prefixNamspaceMap = getPrefixNamspaceMap();
+        for (String namespace : prefixNamspaceMap.keySet()) {
+            if (prefix.equals(prefixNamspaceMap.get(prefix))) {
+                return namespace;
+            }
+        }
+        return null;
+    }
+
+    public String getPrefixFor(String namespace) {
+        return getPrefixNamspaceMap().get(namespace);
+
+    }
+
+    private Map<String, String> getPrefixNamspaceMap() {
+        Map<String, String> prefixMap = Maps.newHashMap();
+        for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {
+            encoder.addNamespacePrefixToMap(prefixMap);
+        }
+        return prefixMap;
+    }
 	public Set<String> getAllSupportedProcedureDescriptionFormats(final String service, final String version) {
 		return getAllSupportedProcedureDescriptionFormats(service, version, procedureDescriptionFormats);
 	}
@@ -687,35 +714,6 @@ public class CodingRepository {
 		if (responseFormatStatus.containsKey(rfkt)) {
 			responseFormatStatus.put(rfkt, active);
 		}
-	}
-
-	public void setActive(final ProcedureDescriptionFormatKey pdfk, final boolean active) {
-		if (procedureDescriptionFormatsStatus.containsKey(pdfk)) {
-			procedureDescriptionFormatsStatus.put(pdfk, active);
-		}
-	}
-
-	public String getNamespaceFor(String prefix) {
-		Map<String, String> prefixNamspaceMap = getPrefixNamspaceMap();
-		for (String namespace : prefixNamspaceMap.keySet()) {
-			if (prefix.equals(prefixNamspaceMap.get(prefix))) {
-				return namespace;
-			}
-		}
-		return null;
-	}
-
-	public String getPrefixFor(String namespace) {
-		return getPrefixNamspaceMap().get(namespace);
-
-	}
-
-	private Map<String, String> getPrefixNamspaceMap() {
-		Map<String, String> prefixMap = Maps.newHashMap();
-		for (final Encoder<?, ?> encoder : CodingRepository.getInstance().getEncoders()) {
-			encoder.addNamespacePrefixToMap(prefixMap);
-		}
-		return prefixMap;
 	}
 
 	private class DecoderComparator extends ProxySimilarityComparator<Decoder<?, ?>, DecoderKey> {

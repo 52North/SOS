@@ -33,8 +33,6 @@ import java.util.Locale;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
@@ -43,6 +41,8 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;

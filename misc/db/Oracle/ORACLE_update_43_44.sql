@@ -33,3 +33,18 @@ ALTER TABLE procedure ADD isaggregation char(1 char) default 'F' check (isaggreg
 ALTER TABLE procedure ADD typeof number(19,0);
 
 alter table procedure add constraint typeoffk foreign key (procedureid) references procedure;
+
+-- complex observation
+ALTER TABLE observableproperty ADD hiddenchild char(1 char) default 'F' check (hiddenchild in ('T','F'));
+
+ALTER TABLE observation ADD child char(1 char) default 'F' check (child in ('T','F'));
+ALTER TABLE observation ADD parent char(1 char) default 'F' check (parent in ('T','F'));
+
+create table complexValue (observationId number(19,0) not null, primary key (observationId));
+alter table complexValue add constraint observationComplexValueFk foreign key (observationId) references observation;
+alter table complexValue add constraint observationComplexValueFk foreign key (observationId) references observation;
+
+create table compositeObservation (observationId number(19,0) not null, childObservationId number(19,0) not null, primary key (observationId, childObservationId));
+alter table compositeObservation add constraint observationChildFk foreign key (childObservationId) references observation;
+alter table compositeObservation add constraint observationParentFK foreign key (observationId) references complexValue;
+alter table compositeObservation add constraint observationParentFK foreign key (observationId) references complexValue;

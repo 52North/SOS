@@ -142,7 +142,7 @@ public class Comparables {
 
     private static class InheritanceComparator<T> extends Ordering<T> {
         private static final InheritanceComparator<Object> INSTANCE
-                = new InheritanceComparator<Object>();
+                = new InheritanceComparator<>();
 
         private InheritanceComparator() {
         }

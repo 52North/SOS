@@ -42,10 +42,10 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -72,7 +72,8 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             observationDAO = DaoFactory.getInstance().getObservationDAO();
             transaction = session.beginTransaction();
-            HibernateObservationBuilder b = new HibernateObservationBuilder(session);
+            HibernateObservationBuilder b;
+            b = new HibernateObservationBuilder(session);
             DateTime begin = new DateTime();
             for (int i = 0; i < 50; ++i) {
                 b.createObservation(String.valueOf(i), begin.plusHours(i));
@@ -96,12 +97,11 @@ public class ObservationDAOTest extends ExtendedHibernateTestCase {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            ScrollableIterable<AbstractObservation> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass(session)));
-            for (AbstractObservation o : i) {
-                session.delete(o);
+            try (ScrollableIterable<Observation<?>> i = ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()))) {
+                for (Observation<?> o : i) {
+                    session.delete(o);
+                }
             }
-            i.close();
             session.flush();
             transaction.commit();
         } catch (HibernateException he) {

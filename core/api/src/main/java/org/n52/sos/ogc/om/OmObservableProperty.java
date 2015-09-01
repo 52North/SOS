@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ogc.om;
 
+
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Objects;
 
 /**
  * class represents a phenomenon of an observation
- * 
+ *
  * @since 4.0.0
  */
 public class OmObservableProperty extends AbstractPhenomenon {
@@ -49,7 +52,7 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * constructor
-     * 
+     *
      * @param identifier
      *            observableProperty identifier
      */
@@ -59,7 +62,7 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * constructor
-     * 
+     *
      * @param identifier
      *            id of the observableProperty
      * @param description
@@ -79,7 +82,7 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * Get unit of measurement
-     * 
+     *
      * @return Returns the unit.
      */
     public String getUnit() {
@@ -88,7 +91,7 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * Set unit of measurement
-     * 
+     *
      * @param unit
      *            The unit to set.
      */
@@ -98,7 +101,7 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * Get value type
-     * 
+     *
      * @return Returns the valueType.
      */
     public String getValueType() {
@@ -107,7 +110,7 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * Set value type
-     * 
+     *
      * @param valueType
      *            The valueType to set.
      */
@@ -117,10 +120,21 @@ public class OmObservableProperty extends AbstractPhenomenon {
 
     /**
      * Check whether unit of measure is set
-     * 
+     *
      * @return <code>true</code>, if unit of measure is set
      */
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
     }
+
+    @Override
+    public boolean isComposite() {
+        return false;
+    }
+
+    @Override
+    public boolean isObservableProperty() {
+        return true;
+    }
+
 }

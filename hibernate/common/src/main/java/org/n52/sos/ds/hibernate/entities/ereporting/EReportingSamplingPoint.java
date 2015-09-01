@@ -29,9 +29,9 @@
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasAssessmentType;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasNetwork;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.HasStation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasAssessmentType;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasNetwork;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasStation;
 
 /**
  * Entity for AQD e-Reporting SamplingPoint
@@ -66,22 +66,24 @@ public class EReportingSamplingPoint extends AbstractIdentifierNameDescriptionEn
      * @param samplingPointId
      *            the samplingPointId to set
      */
-    public EReportingSamplingPoint setSamplingPointId(Long samplingPointId) {
+    public void setSamplingPointId(Long samplingPointId) {
         this.samplingPointId = samplingPointId;
-        return this;
     }
 
+    @Override
     public EReportingAssessmentType getAssessmentType() {
         return assessmentType;
     }
 
-    public EReportingSamplingPoint setAssessmentType(EReportingAssessmentType assessmentType) {
+    @Override
+    public void setAssessmentType(EReportingAssessmentType assessmentType) {
         this.assessmentType = assessmentType;
-        return this;
     }
 
+    @Override
     public boolean isSetAssessmentType() {
-        return getAssessmentType() != null && getAssessmentType().isSetAssessmentType();
+        return getAssessmentType() != null &&
+               getAssessmentType().isSetAssessmentType();
     }
 
     @Override

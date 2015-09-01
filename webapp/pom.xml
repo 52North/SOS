@@ -373,6 +373,13 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sqlite-config</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
 
 
         <!-- #### Spring dependencies #### -->

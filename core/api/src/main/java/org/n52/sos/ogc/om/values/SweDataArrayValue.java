@@ -32,10 +32,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -43,23 +48,22 @@ import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
 /**
  * Multi value representing a SweDataArray for observations
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SweDataArrayValue implements MultiValue<SweDataArray> {
 
     /**
      * logger
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SweDataArrayValue.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(SweDataArrayValue.class);
 
     /**
      * serial number
@@ -70,6 +74,14 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
      * Measurement values
      */
     private SweDataArray value;
+
+    public SweDataArrayValue() {
+        this(null);
+    }
+
+    public SweDataArrayValue(SweDataArray value) {
+        this.value = value;
+    }
 
     @Override
     public void setValue(final SweDataArray value) {
@@ -94,10 +106,11 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     /**
      * Adds the given block - a {@link List}<{@link String}> - add the end of
      * the current list of blocks
-     * 
+     *
      * @param blockOfTokensToAddAtTheEnd
+     *
      * @return <tt>true</tt> (as specified by {@link Collection#add}) <br />
-     *         <tt>false</tt> if block could not be added
+     * <tt>false</tt> if block could not be added
      */
     public boolean addBlock(final List<String> blockOfTokensToAddAtTheEnd) {
         if (value != null) {
@@ -108,7 +121,8 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
 
     @Override
     public String toString() {
-        return String.format("SweDataArrayValue [value=%s, unit=null]", getValue());
+        return String
+                .format("SweDataArrayValue [value=%s, unit=null]", getValue());
     }
 
     @Override
@@ -116,10 +130,12 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
         final TimePeriod timePeriod = new TimePeriod();
         Set<Integer> dateTokenIndizes = Sets.newHashSet();
         int dateTokenIndex = -1;
-        if (getValue() != null && getValue().getElementType() != null && getValue().getEncoding() != null) {
+        if (getValue() != null && getValue().getElementType() != null &&
+            getValue().getEncoding() != null) {
             // get index of time token from elementtype
             if (getValue().getElementType() instanceof SweDataRecord) {
-                final SweDataRecord elementType = (SweDataRecord) getValue().getElementType();
+                final SweDataRecord elementType = (SweDataRecord) getValue()
+                        .getElementType();
                 final List<SweField> fields = elementType.getFields();
                 for (int i = 0; i < fields.size(); i++) {
                     final SweField sweField = fields.get(i);
@@ -151,32 +167,15 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
 	                     }
 					}
                 }
-			} else {
-				final String errorMsg = "PhenomenonTime field could not be found in ElementType";
-				LOGGER.error(errorMsg);
-			}
-//                    if (dateTokenIndex > -1) {
-//                        for (final List<String> block : getValue().getValues()) {
-//                            // check for "/" to identify time periods (Is
-//                            // conform with ISO8601 (see WP))
-//                            // datetimehelper to DateTime from joda time
-//                	final String token = block.get(dateTokenIndex);
-//                    try {
-//                        final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
-//                        timePeriod.extendToContain(time);
-//                    } catch (final DateTimeParseException dte) {
-//                        LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
-//                        // FIXME throw exception here?
-//                        continue; // try next block;
-//                    }
-//                   }
-//            } else {
-//                final String errorMsg = "PhenomenonTime field could not be found in ElementType";
-//                LOGGER.error(errorMsg);
-//            }
+            } else {
+                final String errorMsg
+                        = "PhenomenonTime field could not be found in ElementType";
+                LOGGER.error(errorMsg);
+            }
         } else {
-            final String errorMsg =
-                    String.format("Value of type \"%s\" not set correct.", SweDataArrayValue.class.getName());
+            final String errorMsg = String
+                    .format("Value of type \"%s\" not set correct.", SweDataArrayValue.class
+                            .getName());
             LOGGER.error(errorMsg);
         }
         return timePeriod;
@@ -196,5 +195,17 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     @Override
     public boolean isSetUnit() {
         return false;
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

@@ -33,3 +33,18 @@ ALTER TABLE public."procedure" ADD COLUMN isaggregation char(1) default 'F' chec
 ALTER TABLE public."procedure" ADD COLUMN typeof int8;
 
 alter table public."procedure" add constraint typeoffk foreign key (procedureid) references public."procedure";
+
+-- complex observation
+ALTER TABLE public.observableproperty ADD COLUMN hiddenchild char(1) default 'F' check (hiddenchild in ('T','F'));
+
+ALTER TABLE public.observation ADD COLUMN child char(1) default 'F' check (child in ('T','F'));
+ALTER TABLE public.observation ADD COLUMN parent char(1) default 'F' check (parent in ('T','F'));
+
+create table public.complexValue (observationId int8 not null, primary key (observationId));
+alter table public.complexValue add constraint observationComplexValueFk foreign key (observationId) references public.observation;
+alter table public.complexValue add constraint observationComplexValueFk foreign key (observationId) references public.observation;
+
+create table public.compositeObservation (observationId int8 not null, childObservationId int8 not null, primary key (observationId, childObservationId));
+alter table public.compositeObservation add constraint observationChildFk foreign key (childObservationId) references public.observation;
+alter table public.compositeObservation add constraint observationParentFK foreign key (observationId) references public.complexValue;
+alter table public.compositeObservation add constraint observationParentFK foreign key (observationId) references public.complexValue;

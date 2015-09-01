@@ -28,18 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationInfo;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationTime;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
-import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValueTime;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 
 public class EntitiyHelper {
@@ -66,8 +66,8 @@ public class EntitiyHelper {
     }
 
     public boolean isSeriesObservationSupported() {
-        return HibernateHelper.isEntitySupported(EReportingObservation.class)
-                || HibernateHelper.isEntitySupported(SeriesObservation.class);
+        return HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)
+                || HibernateHelper.isEntitySupported(AbstractSeriesObservation.class);
     }
 
     public boolean isObservationInfoSupported() {
@@ -76,16 +76,16 @@ public class EntitiyHelper {
 
     public boolean isSeriesObservationInfoSupported() {
         if (isObservationInfoSupported()) {
-            return HibernateHelper.isEntitySupported(EReportingObservationInfo.class)
-                    || HibernateHelper.isEntitySupported(SeriesObservationInfo.class);
+            return HibernateHelper.isEntitySupported(ContextualReferencedEReportingObservation.class)
+                    || HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class);
         }
         return false;
     }
 
     public boolean isSeriesObservationTimeSupported() {
         if (isObservationTimeSupported()) {
-            return HibernateHelper.isEntitySupported(EReportingObservationTime.class)
-                    || HibernateHelper.isEntitySupported(SeriesObservationTime.class);
+            return HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)
+                    || HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class);
         }
         return false;
     }
@@ -112,50 +112,50 @@ public class EntitiyHelper {
     }
 
     public Class<?> getObservationEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
-            return EReportingObservation.class;
-        } else if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
-            return SeriesObservation.class;
-        } else if (HibernateHelper.isEntitySupported(Observation.class)) {
-            return Observation.class;
+        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
+            return AbstractEReportingObservation.class;
+        } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
+            return AbstractSeriesObservation.class;
+        } else if (HibernateHelper.isEntitySupported(AbstractLegacyObservation.class)) {
+            return AbstractLegacyObservation.class;
         }
         return null;
     }
 
     public Class<?> getObservationInfoEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingObservationInfo.class)) {
-            return EReportingObservationInfo.class;
-        } else if (HibernateHelper.isEntitySupported(SeriesObservationInfo.class)) {
-            return SeriesObservationInfo.class;
-        } else if (HibernateHelper.isEntitySupported(ObservationInfo.class)) {
-            return ObservationInfo.class;
+        if (HibernateHelper.isEntitySupported(ContextualReferencedEReportingObservation.class)) {
+            return ContextualReferencedEReportingObservation.class;
+        } else if (HibernateHelper.isEntitySupported(ContextualReferencedSeriesObservation.class)) {
+            return ContextualReferencedSeriesObservation.class;
+        } else if (HibernateHelper.isEntitySupported(ContextualReferencedLegacyObservation.class)) {
+            return ContextualReferencedLegacyObservation.class;
         }
         return null;
     }
 
     public Class<?> getObservationTimeEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingObservationTime.class)) {
-            return EReportingObservationTime.class;
-        } else if (HibernateHelper.isEntitySupported(SeriesObservationTime.class)) {
-            return SeriesObservationTime.class;
+        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
+            return TemporalReferencedEReportingObservation.class;
+        } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
+            return TemporalReferencedSeriesObservation.class;
         }
         return null;
     }
 
     public Class<?> getValueEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingValue.class)) {
-            return EReportingValue.class;
-        } else if (HibernateHelper.isEntitySupported(SeriesValue.class)) {
-            return SeriesValue.class;
+        if (HibernateHelper.isEntitySupported(AbstractValuedEReportingObservation.class)) {
+            return AbstractValuedEReportingObservation.class;
+        } else if (HibernateHelper.isEntitySupported(AbstractValuedSeriesObservation.class)) {
+            return AbstractValuedSeriesObservation.class;
         }
         return null;
     }
 
     public Class<?> getValueTimeEntityClass() {
-        if (HibernateHelper.isEntitySupported(EReportingValueTime.class)) {
-            return EReportingValueTime.class;
-        } else if (HibernateHelper.isEntitySupported(SeriesValueTime.class)) {
-            return SeriesValueTime.class;
+        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
+            return TemporalReferencedEReportingObservation.class;
+        } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
+            return TemporalReferencedSeriesObservation.class;
         }
         return null;
     }

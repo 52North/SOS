@@ -30,8 +30,8 @@ package org.n52.sos.ds.hibernate.values.series;
 
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.sos.exception.CodedException;
@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.2
  *
@@ -52,18 +52,14 @@ import org.slf4j.LoggerFactory;
 public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStreamingValue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateSeriesStreamingValue.class);
-
     private static final long serialVersionUID = 201732114914686926L;
-
     protected final AbstractSeriesValueDAO seriesValueDAO;
-
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
-
     protected long series;
 
     /**
      * constructor
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series

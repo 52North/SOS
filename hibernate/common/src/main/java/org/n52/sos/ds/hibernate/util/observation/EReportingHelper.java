@@ -36,10 +36,9 @@ import org.n52.sos.aqd.AqdConstants.PrimaryObservation;
 import org.n52.sos.aqd.AqdUomRepository;
 import org.n52.sos.aqd.AqdUomRepository.Uom;
 import org.n52.sos.aqd.ElementType;
-import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingQualityData;
-import org.n52.sos.ds.hibernate.entities.ereporting.HiberanteEReportingRelations.EReportingValues;
-import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingQualityData;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -100,7 +99,7 @@ public class EReportingHelper {
         sweDataArrayValue.setValue(createSweDataArray(omObservation, observation));
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
         observationValue.setPhenomenonTime(getPhenomenonTime(omObservation,
-                ((AbstractObservationTime) observation).createPhenomenonTime()));
+                ((AbstractTemporalReferencedObservation) observation).createPhenomenonTime()));
         addQuality(observation, observationValue);
         return observationValue;
     }
@@ -250,7 +249,7 @@ public class EReportingHelper {
 
     private static List<List<String>> createValue(OmObservation omObservation, EReportingValues observation, PrimaryObservation primaryObservation) {
         List<String> value = Lists.newArrayListWithCapacity(5);
-        addTimes(value, ((AbstractObservationTime) observation).createPhenomenonTime());
+        addTimes(value, ((AbstractTemporalReferencedObservation) observation).createPhenomenonTime());
         addIntegerValue(value, observation.getVerification());
         addIntegerValue(value, observation.getValidation());
         addValue(value, observation, omObservation);

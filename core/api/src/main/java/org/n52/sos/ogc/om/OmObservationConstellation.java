@@ -73,7 +73,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * constructor
-     * 
+     *
      * @param procedure
      *            Procedure by which the observation is made
      * @param observableProperty
@@ -91,7 +91,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * constructor
-     * 
+     *
      * @param procedure
      *            Procedure by which the observation is made
      * @param observableProperty
@@ -115,7 +115,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get the procedure
-     * 
+     *
      * @return the procedure
      */
     public SosProcedureDescription getProcedure() {
@@ -124,7 +124,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set the procedure
-     * 
+     *
      * @param procedure
      *            the procedure to set
      * @return this
@@ -136,7 +136,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get observableProperty
-     * 
+     *
      * @return the observableProperty
      */
     public AbstractPhenomenon getObservableProperty() {
@@ -145,7 +145,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set observableProperty
-     * 
+     *
      * @param observableProperty
      *            the observableProperty to set
      * @return this
@@ -157,7 +157,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get offering
-     * 
+     *
      * @return the offering
      */
     public Set<String> getOfferings() {
@@ -166,7 +166,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set offering
-     * 
+     *
      * @param offerings
      *            the offering to set
      * @return this
@@ -178,7 +178,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public OmObservationConstellation setOfferings(List<String> offerings) {
         if (this.offerings == null) {
-            this.offerings = new HashSet<String>(0);
+            this.offerings = new HashSet<>(offerings.size());
         }
         this.offerings.addAll(offerings);
         return this;
@@ -186,7 +186,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     public OmObservationConstellation addOffering(String offering) {
         if (offerings == null) {
-            offerings = new HashSet<String>(0);
+            offerings = new HashSet<>(1);
         }
         offerings.add(offering);
         return this;
@@ -194,7 +194,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get featureOfInterest
-     * 
+     *
      * @return the featureOfInterest
      */
     public AbstractFeature getFeatureOfInterest() {
@@ -203,7 +203,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set featureOfInterest
-     * 
+     *
      * @param featureOfInterest
      *            the featureOfInterest to set
      * @return this
@@ -215,7 +215,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Get observation type
-     * 
+     *
      * @return the observationType
      */
     public String getObservationType() {
@@ -224,7 +224,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Set observation type
-     * 
+     *
      * @param observationType
      *            the observationType to set
      * @return this
@@ -250,7 +250,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * Check if constellations are equal excluding observableProperty
-     * 
+     *
      * @param toCheckObsConst
      *            Observation constellation to chek
      * @return true if equals

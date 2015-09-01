@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.sensorML.Term;
 
 /**
  * SOS internal representation of SensorML classifier
@@ -39,23 +39,19 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public class SmlClassifier {
+public class SmlClassifier extends Term {
 
     public static final String PROCEDURE_TYPE = "procedureType";
 
     public static final String INTENDED_APPLICATION = "intendedApplication";
 
-    private String name;
-
-    private String definition;
-
     /**
-     * Classifier codeSpace href
+     * constructor
      */
-    private String codeSpace;
-    
-    private String value;
-
+    public SmlClassifier() {
+    	
+    }
+    		
     /**
      * constructor
      * 
@@ -71,84 +67,10 @@ public class SmlClassifier {
     public SmlClassifier(final String name, final String definition, final String codeSpace,
             final String value) {
         super();
-        this.name = name;
-        this.definition = definition;
-        this.codeSpace = codeSpace;        
-        this.value = value;
+        setName(name);
+        setCodeSpace(codeSpace);
+        setDefinition(definition);
+        setValue(value);
+ 
     }
-    
-	/**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @param name
-     *            the name to set
-     */
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    /**
-     * @return the Classifier definition
-     */
-    public String getDefinition() {
-        return definition;
-    }
-
-    /**
-     * @param definition
-     *            Identifier definition
-     */
-    public void setDefinition(final String definition) {
-        this.definition = definition;
-    }
-    
-    /**
-     * @return the Classifier codeSpace href
-     */
-    public String getCodeSpace() {
-        return codeSpace;
-    }
-
-    /**
-     * @param codeSpace href
-     *            Classifier codeSpace href
-     */
-    public void setCodeSpace(final String codeSpace) {
-        this.codeSpace = codeSpace;
-    }
-
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value
-     *            the value to set
-     */
-    public void setValue(final String value) {
-        this.value = value;
-    }
-
-	/**
-	 * @return <code>true</code>, if the codeSpace is set AND not empty
-	 */
-	public boolean isSetCodeSpace()	{
-		return StringHelper.isNotEmpty(codeSpace);
-	}
-	
-	/**
-	 * @return <code>true</code>, if the codeSpace is set AND not empty
-	 */
-	public boolean isSetDefinition() {
-		return StringHelper.isNotEmpty(definition);
-	}
-
 }

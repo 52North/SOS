@@ -45,6 +45,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
@@ -72,9 +73,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * SWE helper class.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class SweHelper {
 
@@ -86,7 +87,7 @@ public final class SweHelper {
      * throws OwsExceptionReport { if (sosObservation.getv) { return
      * createSosSweDataArrayWithResultTemplate(sosObservation); } else { return
      * createSosSweDataArrayWithoutResultTemplate(sosObservation); } }
-     * 
+     *
      * private static SweDataArray
      * createSosSweDataArrayWithResultTemplate(OmObservation sosObservation)
      * throws OwsExceptionReport { SosResultTemplate sosResultTemplate =
@@ -239,6 +240,8 @@ public final class SweHelper {
             return new SweText();
         } else if (iValue instanceof NilTemplateValue) {
             return new SweText();
+        } else if (iValue instanceof ComplexValue) {
+            return new SweDataRecord();
         }
         return null;
     }
@@ -247,7 +250,7 @@ public final class SweHelper {
      * Create a TextEncoding object for token and tuple separators from
      * SosObservation. If separators not set, definitions from Configurator are
      * used.
-     * 
+     *
      * @param sosObservation
      *            SosObservation with token and tuple separator
      * @return TextEncoding
@@ -272,7 +275,7 @@ public final class SweHelper {
      * Create a TextEncoding object for token and tuple separators from
      * SosObservation. If separators not set, definitions from Configurator are
      * used.
-     * 
+     *
      * @param observationValue
      *            AbstractObservationValue with token and tuple separator
      * @return TextEncoding
@@ -295,7 +298,7 @@ public final class SweHelper {
 
     /**
      * Create a TextEncoding object for token and tuple separators.
-     * 
+     *
      * @param tupleSeparator
      *            Token separator
      * @param tokenSeparator
@@ -318,7 +321,7 @@ public final class SweHelper {
             Value<?> value) {
         if (elementType instanceof SweDataRecord) {
             SweDataRecord elementTypeRecord = (SweDataRecord) elementType;
-            List<String> block = new ArrayList<String>(elementTypeRecord.getFields().size());
+            List<String> block = new ArrayList<>(elementTypeRecord.getFields().size());
             for (SweField sweField : elementTypeRecord.getFields()) {
                 if (!(value instanceof NilTemplateValue)) {
                     if (sweField.getElement() instanceof SweTime || sweField.getElement() instanceof SweTimeRange) {
@@ -342,7 +345,7 @@ public final class SweHelper {
 
     /**
      * Create a {@link SweQuantity} from parameter
-     * 
+     *
      * @param value
      *            the {@link SweQuantity} value
      * @param axis

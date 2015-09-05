@@ -103,4 +103,12 @@
         <property name="defaultValue" value="120" />
         <property name="minimum" value="0" />
     </bean>
+    <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
+        <property name="key" value="service.exposeChildObservableProperties" />
+        <property name="title" value="Should this SOS expose child observable properties?" />
+        <property name="description" value="Whether the SOS should expose the children of composite phenomenons (e.g. in complex observations) instead of their parents." />
+        <property name="order" value="17.0" />
+        <property name="group" ref="serviceSettingDefintionGroup" />
+        <property name="defaultValue" value="false" />
+    </bean>
 </beans>

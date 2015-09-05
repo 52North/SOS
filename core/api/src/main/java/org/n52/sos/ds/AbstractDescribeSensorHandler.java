@@ -56,7 +56,7 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
         addProcedureParameter(opsMeta);
-        Set<String> pdfs = getCache().getRequstableProcedureDescriptionFormat();
+        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             pdfs.addAll(ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION));
             opsMeta.addPossibleValuesParameter(

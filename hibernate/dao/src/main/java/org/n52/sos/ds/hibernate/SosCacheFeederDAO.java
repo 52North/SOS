@@ -36,13 +36,9 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
@@ -54,7 +50,6 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.ows.ServiceIdentificationFactory;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
@@ -63,6 +58,8 @@ import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of the interface CacheFeederDAO

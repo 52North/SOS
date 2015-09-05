@@ -30,11 +30,14 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import java.util.Collection;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType quantity
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
@@ -58,7 +61,7 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
 
     /**
      * Get axis ID
-     * 
+     *
      * @return the axisID
      */
     public String getAxisID() {
@@ -67,7 +70,7 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
 
     /**
      * set axis ID
-     * 
+     *
      * @param axisID
      *            the axisID to set
      * @return This SweQuantity
@@ -143,4 +146,17 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
     public SweQuantity setQuality(Collection<SweQuality> quality) {
         return (SweQuantity) super.setQuality(quality);
     }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
 }

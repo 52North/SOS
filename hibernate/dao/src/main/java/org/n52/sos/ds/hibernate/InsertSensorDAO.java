@@ -246,7 +246,7 @@ private HibernateSessionHolder sessionHolder;
         for (final String observableProperty : obsProps) {
             observableProperties.add(new OmObservableProperty(observableProperty));
         }
-        return new ObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, session);
+        return new ObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, false, session);
     }
 
     /**

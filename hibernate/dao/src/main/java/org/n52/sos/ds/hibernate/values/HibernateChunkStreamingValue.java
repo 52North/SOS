@@ -32,13 +32,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
-
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.request.GetObservationRequest;
@@ -54,7 +54,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
 
     private static final long serialVersionUID = -4898252375907510691L;
 
-    private Iterator<AbstractValue> valuesResult;
+    private Iterator<ValuedObservation<?>> valuesResult;
 
     private int chunkSize;
 
@@ -102,16 +102,16 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return valuesResult.next();
-	}
+    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedLegacyObservation<?>) valuesResult.next();
+    }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValue resultObject = nextEntity();
-                TimeValuePair value = resultObject.createTimeValuePairFrom();
+                ValuedObservation<?> resultObject = nextEntity();
+                TimeValuePair value = createTimeValuePairFrom(resultObject);
                 session.evict(resultObject);
                 return value;
             }
@@ -128,8 +128,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValue resultObject = nextEntity();
-                resultObject.addValuesToObservation(observation, getResponseFormat());
+                ValuedObservation<?> resultObject = nextEntity();
+                addValuesToObservation(observation, resultObject);
                 checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;
@@ -154,7 +154,7 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         }
         try {
             // query with temporal filter
-            Collection<AbstractValue> valuesResult = null;
+            final Collection<ValuedObservation<?>> valuesResult;
             if (temporalFilterCriterion != null) {
                 valuesResult =
                         valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
@@ -176,13 +176,13 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     }
 
     /**
-     * Check the queried {@link AbstractValue}s for null and set them as
-     * iterator to local variable.
+     * Check the queried {@link AbstractValuedLegacyObservation}s for null and
+     * set them as iterator to local variable.
      *
      * @param valuesResult
-     *            Queried {@link AbstractValue}s
+     *            Queried {@link AbstractValuedLegacyObservation}s
      */
-    private void setObservationValuesResult(Collection<AbstractValue> valuesResult) {
+    private void setObservationValuesResult(Collection<ValuedObservation<?>> valuesResult) {
         if (CollectionHelper.isNotEmpty(valuesResult)) {
             this.valuesResult = valuesResult.iterator();
         }

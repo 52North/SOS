@@ -32,18 +32,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 
-/**
- * SOS internal representation of SWE dataArray TODO document that this
- * implementation supports only simple types in swe:elementType.swe:DataRecord
- * in TWiki
- * 
- * @since 4.0.0
- */
+
 public class SweDataArray extends SweAbstractDataComponent {
 
     /**
@@ -59,7 +53,7 @@ public class SweDataArray extends SweAbstractDataComponent {
     private SweAbstractDataComponent elementType;
 
     /**
-     * 
+     *
      */
     private SweAbstractEncoding encoding;
 
@@ -73,7 +67,7 @@ public class SweDataArray extends SweAbstractDataComponent {
     }
 
     /**
-     * 
+     *
      * @param values
      *            the values to set
      * @return This SweDataArray
@@ -138,7 +132,7 @@ public class SweDataArray extends SweAbstractDataComponent {
     /**
      * Adds the given block - a {@link List}<{@link String}> - add the end of
      * the current list of blocks
-     * 
+     *
      * @param blockOfTokensToAddAtTheEnd
      * @return <tt>true</tt> (as specified by {@link Collection#add}) <br />
      *         <tt>false</tt> if block could not be added
@@ -215,5 +209,17 @@ public class SweDataArray extends SweAbstractDataComponent {
     @Override
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.DataArray;
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

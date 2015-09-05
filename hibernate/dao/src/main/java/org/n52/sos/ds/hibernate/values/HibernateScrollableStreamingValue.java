@@ -30,12 +30,12 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.hibernate.entities.values.AbstractValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.request.GetObservationRequest;
@@ -87,15 +87,15 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-	public AbstractValue nextEntity() throws OwsExceptionReport {
-    	return (AbstractValue) scrollableResult.get()[0];
-	}
+    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedLegacyObservation<?>) scrollableResult.get()[0];
+    }
 
-	@Override
+    @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-        	AbstractValue resultObject = nextEntity();
-            TimeValuePair value = resultObject.createTimeValuePairFrom();
+            ValuedObservation<?> resultObject = nextEntity();
+            TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -109,8 +109,11 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            AbstractValue resultObject = nextEntity();
-            resultObject.addValuesToObservation(observation, getResponseFormat());
+            ValuedObservation<?> resultObject = nextEntity();
+            addValuesToObservation(observation, resultObject);
+            if (resultObject.hasSamplingGeometry()) {
+                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;

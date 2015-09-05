@@ -41,7 +41,7 @@ public class ContentCacheFactoryImpl implements ContentCacheFactory {
 
     @Override
     public WritableContentCache get() {
-        return new SosWritableContentCacheImpl();
+        return new InMemoryCacheImpl();
     }
 
 }

@@ -30,14 +30,14 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.action.Action;
 import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.request.DeleteSensorRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
@@ -107,6 +107,7 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
                 for (String observableProperty : cache.getObservablePropertiesForOffering(offering)) {
                     cache.removeOfferingForObservableProperty(observableProperty, offering);
                 }
+                cache.clearCompositePhenomenonForOffering(offering);
                 cache.removeObservablePropertiesForOffering(offering);
                 Set<String> resultTemplatesToRemove = cache.getResultTemplatesForOffering(offering);
                 cache.removeResultTemplatesForOffering(offering);
@@ -133,6 +134,9 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
             cache.removeProcedureForObservableProperty(observableProperty, procedure);
             cache.removeObservablePropertyForProcedure(procedure, observableProperty);
         }
+
+        cache.clearCompositePhenomenonForProcedure(procedure);
+        
         // At the latest
         cache.removeOfferingsForProcedure(procedure);
         cache.recalculatePhenomenonTime();

@@ -37,7 +37,7 @@ import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.AbstractObservationRequest;
 

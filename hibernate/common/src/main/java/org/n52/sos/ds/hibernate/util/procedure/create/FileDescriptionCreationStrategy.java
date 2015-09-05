@@ -42,6 +42,8 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

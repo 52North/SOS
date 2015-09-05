@@ -43,6 +43,7 @@ import org.n52.iceland.service.Service;
 @RunWith(ComplianceSuiteRunner.class)
 public class SosComplianceTestSuite extends MockHttpExecutor
         implements ComplianceSuite {
+
     private final H2Database datasource = new H2Database();
 
     public SosComplianceTestSuite() {
@@ -77,6 +78,26 @@ public class SosComplianceTestSuite extends MockHttpExecutor
     @Override
     public Class<?>[] getTests() {
         return new Class<?>[] {
+
+            org.n52.sos.service.it.functional.ComplexObservationTest.class,
+            org.n52.sos.service.it.functional.ContentNegotiationEndpointTest.class,
+
+            org.n52.sos.service.it.v2.kvp.DeleteObservationTest.class,
+            org.n52.sos.service.it.v2.kvp.DeleteSensorTest.class,
+            org.n52.sos.service.it.v2.kvp.DescribeSensorTest.class,
+            org.n52.sos.service.it.v2.kvp.GetCapabilitiesTest.class,
+            org.n52.sos.service.it.v2.kvp.GetDataAvailabilityTest.class,
+            org.n52.sos.service.it.v2.kvp.GetFeatureOfInterestTest.class,
+            org.n52.sos.service.it.v2.kvp.GetObservationByIdTest.class,
+            org.n52.sos.service.it.v2.kvp.GetObservationTest.class,
+            org.n52.sos.service.it.v2.kvp.GetResultTemplateTest.class,
+            org.n52.sos.service.it.v2.kvp.GetResultTest.class,
+
+            org.n52.sos.service.it.v2.rest.CapabilitiesTest.class,
+            org.n52.sos.service.it.v2.rest.OfferingsTest.class,
+            org.n52.sos.service.it.v2.rest.SensorsTest.class,
+            org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class,
+
             org.n52.sos.service.it.v2.soap.DeleteObservationTest.class,
             org.n52.sos.service.it.v2.soap.DeleteSensorTest.class,
             org.n52.sos.service.it.v2.soap.DescribeSensorTest.class,
@@ -92,21 +113,7 @@ public class SosComplianceTestSuite extends MockHttpExecutor
             org.n52.sos.service.it.v2.soap.InsertResultTest.class,
             org.n52.sos.service.it.v2.soap.InsertSensorTest.class,
             org.n52.sos.service.it.v2.soap.UpdateSensorDescriptionTest.class,
-            org.n52.sos.service.it.v2.kvp.DeleteObservationTest.class,
-            org.n52.sos.service.it.v2.kvp.DeleteSensorTest.class,
-            org.n52.sos.service.it.v2.kvp.DescribeSensorTest.class,
-            org.n52.sos.service.it.v2.kvp.GetCapabilitiesTest.class,
-            org.n52.sos.service.it.v2.kvp.GetDataAvailabilityTest.class,
-            org.n52.sos.service.it.v2.kvp.GetFeatureOfInterestTest.class,
-            org.n52.sos.service.it.v2.kvp.GetObservationByIdTest.class,
-            org.n52.sos.service.it.v2.kvp.GetObservationTest.class,
-            org.n52.sos.service.it.v2.kvp.GetResultTemplateTest.class,
-            org.n52.sos.service.it.v2.kvp.GetResultTest.class,
-            org.n52.sos.service.it.v2.rest.CapabilitiesTest.class,
-            org.n52.sos.service.it.v2.rest.OfferingsTest.class,
-            org.n52.sos.service.it.v2.rest.SensorsTest.class,
-            org.n52.sos.service.it.v2.rest.ServiceEndpointTest.class,
-            org.n52.sos.service.it.ContentNegotiationEndpointTest.class
         };
     }
+
 }

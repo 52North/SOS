@@ -96,6 +96,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 
 
 @Configurable
@@ -551,14 +552,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                             lastGeoemtry = geometry;
                         }
                     }
-                    Geometry geom;
+                    GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(PrecisionModel.FLOATING), srid);
                     if (coordinates.size() == 1) {
-                        geom = new GeometryFactory().createPoint(coordinates.iterator().next());
+                        return geometryFactory.createPoint(coordinates.iterator().next());
                     } else {
-                        geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
+                        return geometryFactory.createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                     }
-                    geom.setSRID(srid);
-                    return geom;
                 }
             }
         }

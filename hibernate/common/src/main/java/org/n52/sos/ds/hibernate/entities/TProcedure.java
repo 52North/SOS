@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
@@ -37,10 +38,11 @@ import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
-public class TProcedure extends Procedure implements HasValidProcedureTimes, HasParentChilds<Procedure, TProcedure> {
+public class TProcedure extends Procedure implements HasValidProcedureTimes,
+                                                     HasParentChilds<Procedure> {
 
     private static final long serialVersionUID = 3307492687846686350L;
 
@@ -62,9 +64,9 @@ public class TProcedure extends Procedure implements HasValidProcedureTimes, Has
     }
 
     @Override
-    public TProcedure setValidProcedureTimes(final Set<ValidProcedureTime> validProcedureTimes) {
+    public void setValidProcedureTimes(
+            Set<ValidProcedureTime> validProcedureTimes) {
         this.validProcedureTimes = validProcedureTimes;
-        return this;
     }
 
     @Override
@@ -73,9 +75,8 @@ public class TProcedure extends Procedure implements HasValidProcedureTimes, Has
     }
 
     @Override
-    public TProcedure setParents(final Set<Procedure> parents) {
+    public void setParents(Set<Procedure> parents) {
         this.parents = parents;
-        return this;
     }
 
     @Override
@@ -84,9 +85,30 @@ public class TProcedure extends Procedure implements HasValidProcedureTimes, Has
     }
 
     @Override
-    public TProcedure setChilds(final Set<Procedure> childs) {
+    public void setChilds(Set<Procedure> childs) {
         this.childs = childs;
-        return this;
+    }
+
+    @Override
+    public void addParent(Procedure parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(Procedure child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
     }
 
 }

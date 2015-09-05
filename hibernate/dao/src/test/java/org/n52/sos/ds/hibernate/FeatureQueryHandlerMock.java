@@ -44,7 +44,7 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class FeatureQueryHandlerMock implements FeatureQueryHandler {

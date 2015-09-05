@@ -67,6 +67,7 @@ import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
@@ -76,6 +77,7 @@ import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,6 +88,7 @@ import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
 import net.opengis.om.x20.NamedValuePropertyType;
+import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.om.x20.TimeObjectPropertyType;
 
@@ -101,6 +104,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             .decoderKeysForElements(OmConstants.NS_OM_2,
                                     OMObservationType.class,
                                     NamedValuePropertyType.class,
+                                    OMObservationDocument.class,
                                     NamedValuePropertyType[].class);
 
     private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
@@ -121,6 +125,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             ConformanceClasses.OM_V2_COUNT_OBSERVATION,
             ConformanceClasses.OM_V2_TRUTH_OBSERVATION,
             ConformanceClasses.OM_V2_GEOMETRY_OBSERVATION,
+            ConformanceClasses.OM_V2_COMPLEX_OBSERVATION,
             ConformanceClasses.OM_V2_TEXT_OBSERVATION);
 
     public OmDecoderv20() {
@@ -150,7 +155,10 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
     public Object decode(Object object) throws OwsExceptionReport {
         // validate document
         // XmlHelper.validateDocument((XmlObject) object);
-        if (object instanceof OMObservationType) {
+        if (object instanceof OMObservationDocument) {
+            OMObservationDocument omObservationDocument = (OMObservationDocument) object;
+            return parseOmObservation(omObservationDocument.getOMObservation());
+        } else if (object instanceof OMObservationType) {
             return parseOmObservation((OMObservationType) object);
 
         }
@@ -300,7 +308,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         ObservationValue<?> observationValue;
         if (!omObservation.getResult().getDomNode().hasChildNodes() && phenomenonTime.isSetNilReason()
                 && phenomenonTime.getNilReason().equals(NilReason.template)) {
-            observationValue = new SingleObservationValue<String>(new NilTemplateValue());
+            observationValue = new SingleObservationValue<>(new NilTemplateValue());
         } else {
             observationValue = getResult(omObservation);
         }
@@ -314,7 +322,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         if (xbResult.schemaType() == XmlAnyTypeImpl.type) {
             // Template observation for InsertResultTemplate operation
             if (!xbResult.getDomNode().hasChildNodes()) {
-                return new SingleObservationValue<String>(new NilTemplateValue());
+                return new SingleObservationValue<>(new NilTemplateValue());
             } else {
                 try {
                     xbResult = XmlObject.Factory.parse(xbResult.xmlText().trim());
@@ -332,19 +340,19 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         if (xbResult.schemaType() == XmlBoolean.type) {
             XmlBoolean xbBoolean = (XmlBoolean) xbResult;
             BooleanValue booleanValue = new BooleanValue(xbBoolean.getBooleanValue());
-            return new SingleObservationValue<Boolean>(booleanValue);
+            return new SingleObservationValue<>(booleanValue);
         }
         // CountObservation
         else if (xbResult.schemaType() == XmlInteger.type) {
             XmlInteger xbInteger = (XmlInteger) xbResult;
             CountValue countValue = new CountValue(Integer.parseInt(xbInteger.getBigIntegerValue().toString()));
-            return new SingleObservationValue<Integer>(countValue);
+            return new SingleObservationValue<>(countValue);
         }
         // TextObservation
         else if (xbResult.schemaType() == XmlString.type) {
             XmlString xbString = (XmlString) xbResult;
             TextValue stringValue = new TextValue(xbString.getStringValue());
-            return new SingleObservationValue<String>(stringValue);
+            return new SingleObservationValue<>(stringValue);
         }
         // result elements with other encoding like SWE_ARRAY_OBSERVATION
         else {
@@ -352,29 +360,21 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             if (decodedObject instanceof ObservationValue) {
                 return (ObservationValue<?>) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
-                SingleObservationValue<Double> result = new SingleObservationValue<Double>();
                 GmlMeasureType measureType = (GmlMeasureType) decodedObject;
                 QuantityValue quantitiyValue = new QuantityValue(measureType.getValue(), measureType.getUnit());
-                result.setValue(quantitiyValue);
-                return result;
+                return new SingleObservationValue<>(quantitiyValue);
             } else if (decodedObject instanceof ReferenceType) {
-                SingleObservationValue<String> result = new SingleObservationValue<String>();
-                result.setValue(new CategoryValue(((ReferenceType) decodedObject).getHref()));
-                return result;
+                return new SingleObservationValue<>(new CategoryValue(((ReferenceType) decodedObject).getHref()));
             } else if (decodedObject instanceof Geometry) {
-                SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
-                result.setValue(new GeometryValue((Geometry) decodedObject));
-                return result;
+                return new SingleObservationValue<>(new GeometryValue((Geometry) decodedObject));
             } else if (decodedObject instanceof AbstractGeometry) {
                 SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
                 result.setValue(new GeometryValue(((AbstractGeometry) decodedObject).getGeometry()));
                 return result;
             } else if (decodedObject instanceof SweDataArray) {
-                SweDataArrayValue value = new SweDataArrayValue();
-                value.setValue((SweDataArray) decodedObject);
-                SingleObservationValue<SweDataArray> result = new SingleObservationValue<SweDataArray>();
-                result.setValue(value);
-                return result;
+                return new SingleObservationValue<>(new SweDataArrayValue((SweDataArray) decodedObject));
+            } else if (decodedObject instanceof SweDataRecord) {
+                return new SingleObservationValue<>(new ComplexValue((SweDataRecord) decodedObject));
             }
             throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
                     .withMessage("The requested result type '{}' is not supported by this service!", decodedObject.getClass().getSimpleName());

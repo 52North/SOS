@@ -65,10 +65,10 @@ import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ogc.om.features.FeatureCollection;
@@ -333,8 +333,8 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
      * @return Hibernate Criteria
      */
     private Criteria getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(GetFeatureOfInterestRequest req, Session session) {
-        final Criteria c = session.createCriteria(ObservationInfo.class);
-        final Criteria fc = c.createCriteria(ObservationInfo.FEATURE_OF_INTEREST);
+        final Criteria c = session.createCriteria(ContextualReferencedLegacyObservation.class);
+        final Criteria fc = c.createCriteria(ContextualReferencedLegacyObservation.FEATURE_OF_INTEREST);
         fc.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
 
         // relates to observations.
@@ -346,12 +346,12 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
         }
         // observableProperties
         if (req.isSetObservableProperties()) {
-            c.createCriteria(ObservationInfo.OBSERVABLE_PROPERTY).add(
+            c.createCriteria(ContextualReferencedLegacyObservation.OBSERVABLE_PROPERTY).add(
                     Restrictions.in(ObservableProperty.IDENTIFIER, req.getObservedProperties()));
         }
         // procedures
         if (req.isSetProcedures()) {
-            c.createCriteria(ObservationInfo.PROCEDURE)
+            c.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE)
                     .add(Restrictions.in(Procedure.IDENTIFIER, req.getProcedures()));
         }
         return c;
@@ -496,8 +496,8 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
      * @throws CodedException If an error occurs during processing
      */
     private DetachedCriteria getDetachedCriteriaForSeriesWithProcedureObservablePropertyTemporalFilter(GetFeatureOfInterestRequest req, Session session) throws CodedException {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EntitiyHelper.getInstance().getObservationInfoEntityClass());
-        DetachedCriteria seriesCriteria = detachedCriteria.createCriteria(SeriesObservationInfo.SERIES);
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(ContextualReferencedSeriesObservation.class);
+        DetachedCriteria seriesCriteria = detachedCriteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
         // observableProperties
         if (req.isSetObservableProperties()) {
@@ -514,7 +514,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestHandler
             detachedCriteria.add(TemporalRestrictions.filter(req.getTemporalFilters()));
         }
 
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(SeriesObservationInfo.SERIES)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(ContextualReferencedSeriesObservation.SERIES)));
         return detachedCriteria;
     }
 

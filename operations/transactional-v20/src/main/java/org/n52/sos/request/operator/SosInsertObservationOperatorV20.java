@@ -37,6 +37,7 @@ import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.ows.Extensions;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -50,9 +51,16 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingExcep
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmCompositePhenomenon;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweAbstractDataRecord;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.service.Configurator;
@@ -60,10 +68,7 @@ import org.n52.sos.util.OMHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
-/**
- * @since 4.0.0
- *
- */
+
 public class SosInsertObservationOperatorV20 extends
         AbstractV2TransactionalRequestOperator<AbstractInsertObservationHandler, InsertObservationRequest, InsertObservationResponse> {
 
@@ -93,6 +98,7 @@ public class SosInsertObservationOperatorV20 extends
 
     @Override
     protected void checkParameters(final InsertObservationRequest request) throws OwsExceptionReport {
+        createCompositePhenomenons(request);
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -133,7 +139,7 @@ public class SosInsertObservationOperatorV20 extends
      * @throws CodedException
      *             If more than one sampling geometry is defined
      */
-    private void checkParameterForSpatialFilteringProfile(InsertObservationRequest request) throws CodedException {
+    private void checkParameterForSpatialFilteringProfile(InsertObservationRequest request) throws OwsExceptionReport {
         for (OmObservation observation : request.getObservations()) {
             if (observation.isSetParameter()) {
                 int count = 0;
@@ -213,12 +219,27 @@ public class SosInsertObservationOperatorV20 extends
 
     private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation)
             throws OwsExceptionReport {
-        checkTransactionalProcedureID(obsConstallation.getProcedure().getIdentifier(),
-                Sos2Constants.InsertObservationParams.procedure.name());
-        checkObservedProperty(obsConstallation.getObservableProperty().getIdentifier(),
-                Sos2Constants.InsertObservationParams.observedProperty.name());
+        AbstractPhenomenon observableProperty = obsConstallation.getObservableProperty();
+        String observablePropertyIdentifier = observableProperty.getIdentifier();
+
+        if (hasObservations(observablePropertyIdentifier, obsConstallation.getOfferings()) &&
+            observableProperty.isComposite() != getCache().isCompositePhenomenon(observablePropertyIdentifier)) {
+            throw new InvalidParameterValueException(Sos2Constants.InsertObservationParams.observedProperty, observablePropertyIdentifier);
+        }
+
+        checkProcedureID(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure);
+        checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
         checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(),
                 Sos2Constants.InsertObservationParams.featureOfInterest);
+    }
+
+    private boolean hasObservations(String observableProperty, Set<String> offerings) {
+        for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
+            if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)
@@ -247,5 +268,46 @@ public class SosInsertObservationOperatorV20 extends
     @Override
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.INSERT_OBSERVATION;
+    }
+
+    private void createCompositePhenomenons(InsertObservationRequest request) {
+        for (OmObservation observation : request.getObservations()) {
+            if (isComplexObservation(observation)) {
+                createCompositePhenomenon(observation);
+            }
+        }
+    }
+
+    protected void createCompositePhenomenon(OmObservation observation) {
+        OmObservationConstellation oc = observation.getObservationConstellation();
+        AbstractPhenomenon observableProperty = oc.getObservableProperty();
+
+        if (!(observableProperty instanceof  OmCompositePhenomenon)) {
+            final OmCompositePhenomenon parent;
+            parent = new OmCompositePhenomenon(observableProperty.getIdentifier());
+            parent.setDefaultElementEncoding(observableProperty.getDefaultElementEncoding());
+            parent.setHumanReadableIdentifier(observableProperty.getHumanReadableIdentifierCodeWithAuthority());
+            parent.setIdentifier(observableProperty.getIdentifierCodeWithAuthority());
+            parent.setDescription(observableProperty.getDescription());
+            parent.setName(observableProperty.getName());
+
+            ComplexValue value = (ComplexValue) observation.getValue().getValue();
+            SweAbstractDataRecord dataRecord = value.getValue();
+            for (SweField field : dataRecord.getFields()) {
+                SweAbstractDataComponent element = field.getElement();
+                OmObservableProperty child = new OmObservableProperty(element.getDefinition());
+                child.setName(element.getNames());
+                child.setDescription(element.getDescription());
+                parent.addPhenomenonComponent(child);
+            }
+
+            oc.setObservableProperty(parent);
+        }
+    }
+
+    protected static boolean isComplexObservation(OmObservation observation) {
+        return observation.getObservationConstellation().getObservationType()
+                .equalsIgnoreCase(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION) &&
+               observation.getValue().getValue() instanceof ComplexValue;
     }
 }

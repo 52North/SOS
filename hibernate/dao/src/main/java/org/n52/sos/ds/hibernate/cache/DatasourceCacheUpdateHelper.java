@@ -37,7 +37,7 @@ import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DatasourceCacheUpdateHelper {
 
@@ -89,7 +89,7 @@ public class DatasourceCacheUpdateHelper {
                 if (procedureFlag.equals(ProcedureFlag.PARENT) && !oci.isHiddenChild()) {
                     addProcedure = true;
                 } else if (procedureFlag.equals(ProcedureFlag.HIDDEN_CHILD) && oci.isHiddenChild()) {
-                    addProcedure = true;                    
+                    addProcedure = true;
                 }
             }
             if (addProcedure) {
@@ -110,10 +110,10 @@ public class DatasourceCacheUpdateHelper {
 
     public static Set<String> getAllObservablePropertyIdentifiersFromObservationConstellationInfos(
             Collection<ObservationConstellationInfo> observationConstellationInfos) {
-        Set<String> observableProperties = new HashSet<String>(observationConstellationInfos.size());
+        Set<String> observableProperties = new HashSet<>(observationConstellationInfos.size());
         for (ObservationConstellationInfo oci : observationConstellationInfos) {
             observableProperties.add(oci.getObservableProperty());
         }
         return observableProperties;
-    }    
+    }
 }

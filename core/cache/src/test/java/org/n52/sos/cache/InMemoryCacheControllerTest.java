@@ -70,6 +70,7 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
@@ -159,8 +160,8 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     public void should_update_global_temporal_BoundingBox_after_InsertObservation() throws OwsExceptionReport {
         updateCacheWithSingleObservation(PROCEDURE);
         final DateTime phenomenonTime =
-                ((TimeInstant) ((InsertObservationRequest) request).getObservations().get(0).getPhenomenonTime())
-                        .getValue();
+                DateTimeHelper.toUTC(((TimeInstant) ((InsertObservationRequest) request).getObservations().get(0).getPhenomenonTime())
+                        .getValue());
 
         assertEquals("maxtime", getCache().getMaxPhenomenonTime(), phenomenonTime);
 
@@ -500,26 +501,10 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_not_contain_roles_for_deleted_related_features_after_DeleteSensor() throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("roles for deleted related features are STILL in cache", onlyValidRelatedFeaturesAreInRoleMap());
-    }
-
-    @Test
     public void should_not_contain_offering_names_after_DeleteSensor() throws OwsExceptionReport {
         deleteSensorPreparation();
 
         assertNull("offering name STILL in cache", getCache().getNameForOffering(OFFERING));
-    }
-
-    @Test
-    public void should_not_contain_composite_phenomenons_after_DeleteSensor() throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("composite phenomenons STILL in cache for deleted sensor", getCache()
-                .getCompositePhenomenonsForOffering(OFFERING) == null
-                || getCache().getCompositePhenomenonsForOffering(OFFERING).isEmpty());
     }
 
     @Test
@@ -822,7 +807,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private boolean onlyValidRelatedFeaturesAreInRoleMap() {
         Set<String> allowedRelatedFeatures = getCache().getRelatedFeatures();
-        for (String relatedFeatureWithRole : ((SosWritableContentCacheImpl) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
+        for (String relatedFeatureWithRole : ((InMemoryCacheImpl) getCache()).getRolesForRelatedFeaturesMap().keySet()) {
             if (!allowedRelatedFeatures.contains(relatedFeatureWithRole)) {
                 return false;
             }
@@ -980,7 +965,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
         return ((InsertSensorRequest) request).getProcedureDescription().getIdentifier();
     }
 
-    protected SosContentCache getCache() {
+    protected SosWritableContentCache getCache() {
         return controller.getCache();
     }
 

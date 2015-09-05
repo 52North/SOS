@@ -32,13 +32,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.sos.cache.SosContentCacheUpdate;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -46,6 +46,7 @@ import com.vividsolutions.jts.geom.Geometry;
 /**
  * TODO add log statements to all protected methods! TODO extract sub classes
  * for insertion updates
+ *
  *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>

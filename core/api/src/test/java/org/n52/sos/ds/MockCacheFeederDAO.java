@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 
+import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.cache.SosWritableContentCache;
 
@@ -39,7 +40,7 @@ import org.n52.sos.cache.SosWritableContentCache;
 public class MockCacheFeederDAO implements CacheFeederHandler {
 
     @Override
-    public void updateCache(SosWritableContentCache capabilitiesCache)
+    public void updateCache(WritableContentCache capabilitiesCache)
             throws OwsExceptionReport {
         //NOOP, only used for testing
     }

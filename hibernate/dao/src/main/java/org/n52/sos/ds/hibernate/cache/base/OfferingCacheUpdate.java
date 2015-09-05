@@ -48,17 +48,17 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
@@ -125,8 +125,10 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                     if (offering instanceof TOffering) {
                         TOffering tOffering = (TOffering) offering;
                         // Related features
-                        cache.setRelatedFeaturesForOffering(offeringId,
-                                                             getRelatedFeatureIdentifiersFrom(tOffering));
+                        Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
+                        if (!relatedFeatures.isEmpty()) {
+                            getCache().setRelatedFeaturesForOffering(offeringId, relatedFeatures);
+                        }
                         cache.setAllowedObservationTypeForOffering(offeringId,
                                                                     getObservationTypesFromObservationType(tOffering.getObservationTypes()));
                         // featureOfInterestTypes

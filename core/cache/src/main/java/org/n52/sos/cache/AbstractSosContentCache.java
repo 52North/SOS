@@ -876,11 +876,9 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
         this.defaultEpsgCode = defaultEpsgCode;
     }
 
-    @Override
     public int getDefaultEPSGCode() {
         return this.defaultEpsgCode;
     }
-
 
     @Override
     public int hashCode() {

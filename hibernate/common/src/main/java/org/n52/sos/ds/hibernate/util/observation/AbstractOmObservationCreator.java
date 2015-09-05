@@ -46,9 +46,9 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
@@ -82,7 +82,7 @@ public abstract class AbstractOmObservationCreator {
                                         Session session) {
         this.request = request;
         this.session = session;
-        this.i18n = i18n;
+        this.i18n = i18n == null ?  ServiceConfiguration.getInstance().getDefaultLanguage() : i18n;
         this.serviceProvider = serviceProvider;
     }
 
@@ -208,6 +208,7 @@ public abstract class AbstractOmObservationCreator {
     /**
      * Get featureOfInterest object from series
      *
+     * @param identifier
      * @return FeatureOfInerest object
      * @throws OwsExceptionReport
      *             If an error occurs
@@ -220,7 +221,7 @@ public abstract class AbstractOmObservationCreator {
         return feature;
     }
 
-    protected void checkForAdditionalObservationCreator(AbstractObservation hObservation, OmObservation sosObservation) {
+    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
 
         if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {

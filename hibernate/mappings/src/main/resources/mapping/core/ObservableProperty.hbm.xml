@@ -43,5 +43,8 @@
             	<comment>For later use by the SOS. Indicator if this observableProperty should not be provided by the SOS.</comment>
             </column>
         </property>
+        <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')"/>
+        </property>
     </class>
 </hibernate-mapping>

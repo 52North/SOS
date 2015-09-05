@@ -39,7 +39,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescript
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -66,9 +66,9 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean deleted;
 
     private String descriptionFile;
-    
+
     private boolean disabled;
-    
+
     private boolean reference;
     
     private Procedure typeOf;
@@ -91,9 +91,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     @Override
-    public Procedure setProcedureDescriptionFormat(ProcedureDescriptionFormat procedureDescriptionFormat) {
+    public void setProcedureDescriptionFormat(ProcedureDescriptionFormat procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
-        return this;
     }
 
     @Override
@@ -102,9 +101,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     @Override
-    public Procedure setDeleted(boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        return this;
     }
 
     public String getDescriptionFile() {
@@ -116,9 +114,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     @Override
-    public HasDisabledFlag setDisabled(boolean disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-        return this;
     }
 
     @Override

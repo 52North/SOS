@@ -43,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.cache.ContentCacheController;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierRepository;
 import org.n52.iceland.ds.OperationHandler;
@@ -99,8 +101,11 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
+@Configurable
 public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse> implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
+    
+    public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
 
     // TODO make supported ValueReferences dynamic
     private static final Set<String> validTemporalFilterValueReferences = Sets.newHashSet(
@@ -119,6 +124,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private ProfileHandler profileHandler;
     private ServiceOperatorRepository serviceOperatorRepository;
     private ServiceEventBus serviceEventBus;
+    private boolean includeChildObservableProperties;
+    
 
 	private final String service;
 
@@ -463,7 +470,22 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkProcedureIDs(Collection<String> procedureIDs, String parameterName)
+    /**
+     * checks whether the requested sensor ID is valid
+     *
+     * @param procedureID
+     *            the sensor ID which should be checked
+     * @param parameterName
+     *            the parameter name
+     *
+     * @throws OwsExceptionReport
+     *             * if the value of the sensor ID parameter is incorrect
+     */
+    protected void checkProcedureID(final String procedureID, final Enum<?> parameterName) throws OwsExceptionReport {
+        checkProcedureID(procedureID, parameterName.name());
+    }
+
+    protected void checkProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
@@ -565,13 +587,18 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
-    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName)
+    protected void checkObservedProperties(final List<String> observedProperties, final Enum<?> parameterName, boolean insertion)
+            throws OwsExceptionReport {
+        checkObservedProperties(observedProperties, parameterName.name(), insertion);
+    }
+
+    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String observedProperty : observedProperties) {
                 try {
-                    checkObservedProperty(observedProperty, parameterName);
+                    checkObservedProperty(observedProperty, parameterName, insertion);
                 } catch (final OwsExceptionReport e) {
                     exceptions.add(e);
                 }
@@ -580,19 +607,30 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    protected void checkObservedProperty(final String observedProperty, final String parameterName)
+    protected void checkObservedProperty(String observedProperty, String parameterName, boolean insertion)
             throws OwsExceptionReport {
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingParameterValueException(parameterName);
         }
-        if (!getCache().hasObservableProperty(observedProperty)) {
+        if (insertion) {
+            if (!getCache().hasObservableProperty(observedProperty)) {
+                throw new InvalidParameterValueException(parameterName, observedProperty);
+            }
+        } else if (isIncludeChildObservableProperties()) {
+            if (getCache().isCompositePhenomenon(observedProperty) ||
+                !(getCache().isCompositePhenomenonComponent(observedProperty) ||
+                  getCache().hasObservableProperty(observedProperty))) {
+                throw new InvalidParameterValueException(parameterName, observedProperty);
+            }
+        } else if (!getCache().hasObservableProperty(observedProperty)) {
             throw new InvalidParameterValueException(parameterName, observedProperty);
         }
+
     }
 
-    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName)
+    protected void checkObservedProperty(final String observedProperty, final Enum<?> parameterName, boolean insertion)
             throws OwsExceptionReport {
-        checkObservedProperty(observedProperty, parameterName.name());
+        checkObservedProperty(observedProperty, parameterName.name(), insertion);
     }
 
     protected void checkOfferings(final Collection<String> offerings, final String parameterName)
@@ -802,8 +840,16 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            return getCache().hasRequstableProcedureDescriptionFormat(format);
+            return getCache().hasRequestableProcedureDescriptionFormat(format);
         }
     }
 
+    public boolean isIncludeChildObservableProperties() {
+        return includeChildObservableProperties;
+    }
+
+    @Setting(EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
+    public void setIncludeChildObservableProperties(boolean include) {
+        this.includeChildObservableProperties = include;
+    }
 }

@@ -34,17 +34,16 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSeries;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.AbstractObservationRequest;
 
@@ -58,12 +57,12 @@ public class HibernateObservationUtilities {
     private HibernateObservationUtilities() {
     }
 
-    public static List<OmObservation> createSosObservationsFromObservations(Collection<AbstractObservation> o,
+    public static List<OmObservation> createSosObservationsFromObservations(Collection<Observation<?>> o,
              AbstractObservationRequest r, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale l, Session s) throws OwsExceptionReport, ConverterException {
         return new ObservationOmObservationCreator(o, r, serviceProvider, l, s).create();
     }
-
-    public static OmObservation createSosObservationFromObservation(AbstractObservation o, AbstractObservationRequest r,
+    
+    public static OmObservation createSosObservationFromObservation(Observation<?> o, AbstractObservationRequest r,
             LocalizedProducer<OwsServiceProvider> serviceProvider, Locale l, Session s) throws OwsExceptionReport, ConverterException {
         List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, serviceProvider, l, s).create();
         if (CollectionHelper.isNotEmpty(c)) {
@@ -72,6 +71,23 @@ public class HibernateObservationUtilities {
         return null;
     }
 
+    /**
+     * Create SOS internal observation from ObservationConstellation
+     *
+     * @param oc
+     *            ObservationConstellation object
+     * @param fois
+     *            List of featureOfInterest identifiers
+     * @param version
+     *            Service version
+     * @param session
+     *            Hibernate session
+     * @return SOS internal observation
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     * @throws ConverterException
+     *             If procedure creation fails
+     */
     public static Collection<? extends OmObservation> createSosObservationFromObservationConstellation(
             ObservationConstellation oc, List<String> fois, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, Session session)
             throws OwsExceptionReport, ConverterException {
@@ -128,9 +144,9 @@ public class HibernateObservationUtilities {
      *            Collection of observation objects
      * @return Observation ids as Set
      */
-    public static Set<Long> getObservationIds(Collection<AbstractObservation> observations) {
+    public static Set<Long> getObservationIds(Collection<Observation<?>> observations) {
         Set<Long> observationIds = Sets.newHashSet();
-        for (AbstractObservation observation : observations) {
+        for (Observation<?> observation : observations) {
             observationIds.add(observation.getObservationId());
         }
         return observationIds;

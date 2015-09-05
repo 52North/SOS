@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;

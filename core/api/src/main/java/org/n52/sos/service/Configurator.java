@@ -49,6 +49,9 @@ import org.n52.iceland.util.Producer;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * Singleton class reads the configFile and builds the RequestOperator and DAO;

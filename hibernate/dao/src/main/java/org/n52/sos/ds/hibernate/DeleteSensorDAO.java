@@ -41,17 +41,17 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.response.DeleteSensorResponse;
@@ -132,7 +132,7 @@ public class DeleteSensorDAO extends AbstractDeleteSensorHandler {
             }
             // set deleted flag in Observation table for old concept to true
             else {
-                new ObservationDAO().updateObservationSetAsDeletedForProcedure(identifier, deleteFlag, session);
+                new LegacyObservationDAO().updateObservationSetAsDeletedForProcedure(identifier, deleteFlag, session);
             }
         } else {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");

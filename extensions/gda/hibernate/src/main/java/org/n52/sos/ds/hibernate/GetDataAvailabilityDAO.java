@@ -63,22 +63,22 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.FeatureQueryHandler;
+
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
+import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.gda.AbstractGetDataAvailabilityHandler;
@@ -187,30 +187,30 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
             Criteria c = getDefaultObservationInfoCriteria(session);
 
             if (req.isSetFeaturesOfInterest()) {
-                c.createCriteria(ObservationInfo.FEATURE_OF_INTEREST).add(
-                        Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeaturesOfInterest()));
+                c.createCriteria(ContextualReferencedObservation.FEATURE_OF_INTEREST)
+                        .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeaturesOfInterest()));
             }
             if (req.isSetProcedures()) {
-                c.createCriteria(ObservationInfo.PROCEDURE).add(
-                        Restrictions.in(Procedure.IDENTIFIER, req.getProcedures()));
+                c.createCriteria(ContextualReferencedObservation.PROCEDURE)
+                        .add(Restrictions.in(Procedure.IDENTIFIER, req.getProcedures()));
 
             }
             if (req.isSetObservedProperties()) {
-                c.createCriteria(ObservationInfo.OBSERVABLE_PROPERTY).add(
-                        Restrictions.in(ObservableProperty.IDENTIFIER, req.getObservedProperties()));
+                c.createCriteria(ContextualReferencedObservation.OBSERVABLE_PROPERTY)
+                        .add(Restrictions.in(ObservableProperty.IDENTIFIER, req.getObservedProperties()));
             }
 
             if (req.isSetOfferings()) {
-                c.createCriteria(ObservationInfo.OFFERINGS).add(
-                        Restrictions.in(Offering.IDENTIFIER, req.getOfferings()));
+                c.createCriteria(ContextualReferencedObservation.OFFERINGS)
+                        .add(Restrictions.in(Offering.IDENTIFIER, req.getOfferings()));
             }
 
             ProjectionList projectionList = Projections.projectionList();
-            projectionList.add(Projections.groupProperty(ObservationInfo.PROCEDURE))
-                    .add(Projections.groupProperty(ObservationInfo.OBSERVABLE_PROPERTY))
-                    .add(Projections.groupProperty(ObservationInfo.FEATURE_OF_INTEREST))
-                    .add(Projections.min(ObservationInfo.PHENOMENON_TIME_START))
-                    .add(Projections.max(ObservationInfo.PHENOMENON_TIME_END));
+            projectionList.add(Projections.groupProperty(ContextualReferencedObservation.PROCEDURE))
+                    .add(Projections.groupProperty(ContextualReferencedObservation.OBSERVABLE_PROPERTY))
+                    .add(Projections.groupProperty(ContextualReferencedObservation.FEATURE_OF_INTEREST))
+                    .add(Projections.min(ContextualReferencedObservation.PHENOMENON_TIME_START))
+                    .add(Projections.max(ContextualReferencedObservation.PHENOMENON_TIME_END));
             if (isShowCount(req)) {
                 projectionList.add(Projections.rowCount());
             }
@@ -245,21 +245,21 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     private List<TimeInstant> getResultTimesFromObservation(DataAvailability dataAvailability,
             GetDataAvailabilityRequest request, Session session) throws OwsExceptionReport {
         Criteria c = getDefaultObservationInfoCriteria(session);
-        c.createCriteria(ObservationInfo.FEATURE_OF_INTEREST).add(
+        c.createCriteria(ContextualReferencedObservation.FEATURE_OF_INTEREST).add(
                 Restrictions.eq(FeatureOfInterest.IDENTIFIER, dataAvailability.getFeatureOfInterest().getHref()));
-        c.createCriteria(ObservationInfo.PROCEDURE).add(
+        c.createCriteria(ContextualReferencedObservation.PROCEDURE).add(
                 Restrictions.eq(Procedure.IDENTIFIER, dataAvailability.getProcedure().getHref()));
-        c.createCriteria(ObservationInfo.OBSERVABLE_PROPERTY).add(
+        c.createCriteria(ContextualReferencedObservation.OBSERVABLE_PROPERTY).add(
                 Restrictions.eq(ObservableProperty.IDENTIFIER, dataAvailability.getObservedProperty().getHref()));
         if (request.isSetOfferings()) {
-            c.createCriteria(ObservationInfo.OFFERINGS).add(
+            c.createCriteria(ContextualReferencedObservation.OFFERINGS).add(
                     Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
         if (hasPhenomenonTimeFilter(request.getExtensions())) {
             c.add(TemporalRestrictions.filter(getPhenomenonTimeFilter(request.getExtensions())));
         }
-        c.setProjection(Projections.distinct(Projections.property(ObservationInfo.RESULT_TIME)));
-        c.addOrder(Order.asc(ObservationInfo.RESULT_TIME));
+        c.setProjection(Projections.distinct(Projections.property(ContextualReferencedObservation.RESULT_TIME)));
+        c.addOrder(Order.asc(ContextualReferencedObservation.RESULT_TIME));
         LOGGER.debug("QUERY getResultTimesFromObservation({}): {}", HibernateHelper.getSqlString(c));
         List<TimeInstant> resultTimes = Lists.newArrayList();
         for (Date date : (List<Date>) c.list()) {
@@ -269,7 +269,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     }
 
     private Criteria getDefaultObservationInfoCriteria(Session session) {
-        return session.createCriteria(ObservationInfo.class).add(Restrictions.eq(ObservationInfo.DELETED, false))
+        return session.createCriteria(ContextualReferencedObservation.class)
+                .add(Restrictions.eq(ContextualReferencedObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 
@@ -360,7 +361,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
     private TimePeriod getTimePeriodFromNamedQuery(long seriesId, SeriesMinMaxTransformer seriesMinMaxTransformer,
             Session session) {
         Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES);
-        namedQuery.setParameter(SeriesObservationInfo.SERIES, seriesId);
+        namedQuery.setParameter(ContextualReferencedSeriesObservation.SERIES, seriesId);
         LOGGER.debug("QUERY getTimePeriodFromNamedQuery(series) with NamedQuery: {}", namedQuery);
         namedQuery.setResultTransformer(seriesMinMaxTransformer);
         return (TimePeriod) namedQuery.uniqueResult();
@@ -459,13 +460,12 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      * @return Count of available observations
      */
     private Long getCountFor(Series series, GetDataAvailabilityRequest request, Session session) {
-        Criteria criteria =
-                session.createCriteria(SeriesObservationInfo.class).add(
-                        Restrictions.eq(AbstractObservation.DELETED, false));
-        criteria.add(Restrictions.eq(SeriesObservationInfo.SERIES, series));
+        Criteria criteria = session.createCriteria(TemporalReferencedSeriesObservation.class)
+        		.add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false));
+        criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
         if (request.isSetOfferings()) {
-            criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(
-                    Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
         criteria.setProjection(Projections.rowCount());
         return (Long) criteria.uniqueResult();
@@ -496,8 +496,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
         }
         // features and observableProperties
         else if (features && observableProperties && !procedures) {
-            return HibernateHelper.isNamedQuerySupported(
-                    SQL_QUERY_GET_DATA_AVAILABILITY_FOR_FEATURES_OBSERVED_PROPERTIES, session);
+            return HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_FEATURES_OBSERVED_PROPERTIES, session);
         }
         // features and procedures
         else if (features && !observableProperties && procedures) {
@@ -703,17 +702,17 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
 
         private final Logger LOGGER = LoggerFactory.getLogger(DataAvailabilityTransformer.class);
 
-        private Session session;
+        private final Session session;
 
-        public DataAvailabilityTransformer(Session session) {
+        DataAvailabilityTransformer(Session session) {
             this.session = session;
         }
 
         @Override
         public DataAvailability transformTuple(Object[] tuple, String[] aliases) {
-            Map<String, ReferenceType> procedures = new HashMap<String, ReferenceType>();
-            Map<String, ReferenceType> observableProperties = new HashMap<String, ReferenceType>();
-            Map<String, ReferenceType> featuresOfInterest = new HashMap<String, ReferenceType>();
+            Map<String, ReferenceType> procedures = new HashMap<>();
+            Map<String, ReferenceType> observableProperties = new HashMap<>();
+            Map<String, ReferenceType> featuresOfInterest = new HashMap<>();
             if (tuple != null) {
                 try {
                     ReferenceType procedure = null;

@@ -59,6 +59,7 @@ import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.SmlContact;
+import org.n52.sos.ogc.sensorML.Term;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCapability;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristic;
@@ -114,6 +115,7 @@ import net.opengis.sensorml.x20.CharacteristicListPropertyType;
 import net.opengis.sensorml.x20.CharacteristicListType;
 import net.opengis.sensorml.x20.CharacteristicListType.Characteristic;
 import net.opengis.sensorml.x20.ClassifierListPropertyType;
+import net.opengis.sensorml.x20.ClassifierListType;
 import net.opengis.sensorml.x20.ClassifierListType.Classifier;
 import net.opengis.sensorml.x20.ComponentListPropertyType;
 import net.opengis.sensorml.x20.ComponentListType;
@@ -475,9 +477,8 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                     && CollectionHelper.isNotNullOrEmpty(ilpt.getIdentifierList().getIdentifier2Array())) {
                 for (final Identifier i : ilpt.getIdentifierList().getIdentifier2Array()) {
                     if (i.getTerm() != null) {
-                        TermType term = i.getTerm();
-                        final SmlIdentifier identifier =
-                                new SmlIdentifier(term.getLabel(), term.getDefinition(), term.getValue());
+                        final SmlIdentifier identifier = new SmlIdentifier();
+                        parseTerm(i.getTerm(), identifier);
                         describedObject.addIdentifier(identifier);
                         if (isIdentificationProcedureIdentifier(identifier)) {
                             describedObject.setIdentifier(identifier.getValue());
@@ -498,15 +499,31 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     private List<SmlClassifier> parseClassification(final ClassifierListPropertyType[] clpts) {
         final List<SmlClassifier> sosClassifiers = new ArrayList<SmlClassifier>(clpts.length);
         for (final ClassifierListPropertyType clpt : clpts) {
-            for (final Classifier c : clpt.getClassifierList().getClassifierArray()) {
-                final TermType term = c.getTerm();
-                final SmlClassifier smlClassifier =
-                        new SmlClassifier(term.getLabel(), term.isSetDefinition() ? term.getDefinition() : null,
-                                term.isSetCodeSpace() ? term.getCodeSpace().getHref() : null, term.getValue());
-                sosClassifiers.add(smlClassifier);
+            if (clpt.isSetClassifierList()) {
+                ClassifierListType clt = clpt.getClassifierList();
+                if (CollectionHelper.isNotNullOrEmpty(clt.getClassifierArray()))
+                for (final Classifier c : clt.getClassifierArray()) {
+                	if (c.getTerm() != null) {
+	                    final SmlClassifier smlClassifier = new SmlClassifier();
+	                    parseTerm(c.getTerm(), smlClassifier);
+	                    sosClassifiers.add(smlClassifier);
+                	}
+                }
             }
         }
         return sosClassifiers;
+    }
+    
+    private void parseTerm(TermType t, Term term) {
+    	term.setLabel(t.getLabel());
+    	term.setName(t.getLabel());
+    	if (t.isSetDefinition()) {
+    		term.setDefinition(t.getDefinition());
+    	}
+    	if (t.isSetCodeSpace()) {
+    		term.setCodeSpace(t.getCodeSpace().getHref());
+    	}
+    	term.setValue(t.getValue());
     }
 
     /**

@@ -54,23 +54,24 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.ProcedureTimeExtrema;
@@ -332,8 +333,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                                 .add(Projections.property("f." + FeatureOfInterest.IDENTIFIER))
                                 .add(Projections.property("p." + Procedure.IDENTIFIER))));
             } else {
-                c = session.createCriteria(Observation.class).createAlias(Observation.FEATURE_OF_INTEREST, "f")
-                        .createAlias(Observation.PROCEDURE, "p").add(Restrictions.eq(Observation.DELETED, false))
+                c = session.createCriteria(AbstractLegacyObservation.class)
+                        .createAlias(AbstractLegacyObservation.FEATURE_OF_INTEREST, "f")
+                        .createAlias(AbstractLegacyObservation.PROCEDURE, "p")
+                        .add(Restrictions.eq(AbstractLegacyObservation.DELETED, false))
                         .setProjection(Projections.distinct(Projections.projectionList()
                                 .add(Projections.property("f." + FeatureOfInterest.IDENTIFIER))
                                 .add(Projections.property("p." + Procedure.IDENTIFIER))));
@@ -412,7 +415,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
-                Criteria seriesCriteria = c.createCriteria(SeriesObservationInfo.SERIES);
+                Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
                 seriesCriteria.createCriteria(Series.PROCEDURE)
                         .setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
 
@@ -454,7 +457,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     @SuppressWarnings("unchecked")
     public Collection<String> getProcedureIdentifiersForObservableProperty(final String observablePropertyIdentifier,
-            final Session session) throws CodedException {
+            final Session session) throws OwsExceptionReport {
         final boolean flag = HibernateHelper.isEntitySupported(ObservationConstellation.class);
         Criteria c = null;
         if (flag) {
@@ -470,11 +473,11 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 c.add(Subqueries.propertyIn(Procedure.ID, getDetachedCriteriaProceduresForObservablePropertyFromSeries(
                         observablePropertyIdentifier, session)));
             } else {
-                c = session.createCriteria(ObservationInfo.class).add(Restrictions.eq(ObservationInfo.DELETED, false));
-                c.createCriteria(ObservationInfo.PROCEDURE)
-                        .setProjection(Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
-                c.createCriteria(ObservationInfo.OBSERVABLE_PROPERTY)
-                        .add(Restrictions.eq(ObservableProperty.IDENTIFIER, observablePropertyIdentifier));
+                c = session.createCriteria(ContextualReferencedLegacyObservation.class).add(Restrictions.eq(ContextualReferencedLegacyObservation.DELETED, false));
+                c.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).setProjection(
+                        Projections.distinct(Projections.property(Procedure.IDENTIFIER)));
+                c.createCriteria(ContextualReferencedLegacyObservation.OBSERVABLE_PROPERTY).add(
+                        Restrictions.eq(ObservableProperty.IDENTIFIER, observablePropertyIdentifier));
             }
         }
         LOGGER.debug(
@@ -659,10 +662,10 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
         if (observationDAO instanceof AbstractSeriesObservationDAO) {
-            criteria.createAlias(SeriesObservationInfo.SERIES, "s");
+            criteria.createAlias(ContextualReferencedSeriesObservation.SERIES, "s");
             criteria.createAlias("s." + Series.PROCEDURE, "p");
         } else {
-            criteria.createAlias(ObservationInfo.PROCEDURE, "p");
+            criteria.createAlias(ContextualReferencedLegacyObservation.PROCEDURE, "p");
         }
         criteria.add(Restrictions.eq("p." + Procedure.IDENTIFIER, procedureIdentifier));
         ProjectionList projectionList = Projections.projectionList();
@@ -997,9 +1000,9 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Procedure identifier
      */
     private void addProcedureRestrictionForSeries(Criteria criteria, String procedure) {
-        Criteria seriesCriteria = criteria.createCriteria(SeriesObservationInfo.SERIES);
-        seriesCriteria.createCriteria(SeriesObservationInfo.PROCEDURE)
-                .add(Restrictions.eq(Procedure.IDENTIFIER, procedure));
+        Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
+        seriesCriteria.createCriteria(ContextualReferencedSeriesObservation.PROCEDURE).add(
+                Restrictions.eq(Procedure.IDENTIFIER, procedure));
     }
 
     /**
@@ -1011,7 +1014,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Procedure identifier
      */
     private void addProcedureRestrictionForObservation(Criteria criteria, String procedure) {
-        criteria.createCriteria(ObservationInfo.PROCEDURE).add(Restrictions.eq(Procedure.IDENTIFIER, procedure));
+        criteria.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).add(Restrictions.eq(Procedure.IDENTIFIER, procedure));
     }
 
     @SuppressWarnings("unchecked")
@@ -1020,22 +1023,23 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             Criteria criteria =
                     session.createCriteria(EntitiyHelper.getInstance().getObservationInfoEntityClass())
                             .setProjection(
-                                    Projections.distinct(Projections.property(SeriesObservationInfo.IDENTIFIER)))
-                    .add(Restrictions.isNotNull(SeriesObservationInfo.IDENTIFIER))
-                    .add(Restrictions.eq(SeriesObservationInfo.DELETED, false));
-            Criteria seriesCriteria = criteria.createCriteria(SeriesObservationInfo.SERIES);
+                                    Projections.distinct(Projections.property(ContextualReferencedSeriesObservation.IDENTIFIER)))
+                            .add(Restrictions.isNotNull(ContextualReferencedSeriesObservation.IDENTIFIER))
+                            .add(Restrictions.eq(ContextualReferencedSeriesObservation.DELETED, false));
+            Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
             seriesCriteria.createCriteria(Series.PROCEDURE)
                     .add(Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
             LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                     HibernateHelper.getSqlString(criteria));
             return Sets.newHashSet(criteria.list());
         } else {
-            Criteria criteria = session.createCriteria(EntitiyHelper.getInstance().getObservationInfoEntityClass())
-                    .setProjection(Projections.distinct(Projections.property(ObservationInfo.IDENTIFIER)))
-                    .add(Restrictions.isNotNull(ObservationInfo.IDENTIFIER))
-                    .add(Restrictions.eq(ObservationInfo.DELETED, false));
-            criteria.createCriteria(ObservationInfo.PROCEDURE)
-                    .add(Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
+            Criteria criteria =
+                    session.createCriteria(EntitiyHelper.getInstance().getObservationInfoEntityClass())
+                            .setProjection(Projections.distinct(Projections.property(ContextualReferencedLegacyObservation.IDENTIFIER)))
+                            .add(Restrictions.isNotNull(ContextualReferencedLegacyObservation.IDENTIFIER))
+                            .add(Restrictions.eq(ContextualReferencedLegacyObservation.DELETED, false));
+            criteria.createCriteria(ContextualReferencedLegacyObservation.PROCEDURE).add(
+                    Restrictions.eq(Procedure.IDENTIFIER, procedureIdentifier));
             LOGGER.debug("QUERY getObservationIdentifiers(procedureIdentifier): {}",
                     HibernateHelper.getSqlString(criteria));
             return Sets.newHashSet(criteria.list());

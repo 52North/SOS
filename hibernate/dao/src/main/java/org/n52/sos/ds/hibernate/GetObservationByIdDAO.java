@@ -46,11 +46,14 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +94,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            List<AbstractObservation> observations = queryObservation(request, session);
+            List<Observation<?>> observations = queryObservation(request, session);
             GetObservationByIdResponse response = new GetObservationByIdResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
@@ -121,7 +124,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdHandler {
      *             If an error occurs during querying the database
      */
     @SuppressWarnings("unchecked")
-    private List<AbstractObservation> queryObservation(GetObservationByIdRequest request, Session session)
+    private List<Observation<?>> queryObservation(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport {
         Criteria c =
                 DaoFactory.getInstance().getObservationDAO()

@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ogc.swe;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 
 /**
  * SOS internal representation of SWE field
- * 
+ *
  * @since 4.0.0
  */
 public class SweField extends SweAbstractDataComponent {
@@ -46,7 +46,7 @@ public class SweField extends SweAbstractDataComponent {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Field name
      * @param element
@@ -57,7 +57,7 @@ public class SweField extends SweAbstractDataComponent {
         setName(name);
         this.element = element;
     }
-    
+
     public SweField(final CodeType name, final SweAbstractDataComponent element) {
         super();
         setName(name);
@@ -117,5 +117,17 @@ public class SweField extends SweAbstractDataComponent {
     @Override
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.Field;
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

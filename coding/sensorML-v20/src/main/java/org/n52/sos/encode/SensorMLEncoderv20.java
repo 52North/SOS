@@ -74,6 +74,7 @@ import org.n52.sos.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.SmlContact;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
+import org.n52.sos.ogc.sensorML.Term;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCapability;
@@ -1031,12 +1032,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         final IdentifierListType xbIdentifierList = xbIdentification.addNewIdentifierList();
         for (final SmlIdentifier sosSMLIdentifier : identifications) {
             final Identifier xbIdentifier = xbIdentifierList.addNewIdentifier2();
-            final TermType xbTerm = xbIdentifier.addNewTerm();
-            if (sosSMLIdentifier.isSetDefinition()) {
-                xbTerm.setDefinition(sosSMLIdentifier.getDefinition());
-            }
-            xbTerm.setLabel(sosSMLIdentifier.getLabel());
-            xbTerm.setValue(sosSMLIdentifier.getValue());
+            createTerm(xbIdentifier.addNewTerm(), sosSMLIdentifier);
         }
         return new IdentifierListPropertyType[] { xbIdentification };
     }
@@ -1054,17 +1050,21 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         final ClassifierListType xbClassifierList = xbClassification.addNewClassifierList();
         for (final SmlClassifier sosSMLClassifier : classifications) {
             final Classifier xbClassifier = xbClassifierList.addNewClassifier();
-            final TermType xbTerm = xbClassifier.addNewTerm();
-            xbTerm.setValue(sosSMLClassifier.getValue());
-            if (sosSMLClassifier.isSetDefinition()) {
-                xbTerm.setDefinition(sosSMLClassifier.getDefinition());
-            }
-            if (sosSMLClassifier.isSetCodeSpace()) {
-                xbTerm.addNewCodeSpace().setHref(sosSMLClassifier.getCodeSpace());
-            }
+            createTerm(xbClassifier.addNewTerm(), sosSMLClassifier);
 
         }
         return new ClassifierListPropertyType[] { xbClassification };
+    }
+    
+    private void createTerm(TermType t, Term term) {
+    	t.setLabel(term.getLabel());
+        if (term.isSetDefinition()) {
+            t.setDefinition(term.getDefinition());
+        }
+        if (term.isSetCodeSpace()) {
+            t.addNewCodeSpace().setHref(term.getCodeSpace());
+        }
+        t.setValue(term.getValue());
     }
 
     /**

@@ -32,10 +32,13 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -105,5 +108,15 @@ public class SmlFeatureOfInterest extends SweAbstractDataComponent {
     
     public boolean isSetFeatures() {
         return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
+    }
+    
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

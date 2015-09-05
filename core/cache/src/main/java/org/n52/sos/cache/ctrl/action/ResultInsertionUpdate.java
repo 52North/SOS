@@ -30,14 +30,15 @@ package org.n52.sos.cache.ctrl.action;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.util.action.Action;
+import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -76,7 +77,7 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
     @Override
     public void execute() {
         // TODO remove not required updates and adjust test accordingly
-        final SosWritableContentCache cache = (SosWritableContentCache) getCache();
+        final InMemoryCacheImpl cache = (InMemoryCacheImpl) getCache();
         final String observationType = observation.getObservationConstellation().getObservationType();
         final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
         final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();

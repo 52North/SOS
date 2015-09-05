@@ -33,3 +33,18 @@ ALTER TABLE dbo.[procedure] ADD isaggregation char(1) default 'T' check (isaggre
 ALTER TABLE dbo.[procedure] ADD typeof bigint;
 
 ALTER TABLE dbo.[procedure] add constraint typeoffk foreign key (typeof) references dbo.[procedure];
+
+-- complex observation
+ALTER TABLE dbo.observableproperty ADD COLUMN hiddenchild char(1) default 'F' check (hiddenchild in ('T','F'));
+
+ALTER TABLE dbo.observation ADD COLUMN child char(1) default 'F' check (child in ('T','F'));
+ALTER TABLE dbo.observation ADD COLUMN parent char(1) default 'F' check (parent in ('T','F'));
+
+create table dbo.complexValue (observationId bigint not null, primary key (observationId));
+alter table dbo.complexValue add constraint observationComplexValueFk foreign key (observationId) references dbo.observation;
+alter table dbo.complexValue add constraint observationComplexValueFk foreign key (observationId) references dbo.observation;
+
+create table dbo.compositeObservation (observationId bigint not null, childObservationId bigint not null, primary key (observationId, childObservationId));
+alter table dbo.compositeObservation add constraint observationChildFk foreign key (childObservationId) references dbo.observation;
+alter table dbo.compositeObservation add constraint observationParentFK foreign key (observationId) references dbo.complexValue;
+alter table dbo.compositeObservation add constraint observationParentFK foreign key (observationId) references dbo.complexValue;

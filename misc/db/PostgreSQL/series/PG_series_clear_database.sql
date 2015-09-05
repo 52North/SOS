@@ -32,6 +32,8 @@ TRUNCATE
  public.booleanValue,
  public.categoryValue,
  public.codespace,
+ public.complexValue,
+ public.compositeObservation,
  public.compositePhenomenon,
  public.countValue,
  public.featureOfInterest,

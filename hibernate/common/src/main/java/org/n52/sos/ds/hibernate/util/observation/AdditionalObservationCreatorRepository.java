@@ -38,18 +38,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.n52.iceland.component.AbstractComponentRepository;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.Producer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
-@SuppressWarnings("rawtypes")
-public class AdditionalObservationCreatorRepository
-        extends AbstractComponentRepository<AdditionalObservationCreatorKey, AdditionalObservationCreator, AdditionalObservationCreatorFactory> implements Constructable {
+public class AdditionalObservationCreatorRepository extends
+        AbstractComponentRepository<AdditionalObservationCreatorKey, AdditionalObservationCreator, AdditionalObservationCreatorFactory>
+        implements Constructable {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdditionalObservationCreatorRepository.class);
 
     @Deprecated
     private static AdditionalObservationCreatorRepository instance;
     private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
             = Maps.newHashMap();
 
+    
     @Autowired(required = false)
     private Collection<AdditionalObservationCreator> components;
 
@@ -64,6 +69,7 @@ public class AdditionalObservationCreatorRepository
                 this.additionalObservationCreator.clear();
         this.additionalObservationCreator.putAll(implementations);
     }
+
 
     public AdditionalObservationCreator get(AdditionalObservationCreatorKey key) {
         Producer<AdditionalObservationCreator> producer = additionalObservationCreator.get(key);
@@ -94,5 +100,4 @@ public class AdditionalObservationCreatorRepository
         }
         return keys;
     }
-
 }

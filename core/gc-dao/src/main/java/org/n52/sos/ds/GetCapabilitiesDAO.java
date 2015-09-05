@@ -839,7 +839,8 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 .collect(Collectors.toList());
     }
 
-    protected void setUpPhenomenaForOffering(final String offering, final String procedure, final SosObservationOffering sosOffering) {
+    protected void setUpPhenomenaForOffering(final String offering, final String procedure,
+            final SosObservationOffering sosOffering) {
         final Collection<String> phenomenons = new LinkedList<>();
         final Collection<String> observablePropertiesForOffering =
                 getCache().getObservablePropertiesForOffering(offering);
@@ -858,8 +859,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 getCache().getCompositePhenomenonsForOffering(offering);
 
         if (compositePhenomenonsForOffering != null) {
-            final Map<String, Collection<String>> phens4CompPhens =
-                    new HashMap<>(compositePhenomenonsForOffering.size());
+            final Map<String, Collection<String>> phens4CompPhens = new HashMap<>(compositePhenomenonsForOffering.size());
             for (final String compositePhenomenon : compositePhenomenonsForOffering) {
                 final Collection<String> phenomenonsForComposite =
                         getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon);

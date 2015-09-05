@@ -31,10 +31,12 @@ package org.n52.sos.ogc.swe;
 import java.util.Collection;
 import java.util.List;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 import org.n52.iceland.util.StringHelper;
 
 import com.google.common.base.Objects;
@@ -42,7 +44,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class SweAbstractDataComponent {
 
@@ -227,6 +229,8 @@ public abstract class SweAbstractDataComponent {
     }
 
     public abstract SweDataComponentType getDataComponentType();
+    public abstract <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport;
+    public abstract void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport;
 
     /**
      * Copies all values from this {@link SweAbstractDataComponent} to the

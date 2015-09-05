@@ -53,6 +53,7 @@ import net.opengis.sosdo.x10.DeleteObservationDocument;
 
 
 import org.apache.xmlbeans.XmlObject;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

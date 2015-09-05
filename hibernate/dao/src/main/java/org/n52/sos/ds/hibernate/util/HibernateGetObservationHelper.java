@@ -61,10 +61,10 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.filter.BinaryLogicFilter;
@@ -123,11 +123,11 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *             If the size limit is exceeded
      */
-    public static void checkMaxNumberOfReturnedTimeSeries(Collection<SeriesObservation> seriesObservations,
+    public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends SeriesObservation<?>> seriesObservations,
             int metadataObservationsCount) throws CodedException {
         if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             Set<Long> seriesIds = Sets.newHashSet();
-            for (SeriesObservation seriesObs : seriesObservations) {
+            for (SeriesObservation<?> seriesObs : seriesObservations) {
                 seriesIds.add(seriesObs.getSeries().getSeriesId());
             }
             checkMaxNumberOfReturnedSeriesSize(seriesIds.size() + metadataObservationsCount);
@@ -183,19 +183,25 @@ public class HibernateGetObservationHelper {
         }
     }
 
-    public static List<OmObservation> toSosObservation(Collection<AbstractObservation> observations, AbstractObservationRequest request,LocalizedProducer<OwsServiceProvider> serviceProvider,  Locale language, Session session) throws OwsExceptionReport,
+    public static List<OmObservation> toSosObservation(final Collection<Observation<?>> observations,
+            final AbstractObservationRequest request, final LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, final Session session) throws OwsExceptionReport,
             ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
-            List<OmObservation> sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(new HashSet<>(observations), request, serviceProvider, language, session);
-            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(), (System.currentTimeMillis() - startProcess));
+            List<OmObservation> sosObservations =
+                        HibernateObservationUtilities.createSosObservationsFromObservations(
+                                new HashSet<>(observations), request, serviceProvider, language, session);
+
+
+            LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
+                    (System.currentTimeMillis() - startProcess));
             return sosObservations;
         } else {
             return Collections.emptyList();
         }
     }
 
-    public static OmObservation toSosObservation(AbstractObservation observation, AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, Session session) throws OwsExceptionReport, ConverterException {
+    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
             OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(observation, request, serviceProvider, language, session);
@@ -255,11 +261,11 @@ public class HibernateGetObservationHelper {
         if (ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
-                return HibernateCriterionHelper.getLikeExpression(Observation.DESCRIPTION,
+                return HibernateCriterionHelper.getLikeExpression(AbstractLegacyObservation.DESCRIPTION,
                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE,
                         Constants.DOLLAR_CHAR, true);
             } else {
-                return Restrictions.like(Observation.DESCRIPTION,
+                return Restrictions.like(AbstractLegacyObservation.DESCRIPTION,
                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
             }
         } else {
@@ -306,10 +312,11 @@ public class HibernateGetObservationHelper {
                     "The requested valueReference is missing! The valueReference should be %s/%s!",
                     OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
         } else if (!valueReference.startsWith(OmConstants.VALUE_REF_OM_OBSERVATION)
-                && !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION))
+                && !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION)) {
             throw new NoApplicableCodeException().withMessage(
                     "The requested valueReference is not supported! Currently only %s/%s is supported",
                     OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
+        }
     }
 
     /**

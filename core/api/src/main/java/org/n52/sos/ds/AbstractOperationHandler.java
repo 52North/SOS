@@ -30,6 +30,7 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -42,6 +43,8 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.config.annotation.Configurable;
+import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.ds.OperationHandlerKey;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
@@ -58,6 +61,7 @@ import org.n52.iceland.util.http.HTTPHeaders;
 import org.n52.iceland.util.http.HTTPMethods;
 import org.n52.iceland.util.http.MediaType;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.SosHelper;
@@ -70,12 +74,14 @@ import org.slf4j.LoggerFactory;
  * @since 5.0.0
  *
  */
+@Configurable
 public abstract class AbstractOperationHandler implements OperationHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOperationHandler.class);
 
     private final OperationHandlerKey key;
     private ContentCacheController contentCacheController;
+    private boolean includeChildObservableProperties;
 
     public AbstractOperationHandler(String service, String operationName) {
         this.key = new OperationHandlerKey(service, operationName);
@@ -233,12 +239,24 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta) {
-        addObservablePropertyParameter(opsMeta, getCache().getObservableProperties());
+        addObservablePropertyParameter(opsMeta, getObservableProperties());
+    }
+
+    protected Collection<String> getObservableProperties() {
+        Set<String> observableProperties = getCache().getObservableProperties();
+        if (isIncludeChildObservableProperties()) {
+            Set<String> compositePhenomenons = getCache().getCompositePhenomenons();
+            observableProperties.removeAll(compositePhenomenons);
+            for (String compositePhenomenon : compositePhenomenons) {
+                observableProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
+            }
+        }
+        return observableProperties;
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
         if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
+            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
         }
@@ -254,5 +272,14 @@ public abstract class AbstractOperationHandler implements OperationHandler {
         } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);
         }
+    }
+    
+    public boolean isIncludeChildObservableProperties() {
+        return includeChildObservableProperties;
+    }
+
+    @Setting(AbstractRequestOperator.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
+    public void setIncludeChildObservableProperties(boolean include) {
+        this.includeChildObservableProperties = include;
     }
 }

@@ -45,6 +45,7 @@ import java.util.Set;
 
 import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

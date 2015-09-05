@@ -127,7 +127,8 @@ import com.google.common.collect.Sets;
  */
 public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OmEncoderv100.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(OmEncoderv100.class);
 
     private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
             .<SupportedType>builder()
@@ -248,22 +249,27 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     private XmlObject createObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         String observationType = checkObservationType(sosObservation);
-        if (OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType)) {
-            return createMeasurement(sosObservation, additionalValues);
-        } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
-            return createCategoryObservation(sosObservation, additionalValues);
-        } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-            return createCountObservation(sosObservation, additionalValues);
-        } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-            return createTruthObservation(sosObservation, additionalValues);
-        } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
-            return createGeometryObservation(sosObservation, additionalValues);
+        if (null != observationType) {
+            switch (observationType) {
+                case OmConstants.OBS_TYPE_MEASUREMENT:
+                    return createMeasurement(sosObservation, additionalValues);
+                case OmConstants.OBS_TYPE_CATEGORY_OBSERVATION:
+                    return createCategoryObservation(sosObservation, additionalValues);
+                case OmConstants.OBS_TYPE_COUNT_OBSERVATION:
+                    return createCountObservation(sosObservation, additionalValues);
+                case OmConstants.OBS_TYPE_TRUTH_OBSERVATION:
+                    return createTruthObservation(sosObservation, additionalValues);
+                case OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION:
+                    return createGeometryObservation(sosObservation, additionalValues);
+                default:
+                    return createOmObservation(sosObservation, additionalValues);
+            }
         } else {
             return createOmObservation(sosObservation, additionalValues);
         }
     }
 
-    private String checkObservationType(OmObservation sosObservation) {
+    private String checkObservationType(OmObservation sosObservation) throws OwsExceptionReport {
         if (sosObservation.isSetResultType()) {
             return sosObservation.getResultType();
         } else if (sosObservation.getValue() instanceof SingleObservationValue) {
@@ -408,7 +414,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         if (sosObservation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty) {
             xbObs.addNewObservedProperty().setHref(
                     sosObservation.getObservationConstellation().getObservableProperty().getIdentifier());
-            phenComponents = new ArrayList<OmObservableProperty>(1);
+            phenComponents = new ArrayList<>(1);
             phenComponents.add((OmObservableProperty) sosObservation.getObservationConstellation()
                     .getObservableProperty());
         } else if (sosObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
@@ -515,7 +521,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         } else if (observationValue.getValue() instanceof CategoryValue) {
             CategoryValue categoryValue = (CategoryValue) observationValue.getValue();
             if (categoryValue.getValue() != null && !categoryValue.getValue().isEmpty()) {
-                Map<HelperValues, String> additionalValue = new EnumMap<HelperValues, String>(HelperValues.class);
+                Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
                 additionalValue
                         .put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + sosObservation.getObservationID());
                 xbResult.set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, categoryValue, additionalValue));
@@ -525,7 +531,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         } else if (observationValue.getValue() instanceof GeometryValue) {
             GeometryValue geometryValue = (GeometryValue) observationValue.getValue();
             if (geometryValue.getValue() != null) {
-                Map<HelperValues, String> additionalValue = new EnumMap<HelperValues, String>(HelperValues.class);
+                Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
                 additionalValue
                         .put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + sosObservation.getObservationID());
                 xbResult.set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, geometryValue.getValue(),
@@ -534,10 +540,10 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
                 xbResult.setNil();
             }
         } else if (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)
-                || OmConstants.RESULT_MODEL_OBSERVATION.equals(observationType)) {
+                || OmConstants.RESULT_MODEL_OBSERVATION.getLocalPart().equals(observationType)) {
             SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
             Map<HelperValues, String> additionalValues =
-                    new EnumMap<SosConstants.HelperValues, String>(SosConstants.HelperValues.class);
+                    new EnumMap<>(SosConstants.HelperValues.class);
             additionalValues.put(HelperValues.FOR_OBSERVATION, null);
             xbResult.set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, dataArray, additionalValues));
         }
@@ -546,7 +552,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     private void addMultiObservationValueToResult(XmlObject xbResult, OmObservation sosObservation)
             throws OwsExceptionReport {
         Map<HelperValues, String> additionalValues =
-                new EnumMap<SosConstants.HelperValues, String>(SosConstants.HelperValues.class);
+                new EnumMap<>(SosConstants.HelperValues.class);
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
         SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
         xbResult.set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, dataArray, additionalValues));
@@ -566,7 +572,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
      */
     private void addFeatureOfInterest(ObservationType observation, AbstractFeature feature) throws OwsExceptionReport {
         Map<HelperValues, String> additionalValues =
-                new EnumMap<SosConstants.HelperValues, String>(HelperValues.class);
+                new EnumMap<>(HelperValues.class);
         Profile activeProfile = ProfileHandler.getInstance().getActiveProfile();
         additionalValues.put(HelperValues.ENCODE,
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));

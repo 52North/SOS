@@ -40,16 +40,12 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
@@ -61,18 +57,18 @@ import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -89,6 +85,8 @@ import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -168,7 +166,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                     // sosResponse.setObservationCollection(queryObservationHydro(sosRequest,
                     // session));
                     // } else {
-                    sosResponse.setObservationCollection(queryObservation(sosRequest, (ObservationDAO)observationDAO, session));
+                    sosResponse.setObservationCollection(queryObservation(sosRequest, (LegacyObservationDAO)observationDAO, session));
                     // }
                 }
 
@@ -210,7 +208,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
      *             If an error occurs during converting
      */
     // TODO move this and associated methods to ObservationDAO
-    protected List<OmObservation> queryObservation(final GetObservationRequest request, ObservationDAO observationDAO, final Session session)
+    protected List<OmObservation> queryObservation(final GetObservationRequest request, LegacyObservationDAO observationDAO, final Session session)
             throws OwsExceptionReport, ConverterException {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
@@ -227,7 +225,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         // final List<OmObservation> result = new LinkedList<OmObservation>();
-        Collection<AbstractObservation> observations = Lists.newArrayList();
+        Collection<Observation<?>> observations = Lists.newArrayList();
         // query with temporal filter
         if (filterCriterion != null) {
             observations = observationDAO.getObservationsFor(request, features, filterCriterion, session);
@@ -311,14 +309,14 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         // get valid featureOfInterest identifier
         final Set<String> features = getFeatures(request, session);
         if (features != null && features.isEmpty()) {
-            return new ArrayList<OmObservation>();
+            return new LinkedList<>();
         }
         // temporal filters
         final List<ExtendedIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
-        final List<OmObservation> result = new LinkedList<OmObservation>();
-        Collection<SeriesObservation> seriesObservations = Lists.newArrayList();
+        final List<OmObservation> result = new LinkedList<>();
+        Collection<SeriesObservation<?>> seriesObservations = Lists.newArrayList();
 
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
 
@@ -362,7 +360,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             }
 
             // check observations and remove any series found from the map
-            for (SeriesObservation seriesObs : seriesObservations) {
+            for (SeriesObservation<?> seriesObs : seriesObservations) {
                 long seriesId = seriesObs.getSeries().getSeriesId();
                 if (seriesToCheckMap.containsKey(seriesId)) {
                     seriesToCheckMap.remove(seriesId);
@@ -382,7 +380,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         HibernateGetObservationHelper.checkMaxNumberOfReturnedValues(seriesObservations.size());
 
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
-        Collection<AbstractObservation> abstractObservations = Lists.newArrayList();
+        Collection<Observation<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
         result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
         return result;

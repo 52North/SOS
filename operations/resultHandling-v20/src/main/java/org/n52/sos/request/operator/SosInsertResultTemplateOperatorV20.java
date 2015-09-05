@@ -117,7 +117,7 @@ public class SosInsertResultTemplateOperatorV20
         // check observedProperty
         try {
             checkObservedProperty(request.getObservationTemplate().getObservableProperty().getIdentifier(),
-                    Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
+                    Sos2Constants.InsertResultTemplateParams.proposedTemplate, true);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

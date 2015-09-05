@@ -39,11 +39,12 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingObservation;
 import org.n52.sos.request.GetObservationRequest;
 
@@ -81,9 +82,9 @@ public class HibernateSeriesStreamingObservation extends AbstractHibernateStream
     }
 
     @Override
-    protected AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation) {
+    protected Observation<?> checkShowMetadataOfEmptyObservations(Observation<?> abstractObservation) {
         if (showMetadataOfEmptyObservation) {
-            if (abstractObservation instanceof SeriesObservation) {
+            if (abstractObservation instanceof AbstractSeriesObservation) {
                 seriesIDs.add(((SeriesObservation) abstractObservation).getSeries().getSeriesId());
             }
         }

@@ -97,7 +97,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
             if (properties.containsKey(HIBERNATE_RESOURCES)) {
                 List<String> resources = (List<String>) properties.get(HIBERNATE_RESOURCES);
                 for (String resource : resources) {
-                    configuration.addResource(resource);
+                    configuration.addURL(SessionFactoryProvider.class.getResource(resource));
                 }
                 properties.remove(HIBERNATE_RESOURCES);
             } else if (properties.containsKey(HIBERNATE_DIRECTORY)) {

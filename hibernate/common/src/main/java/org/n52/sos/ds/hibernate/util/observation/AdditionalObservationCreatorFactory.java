@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import org.n52.iceland.component.ComponentFactory;
-import org.n52.sos.ds.hibernate.entities.series.Series;
 
 /**
  *

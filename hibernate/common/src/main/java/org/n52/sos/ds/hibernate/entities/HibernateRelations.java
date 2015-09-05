@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -49,7 +51,8 @@ public interface HibernateRelations {
 
         ObservationConstellation getObservationConstellation();
 
-        void setObservationConstellation(ObservationConstellation observationConstellation);
+        void setObservationConstellation(
+                ObservationConstellation observationConstellation);
     }
 
     interface HasObservationConstellations {
@@ -57,7 +60,8 @@ public interface HibernateRelations {
 
         Set<ObservationConstellation> getObservationConstellations();
 
-        void setObservationConstellations(Set<ObservationConstellation> observationConstellations);
+        void setObservationConstellations(
+                Set<ObservationConstellation> observationConstellations);
     }
 
     interface HasDescription {
@@ -65,7 +69,7 @@ public interface HibernateRelations {
 
         String getDescription();
 
-        HasDescription setDescription(String description);
+        void setDescription(String description);
 
         /**
          * Is description set
@@ -80,7 +84,7 @@ public interface HibernateRelations {
 
         Codespace getCodespace();
 
-        HasCodespace setCodespace(Codespace codespace);
+        void setCodespace(Codespace codespace);
 
         boolean isSetCodespace();
     }
@@ -90,7 +94,7 @@ public interface HibernateRelations {
 
         Codespace getCodespaceName();
 
-        HasCodespaceName setCodespaceName(Codespace codespaceName);
+        void setCodespaceName(Codespace codespaceName);
 
         boolean isSetCodespaceName();
     }
@@ -98,7 +102,7 @@ public interface HibernateRelations {
     interface HasDisabledFlag {
         String DIABLED = "disabled";
 
-        HasDisabledFlag setDisabled(boolean disabled);
+        void setDisabled(boolean disabled);
 
         boolean getDisabled();
 
@@ -108,7 +112,7 @@ public interface HibernateRelations {
     interface HasDeletedFlag {
         String DELETED = "deleted";
 
-        HasDeletedFlag setDeleted(boolean deleted);
+        void setDeleted(boolean deleted);
 
         boolean getDeleted();
 
@@ -128,7 +132,8 @@ public interface HibernateRelations {
 
         FeatureOfInterestType getFeatureOfInterestType();
 
-        void setFeatureOfInterestType(FeatureOfInterestType featureOfInterestType);
+        void setFeatureOfInterestType(
+                FeatureOfInterestType featureOfInterestType);
     }
 
     interface HasFeatureOfInterestTypes {
@@ -136,7 +141,8 @@ public interface HibernateRelations {
 
         Set<FeatureOfInterestType> getFeatureOfInterestTypes();
 
-        void setFeatureOfInterestTypes(Set<FeatureOfInterestType> featureOfInterestTypes);
+        void setFeatureOfInterestTypes(
+                Set<FeatureOfInterestType> featureOfInterestTypes);
     }
 
     interface HasFeatureOfInterestGetter {
@@ -148,6 +154,19 @@ public interface HibernateRelations {
     interface HasFeatureOfInterest extends HasFeatureOfInterestGetter {
 
         void setFeatureOfInterest(FeatureOfInterest featureOfInterest);
+    }
+
+    interface HasReadableObservationContext
+            extends HasObservablePropertyGetter,
+                    HasProcedureGetter,
+                    HasFeatureOfInterestGetter {
+    }
+
+    interface HasWriteableObservationContext
+            extends HasReadableObservationContext,
+                    HasObservableProperty,
+                    HasProcedure,
+                    HasFeatureOfInterest {
     }
 
     interface HasDescriptionXml {
@@ -165,7 +184,7 @@ public interface HibernateRelations {
 
         Geometry getGeom();
 
-        HasGeometry setGeom(Geometry geom);
+        void setGeom(Geometry geom);
 
         /**
          * Is geometry set
@@ -178,9 +197,21 @@ public interface HibernateRelations {
     interface HasHiddenChildFlag {
         String HIDDEN_CHILD = "hiddenChild";
 
-        HasHiddenChildFlag setHiddenChild(boolean hiddenChild);
+        void setHiddenChild(boolean hiddenChild);
 
         boolean isHiddenChild();
+    }
+
+    interface HasChildFlag {
+        String CHILD = "child";
+        void setChild(boolean child);
+        boolean isChild();
+    }
+
+    interface HasParentFlag {
+        String PARENT = "parent";
+        void setParent(boolean parent);
+        boolean isParent();
     }
 
     interface HasIdentifier {
@@ -188,7 +219,7 @@ public interface HibernateRelations {
 
         String getIdentifier();
 
-        HasIdentifier setIdentifier(String identifier);
+        void setIdentifier(String identifier);
 
         /**
          * Is identifier set
@@ -203,18 +234,19 @@ public interface HibernateRelations {
 
         String getName();
 
-        HasName setName(String name);
+        void setName(String name);
 
         boolean isSetName();
 
     }
 
+    @Deprecated
     interface HasObservation {
         String OBSERVATION = "observation";
 
-        Observation getObservation();
+        Observation<?> getObservation();
 
-        HasObservation setObservation(Observation observation);
+        void setObservation(Observation<?> observation);
     }
 
     interface HasObservablePropertyGetter {
@@ -235,6 +267,8 @@ public interface HibernateRelations {
         ObservationType getObservationType();
 
         void setObservationType(ObservationType observationType);
+
+        boolean isSetObservationType();
     }
 
     interface HasObservationTypes {
@@ -270,7 +304,7 @@ public interface HibernateRelations {
          * Set the start phenomenon time
          *
          * @param phenomenonTimeStart
-         *            Start phenomenon time to set
+         *                            Start phenomenon time to set
          */
         void setPhenomenonTimeStart(Date phenomenonTimeStart);
 
@@ -285,7 +319,7 @@ public interface HibernateRelations {
          * Set the end phenomenon time
          *
          * @param phenomenonTimeEnd
-         *            End phenomenon time to set
+         *                          End phenomenon time to set
          */
         void setPhenomenonTimeEnd(Date phenomenonTimeEnd);
     }
@@ -306,7 +340,7 @@ public interface HibernateRelations {
 
         ProcedureDescriptionFormat getProcedureDescriptionFormat();
 
-        HasProcedureDescriptionFormat setProcedureDescriptionFormat(
+        void setProcedureDescriptionFormat(
                 ProcedureDescriptionFormat procedureDescriptionFormat);
     }
 
@@ -361,7 +395,7 @@ public interface HibernateRelations {
          * Set the result tiem
          *
          * @param resultTime
-         *            Result tiem to set
+         *                   Result tiem to set
          */
         void setResultTime(Date resultTime);
     }
@@ -398,7 +432,7 @@ public interface HibernateRelations {
          * Set the start valid time
          *
          * @param validTimeStart
-         *            Start valid time to set
+         *                       Start valid time to set
          */
         void setValidTimeStart(Date validTimeStart);
 
@@ -413,7 +447,7 @@ public interface HibernateRelations {
          * Set the end valid time
          *
          * @param validTimeEnd
-         *            End valid time to set
+         *                     End valid time to set
          */
         void setValidTimeEnd(Date validTimeEnd);
 
@@ -446,13 +480,14 @@ public interface HibernateRelations {
 
     }
 
+    interface HasUnitValue<T> extends HasUnit, HasValue<T> {}
+
     interface HasOfferings {
         String OFFERINGS = "offerings";
 
         Set<Offering> getOfferings();
 
 //        Object getOffering();
-
         void setOfferings(Object offerings);
 
     }
@@ -462,7 +497,8 @@ public interface HibernateRelations {
 
         Set<ObservableProperty> getObservableProperties();
 
-        void setObservableProperties(Set<ObservableProperty> observableProperties);
+        void setObservableProperties(
+                Set<ObservableProperty> observableProperties);
     }
 
     interface GeoColumnsId {
@@ -527,11 +563,11 @@ public interface HibernateRelations {
 
         Object getLongitude();
 
-        HasCoordinate setLongitude(Object longitude);
+        void setLongitude(Object longitude);
 
         Object getLatitude();
 
-        HasCoordinate setLatitude(Object latitude);
+        void setLatitude(Object latitude);
 
         /**
          * Are longitude and latitude set
@@ -542,7 +578,7 @@ public interface HibernateRelations {
 
         Object getAltitude();
 
-        HasCoordinate setAltitude(Object altitude);
+        void setAltitude(Object altitude);
 
         /**
          * Is altitude set
@@ -559,21 +595,26 @@ public interface HibernateRelations {
 
         Set<ValidProcedureTime> getValidProcedureTimes();
 
-        HasValidProcedureTimes setValidProcedureTimes(Set<ValidProcedureTime> validProcedureTimes);
+        void setValidProcedureTimes(
+                Set<ValidProcedureTime> validProcedureTimes);
     }
 
-    interface HasParentChilds<T, S> {
+    interface HasParentChilds<T> {
         String PARENTS = "parents";
 
         String CHILDS = "childs";
 
         Set<T> getParents();
 
-        HasParentChilds<T, S> setParents(Set<T> parents);
+        void setParents(Set<T> parents);
+
+        void addParent(T parent);
 
         Set<T> getChilds();
 
-        HasParentChilds<T, S> setChilds(Set<T> childs);
+        void setChilds(Set<T> childs);
+
+        void addChild(T child);
     }
 
     interface HasObservationId {
@@ -590,7 +631,7 @@ public interface HibernateRelations {
          * Set the observation id
          *
          * @param observationId
-         *            Observation id to set
+         *                      Observation id to set
          */
         void setObservationId(final long observationId);
     }
@@ -600,21 +641,20 @@ public interface HibernateRelations {
 
         Locale getLocale();
 
-        HasLocale setLocale(Locale locale);
+        void setLocale(Locale locale);
 
         boolean isSetLocale();
     }
 
-    
     interface HasSamplingGeometry {
-        
+
         String SAMPLING_GEOMETRY = "samplingGeometry";
-        
+
         Geometry getSamplingGeometry();
-        
+
         void setSamplingGeometry(Geometry samplingGeometry);
-        
+
         boolean hasSamplingGeometry();
-        
+
     }
 }

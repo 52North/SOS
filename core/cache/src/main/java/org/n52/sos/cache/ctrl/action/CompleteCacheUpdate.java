@@ -29,7 +29,7 @@
 package org.n52.sos.cache.ctrl.action;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.cache.SosWritableContentCacheImpl;
+import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.CacheFeederHandler;
 
@@ -47,7 +47,7 @@ public class CompleteCacheUpdate extends CacheFeederDAOCacheUpdate {
     @Override
     public void execute() {
         try {
-            SosWritableContentCache cache = new SosWritableContentCacheImpl();
+            SosWritableContentCache cache = new InMemoryCacheImpl();
             getCacheFeederDAO().updateCache(cache);
             setCache(cache);
         } catch (OwsExceptionReport ex) {

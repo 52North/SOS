@@ -28,6 +28,7 @@
  */
 package org.n52.sos.service.it;
 
+import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -39,17 +40,13 @@ import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class H2Database extends ExternalResource {
-    private final String[] defaultObservationTypes = {
-            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CountObservation",
-            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
-            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_SWEArrayObservation",
-            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation",
-            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_CategoryObservation",
-            "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation" };
+    private final String[] defaultObservationTypes
+            = OmConstants.OBSERVATION_TYPES
+            .toArray(new String[OmConstants.OBSERVATION_TYPES.size()]);
 
     @Override
     protected void before() throws Throwable {
@@ -58,12 +55,12 @@ public class H2Database extends ExternalResource {
 
     @Override
     protected void after() {
-        H2Configuration.recreate();
+        H2Configuration.truncate();
     }
 
     /**
      * Removes all entries of entity {@link ObservationType} from the database.
-     * 
+     *
      * @throws OwsExceptionReport
      */
     protected void removeObservationTypes() throws OwsExceptionReport {
@@ -72,12 +69,12 @@ public class H2Database extends ExternalResource {
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            final ScrollableIterable<ObservationType> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(ObservationType.class));
-            for (final ObservationType o : i) {
-                session.delete(o);
+            Criteria criteria = session.createCriteria(ObservationType.class);
+            try (ScrollableIterable<ObservationType> i = ScrollableIterable.fromCriteria(criteria)) {
+                for (final ObservationType o : i) {
+                    session.delete(o);
+                }
             }
-            i.close();
             session.flush();
             transaction.commit();
         } catch (final HibernateException he) {
@@ -93,7 +90,7 @@ public class H2Database extends ExternalResource {
     /**
      * Add some default entries of entity {@link ObservationType} to the test
      * database.
-     * 
+     *
      * @throws OwsExceptionReport
      * @see {@link #defaultObservationTypes}
      */

@@ -555,11 +555,8 @@ public final class XmlHelper {
             }
         } else {
             final QName nameOfElement = substitutionElement.schemaType().getName();
-            final String localPart =
-                    nameOfElement.getLocalPart().replace(GmlConstants.EN_PART_TYPE, Constants.EMPTY_STRING);
-            name =
-                    new QName(nameOfElement.getNamespaceURI(), localPart, getPrefixForNamespace(elementToSubstitute,
-                            nameOfElement.getNamespaceURI()));
+            final String localPart = nameOfElement.getLocalPart().replace(GmlConstants.EN_PART_TYPE, Constants.EMPTY_STRING);
+            name = new QName(nameOfElement.getNamespaceURI(), localPart, getPrefixForNamespace(elementToSubstitute, nameOfElement.getNamespaceURI()));
         }
         return substituteElement(elementToSubstitute, substitutionElement.schemaType(), name);
     }

@@ -45,7 +45,7 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetFeatureOfInterestOperatorV20
         extends
@@ -88,7 +88,7 @@ public class SosGetFeatureOfInterestOperatorV20
         }
         try {
             checkObservedProperties(sosRequest.getObservedProperties(),
-                    Sos2Constants.GetFeatureOfInterestParams.observedProperty.name());
+                    Sos2Constants.GetFeatureOfInterestParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

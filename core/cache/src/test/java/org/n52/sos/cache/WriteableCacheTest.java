@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class WriteableCacheTest {
 
-    SosWritableContentCacheImpl cache;
+    InMemoryCacheImpl cache;
 
     String feature = "feature";
 
@@ -70,7 +70,7 @@ public class WriteableCacheTest {
 
     @Before
     public void init() {
-        cache = new SosWritableContentCacheImpl();
+        cache = new InMemoryCacheImpl();
         cache.addFeatureOfInterestIdentifierHumanReadableName(feature, featureName);
         cache.addProcedureIdentifierHumanReadableName(procedure, procedureName);
         cache.addObservablePropertyIdentifierHumanReadableName(observedProperty, observedPropertyName);

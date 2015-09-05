@@ -32,6 +32,7 @@ import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
+
 import net.opengis.sos.x20.GetObservationDocument;
 
 import org.apache.xmlbeans.XmlException;
@@ -45,7 +46,7 @@ import org.n52.sos.request.GetObservationRequest;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SosDecoderv20Test {

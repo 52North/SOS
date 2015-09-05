@@ -36,7 +36,7 @@ import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NObservablePropertyMetadata;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.OmObservableProperty;
 
 import com.google.common.base.Optional;
 
@@ -52,12 +52,12 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
                 Set<String> ids = getCache().getObservablePropertiesForProcedure(getIdentifier());
                 Collection<I18NObservablePropertyMetadata> metadata = dao.getMetadata(ids);
                 for (I18NObservablePropertyMetadata i18n : metadata) {
-                    AbstractPhenomenon abstractPhenomenon = new AbstractPhenomenon(i18n.getIdentifier());
+                    OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
                     Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale());
                     if (name.isPresent()) {
-                        abstractPhenomenon.addName(name.get().asCodeType());
+                        observableProperty.addName(name.get().asCodeType());
                     }
-                    getDescription().addPhenomenon(abstractPhenomenon);
+                    getDescription().addPhenomenon(observableProperty);
                 }
             }
         }

@@ -48,7 +48,7 @@ import com.google.common.base.MoreObjects;
 @Entity(name = "settings")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serializable {
-    private static final long serialVersionUID = 6198638340795737858L;
+    private static final long serialVersionUID = -6354179246534360077L;
 
     @Id
     private String identifier;

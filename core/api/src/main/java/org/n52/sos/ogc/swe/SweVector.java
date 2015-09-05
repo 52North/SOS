@@ -31,6 +31,7 @@ package org.n52.sos.ogc.swe;
 import java.util.Arrays;
 import java.util.List;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.StringHelper;
 
@@ -128,4 +129,15 @@ public class SweVector extends SweAbstractDataComponent {
         return StringHelper.isNotEmpty(localFrame);
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

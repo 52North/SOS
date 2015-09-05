@@ -237,7 +237,19 @@ public class SweEnvelope extends SweAbstractDataComponent {
     private static SweVector createSweVector(double x, double y, String uom) {
         SweQuantity xCoord = SweHelper.createSweQuantity(x, SweConstants.X_AXIS, uom);
         SweQuantity yCoord = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
-        return new SweVector(new SweCoordinate<Double>(SweCoordinateName.easting.name(), xCoord),
-                new SweCoordinate<Double>(SweCoordinateName.northing.name(), yCoord));
+        return new SweVector(new SweCoordinate<>(SweCoordinateName.easting.name(), xCoord),
+                             new SweCoordinate<>(SweCoordinateName.northing.name(), yCoord));
+    }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

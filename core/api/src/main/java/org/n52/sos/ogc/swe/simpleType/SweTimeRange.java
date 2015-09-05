@@ -29,13 +29,16 @@
 package org.n52.sos.ogc.swe.simpleType;
 
 import org.joda.time.DateTime;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
- * 
+ * J&uuml;rrens</a>
+ *
  * @since 4.0.0
  */
 public class SweTimeRange extends SweAbstractUomType<RangeValue<DateTime>> {
@@ -68,4 +71,15 @@ public class SweTimeRange extends SweAbstractUomType<RangeValue<DateTime>> {
         return SweDataComponentType.TimeRange;
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

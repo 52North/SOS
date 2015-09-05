@@ -28,7 +28,6 @@
  */
 package org.n52.sos.request.operator;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -46,9 +45,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetObservationHandler;
-import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
-import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
 import org.n52.sos.ogc.filter.TemporalFilter;
@@ -61,7 +58,7 @@ import org.n52.sos.wsdl.WSDLOperation;
 /**
  * class and forwards requests to the GetObservationDAO; after query of
  * Database, class encodes the ObservationResponse (thru using the IOMEncoder)
- * 
+ *
  * @since 4.0.0
  */
 @Configurable
@@ -115,7 +112,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(sosRequest.getObservedProperties());
+            checkObservedProperties(sosRequest.getObservedProperties(), SosConstants.GetObservationParams.observedProperty, false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -177,7 +174,7 @@ public class SosGetObservationOperatorV20 extends
                     .withMessage("The response exceeds the size limit! Please define some filtering parameters.");
         }
     }
-    
+
     private boolean isBlockRequestsWithoutRestriction() {
         return blockRequestsWithoutRestriction;
     }
@@ -188,40 +185,12 @@ public class SosGetObservationOperatorV20 extends
     }
 
     /**
-     * checks if mandatory parameter observed property is correct
-     * 
-     * @param observedProperties
-     *            list containing the observed properties of the request
-     * 
-     * @throws OwsExceptionReport
-     *             if the parameter does not containing any matching
-     *             observedProperty for the requested offering
-     */
-    private void checkObservedProperties(final List<String> observedProperties) throws OwsExceptionReport {
-        if (observedProperties != null) {
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            final Collection<String> validObservedProperties =
-                    Configurator.getInstance().getCache().getObservableProperties();
-            for (final String obsProp : observedProperties) {
-                if (obsProp.isEmpty()) {
-                    exceptions.add(new MissingObservedPropertyParameterException());
-                } else {
-                    if (!validObservedProperties.contains(obsProp)) {
-                        exceptions.add(new InvalidObservedPropertyParameterException(obsProp));
-                    }
-                }
-            }
-            exceptions.throwIfNotEmpty();
-        }
-    }
-
-    /**
      * checks if the passed offeringId is supported
-     * 
+     *
      * @param offeringIds
      *            the offeringId to be checked
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if the passed offeringId is not supported
      */

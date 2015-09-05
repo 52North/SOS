@@ -31,15 +31,14 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
-
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ds.hibernate.dao.ObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.collect.Sets;
@@ -55,13 +54,10 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
 
     private static final long serialVersionUID = 3162933935914818428L;
 
-    private final ObservationDAO observationDAO = new ObservationDAO();
-
-    private Set<Long> procedureIds = Sets.newHashSet();
-
-    private Set<Long> observablePropertyIds = Sets.newHashSet();
-
-    private Set<Long> featureIds = Sets.newHashSet();
+    private final LegacyObservationDAO observationDAO = new LegacyObservationDAO();
+    private final Set<Long> procedureIds = Sets.newHashSet();
+    private final Set<Long> observablePropertyIds = Sets.newHashSet();
+    private final Set<Long> featureIds = Sets.newHashSet();
 
     /**
      * constructor
@@ -74,7 +70,7 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
     }
 
     @Override
-    protected AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation) {
+    protected Observation<?> checkShowMetadataOfEmptyObservations(Observation<?> abstractObservation) {
         if (showMetadataOfEmptyObservation) {
             procedureIds.add(abstractObservation.getProcedure().getProcedureId());
             observablePropertyIds.add(abstractObservation.getObservableProperty().getObservablePropertyId());

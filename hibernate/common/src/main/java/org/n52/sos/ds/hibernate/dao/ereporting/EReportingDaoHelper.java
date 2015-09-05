@@ -34,7 +34,7 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

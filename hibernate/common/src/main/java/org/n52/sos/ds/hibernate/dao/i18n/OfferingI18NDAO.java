@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.hibernate.Session;
-
 import org.n52.iceland.i18n.I18NDAOKey;
 import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;

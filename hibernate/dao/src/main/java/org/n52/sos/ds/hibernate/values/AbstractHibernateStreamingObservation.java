@@ -44,9 +44,9 @@ import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ogc.om.OmObservation;
@@ -120,7 +120,10 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
             OmObservation observation;
             Object resultObject = result.get()[0];
             if (resultObject instanceof SeriesObservation) {
-                observation = HibernateGetObservationHelper.toSosObservation(checkShowMetadtaOfEmptyObservations((SeriesObservation) result.get()[0]), this.request, this.serviceProvider, this.locale, this.session);
+                observation =
+                        HibernateGetObservationHelper.toSosObservation(
+                                checkShowMetadataOfEmptyObservations((SeriesObservation) result.get()[0]),
+                                this.request, this.serviceProvider, this.locale, this.session);
             } else if (resultObject instanceof Series) {
                 observation = HibernateObservationUtilities.createSosObservationFromSeries((Series) resultObject, this.request, this.serviceProvider, this.locale, this.session).iterator().next();
             } else {
@@ -180,7 +183,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
      *            Observation to check
      * @return Checked observation
      */
-    protected abstract AbstractObservation checkShowMetadtaOfEmptyObservations(AbstractObservation abstractObservation);
+    protected abstract Observation<?> checkShowMetadataOfEmptyObservations(Observation<?> abstractObservation);
 
     /**
      * Get the next {@link ScrollableResults} from database

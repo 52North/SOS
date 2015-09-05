@@ -28,8 +28,11 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 
 public class HrefAttributeValue implements Value<W3CHrefAttribute> {
 
@@ -51,7 +54,7 @@ public class HrefAttributeValue implements Value<W3CHrefAttribute> {
 
     @Override
     public void setValue(W3CHrefAttribute value) {
-       this.value = value;
+        this.value = value;
     }
 
     @Override
@@ -74,15 +77,26 @@ public class HrefAttributeValue implements Value<W3CHrefAttribute> {
         return getValue() != null && getValue().isSetHref();
     }
 
-
     @Override
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
     }
-    
+
     @Override
     public String toString() {
-        return String.format("HrefAttributeValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("HrefAttributeValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

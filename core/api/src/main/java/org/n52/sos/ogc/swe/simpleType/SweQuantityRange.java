@@ -28,12 +28,15 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType quantity
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  */
@@ -57,7 +60,7 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
 
     /**
      * Get axis ID
-     * 
+     *
      * @return the axisID
      */
     public String getAxisID() {
@@ -66,7 +69,7 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
 
     /**
      * set axis ID
-     * 
+     *
      * @param axisID
      *            the axisID to set
      * @return This SweQuantityRange
@@ -129,4 +132,17 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.QuantityRange;
     }
+
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
 }

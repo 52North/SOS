@@ -29,12 +29,15 @@
 package org.n52.sos.ogc.swe.simpleType;
 
 import org.joda.time.DateTime;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.DateTimeHelper;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType time
- * 
+ *
  * @since 4.0.0
  */
 public class SweTime extends SweAbstractUomType<DateTime> {
@@ -73,4 +76,15 @@ public class SweTime extends SweAbstractUomType<DateTime> {
         return SweDataComponentType.Time;
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

@@ -43,7 +43,8 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
  * meta data, temporal and contextual reference and a value.
  *
  * @author Christian Autermann
- * @param <T> the value type
+ * @param <T>
+ *            the value type
  * @see BlobObservation
  * @see BooleanObservation
  * @see CategoryObservation

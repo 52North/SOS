@@ -48,7 +48,8 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservatio
  * {@link ContextualReferencedObservation} and {@link Observation}.
  *
  * @author Christian Autermann
- * @param <T> the value type
+ * @param <T>
+ *            the value type
  * @see BlobValuedObservation
  * @see BooleanValuedObservation
  * @see CategoryValuedObservation

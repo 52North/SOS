@@ -94,7 +94,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
-            TimeValuePair value = createTimeValuePairFrom(resultObject);
+            TimeValuePair value = resultObject.createTimeValuePairFrom();
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {

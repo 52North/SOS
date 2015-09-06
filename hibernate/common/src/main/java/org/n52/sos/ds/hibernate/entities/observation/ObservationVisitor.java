@@ -46,31 +46,22 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
  */
 public interface ObservationVisitor<T> {
 
-    T visit(NumericObservation o)
-            throws OwsExceptionReport;
+    T visit(NumericObservation o) throws OwsExceptionReport;
 
-    T visit(BlobObservation o)
-            throws OwsExceptionReport;
+    T visit(BlobObservation o) throws OwsExceptionReport;
 
-    T visit(BooleanObservation o)
-            throws OwsExceptionReport;
+    T visit(BooleanObservation o) throws OwsExceptionReport;
 
-    T visit(CategoryObservation o)
-            throws OwsExceptionReport;
+    T visit(CategoryObservation o) throws OwsExceptionReport;
 
-    T visit(ComplexObservation o)
-            throws OwsExceptionReport;
+    T visit(ComplexObservation o) throws OwsExceptionReport;
 
-    T visit(CountObservation o)
-            throws OwsExceptionReport;
+    T visit(CountObservation o) throws OwsExceptionReport;
 
-    T visit(GeometryObservation o)
-            throws OwsExceptionReport;
+    T visit(GeometryObservation o) throws OwsExceptionReport;
 
-    T visit(TextObservation o)
-            throws OwsExceptionReport;
+    T visit(TextObservation o) throws OwsExceptionReport;
 
-    T visit(SweDataArrayObservation o)
-            throws OwsExceptionReport;
+    T visit(SweDataArrayObservation o) throws OwsExceptionReport;
 
 }

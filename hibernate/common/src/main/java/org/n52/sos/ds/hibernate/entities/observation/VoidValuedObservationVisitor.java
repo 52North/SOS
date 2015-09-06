@@ -44,95 +44,76 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
  *
  * @author Christian Autermann
  */
-public abstract class VoidValuedObservationVisitor
-        implements ValuedObservationVisitor<Void> {
+public abstract class VoidValuedObservationVisitor implements ValuedObservationVisitor<Void> {
 
-    protected abstract void _visit(NumericValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(NumericValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(BlobValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(BlobValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(BooleanValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(BooleanValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(CategoryValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(CategoryValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(ComplexValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(ComplexValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(CountValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(CountValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(GeometryValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(GeometryValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(TextValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(TextValuedObservation o) throws OwsExceptionReport;
 
-    protected abstract void _visit(SweDataArrayValuedObservation o)
-            throws OwsExceptionReport;
+    protected abstract void _visit(SweDataArrayValuedObservation o) throws OwsExceptionReport;
 
     @Override
-    public Void visit(NumericValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(NumericValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(BlobValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(BlobValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(BooleanValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(BooleanValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(CategoryValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(CategoryValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(ComplexValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(ComplexValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(CountValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(CountValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(GeometryValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(GeometryValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(TextValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(TextValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }
 
     @Override
-    public Void visit(SweDataArrayValuedObservation o)
-            throws OwsExceptionReport {
+    public Void visit(SweDataArrayValuedObservation o) throws OwsExceptionReport {
         _visit(o);
         return null;
     }

@@ -46,31 +46,22 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservatio
  */
 public interface ValuedObservationVisitor<T> {
 
-    T visit(NumericValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(NumericValuedObservation o) throws OwsExceptionReport;
 
-    T visit(BlobValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(BlobValuedObservation o) throws OwsExceptionReport;
 
-    T visit(BooleanValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(BooleanValuedObservation o) throws OwsExceptionReport;
 
-    T visit(CategoryValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(CategoryValuedObservation o) throws OwsExceptionReport;
 
-    T visit(ComplexValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(ComplexValuedObservation o) throws OwsExceptionReport;
 
-    T visit(CountValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(CountValuedObservation o) throws OwsExceptionReport;
 
-    T visit(GeometryValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(GeometryValuedObservation o) throws OwsExceptionReport;
 
-    T visit(TextValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(TextValuedObservation o) throws OwsExceptionReport;
 
-    T visit(SweDataArrayValuedObservation o)
-            throws OwsExceptionReport;
+    T visit(SweDataArrayValuedObservation o) throws OwsExceptionReport;
 
 }

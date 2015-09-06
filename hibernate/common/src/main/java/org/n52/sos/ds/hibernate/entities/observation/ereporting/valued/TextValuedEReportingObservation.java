@@ -35,11 +35,11 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisito
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
 
-public class TextValuedEReportingObservation
-        extends AbstractValuedEReportingObservation<String>
+public class TextValuedEReportingObservation extends AbstractValuedEReportingObservation<String>
         implements TextValuedObservation {
 
     private static final long serialVersionUID = -9156707657634066902L;
+
     private String value;
 
     @Override
@@ -57,20 +57,18 @@ public class TextValuedEReportingObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

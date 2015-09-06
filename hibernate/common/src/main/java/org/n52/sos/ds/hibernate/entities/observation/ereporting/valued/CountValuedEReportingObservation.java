@@ -56,20 +56,18 @@ public class CountValuedEReportingObservation
         return value != null;
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

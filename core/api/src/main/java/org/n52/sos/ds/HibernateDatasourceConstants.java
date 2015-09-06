@@ -61,6 +61,8 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_MAPPING_FILE_CATEGORY = "Category.hbm.xml";
     
+    String HIBERNATE_MAPPING_FILE_COMPLEX = "Complex.hbm.xml";
+    
     String HIBERNATE_MAPPING_FILE_COUNT = "Count.hbm.xml";
     
     String HIBERNATE_MAPPING_FILE_GEOMETRY = "Geometry.hbm.xml";

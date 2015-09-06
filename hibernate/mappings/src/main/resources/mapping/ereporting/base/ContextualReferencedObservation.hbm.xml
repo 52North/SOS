@@ -2,9 +2,9 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation"
+    <class name="org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation"
            table="observation">
-        <comment>Stores the observations. Mapping file: mapping/series/observation/ContextualReferencedObservation.hbm.xml</comment>
+        <comment>Stores the observations. Mapping file: mapping/ereporting/base/ContextualReferencedObservation.hbm.xml</comment>
         <id name="observationId"
             type="long">
             <column name="observationId">
@@ -15,7 +15,7 @@
             </generator>
         </id>
         <many-to-one name="series"
-                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
+                     class="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries"
                      fetch="select"
                      lazy="no-proxy"
                      foreign-key="observationSeriesFk">
@@ -90,7 +90,7 @@
         <property name="description"
                   type="string">
             <column name="description">
-            	<comment>The name of the observation, gml:name. Optional</comment>
+            	<comment>Description of the observation, gml:description. Optional</comment>
             </column>
         </property>
         <property name="deleted"
@@ -144,7 +144,7 @@
              table="observationHasOffering"
              inverse="false"
              fetch="select"
-             lazy="true" >
+             lazy="false" >
             <key>
                 <column name="observationId"
                         not-null="true"

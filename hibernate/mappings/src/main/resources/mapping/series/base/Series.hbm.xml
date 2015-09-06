@@ -4,7 +4,7 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.observation.series.Series"
            table="series">
-		<comment>Table to store a (time-) series which consists of featureOfInterest, observableProperty, and procedure. Mapping file: mapping/series/Series.hbm.xml</comment>
+		<comment>Table to store a (time-) series which consists of featureOfInterest, observableProperty, and procedure. Mapping file: mapping/series/base/Series.hbm.xml</comment>
         <id name="seriesId"
             type="long">
             <column name="seriesId">

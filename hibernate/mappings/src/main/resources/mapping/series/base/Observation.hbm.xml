@@ -2,9 +2,10 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.observation.ereporting.ContextualReferencedEReportingObservation"
+    <class abstract="true"
+           name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
            table="observation">
-        <comment>Stores the observations. Mapping file: mapping/ereporting/ContextualReferencedObservation.hbm.xml</comment>
+        <comment>Stores the observations. Mapping file: mapping/series/base/Observation.hbm.xml</comment>
         <id name="observationId"
             type="long">
             <column name="observationId">
@@ -15,7 +16,7 @@
             </generator>
         </id>
         <many-to-one name="series"
-                     class="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      fetch="select"
                      lazy="no-proxy"
                      foreign-key="observationSeriesFk">
@@ -81,7 +82,6 @@
         <many-to-one name="codespaceName"
                      class="org.n52.sos.ds.hibernate.entities.Codespace"
                      fetch="select"
-                     lazy="no-proxy"
                      foreign-key="obsCodespaceNameFk">
             <column name="codespaceName">
             	<comment>The name of the observation, gml:name. Optional</comment>
@@ -140,11 +140,21 @@
             	<comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
+        <many-to-one name="unit"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="observationUnitFk">
+            <column name="unitId"
+                    not-null="false">
+            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+            </column>
+        </many-to-one>
         <set name="offerings"
              table="observationHasOffering"
              inverse="false"
              fetch="select"
-             lazy="false" >
+             lazy="true" >
             <key>
                 <column name="observationId"
                         not-null="true"

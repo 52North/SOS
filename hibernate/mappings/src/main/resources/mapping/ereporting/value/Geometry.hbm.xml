@@ -2,8 +2,22 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-		<joined-subclass name="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingGeometryValue" extends="org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue" table="geometryValue">
-        	<key column="observationId" foreign-key="observationGeometryValueFk" />
-         	<property name="value" type="org.hibernate.spatial.GeometryType" />
-        </joined-subclass>
+    <joined-subclass
+        name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.GeometryValuedEReportingObservation"
+        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation" 
+        table="geometryValue">
+        <comment>Value table for geometry observation</comment>
+        <key foreign-key="observationGeometryValueFk">
+            <column name="observationId">
+                <comment>Foreign Key (FK) to the related observation from the observation table. Contains
+                    "observation".observationid</comment>
+            </column>
+        </key>
+        <property name="value" 
+                    type="org.hibernate.spatial.GeometryType">
+            <column name="value">
+                <comment>Geometry observation value</comment>
+            </column>
+        </property>
+    </joined-subclass>
 </hibernate-mapping>

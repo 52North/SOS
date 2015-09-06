@@ -47,7 +47,6 @@ import org.hibernate.MappingException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 
@@ -117,31 +116,16 @@ public class H2Configuration {
             resources.add("mapping/transactional/TObservableProperty.hbm.xml");
             resources.add("mapping/transactional/TOffering.hbm.xml");
             resources.add("mapping/transactional/TProcedure.hbm.xml");
-            // old observation concept
-            // resources.add("mapping/old/observation/Observation.hbm.xml");
-            // resources.add("mapping/old/observation/ObservationInfo.hbm.xml");
-            // resources.add("mapping/old/spatialFilteringProfile/SpatialFitleringProfile.hbm.xml");
-            
-//          resources.add("/mapping/old/observation/ValuedObservation.hbm.xml");
-//          resources.add("/mapping/old/observation/Observation.hbm.xml");
-//          resources.add("/mapping/old/observation/TemporalReferencedObservation.hbm.xml");
-//          resources.add("/mapping/old/observation/ContextualReferencedObservation.hbm.xml");
-          resources.add("/mapping/series/observation/ValuedObservation.hbm.xml");
-          resources.add("/mapping/series/observation/Series.hbm.xml");
-          resources.add("/mapping/series/observation/Observation.hbm.xml");
-          resources.add("/mapping/series/observation/TemporalReferencedObservation.hbm.xml");
-          resources.add("/mapping/series/observation/ContextualReferencedObservation.hbm.xml");
-            
-            // series observation concept, needs changes in tests
-            resources.add("mapping/series/base/Series.hbm.xml");
-            resources.add("mapping/series/base/SeriesObservation.hbm.xml");
-            resources.add("mapping/series/base/SeriesObservationInfo.hbm.xml");
-            resources.add("mapping/series/base/SeriesObservationTime.hbm.xml");
-            resources.add("mapping/series/base/SeriesValue.hbm.xml");
-            resources.add("mapping/series/base/SeriesValueTime.hbm.xml");
+            // observation/values
+            resources.add("/mapping/series/base/ValuedObservation.hbm.xml");
+            resources.add("/mapping/series/base/Series.hbm.xml");
+            resources.add("/mapping/series/base/Observation.hbm.xml");
+            resources.add("/mapping/series/base/TemporalReferencedObservation.hbm.xml");
+            resources.add("/mapping/series/base/ContextualReferencedObservation.hbm.xml");
             resources.add("mapping/series/observation/Blob.hbm.xml");
             resources.add("mapping/series/observation/Boolean.hbm.xml");
             resources.add("mapping/series/observation/Category.hbm.xml");
+            resources.add("mapping/series/observation/Complex.hbm.xml");
             resources.add("mapping/series/observation/Count.hbm.xml");
             resources.add("mapping/series/observation/Geometry.hbm.xml");
             resources.add("mapping/series/observation/Numeric.hbm.xml");
@@ -150,6 +134,7 @@ public class H2Configuration {
             resources.add("mapping/series/value/Blob.hbm.xml");
             resources.add("mapping/series/value/Boolean.hbm.xml");
             resources.add("mapping/series/value/Category.hbm.xml");
+            resources.add("mapping/series/value/Complex.hbm.xml");
             resources.add("mapping/series/value/Count.hbm.xml");
             resources.add("mapping/series/value/Geometry.hbm.xml");
             resources.add("mapping/series/value/Numeric.hbm.xml");

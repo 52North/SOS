@@ -2,49 +2,28 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation" 
-    	   table="observation">
-        <comment>Stores the observations. Mapping file: mapping/old/observation/TemporalReferencedObservation.hbm.xml</comment>
-        <id name="observationId" type="long">
-            <column name="observationId" />
+    <class name="org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation"
+           table="observation">
+        <comment>Stores the observations. Mapping file: mapping/series/base/ContextualReferencedObservation.hbm.xml</comment>
+        <id name="observationId"
+            type="long">
+            <column name="observationId">
+            	<comment>Table primary key, used in relations</comment>
+            </column>
             <generator class="native">
                 <param name="sequence">observationId_seq</param>
             </generator>
         </id>
-        <many-to-one name="featureOfInterest"
-                     class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
+        <many-to-one name="series"
+                     class="org.n52.sos.ds.hibernate.entities.observation.series.Series"
                      fetch="select"
                      lazy="no-proxy"
-                     foreign-key="observationFeatureFk">
-            <column index="obsFeatureIdx"
-                    name="featureOfInterestId"
+                     foreign-key="observationSeriesFk">
+            <column index="obsSeriesIdx"
+                    name="seriesId"
                     not-null="true"
                     unique-key="observationIdentity">
-           		<comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
-           	</column>
-        </many-to-one>
-        <many-to-one name="observableProperty"
-                     class="org.n52.sos.ds.hibernate.entities.ObservableProperty"
-                     fetch="select"
-                     lazy="no-proxy"
-                     foreign-key="observationObPropFk">
-            <column index="obsObsPropIdx"
-                    name="observablePropertyId"
-                    not-null="true"
-                    unique-key="observationIdentity">
-           		<comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
-           	</column>
-        </many-to-one>
-        <many-to-one name="procedure"
-                     class="org.n52.sos.ds.hibernate.entities.Procedure"
-                     fetch="select"
-                     lazy="no-proxy"
-                     foreign-key="observationProcedureFk">
-            <column index="obsProcedureIdx"
-                    name="procedureId"
-                    not-null="true"
-                    unique-key="observationIdentity">
-           		<comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
+           		<comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
            	</column>
         </many-to-one>
         <property name="phenomenonTimeStart"
@@ -75,6 +54,43 @@
                     not-null="true"
                     unique-key="observationIdentity">
             	<comment>Time stamp when the observation was published or result was published/available</comment>
+            </column>
+        </property>
+        <property name="identifier"
+                  type="string">
+            <column name="identifier"
+                    unique-key="obsIdentifierUK">
+            	<comment>The identifier of the observation, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="obsCodespaceIdentifierFk">
+            <column name="codespace">
+            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name"
+                  type="string">
+            <column name="name">
+            	<comment>The name of the observation, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName"
+                     class="org.n52.sos.ds.hibernate.entities.Codespace"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="obsCodespaceNameFk">
+            <column name="codespaceName">
+            	<comment>The name of the observation, gml:name. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description"
+                  type="string">
+            <column name="description">
+            	<comment>The name of the observation, gml:name. Optional</comment>
             </column>
         </property>
         <property name="deleted"
@@ -124,11 +140,11 @@
             	<comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
- 		<set name="offerings"
+        <set name="offerings"
              table="observationHasOffering"
              inverse="false"
              fetch="select"
-             lazy="false" >
+             lazy="true" >
             <key>
                 <column name="observationId"
                         not-null="true"

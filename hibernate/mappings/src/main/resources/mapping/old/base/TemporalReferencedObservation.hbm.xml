@@ -2,28 +2,49 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation"
-           table="observation">
-           <comment>Stores the observations. Mapping file: mapping/ereporting/TemporalReferencedObservation.hbm.xml</comment>
-        <id name="observationId"
-            type="long">
-            <column name="observationId">
-            	<comment>Table primary key, used in relations</comment>
-            </column>
+    <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation" 
+    	   table="observation">
+        <comment>Stores the observations. Mapping file: mapping/old/base/TemporalReferencedObservation.hbm.xml</comment>
+        <id name="observationId" type="long">
+            <column name="observationId" />
             <generator class="native">
                 <param name="sequence">observationId_seq</param>
             </generator>
         </id>
-        <many-to-one name="series"
-                     class="org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries"
+        <many-to-one name="featureOfInterest"
+                     class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
                      fetch="select"
                      lazy="no-proxy"
-                     foreign-key="observationSeriesFk">
-            <column index="obsSeriesIdx"
-                    name="seriesId"
+                     foreign-key="observationFeatureFk">
+            <column index="obsFeatureIdx"
+                    name="featureOfInterestId"
                     not-null="true"
                     unique-key="observationIdentity">
-           		<comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
+           		<comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
+           	</column>
+        </many-to-one>
+        <many-to-one name="observableProperty"
+                     class="org.n52.sos.ds.hibernate.entities.ObservableProperty"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="observationObPropFk">
+            <column index="obsObsPropIdx"
+                    name="observablePropertyId"
+                    not-null="true"
+                    unique-key="observationIdentity">
+           		<comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
+           	</column>
+        </many-to-one>
+        <many-to-one name="procedure"
+                     class="org.n52.sos.ds.hibernate.entities.Procedure"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="observationProcedureFk">
+            <column index="obsProcedureIdx"
+                    name="procedureId"
+                    not-null="true"
+                    unique-key="observationIdentity">
+           		<comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
            	</column>
         </many-to-one>
         <property name="phenomenonTimeStart"
@@ -71,7 +92,7 @@
                     not-null="true"
                     default="'F'"
                     length="1"
-                    check="child in ('T','F')" >
+                    check="child in ('T','F')">
             	<comment>Flag to indicate that this observation is a child observation for complex observation</comment>
             </column>
         </property>
@@ -103,11 +124,11 @@
             	<comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
-        <set name="offerings"
+ 		<set name="offerings"
              table="observationHasOffering"
              inverse="false"
              fetch="select"
-             lazy="true" >
+             lazy="false" >
             <key>
                 <column name="observationId"
                         not-null="true"
@@ -116,8 +137,7 @@
 	            </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
-                          foreign-key="observationOfferingFk"
-                          lazy="proxy">
+                          foreign-key="observationOfferingFk">
                 <column name="offeringId"
                         not-null="true"
                         index="obshasoffofferingidx">
@@ -129,21 +149,6 @@
                   type="org.hibernate.spatial.GeometryType">
             <column name="samplingGeometry">
             	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
-            </column>
-        </property>
-        <property name="validation" type="int">
-            <column name="validation" not-null="true" default="-1">
-            	<comment>AQD e-Reporting validation flag, see http://dd.eionet.europa.eu/vocabulary/aq/observationvalidity/view</comment>
-            </column>
-        </property>
-        <property name="verification" type="int">
-            <column name="verification" not-null="true" default="3">
-            	<comment>AQD e-Reporting verification flag, see http://dd.eionet.europa.eu/vocabulary/aq/observationverification/view</comment>
-            </column>
-        </property>
-        <property name="primaryObservation" type="string">
-            <column name="primaryObservation" not-null="true" default="'var'">
-            	<comment>AQD e-Reporting primaryObservation type, see http://dd.eionet.europa.eu/vocabulary/aq/primaryObservation/view</comment>
             </column>
         </property>
     </class>

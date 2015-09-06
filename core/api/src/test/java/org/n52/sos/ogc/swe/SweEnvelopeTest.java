@@ -33,13 +33,16 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.util.GeometryHandler;
 
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.io.ParseException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -48,10 +51,15 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 4.0.0
  */
 public class SweEnvelopeTest {
+    
+    @BeforeClass
+    public static void init() throws ParseException {
+        new GeometryHandler().setAuthority("EPSG").init();
+    }
 
     @Test public void
-    should_create_valid_sosSweEnvelope_from_sosEnvelope()
-    {
+    should_create_valid_sosSweEnvelope_from_sosEnvelope() {
+        
         final int srid = 52;
         final double x1 = 1;
         final double y1 = 2;

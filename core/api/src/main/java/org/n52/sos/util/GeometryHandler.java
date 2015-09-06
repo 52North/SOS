@@ -29,7 +29,6 @@
 package org.n52.sos.util;
 
 import static org.geotools.referencing.ReferencingFactoryFinder.getCRSAuthorityFactory;
-import static org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator.BBOX;
 import static org.n52.iceland.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
 
 import java.util.Collection;
@@ -113,8 +112,9 @@ public class GeometryHandler implements Constructable, Destroyable {
     private String srsNamePrefixSosV2;
 
     @Setting(SRS_NAME_PREFIX_SOS_V2)
-    public void setSrsNamePrefixSosV2(String srsNamePrefixSosV2) {
+    public GeometryHandler setSrsNamePrefixSosV2(String srsNamePrefixSosV2) {
         this.srsNamePrefixSosV2 = srsNamePrefixSosV2;
+        return this;
     }
 
     @Override
@@ -196,10 +196,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
-    public void setStorageEpsg(int epsgCode) throws ConfigurationError {
+    public GeometryHandler setStorageEpsg(int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         storageEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
+        return this;
     }
 
     /**
@@ -211,10 +212,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
-    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
+    public GeometryHandler setStorage3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         storage3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
+        return this;
     }
 
     /**
@@ -226,10 +228,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
-    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
+    public GeometryHandler setDefaultResponseEpsg(final int epsgCode) throws ConfigurationError {
         Validation.greaterZero("Storage EPSG Code", epsgCode);
         defaultResponseEPSG = epsgCode;
         addToSupportedCrs(epsgCode);
+        return this;
     }
 
     /**
@@ -241,10 +244,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
-    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
+    public GeometryHandler setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationError {
         Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
         defaultResponse3DEPSG = epsgCode3D;
         addToSupportedCrs(epsgCode3D);
+        return this;
     }
 
     /**
@@ -255,10 +259,11 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @throws ConfigurationError
      */
     @Setting(FeatureQuerySettingsProvider.SUPPORTED_CRS_KEY)
-    public void setSupportedCRS(final String supportedCRS) throws ConfigurationError {
+    public GeometryHandler setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
         this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+        return this;
     }
 
     /**
@@ -282,9 +287,10 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     @Setting(FeatureQuerySettingsProvider.AUTHORITY)
-    public void setAuthority(final String authority) {
+    public GeometryHandler setAuthority(final String authority) {
         Validation.notNull("The CRS authority", authority);
         this.authority = authority;
+        return this;
     }
 
     public String getAuthority() {
@@ -297,8 +303,9 @@ public class GeometryHandler implements Constructable, Destroyable {
      * @param epsgCode
      *            Integer EPSG code
      */
-    private void addToSupportedCrs(int epsgCode) {
+    private GeometryHandler addToSupportedCrs(int epsgCode) {
         this.supportedCRS.add(Integer.toString(epsgCode));
+        return this;
     }
 
     /**
@@ -308,8 +315,9 @@ public class GeometryHandler implements Constructable, Destroyable {
      *            Northing first indicator
      */
     @Setting(FeatureQuerySettingsProvider.DATASOURCE_NORTHING_FIRST)
-    public void setDatasourceNorthingFirst(final boolean datasoureUsesNorthingFirst) {
+    public GeometryHandler setDatasourceNorthingFirst(final boolean datasoureUsesNorthingFirst) {
         this.datasoureUsesNorthingFirst = datasoureUsesNorthingFirst;
+        return this;
     }
 
     /**
@@ -331,7 +339,7 @@ public class GeometryHandler implements Constructable, Destroyable {
      *             If an error occurs
      */
     @Setting(FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST)
-    public void setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationError {
+    public GeometryHandler setEpsgCodesWithNorthingFirstAxisOrder(final String codes) throws ConfigurationError {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
         for (final String entry : splitted) {
@@ -347,6 +355,7 @@ public class GeometryHandler implements Constructable, Destroyable {
             }
             epsgsWithNorthingFirstAxisOrder.add(r);
         }
+        return this;
     }
 
     /**

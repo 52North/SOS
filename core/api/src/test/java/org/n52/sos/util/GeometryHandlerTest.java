@@ -78,14 +78,20 @@ public class GeometryHandlerTest {
     
     @BeforeClass
     public static void init() throws ParseException {
-        geometryHandler = GeometryHandler.getInstance();
+        geometryHandler =  new GeometryHandler()
+                .setAuthority("EPSG")
+                .setStorageEpsg(EPSG_4326)
+                .setSupportedCRS(supportedCRS)
+                .setEpsgCodesWithNorthingFirstAxisOrder(nortingFirstCRS)
+                .setDatasourceNorthingFirst(false);
+        geometryHandler.init();
         WKTReader reader = new WKTReader();
         double lat_4326 = 52.7;
         double lon_4326 = 7.52;
         double lat_31467 = 5841822;
         double lon_31467 = 3400029;
         
-        geometryHandler.setSupportedCRS(supportedCRS);
+        
 
         wkt4326 = geometryHandler.getWktString(lat_4326, lon_4326);
         geometry4326 = reader.read(wkt4326);
@@ -102,7 +108,6 @@ public class GeometryHandlerTest {
         wkt31467Switched = geometryHandler.getWktString(lon_31467, lat_31467);
         geometry31467Switched = reader.read(wkt31467Switched);
         geometry31467Switched.setSRID(EPSG_31467);
-        geometryHandler.setEpsgCodesWithNorthingFirstAxisOrder(nortingFirstCRS);
     }
     
     private Geometry get4326Geometry() {
@@ -164,7 +169,7 @@ public class GeometryHandlerTest {
     }
 
     @Test
-    public void shouldvGeometryForDatasourceNorthingTrueEpsg31467() throws OwsExceptionReport {
+    public void shouldGeometryForDatasourceNorthingTrueEpsg31467() throws OwsExceptionReport {
         geometryHandler.clearSupportedCRSMap();
         geometryHandler.setDatasourceNorthingFirst(true);
         geometryHandler.setStorageEpsg(EPSG_31467);

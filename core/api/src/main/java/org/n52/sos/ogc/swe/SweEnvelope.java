@@ -173,7 +173,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
         Coordinate max = getUpperCornerAsCoordinate();
         if (min != null && max != null) {
             int srid = SosHelper.parseSrsName(getReferenceFrame());
-            if (GeometryHandler.getInstance().isNorthingFirstEpsgCode(srid)) {
+            if (isNorthingFirstEpsgCode(srid)) {
                 return new Envelope(min.y, max.y, min.x, max.x);
             } else {
                 return new Envelope(min.x, max.x, min.y, max.y);
@@ -219,7 +219,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private static SweVector createLowerCorner(SosEnvelope env, String uom) {
-        if (env.isSetSrid() && GeometryHandler.getInstance().isNorthingFirstEpsgCode(env.getSrid())) {
+        if (env.isSetSrid() && isNorthingFirstEpsgCode(env.getSrid())) {
             return createSweVector(env.getEnvelope().getMinY(), env.getEnvelope().getMinX(), uom);
         } else {
             return createSweVector(env.getEnvelope().getMinX(), env.getEnvelope().getMinY(), uom);
@@ -227,7 +227,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private static SweVector createUpperCorner(SosEnvelope env, String uom) {
-        if (env.isSetSrid() && GeometryHandler.getInstance().isNorthingFirstEpsgCode(env.getSrid())) {
+        if (env.isSetSrid() && isNorthingFirstEpsgCode(env.getSrid())) {
             return createSweVector(env.getEnvelope().getMaxY(), env.getEnvelope().getMaxX(), uom);
         } else {
             return createSweVector(env.getEnvelope().getMaxX(), env.getEnvelope().getMaxY(), uom);
@@ -251,5 +251,9 @@ public class SweEnvelope extends SweAbstractDataComponent {
     public void accept(VoidSweDataComponentVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);
+    }
+    
+    private static boolean isNorthingFirstEpsgCode(int srid) {
+        return GeometryHandler.getInstance().isNorthingFirstEpsgCode(srid);
     }
 }

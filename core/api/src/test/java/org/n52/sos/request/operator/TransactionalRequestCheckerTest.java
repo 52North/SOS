@@ -30,6 +30,7 @@ package org.n52.sos.request.operator;
 
 import static org.n52.iceland.util.HasStatusCode.hasStatusCode;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -40,13 +41,15 @@ import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.net.IPAddress;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
+import com.vividsolutions.jts.io.ParseException;
+
 /**
  * @since 4.0.0
  *
  */
 public class TransactionalRequestCheckerTest {
-    private static TransactionalSecurityConfiguration tsc =
-            TransactionalSecurityConfiguration.getInstance();
+    private static TransactionalSecurityConfiguration tsc;
+           
     private static final IPAddress IP = new IPAddress("123.123.123.123");
     private static final String TOKEN = "I_HAVE_THE_PERMISSION";
     private static final IPAddress INVALID_IP = new IPAddress("234.234.234.234");
@@ -54,6 +57,12 @@ public class TransactionalRequestCheckerTest {
     private static final String NULL = null;
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
+    
+    @BeforeClass
+    public static void init() throws ParseException {
+       tsc = new TransactionalSecurityConfiguration();
+       tsc.init();
+    }
 
     @Test
     public void shouldPass_NotActive()

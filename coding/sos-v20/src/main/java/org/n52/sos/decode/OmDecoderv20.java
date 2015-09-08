@@ -110,7 +110,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
     private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet
             .<SupportedType>builder()
             .add(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION_TYPE)
-            //.add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION_TYPE)
+            .add(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION_TYPE)
             .add(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION_TYPE)
             .add(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION_TYPE)
             .add(OmConstants.OBS_TYPE_COUNT_OBSERVATION_TYPE)

@@ -55,7 +55,7 @@ public class SosStringDecoderv20 extends AbstractStringRequestDecoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosStringDecoderv20.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
-            .xmlDecoderKeysForOperation(
+            .xmlStringDecoderKeysForOperationAndMediaType(
                     SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                     SosConstants.Operations.GetCapabilities,
                     SosConstants.Operations.GetObservation,

@@ -54,10 +54,14 @@ public class SosStringDecoderv100 extends AbstractStringRequestDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosStringDecoderv100.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.xmlDecoderKeysForOperation(SosConstants.SOS,
-            Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities,
-            SosConstants.Operations.GetObservation, SosConstants.Operations.GetFeatureOfInterest,
-            SosConstants.Operations.GetObservationById, SosConstants.Operations.DescribeSensor);
+    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
+            .xmlStringDecoderKeysForOperationAndMediaType(
+                    SosConstants.SOS, Sos1Constants.SERVICEVERSION, 
+                    SosConstants.Operations.GetCapabilities,
+                    SosConstants.Operations.GetObservation, 
+                    SosConstants.Operations.GetFeatureOfInterest,
+                    SosConstants.Operations.GetObservationById, 
+                    SosConstants.Operations.DescribeSensor);
 
     public SosStringDecoderv100() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")

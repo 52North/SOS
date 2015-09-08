@@ -348,7 +348,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkBlobObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().blobClass(), offeringIdentifier, session);
     }
-
+    
     /**
      * Check if there are geometry observations for the offering
      *
@@ -361,9 +361,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkGeometryObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().geometryClass(), offeringIdentifier, session);
     }
+    
+    /**
+     * Check if there are complex observations for the offering
+     *
+     * @param offeringIdentifier
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return If there are observations or not
+     */
+    public boolean checkComplexObservationsFor(String offeringIdentifier, Session session) {
+        return checkObservationFor(getObservationFactory().complexClass(), offeringIdentifier, session);
+    }
 
     /**
-     * Check if there are geometry observations for the offering
+     * Check if there are SweDataArray observations for the offering
      *
      * @param offeringIdentifier
      *            Offering identifier
@@ -1483,4 +1496,5 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             return collection;
         }
     }
+
 }

@@ -46,6 +46,7 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.GetObservationRequest;
@@ -59,10 +60,7 @@ import org.n52.sos.util.GeometryHandler;
  * @since 4.1.0
  *
  */
-@Configurable
 public abstract class AbstractValueDAO extends TimeCreator {
-    
-    private boolean includeChildObservableProperties;
 
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
@@ -194,14 +192,9 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-
-    public boolean isIncludeChildObservableProperties() {
-        return includeChildObservableProperties;
-    }
-
-    @Setting(AbstractRequestOperator.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
-    public void setIncludeChildObservableProperties(boolean include) {
-        this.includeChildObservableProperties = include;
+    
+    protected boolean isIncludeChildObservableProperties(){
+        return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
     }
 
     protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;

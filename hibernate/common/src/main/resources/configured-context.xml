@@ -57,4 +57,7 @@
     <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"
           class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
 
+    <bean id="observationSettingProvider"
+          class="org.n52.sos.ds.hibernate.util.ObservationSettingProvider" />
+          
 </beans>

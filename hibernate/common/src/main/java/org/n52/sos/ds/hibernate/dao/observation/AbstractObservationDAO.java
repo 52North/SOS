@@ -84,6 +84,7 @@ import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservati
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
@@ -126,15 +127,12 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
-@Configurable
 public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
     
-    private boolean includeChildObservableProperties;
-
     /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
@@ -1143,16 +1141,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return null;
     }
     
+    protected boolean isIncludeChildObservableProperties(){
+        return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
+    }
     
-    public boolean isIncludeChildObservableProperties() {
-        return includeChildObservableProperties;
-    }
-
-    @Setting(AbstractRequestOperator.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
-    public void setIncludeChildObservableProperties(boolean include) {
-        this.includeChildObservableProperties = include;
-    }
-
     public abstract String addProcedureAlias(Criteria criteria);
     
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session);

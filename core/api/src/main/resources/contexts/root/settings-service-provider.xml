@@ -95,13 +95,44 @@
         <property name="group" ref="serviceProviderSettingsDefitionGroup" />
         <property name="defaultValue" value="TBA" />
     </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.hoursOfService" />
+        <property name="title" value="Hours of service" />
+        <property name="description" value="The hours of service." />
+        <property name="order" value="11.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+       <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.contactInstructions" />
+        <property name="title" value="Contact instructions" />
+        <property name="description" value="The contact instructions" />
+        <property name="order" value="12.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.onlineResource" />
+        <property name="title" value="Online resource" />
+        <property name="description" value="Set the online resource" />
+        <property name="order" value="13.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA|TBA" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.facsimile" />
+        <property name="title" value="Facsimile" />
+        <property name="description" value="Set the facsimile" />
+        <property name="order" value="14.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
     <bean class="org.n52.iceland.config.settings.FileSettingDefinition">
         <property name="key" value="serviceProvider.file" />
         <property name="title" value="Service Provider File" />
         <property name="description" value="The path to a file containing an ows:ServiceProvider overriding the above settings. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/provider.xml&lt;/code&gt;) or a path relative to the web application directory (e.g. &lt;code&gt;WEB-INF/provider.xml&lt;/code&gt;)." />
-        <property name="order" value="11.0" />
+        <property name="order" value="15.0" />
         <property name="optional" value="true" />
         <property name="group" ref="serviceProviderSettingsDefitionGroup" />
     </bean>
-
 </beans>

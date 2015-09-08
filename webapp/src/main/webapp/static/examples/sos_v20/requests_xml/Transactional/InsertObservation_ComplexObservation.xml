@@ -18,9 +18,9 @@
 		<om:OM_Observation gml:id="o1">
 			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation"/>
 			<om:phenomenonTime>
-				<gml:TimePeriod gml:id="phenomenonTime">
+				<gml:TimeInstant gml:id="phenomenonTime">
 					<gml:timePosition>2012-11-19T17:46:15.000+00:00</gml:timePosition>
-				</gml:TimePeriod>
+				</gml:TimeInstant>
 			</om:phenomenonTime>
 			<om:resultTime>
 				<gml:TimeInstant gml:id="resultTime">

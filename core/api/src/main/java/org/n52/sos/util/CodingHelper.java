@@ -40,6 +40,7 @@ import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.coding.decode.OperationDecoderKey;
 import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.iceland.coding.decode.XmlStringOperationDecoderKey;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
@@ -48,6 +49,7 @@ import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.http.MediaTypes;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 
@@ -117,6 +119,24 @@ public final class CodingHelper {
         for (String o : operations) {
             set.add(new OperationDecoderKey(service, version, o, MediaTypes.TEXT_XML));
             set.add(new OperationDecoderKey(service, version, o, MediaTypes.APPLICATION_XML));
+        }
+        return set;
+    }
+    
+    public static Set<DecoderKey> xmlStringDecoderKeysForOperationAndMediaType(String service, String version, Enum<?>... operations) {
+        final HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
+        for (final Enum<?> o : operations) {
+            set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.TEXT_XML));
+            set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.APPLICATION_XML));
+        }
+        return set;
+    }
+
+    public static Set<DecoderKey> xmlStringDecoderKeysForOperationAndMediaType(String service, String version, String... operations) {
+        HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
+        for (String o : operations) {
+            set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.TEXT_XML));
+            set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.APPLICATION_XML));
         }
         return set;
     }

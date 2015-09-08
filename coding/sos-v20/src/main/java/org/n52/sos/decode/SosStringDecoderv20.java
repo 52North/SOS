@@ -38,6 +38,7 @@ import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.coding.decode.AbstractStringRequestDecoder;
 import org.n52.sos.util.CodingHelper;
 
@@ -54,8 +55,8 @@ public class SosStringDecoderv20 extends AbstractStringRequestDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosStringDecoderv20.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
-            .xmlStringDecoderKeysForOperationAndMediaType(
+    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
+            CodingHelper.xmlStringDecoderKeysForOperationAndMediaType(
                     SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                     SosConstants.Operations.GetCapabilities,
                     SosConstants.Operations.GetObservation,
@@ -65,7 +66,10 @@ public class SosStringDecoderv20 extends AbstractStringRequestDecoder {
                     Sos2Constants.Operations.InsertResultTemplate,
                     Sos2Constants.Operations.InsertResult,
                     Sos2Constants.Operations.GetResultTemplate,
-                    SosConstants.Operations.GetResult);
+                    SosConstants.Operations.GetResult),
+            CodingHelper.xmlStringDecoderKeysForOperationAndMediaType(
+                    SosConstants.SOS, null,
+                    SosConstants.Operations.GetCapabilities));
 
     public SosStringDecoderv20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(DECODER_KEYS));

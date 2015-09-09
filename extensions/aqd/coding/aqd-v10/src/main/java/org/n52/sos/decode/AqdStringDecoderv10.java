@@ -41,6 +41,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
+/**
+ * {@link String} decoder for AQD e-Reporting requests
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 5.0.0
+ *
+ */
 public class AqdStringDecoderv10 extends AbstractStringRequestDecoder {
     private static final Logger LOGGER = LoggerFactory.getLogger(AqdStringDecoderv10.class);
 

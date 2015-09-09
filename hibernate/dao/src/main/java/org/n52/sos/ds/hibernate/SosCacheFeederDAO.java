@@ -58,6 +58,7 @@ import org.n52.sos.ds.CacheFeederHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
+import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +82,9 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private FeatureQueryHandler featureQueryHandler;
     private ServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionHolder sessionHolder;
+    
+    @Inject
+    private ObservationSettingProvider observationSettingProvider;
 
     @Inject
     public void setConnectionProvider(ConnectionProvider connectionProvider) {
@@ -96,8 +100,6 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
         this.serviceMetadataRepository = repo;
     }
-
-
 
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {

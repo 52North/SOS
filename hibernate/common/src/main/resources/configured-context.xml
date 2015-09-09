@@ -3,6 +3,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
+    <bean id="observationSettingProvider"
+          class="org.n52.sos.ds.hibernate.util.ObservationSettingProvider" />
+          
     <bean id="procedureI18NDAO"
           class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
 
@@ -57,7 +60,4 @@
     <bean id="hibernateProcedureDescriptionGeneratorFactoryRepository"
           class="org.n52.sos.ds.hibernate.util.procedure.generator.HibernateProcedureDescriptionGeneratorFactoryRepository" />
 
-    <bean id="observationSettingProvider"
-          class="org.n52.sos.ds.hibernate.util.ObservationSettingProvider" />
-          
 </beans>

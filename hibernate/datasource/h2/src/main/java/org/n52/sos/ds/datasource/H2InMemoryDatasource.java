@@ -80,6 +80,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_USERNAME, DEFAULT_USERNAME);
         p.put(HibernateConstants.CONNECTION_PASSWORD, DEFAULT_PASSWORD);
         p.put(HibernateConstants.HBM2DDL_AUTO, HibernateConstants.HBM2DDL_CREATE);
+        p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         addMappingFileDirectories(settings, p);
         return p;
     }
@@ -91,8 +92,10 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<>(2);
+        Map<String, Object> settings = new HashMap<>(4);
         settings.put(getTransactionalDefiniton().getKey(), isTransactional(current));
+        settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
+        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         return settings;
     }
 

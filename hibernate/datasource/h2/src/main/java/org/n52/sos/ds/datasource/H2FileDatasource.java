@@ -100,17 +100,20 @@ public class H2FileDatasource extends AbstractH2Datasource {
         p.put(HibernateConstants.CONNECTION_POOL_SIZE, "1");
         p.put(HibernateConstants.CONNECTION_RELEASE_MODE, HibernateConstants.CONNECTION_RELEASE_MODE_AFTER_TRANSACTION);
         p.put(HibernateConstants.CURRENT_SESSION_CONTEXT, HibernateConstants.THREAD_LOCAL_SESSION_CONTEXT);
+        p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
         addMappingFileDirectories(settings, p);
         return p;
     }
 
     @Override
     public Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<>(2);
+        Map<String, Object> settings = new HashMap<>(5);
         Matcher matcher = JDBC_URL_PATTERN.matcher(current.getProperty(HibernateConstants.CONNECTION_URL));
         matcher.find();
         settings.put(h2Database.getKey(), matcher.group(1));
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
+        settings.put(HIBERNATE_DIRECTORY, current.get(HIBERNATE_DIRECTORY));
+        settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         return settings;
     }
 

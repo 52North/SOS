@@ -86,6 +86,6 @@ public class AdminResetController extends AbstractAdminController {
 
         this.contextSwitcher.reloadContext();
 
-        return new RedirectView(ControllerConstants.Paths.LOGOUT, true);
+        return new RedirectView(ControllerConstants.Paths.ROOT, true);
     }
 }

@@ -79,7 +79,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants {
-	
+    
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
 
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
@@ -266,20 +266,20 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private void addDatabaseConceptMappingDirectory(CustomConfiguration config, Map<String, Object> settings) {
         String concept = (String) settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
-        	String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
-        	concept = DatabaseConcept.SERIES_CONCEPT.name();
-        	if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
-        		concept = DatabaseConcept.EREPORTING_CONCEPT.name();
-        	} else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
-        		concept = DatabaseConcept.OLD_CONCEPT.name();
-        	}
-        	LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
-        			+ " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-        			databaseConceptDefinition.getKey(),
-        			HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-        			concept,
-        			databaseConceptDefinition.getKey(),
-        			concept);
+            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+            concept = DatabaseConcept.SERIES_CONCEPT.name();
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+                concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+                concept = DatabaseConcept.OLD_CONCEPT.name();
+            }
+            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+                    databaseConceptDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+                    concept,
+                    databaseConceptDefinition.getKey(),
+                    concept);
         }
         switch (DatabaseConcept.valueOf(concept)) {
         case SERIES_CONCEPT:
@@ -694,7 +694,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     private String[] concat(String[] first, String[]... rest) {
-		int length = first.length;
+        int length = first.length;
         for (int i = 0; i < rest.length; ++i) {
             length += rest[i].length;
         }
@@ -859,7 +859,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * @throws SQLException If an error occurs while checking catalog/schema
      */
     protected List<String> getQuotedSchemaTableNames(Map<String, Object> settings, Connection conn) throws SQLException {
-    	String catalog = checkCatalog(conn);
+        String catalog = checkCatalog(conn);
         String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
         CustomConfiguration config = getConfig(settings);
         Iterator<Table> tables = config.getTableMappings();

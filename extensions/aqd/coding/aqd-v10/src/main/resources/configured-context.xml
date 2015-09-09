@@ -11,9 +11,9 @@
 
     <!-- Decoder implementations from extensions/aqd/coding/aqd-v10 -->
     <bean class="org.n52.sos.decode.AqdDecoderv10"/>
+    <bean class="org.n52.sos.decode.AqdStringDecoderv10"/>
     <bean class="org.n52.sos.decode.kvp.AqdGetCapabilitiesKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.AqdDescribeSensorKvpDecoder"/>
     <bean class="org.n52.sos.decode.kvp.AqdGetObservationKvpDecoder"/>
-
 
 </beans>

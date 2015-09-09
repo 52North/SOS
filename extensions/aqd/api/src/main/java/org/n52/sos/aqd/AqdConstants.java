@@ -338,6 +338,16 @@ public interface AqdConstants {
     String VAR = "var";
 
     String EXTENSION_FLOW = "flow";
+    
+    /**
+     * the names of the operations supported by all versions of the SOS
+     * specification
+     */
+    enum Operations {
+        GetCapabilities,
+        GetObservation,
+        DescribeSensor
+    }
 
     enum PrimaryObservation {
         Hourly(HOUR),

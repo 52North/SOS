@@ -107,7 +107,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
             while (tables.hasNext()) {
                 Table table = tables.next();
                 if (table.isPhysicalTable()) {
-                    stmt.execute("truncate table " + table.getName());
+                    stmt.execute("truncate table " + table.getQuotedName(new GeoDBDialect()));
                 }
             }
             stmt.execute("set referential_integrity true");

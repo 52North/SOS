@@ -383,7 +383,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             List<SchemaUpdateScript> upSchema =
                     getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
-            return SchemaUpdateScript.toStringArray(upSchema);
+            return checkScriptForDuplicatedEntries(Arrays.asList(SchemaUpdateScript.toStringArray(upSchema)));
         } catch (SQLException ex) {
             throw new ConfigurationError(ex);
         } finally {
@@ -818,7 +818,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         // eliminate duplicated lines while keeping the order
-        Set<String> nonDublicated = Sets.newLinkedHashSet(checkedSchema);
+        return checkScriptForDuplicatedEntries(checkedSchema);
+    }
+    
+    protected String[] checkScriptForDuplicatedEntries(List<String> script) {
+        Set<String> nonDublicated = Sets.newLinkedHashSet(script);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
     }
 

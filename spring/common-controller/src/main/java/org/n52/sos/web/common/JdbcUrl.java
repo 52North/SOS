@@ -36,7 +36,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtils;
 
 import org.n52.iceland.util.Constants;
-import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 
 /**
  * @since 4.0.0
@@ -62,6 +61,12 @@ public class JdbcUrl implements Constants {
 
     private static final int DEFAULT_PORT = 5432;
 
+    private static final String CONNECTION_STRING_PROPERTY = "hibernate.connection.url";
+
+    private static final String USER_PROPERTY = "hibernate.connection.username";
+
+    private static final String PASS_PROPERTY = "hibernate.connection.password";
+    
     private String scheme;
 
     private String type;
@@ -96,19 +101,19 @@ public class JdbcUrl implements Constants {
 
     public Properties toProperties() {
         Properties properties = new Properties();
-        properties.put(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY, getConnectionString());
-        properties.put(DefaultHibernateConstants.USER_PROPERTY, getUser());
-        properties.put(DefaultHibernateConstants.PASS_PROPERTY, getPassword());
+        properties.put(CONNECTION_STRING_PROPERTY, getConnectionString());
+        properties.put(USER_PROPERTY, getUser());
+        properties.put(PASS_PROPERTY, getPassword());
         return properties;
     }
 
     private static String toURI(Properties p) {
         StringBuilder sb = new StringBuilder();
-        sb.append(p.getProperty(DefaultHibernateConstants.CONNECTION_STRING_PROPERTY));
+        sb.append(p.getProperty(CONNECTION_STRING_PROPERTY));
         sb.append(QUERSTIONMARK_CHAR).append(QUERY_PARAMETER_USER).append(EQUAL_SIGN_CHAR)
-                .append(p.getProperty(DefaultHibernateConstants.USER_PROPERTY));
+                .append(p.getProperty(USER_PROPERTY));
         sb.append(AMPERSAND_CHAR).append(QUERY_PARAMETER_PASSWORD).append(EQUAL_SIGN_CHAR)
-                .append(p.getProperty(DefaultHibernateConstants.PASS_PROPERTY));
+                .append(p.getProperty(PASS_PROPERTY));
         return sb.toString();
     }
 

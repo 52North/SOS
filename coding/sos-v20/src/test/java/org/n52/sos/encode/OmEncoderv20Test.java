@@ -185,12 +185,12 @@ public class OmEncoderv20Test {
         return observation;
     }
 
-    @Before
-    public void init() {
-        Configurator configurator = mock(Configurator.class);
-        when(configurator.getProfileHandler()).thenReturn(new DefaultProfileHandler());
-        Configurator.setInstance(configurator);
-    }
+//    @Before
+//    public void init() {
+//        Configurator configurator = mock(Configurator.class);
+//        when(configurator.getProfileHandler()).thenReturn(new DefaultProfileHandler());
+//        Configurator.setInstance(configurator);
+//    }
 
     private class Checker {
         private final NamespaceContext ctx;

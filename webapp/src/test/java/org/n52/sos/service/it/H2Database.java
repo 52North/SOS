@@ -34,6 +34,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.junit.rules.ExternalResource;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;

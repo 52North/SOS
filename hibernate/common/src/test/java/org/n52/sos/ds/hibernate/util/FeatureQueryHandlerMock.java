@@ -77,12 +77,14 @@ public class FeatureQueryHandlerMock implements FeatureQueryHandler {
 
     @Override
     public int getStorageEPSG() {
-        return super.getStorageEPSG();
+//        return super.getStorageEPSG();
+        return 0;
     }
 
     @Override
     public int getStorage3DEPSG() {
-        return super.getStorage3DEPSG();
+//        return super.getStorage3DEPSG();
+        return 0;
     }
     @Override
     public String getDatasourceDaoIdentifier() {

@@ -32,8 +32,8 @@ import java.sql.SQLException;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.UpdateableConnectionProvider;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -59,13 +59,12 @@ public class AdminDatasourceUpdateScriptController extends AbstractController {
     @ResponseBody
     public String getChangeScript() throws ConnectionProviderException, SQLException {
         ConnectionProvider connectionProvider = Configurator.getInstance().getDataConnectionProvider();
-        if (connectionProvider instanceof SessionFactoryProvider) {
-            SessionFactoryProvider sessionFactoryProvider = (SessionFactoryProvider) connectionProvider;
-            String updateScript = sessionFactoryProvider.getUpdateScript();
+        if (connectionProvider instanceof UpdateableConnectionProvider && ((UpdateableConnectionProvider)connectionProvider).supportsUpdateScript()) {
+            String updateScript = ((UpdateableConnectionProvider)connectionProvider).getUpdateScript();
             if (updateScript.isEmpty()) {
                 return "The database is current with the data model. No updates necessary.";
             } else {
-                return sessionFactoryProvider.getUpdateScript();
+                return updateScript;
             }
         } else {
             return "Couldn't generate update script.";

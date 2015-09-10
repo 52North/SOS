@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProviderException;
+import org.n52.iceland.ds.UpdateableConnectionProvider;
 import org.n52.iceland.exception.ConfigurationError;
 
 /**
@@ -60,11 +61,11 @@ import org.n52.iceland.exception.ConfigurationError;
  *
  * @since 4.0.0
  */
-public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
+public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider implements UpdateableConnectionProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
 
-    public String getUpdateScript() throws ConnectionProviderException, SQLException {
+    public String getUpdateScript() throws ConnectionProviderException {
         Configuration configuration = getConfiguration();
         if (configuration == null) {
             throw new ConfigurationError("configuration is null");
@@ -79,14 +80,24 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
         }
         Session session = getConnection();
         Connection conn = ((SessionImplementor) session).connection();
-        DatabaseMetadata databaseMetadata = new DatabaseMetadata(conn, dialect, configuration);
-        String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
-        returnConnection(session);
-        StringBuilder updateSqlString = new StringBuilder();
-        for (String sqlLine : udpateSql) {
-            updateSqlString.append(sqlLine).append(";\n\n");
+       
+        try {
+            DatabaseMetadata databaseMetadata = new DatabaseMetadata(conn, dialect, configuration);
+            String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));
+            returnConnection(session);
+            StringBuilder updateSqlString = new StringBuilder();
+            for (String sqlLine : udpateSql) {
+                updateSqlString.append(sqlLine).append(";\n\n");
+            }
+            return updateSqlString.toString();
+        } catch (SQLException e) {
+          throw new ConnectionProviderException("Error while creating update script!", e);
         }
-        return updateSqlString.toString();
+    }
+
+    @Override
+    public boolean supportsUpdateScript() {
+        return true;
     }
 
     @SuppressWarnings("unchecked")

@@ -37,7 +37,6 @@ import org.n52.sos.cache.InMemoryCacheImpl;
 
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.cache.SosWritableContentCacheImpl;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -56,7 +55,7 @@ public class SosCacheFeederDAOTest extends HibernateTestCase {
 
     @Test
     public void updateCacheFillsCapabilitiesCache() throws OwsExceptionReport {
-        WritableContentCache cache = new InMemoryCacheImpl();
+        SosWritableContentCache cache = new InMemoryCacheImpl();
         instance.updateCache(cache);
         testCacheResult(cache);
     }

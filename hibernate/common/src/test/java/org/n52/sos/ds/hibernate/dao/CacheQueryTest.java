@@ -233,7 +233,7 @@ public class CacheQueryTest extends ExtendedHibernateTestCase {
         } finally {
             returnSession(session);
         }
-//        SettingsManagerI.getInstance().cleanup();
+//        SettingsManager.getInstance().cleanup();
     }
 
     private enum QueryType {

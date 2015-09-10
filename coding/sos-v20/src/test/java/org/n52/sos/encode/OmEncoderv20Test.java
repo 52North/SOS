@@ -29,8 +29,6 @@
 package org.n52.sos.encode;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasXPath;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,24 +47,23 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.w3c.dom.Node;
-
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.iceland.ogc.gml.GmlConstants;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.w3c.W3CConstants;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
@@ -78,7 +75,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.DefaultProfileHandler;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.W3CConstants;
+import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;

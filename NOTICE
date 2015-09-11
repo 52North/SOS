@@ -11,6 +11,7 @@ This project includes:
   52°North Aggregated Third Party modules under GPLv2
   52°North AQD - 1.0 XML Coding under GPLv2
   52°North Iceland under The Apache Software License, Version 2.0
+  52°North Iceland Statistics under The Apache Software License, Version 2.0
   52°North Sensor Observation Service under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
@@ -62,14 +63,11 @@ This project includes:
   52°North SOS - Identifier Modifier Modules under GPLv2
   52°North SOS - JSON Coding under GPLv2
   52°North SOS - JSON Common under GPLv2
-<<<<<<< HEAD
   52°North SOS - KVP Coding under GPLv2
-=======
-  52°North SOS - KVP Binding under GPLv2
   52°North SOS - netCDF under GPLv2
   52°North SOS - netCDF Coding under GPLv2
   52°North SOS - OceanSITES netCDF Coding under GPLv2
->>>>>>> develop
+  52°North SOS - OGC Statistics under GPLv2
   52°North SOS - Operation Request Operators under GPLv2
   52°North SOS - OWS 1.1.0 XML Request Coding under GPLv2
   52°North SOS - Prefixed identifier convert module under GPLv2
@@ -101,14 +99,19 @@ This project includes:
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
+  ANTLR 3 Runtime under BSD licence
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under The Apache Software License, Version 2.0
+  Apache Commons Compress under The Apache Software License, Version 2.0
+  Apache Commons Logging under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
+  ASM Commons under BSD
+  ASM Core under BSD
   Avalon Framework API under The Apache Software License, Version 2.0
   Avalon Framework Implementation under The Apache Software License, Version 2.0
   Batik animation engine under The Apache Software License, Version 2.0
@@ -140,6 +143,7 @@ This project includes:
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Ehcache Core under The Apache Software License, Version 2.0
+  elasticsearch under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   EXIficient under GNU General Public License (GPL), Version 2.0
   FindBugs-Annotations under GNU Lesser Public License
@@ -147,6 +151,7 @@ This project includes:
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic COmmon (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
+  Google HTTP Client Library for Java under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under MPL 2.0, and EPL 1.0
   Hamcrest All under New BSD License
@@ -156,6 +161,7 @@ This project includes:
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate/c3p0 Integration under GNU Lesser General Public License
   HSQLDB under HSQLDB License
+  HttpClient under Apache License
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
@@ -191,7 +197,21 @@ This project includes:
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  Lucene Common Analyzers under Apache 2
+  Lucene Core under Apache 2
+  Lucene Grouping under Apache 2
+  Lucene Highlighter under Apache 2
+  Lucene Join under Apache 2
+  Lucene Memory under Apache 2
+  Lucene Miscellaneous under Apache 2
+  Lucene Queries under Apache 2
+  Lucene QueryParsers under Apache 2
+  Lucene Sandbox under Apache 2
+  Lucene Spatial under Apache 2
+  Lucene Suggest under Apache 2
   Main module under Lesser General Public License (LGPL)
+  MaxMind DB Reader under Apache License 2.0
+  MaxMind GeoIP2 API under Apache License, Version 2.0
   mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under Lesser General Public License (LGPL)
   Mockito under The MIT License
@@ -225,13 +245,9 @@ This project includes:
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Postgis JDBC Driver under GNU Lesser General Public License
-<<<<<<< HEAD
   PostgreSQL JDBC Driver under The PostgreSQL License
-=======
-  PostgreSQL JDBC Driver under BSD License
   Protocol Buffer Java API under New BSD license
   Quartz Enterprise Job Scheduler under Apache 2.0
->>>>>>> develop
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL or The New BSD License
   SaxonB under Mozilla Public License Version 1.0
@@ -241,6 +257,8 @@ This project includes:
   Sensor Web Timeseries API - SPI Impl DAO under GNU General Public License, Version 2.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
+  SnakeYAML under Apache License Version 2.0
+  Spatial4J under The Apache Software License, Version 2.0
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
   Spring Context under The Apache Software License, Version 2.0

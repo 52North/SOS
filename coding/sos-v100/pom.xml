@@ -17,7 +17,7 @@
         </dependency>
         <dependency>
             <groupId>org.n52.iceland</groupId>
-            <artifactId>iceland</artifactId>
+            <artifactId>iceland-core</artifactId>
         </dependency>
         <!-- XML Beans Generated Classes -->
         <dependency>

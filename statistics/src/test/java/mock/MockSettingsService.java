@@ -101,4 +101,10 @@ public class MockSettingsService implements SettingsService {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void reconfigure() {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

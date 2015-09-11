@@ -93,6 +93,7 @@ public class GetObservationResponseDocumentDecoder implements SosResponseDecoder
             for (ObservationData od : gort.getObservationDataArray()) {
                 observations.add((OmObservation)decodeXmlObject(od.getOMObservation()));
             }
+            return observations;
         }
         return Collections.emptyList();
     }

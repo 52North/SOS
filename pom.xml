@@ -76,6 +76,7 @@
 		<sqljdbc4.version>4.0</sqljdbc4.version>
 
 		<!-- 52N dependency versions -->
+		<iceland.version>1.0.0-SNAPSHOT</iceland.version>
 		<n52.common.xml.version>2.1.0</n52.common.xml.version>
 		<!-- Remove third party ncname resolver from SOS and use OXF instead -->
 		<!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
@@ -88,26 +89,26 @@
 		<dependencies>
 			<dependency>
 				<groupId>org.n52.iceland</groupId>
-				<artifactId>iceland-core</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<artifactId>iceland</artifactId>
+				<version>${iceland.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.iceland</groupId>
-				<artifactId>iceland-core</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<artifactId>iceland</artifactId>
+				<version>${iceland.version}</version>
 				<type>test-jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.iceland</groupId>
-				<artifactId>iceland-core</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<artifactId>iceland</artifactId>
+				<version>${iceland.version}</version>
 				<scope>test</scope>
 				<classifier>tests</classifier>
 			</dependency>
 			<dependency>
 				<groupId>org.n52.iceland</groupId>
-				<artifactId>statistics-core</artifactId>
-				<version>1.0.0-SNAPSHOT</version>
+				<artifactId>statistics</artifactId>
+				<version>${iceland.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>

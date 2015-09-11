@@ -48,6 +48,13 @@ No printer friendly documentation exist for this release. Instead, refer to the 
 
 No printer friendly installation guide exist for this release. Instead, refer to the [wiki documentation][5].
 
+### Statistics support
+
+The 52°North SOS supports statistics for requests, processing time of requests, request parameter, and location of clients.
+
+More information about the statistics can be found in the [statisitcs/README.md](statistics documentation).
+
+
 ## Contributing
 
 You are interesting in contributing the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?

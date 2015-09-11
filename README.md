@@ -52,7 +52,7 @@ No printer friendly installation guide exist for this release. Instead, refer to
 
 The 52°North SOS supports statistics for requests, processing time of requests, request parameter, and location of clients.
 
-More information about the statistics can be found in the [statisitcs/README.md](statistics documentation).
+More information about the statistics can be found in the [statistics documentation](statistics/README.md).
 
 
 ## Contributing

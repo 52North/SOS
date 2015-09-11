@@ -98,8 +98,8 @@ In case the webapplication can't connect to your Elasticsearch cluster the stati
 
 ## Parameter
 
-Here you can find the supported parameter: [PARAMETERS.MD](parameter documentation)
+Here you can find the supported parameter: [parameter documentation](PARAMETERS.md)
 
 ## Security
 
-[SECURITY.MD](security documentation)
+Here you can find information about securing the statistics support: [security documentation](SECURITY.md)

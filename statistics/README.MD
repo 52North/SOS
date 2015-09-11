@@ -95,3 +95,11 @@ In case the webapplication can't connect to your Elasticsearch cluster the stati
 
 - This chart describes for how long the requests were running. Most of the execution time were fast less than 100ms but there were some outliers like 900ms.
 ![Execution times](https://wiki.52north.org/pub/Projects/GSoC2015Statistics4Ows/exec-ms-interval.JPG)
+
+## Parameter
+
+Here you can find the supported parameter: [PARAMETERS.MD](parameter documentation)
+
+## Security
+
+[SECURITY.MD](security documentation)

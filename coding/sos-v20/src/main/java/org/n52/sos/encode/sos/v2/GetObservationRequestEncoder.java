@@ -41,6 +41,8 @@ import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.collect.Sets;
 
+import net.opengis.fes.x20.SpatialOpsDocument;
+import net.opengis.fes.x20.TemporalOpsDocument;
 import net.opengis.sos.x20.GetObservationDocument;
 import net.opengis.sos.x20.GetObservationType;
 
@@ -104,7 +106,11 @@ public class GetObservationRequestEncoder extends AbstractSosRequestEncoder<GetO
     private void addTemporalFilter(GetObservationType got, GetObservationRequest request) throws OwsExceptionReport {
         if (request.isSetTemporalFilter()) {
             for (TemporalFilter temporalFilter : request.getTemporalFilters()) {
-                got.addNewTemporalFilter().addNewTemporalOps().set(encodeFes(temporalFilter));
+                // TODO fixme
+                XmlObject encodeFes = encodeFes(temporalFilter);
+                if (encodeFes instanceof TemporalOpsDocument) {
+                    substitute(got.addNewTemporalFilter().addNewTemporalOps(), ((TemporalOpsDocument) encodeFes).getTemporalOps());
+                }
             }
         }
     }
@@ -119,7 +125,11 @@ public class GetObservationRequestEncoder extends AbstractSosRequestEncoder<GetO
 
     private void addSpatialFilter(GetObservationType got, GetObservationRequest request) throws OwsExceptionReport {
         if (request.isSetSpatialFilter()) {
-            got.addNewSpatialFilter().addNewSpatialOps().set(encodeFes(request.getSpatialFilter()));
+            // TODO fixme
+            XmlObject encodeFes = encodeFes(request.getSpatialFilter());
+            if (encodeFes instanceof SpatialOpsDocument) {
+                substitute(got.addNewSpatialFilter().getSpatialOps(), ((SpatialOpsDocument) encodeFes).getSpatialOps());
+            }
         }
     }
 

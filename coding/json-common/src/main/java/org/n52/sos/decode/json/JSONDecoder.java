@@ -30,14 +30,12 @@ package org.n52.sos.decode.json;
 
 import static org.n52.sos.util.DateTimeHelper.parseIsoString2DateTime;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.mozilla.javascript.tools.shell.JSConsole;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.decode.Decoder;
@@ -50,7 +48,6 @@ import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -60,7 +57,6 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
@@ -208,29 +204,5 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
         }
     }
     
-    protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws OwsExceptionReport {
-    	Set<NamedValue<?>> parameters = Sets.newHashSet();
-    	JsonNode parameter = node.path(JSONConstants.PARAMETER);
-    	if (parameter.isArray()) {
-    		for (JsonNode jsonNode : parameter) {
-    			parameters.add(parseNamedValue(jsonNode));
-			}
-    	} else if (parameter.isObject()) {
-    		parameters.add(parseNamedValue(parameter));
-    	}
-		return parameters;
-	}
-
-    private NamedValue<?> parseNamedValue(JsonNode parameter) throws OwsExceptionReport {
-    	JsonNode namedValue = parameter.path(JSONConstants.NAMED_VALUE);
-    	JsonNode name = namedValue.path(JSONConstants.NAME);
-    	if (name.isTextual()) {
-    		
-    	}
-    	T decode = decode(namedValue.path(JSONConstants.VALUE));
-    	
-		return new NamedValue<>();
-	}
-
 	public abstract T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport;
 }

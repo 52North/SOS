@@ -6,8 +6,24 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
-    Release 52n-sensorweb-sos-4.3.3
-==================================
+   Release 52n-sensorweb-sos-4.3.4
+===================================
+
+  --- New features ---
+  
+        * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
+  
+  --- Changes ---
+  
+  
+  --- Fixed issues ---
+  
+      * Issue #320: StackOverflowError in DescribeSensor operation when inserted with relatedFeature
+      * Issue #321: InsertObservation with samplingGeometry om:parameter (OM_SpatialObservation) fails with exception
+      * Issue #322: Missing samplingGeometry (om:parameter) in returned observation
+ 
+   Release 52n-sensorweb-sos-4.3.3
+===================================
 
   --- New features ---
   

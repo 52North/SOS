@@ -2312,6 +2312,62 @@
 
 		},
 		{
+            "service":"SOS",
+            "version":"2.0.0",
+            "method":"POST",
+            "binding": "application/json",
+            "headers":{
+                "Accept":"application/json",
+                "Content-Type":"application/json"
+            },
+            "operation":"GetObservation",
+            "title":"Spatial Filtering Profile",
+            "request":{
+                "request":"GetObservation",
+                "service":"SOS",
+                "version":"2.0.0",
+                "spatialFilter":{
+                    "bbox":{
+                        "ref":"http://www.opengis.net/req/omxml/2.0/data/samplingGeometry",
+                        "value":{
+                            "type":"Polygon",
+                            "coordinates":[
+                                [
+                                    [
+                                        50.0,
+                                        7.0
+                                    ],
+                                    [
+                                        53.0,
+                                        7.0
+                                    ],
+                                    [
+                                        53.0,
+                                        10.0
+                                    ],
+                                    [
+                                        50.0,
+                                        10.0
+                                    ],
+                                    [
+                                        50.0,
+                                        7.0
+                                    ]
+
+                                ]
+
+                            ]
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        },
+		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",

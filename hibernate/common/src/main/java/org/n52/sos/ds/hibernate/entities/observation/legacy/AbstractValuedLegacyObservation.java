@@ -161,6 +161,9 @@ public abstract class AbstractValuedLegacyObservation<T>
         }
         observation.setResultTime(createResutlTime(getResultTime()));
         observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
+        if (hasSamplingGeometry()) {
+        	observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+        }
         addValueSpecificDataToObservation(observation, responseFormat);
         addObservationValueToObservation(observation, value, responseFormat);
         return observation;

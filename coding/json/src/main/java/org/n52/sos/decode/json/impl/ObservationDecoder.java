@@ -28,6 +28,7 @@
  */
 package org.n52.sos.decode.json.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,7 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -63,6 +65,7 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -112,6 +115,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
             o.setValidTime(parseValidTime(node));
             o.setResultTime(parseResultTime(node));
             o.setValue(parseValue(node));
+            o.setParameter(parseParameter(node));
             o.setObservationConstellation(parseObservationConstellation(node));
             return o;
         } else {
@@ -152,7 +156,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return parseTimeInstant(node.path(JSONConstants.RESULT_TIME));
     }
 
-    private Time parsePhenomenonTime(JsonNode node) throws OwsExceptionReport {
+	private Time parsePhenomenonTime(JsonNode node) throws OwsExceptionReport {
         return parseTime(node.path(JSONConstants.PHENOMENON_TIME));
     }
 

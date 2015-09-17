@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate.dao;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -728,8 +727,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     protected void insertParameter(Collection<NamedValue<?>> parameter, AbstractObservation observation,
             Session session) throws OwsExceptionReport {
-        throw new OptionNotSupportedException().at("om:parameter").withMessage(
-                "The om:parameter support is not yet implemented!");
+    	for (NamedValue<?> namedValue : parameter) {
+    		if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+    			throw new OptionNotSupportedException().at("om:parameter").withMessage(
+    	                "The om:parameter support is not yet implemented!");
+    		}
+		}
     }
 
     /**

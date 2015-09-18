@@ -203,9 +203,11 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addSiteCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
                     .getInstance().getSiteDefinition(), OceanSITESConstants.SITE_CODE);
-            return getAttribute(writer, OceanSITESConstants.SITE_CODE);
+            if (exists) {
+                return getAttribute(writer, OceanSITESConstants.SITE_CODE);
+            }
         }
         return null;
     }
@@ -214,9 +216,11 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     protected CDMNode addPlatform(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         // platform_code (RECOMMENDED)
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
+            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
                     .getInstance().getPlatformDefinition(), OceanSITESConstants.PLATFORM_CODE);
-            return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE);
+            if (exists) {
+                return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE); 
+            }
         }
         return super.addPlatform(writer, sensorDataset);
     }

@@ -33,13 +33,19 @@ import java.util.List;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * SOS internal representation of SensorML position
@@ -156,11 +162,24 @@ public class SmlPosition extends SweAbstractDataComponent {
      * @return the position
      */
     public List<SweCoordinate<?>> getPosition() {
-        if (!isSetPosition() && isSetVector() && getVector().isSetCoordinates()) {
-            if (!isSetName() && vector.isSetName()) {
-                setName(vector.getName());
+        if (!isSetPosition()) {
+            if (isSetVector() && getVector().isSetCoordinates()) {
+                if (!isSetName() && vector.isSetName()) {
+                    setName(vector.getName());
+                }
+                return vector.getCoordinates();
+            } else if (isSetAbstractDataComponent() && getAbstractDataComponent() instanceof SweDataRecord) {
+                SweDataRecord dataRecord = (SweDataRecord) getAbstractDataComponent();
+                if (dataRecord.isSetFields()) {
+                    List<SweCoordinate<?>> coordinates = Lists.newArrayList();
+                    for (SweField field : dataRecord.getFields()) {
+                        if (field.getElement() instanceof SweQuantity) {
+                            coordinates.add(new SweCoordinate<Double>(field.getName().getValue(), (SweQuantity)field.getElement()));
+                        }
+                    }
+                    return coordinates;
+                }
             }
-            return vector.getCoordinates();
         }
         return position;
     }
@@ -215,7 +234,7 @@ public class SmlPosition extends SweAbstractDataComponent {
     }
     
     public boolean isSetAbstractDataComponent() {
-        return dataComponent != null && isSetVector();
+        return dataComponent != null || isSetVector();
     }
 
     @Override

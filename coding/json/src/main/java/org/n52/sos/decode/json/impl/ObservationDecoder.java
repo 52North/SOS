@@ -28,6 +28,7 @@
  */
 package org.n52.sos.decode.json.impl;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -40,12 +41,15 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.service.ServiceConstants.ObservationType;
 import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.decode.json.JSONDecodingException;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
@@ -55,6 +59,7 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -62,6 +67,7 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -133,6 +139,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
             o.setValidTime(parseValidTime(node));
             o.setResultTime(parseResultTime(node));
             o.setValue(parseValue(node));
+            o.setParameter(parseParameter(node));
             o.setObservationConstellation(parseObservationConstellation(node));
             return o;
         } else {
@@ -173,10 +180,44 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return parseTimeInstant(node.path(JSONConstants.RESULT_TIME));
     }
 
-    private Time parsePhenomenonTime(JsonNode node) throws OwsExceptionReport {
+	private Time parsePhenomenonTime(JsonNode node) throws OwsExceptionReport {
         return parseTime(node.path(JSONConstants.PHENOMENON_TIME));
     }
 
+	protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws OwsExceptionReport {
+    	Set<NamedValue<?>> parameters = Sets.newHashSet();
+    	JsonNode parameter = node.path(JSONConstants.PARAMETER);
+    	if (parameter.isArray()) {
+    		for (JsonNode jsonNode : parameter) {
+    			parameters.add(parseNamedValue(jsonNode));
+			}
+    	} else if (parameter.isObject()) {
+    		parameters.add(parseNamedValue(parameter));
+    	}
+		return parameters;
+	}
+
+    private NamedValue<?> parseNamedValue(JsonNode parameter) throws OwsExceptionReport {
+    	JsonNode namedValue = parameter.path(JSONConstants.NAMED_VALUE);
+    	NamedValue<?> nv = parseNamedValueValue(parameter);
+    	ReferenceType referenceType = new ReferenceType(namedValue.path(JSONConstants.NAME).asText());
+    	nv.setName(referenceType);
+    	return nv;
+	}
+    
+    private NamedValue<?> parseNamedValueValue(JsonNode namedValue) throws OwsExceptionReport {
+    	JsonNode value = namedValue.path(JSONConstants.VALUE);
+    	if (value.isTextual()) {
+    		NamedValue<W3CHrefAttribute> nv = new NamedValue<W3CHrefAttribute>();
+    		nv.setValue(new HrefAttributeValue(new W3CHrefAttribute(value.asText())));
+            return nv;
+    	} else {
+    		 NamedValue<Geometry> nv = new NamedValue<Geometry>();
+             nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
+             return nv;
+    	}
+    }
+	
     protected AbstractFeature parseFeatureOfInterest(JsonNode node) throws OwsExceptionReport {
         return featureDecoder.decodeJSON(node.path(JSONConstants.FEATURE_OF_INTEREST), false);
     }
@@ -233,4 +274,5 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         GeometryValue v = new GeometryValue(geometryDecoder.decodeJSON(node.path(JSONConstants.RESULT), false));
         return new SingleObservationValue<Geometry>(parsePhenomenonTime(node), v);
     }
+    
 }

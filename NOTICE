@@ -216,7 +216,7 @@ This project includes:
   Metadata under Lesser General Public License (LGPL)
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
-  MySQL java connector under The GNU General Public License, Version 2
+  MySQL Connector/J under The GNU General Public License, Version 2
   NetCDF-Java Library under (MIT-style) netCDF C library license
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0

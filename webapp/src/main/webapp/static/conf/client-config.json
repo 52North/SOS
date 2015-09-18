@@ -1285,253 +1285,6 @@
 			"method":"POST"
 		},
 		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_categoryObservation.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"CategoryObservation",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_allTypes.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"GenericObservation - AllTypes",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_Derwent.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"GenericObservation - Derwent",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_Derwent_2.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"GenericObservation - Derwent 2",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_GenericObs_noIDs.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"GenericObservation - No ID's",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObs_geometry.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"Geometry",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObs_geometry_movingObject.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"Geometry - MovingObject",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_Measurement.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"Measurement",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_4_RegSen_withFOI.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"RegisterSensor - FeatureOfInterest",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_samplingPoint.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"SamplingPoint",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/InsertObservation/InsertObservation_samplingSurface.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"InsertObservation",
-			"title":"SamplingSurface",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_categoryObservation.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"CategoryObservation",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_withFOI.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"FeatureOfInterest",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_geometry.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"Geometry",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_measurement.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"Measurement",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Measurement_Derwent.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"Measurement - Derwent",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_Derwent_2.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"Measurement - Derwent 2",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_allTypes.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"Observation - AllTypes",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_xml/RegisterSensor/RegisterSensor_Observation_noIDs.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/xml",
-			"operation":"RegisterSensor",
-			"title":"Observation - No ID's",
-			"headers":{
-				"Accept":"application/xml",
-				"Content-Type":"application/xml"
-			},
-			"method":"POST"
-		},
-		{
 			"request":"static/examples/sos_v20/requests_xml/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2070,32 +1823,6 @@
 			"binding": "application/soap+xml",
 			"operation":"GetObservationById",
 			"title":"By ID (SOAP 1.2)",
-			"headers":{
-				"Accept":"application/soap+xml",
-				"Content-Type":"application/soap+xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_soap/InsertObservation.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/soap+xml",
-			"operation":"InsertObservation",
-			"title":"SOAP 1.2",
-			"headers":{
-				"Accept":"application/soap+xml",
-				"Content-Type":"application/soap+xml"
-			},
-			"method":"POST"
-		},
-		{
-			"request":"static/examples/sos_v100/requests_soap/RegisterSensor.xml",
-			"service":"SOS",
-			"version":"1.0.0",
-			"binding": "application/soap+xml",
-			"operation":"RegisterSensor",
-			"title":"SOAP 1.2",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -2852,6 +2579,62 @@
 
 		},
 		{
+            "service":"SOS",
+            "version":"2.0.0",
+            "method":"POST",
+            "binding": "application/json",
+            "headers":{
+                "Accept":"application/json",
+                "Content-Type":"application/json"
+            },
+            "operation":"GetObservation",
+            "title":"Spatial Filtering Profile",
+            "request":{
+                "request":"GetObservation",
+                "service":"SOS",
+                "version":"2.0.0",
+                "spatialFilter":{
+                    "bbox":{
+                        "ref":"http://www.opengis.net/req/omxml/2.0/data/samplingGeometry",
+                        "value":{
+                            "type":"Polygon",
+                            "coordinates":[
+                                [
+                                    [
+                                        50.0,
+                                        7.0
+                                    ],
+                                    [
+                                        53.0,
+                                        7.0
+                                    ],
+                                    [
+                                        53.0,
+                                        10.0
+                                    ],
+                                    [
+                                        50.0,
+                                        10.0
+                                    ],
+                                    [
+                                        50.0,
+                                        7.0
+                                    ]
+
+                                ]
+
+                            ]
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+        },
+		{
 			"service":"SOS",
 			"version":"2.0.0",
 			"method":"POST",
@@ -3258,6 +3041,87 @@
 						},
 						"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
 						"procedure":"http://www.52north.org/test/procedure/9",
+						"observedProperty":"http://www.52north.org/test/observableProperty/9_3",
+						"featureOfInterest":{
+							"identifier":{
+								"value":"http://www.52north.org/test/featureOfInterest/9",
+								"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
+							},
+							"name":[
+								{
+									"value":"52°North",
+									"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
+								}
+
+							],
+							"sampledFeature":[
+								"http://www.52north.org/test/featureOfInterest/world"
+							],
+							"geometry":{
+								"type":"Point",
+								"coordinates":[
+									51.935101100104916,
+									7.651968812254194
+								],
+								"crs":{
+									"type":"name",
+									"properties":{
+										"name":"EPSG:4326"
+									}
+
+								}
+
+							}
+
+						},
+						"phenomenonTime":"2012-11-19T17:45:15+00:00",
+						"resultTime":"2012-11-19T17:45:15+00:00",
+						"result":{
+							"uom":"test_unit_9_3",
+							"value":0.28
+						}
+
+					}
+
+				}
+
+			},
+					{
+			"service":"SOS",
+			"version":"2.0.0",
+			"method":"POST",
+			"binding": "application/json",
+			"headers":{
+				"Accept":"application/json",
+				"Content-Type":"application/json"
+			},
+			"operation":"InsertObservation",
+			"title" : "with sampling geometry (SPF)",
+			"request":{
+				"request":"InsertObservation",
+				"service":"SOS",
+				"version":"2.0.0",
+				"offering":"http://www.52north.org/test/offering/9",
+				"observation":
+					{
+						"identifier":{
+							"value":"http://www.52north.org/test/observation/9",
+							"codespace":"http://www.opengis.net/def/nil/OGC/0/unknown"
+						},
+						"type":"http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement",
+						"procedure":"http://www.52north.org/test/procedure/9",
+						"parameter" : {
+				        	"NamedValue" : {
+				          		"name" : "http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry",
+			          			"value" : {
+				            		"type" : "Point",
+				            			"coordinates" : [
+			              					52.9,
+				              				7.52
+				           	 			]
+				          		}
+				        	}
+					    },
 						"observedProperty":"http://www.52north.org/test/observableProperty/9_3",
 						"featureOfInterest":{
 							"identifier":{

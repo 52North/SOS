@@ -1348,7 +1348,10 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         } else if (identifier.startsWith(Constants.HTTP)) {
             splitter = Constants.SLASH_STRING;
         }
-        return identifier.substring(identifier.lastIndexOf(splitter) + 1);
+        if (identifier.lastIndexOf(splitter) < identifier.length()) {
+            return identifier.substring(identifier.lastIndexOf(splitter) + 1);
+        } 
+        return identifier;
     }
 
     protected String makeDateSafe(DateTime dt) {

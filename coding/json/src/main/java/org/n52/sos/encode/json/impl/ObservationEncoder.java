@@ -37,6 +37,7 @@ import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -87,6 +88,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         encodeIdentifier(o, json);
         encodeProcedure(o, json);
         encodeOfferings(o, json);
+        encodeParameter(o, json);
         encodeObservableProperty(o, json);
         encodeFeatureOfInterest(o, json);
         encodePhenomenonTime(o, json);
@@ -107,7 +109,29 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
                  o.getObservationConstellation().getProcedure().getIdentifier());
     }
 
-    private void encodeObservableProperty(OmObservation o, ObjectNode json) {
+    private void encodeParameter(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+		if (o.isSetParameter()) {
+			if (o.getParameter().size() == 1) {
+                json.set(JSONConstants.PARAMETER, encodeNamedValue(o.getParameter().iterator().next()));
+            } else {
+                ArrayNode parameters = json.putArray(JSONConstants.PARAMETER);
+                for (NamedValue<?> namedValue : o.getParameter()) {
+                	parameters.add(encodeNamedValue(namedValue));
+                }
+            }
+		}
+	}
+
+	private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
+		ObjectNode namedValueObject = nodeFactory().objectNode();
+		namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
+		namedValueObject.set(JSONConstants.VALUE, encodeObjectToJson(namedValue.getValue().getValue()));
+		ObjectNode parameterObject = nodeFactory().objectNode();
+		parameterObject.set(JSONConstants.NAMED_VALUE, namedValueObject);
+		return parameterObject;
+	}
+
+	private void encodeObservableProperty(OmObservation o, ObjectNode json) {
         json.put(JSONConstants.OBSERVABLE_PROPERTY, o.getObservationConstellation().getObservableProperty()
                 .getIdentifier());
     }

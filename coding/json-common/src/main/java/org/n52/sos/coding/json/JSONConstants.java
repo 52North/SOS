@@ -375,4 +375,9 @@ public interface JSONConstants {
     String VERSIONS = "versions";
 
     String WITHIN = "within";
+
+	String PARAMETER = "parameter";
+	
+	String NAMED_VALUE = "NamedValue";
+	
 }

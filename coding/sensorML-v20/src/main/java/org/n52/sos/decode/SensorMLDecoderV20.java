@@ -713,7 +713,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             // CodingHelper.decodeXmlElement(pupt.getDataArray1());
         } else if (pupt.isSetDataRecord()) {
             Object decodeXmlElement = CodingHelper.decodeXmlElement(pupt.getDataRecord());
-            if (decodeXmlElement != null && decodeXmlElement instanceof SweVector) {
+            if (decodeXmlElement != null && decodeXmlElement instanceof SweDataRecord) {
                 position.setAbstractDataComponent((SweDataRecord) decodeXmlElement);
             }
             // } else if (pupt.isSetPoint()){

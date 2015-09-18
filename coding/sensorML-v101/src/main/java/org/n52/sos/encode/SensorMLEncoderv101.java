@@ -116,6 +116,8 @@ import net.opengis.sensorML.x101.CharacteristicsDocument.Characteristics;
 import net.opengis.sensorML.x101.ClassificationDocument.Classification;
 import net.opengis.sensorML.x101.ClassificationDocument.Classification.ClassifierList;
 import net.opengis.sensorML.x101.ClassificationDocument.Classification.ClassifierList.Classifier;
+import net.opengis.sensorML.x101.ComponentDocument;
+import net.opengis.sensorML.x101.ComponentType;
 import net.opengis.sensorML.x101.ComponentsDocument.Components;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList.Component;
@@ -281,12 +283,24 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                                     && absProcess instanceof ProcessModel) {
                                 addProcessModelValues((ProcessModelType) member.getProcess(),
                                         (ProcessModel) absProcess);
+                            } else if  (member.getProcess() instanceof ComponentType
+                                    && absProcess instanceof org.n52.sos.ogc.sensorML.Component) {
+                                addComponentValues((ComponentType) member.getProcess(),
+                                        (org.n52.sos.ogc.sensorML.Component) absProcess);
                             }
                         }
                     } else if (sensorDesc instanceof AbstractProcess) {
                         addAbstractProcessValues(member.getProcess(), (AbstractProcess) sensorDesc);
                         if (member.getProcess() instanceof SystemType && sensorDesc instanceof System) {
                             addSystemValues((SystemType) member.getProcess(), (System) sensorDesc);
+                        }  else if (member.getProcess() instanceof ProcessModelType
+                                && sensorDesc instanceof ProcessModel) {
+                            addProcessModelValues((ProcessModelType) member.getProcess(),
+                                    (ProcessModel) sensorDesc);
+                        } else if  (member.getProcess() instanceof ComponentType
+                                && sensorDesc instanceof org.n52.sos.ogc.sensorML.Component) {
+                            addComponentValues((ComponentType) member.getProcess(),
+                                    (org.n52.sos.ogc.sensorML.Component) sensorDesc);
                         }
                     }
                 }
@@ -298,6 +312,8 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                     addSystemValues((SystemType) abstractProcess, (System) sensorDesc);
                 } else if (abstractProcess instanceof ProcessModelType && sensorDesc instanceof ProcessModel) {
                     addProcessModelValues((ProcessModelType) abstractProcess, (ProcessModel) sensorDesc);
+                } else if (abstractProcess instanceof ComponentType && sensorDesc instanceof org.n52.sos.ogc.sensorML.Component) {
+                    addComponentValues((ComponentType)abstractProcess, (org.n52.sos.ogc.sensorML.Component)sensorDesc);
                 }
             }
             return xmlObject;
@@ -335,6 +351,12 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             addAbstractProcessValues(xbProcessModel, processModel);
             addProcessModelValues(xbProcessModel, processModel);
             return xbProcessModel;
+        } else if (sensorDesc instanceof org.n52.sos.ogc.sensorML.Component) {
+            org.n52.sos.ogc.sensorML.Component component = (org.n52.sos.ogc.sensorML.Component)sensorDesc;
+            ComponentDocument cd = ComponentDocument.Factory.newInstance(getOptions());
+            ComponentType ct = cd.addNewComponent();
+            addAbstractProcessValues(ct, component);
+            return ct;
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("The sensor description type is not supported by this service!")
@@ -729,6 +751,26 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
         }
     }
+    
+    private void addComponentValues(final ComponentType ct, final org.n52.sos.ogc.sensorML.Component component) throws OwsExceptionReport {
+        // set inputs
+        if (component.isSetInputs()) {
+            ct.setInputs(createInputs(component.getInputs()));
+        }
+        // set position
+        if (component.isSetPosition()) {
+            ct.setPosition(createPosition(component.getPosition()));
+        }
+        // set location
+        if (component.isSetLocation()) {
+            ct.setSmlLocation(createLocation(component.getLocation()));
+        }
+        // set outputs
+        if (component.isSetOutputs()) {
+            extendOutputs(component);
+            ct.setOutputs(createOutputs(component.getOutputs()));
+        }
+    }
 
     private void extendOutputs(AbstractProcess abstractProcess) {
         if (abstractProcess.isSetPhenomenon()) {
@@ -1095,7 +1137,11 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                                         + "from stored SensorML encoded sensor description with XMLBeans");
                     }
                 } else {
-                    xmlObject = createSensorDescriptionFromObject(sosSMLComponent.getProcess());
+                    if (sosSMLComponent.getProcess() instanceof SensorML) {
+                        xmlObject = createSensorDescriptionFromObject(((SensorML)sosSMLComponent.getProcess()).getMembers().iterator().next());
+                    } else if (sosSMLComponent.getProcess() instanceof AbstractProcess) {
+                        xmlObject = createSensorDescriptionFromObject(sosSMLComponent.getProcess());
+                    }
                 }
                 if (xmlObject != null) {
                     AbstractProcessType xbProcess = null;
@@ -1256,6 +1302,8 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             return SensorMLConstants.SYSTEM_QNAME;
         } else if (type == ProcessModelType.type) {
             return SensorMLConstants.PROCESS_MODEL_QNAME;
+        } else if (type == ComponentType.type) {
+            return SensorMLConstants.COMPONENT_QNAME;
         }
         return SensorMLConstants.ABSTRACT_PROCESS_QNAME;
     }

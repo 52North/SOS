@@ -11,10 +11,10 @@ public class NcNameResolver {
 
     /**
      * Checks whether the supplied String is an NCName (Namespace Classified
-     * Name) as specified at <a
-     * href="http://www.w3.org/TR/REC-xml-names/#NT-NCName">
-     * http://www.w3.org/TR/REC-xml-names/#NT-NCName</a>.
-     * 
+     * Name) as specified at
+     * <a href="http://www.w3.org/TR/REC-xml-names/#NT-NCName"> http://www.w3.
+     * org/TR/REC-xml-names/#NT-NCName</a>.
+     *
      * @param name
      *            the {@link java.lang.String String} to test
      * @return <code>true</code>, if the given {@link java.lang.String String}
@@ -215,8 +215,8 @@ public class NcNameResolver {
      * @param nonNcName
      *            an invalid ncName.
      * @return a valid ncName
-     * @see http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/datatypes.html#NCName
-     * @see http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName
+     * @see <a href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/datatypes.html#NCName" />
+     * @see <a href="http://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-NCName" />
      */
     public static String fixNcName(String nonNcName) {
         if (NcNameResolver.isNCName(nonNcName)) {

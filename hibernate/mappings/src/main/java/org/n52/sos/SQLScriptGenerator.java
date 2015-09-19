@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,10 +50,9 @@ import com.google.common.collect.Lists;
  * Class to generate the create and drop scripts for different databases.
  * Currently supported spatial databases to create scripts - PostgreSQL/PostGIS
  * - Oracle - H2/GeoDB
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
- * 
  */
 public class SQLScriptGenerator {
 

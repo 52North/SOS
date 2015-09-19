@@ -57,7 +57,7 @@ public class ObservationsPostRequestHandler extends RequestHandler {
                 // 3 return response
                 // no interesting content, just check the class to be sure that the insertion was successful
                 // the restful response requires the link to the newly created observation
-            	// FIXME we are always using only the first observation in the list without checking
+                // FIXME we are always using only the first observation in the list without checking
                 return new ObservationsPostResponse(
                         ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
                         ((ObservationsPostRequest) req).getXb_OMObservation());

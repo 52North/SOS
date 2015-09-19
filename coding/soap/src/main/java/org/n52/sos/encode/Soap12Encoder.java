@@ -107,7 +107,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
 
     @Override
     public boolean forceStreaming() {
-    	return false;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

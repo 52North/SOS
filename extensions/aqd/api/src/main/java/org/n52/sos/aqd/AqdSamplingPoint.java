@@ -49,7 +49,7 @@ public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
     private AqdNetwork network;
     
     public AqdSamplingPoint() {
-    	setDefaultElementEncoding(AqdConstants.NS_AQD);
+        setDefaultElementEncoding(AqdConstants.NS_AQD);
     }
     
     /**

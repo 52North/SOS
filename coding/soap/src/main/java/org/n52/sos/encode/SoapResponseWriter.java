@@ -62,7 +62,7 @@ public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
         try {
             t.writeTo(out);
         } catch (SOAPException soapex) {
-        	 throw new NoApplicableCodeException().causedBy(soapex);
+             throw new NoApplicableCodeException().causedBy(soapex);
         }
     }
 

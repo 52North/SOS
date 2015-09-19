@@ -68,113 +68,113 @@ import com.google.common.collect.Lists;
 public class SweCommonDecoderV101Test {
 
 
-	@Test public void
-	should_decode_Count_with_Quality_Text()
-			throws OwsExceptionReport {
-		final CountDocument xbCount = CountDocument.Factory.newInstance();
+    @Test public void
+    should_decode_Count_with_Quality_Text()
+            throws OwsExceptionReport {
+        final CountDocument xbCount = CountDocument.Factory.newInstance();
 
-		final String textValue = "quality-text";
-		xbCount.addNewCount().addNewQuality().addNewText().setValue(textValue);
+        final String textValue = "quality-text";
+        xbCount.addNewCount().addNewQuality().addNewText().setValue(textValue);
 
-		final Object decodedObject = new SweCommonDecoderV101().decode(xbCount);
+        final Object decodedObject = new SweCommonDecoderV101().decode(xbCount);
 
-		assertThat(decodedObject, is(instanceOf(SweCount.class)));
-		final SweCount sweCount = (SweCount) decodedObject;
-		assertThat(sweCount.isSetQuality(), is(true));
-		assertThat(sweCount.getQuality().size(), is(1));
-		assertThat(sweCount.getQuality().iterator().next(), is(instanceOf(SweText.class)));
-		assertThat(((SweText)sweCount.getQuality().iterator().next()).getValue(),is(textValue));
-	}
+        assertThat(decodedObject, is(instanceOf(SweCount.class)));
+        final SweCount sweCount = (SweCount) decodedObject;
+        assertThat(sweCount.isSetQuality(), is(true));
+        assertThat(sweCount.getQuality().size(), is(1));
+        assertThat(sweCount.getQuality().iterator().next(), is(instanceOf(SweText.class)));
+        assertThat(((SweText)sweCount.getQuality().iterator().next()).getValue(),is(textValue));
+    }
 
-	@Test public void
-	should_decode_Quantity_with_Quality_Category()
-			throws OwsExceptionReport {
-		final QuantityDocument xbQuantity = QuantityDocument.Factory.newInstance();
+    @Test public void
+    should_decode_Quantity_with_Quality_Category()
+            throws OwsExceptionReport {
+        final QuantityDocument xbQuantity = QuantityDocument.Factory.newInstance();
 
-		final String categoryValue = "quality-category";
-		xbQuantity.addNewQuantity().addNewQuality().addNewCategory().setValue(categoryValue);
+        final String categoryValue = "quality-category";
+        xbQuantity.addNewQuantity().addNewQuality().addNewCategory().setValue(categoryValue);
 
-		final Object decodedObject = new SweCommonDecoderV101().decode(xbQuantity);
+        final Object decodedObject = new SweCommonDecoderV101().decode(xbQuantity);
 
-		assertThat(decodedObject, is(instanceOf(SweQuantity.class)));
-		final SweQuantity sweQuantity = (SweQuantity) decodedObject;
-		assertThat(sweQuantity.isSetQuality(), is(true));
-		assertThat(sweQuantity.getQuality().size(), is(1));
-		assertThat(sweQuantity.getQuality().iterator().next(), is(instanceOf(SweCategory.class)));
-		assertThat(((SweCategory)sweQuantity.getQuality().iterator().next()).getValue(),is(categoryValue));
-	}
+        assertThat(decodedObject, is(instanceOf(SweQuantity.class)));
+        final SweQuantity sweQuantity = (SweQuantity) decodedObject;
+        assertThat(sweQuantity.isSetQuality(), is(true));
+        assertThat(sweQuantity.getQuality().size(), is(1));
+        assertThat(sweQuantity.getQuality().iterator().next(), is(instanceOf(SweCategory.class)));
+        assertThat(((SweCategory)sweQuantity.getQuality().iterator().next()).getValue(),is(categoryValue));
+    }
 
-	@Test public void
-	should_decode_Category_with_Quality_QuantityRange()
-			throws OwsExceptionReport {
-		final CategoryDocument xbQuantity = CategoryDocument.Factory.newInstance();
+    @Test public void
+    should_decode_Category_with_Quality_QuantityRange()
+            throws OwsExceptionReport {
+        final CategoryDocument xbQuantity = CategoryDocument.Factory.newInstance();
 
-		final Double rangeStart = 1.0;
-		final Double rangeEnd = 2.0;
-		final ArrayList<Double> categoryValue = Lists.newArrayList(rangeStart,rangeEnd);
-		xbQuantity.addNewCategory().addNewQuality().addNewQuantityRange().setValue(categoryValue);
+        final Double rangeStart = 1.0;
+        final Double rangeEnd = 2.0;
+        final ArrayList<Double> categoryValue = Lists.newArrayList(rangeStart,rangeEnd);
+        xbQuantity.addNewCategory().addNewQuality().addNewQuantityRange().setValue(categoryValue);
 
-		final Object decodedObject = new SweCommonDecoderV101().decode(xbQuantity);
+        final Object decodedObject = new SweCommonDecoderV101().decode(xbQuantity);
 
-		assertThat(decodedObject, is(instanceOf(SweCategory.class)));
-		final SweCategory sweCategory = (SweCategory) decodedObject;
-		assertThat(sweCategory.isSetQuality(), is(true));
-		assertThat(sweCategory.getQuality().size(), is(1));
-		assertThat(sweCategory.getQuality().iterator().next(), is(instanceOf(SweQuantityRange.class)));
-		assertThat(((SweQuantityRange)sweCategory.getQuality().iterator().next()).getValue(),is(new RangeValue<Double>(rangeStart, rangeEnd)));
-	}
+        assertThat(decodedObject, is(instanceOf(SweCategory.class)));
+        final SweCategory sweCategory = (SweCategory) decodedObject;
+        assertThat(sweCategory.isSetQuality(), is(true));
+        assertThat(sweCategory.getQuality().size(), is(1));
+        assertThat(sweCategory.getQuality().iterator().next(), is(instanceOf(SweQuantityRange.class)));
+        assertThat(((SweQuantityRange)sweCategory.getQuality().iterator().next()).getValue(),is(new RangeValue<Double>(rangeStart, rangeEnd)));
+    }
 
-	@Test public void
-	should_decode_Boolean_with_Quality_Quantity()
-			throws OwsExceptionReport {
-		final BooleanDocument xbBoolean = BooleanDocument.Factory.newInstance();
+    @Test public void
+    should_decode_Boolean_with_Quality_Quantity()
+            throws OwsExceptionReport {
+        final BooleanDocument xbBoolean = BooleanDocument.Factory.newInstance();
 
-		final double quantityValue = 42.0;
-		xbBoolean.addNewBoolean().addNewQuality().addNewQuantity().setValue(quantityValue);
+        final double quantityValue = 42.0;
+        xbBoolean.addNewBoolean().addNewQuality().addNewQuantity().setValue(quantityValue);
 
-		final Object decodedObject = new SweCommonDecoderV101().decode(xbBoolean);
+        final Object decodedObject = new SweCommonDecoderV101().decode(xbBoolean);
 
-		assertThat(decodedObject, is(instanceOf(SweBoolean.class)));
-		final SweBoolean sweBoolean = (SweBoolean) decodedObject;
-		assertThat(sweBoolean.isSetQuality(), is(true));
-		assertThat(sweBoolean.getQuality().size(), is(1));
-		assertThat(sweBoolean.getQuality().iterator().next(), is(instanceOf(SweQuantity.class)));
-		assertThat(((SweQuantity)sweBoolean.getQuality().iterator().next()).getValue(),is(quantityValue));
-	}
+        assertThat(decodedObject, is(instanceOf(SweBoolean.class)));
+        final SweBoolean sweBoolean = (SweBoolean) decodedObject;
+        assertThat(sweBoolean.isSetQuality(), is(true));
+        assertThat(sweBoolean.getQuality().size(), is(1));
+        assertThat(sweBoolean.getQuality().iterator().next(), is(instanceOf(SweQuantity.class)));
+        assertThat(((SweQuantity)sweBoolean.getQuality().iterator().next()).getValue(),is(quantityValue));
+    }
 
-	@Test public void
-	should_decode_QuantityRange()
-			throws OwsExceptionReport {
-		final QuantityRangeDocument xbQuantityRange = QuantityRangeDocument.Factory.newInstance();
+    @Test public void
+    should_decode_QuantityRange()
+            throws OwsExceptionReport {
+        final QuantityRangeDocument xbQuantityRange = QuantityRangeDocument.Factory.newInstance();
 
-		final ArrayList<Double> values = Lists.newArrayList(1.0,2.0);
-		final QuantityRange xbQuantityRangeType = xbQuantityRange.addNewQuantityRange();
-		xbQuantityRangeType.setValue(values);
-		final String definition = "definition";
-		xbQuantityRangeType.setDefinition(definition);
-		final String axisId = "axis-id";
-		xbQuantityRangeType.setAxisID(axisId);
-		final String description = "description";
-		xbQuantityRangeType.addNewDescription().setStringValue(description);
-		final UomPropertyType xbUom = xbQuantityRangeType.addNewUom();
-		final String uomCode = "uom-code";
-		xbUom.setCode(uomCode);
-		final Object decodedObject = new SweCommonDecoderV101().decode(xbQuantityRange);
+        final ArrayList<Double> values = Lists.newArrayList(1.0,2.0);
+        final QuantityRange xbQuantityRangeType = xbQuantityRange.addNewQuantityRange();
+        xbQuantityRangeType.setValue(values);
+        final String definition = "definition";
+        xbQuantityRangeType.setDefinition(definition);
+        final String axisId = "axis-id";
+        xbQuantityRangeType.setAxisID(axisId);
+        final String description = "description";
+        xbQuantityRangeType.addNewDescription().setStringValue(description);
+        final UomPropertyType xbUom = xbQuantityRangeType.addNewUom();
+        final String uomCode = "uom-code";
+        xbUom.setCode(uomCode);
+        final Object decodedObject = new SweCommonDecoderV101().decode(xbQuantityRange);
 
-		assertThat(decodedObject, is(instanceOf(SweQuantityRange.class)));
-		final SweQuantityRange sweQuantityRange = (SweQuantityRange) decodedObject;
-		assertThat(sweQuantityRange.isSetDefinition(), is(true));
-		assertThat(sweQuantityRange.getDefinition(),is(definition));
-		assertThat(sweQuantityRange.isSetUom(), is(true));
-		assertThat(sweQuantityRange.getUom(), is(uomCode));
-		assertThat(sweQuantityRange.isSetAxisID(), is(true));
-		assertThat(sweQuantityRange.getAxisID(), is(axisId));
-		assertThat(sweQuantityRange.isSetDescription(), is(true));
-		assertThat(sweQuantityRange.getDescription(), is(description));
-		assertThat(sweQuantityRange.isSetValue(), is(true));
-		assertThat(sweQuantityRange.getValue().getRangeStart(), is(values.get(0)));
-		assertThat(sweQuantityRange.getValue().getRangeEnd(), is(values.get(1)));
-	}
+        assertThat(decodedObject, is(instanceOf(SweQuantityRange.class)));
+        final SweQuantityRange sweQuantityRange = (SweQuantityRange) decodedObject;
+        assertThat(sweQuantityRange.isSetDefinition(), is(true));
+        assertThat(sweQuantityRange.getDefinition(),is(definition));
+        assertThat(sweQuantityRange.isSetUom(), is(true));
+        assertThat(sweQuantityRange.getUom(), is(uomCode));
+        assertThat(sweQuantityRange.isSetAxisID(), is(true));
+        assertThat(sweQuantityRange.getAxisID(), is(axisId));
+        assertThat(sweQuantityRange.isSetDescription(), is(true));
+        assertThat(sweQuantityRange.getDescription(), is(description));
+        assertThat(sweQuantityRange.isSetValue(), is(true));
+        assertThat(sweQuantityRange.getValue().getRangeStart(), is(values.get(0)));
+        assertThat(sweQuantityRange.getValue().getRangeEnd(), is(values.get(1)));
+    }
 
    @Test
    public void should_decode_TimeRange() throws OwsExceptionReport {

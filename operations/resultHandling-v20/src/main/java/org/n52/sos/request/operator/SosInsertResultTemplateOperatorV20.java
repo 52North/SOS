@@ -123,8 +123,8 @@ public class SosInsertResultTemplateOperatorV20
         }
         // check for observed character of featureOfInterest
         try {
-	        checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(), 
-	        		Sos2Constants.InsertResultTemplateParams.featureOfInterest);
+            checkReservedCharacter(request.getObservationTemplate().getFeatureOfInterest().getIdentifier(), 
+                    Sos2Constants.InsertResultTemplateParams.featureOfInterest);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

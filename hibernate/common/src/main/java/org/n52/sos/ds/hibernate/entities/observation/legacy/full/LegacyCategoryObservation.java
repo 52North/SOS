@@ -66,10 +66,10 @@ public class LegacyCategoryObservation
         return StringHelper.isNotEmpty(value);
     }
     
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
     public void accept(VoidObservationVisitor visitor)

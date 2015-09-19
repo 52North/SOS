@@ -88,7 +88,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
             Locale language, Session session) {
-    	super(request, language, serviceProvider, session);
+        super(request, language, serviceProvider, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -259,12 +259,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getObservableProperty().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
-        	 OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getObservableProperty());
+             OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getObservableProperty());
 //            final String description = hObservation.getObservableProperty().getDescription();
 //            OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
 //            if (hObservation.getObservableProperty().isSetName()) {
-//            	omObservableProperty.setHumanReadableIdentifier(hObservation.getObservableProperty().getName());
-//            	omObservableProperty.setName(new CodeType(hObservation.getObservableProperty().getName()));
+//                omObservableProperty.setHumanReadableIdentifier(hObservation.getObservableProperty().getName());
+//                omObservableProperty.setName(new CodeType(hObservation.getObservableProperty().getName()));
 //            }
             observedProperties.put(phenID, omObservableProperty);
         }

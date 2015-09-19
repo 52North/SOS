@@ -64,10 +64,10 @@ import org.n52.sos.service.profile.ProfileHandler;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
-	
+    
     public AbstractAqdResponseEncoder(String operation, Class<T> responseType) {
         super(AqdConstants.AQD, AqdConstants.VERSION, operation, AqdConstants.NS_AQD,
-        		AqdConstants.NS_AQD_PREFIX, responseType);
+                AqdConstants.NS_AQD_PREFIX, responseType);
     }
 
     @Override
@@ -75,10 +75,10 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         return Sets.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
     }
     
-	protected EReportingHeader getEReportingHeader(ReportObligationType type)
-			throws CodedException {
-		return ReportObligationRepository.getInstance().createHeader(type);
-	}
+    protected EReportingHeader getEReportingHeader(ReportObligationType type)
+            throws CodedException {
+        return ReportObligationRepository.getInstance().createHeader(type);
+    }
 
     protected Profile getActiveProfile() {
         return ProfileHandler.getInstance().getActiveProfile();
@@ -121,10 +121,10 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
     }
     
     protected AbstractServiceResponse changeResponseServiceVersion(AbstractServiceResponse response) {
-    	response.setService(SosConstants.SOS);
-		response.setVersion(Sos2Constants.SERVICEVERSION);
-		return response;
-	}
+        response.setService(SosConstants.SOS);
+        response.setVersion(Sos2Constants.SERVICEVERSION);
+        return response;
+    }
     
     /**
      * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
@@ -155,15 +155,15 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         return CodingRepository.getInstance().getEncoder(key);
     }
     
-	protected XmlObject encodeWithSosEncoder(T response) throws OwsExceptionReport {
-		Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
-		if (encoder != null) {
-			Object encode = encoder.encode(response);
+    protected XmlObject encodeWithSosEncoder(T response) throws OwsExceptionReport {
+        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
+        if (encoder != null) {
+            Object encode = encoder.encode(response);
             if (encode != null && encode instanceof XmlObject) {
-            	return (XmlObject)encode;
+                return (XmlObject)encode;
             }
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
 }

@@ -74,12 +74,12 @@ public class SOSDispatcherServlet
         return def + " " + com + " " + add;
     }
 
-	protected String getDefaultConfigLocations() {
+    protected String getDefaultConfigLocations() {
         // -> /WEB-INF/dispatcher-servlet.xml
         return XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_PREFIX +
                getNamespace() +
                XmlWebApplicationContext.DEFAULT_CONFIG_LOCATION_SUFFIX;
-	}
+    }
 
     private String getConfigLocation(ServletContext servletContext, String initParamName) {
         String initParam = servletContext.getInitParameter(initParamName);

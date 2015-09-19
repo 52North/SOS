@@ -59,10 +59,10 @@ public class EReportingSweDataArrayObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
     
     
 

@@ -48,7 +48,7 @@ public abstract class SweAbstractSimpleType<T>
         extends SweAbstractDataComponent
         implements Value<T, SweAbstractSimpleType<T>> {
 
-	// TODO quality needs to be a collection
+    // TODO quality needs to be a collection
     private Collection<SweQuality> quality;
 
     /**

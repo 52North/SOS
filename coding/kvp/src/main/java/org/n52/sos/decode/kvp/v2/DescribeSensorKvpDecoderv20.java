@@ -54,7 +54,7 @@ import org.n52.sos.request.DescribeSensorRequest;
  * 
  */
 public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
-	
+    
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 

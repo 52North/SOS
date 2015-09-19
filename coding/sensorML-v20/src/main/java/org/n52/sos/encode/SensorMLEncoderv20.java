@@ -1057,7 +1057,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
     }
     
     private void createTerm(TermType t, Term term) {
-    	t.setLabel(term.getLabel());
+        t.setLabel(term.getLabel());
         if (term.isSetDefinition()) {
             t.setDefinition(term.getDefinition());
         }

@@ -652,7 +652,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
                                 int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 Envelope transformEnvelope =
                                         getGeomtryHandler().transformEnvelope(envelope.toEnvelope(),
-                                        		sourceCrs, targetCrs);
+                                                sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new SosEnvelope(transformEnvelope, targetCrs),
                                                 ProcedureDescriptionSettings.getInstance().getLatLongUom());
@@ -757,12 +757,12 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     @VisibleForTesting
     protected int getCrsFromString(String crs) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(crs) && !"NOT_SET".equalsIgnoreCase(crs)) {
-        	int lastIndex = 0;
-			if (crs.startsWith(Constants.HTTP)) {
-				lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
-			} else if (crs.indexOf(Constants.COLON_STRING) != -1) {
-				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
-			}
+            int lastIndex = 0;
+            if (crs.startsWith(Constants.HTTP)) {
+                lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
+            } else if (crs.indexOf(Constants.COLON_STRING) != -1) {
+                lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
+            }
             try {
                 return Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {

@@ -50,31 +50,31 @@ import org.n52.sos.ogc.swe.SweDataRecord;
  * @since 4.3.0
  */
 public class SensorMLDecoderV20Test extends AbstractBeforeAfterClassSettingsManagerTest {
-	
-	@Test
-	public void shouldDecodeDataInterface() throws OwsExceptionReport{
-		DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
-		SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
-		assertThat(parsedDataInterface, is(notNullValue()));
-	}
-	
-	@Test @Ignore("Activat again and extend while implementing the DataInterface decoding.")
-	public void shouldDecodeDataInterfaceData() throws OwsExceptionReport {
-		DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
-		xbDataInterface.addNewData();
-		SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
-		assertThat(parsedDataInterface.getData(), is(notNullValue()));
-	}
-	
-	@Test @Ignore("Activate again and continue implementation here")
-	public void shouldDecodeDataInterfaceInterfaceParameters() throws OwsExceptionReport {
-		DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
-		DataRecordPropertyType xbInterfaceParameters = xbDataInterface.addNewInterfaceParameters();
-		Field field = xbInterfaceParameters.addNewDataRecord().addNewField();
-		field.setName("test-field-name");
-		SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
-		assertThat(parsedDataInterface.isSetInterfaceParameters(),is(true));
-		assertThat(parsedDataInterface.getInterfaceParameters(), CoreMatchers.isA(SweDataRecord.class));
-	}
+    
+    @Test
+    public void shouldDecodeDataInterface() throws OwsExceptionReport{
+        DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
+        SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
+        assertThat(parsedDataInterface, is(notNullValue()));
+    }
+    
+    @Test @Ignore("Activat again and extend while implementing the DataInterface decoding.")
+    public void shouldDecodeDataInterfaceData() throws OwsExceptionReport {
+        DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
+        xbDataInterface.addNewData();
+        SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
+        assertThat(parsedDataInterface.getData(), is(notNullValue()));
+    }
+    
+    @Test @Ignore("Activate again and continue implementation here")
+    public void shouldDecodeDataInterfaceInterfaceParameters() throws OwsExceptionReport {
+        DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
+        DataRecordPropertyType xbInterfaceParameters = xbDataInterface.addNewInterfaceParameters();
+        Field field = xbInterfaceParameters.addNewDataRecord().addNewField();
+        field.setName("test-field-name");
+        SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
+        assertThat(parsedDataInterface.isSetInterfaceParameters(),is(true));
+        assertThat(parsedDataInterface.getInterfaceParameters(), CoreMatchers.isA(SweDataRecord.class));
+    }
 
 }

@@ -55,8 +55,8 @@ import com.google.common.collect.Lists;
  *
  */
 public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
@@ -211,21 +211,21 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         Map<String, Object> settings = parseDatasourceProperties(properties);
         Connection conn = null;
         Statement stmt = null;
-		try {
-			conn = openConnection(settings);
-			List<String> names = getQuotedSchemaTableNames(settings, conn);
-			if (!names.isEmpty()) {
-				stmt = conn.createStatement();
-				String sql = String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names));
-				LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
-				stmt.execute(sql);
-			}
-		} catch (SQLException ex) {
-			throw new ConfigurationError(ex);
-		} finally {
-			close(stmt);
-			close(conn);
-		}
+        try {
+            conn = openConnection(settings);
+            List<String> names = getQuotedSchemaTableNames(settings, conn);
+            if (!names.isEmpty()) {
+                stmt = conn.createStatement();
+                String sql = String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names));
+                LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
+                stmt.execute(sql);
+            }
+        } catch (SQLException ex) {
+            throw new ConfigurationError(ex);
+        } finally {
+            close(stmt);
+            close(conn);
+        }
     }
 
     @Override

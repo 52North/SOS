@@ -160,8 +160,8 @@ public abstract class AbstractOmObservationCreator {
         String description = observableProperty.getDescription();
         OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
         if (observableProperty.isSetName()) {
-        	omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
-        	addName(omObservableProperty, observableProperty);
+            omObservableProperty.setHumanReadableIdentifier(observableProperty.getName());
+            addName(omObservableProperty, observableProperty);
         }
         return omObservableProperty;
     }

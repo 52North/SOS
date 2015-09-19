@@ -218,7 +218,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         }
 
         if (getCapsType.getExtensionArray() != null && getCapsType.getExtensionArray().length > 0) {
-        	request.setExtensions(parseExtensibleRequestExtension(getCapsType.getExtensionArray()));
+            request.setExtensions(parseExtensibleRequestExtension(getCapsType.getExtensionArray()));
         }
 
         return request;
@@ -263,18 +263,18 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         return getObsRequest;
     }
 
-//	private SwesExtensions parseSwesExtensions(final XmlObject[] extensionArray) throws OwsExceptionReport
-//	{
-//		final SwesExtensions extensions = new SwesExtensions();
-//    	for (final XmlObject xbSwesExtension : extensionArray) {
+//    private SwesExtensions parseSwesExtensions(final XmlObject[] extensionArray) throws OwsExceptionReport
+//    {
+//        final SwesExtensions extensions = new SwesExtensions();
+//        for (final XmlObject xbSwesExtension : extensionArray) {
 //
-//    		final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
-//			if (obj instanceof SwesExtension<?>) {
-//				extensions.addSwesExtension((SwesExtension<?>) obj);
-//    		}
-//		}
-//		return extensions;
-//	}
+//            final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
+//            if (obj instanceof SwesExtension<?>) {
+//                extensions.addSwesExtension((SwesExtension<?>) obj);
+//            }
+//        }
+//        return extensions;
+//    }
 
     /**
      * parses the passes XmlBeans document and creates a SOS

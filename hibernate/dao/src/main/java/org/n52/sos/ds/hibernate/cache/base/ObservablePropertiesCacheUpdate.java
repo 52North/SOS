@@ -82,7 +82,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 boolean isParent = !children.isEmpty();
 
                 if (observableProperty.isSetName()) {
-                	getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
+                    getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
                 }
 
                 if (!observableProperty.isHiddenChild()) {

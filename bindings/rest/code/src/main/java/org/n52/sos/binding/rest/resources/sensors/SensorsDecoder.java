@@ -110,7 +110,7 @@ public class SensorsDecoder extends ResourceDecoder {
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
-    	throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
+        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
                 bindingConstants.getResourceSensors()));
     }
 
@@ -170,7 +170,7 @@ public class SensorsDecoder extends ResourceDecoder {
         }
         
         if (xb_insertionMetadata == null) {
-        	throw new MissingParameterValueException(bindingConstants.getSmlCapabilityInsertMetadataName());
+            throw new MissingParameterValueException(bindingConstants.getSmlCapabilityInsertMetadataName());
         }
         setAdditionalMetadata(insertionMetadata,xb_insertionMetadata);
         
@@ -250,15 +250,15 @@ public class SensorsDecoder extends ResourceDecoder {
     private AbstractSensorML createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws OwsExceptionReport
     {
         // TODO add some error handling
-    	Object decodedObject = CodingHelper.decodeXmlObject(xb_system);
-    	if (decodedObject instanceof AbstractSensorML)
-    	{
-    		return (AbstractSensorML) decodedObject;
-    	}
+        Object decodedObject = CodingHelper.decodeXmlObject(xb_system);
+        if (decodedObject instanceof AbstractSensorML)
+        {
+            return (AbstractSensorML) decodedObject;
+        }
         throw new NoApplicableCodeException().causedBy(
-        		new IllegalArgumentException(
-        				String.format("SystemType '%s' could not be decoded",
-        						decodedObject!=null?decodedObject.getClass().getName():"null")));
+                new IllegalArgumentException(
+                        String.format("SystemType '%s' could not be decoded",
+                                decodedObject!=null?decodedObject.getClass().getName():"null")));
     }
 
     @Override

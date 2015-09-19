@@ -71,10 +71,10 @@ public class GeometryValuedSeriesObservation
         visitor.visit(this);
     }
     
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toText();
+    }
 
     @Override
     public <T> T accept(ValuedObservationVisitor<T> visitor)

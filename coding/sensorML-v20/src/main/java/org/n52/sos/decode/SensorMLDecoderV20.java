@@ -503,11 +503,11 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                 ClassifierListType clt = clpt.getClassifierList();
                 if (CollectionHelper.isNotNullOrEmpty(clt.getClassifierArray()))
                 for (final Classifier c : clt.getClassifierArray()) {
-                	if (c.getTerm() != null) {
-	                    final SmlClassifier smlClassifier = new SmlClassifier();
-	                    parseTerm(c.getTerm(), smlClassifier);
-	                    sosClassifiers.add(smlClassifier);
-                	}
+                    if (c.getTerm() != null) {
+                        final SmlClassifier smlClassifier = new SmlClassifier();
+                        parseTerm(c.getTerm(), smlClassifier);
+                        sosClassifiers.add(smlClassifier);
+                    }
                 }
             }
         }
@@ -515,15 +515,15 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     }
     
     private void parseTerm(TermType t, Term term) {
-    	term.setLabel(t.getLabel());
-    	term.setName(t.getLabel());
-    	if (t.isSetDefinition()) {
-    		term.setDefinition(t.getDefinition());
-    	}
-    	if (t.isSetCodeSpace()) {
-    		term.setCodeSpace(t.getCodeSpace().getHref());
-    	}
-    	term.setValue(t.getValue());
+        term.setLabel(t.getLabel());
+        term.setName(t.getLabel());
+        if (t.isSetDefinition()) {
+            term.setDefinition(t.getDefinition());
+        }
+        if (t.isSetCodeSpace()) {
+            term.setCodeSpace(t.getCodeSpace().getHref());
+        }
+        term.setValue(t.getValue());
     }
 
     /**
@@ -899,7 +899,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return new SmlDataStreamPropertyType();
     }
 
-	/**
+    /**
      * Parse {@link ObservablePropertyType}
      * @param opt Object to parse
      * @return Parsed {@link SweObservableProperty}

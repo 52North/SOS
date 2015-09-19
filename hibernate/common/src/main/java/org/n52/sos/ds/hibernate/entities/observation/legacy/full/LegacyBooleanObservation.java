@@ -65,10 +65,10 @@ public class LegacyBooleanObservation
         this.value = value;
     }
     
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
 
     @Override
     public void accept(VoidObservationVisitor visitor)

@@ -82,8 +82,8 @@ public class EReportingBooleanObservation
         return visitor.visit(this);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
 }

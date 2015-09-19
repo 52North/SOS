@@ -86,8 +86,8 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                         "ResultEncoding element encoding is not supported!");
             }
         } else {
-        	Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
-        	helperValues.put(HelperValues.DOCUMENT, null);
+            Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
+            helperValues.put(HelperValues.DOCUMENT, null);
             XmlObject xml = encodeSwe(helperValues, resultEncoding.getEncoding());
             if (xml instanceof TextEncodingDocument) {
                 xbEncoding = (TextEncodingDocument) xml;
@@ -112,8 +112,8 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                         .withMessage("ResultStructure element encoding is not supported!");
             }
         } else {
-        	Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
-        	helperValues.put(HelperValues.DOCUMENT, null);
+            Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
+            helperValues.put(HelperValues.DOCUMENT, null);
             XmlObject xml = encodeSwe(helperValues, resultStructure.getResultStructure());
             if (xml instanceof DataRecordDocument) {
                 dataRecordDoc = (DataRecordDocument) xml;

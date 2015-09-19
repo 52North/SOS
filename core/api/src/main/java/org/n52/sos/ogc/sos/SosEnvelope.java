@@ -142,39 +142,39 @@ public class SosEnvelope implements Serializable {
         return getEnvelope() != null && !getEnvelope().isNull();
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getEnvelope() == null) ? 0 : getEnvelope().hashCode());
-		result = prime * result + getSrid();
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getEnvelope() == null) ? 0 : getEnvelope().hashCode());
+        result = prime * result + getSrid();
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof SosEnvelope)) {
-			return false;
-		}
-		final SosEnvelope other = (SosEnvelope) obj;
-		if (getEnvelope() == null) {
-			if (other.getEnvelope() != null) {
-				return false;
-			}
-		} else if (!getEnvelope().equals(other.getEnvelope())) {
-			return false;
-		}
-		if (getSrid() != other.getSrid()) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof SosEnvelope)) {
+            return false;
+        }
+        final SosEnvelope other = (SosEnvelope) obj;
+        if (getEnvelope() == null) {
+            if (other.getEnvelope() != null) {
+                return false;
+            }
+        } else if (!getEnvelope().equals(other.getEnvelope())) {
+            return false;
+        }
+        if (getSrid() != other.getSrid()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {

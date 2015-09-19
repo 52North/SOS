@@ -433,16 +433,16 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
             throws OwsExceptionReport {
         final SweBoolean sosBoolean = new SweBoolean();
         if (xbBoolean.isSetDefinition()) {
-        	sosBoolean.setDefinition(xbBoolean.getDefinition());
+            sosBoolean.setDefinition(xbBoolean.getDefinition());
         }
         if (xbBoolean.isSetDescription()) {
-        	sosBoolean.setDescription(xbBoolean.getDescription().getStringValue());
+            sosBoolean.setDescription(xbBoolean.getDescription().getStringValue());
         }
         if (xbBoolean.isSetValue()) {
             sosBoolean.setValue(xbBoolean.getValue());
         }
         if (xbBoolean.isSetQuality()) {
-        	sosBoolean.setQuality(parseQuality(xbBoolean.getQuality()));
+            sosBoolean.setQuality(parseQuality(xbBoolean.getQuality()));
         }
         return sosBoolean;
     }
@@ -456,7 +456,7 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
             sosCategory.setCodeSpace(category.getCodeSpace().getHref());
         }
         if (category.isSetQuality()) {
-        	sosCategory.setQuality(parseQuality(category.getQuality()));
+            sosCategory.setQuality(parseQuality(category.getQuality()));
         }
         return sosCategory;
     }
@@ -501,45 +501,45 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
 
     private SweAbstractSimpleType<RangeValue<Double>> parseQuantityRange(final QuantityRange xbQuantityRange)
             throws OwsExceptionReport {
-    	final SweQuantityRange sosQuantityRange = new SweQuantityRange();
-    	if (xbQuantityRange.isSetAxisID()) {
-    		sosQuantityRange.setAxisID(xbQuantityRange.getAxisID());
-    	}
-    	if (xbQuantityRange.isSetDefinition()) {
-    		sosQuantityRange.setDefinition(xbQuantityRange.getDefinition());
-    	}
-    	if (xbQuantityRange.isSetDescription()) {
-    		sosQuantityRange.setDescription(xbQuantityRange.getDescription().getStringValue());
-    	}
-    	if (xbQuantityRange.isSetUom() && xbQuantityRange.getUom().isSetCode()) {
-    		sosQuantityRange.setUom(xbQuantityRange.getUom().getCode());
-    	}
-    	if (xbQuantityRange.isSetValue()) {
-    		try {
-    			final List<?> value = xbQuantityRange.getValue();
-    			final Double rangeStart = Double.parseDouble(value.get(0).toString());
-    			final Double rangeEnd = Double.parseDouble(value.get(1).toString());
-    			sosQuantityRange.setValue(new RangeValue<Double>(rangeStart, rangeEnd));
-    		}
-    		catch (final NumberFormatException nfe) { throw createParsingException(nfe); }
-    		catch (final NullPointerException e) { throw createParsingException(e); }
-    		catch (final IndexOutOfBoundsException e) { throw createParsingException(e); }
-    	}
-    	if (xbQuantityRange.isSetConstraint()) {
-    		LOGGER.error("Decoding of swe:QuantityRange/swe:constraint is not implemented");
-    	}
-    	if (xbQuantityRange.getQualityArray() != null && xbQuantityRange.getQualityArray().length > 0) {
-    		LOGGER.error("Decoding of swe:QuantityRange/swe:quality is not implemented");
-    	}
-    	return sosQuantityRange;
+        final SweQuantityRange sosQuantityRange = new SweQuantityRange();
+        if (xbQuantityRange.isSetAxisID()) {
+            sosQuantityRange.setAxisID(xbQuantityRange.getAxisID());
+        }
+        if (xbQuantityRange.isSetDefinition()) {
+            sosQuantityRange.setDefinition(xbQuantityRange.getDefinition());
+        }
+        if (xbQuantityRange.isSetDescription()) {
+            sosQuantityRange.setDescription(xbQuantityRange.getDescription().getStringValue());
+        }
+        if (xbQuantityRange.isSetUom() && xbQuantityRange.getUom().isSetCode()) {
+            sosQuantityRange.setUom(xbQuantityRange.getUom().getCode());
+        }
+        if (xbQuantityRange.isSetValue()) {
+            try {
+                final List<?> value = xbQuantityRange.getValue();
+                final Double rangeStart = Double.parseDouble(value.get(0).toString());
+                final Double rangeEnd = Double.parseDouble(value.get(1).toString());
+                sosQuantityRange.setValue(new RangeValue<Double>(rangeStart, rangeEnd));
+            }
+            catch (final NumberFormatException nfe) { throw createParsingException(nfe); }
+            catch (final NullPointerException e) { throw createParsingException(e); }
+            catch (final IndexOutOfBoundsException e) { throw createParsingException(e); }
+        }
+        if (xbQuantityRange.isSetConstraint()) {
+            LOGGER.error("Decoding of swe:QuantityRange/swe:constraint is not implemented");
+        }
+        if (xbQuantityRange.getQualityArray() != null && xbQuantityRange.getQualityArray().length > 0) {
+            LOGGER.error("Decoding of swe:QuantityRange/swe:quality is not implemented");
+        }
+        return sosQuantityRange;
     }
 
-	private CodedException createParsingException(final Exception e) {
-		return new InvalidParameterValueException()
-			.at("QuantityRange")
-			.withMessage("Error when parsing 'swe:QuantityRange/swe:value': It must be of type 'double double!")
-		    .causedBy(e);
-	}
+    private CodedException createParsingException(final Exception e) {
+        return new InvalidParameterValueException()
+            .at("QuantityRange")
+            .withMessage("Error when parsing 'swe:QuantityRange/swe:value': It must be of type 'double double!")
+            .causedBy(e);
+    }
 
     private SweAbstractSimpleType<?> parseText(final Text xbText) {
         final SweText sosText = new SweText();
@@ -585,24 +585,24 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     private Collection<SweQuality> parseQuality(final QualityPropertyType... qualityArray) throws OwsExceptionReport {
-    	if (qualityArray != null && qualityArray.length > 0) {
-    		final ArrayList<SweQuality> sosQualities = Lists.newArrayListWithCapacity(qualityArray.length);
-    		for (final QualityPropertyType quality : qualityArray) {
-				if (quality.isSetQuantity()) {
-					sosQualities.add((SweQuality) parseQuantity(quality.getQuantity()));
-				}
-				else if (quality.isSetQuantityRange()) {
-					sosQualities.add((SweQuality) parseQuantityRange(quality.getQuantityRange()));
-				}
-				else if (quality.isSetCategory()) {
-					sosQualities.add((SweQuality) parseCategory(quality.getCategory()));
-				}
-				else if (quality.isSetText()) {
-					sosQualities.add((SweQuality) parseText(quality.getText()));
-				}
-			}
-    		return sosQualities;
-    	}
+        if (qualityArray != null && qualityArray.length > 0) {
+            final ArrayList<SweQuality> sosQualities = Lists.newArrayListWithCapacity(qualityArray.length);
+            for (final QualityPropertyType quality : qualityArray) {
+                if (quality.isSetQuantity()) {
+                    sosQualities.add((SweQuality) parseQuantity(quality.getQuantity()));
+                }
+                else if (quality.isSetQuantityRange()) {
+                    sosQualities.add((SweQuality) parseQuantityRange(quality.getQuantityRange()));
+                }
+                else if (quality.isSetCategory()) {
+                    sosQualities.add((SweQuality) parseCategory(quality.getCategory()));
+                }
+                else if (quality.isSetText()) {
+                    sosQualities.add((SweQuality) parseText(quality.getText()));
+                }
+            }
+            return sosQualities;
+        }
         return Collections.emptyList();
     }
 

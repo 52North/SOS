@@ -70,13 +70,13 @@ public class SweCount extends SweAbstractSimpleType<Integer> {
         return SweDataComponentType.Count;
     }
 
-	public void increaseCount() {
-		value++;
-	}
+    public void increaseCount() {
+        value++;
+    }
 
-	public void increaseCount(int count) {
-		value += count;
-	}
+    public void increaseCount(int count) {
+        value += count;
+    }
     @Override
     public <T> T accept(SweDataComponentVisitor<T> visitor)
             throws OwsExceptionReport {

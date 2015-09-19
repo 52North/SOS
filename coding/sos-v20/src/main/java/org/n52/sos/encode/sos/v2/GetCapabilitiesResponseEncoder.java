@@ -79,7 +79,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<GetCapabilitiesResponse> {
-	
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCapabilitiesResponseEncoder.class);
 
     public GetCapabilitiesResponseEncoder() {
@@ -90,7 +90,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     protected XmlObject create(GetCapabilitiesResponse response) throws OwsExceptionReport {
         CapabilitiesDocument doc = CapabilitiesDocument.Factory.newInstance(getXmlOptions());
         CapabilitiesType xbCaps = doc.addNewCapabilities();
-		
+        
         if (response.isStatic()) {
             String xml = response.getXmlString();
             LOGGER.trace("Response is static. XML-String:\n{}\n",xml);
@@ -101,7 +101,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
                 throw new XmlDecodingException("Static Capabilities", xml, ex);
             }
         }
-		
+        
         // set version.
         
         
@@ -314,7 +314,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             ContentsType xbContType) throws OwsExceptionReport {
         final ObservationOfferingType xbObsOff = ObservationOfferingType.Factory.newInstance(getXmlOptions());
         
-	SosOffering sosOffering = offering.getOffering();
+    SosOffering sosOffering = offering.getOffering();
         xbObsOff.setIdentifier(sosOffering.getIdentifier());
         if (sosOffering.isSetName()) {
             for (CodeType name : sosOffering.getName()) {

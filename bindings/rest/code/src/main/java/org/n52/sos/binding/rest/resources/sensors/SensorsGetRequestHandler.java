@@ -143,17 +143,17 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
             final SystemType xb_system = (SystemType) xb_sensorML.getSensorML().getMemberArray()[0].getProcess().substitute(SensorMLConstants.SYSTEM_QNAME,SystemType.type);
             return xb_system;
         } catch (final IOException ioe) {
-        	throw logAndCreateException(ioe,String.format("Processing of '%s' failed.",
+            throw logAndCreateException(ioe,String.format("Processing of '%s' failed.",
                     GetSensorByIdResponse.class.getName()));
         } catch (final XmlException xe) {
             throw logAndCreateException(xe,String.format("XML Processing of '%s' failed.",
-    		        GetSensorByIdResponse.class.getName()));
+                    GetSensorByIdResponse.class.getName()));
         }
     }
 
-	private CodedException logAndCreateException(final Exception e, final String exceptionText) throws CodedException
-	{
-		LOGGER.debug(exceptionText);
-		return new NoApplicableCodeException().causedBy(e).withMessage("%s Exception: %s",exceptionText,e.getMessage());
-	}
+    private CodedException logAndCreateException(final Exception e, final String exceptionText) throws CodedException
+    {
+        LOGGER.debug(exceptionText);
+        return new NoApplicableCodeException().causedBy(e).withMessage("%s Exception: %s",exceptionText,e.getMessage());
+    }
 }

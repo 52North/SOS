@@ -73,12 +73,12 @@ public class SweEnvelopeTest {
         assertThat(sweEnvelope.getReferenceFrame(), is(Integer.toString(srid)));
         // x1
         final List<? extends SweCoordinate<?>> lcCoordinates = sweEnvelope.getLowerCorner().getCoordinates();
-		assertThat(((Double) lcCoordinates.get(0).getValue().getValue()).doubleValue(), is(x1));
+        assertThat(((Double) lcCoordinates.get(0).getValue().getValue()).doubleValue(), is(x1));
         // y1
         assertThat(((Double) lcCoordinates.get(1).getValue().getValue()).doubleValue(), is(y1));
         // x2
         final List<? extends SweCoordinate<?>> ucCoordinates = sweEnvelope.getUpperCorner().getCoordinates();
-		assertThat(((Double) ucCoordinates.get(0).getValue().getValue()).doubleValue(), is(x2));
+        assertThat(((Double) ucCoordinates.get(0).getValue().getValue()).doubleValue(), is(x2));
         // y2
         assertThat(((Double) ucCoordinates.get(1).getValue().getValue()).doubleValue(), is(y2));
         // uom

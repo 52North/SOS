@@ -47,8 +47,8 @@ import com.vividsolutions.jts.geom.Point;
  */
 public class FeatureUtil {
     public static Set<Point> getFeaturePoints( Set<SamplingFeature> features ){
-    	Set<Point> featurePoints = new HashSet<Point>();
-    	
+        Set<Point> featurePoints = new HashSet<Point>();
+        
         for( SamplingFeature feature : features ){            
             featurePoints.addAll(getFeaturePoints( feature ));
         }
@@ -98,15 +98,15 @@ public class FeatureUtil {
     }
 
     public static Point clonePoint2d( Point point ){
-    	if( point == null ){
-    		return null;
-    	}
-    	if( Double.isNaN( point.getCoordinate().z ) ){
-    		return point;
-    	}
-    	Point clonedPoint = (Point) point.clone();
-    	clonedPoint.getCoordinate().z = Double.NaN;
-    	return clonedPoint;
+        if( point == null ){
+            return null;
+        }
+        if( Double.isNaN( point.getCoordinate().z ) ){
+            return point;
+        }
+        Point clonedPoint = (Point) point.clone();
+        clonedPoint.getCoordinate().z = Double.NaN;
+        return clonedPoint;
     }
 
     public static boolean equal2d(Point a, Point b){

@@ -65,8 +65,8 @@ import com.google.common.collect.Sets;
  */
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
-	
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
+    
     private static final int INSTANCE = 3;
 
     private static final int DATABASE = 4;
@@ -149,8 +149,8 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     protected StringSettingDefinition createInstanceDefinition(String instanceValue) {
         return new StringSettingDefinition()
-        	.setGroup(BASE_GROUP)
-        	.setOrder(2)
+            .setGroup(BASE_GROUP)
+            .setOrder(2)
             .setKey(INSTANCE_KEY)
             .setTitle(INSTANCE_TITLE)
             .setDescription(INSTANCE_DESCRIPTION)
@@ -220,10 +220,10 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
         builder.append(settings.get(HOST_KEY)).append(Constants.COLON_CHAR);
         builder.append(settings.get(PORT_KEY)).append(Constants.SEMICOLON_CHAR);
         if (settings.containsKey(INSTANCE_KEY) &&
-        		settings.get(INSTANCE_KEY) != null &&
-        		settings.get(INSTANCE_KEY) instanceof String &&
-        		!((String)settings.get(INSTANCE_KEY)).isEmpty()) {
-        	builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
+                settings.get(INSTANCE_KEY) != null &&
+                settings.get(INSTANCE_KEY) instanceof String &&
+                !((String)settings.get(INSTANCE_KEY)).isEmpty()) {
+            builder.append(URL_INSTANCE).append(settings.get(INSTANCE_KEY)).append(Constants.SEMICOLON_CHAR);
         }
         builder.append(URL_DATABASE_NAME).append(settings.get(DATABASE_KEY));
         return builder.toString();
@@ -280,22 +280,22 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
                 // alter table MyOtherTable nocheck constraint all
                 for (String table : names) {
                     statement = statement.append("ALTER TABLE \"")
-                    		.append(table)
-                    		.append("\" NOCHECK CONSTRAINT ALL; ");
+                            .append(table)
+                            .append("\" NOCHECK CONSTRAINT ALL; ");
                 }
                 // delete from MyTable
                 for (String table : names) {
                     statement = statement.append("DELETE from \"")
-                    		.append(table)
-                    		.append("\"; DBCC CHECKIDENT(\"")
+                            .append(table)
+                            .append("\"; DBCC CHECKIDENT(\"")
                             .append(table)
                             .append("\", RESEED, 0); ");
                 }
                 // alter table MyOtherTable check constraint all
                 for (String table : names) {
                     statement = statement.append("ALTER TABLE \"")
-                    		.append(table)
-                    		.append("\" CHECK CONSTRAINT ALL; ");
+                            .append(table)
+                            .append("\" CHECK CONSTRAINT ALL; ");
                 }
                 statement =
                         statement.append("DBCC SHRINKDATABASE (")

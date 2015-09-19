@@ -454,7 +454,7 @@ public class SQLiteCapabilitiesExtensionService
         @Override
         public ListMultiMap<String, OfferingExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
-			final
+            final
             List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class).list();
             final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>(
                     getCache().getOfferings().size());
@@ -489,7 +489,7 @@ public class SQLiteCapabilitiesExtensionService
         @Override
         public ListMultiMap<String, OfferingExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
-			final
+            final
             List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class)
                     .add(eq(OfferingExtensionImpl.ACTIVE, true)).list();
             final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>(
@@ -566,7 +566,7 @@ public class SQLiteCapabilitiesExtensionService
         @Override
         public Map<String, StringBasedCapabilitiesExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
-			final
+            final
             List<CapabilitiesExtensionImpl> extensions = session
                     .createCriteria(CapabilitiesExtensionImpl.class)
                     .add(eq(CapabilitiesExtensionImpl.ACTIVE, true))
@@ -586,7 +586,7 @@ public class SQLiteCapabilitiesExtensionService
         @Override
         public Map<String, StringBasedCapabilitiesExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
-			final
+            final
             List<CapabilitiesExtensionImpl> extensions = session
                     .createCriteria(CapabilitiesExtensionImpl.class).list();
             final HashMap<String, StringBasedCapabilitiesExtension> map =
@@ -670,7 +670,7 @@ public class SQLiteCapabilitiesExtensionService
         @Override
         public Map<String, StaticCapabilities> call(final Session session) {
             @SuppressWarnings("unchecked")
-			final
+            final
             List<StaticCapabilitiesImpl> scs = session.createCriteria(StaticCapabilitiesImpl.class).list();
             final HashMap<String, StaticCapabilities> map = new HashMap<>(scs.size());
             for (final StaticCapabilitiesImpl sc : scs) {

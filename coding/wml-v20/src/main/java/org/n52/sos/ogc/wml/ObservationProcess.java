@@ -108,7 +108,7 @@ public class ObservationProcess extends SosProcedureDescription {
     }
 
     public ObservationProcess setOfferingIdentifiers(final Set<SosOffering> offeringIdentifiers) {
-    	addOfferings(offeringIdentifiers);
+        addOfferings(offeringIdentifiers);
         return this;
     }
 

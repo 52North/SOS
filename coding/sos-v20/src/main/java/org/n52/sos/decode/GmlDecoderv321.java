@@ -457,8 +457,8 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
     }
 
     private org.n52.sos.ogc.gml.ReferenceType parseVerticalDatumPropertyType(VerticalDatumPropertyType vdpt) {
-    	// TODO parse VerticalDatumType 
-    	if (vdpt.isSetHref() && !vdpt.getHref().isEmpty()) {
+        // TODO parse VerticalDatumType 
+        if (vdpt.isSetHref() && !vdpt.getHref().isEmpty()) {
             org.n52.sos.ogc.gml.ReferenceType referenceType =
                     new org.n52.sos.ogc.gml.ReferenceType(vdpt.getHref());
             if (vdpt.isSetTitle() && !vdpt.getTitle().isEmpty()) {
@@ -467,9 +467,9 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             return referenceType;
         }
         return new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
-	}
+    }
 
-	/**
+    /**
      * method parses the passed linearRing(generated thru XmlBEans) and returns
      * a string containing the coordinate values of the passed ring
      *

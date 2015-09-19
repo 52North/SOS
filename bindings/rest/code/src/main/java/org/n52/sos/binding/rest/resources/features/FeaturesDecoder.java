@@ -159,7 +159,7 @@ public class FeaturesDecoder extends ResourceDecoder {
         
         if (!parameterMapValid)
         {
-        	throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
+            throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
         }
         
         return new FeaturesSearchRequest(featureOfInterestRequest,httpRequest.getQueryString());

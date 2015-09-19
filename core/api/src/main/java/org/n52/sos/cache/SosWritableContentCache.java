@@ -760,9 +760,9 @@ public interface SosWritableContentCache
 
     void removeProcedureHumanReadableNameForIdentifier(String identifier);
 
-	void removeOfferingIdentifierForHumanReadableName(String humanReadableName);
+    void removeOfferingIdentifierForHumanReadableName(String humanReadableName);
 
-	void removeOfferingHumanReadableNameForIdentifier(String identifier);
+    void removeOfferingHumanReadableNameForIdentifier(String identifier);
 
     /**
      * Sets the allowed observation types for the specified offering.

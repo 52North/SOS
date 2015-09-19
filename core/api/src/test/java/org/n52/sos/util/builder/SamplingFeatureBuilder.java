@@ -66,7 +66,7 @@ public class SamplingFeatureBuilder {
 
     private String featureType;
 
-	private String name;
+    private String name;
 
     public SamplingFeatureBuilder setIdentifier(String featureIdentifier) {
         this.featureIdentifier = featureIdentifier;
@@ -104,7 +104,7 @@ public class SamplingFeatureBuilder {
             feature.setFeatureType(featureType);
         }
         if (name != null && !name.isEmpty()) {
-        	feature.setName(new CodeType(name));
+            feature.setName(new CodeType(name));
         }
         return feature;
     }
@@ -114,9 +114,9 @@ public class SamplingFeatureBuilder {
         return this;
     }
 
-	public SamplingFeatureBuilder setName(String name) {
-		this.name = name;
-		return this;
-	}
+    public SamplingFeatureBuilder setName(String name) {
+        this.name = name;
+        return this;
+    }
 
 }

@@ -62,23 +62,23 @@ import org.n52.sos.ogc.wml.ObservationProcess;
  *
  */
 public abstract class AbstractWaterMLv20SensorMLConverter
-		implements Converter<SosProcedureDescription, SosProcedureDescription> {
-	
-	protected AbstractProcess convertObservationProcessToAbstractProcess(ObservationProcess observationProcess, AbstractProcess abstractProcess) {
-    	abstractProcess.addIdentifier(createUniqueIDIdentifier(observationProcess.getIdentifier()));
+        implements Converter<SosProcedureDescription, SosProcedureDescription> {
+    
+    protected AbstractProcess convertObservationProcessToAbstractProcess(ObservationProcess observationProcess, AbstractProcess abstractProcess) {
+        abstractProcess.addIdentifier(createUniqueIDIdentifier(observationProcess.getIdentifier()));
         // duration is not valid for validTime element
         observationProcess.getAggregationDuration();
         if (observationProcess.isSetComments()) {
-        	abstractProcess.addDocumentation(convertCommentsToDocumentation(observationProcess.getComments()));
+            abstractProcess.addDocumentation(convertCommentsToDocumentation(observationProcess.getComments()));
         }
         if (observationProcess.isSetInputs()) {
-        	abstractProcess.setInputs(convertObservationProcessInputsToSMLInputs(observationProcess.getInputs()));
+            abstractProcess.setInputs(convertObservationProcessInputsToSMLInputs(observationProcess.getInputs()));
         }
 
         observationProcess.getOriginatingProcess();
         observationProcess.getParameters();
         if (observationProcess.isSetProcessReference()) {
-        	abstractProcess.addDocumentation(convertProcessReferenceToDocumentation(observationProcess
+            abstractProcess.addDocumentation(convertProcessReferenceToDocumentation(observationProcess
                     .getProcessReference()));
         }
         observationProcess.getVerticalDatum();
@@ -202,9 +202,9 @@ public abstract class AbstractWaterMLv20SensorMLConverter
             final NamedValue<String> namedValueProperty = new NamedValue<String>();
             // TODO What to do if optional value is not available?
             final ReferenceType refType = new ReferenceType(
-            		classifier.isSetDefinition()?
-            				classifier.getDefinition():
-            					"http://example.com/error/classfier_definition_not_set");
+                    classifier.isSetDefinition()?
+                            classifier.getDefinition():
+                                "http://example.com/error/classfier_definition_not_set");
             refType.setTitle(classifier.getName());
             namedValueProperty.setName(refType);
             namedValueProperty.setValue(new TextValue(classifier.getValue()));

@@ -102,9 +102,9 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
                         // sections (optional)
                     else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Sections.name())) {
                         request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-    				} 
+                    } 
                         // capabilitiesId (optional; non-standard)
-    			else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
+                else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
                         request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                     } else {
                         exceptions.add(new ParameterNotSupportedException(parameterName));

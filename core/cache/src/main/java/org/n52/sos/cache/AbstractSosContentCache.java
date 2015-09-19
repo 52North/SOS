@@ -825,35 +825,35 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     }
 
     protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
-    	return featureOfInterestIdentifierHumanReadableName.inverse();
+        return featureOfInterestIdentifierHumanReadableName.inverse();
     }
 
     protected Map<String, String> getFeatureOfInterestHumanReadableNameForIdentifier() {
-    	return featureOfInterestIdentifierHumanReadableName;
+        return featureOfInterestIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getObservablePropertyIdentifierForHumanReadableName() {
-    	return observablePropertyIdentifierHumanReadableName.inverse();
+        return observablePropertyIdentifierHumanReadableName.inverse();
     }
 
     protected Map<String, String> getObservablePropertyHumanReadableNameForIdentifier() {
-    	return observablePropertyIdentifierHumanReadableName;
+        return observablePropertyIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getProcedureIdentifierForHumanReadableName() {
-    	return procedureIdentifierHumanReadableName.inverse();
+        return procedureIdentifierHumanReadableName.inverse();
     }
 
     protected Map<String, String> getProcedureHumanReadableNameForIdentifier() {
-    	return procedureIdentifierHumanReadableName;
+        return procedureIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getOfferingIdentifierForHumanReadableName() {
-    	return offeringIdentifierHumanReadableName;
+        return offeringIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
-    	return offeringIdentifierHumanReadableName.inverse();
+        return offeringIdentifierHumanReadableName.inverse();
     }
     
     protected Map<TypeInstance, Set<String>> getTypeIntanceProcedureMap() {
@@ -896,8 +896,8 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-		procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
-		typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
+        procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
+        typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
     }
 
     @Override

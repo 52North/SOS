@@ -660,12 +660,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     protected void insertParameter(Collection<NamedValue<?>> parameter, Observation<?> observation,
             Session session) throws OwsExceptionReport {
-    	for (NamedValue<?> namedValue : parameter) {
-    		if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-    			throw new OptionNotSupportedException().at("om:parameter").withMessage(
-    	                "The om:parameter support is not yet implemented!");
-    		}
-		}
+        for (NamedValue<?> namedValue : parameter) {
+            if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                throw new OptionNotSupportedException().at("om:parameter").withMessage(
+                        "The om:parameter support is not yet implemented!");
+            }
+        }
     }
 
     /**

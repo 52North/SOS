@@ -33,8 +33,8 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferenc
 
 public class EReportingObservationTimeDAO extends SeriesObservationTimeDAO {
 
-	@Override
-	protected Class<?> getObservationTimeClass() {
-		return TemporalReferencedEReportingObservation.class;
-	}
+    @Override
+    protected Class<?> getObservationTimeClass() {
+        return TemporalReferencedEReportingObservation.class;
+    }
 }

@@ -38,11 +38,11 @@ import org.n52.sos.ogc.sensorML.Term;
  */
 public class SmlIdentifier extends Term {
 
-	 /**
+     /**
      * constructor
      */
     public SmlIdentifier() {
-    	
+        
     }
     
     /**

@@ -184,32 +184,32 @@ public class EReportingHeaderEncoderTest {
         validate(header);
     }
 
-	protected void validate(EReportingHeader header) throws XMLStreamException,
-			OwsExceptionReport, IOException, SAXException,
-			MalformedURLException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		new EReportingHeaderEncoder(header).write(baos);
-		System.out.println(baos.toString("UTF-8"));
-//		xmlValidation(baos);
+    protected void validate(EReportingHeader header) throws XMLStreamException,
+            OwsExceptionReport, IOException, SAXException,
+            MalformedURLException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        new EReportingHeaderEncoder(header).write(baos);
+        System.out.println(baos.toString("UTF-8"));
+//        xmlValidation(baos);
 
-	}
+    }
 
-	private void xmlValidation(ByteArrayOutputStream baos)
-			throws XMLStreamException, OwsExceptionReport, IOException,
-			SAXException, MalformedURLException {
-		ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
-		URL schemaFile = new URL(AqdConstants.NS_AQD_SCHEMA);
-		Source xmlFile = new StreamSource(in);
-		SchemaFactory schemaFactory = SchemaFactory
-				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = schemaFactory.newSchema(schemaFile);
-		Validator validator = schema.newValidator();
+    private void xmlValidation(ByteArrayOutputStream baos)
+            throws XMLStreamException, OwsExceptionReport, IOException,
+            SAXException, MalformedURLException {
+        ByteArrayInputStream in = new ByteArrayInputStream(baos.toByteArray());
+        URL schemaFile = new URL(AqdConstants.NS_AQD_SCHEMA);
+        Source xmlFile = new StreamSource(in);
+        SchemaFactory schemaFactory = SchemaFactory
+                .newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = schemaFactory.newSchema(schemaFile);
+        Validator validator = schema.newValidator();
 
-		try {
-			validator.validate(xmlFile);
-		} catch (SAXException e) {
-			Assert.fail(e.getLocalizedMessage());
-		}
-	}
+        try {
+            validator.validate(xmlFile);
+        } catch (SAXException e) {
+            Assert.fail(e.getLocalizedMessage());
+        }
+    }
 
 }

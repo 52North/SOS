@@ -61,10 +61,10 @@ public class EReportingGeometryObservation
         return value != null;
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toText();
+    }
 
     @Override
     public void accept(VoidObservationVisitor visitor)

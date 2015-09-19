@@ -107,32 +107,32 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
         SwesExtensions extensions = new SwesExtensions();
         if (node.isArray()) {
             for (JsonNode n : node) {
-            	SwesExtension extension = parseExtension(n);
-            	if (extension != null) {
-            		extensions.addExtension(extension);
-            	}
+                SwesExtension extension = parseExtension(n);
+                if (extension != null) {
+                    extensions.addExtension(extension);
+                }
             }
         }
         return extensions;
     }
 
     @SuppressWarnings("rawtypes")
-	protected SwesExtension parseExtension(JsonNode node) {
-    	SwesExtension extension = null;
-    	if (node.isObject() && node.has(DEFINITION) && node.has(VALUE)) {
-    		if (node.path("value").isBoolean()) {
+    protected SwesExtension parseExtension(JsonNode node) {
+        SwesExtension extension = null;
+        if (node.isObject() && node.has(DEFINITION) && node.has(VALUE)) {
+            if (node.path("value").isBoolean()) {
                 SwesExtension<SweBoolean> ext = new SwesExtension<>();
                 ext.setDefinition(node.path(DEFINITION).asText())
-					.setValue(new SweBoolean().setValue(node.path(VALUE).asBoolean()));
-    			extension = ext;
-    		} else if (node.path(VALUE).isTextual()) {
+                    .setValue(new SweBoolean().setValue(node.path(VALUE).asBoolean()));
+                extension = ext;
+            } else if (node.path(VALUE).isTextual()) {
                 SwesExtension<SweText> ext = new SwesExtension<>();
                 ext.setDefinition(node.path(DEFINITION).asText())
-					.setValue(new SweText().setValue(node.path(VALUE).asText()));
-    			extension = ext;
-    		}
-    	}
-		return extension;
+                    .setValue(new SweText().setValue(node.path(VALUE).asText()));
+                extension = ext;
+            }
+        }
+        return extension;
     }
 
     protected List<String> parseStringOrStringList(JsonNode node) {

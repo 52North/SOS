@@ -129,7 +129,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
     
     public SosProcedureDescription setFeaturesOfInterest(Collection<String> features) {
-    	getFeaturesOfInterest().clear();
+        getFeaturesOfInterest().clear();
         getFeaturesOfInterest().addAll(features);
         return this;
     }
@@ -153,8 +153,8 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
     
     public SosProcedureDescription setFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
-    	this.featuresOfInterestMap.clear();
-    	this.featuresOfInterestMap.putAll(featuresOfInterestMap);
+        this.featuresOfInterestMap.clear();
+        this.featuresOfInterestMap.putAll(featuresOfInterestMap);
         return this;
     }
     
@@ -185,8 +185,8 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
 
     public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
-    	this.parentProcedures.clear();
-    	addParentProcedures(parentProcedures);
+        this.parentProcedures.clear();
+        addParentProcedures(parentProcedures);
         return this;
     }
     
@@ -267,7 +267,7 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     }
     
     public SosProcedureDescription setPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
-    	getPhenomenon().clear();
+        getPhenomenon().clear();
         getPhenomenon().putAll(phenomenons);
         return this;
     }

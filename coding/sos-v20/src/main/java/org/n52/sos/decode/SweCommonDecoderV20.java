@@ -411,32 +411,32 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     }
 
     private SweQuantityRange parseQuantityRange(final QuantityRangeType quantityRange) throws OwsExceptionReport {
-    	SweQuantityRange sweQuantityRange = new SweQuantityRange();
-    	if (quantityRange.isSetDefinition()) {
-    		sweQuantityRange.setDefinition(quantityRange.getDefinition());
-    	}
-    	if (quantityRange.isSetLabel()) {
-    		sweQuantityRange.setLabel(quantityRange.getLabel());
-    	}
-    	if (!quantityRange.getUom().isNil() && quantityRange.getUom().isSetCode()) {
-    		sweQuantityRange.setUom(quantityRange.getUom().getCode());
-    	}
-    	if (quantityRange.getValue() != null) {
-    		sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
-    	}
+        SweQuantityRange sweQuantityRange = new SweQuantityRange();
+        if (quantityRange.isSetDefinition()) {
+            sweQuantityRange.setDefinition(quantityRange.getDefinition());
+        }
+        if (quantityRange.isSetLabel()) {
+            sweQuantityRange.setLabel(quantityRange.getLabel());
+        }
+        if (!quantityRange.getUom().isNil() && quantityRange.getUom().isSetCode()) {
+            sweQuantityRange.setUom(quantityRange.getUom().getCode());
+        }
+        if (quantityRange.getValue() != null) {
+            sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
+        }
         return sweQuantityRange;
     }
 
     private RangeValue<Double> parseRangeValue(List<?> value) throws CodedException {
-    	if (value == null || value.isEmpty() || value.size() != 2) {
-    		throw new NoApplicableCodeException()
-    			.at("?:QuantityRange/?:value")
-    			.withMessage("The 'swe:value' element of an 'swe:QuantityRange' is not set correctly", "");
-    	}
-		return new RangeValue<Double>(Double.parseDouble(value.get(0).toString()), Double.parseDouble(value.get(1).toString()));
-	}
+        if (value == null || value.isEmpty() || value.size() != 2) {
+            throw new NoApplicableCodeException()
+                .at("?:QuantityRange/?:value")
+                .withMessage("The 'swe:value' element of an 'swe:QuantityRange' is not set correctly", "");
+        }
+        return new RangeValue<Double>(Double.parseDouble(value.get(0).toString()), Double.parseDouble(value.get(1).toString()));
+    }
 
-	private SweText parseText(final TextType xbText) {
+    private SweText parseText(final TextType xbText) {
         final SweText sosText = new SweText();
         if (xbText.isSetValue()) {
             sosText.setValue(xbText.getValue());

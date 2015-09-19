@@ -165,8 +165,8 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
         return CollectionHelper.isNotEmpty(getQualityList());
     }
     
-	@Override
-	public boolean isSetValue() {
-		return getValue() != null && getValue().isSetValue();
-	}
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null && getValue().isSetValue();
+    }
 }

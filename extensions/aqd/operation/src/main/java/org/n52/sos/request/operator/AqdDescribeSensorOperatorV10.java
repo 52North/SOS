@@ -41,55 +41,55 @@ import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 
 public class AqdDescribeSensorOperatorV10
-		extends AbstractAqdRequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
-	private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
+        extends AbstractAqdRequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
+    private static final String OPERATION_NAME = SosConstants.Operations.DescribeSensor.name();
 
-	public AqdDescribeSensorOperatorV10() {
-		super(OPERATION_NAME, DescribeSensorRequest.class);
-	}
+    public AqdDescribeSensorOperatorV10() {
+        super(OPERATION_NAME, DescribeSensorRequest.class);
+    }
 
 
-	@Override
-	public DescribeSensorResponse receive(DescribeSensorRequest request)
-			throws OwsExceptionReport {
-		return (DescribeSensorResponse) changeResponseServiceVersion(getOperationHandler()
-				.getSensorDescription((DescribeSensorRequest) changeRequestServiceVersion(request)));
-	}
+    @Override
+    public DescribeSensorResponse receive(DescribeSensorRequest request)
+            throws OwsExceptionReport {
+        return (DescribeSensorResponse) changeResponseServiceVersion(getOperationHandler()
+                .getSensorDescription((DescribeSensorRequest) changeRequestServiceVersion(request)));
+    }
 
-	@Override
-	protected void checkParameters(DescribeSensorRequest request)
-			throws OwsExceptionReport {
-		CompositeOwsException exceptions = new CompositeOwsException();
-		try {
-			checkServiceParameter(request.getService());
-		} catch (OwsExceptionReport owse) {
-			exceptions.add(owse);
-		}
-		try {
-			checkSingleVersionParameter(request);
-		} catch (OwsExceptionReport owse) {
-			exceptions.add(owse);
-		}
-		try {
-			checkProcedureID(request.getProcedure(),
-					SosConstants.DescribeSensorParams.procedure.name());
-		} catch (OwsExceptionReport owse) {
-			exceptions.add(owse);
-		}
-		try {
-			SosHelper.checkProcedureDescriptionFormat(
-					request.getProcedureDescriptionFormat(),
-					SosConstants.SOS, Sos2Constants.SERVICEVERSION);
-		} catch (OwsExceptionReport owse) {
-			exceptions.add(owse);
-		}
-		// if (sosRequest.isSetValidTime()) {
-		// exceptions.add(new
-		// OptionNotSupportedException().at(Sos2Constants.DescribeSensorParams.validTime)
-		// .withMessage("The requested parameter is not supported by this server!"));
-		// }
-		checkExtensions(request, exceptions);
-		exceptions.throwIfNotEmpty();
-	}
+    @Override
+    protected void checkParameters(DescribeSensorRequest request)
+            throws OwsExceptionReport {
+        CompositeOwsException exceptions = new CompositeOwsException();
+        try {
+            checkServiceParameter(request.getService());
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        try {
+            checkSingleVersionParameter(request);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        try {
+            checkProcedureID(request.getProcedure(),
+                    SosConstants.DescribeSensorParams.procedure.name());
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        try {
+            SosHelper.checkProcedureDescriptionFormat(
+                    request.getProcedureDescriptionFormat(),
+                    SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        // if (sosRequest.isSetValidTime()) {
+        // exceptions.add(new
+        // OptionNotSupportedException().at(Sos2Constants.DescribeSensorParams.validTime)
+        // .withMessage("The requested parameter is not supported by this server!"));
+        // }
+        checkExtensions(request, exceptions);
+        exceptions.throwIfNotEmpty();
+    }
 
 }

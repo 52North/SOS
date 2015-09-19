@@ -267,8 +267,8 @@ public abstract class ResourceEncoder extends RestEncoder {
 
     protected OwsExceptionReport createResponseNotSupportedException(String expectedClassString, Object receivedObject)
     {
-    	return new EncoderResponseUnsupportedException().
-    			withMessage("Received RestResponse is not a '%s' but of type '%s'",
+        return new EncoderResponseUnsupportedException().
+                withMessage("Received RestResponse is not a '%s' but of type '%s'",
                         expectedClassString,
                         receivedObject!=null?receivedObject.getClass().getName():"null");
     }

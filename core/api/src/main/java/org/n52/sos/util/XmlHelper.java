@@ -202,8 +202,8 @@ public final class XmlHelper {
         // Create an XmlOptions instance and set the error listener.
         final LinkedList<XmlError> validationErrors = new LinkedList<XmlError>();
         final XmlOptions validationOptions = new XmlOptions()
-        	.setErrorListener(validationErrors)
-        	.setLoadLineNumbers(XmlOptions.LOAD_LINE_NUMBERS_END_ELEMENT);
+            .setErrorListener(validationErrors)
+            .setLoadLineNumbers(XmlOptions.LOAD_LINE_NUMBERS_END_ELEMENT);
 
         // Validate the GetCapabilitiesRequest XML document
         final boolean isValid = doc.validate(validationOptions);

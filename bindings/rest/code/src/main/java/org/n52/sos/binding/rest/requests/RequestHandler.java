@@ -120,12 +120,12 @@ public abstract class RequestHandler {
         }
     }
 
-	private boolean isOfferingArrayAvailable(final CapabilitiesType xb_capabilities)
-	{
-		return xb_capabilities.getContents() != null &&
-				xb_capabilities.getContents().getContents() != null &&
-				xb_capabilities.getContents().getContents().getOfferingArray() != null;
-	}
+    private boolean isOfferingArrayAvailable(final CapabilitiesType xb_capabilities)
+    {
+        return xb_capabilities.getContents() != null &&
+                xb_capabilities.getContents().getContents() != null &&
+                xb_capabilities.getContents().getContents().getOfferingArray() != null;
+    }
     
     protected ObservationOfferingType getObservationOfferingFromOffering(final Offering xb_offering) throws XmlException, IOException
     {

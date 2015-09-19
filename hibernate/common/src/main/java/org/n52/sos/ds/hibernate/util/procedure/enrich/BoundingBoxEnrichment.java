@@ -52,7 +52,7 @@ import com.google.common.base.Predicate;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class BoundingBoxEnrichment extends SensorMLEnrichment {
-	public static final Predicate<SmlCapabilities> BBOX_PREDICATE =
+    public static final Predicate<SmlCapabilities> BBOX_PREDICATE =
             SmlCapabilitiesPredicates.name(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX);
 
     @Override

@@ -463,13 +463,13 @@ public interface HibernateRelations {
     }
     
     
-	interface GetStringValue {
-		
-		 boolean isSetValue();
-		
-		String getValueAsString();
-		
-	}
+    interface GetStringValue {
+        
+         boolean isSetValue();
+        
+        String getValueAsString();
+        
+    }
 
     interface HasValue<T> extends GetStringValue {
         String VALUE = "value";

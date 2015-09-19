@@ -73,7 +73,7 @@ import org.n52.sos.util.XmlHelper;
  */
 public class ObservationsDecoder extends ResourceDecoder {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsDecoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsDecoder.class);
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
@@ -188,8 +188,8 @@ public class ObservationsDecoder extends ResourceDecoder {
             }
         }
         String errorMsg = String.format(bindingConstants.getErrorMessageHttpMethodNotAllowedForResource(),
-        		"POST",
-        		bindingConstants.getResourceObservations());
+                "POST",
+                bindingConstants.getResourceObservations());
         LOGGER.error(errorMsg);
         throw new OperationNotSupportedException("HTTP POST").withMessage(errorMsg);
     }
@@ -228,7 +228,7 @@ public class ObservationsDecoder extends ResourceDecoder {
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
-    	throw new OperationNotSupportedException(String.format("HTTP-PUT + '%s'",
+        throw new OperationNotSupportedException(String.format("HTTP-PUT + '%s'",
                 bindingConstants.getResourceObservations()));
     }
 
@@ -319,7 +319,7 @@ public class ObservationsDecoder extends ResourceDecoder {
         }
         if (!parameterMapValid)
         {
-        	throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
+            throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
         }
         return request;
     }
@@ -332,28 +332,28 @@ public class ObservationsDecoder extends ResourceDecoder {
         request.setObservationIdentifier(observationIds);
         request.setService(bindingConstants.getSosService());
         request.setVersion(bindingConstants.getSosVersion());
-		Extensions extensions = createSubsettingExtension(true);
-		request.setExtensions(extensions);
+        Extensions extensions = createSubsettingExtension(true);
+        request.setExtensions(extensions);
         return request;
     }
 
-	private Extensions createSubsettingExtension(boolean enabled)
-	{
-		Boolean value = enabled?Boolean.TRUE:Boolean.FALSE;
+    private Extensions createSubsettingExtension(boolean enabled)
+    {
+        Boolean value = enabled?Boolean.TRUE:Boolean.FALSE;
 
-		Extensions extensions = new Extensions();
+        Extensions extensions = new Extensions();
         SwesExtension<Boolean> antiSubsettingExtension = new SwesExtension<>();
         antiSubsettingExtension.setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
         antiSubsettingExtension.setValue(value);
         extensions.addExtension(antiSubsettingExtension);
 
-		return extensions;
-	}
+        return extensions;
+    }
 
     private OmObservation createSosObservationFromOMObservation(OMObservationType omObservation) throws OwsExceptionReport
     {
-    	Object decodedObject = CodingHelper.decodeXmlObject(omObservation);
-    	if (decodedObject != null && decodedObject instanceof OmObservation) {
+        Object decodedObject = CodingHelper.decodeXmlObject(omObservation);
+        if (decodedObject != null && decodedObject instanceof OmObservation) {
             OmObservation sosObservation = (OmObservation) decodedObject;
             return sosObservation;
         } else {

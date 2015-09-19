@@ -50,9 +50,9 @@ public class SmlClassifier extends Term {
      * constructor
      */
     public SmlClassifier() {
-    	
+        
     }
-    		
+            
     /**
      * constructor
      * 

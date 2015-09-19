@@ -465,75 +465,75 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
 
     @Test public void
     should_encode_count_with_quality_text()
-    		throws OwsExceptionReport {
-    	final String qualityTextValue = "quality-text-value";
-		final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweText().setValue(qualityTextValue)));
+            throws OwsExceptionReport {
+        final String qualityTextValue = "quality-text-value";
+        final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweText().setValue(qualityTextValue)));
 
 
-		final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
+        final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
 
-		assertThat(encode, instanceOf(Count.class));
+        assertThat(encode, instanceOf(Count.class));
 
-		final Count xbCount = (Count) encode;
-		assertThat(xbCount.getQualityArray(), is(not(nullValue())));
-		assertThat(xbCount.getQualityArray().length, is(1));
-		assertThat(xbCount.getQualityArray(0).isSetText(), is(true));
-		assertThat(xbCount.getQualityArray(0).getText().getValue(),is(qualityTextValue));
+        final Count xbCount = (Count) encode;
+        assertThat(xbCount.getQualityArray(), is(not(nullValue())));
+        assertThat(xbCount.getQualityArray().length, is(1));
+        assertThat(xbCount.getQualityArray(0).isSetText(), is(true));
+        assertThat(xbCount.getQualityArray(0).getText().getValue(),is(qualityTextValue));
     }
 
     @Test public void
     should_encode_count_with_quality_Category()
-    		throws OwsExceptionReport {
-    	final String qualityCategoryValue = "quality-category-value";
-		final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweCategory().setValue(qualityCategoryValue)));
+            throws OwsExceptionReport {
+        final String qualityCategoryValue = "quality-category-value";
+        final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweCategory().setValue(qualityCategoryValue)));
 
 
-		final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
+        final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
 
-		assertThat(encode, instanceOf(Count.class));
+        assertThat(encode, instanceOf(Count.class));
 
-		final Count xbCount = (Count) encode;
-		assertThat(xbCount.getQualityArray(), is(not(nullValue())));
-		assertThat(xbCount.getQualityArray().length, is(1));
-		assertThat(xbCount.getQualityArray(0).isSetCategory(), is(true));
-		assertThat(xbCount.getQualityArray(0).getCategory().getValue(),is(qualityCategoryValue));
+        final Count xbCount = (Count) encode;
+        assertThat(xbCount.getQualityArray(), is(not(nullValue())));
+        assertThat(xbCount.getQualityArray().length, is(1));
+        assertThat(xbCount.getQualityArray(0).isSetCategory(), is(true));
+        assertThat(xbCount.getQualityArray(0).getCategory().getValue(),is(qualityCategoryValue));
     }
 
     @Test public void
     should_encode_count_with_quality_Quantity()
-    		throws OwsExceptionReport {
-    	final double qualityQuantityValue = 42.0;
-		final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweQuantity().setValue(qualityQuantityValue)));
+            throws OwsExceptionReport {
+        final double qualityQuantityValue = 42.0;
+        final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweQuantity().setValue(qualityQuantityValue)));
 
 
-		final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
+        final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
 
-		assertThat(encode, instanceOf(Count.class));
+        assertThat(encode, instanceOf(Count.class));
 
-		final Count xbCount = (Count) encode;
-		assertThat(xbCount.getQualityArray(), is(not(nullValue())));
-		assertThat(xbCount.getQualityArray().length, is(1));
-		assertThat(xbCount.getQualityArray(0).isSetQuantity(), is(true));
-		assertThat(xbCount.getQualityArray(0).getQuantity().getValue(),is(qualityQuantityValue));
+        final Count xbCount = (Count) encode;
+        assertThat(xbCount.getQualityArray(), is(not(nullValue())));
+        assertThat(xbCount.getQualityArray().length, is(1));
+        assertThat(xbCount.getQualityArray(0).isSetQuantity(), is(true));
+        assertThat(xbCount.getQualityArray(0).getQuantity().getValue(),is(qualityQuantityValue));
     }
 
     @Test public void
     should_encode_count_with_quality_QuantityRange()
-    		throws OwsExceptionReport {
-    	final RangeValue<Double> qualityQuantityRangeValue = new RangeValue<Double>(1.0, 2.0);
-		final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweQuantityRange().setValue(qualityQuantityRangeValue)));
+            throws OwsExceptionReport {
+        final RangeValue<Double> qualityQuantityRangeValue = new RangeValue<Double>(1.0, 2.0);
+        final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweQuantityRange().setValue(qualityQuantityRangeValue)));
 
 
-		final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
+        final XmlObject encode = new SweCommonEncoderv101().encode(sosCount);
 
-		assertThat(encode, instanceOf(Count.class));
+        assertThat(encode, instanceOf(Count.class));
 
-		final Count xbCount = (Count) encode;
-		assertThat(xbCount.getQualityArray(), is(not(nullValue())));
-		assertThat(xbCount.getQualityArray().length, is(1));
-		assertThat(xbCount.getQualityArray(0).isSetQuantityRange(), is(true));
-		assertThat((Double)xbCount.getQualityArray(0).getQuantityRange().getValue().get(0),is(qualityQuantityRangeValue.getRangeStart()));
-		assertThat((Double)xbCount.getQualityArray(0).getQuantityRange().getValue().get(1),is(qualityQuantityRangeValue.getRangeEnd()));
+        final Count xbCount = (Count) encode;
+        assertThat(xbCount.getQualityArray(), is(not(nullValue())));
+        assertThat(xbCount.getQualityArray().length, is(1));
+        assertThat(xbCount.getQualityArray(0).isSetQuantityRange(), is(true));
+        assertThat((Double)xbCount.getQualityArray(0).getQuantityRange().getValue().get(0),is(qualityQuantityRangeValue.getRangeStart()));
+        assertThat((Double)xbCount.getQualityArray(0).getQuantityRange().getValue().get(1),is(qualityQuantityRangeValue.getRangeEnd()));
     }
 
     @Test
@@ -584,7 +584,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
         assertThat(ucY.getQuantity().getUom().getCode(), is(uom));
         assertThat(ucY.getQuantity().getValue(), is(x2));
 
-		assertThat(xbEnvelope.isSetReferenceFrame(), is(true));
-		assertThat(xbEnvelope.getReferenceFrame(), is(""+srid));
+        assertThat(xbEnvelope.isSetReferenceFrame(), is(true));
+        assertThat(xbEnvelope.getReferenceFrame(), is(""+srid));
     }
 }

@@ -127,7 +127,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private boolean includeChildObservableProperties;
     
 
-	private final String service;
+    private final String service;
 
     public AbstractRequestOperator(String service,
                                    String version,

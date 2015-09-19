@@ -188,7 +188,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         if (!parameterValue.isEmpty() && (parameterValue.split(",").length == 1)) {
             return parameterValue;
         } else {
-        	final InvalidParameterValueException ipve = new InvalidParameterValueException(parameterName, parameterValue); 
+            final InvalidParameterValueException ipve = new InvalidParameterValueException(parameterName, parameterValue); 
             LOGGER.debug(ipve.getMessage());
             throw ipve;
         }
@@ -225,8 +225,8 @@ public abstract class ResourceDecoder extends RestDecoder {
         final List<TemporalFilter> filterList = new ArrayList<TemporalFilter>(1);
         if (parameterValues.size() != 2) {
             throw new InvalidParameterValueException(
-            		bindingConstants.getHttpGetParameterNameTemporalFilter(),
-            		Arrays.toString(parameterValues.toArray()));
+                    bindingConstants.getHttpGetParameterNameTemporalFilter(),
+                    Arrays.toString(parameterValues.toArray()));
         }
         filterList.add(createTemporalFilterFromValue(parameterValues.get(1), parameterValues.get(0)));
         return filterList;
@@ -238,35 +238,35 @@ public abstract class ResourceDecoder extends RestDecoder {
      * TODO move to KVP map decoder to share code
      */
     private TemporalFilter createTemporalFilterFromValue(final String value, final String valueReference) throws DateTimeException, InvalidParameterValueException {
-    	final TemporalFilter temporalFilter = new TemporalFilter();
-    	temporalFilter.setValueReference(valueReference);
-    	final String[] times = value.split("/");
+        final TemporalFilter temporalFilter = new TemporalFilter();
+        temporalFilter.setValueReference(valueReference);
+        final String[] times = value.split("/");
 
-    	if (times.length == 1) {
-    		final TimeInstant ti = new TimeInstant();
-    		if (ExtendedIndeterminateTime.contains(times[0])) {
-    		    ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
-    		} else {
-    			final DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
-    			ti.setValue(instant);
+        if (times.length == 1) {
+            final TimeInstant ti = new TimeInstant();
+            if (ExtendedIndeterminateTime.contains(times[0])) {
+                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
+            } else {
+                final DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                ti.setValue(instant);
                 ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(times[0]));
-    		}
-    		temporalFilter.setOperator(TimeOperator.TM_Equals);
-    		temporalFilter.setTime(ti);
-    	} else if (times.length == 2) {
-    		final DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
-    		// check if end time is a full ISO 8106 string
+            }
+            temporalFilter.setOperator(TimeOperator.TM_Equals);
+            temporalFilter.setTime(ti);
+        } else if (times.length == 2) {
+            final DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+            // check if end time is a full ISO 8106 string
             int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
             DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
             DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
                     origEnd, timeLength);
-    		final TimePeriod tp = new TimePeriod(start, end);
-    		temporalFilter.setOperator(TimeOperator.TM_During);
-    		temporalFilter.setTime(tp);
-    	} else {
-    		throw new InvalidParameterValueException(bindingConstants.getHttpGetParameterNameTemporalFilter(),value);
-    	}
-    	return temporalFilter;
+            final TimePeriod tp = new TimePeriod(start, end);
+            temporalFilter.setOperator(TimeOperator.TM_During);
+            temporalFilter.setTime(tp);
+        } else {
+            throw new InvalidParameterValueException(bindingConstants.getHttpGetParameterNameTemporalFilter(),value);
+        }
+        return temporalFilter;
     }
 
     /**
@@ -338,7 +338,7 @@ public abstract class ResourceDecoder extends RestDecoder {
                     bindingConstants.getContentTypeDefault());
             LOGGER.debug(errorMessage);
             throw new InvalidParameterValueException("Content-Type", httpRequest.getContentType()).
-            	withMessage(errorMessage);
+                withMessage(errorMessage);
         }
         return true;
     }

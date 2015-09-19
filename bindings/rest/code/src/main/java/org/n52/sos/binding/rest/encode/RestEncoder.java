@@ -210,7 +210,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Cons
     }
 
     @Override
-	public ServiceResponse encode(final RestResponse objectToEncode, final Map<HelperValues, String> iGNOREDadditionalValues) throws OwsExceptionReport
+    public ServiceResponse encode(final RestResponse objectToEncode, final Map<HelperValues, String> iGNOREDadditionalValues) throws OwsExceptionReport
     {
         return encode(objectToEncode);
     }
@@ -226,11 +226,11 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Cons
     }
 
     @Override
-	public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap){
-    	if (nameSpacePrefixMap != null)
-    	{
-    		nameSpacePrefixMap.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
-    	}
+    public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap){
+        if (nameSpacePrefixMap != null)
+        {
+            nameSpacePrefixMap.put(bindingConstants.getEncodingNamespace(), bindingConstants.getEncodingPrefix());
+        }
     }
 
     @Override
@@ -239,7 +239,7 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Cons
     }
 
     @Override
-	public MediaType getContentType()
+    public MediaType getContentType()
     {
         return Constants.getInstance().getContentTypeDefault();
     }
@@ -247,9 +247,9 @@ public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Cons
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(
-        		new SchemaLocation(
-        				bindingConstants.getEncodingNamespace(),
-        				bindingConstants.getEncodingSchemaUrl().toString()));
+                new SchemaLocation(
+                        bindingConstants.getEncodingNamespace(),
+                        bindingConstants.getEncodingSchemaUrl().toString()));
     }
 
 }

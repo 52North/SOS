@@ -62,7 +62,7 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationHa
         this.transactionalSecurityConfiguration = config;
     }
 
-	public TransactionalSecurityConfiguration getTransactionalSecurityConfiguration() {
+    public TransactionalSecurityConfiguration getTransactionalSecurityConfiguration() {
         return transactionalSecurityConfiguration;
     }
 

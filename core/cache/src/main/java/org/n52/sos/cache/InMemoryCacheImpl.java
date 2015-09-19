@@ -729,66 +729,66 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName) {
-    	if (featureOfInterestIdentifierForHumanReadableName.containsKey(humanReadableName)) {
-    		return featureOfInterestIdentifierForHumanReadableName.get(humanReadableName);
-    	}
-    	return humanReadableName;
+        if (featureOfInterestIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+            return featureOfInterestIdentifierForHumanReadableName.get(humanReadableName);
+        }
+        return humanReadableName;
     }
 
     @Override
     public String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier) {
-    	if (featureOfInterestHumanReadableNameForIdentifier.containsKey(identifier)) {
-    		return featureOfInterestHumanReadableNameForIdentifier.get(identifier);
-    	}
-    	return identifier;
+        if (featureOfInterestHumanReadableNameForIdentifier.containsKey(identifier)) {
+            return featureOfInterestHumanReadableNameForIdentifier.get(identifier);
+        }
+        return identifier;
     }
 
     @Override
     public String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName) {
-    	if (observablePropertyIdentifierForHumanReadableName.containsKey(humanReadableName)) {
-    		return observablePropertyIdentifierForHumanReadableName.get(humanReadableName);
-    	}
-    	return humanReadableName;
+        if (observablePropertyIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+            return observablePropertyIdentifierForHumanReadableName.get(humanReadableName);
+        }
+        return humanReadableName;
     }
 
     @Override
     public String getObservablePropertyHumanReadableNameForIdentifier(String identifier) {
-    	if (observablePropertyHumanReadableNameForIdentifier.containsKey(identifier)) {
-    		return observablePropertyHumanReadableNameForIdentifier.get(identifier);
-    	}
-    	return identifier;
+        if (observablePropertyHumanReadableNameForIdentifier.containsKey(identifier)) {
+            return observablePropertyHumanReadableNameForIdentifier.get(identifier);
+        }
+        return identifier;
     }
 
     @Override
     public String getProcedureIdentifierForHumanReadableName(String humanReadableName) {
-    	if (procedureIdentifierForHumanReadableName.containsKey(humanReadableName)) {
-    		return procedureIdentifierForHumanReadableName.get(humanReadableName);
-    	}
-    	return humanReadableName;
+        if (procedureIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+            return procedureIdentifierForHumanReadableName.get(humanReadableName);
+        }
+        return humanReadableName;
     }
 
     @Override
     public String getProcedureHumanReadableNameForIdentifier(String identifier) {
-    	if (procedureHumanReadableNameForIdentifier.containsKey(identifier)) {
-    		return procedureHumanReadableNameForIdentifier.get(identifier);
-    	}
-    	return identifier;
+        if (procedureHumanReadableNameForIdentifier.containsKey(identifier)) {
+            return procedureHumanReadableNameForIdentifier.get(identifier);
+        }
+        return identifier;
     }
 
     @Override
     public String getOfferingIdentifierForHumanReadableName(String humanReadableName) {
-    	if (offeringIdentifierForHumanReadableName.containsKey(humanReadableName)) {
-    		return offeringIdentifierForHumanReadableName.get(humanReadableName);
-    	}
-    	return humanReadableName;
+        if (offeringIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+            return offeringIdentifierForHumanReadableName.get(humanReadableName);
+        }
+        return humanReadableName;
     }
 
     @Override
     public String getOfferingHumanReadableNameForIdentifier(String identifier) {
-    	if (offeringHumanReadableNameForIdentifier.containsKey(identifier)) {
-    		return offeringHumanReadableNameForIdentifier.get(identifier);
-    	}
-    	return identifier;
+        if (offeringHumanReadableNameForIdentifier.containsKey(identifier)) {
+            return offeringHumanReadableNameForIdentifier.get(identifier);
+        }
+        return identifier;
     }
 
     @Override

@@ -66,10 +66,10 @@ public class SeriesCountObservation
         return value != null;
     }
     
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
 
     @Override
     public void accept(VoidObservationVisitor visitor)

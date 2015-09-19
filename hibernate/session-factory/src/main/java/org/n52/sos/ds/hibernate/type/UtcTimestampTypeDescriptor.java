@@ -74,10 +74,10 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
         return new BasicExtractor<X>(javaTypeDescriptor, this) {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {
-            	if (rs.getObject(name) != null) {
-            		return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
-            	}
-            	return null;
+                if (rs.getObject(name) != null) {
+                    return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
+                }
+                return null;
             }
 
             @Override

@@ -129,16 +129,16 @@ public class ReportObligationRepository {
     public EReportingHeader createHeader(ReportObligationType flow) throws CodedException {
         ReportObligation reportObligation = getReportObligation(flow);
         if (reportObligation.isValid()) {
-	        return new EReportingHeader()
-	                .setChange(reportObligation.getChange())
-	                .setInspireID(reportObligation.getInspireID())
-	                .setReportingPeriod(reportObligation.getReportingPeriod())
-	                .setReportingAuthority(getReportingAuthority());
+            return new EReportingHeader()
+                    .setChange(reportObligation.getChange())
+                    .setInspireID(reportObligation.getInspireID())
+                    .setReportingPeriod(reportObligation.getReportingPeriod())
+                    .setReportingAuthority(getReportingAuthority());
         }
-		throw new NoApplicableCodeException()
-					.at("AQD Repoting Header")
-					.withMessage(
-							"No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting) and configure the AQD Repoting Header!", flow.name());
+        throw new NoApplicableCodeException()
+                    .at("AQD Repoting Header")
+                    .withMessage(
+                            "No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting) and configure the AQD Repoting Header!", flow.name());
     }
 
     private void _saveReportingAuthority(RelatedParty relatedParty) {

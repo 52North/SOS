@@ -53,7 +53,7 @@ public abstract class Term {
     private String value;
     
     public Term() {
-    	
+        
     }
     
     /**

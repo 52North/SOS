@@ -30,7 +30,7 @@ package org.n52.sos.ogc.wml;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ConformanceClassesWML2DR {
 

@@ -33,7 +33,7 @@ import org.joda.time.DateTime;
 /**
  * Holder for observation time extrema. Contains phenomenon, result and valid
  * time.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *

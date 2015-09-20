@@ -52,7 +52,7 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 public abstract class ASensorsEncoder extends ResourceEncoder {
 
     /**
-     * 
+     *
      */
     public ASensorsEncoder() {
         super();
@@ -62,7 +62,7 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
             SensorDocument xb_SensorRestDoc) throws OwsExceptionReport
     {
         SensorType xb_SensorRest = xb_SensorRestDoc.addNewSensor();
-        // 
+        //
         SystemType xb_abstractProcessType = (SystemType) xb_SensorRest.addNewProcess().substitute(SensorMLConstants.SYSTEM_QNAME,SystemType.type);
         xb_abstractProcessType.set(sensorsResponse.getSensorDescriptionXB());
         // sensor links
@@ -76,7 +76,7 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
                 createQueryStringForProcedureId(procedureId),
                 bindingConstants.getResourceRelationFeaturesGet(),
                 bindingConstants.getResourceFeatures());
-        
+
         // rel:observations-get
         setValuesOfLinkToDynamicResource(xb_SensorRest.addNewLink(),
                 createQueryStringForProcedureId(procedureId),
@@ -88,13 +88,13 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
                 getObservablePropertiesFromSensorDescription(sensorsResponse.getSensorDescriptionXB()));
         return xb_SensorRest;
     }
-    
+
     private Map<String,String> getObservablePropertiesFromSensorDescription(SystemType xb_system) throws OwsExceptionReport
     {
         Map<String,String> observableProperties = new HashMap<String,String>();
-        if (xb_system != null && 
-                xb_system.isSetInputs() && 
-                xb_system.getInputs().isSetInputList() && 
+        if (xb_system != null &&
+                xb_system.isSetInputs() &&
+                xb_system.getInputs().isSetInputList() &&
                 xb_system.getInputs().getInputList() != null &&
                 xb_system.getInputs().getInputList().getInputArray() != null)
         {
@@ -139,8 +139,8 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
                 {
                     xb_ObservablePropertyLink.setHref(observableProperty);
                     xb_ObservablePropertyLink.setType(observableProperties.get(observableProperty));
-                } 
-                else 
+                }
+                else
                 {
                     xb_ObservablePropertyLink.setHref(createHrefForResourceAndIdentifier(
                             bindingConstants.getResourceObservableProperties(),
@@ -150,12 +150,12 @@ public abstract class ASensorsEncoder extends ResourceEncoder {
             }
         }
     }
-    
+
     private String createQueryStringForProcedureId(String procedureId)
     {
         return bindingConstants.getHttpGetParameterNameProcedure().concat("=").concat(procedureId);
     }
-    
+
     private void addDeleteLink(SensorResponse sensorsPostResponse,
             SensorType xb_SensorRest)
     {

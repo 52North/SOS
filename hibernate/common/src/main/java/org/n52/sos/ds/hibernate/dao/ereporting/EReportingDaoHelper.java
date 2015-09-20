@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EReportingDaoHelper {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingDaoHelper.class);
 
     public static void addValidityAndVerificationRestrictions(Criteria c, GetObservationRequest request) throws InvalidParameterValueException {
@@ -55,12 +55,12 @@ public class EReportingDaoHelper {
             }
         }
     }
-    
+
     private static AqdHelper getAqdHelper() {
         return AqdHelper.getInstance();
     }
-    
+
     private EReportingDaoHelper() {
     }
-    
+
 }

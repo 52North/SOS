@@ -47,7 +47,7 @@ public abstract class AbstractEReportingObservation<T>
     private Boolean timeCoverageFlag;
 
     private Boolean dataCaptureFlag;
-    
+
     private Double dataCapture;
 
     private Double uncertaintyEstimation;
@@ -126,7 +126,7 @@ public abstract class AbstractEReportingObservation<T>
     public boolean isSetDataCaptureFlag() {
         return this.dataCaptureFlag != null;
     }
-    
+
     @Override
     public Double getDataCapture() {
         return this.dataCapture;

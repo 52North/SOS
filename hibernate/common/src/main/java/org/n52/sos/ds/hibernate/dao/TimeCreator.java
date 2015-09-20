@@ -38,7 +38,7 @@ import org.n52.iceland.ogc.gml.time.TimePeriod;
 
 /**
  * Abstract class to create a time period object
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -50,7 +50,7 @@ public abstract class TimeCreator {
 
     /**
      * Creates a time period object from sources
-     * 
+     *
      * @param minStart
      *            Min start timestamp
      * @param maxStart
@@ -73,7 +73,7 @@ public abstract class TimeCreator {
 
     /**
      * Add min/max projection to criteria
-     * 
+     *
      * @param criteria
      *            Hibernate Criteria to add projection
      * @param minMax

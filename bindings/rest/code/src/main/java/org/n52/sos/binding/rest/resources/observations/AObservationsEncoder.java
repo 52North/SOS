@@ -50,16 +50,16 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AObservationsEncoder extends ResourceEncoder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AObservationsEncoder.class);
 
     protected ObservationDocument createRestObservationDocumentFrom(OMObservationType xb_OMObservation) throws OwsExceptionReport
     {
         ObservationDocument xb_ObservationRestDoc = ObservationDocument.Factory.newInstance();
         ObservationType xb_ObservationRest = xb_ObservationRestDoc.addNewObservation();
-        
+
         createRestObservationFromOMObservation(xb_ObservationRest, xb_OMObservation,null);
-        
+
         return xb_ObservationRestDoc;
     }
 
@@ -84,7 +84,7 @@ public abstract class AObservationsEncoder extends ResourceEncoder {
         xb_restObservation.setOMObservation(xb_observation);
         return xb_restObservation;
     }
-    
+
     private void addSensorLink(OMObservationType xb_observation,
             ObservationType xb_restObservation)
     {
@@ -104,7 +104,7 @@ public abstract class AObservationsEncoder extends ResourceEncoder {
         {
             return xb_observation.getProcedure().getHref();
         }
-        else 
+        else
         {
             // XXX continue implementation here! How to parse it correct and generic?
         }
@@ -128,7 +128,7 @@ public abstract class AObservationsEncoder extends ResourceEncoder {
                     bindingConstants.getResourceRelationSelf(),
                     bindingConstants.getResourceObservations());
     }
-    
+
     private String getObservationId(OMObservationType xb_observation)
     {
         return xb_observation.isSetIdentifier()?xb_observation.getIdentifier().getStringValue():null;
@@ -179,8 +179,8 @@ public abstract class AObservationsEncoder extends ResourceEncoder {
                 LOGGER.debug(exceptionText);
                 throw new NoApplicableCodeException().causedBy(e).withMessage(exceptionText);
             }
-            if (xb_SFFeature.isSetIdentifier() && 
-                    xb_SFFeature.getIdentifier().getStringValue() != null && 
+            if (xb_SFFeature.isSetIdentifier() &&
+                    xb_SFFeature.getIdentifier().getStringValue() != null &&
                     !xb_SFFeature.getIdentifier().getStringValue().isEmpty()) {
                 String featureId = xb_SFFeature.getIdentifier().getStringValue();
                 String inDocumentReference = xb_SFFeature.getId();
@@ -206,20 +206,20 @@ public abstract class AObservationsEncoder extends ResourceEncoder {
 
     private boolean isFeatureHrefSetAndInDocumentReference(OMObservationType xb_observation)
     {
-        return isFeatureHrefSet(xb_observation) 
+        return isFeatureHrefSet(xb_observation)
                 && xb_observation.getFeatureOfInterest().getHref().indexOf("#") > -1;
     }
 
     private boolean isFeatureHrefSet(OMObservationType xb_observation)
     {
-        return xb_observation.getFeatureOfInterest() != null 
+        return xb_observation.getFeatureOfInterest() != null
                 && xb_observation.getFeatureOfInterest().isSetHref()
                 && !xb_observation.getFeatureOfInterest().getHref().isEmpty();
     }
 
     private boolean isProcedureHrefSet(OMObservationType xb_observation)
     {
-        return xb_observation.getProcedure().isSetHref() 
+        return xb_observation.getProcedure().isSetHref()
                 && !xb_observation.getProcedure().getHref().isEmpty();
     }
 

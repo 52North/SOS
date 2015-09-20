@@ -35,13 +35,13 @@ import org.n52.sos.encode.exi.AbstractSosV1ResponseEncoder;
 
 /**
  * Response encoder for {@link GetCapabilitiesResponse}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public class GetCapabilitiesResponseEncoder extends AbstractSosV1ResponseEncoder<GetCapabilitiesResponse> {
-    
+
     /**
      * Constructor
      */

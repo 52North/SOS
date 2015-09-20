@@ -20,7 +20,7 @@
 	<bean id="statisticsLocationUtil" class="org.n52.iceland.statistics.impl.StatisticsLocationUtil" primary="true" init-method="init"></bean>
 
 	<bean id="settingsService" class="mock.MockSettingsService" />
-	
+
 	<bean id="servletContext" class="mock.MockServletContext"></bean>
 
 	<bean id="serviceBus" class="org.n52.iceland.event.ServiceEventBus"></bean>

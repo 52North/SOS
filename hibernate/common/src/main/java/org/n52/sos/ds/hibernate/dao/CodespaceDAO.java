@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for codespace
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -48,7 +48,7 @@ public class CodespaceDAO {
 
     /**
      * Get codespace object for identifier
-     * 
+     *
      * @param codespace
      *            identifier
      * @param session
@@ -64,7 +64,7 @@ public class CodespaceDAO {
 
     /**
      * Insert and/or get codespace object
-     * 
+     *
      * @param codespace
      *            Codespace identifier
      * @param session

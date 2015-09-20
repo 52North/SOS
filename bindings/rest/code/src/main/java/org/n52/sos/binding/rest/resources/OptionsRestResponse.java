@@ -35,7 +35,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class OptionsRestResponse implements RestResponse {
-    
+
     private String resourceType;
     private boolean isGlobalResource;
     private boolean isResourceCollection;

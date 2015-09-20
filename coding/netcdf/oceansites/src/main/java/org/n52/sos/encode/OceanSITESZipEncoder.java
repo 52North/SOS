@@ -65,7 +65,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
 /**
  * Implementation of {@link AbstractOceanSITESEncoder} for OceanSITE netCDF
  * encoding with multiple files as ZIP.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *

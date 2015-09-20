@@ -92,7 +92,7 @@ public class GetObservationRequestEncoder extends AbstractSosRequestEncoder<GetO
                 got.addOffering(offering);
             }
         }
-        
+
     }
 
     private void addObservedProperty(GetObservationType got, GetObservationRequest request) {

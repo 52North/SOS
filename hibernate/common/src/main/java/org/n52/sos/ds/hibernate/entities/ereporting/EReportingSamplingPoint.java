@@ -35,7 +35,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReport
 
 /**
  * Entity for AQD e-Reporting SamplingPoint
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *

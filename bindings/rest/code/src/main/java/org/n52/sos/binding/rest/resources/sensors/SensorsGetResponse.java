@@ -35,9 +35,9 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class SensorsGetResponse implements RestResponse{
-    
+
     private String[] sensorIds;
-    
+
     public SensorsGetResponse(String[] sensorIds)
     {
         this.sensorIds = sensorIds;

@@ -44,11 +44,11 @@ import org.n52.sos.ogc.filter.ComparisonFilter;
 
 /**
  * FES 2.0 decoder test class
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class FesDecoderV20Test {
 
@@ -60,7 +60,7 @@ public class FesDecoderV20Test {
 
     /**
      * Test PropertyIsEqualTo filter decoding
-     * 
+     *
      * @throws OwsExceptionReport
      */
     @Test

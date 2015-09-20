@@ -40,7 +40,7 @@ public class SensorResponse implements RestResponse{
 
     private SystemType xb_smlSystem;
     protected String procedureIdentifier;
-    
+
     public SensorResponse(SystemType xb_SensorDescription,
             String procedureIdentifier)
     {

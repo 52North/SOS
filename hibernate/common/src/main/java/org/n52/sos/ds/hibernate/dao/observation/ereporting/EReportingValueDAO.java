@@ -41,7 +41,7 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO {
     protected Class<?> getSeriesValueClass() {
         return AbstractValuedEReportingObservation.class;
     }
-    
+
         @Override
         protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
             // add quality restrictions

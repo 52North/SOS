@@ -365,7 +365,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * @throws OwsExceptionReport
      *             If an error occurs when creating
      *             {@link org.n52.sos.ogc.om.values.SweDataArrayValue}
-     *             
+     *
      * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
     @Deprecated

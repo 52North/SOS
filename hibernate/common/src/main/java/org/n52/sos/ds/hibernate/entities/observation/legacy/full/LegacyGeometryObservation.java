@@ -66,7 +66,7 @@ public class LegacyGeometryObservation
     public boolean isSetValue() {
         return value != null;
     }
-    
+
     @Override
     public String getValueAsString() {
         return getValue().toText();

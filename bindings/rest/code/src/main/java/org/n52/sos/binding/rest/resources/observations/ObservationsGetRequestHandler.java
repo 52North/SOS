@@ -70,7 +70,7 @@ public class ObservationsGetRequestHandler extends RequestHandler {
                 // Case C: Atom Feed
                 return handleObservationsFeedRequest((ObservationsFeedRequest)observationsHttpGetRequest);
             }*/
-            
+
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(observationsHttpGetRequest,this.getClass().getName());
     }
@@ -100,9 +100,9 @@ public class ObservationsGetRequestHandler extends RequestHandler {
                     }
                 }
             }
-            
+
             LOGGER.debug("xb_observation == null? {}; procedureId? {}",xb_observation==null,procedureId);
-            
+
             if (xb_observation == null)
             {
                 return new ResourceNotFoundResponse(bindingConstants.getResourceObservations(),
@@ -126,9 +126,9 @@ public class ObservationsGetRequestHandler extends RequestHandler {
         XmlObject xb_getObservationResponse = executeSosRequest(req.getGetObservationRequest());
         if (xb_getObservationResponse instanceof GetObservationResponseDocument) {
             GetObservationResponseDocument xb_getObservationResponseDoc = (GetObservationResponseDocument) xb_getObservationResponse;
-            
+
             ObservationsSearchResponse response;
-            
+
             if (xb_getObservationResponseDoc.getGetObservationResponse().getObservationDataArray() != null &&
                     xb_getObservationResponseDoc.getGetObservationResponse().getObservationDataArray().length > 0){
 
@@ -138,7 +138,7 @@ public class ObservationsGetRequestHandler extends RequestHandler {
             } else {
                 response = new ObservationsSearchResponse(null, req.getQueryString());
             }
-            
+
             return response;
         }
         throw createHandlingOfSosCoreResponseFailedException(xb_getObservationResponse,

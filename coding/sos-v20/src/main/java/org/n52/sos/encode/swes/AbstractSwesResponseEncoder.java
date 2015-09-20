@@ -41,12 +41,12 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @param <T>
  *            the response type
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractSwesResponseEncoder<T extends AbstractServiceResponse> extends

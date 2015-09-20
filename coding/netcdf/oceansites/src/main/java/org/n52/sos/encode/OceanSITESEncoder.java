@@ -65,7 +65,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
 /**
  * Implementation of {@link AbstractOceanSITESEncoder} for OceanSITE netCDF
  * encoding.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -73,7 +73,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
 public class OceanSITESEncoder extends AbstractOceanSITESEncoder {
 
 private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.class);
-    
+
     private final Set<String> MEDIA_TYPES = Sets.newHashSet(OceanSITESConstants.CONTENT_TYPE_NETCDF_OCEANSITES.toString(),
             OceanSITESConstants.CONTENT_TYPE_NETCDF_3_OCEANSITES.toString(), OceanSITESConstants.CONTENT_TYPE_NETCDF_4_OCEANSITES.toString());
 
@@ -96,7 +96,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
                   SosConstants.Operations.GetObservation, OceanSITESConstants.CONTENT_TYPE_NETCDF_3_OCEANSITES),
           (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, OceanSITESConstants.CONTENT_TYPE_NETCDF_4_OCEANSITES));
-    
+
     public OceanSITESEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(ENCODER_KEYS));
@@ -121,7 +121,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         }
         return Collections.emptySet();
     }
-    
+
     protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws OwsExceptionReport {
         if (CollectionHelper.isEmpty(netCDFObsList)) {
             throw new NoApplicableCodeException().withMessage("No feature types to encode");
@@ -141,7 +141,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         File tempDir = Files.createTempDir();
         String filename = getFilename(sensorDataset);
         File netcdfFile = new File(tempDir, filename);
-        encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);                
+        encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
 
         BinaryAttachmentResponse response = null;
         try {

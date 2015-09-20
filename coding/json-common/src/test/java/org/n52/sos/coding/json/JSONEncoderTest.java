@@ -56,17 +56,17 @@ import com.google.common.collect.Maps;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  */
 public class JSONEncoderTest {
-    
-    
+
+
     private final JSONEncoder<String> encoder = new JSONEncoderForTesting(String.class);
-    
+
     private final JSONEncoder<String> throwingEncoder = new JSONEncoderForExceptionTesting(String.class);
-    
+
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
 

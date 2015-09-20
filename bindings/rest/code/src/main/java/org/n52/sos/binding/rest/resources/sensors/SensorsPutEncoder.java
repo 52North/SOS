@@ -41,7 +41,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class SensorsPutEncoder extends ASensorsEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
     {
@@ -49,12 +49,12 @@ public class SensorsPutEncoder extends ASensorsEncoder {
             SensorsPutResponse sensorsPutResponse = (SensorsPutResponse) restResponse;
             SensorDocument xb_SensorRestDoc = SensorDocument.Factory.newInstance();
             createRestDefaultRestSensor(sensorsPutResponse, xb_SensorRestDoc);
-            
+
             ServiceResponse response = createServiceResponseFromXBDocument(xb_SensorRestDoc,
                     bindingConstants.getResourceSensors(),
                     HTTPStatus.OK,
                     false,true);
-            
+
             return response;
         }
         throw createResponseNotSupportedException(SensorsPutResponse.class.getName(),restResponse);

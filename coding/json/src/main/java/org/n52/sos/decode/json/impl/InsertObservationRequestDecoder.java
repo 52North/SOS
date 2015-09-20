@@ -43,9 +43,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InsertObservationRequestDecoder extends AbstractSosRequestDecoder<InsertObservationRequest> {

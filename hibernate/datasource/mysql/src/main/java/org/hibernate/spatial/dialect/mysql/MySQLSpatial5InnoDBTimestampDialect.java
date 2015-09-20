@@ -36,7 +36,7 @@ import org.hibernate.dialect.Dialect;
 /**
  * Hibernate Spatial {@link Dialect} for MySQL that registers Types.TIMESTAMP to
  * timestampt instead of datetime.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -49,7 +49,7 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
         super();
         registerColumnType( Types.TIMESTAMP, "timestamp" );
     }
-    
+
     @Override
     public String getTypeName(int code, long length, int precision, int scale) throws HibernateException {
         if (Types.TIMESTAMP == code ) {
@@ -57,7 +57,7 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
         }
         return super.getTypeName(code, length, precision, scale);
     }
-    
+
     @Override
     public String getTypeName(int code) throws HibernateException {
         if (Types.TIMESTAMP == code ) {

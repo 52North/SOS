@@ -42,24 +42,24 @@ import net.opengis.sosREST.x10.ObservationDocument;
  *
  */
 public class ObservationsPostEncoder extends AObservationsEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
     {
         if (restResponse != null && restResponse instanceof ObservationsPostResponse) {
             ObservationsPostResponse observationsPostResponse = (ObservationsPostResponse) restResponse;
             ObservationDocument xb_ObservationRestDoc = createRestObservationDocumentFrom(observationsPostResponse.getXb_OMObservation());
-            
-            
+
+
             ServiceResponse response = createServiceResponseFromXBDocument(
                     xb_ObservationRestDoc,
                     bindingConstants.getResourceObservations(),
                     HTTPStatus.CREATED, false, true);
-            
+
             addLocationHeader(response,
                     observationsPostResponse.getObservationIdentifier(),
                     bindingConstants.getResourceObservations());
-            
+
             return response;
         }
         return null;

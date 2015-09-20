@@ -457,7 +457,7 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
     }
 
     private org.n52.sos.ogc.gml.ReferenceType parseVerticalDatumPropertyType(VerticalDatumPropertyType vdpt) {
-        // TODO parse VerticalDatumType 
+        // TODO parse VerticalDatumType
         if (vdpt.isSetHref() && !vdpt.getHref().isEmpty()) {
             org.n52.sos.ogc.gml.ReferenceType referenceType =
                     new org.n52.sos.ogc.gml.ReferenceType(vdpt.getHref());

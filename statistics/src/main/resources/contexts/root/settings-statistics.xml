@@ -6,7 +6,7 @@
 	<bean id="statisticsDefinitionGroup" class="org.n52.iceland.config.SettingDefinitionGroup">
 		<property name="title" value="Statistics" />
 		<property name="description"
-			value="On this settings page you can enable and configure the statistics collection module. 
+			value="On this settings page you can enable and configure the statistics collection module.
 			You can configure the folowwing settings: connection to Elasticsearch, Kibana preconfigured settings and GeoLocation transformation.
 			&lt;br /&gt;&lt;br /&gt;
 			You need to have access to an Elasticsearch setup in order to store the collected data about the incoming requests of the client, exceptions and messages and interesting metrics of the response messages.
@@ -31,10 +31,10 @@
 		<property name="title" value="Elasticsearch: Connection mode" />
 		<property name="description"
 			value="Connection mode to the Elasticsearch cluster. The 'Node client' and the 'Transport client' connects to an external Elasticsearch server.
-			 The 'Embedded Server' mode starts a local elasticsearch server which stores the data in the WEB-INF/elasticsearch directory it is recommended only for testing purposes 
+			 The 'Embedded Server' mode starts a local elasticsearch server which stores the data in the WEB-INF/elasticsearch directory it is recommended only for testing purposes
 			 (some preconfigured visualizations are not available with embedded server).
 			 &lt;br /&gt;
-			 For more information between Node and TransportClient mode visit the 
+			 For more information between Node and TransportClient mode visit the
 			&lt;a href='https://www.elastic.co/guide/en/elasticsearch/guide/current/_transport_client_versus_node_client.html'&gt; official website &lt;/a&gt;
 			&lt;br /&gt; &lt;br /&gt;
 			" />
@@ -156,11 +156,11 @@
 		<property name="key" value="statistics.geoloc.enabled" />
 		<property name="title" value="GeoLocation: Enable geolocation" />
 		<property name="description"
-			value="These settings below are for transforming the client's IP address to geolocation format. 
-		This feature use an external database from company Maxmind. These databases comes in two flavor 'City' and 'Country' they 
- 		differ in accuracy and size. These settings will be change on the next webapplication startup. 
-		
- 		This product includes GeoLite2 data created by MaxMind, available from 
+			value="These settings below are for transforming the client's IP address to geolocation format.
+		This feature use an external database from company Maxmind. These databases comes in two flavor 'City' and 'Country' they
+ 		differ in accuracy and size. These settings will be change on the next webapplication startup.
+
+ 		This product includes GeoLite2 data created by MaxMind, available from
    &lt;a href='http://www.maxmind.com'&gt;http://www.maxmind.com&lt;/a&gt;."></property>
 		<property name="order" value="20.0" />
 		<property name="group" ref="statisticsDefinitionGroup" />

@@ -123,8 +123,8 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
             final Description xb_descriptionDoc = xb_describeSensorResponseDoc.getDescribeSensorResponse().getDescriptionArray()[0];
             final SensorDescriptionType xb_description = xb_descriptionDoc.getSensorDescription();
             xb_system = getSmlSystemFromSensorDescription(xb_description);
-            
-            // 1 return result 
+
+            // 1 return result
             return new GetSensorByIdResponse(xb_system,procedureId);
 
         } else {
@@ -134,7 +134,7 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
     }
-    
+
     private SystemType getSmlSystemFromSensorDescription(final SensorDescriptionType sensorDescription) throws OwsExceptionReport
     {
         try {

@@ -51,9 +51,9 @@ import com.google.common.collect.Sets;
 
 /**
  * {@code Encoder} to handle {@link GetDataAvailabilityResponse}s.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDataAvailabilityResponse> {

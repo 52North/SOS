@@ -512,5 +512,5 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
                    DateTimeFormatException {
         chars(DateTimeHelper.formatDateTime2String(time, format));
     }
-    
+
 }

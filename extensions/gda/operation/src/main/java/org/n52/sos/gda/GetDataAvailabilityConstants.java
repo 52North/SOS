@@ -43,24 +43,24 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * Constants for the GetDataAvailability SOS operation.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public interface GetDataAvailabilityConstants {
-    
+
     String NS_GDA = "http://www.opengis.net/sosgda/1.0";
-    
+
     String SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY =  "http://waterml2.org/schemas/gda/1.0/gda.xsd";
-    
+
     SchemaLocation GET_DATA_AVAILABILITY_SCHEMA_LOCATION = new SchemaLocation(NS_GDA,
             SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY);
-    
+
     String NS_GDA_PREFIX = "gda";
-    
+
     String XPATH_PREFIXES_GDA = XmlHelper.getXPathPrefix(NS_GDA_PREFIX, NS_GDA);
-    
+
     String EN_GET_DATA_AVAILABILITY_MEMBER = "dataAvailabilityMember";
 
     String EN_GET_DATA_AVAILABILITY = "GetDataAvailability";
@@ -86,7 +86,7 @@ public interface GetDataAvailabilityConstants {
      */
     QName SOS_DATA_AVAILABILITY_MEMBER = new QName(Sos2Constants.NS_SOS_20, EN_GET_DATA_AVAILABILITY_MEMBER,
             SosConstants.NS_SOS_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:dataAvailabilityMember}.
      */
@@ -104,19 +104,19 @@ public interface GetDataAvailabilityConstants {
      */
     QName GDA_GET_DATA_AVAILABILITY_RESPONSE = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_RESPONSE,
             GetDataAvailabilityConstants.NS_GDA_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code sos:GetDataAvailability}.
      */
     QName SOS_GET_DATA_AVAILABILITY = new QName(Sos2Constants.NS_SOS_20, EN_GET_DATA_AVAILABILITY,
             SosConstants.NS_SOS_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:GetDataAvailability}.
      */
     QName GDA_GET_DATA_AVAILABILITY = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY,
             GetDataAvailabilityConstants.NS_GDA_PREFIX);
-    
+
     QName GDA_EXTENSION = new QName(GetDataAvailabilityConstants.NS_GDA, "extension",
             GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
@@ -156,7 +156,7 @@ public interface GetDataAvailabilityConstants {
      */
     QName OM_FEATURE_OF_INTEREST = new QName(OmConstants.NS_OM_2, OmConstants.EN_FEATURE_OF_INTEREST,
             OmConstants.NS_OM_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:featureOfInterest}.
      */
@@ -168,7 +168,7 @@ public interface GetDataAvailabilityConstants {
      */
     QName OM_OBSERVED_PROPERTY = new QName(OmConstants.NS_OM_2, OmConstants.EN_OBSERVED_PROPERTY,
             OmConstants.NS_OM_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:observedProperty}.
      */
@@ -180,7 +180,7 @@ public interface GetDataAvailabilityConstants {
      */
     QName OM_PHENOMENON_TIME =
             new QName(OmConstants.NS_OM_2, OmConstants.EN_PHENOMENON_TIME, OmConstants.NS_OM_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:phenomenonTime}.
      */
@@ -191,17 +191,17 @@ public interface GetDataAvailabilityConstants {
      * The {@code QName} for {@code om:procedure}.
      */
     QName OM_PROCEDURE = new QName(OmConstants.NS_OM_2, OmConstants.EN_PROCEDURE, OmConstants.NS_OM_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:procedure}.
      */
     QName GDA_PROCEDURE = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PROCEDURE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code sos:procedure}.
      */
     QName SOS_COUNT = new QName(Sos2Constants.NS_SOS_20, "count", SosConstants.NS_SOS_PREFIX);
-    
+
     /**
      * The {@code QName} for {@code gda:procedure}.
      */

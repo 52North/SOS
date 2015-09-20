@@ -33,15 +33,15 @@ import org.joda.time.DateTime;
 import com.google.common.base.Strings;
 
 /**
- * Hold min and max obs time for procedure 
- * 
+ * Hold min and max obs time for procedure
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
  */
 public class ProcedureTimeExtrema extends TimeExtrema {
     private String procedure;
-    
+
     /**
      * @return the procedure
      */
@@ -56,7 +56,7 @@ public class ProcedureTimeExtrema extends TimeExtrema {
     public void setProcedure(String procedure) {
         this.procedure = procedure;
     }
-    
+
     public boolean isSetProcedure() {
         return !Strings.isNullOrEmpty(getProcedure());
     }

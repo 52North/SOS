@@ -41,7 +41,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class SensorsPostEncoder extends ASensorsEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse restResponse) throws OwsExceptionReport
     {
@@ -55,7 +55,7 @@ public class SensorsPostEncoder extends ASensorsEncoder {
                     bindingConstants.getResourceSensors(),
                     HTTPStatus.CREATED,
                     false, true);
-            
+
             addLocationHeader(response, sensorsPostResponse.getProcedureIdentifier(), bindingConstants.getResourceSensors());
             return response;
         }

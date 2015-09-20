@@ -31,14 +31,14 @@ package org.n52.sos.ds.hibernate.util;
 import org.joda.time.DateTime;
 
 /**
- * Hold min and max obs time 
- * 
+ * Hold min and max obs time
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public class TimeExtrema {
-    
+
     private DateTime minPhenomenonTime;
     private DateTime maxPhenomenonTime;
     private DateTime minResultTime;
@@ -75,7 +75,7 @@ public class TimeExtrema {
     public void setMaxResultTime(DateTime maxResultTime) {
         this.maxResultTime = maxResultTime;
     }
-    
+
     public boolean isSetPhenomenonTimes() {
         return getMinPhenomenonTime() != null && getMaxPhenomenonTime() != null;
     }
@@ -83,7 +83,7 @@ public class TimeExtrema {
     public boolean isSetResultTimes() {
         return getMinResultTime()!= null && getMaxResultTime() != null;
     }
-    
+
     public boolean isSetTimes() {
         return isSetPhenomenonTimes() && isSetResultTimes();
     }

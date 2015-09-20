@@ -43,7 +43,7 @@ import net.opengis.swes.x20.ExtensibleResponseType;
  *
  */
 public interface ExtensibleResponseDecoder {
-    
+
     default SwesExtensions parseExtensibleResponse(ExtensibleResponseType ert) throws OwsExceptionReport {
         return parseExtensibleResponseExtension(ert.getExtensionArray());
     }

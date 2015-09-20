@@ -135,7 +135,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
     /**
      * Get map keyed by undeleted procedure identifiers with collections of
      * parent procedures (if supported) as values
-     * 
+     *
      * @param session
      * @return Map keyed by procedure identifier with values of parent procedure
      *         identifier collections
@@ -869,7 +869,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *            Procedure description format object
      * @param procedureDescription
      *            {@link SosProcedureDescription} to insert
-     * @param isType 
+     * @param isType
      * @param session
      *            Hibernate session
      * @return Procedure object
@@ -880,7 +880,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
                 procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), isType,
                 procedureDescription.isAggragation(), session);
     }
-    
+
     private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,
             Collection<String> parentProcedures, ReferenceType typeOf, boolean isType, boolean isAggregation, Session session) {
         Procedure procedure = getProcedureForIdentifierIncludeDeleted(identifier, session);
@@ -1071,7 +1071,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
 
     /**
      * Procedure time extrema {@link ResultTransformer}
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *

@@ -163,7 +163,7 @@ private HibernateSessionHolder sessionHolder;
             } else {
                 throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat, request.getProcedureDescriptionFormat());
             }
-            
+
 //            final List<ObservationType> observationTypes =
 //                    new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
 //                            session);

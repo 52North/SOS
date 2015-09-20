@@ -30,7 +30,7 @@ package org.n52.sos.ds.datasource;
 
 /**
  * PostgreSQL/PostGIS datasource for customized mapping files.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
@@ -52,5 +52,5 @@ public class PostgresCustomDatasource extends PostgresCoreDatasource {
     public boolean needsSchema() {
         return false;
     }
-    
+
 }

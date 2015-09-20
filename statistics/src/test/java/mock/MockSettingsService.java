@@ -104,7 +104,7 @@ public class MockSettingsService implements SettingsService {
     @Override
     public void reconfigure() {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

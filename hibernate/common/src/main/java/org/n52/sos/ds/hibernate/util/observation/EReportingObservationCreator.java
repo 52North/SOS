@@ -84,7 +84,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         }
         return omObservation;
     }
-    
+
     @Override
     public OmObservation create(OmObservation omObservation, Series series) {
         EReportingSeries ereportingSeries = (EReportingSeries) series;

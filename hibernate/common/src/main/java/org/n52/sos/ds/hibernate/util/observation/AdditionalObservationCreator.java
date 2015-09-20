@@ -39,7 +39,7 @@ public interface AdditionalObservationCreator extends Component<AdditionalObserv
     OmObservation create(OmObservation omObservation, Series series);
 
     OmObservation create(OmObservation omObservation, Observation<?> observation);
-    
+
     OmObservation add(OmObservation sosObservation, Observation<?> hObservation);
 
 }

@@ -39,7 +39,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
 public class ObservationsSearchResponse implements RestResponse {
 
     private ObservationData[] observationDataArray;
-    
+
     private String resourceIdentifier;
 
     public ObservationsSearchResponse(ObservationData[] observationDataArray,

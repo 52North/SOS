@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * DAO class for entity {@link EReportingStation}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -51,7 +51,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     /**
      * Get default Hibernate Criteria for querying station
-     * 
+     *
      * @param session
      *            Hibernate Session
      * @return Default criteria
@@ -63,7 +63,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     /**
      * Get the {@link EReportingStation} for the id
-     * 
+     *
      * @param stationId
      *            Id to get {@link EReportingStation} for
      * @param session
@@ -79,7 +79,7 @@ public class EReportingStationDAO extends AbstractIdentifierNameDescriptionDAO {
 
     /**
      * Get the {@link EReportingStation} for the identifier
-     * 
+     *
      * @param identifier
      *            Identifier to get {@link EReportingStation} for
      * @param session

@@ -69,40 +69,40 @@ import org.slf4j.LoggerFactory;
  * TODO Use KVP helper from 52n-sos-api module
  */
 public abstract class ResourceDecoder extends RestDecoder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceDecoder.class);
-    
+
     protected Constants bindingConstants = Constants.getInstance();
 
     protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport, DateTimeException;
-    
+
     protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
-    
+
     protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
-    
+
     protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
-    
+
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
 
     protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
     {
         String resourceType = null;
         String pathPayload = null;
-    
+
         if (httpRequest != null && httpRequest.getPathInfo() != null) {
-    
+
             final String resourceTypeWithOrWithoutId = getResourceTypeFromPathInfoWithWorkingUrl(httpRequest.getPathInfo());
             final int indexOfPotentialSecondSlash = resourceTypeWithOrWithoutId.indexOf("/");
-    
+
             if (indexOfPotentialSecondSlash > 1) {
                 resourceType = resourceTypeWithOrWithoutId.substring(0,indexOfPotentialSecondSlash);
                 pathPayload = resourceTypeWithOrWithoutId.substring(indexOfPotentialSecondSlash + 1);
             } else {
                 resourceType = resourceTypeWithOrWithoutId;
             }
-            
+
             LOGGER.debug("resourceType: {}; pathPayload: {} ",resourceType,pathPayload);
-    
+
             // delegate to HTTP method specific decoders for parsing this resource's request
             if (httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.GET) ||
                 httpRequest.getMethod().equalsIgnoreCase(HTTPMethods.HEAD)) {
@@ -117,22 +117,22 @@ public abstract class ResourceDecoder extends RestDecoder {
                 return decodeOptionsRequest(httpRequest,pathPayload);
             }
         }
-    
-        final String exceptionText = String.format("The resource type \"%s\" via HTTP method \"%s\" is not supported by this IDecoder implementiation.", 
+
+        final String exceptionText = String.format("The resource type \"%s\" via HTTP method \"%s\" is not supported by this IDecoder implementiation.",
                 resourceType,
                 httpRequest.getMethod());
         LOGGER.debug(exceptionText);
         throw new OperationNotSupportedException(resourceType);
-    
+
     }
-    
+
     protected String getRelationIdentifierWithNamespace(final String resourceRelationIdentifier)
     {
         return bindingConstants.getEncodingNamespace()
                 .concat("/")
                 .concat(resourceRelationIdentifier);
     }
-    
+
     protected GetCapabilitiesRequest createGetCapabilitiesRequest()
     {
         final GetCapabilitiesRequest getCapabilitiesRequest = new GetCapabilitiesRequest(SosConstants.SOS);
@@ -143,12 +143,12 @@ public abstract class ResourceDecoder extends RestDecoder {
 
         return getCapabilitiesRequest;
     }
-    
+
     protected String getResourceIdFromRestfulHref(final String restfulHref)
     {
         return restfulHref.substring(restfulHref.lastIndexOf("/")+1);
     }
-    
+
     protected GetCapabilitiesRequest createGetCapabilitiesRequestWithContentSectionOnly()
     {
         final GetCapabilitiesRequest getCapabilitiesRequestOnlyContents = createGetCapabilitiesRequest();
@@ -159,7 +159,7 @@ public abstract class ResourceDecoder extends RestDecoder {
 
         return getCapabilitiesRequestOnlyContents;
     }
-    
+
     // TODO use this to return operation not allowed response
     protected OwsExceptionReport createHttpMethodForThisResourceNotSupportedException(final String httpMethod, final String resourceType)
     {
@@ -170,7 +170,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         final OperationNotSupportedException onse = new OperationNotSupportedException(exceptionText);
         return onse;
     }
-    
+
     protected Map<String, String> getKvPEncodedParameters(final HttpServletRequest httpRequest)
     {
         final Map<String, String> kvp = new HashMap<String, String>();
@@ -182,13 +182,13 @@ public abstract class ResourceDecoder extends RestDecoder {
         }
         return kvp;
     }
-    
+
     protected String checkParameterSingleValue(final String parameterValue, final String parameterName)
             throws OwsExceptionReport {
         if (!parameterValue.isEmpty() && (parameterValue.split(",").length == 1)) {
             return parameterValue;
         } else {
-            final InvalidParameterValueException ipve = new InvalidParameterValueException(parameterName, parameterValue); 
+            final InvalidParameterValueException ipve = new InvalidParameterValueException(parameterName, parameterValue);
             LOGGER.debug(ipve.getMessage());
             throw ipve;
         }
@@ -199,7 +199,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         return Arrays.asList(value.split(bindingConstants.getKvPEncodingValueSplitter()));
     }
 
-    
+
     /**
      * {@link org.n52.sos.decode.SosKvpDecoderv20#parseNamespaces(String)}
      */
@@ -231,8 +231,8 @@ public abstract class ResourceDecoder extends RestDecoder {
         filterList.add(createTemporalFilterFromValue(parameterValues.get(1), parameterValues.get(0)));
         return filterList;
     }
-    
-    
+
+
     /*
      * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#createTemporalFilterFromValue(String, String)}
      * TODO move to KVP map decoder to share code
@@ -270,7 +270,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     /**
-     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseSpatialFilter(List<String>, String)} 
+     * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#parseSpatialFilter(List<String>, String)}
      * TODO move to KVP map decoder to share code
      */
     protected SpatialFilter parseSpatialFilter(List<String> parameterValues, final String parameterName)

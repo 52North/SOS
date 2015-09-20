@@ -38,7 +38,7 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GmlEncoderTest {
 

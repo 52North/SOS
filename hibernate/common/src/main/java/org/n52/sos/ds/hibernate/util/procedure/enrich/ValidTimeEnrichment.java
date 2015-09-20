@@ -41,7 +41,7 @@ public class ValidTimeEnrichment extends SensorMLEnrichment {
     private TimePeriod validTime;
 
     @Override
-    protected void enrich(AbstractSensorML description) 
+    protected void enrich(AbstractSensorML description)
             throws OwsExceptionReport {
         if (description.getValidTime() != null) {
             validTime.extendToContain(description.getValidTime());

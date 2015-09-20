@@ -54,12 +54,12 @@ import com.vividsolutions.jts.geom.Envelope;
 
 
 public class BoundingBoxEnrichmentTest {
-    
+
     @Test public void
     should_set_definition_of_observed_bbox_envelope()
             throws OwsExceptionReport {
         final BoundingBoxEnrichment enrichmentMock = mock(BoundingBoxEnrichment.class);
-        
+
                 final SosOffering sosOffering = new SosOffering("offeringIdentifier", "offeringName");
         final Collection<SosOffering> sosOfferings = Lists.newArrayList(sosOffering);
         final Envelope envelope = new Envelope(1.0,2.0,3.0,4.0);
@@ -70,7 +70,7 @@ public class BoundingBoxEnrichmentTest {
         when(procSettMock.getLatLongUom()).thenReturn("deg");
         when(enrichmentMock.procedureSettings()).thenReturn(procSettMock);
         doCallRealMethod().when(enrichmentMock).enrich((AbstractSensorML) any());
-        
+
         final SensorML sml = new SensorML();
         final System system = new System();
         sml.addMember(system);
@@ -79,7 +79,7 @@ public class BoundingBoxEnrichmentTest {
         assertThat(sml.getCapabilities().get(0).getName(), is(SensorMLConstants.ELEMENT_NAME_OBSERVED_BBOX));
         assertThat(sml.getCapabilities().get(0).getDataRecord().getFields().get(0).getElement().getDefinition(), is(SensorMLConstants.OBSERVED_BBOX_DEFINITION_URN));
     }
-    
+
     @Test public void
     should_set_reference_frame_of_observed_bbox_envelope()
             throws OwsExceptionReport {

@@ -40,7 +40,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class ObservationsDeleteEncoder extends ResourceEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport
     {

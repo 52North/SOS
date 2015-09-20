@@ -45,18 +45,18 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class OfferingsGetEncoder extends ResourceEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse response) throws OwsExceptionReport
     {
         if (response instanceof OfferingsResponse) {
-            
+
             return encodeOfferingsResponse((OfferingsResponse) response);
-            
+
         } else if (response instanceof OfferingByIdResponse) {
-            
+
             return encodeOfferingByIdResponse((OfferingByIdResponse) response);
-            
+
         }
         return null;
     }
@@ -66,25 +66,25 @@ public class OfferingsGetEncoder extends ResourceEncoder {
         // 0 create observation offering document
         ObservationOfferingDocument xb_ObservationOfferingDoc = ObservationOfferingDocument.Factory.newInstance();
         ObservationOfferingType xb_ObservationOfferingRest = xb_ObservationOfferingDoc.addNewObservationOffering();
-        
+
         // 1 add observation offering from response
         net.opengis.sos.x20.ObservationOfferingType xb_offering = response.getObservationOfferingXB();
         String offeringIdentifier = xb_offering.getIdentifier();
         String procedureIdentifier = xb_offering.getProcedure();
         xb_ObservationOfferingRest.setObservationOffering(xb_offering);
-        
+
         // 2 add self link
         setValuesOfLinkToUniqueResource(xb_ObservationOfferingRest.addNewLink(),
                 offeringIdentifier,
                 bindingConstants.getResourceRelationSelf(),
                 bindingConstants.getResourceOfferings());
-        
+
         // 2.1 add link to sensor
         setValuesOfLinkToUniqueResource(xb_ObservationOfferingRest.addNewLink(),
                 procedureIdentifier,
                 bindingConstants.getResourceRelationSensorGet(),
                 bindingConstants.getResourceSensors());
-        
+
         // 3 create result and return
         return createOfferingResponseWithStatusOK(xb_ObservationOfferingDoc,false,false);
     }
@@ -94,15 +94,15 @@ public class OfferingsGetEncoder extends ResourceEncoder {
         // 0 create offering collection
         OfferingCollectionDocument xb_OfferingCollectionDoc = OfferingCollectionDocument.Factory.newInstance();
         ResourceCollectionType xb_OfferingCollection = xb_OfferingCollectionDoc.addNewOfferingCollection();
-        
+
         // 1 add self link
         setValuesOfLinkToGlobalResource(xb_OfferingCollection.addNewLink(),
                 bindingConstants.getResourceRelationSelf(),
                 bindingConstants.getResourceOfferings());
-        
+
         // 2 add offering links
         setOfferingLinks(xb_OfferingCollection, response.getOfferingIdentifiers());
-        
+
         // 3 create result and return
         return createOfferingResponseWithStatusOK(xb_OfferingCollectionDoc,true,true);
     }

@@ -38,9 +38,9 @@ import org.n52.sos.binding.rest.requests.RestRequest;
 public class OptionsRestRequest implements RestRequest {
 
     private String resourceType;
-    
+
     private boolean isGlobalResource;
-    
+
     private boolean isResourceCollection;
 
     public OptionsRestRequest(String resourceType, boolean isGlobalResource, boolean isResourceCollection) {

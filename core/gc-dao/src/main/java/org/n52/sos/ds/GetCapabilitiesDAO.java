@@ -702,7 +702,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 operands.add(GmlConstants.QN_TIME_PERIOD);
                 operands.add(GmlConstants.QN_TIME_INSTANT);
                 break;
-            default: 
+            default:
                 LOGGER.trace("Not supported version '{}'", version);
                 break;
         }
@@ -724,7 +724,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                     ops.add(op, GmlConstants.QN_TIME_PERIOD);
                 }
                 break;
-            default: 
+            default:
                 LOGGER.trace("Not supported version '{}'", version);
                 break;
         }

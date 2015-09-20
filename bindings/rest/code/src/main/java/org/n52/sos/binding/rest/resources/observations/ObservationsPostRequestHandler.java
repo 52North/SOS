@@ -43,16 +43,16 @@ import org.n52.sos.request.InsertObservationRequest;
  *
  */
 public class ObservationsPostRequestHandler extends RequestHandler {
-    
+
     @Override
     public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException
     {
         if (req != null && req instanceof ObservationsPostRequest) {
             InsertObservationRequest ioReq = ((ObservationsPostRequest) req).getInsertObservationRequest();
-            
+
             // 2 handle core response
             XmlObject xb_InsertObservationResponse = executeSosRequest(ioReq);
-            
+
             if (xb_InsertObservationResponse instanceof InsertObservationResponseDocument) {
                 // 3 return response
                 // no interesting content, just check the class to be sure that the insertion was successful
@@ -61,7 +61,7 @@ public class ObservationsPostRequestHandler extends RequestHandler {
                 return new ObservationsPostResponse(
                         ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
                         ((ObservationsPostRequest) req).getXb_OMObservation());
-            } 
+            }
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req,this.getClass().getName());
     }

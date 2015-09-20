@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for featureofInterest types
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -56,7 +56,7 @@ public class FeatureOfInterestTypeDAO {
 
     /**
      * Get all featureOfInterest types
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return All featureOfInterest types
@@ -76,7 +76,7 @@ public class FeatureOfInterestTypeDAO {
 
     /**
      * Get featureOfInterest type object for featureOfInterest type
-     * 
+     *
      * @param featureOfInterestType
      *            FeatureOfInterest type
      * @param session
@@ -95,7 +95,7 @@ public class FeatureOfInterestTypeDAO {
 
     /**
      * Get featureOfInterest type objects for featureOfInterest types
-     * 
+     *
      * @param featureOfInterestType
      *            FeatureOfInterest types
      * @param session
@@ -115,7 +115,7 @@ public class FeatureOfInterestTypeDAO {
 
     /**
      * Get featureOfInterest type objects for featureOfInterest identifiers
-     * 
+     *
      * @param featureOfInterestIdentifiers
      *            FeatureOfInterest identifiers
      * @param session
@@ -138,7 +138,7 @@ public class FeatureOfInterestTypeDAO {
     /**
      * Insert and/or get featureOfInterest type object for featureOfInterest
      * type
-     * 
+     *
      * @param featureType
      *            FeatureOfInterest type
      * @param session
@@ -159,7 +159,7 @@ public class FeatureOfInterestTypeDAO {
     /**
      * Insert and/or get featureOfInterest type objects for featureOfInterest
      * types
-     * 
+     *
      * @param featureOfInterestTypes
      *            FeatureOfInterest types
      * @param session

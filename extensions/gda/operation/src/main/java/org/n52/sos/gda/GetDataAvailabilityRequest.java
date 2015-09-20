@@ -38,9 +38,9 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> {
@@ -90,7 +90,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     /**
      * Add a {@code procedure} to the request.
-     * 
+     *
      * @param procedure
      *            the {@code procedure}
      */
@@ -100,7 +100,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     /**
      * Add a {@code observedProperty} to the request.
-     * 
+     *
      * @param observedProperty
      *            the {@code observedProperty}
      */
@@ -110,7 +110,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     /**
      * Add a {@code featureOfInterest} to the request.
-     * 
+     *
      * @param featureOfInterest
      *            the {@code featureOfInterest}
      */
@@ -124,7 +124,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     /**
      * Add a {@code offering} to the request.
-     * 
+     *
      * @param offering
      *            the {@code offering}
      */
@@ -143,7 +143,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
     public void setProcedure(List<String> procedures) {
         this.procedures = procedures;
     }
-    
+
     public boolean isSetProcedure() {
         return CollectionHelper.isNotEmpty(getProcedures());
     }

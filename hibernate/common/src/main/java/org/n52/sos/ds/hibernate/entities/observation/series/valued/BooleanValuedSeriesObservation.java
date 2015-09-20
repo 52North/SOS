@@ -62,7 +62,7 @@ public class BooleanValuedSeriesObservation
     public boolean isSetValue() {
         return getValue();
     }
-    
+
     @Override
     public String getValueAsString() {
         return getValue().toString();

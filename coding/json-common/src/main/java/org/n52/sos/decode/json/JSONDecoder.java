@@ -198,6 +198,6 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
             return null;
         }
     }
-    
+
     public abstract T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport;
 }

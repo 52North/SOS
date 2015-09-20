@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.util;
 /**
  * Class that describes a time primitive of an entity. Instants are represented
  * by one field and periods by two.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
@@ -42,7 +42,7 @@ public class TimePrimitiveFieldDescriptor {
 
     /**
      * Creates a new descriptor for a period.
-     * 
+     *
      * @param begin
      *            the begin field
      * @param end
@@ -58,7 +58,7 @@ public class TimePrimitiveFieldDescriptor {
 
     /**
      * Creates a new descriptor for a time instant.
-     * 
+     *
      * @param position
      *            the field name
      */

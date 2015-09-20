@@ -118,7 +118,7 @@ public interface HibernateRelations {
 
         boolean isDeleted();
     }
-    
+
     interface HasPublishedFlag {
         String PUBLISHED = "published";
 
@@ -461,14 +461,14 @@ public interface HibernateRelations {
 
         void setUrl(String url);
     }
-    
-    
+
+
     interface GetStringValue {
-        
+
          boolean isSetValue();
-        
+
         String getValueAsString();
-        
+
     }
 
     interface HasValue<T> extends GetStringValue {

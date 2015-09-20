@@ -58,7 +58,7 @@ import com.github.fge.jackson.JsonLoader;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InsertResultTemplateRequestDecoderTest {
     @ClassRule

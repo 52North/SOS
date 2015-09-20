@@ -134,10 +134,10 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
             }
         }
     }
-    
+
     private void addAssessmentType(Criteria c, String assessmentType) {
         c.createCriteria(EReportingSeries.SAMPLING_POINT).createCriteria(EReportingSamplingPoint.ASSESSMENTTYPE).
         add(Restrictions.ilike(EReportingAssessmentType.ASSESSMENT_TYPE, assessmentType));
     }
-    
+
 }

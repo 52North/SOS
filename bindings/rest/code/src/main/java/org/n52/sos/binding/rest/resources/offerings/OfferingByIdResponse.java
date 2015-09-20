@@ -39,7 +39,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
 public class OfferingByIdResponse implements RestResponse {
 
     private ObservationOfferingType xb_ObservationOffering;
-    
+
     public OfferingByIdResponse(ObservationOfferingType xb_ObservationOffering) {
         this.xb_ObservationOffering = xb_ObservationOffering;
     }

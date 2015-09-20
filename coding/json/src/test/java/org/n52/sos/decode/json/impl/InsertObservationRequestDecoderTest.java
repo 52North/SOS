@@ -52,9 +52,9 @@ import com.github.fge.jackson.JsonLoader;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InsertObservationRequestDecoderTest {

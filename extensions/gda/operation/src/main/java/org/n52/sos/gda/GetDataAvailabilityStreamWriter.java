@@ -54,9 +54,9 @@ import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 
 /**
  * GetDataAvailability response stream writer.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAvailability>> {
@@ -211,7 +211,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         }
         if (tp.isSetEnd()) {
             writeTimeString(tp.getEnd(), tp.getTimeFormat());
-        } 
+        }
         end(GmlConstants.QN_END_POSITION_32);
     }
 

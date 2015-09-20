@@ -52,7 +52,7 @@ public class CustomMySQLDatasource extends MySQLCoreDatasource {
     public String getDialectName() {
         return DIALECT_NAME;
     }
-    
+
     @Override
     public boolean supportsClear() {
         return false;

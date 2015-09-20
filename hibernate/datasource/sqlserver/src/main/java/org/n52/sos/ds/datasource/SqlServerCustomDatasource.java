@@ -30,7 +30,7 @@ package org.n52.sos.ds.datasource;
 
 /**
  * MS SQL Server datasource for custom mapping
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *

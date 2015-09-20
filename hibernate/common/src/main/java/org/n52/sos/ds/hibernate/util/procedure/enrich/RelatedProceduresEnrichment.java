@@ -80,7 +80,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
     public RelatedProceduresEnrichment setValidTime(TimePeriod validTime) {
         this.validTime = validTime;
         return this;
-    }    
+    }
 
     @Override
     public void enrich() throws OwsExceptionReport {
@@ -128,16 +128,16 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
         Set<SosProcedureDescription> childProcedures = Sets.newHashSet();
         for (String childId : childIdentfiers) {
             Procedure child = procedureCache.get(childId);
-            
+
             //if child has valid vpts, use the most recent one within
             //the validTime to create the child procedure
             ValidProcedureTime childVpt = null;
             if (child instanceof TProcedure) {
-                TProcedure tChild = (TProcedure) child;                
+                TProcedure tChild = (TProcedure) child;
                 for (ValidProcedureTime cvpt : tChild.getValidProcedureTimes()) {
                     TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
                             cvpt.getEndTime());
-                    
+
                     if (validTime != null && !validTime.isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childVpt = cvpt;
                     } else {
@@ -146,22 +146,22 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                         if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
                             continue;
                         }
-    
+
                         if (childVpt == null || cvpt.getEndTime() == null ||
                                 (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
-                                cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                                cvpt.getEndTime().after(childVpt.getEndTime()))) {
                             childVpt = cvpt;
                         }
                     }
                 }
             }
-            
+
             if (childVpt != null) {
                 //matching child validProcedureTime was found, use it to build procedure description
                 SosProcedureDescription childDescription =
                         converter.createSosProcedureDescriptionFromValidProcedureTime(
                                 child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
-                childProcedures.add(childDescription);                
+                childProcedures.add(childDescription);
             } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description
                 SosProcedureDescription childDescription = converter.createSosProcedureDescription(

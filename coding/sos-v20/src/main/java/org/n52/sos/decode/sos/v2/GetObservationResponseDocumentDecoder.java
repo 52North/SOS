@@ -55,7 +55,7 @@ import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 public class GetObservationResponseDocumentDecoder implements SosResponseDecoder, Decoder<GetObservationResponse, GetObservationResponseDocument> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationResponseDocumentDecoder.class);
-    
+
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
             Sos2Constants.NS_SOS_20,
             GetObservationResponseDocument.class);
@@ -80,8 +80,8 @@ public class GetObservationResponseDocumentDecoder implements SosResponseDecoder
             GetObservationResponseType gort = gord.getGetObservationResponse();
             response.setExtensions(parseExtensibleResponse(gort));
             response.setObservationCollection(parseObservtions(gort));
-            
-            
+
+
             return response;
         }
         throw new UnsupportedDecoderInputException(this, gord);

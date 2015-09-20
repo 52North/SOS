@@ -39,7 +39,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
 public class ObservationsPostResponse implements RestResponse {
 
     private String observationIdentifier;
-    
+
     private OMObservationType xb_OMObservation;
 
     public ObservationsPostResponse(String identifier,

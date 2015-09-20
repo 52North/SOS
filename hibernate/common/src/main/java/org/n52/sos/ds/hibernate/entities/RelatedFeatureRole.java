@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class RelatedFeatureRole implements Serializable {
 

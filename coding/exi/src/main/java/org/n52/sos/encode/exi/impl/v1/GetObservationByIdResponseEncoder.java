@@ -35,13 +35,13 @@ import org.n52.sos.response.GetObservationByIdResponse;
 
 /**
  * Response encoder for {@link GetObservationByIdResponse}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public class GetObservationByIdResponseEncoder extends AbstractSosV1ResponseEncoder<GetObservationByIdResponse> {
-    
+
     /**
      * Constructor
      */

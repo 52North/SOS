@@ -37,21 +37,21 @@ import org.junit.Test;
 import com.google.common.collect.Lists;
 
 public class HibernateHelperTest {
-    
+
     @Test
     public void shouldReturnListsOfLists() {
         assertTrue( HibernateHelper.getValidSizedLists(getList()).size() == 11);
     }
-    
+
     @Test
     public void shouldListSizeLessThanLimitExpressionDepth() {
         for (List<Long> validSizedList :  HibernateHelper.getValidSizedLists(getList())) {
             assertTrue(validSizedList.size() <= HibernateConstants.LIMIT_EXPRESSION_DEPTH);
         }
     }
-    
+
     private List<Long> getList() {
-        List<Long> list = Lists.newArrayList(); 
+        List<Long> list = Lists.newArrayList();
         for (long i = 0; i < 9999; i++) {
             list.add(i);
         }

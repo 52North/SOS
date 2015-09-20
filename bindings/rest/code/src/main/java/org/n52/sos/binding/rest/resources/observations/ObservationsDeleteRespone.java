@@ -35,7 +35,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class ObservationsDeleteRespone implements RestResponse {
-    
+
     private String deletedObservation;
 
     public ObservationsDeleteRespone(String deletedObservation) {

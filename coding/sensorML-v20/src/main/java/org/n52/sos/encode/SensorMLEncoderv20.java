@@ -1055,7 +1055,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         return new ClassifierListPropertyType[] { xbClassification };
     }
-    
+
     private void createTerm(TermType t, Term term) {
         t.setLabel(term.getLabel());
         if (term.isSetDefinition()) {

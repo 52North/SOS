@@ -66,7 +66,7 @@ import com.google.common.collect.Sets;
 public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullDBDatasource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSqlServerDatasource.class);
-    
+
     private static final int INSTANCE = 3;
 
     private static final int DATABASE = 4;

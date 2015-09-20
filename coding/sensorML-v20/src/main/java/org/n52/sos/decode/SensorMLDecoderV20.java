@@ -169,7 +169,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     private static final ImmutableSet<SupportedType> SUPPORTED_TYPES = ImmutableSet.<SupportedType> builder()
             .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)).build();
 
-    
+
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
             ImmutableMap.of(
                     SosConstants.SOS,
@@ -177,7 +177,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                             .<String, Set<String>> builder()
                             .put(Sos2Constants.SERVICEVERSION,
                                     ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)).build());
-    
+
     public SensorMLDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(DECODER_KEYS));
@@ -513,7 +513,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         }
         return sosClassifiers;
     }
-    
+
     private void parseTerm(TermType t, Term term) {
         term.setLabel(t.getLabel());
         term.setName(t.getLabel());
@@ -741,7 +741,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                     } else {
                         if (component.isSetTitle()) {
                             sosSmlcomponent.setTitle(component.getTitle());
-                        } 
+                        }
                         if (component.isSetHref()) {
                             sosSmlcomponent.setHref(component.getHref());
                         }
@@ -821,7 +821,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         } else {
             sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbInput));
         }
-        
+
         return sosIo;
     }
 
@@ -830,7 +830,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         if (adcpt.isSetTitle()) {
             sosIo.setTitle(adcpt.getTitle());
         }
-        
+
     }
 
     @SuppressWarnings({ "rawtypes" })
@@ -918,8 +918,8 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         }
         return observableProperty;
     }
-    
-    
+
+
     private XmlOptions getXmloptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }

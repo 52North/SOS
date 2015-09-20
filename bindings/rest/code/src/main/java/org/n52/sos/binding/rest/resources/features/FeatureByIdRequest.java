@@ -35,7 +35,7 @@ import org.n52.sos.request.GetFeatureOfInterestRequest;
  *
  */
 public class FeatureByIdRequest extends FeaturesRequest {
-    
+
     private String featureResourceIdentifier;
 
     public FeatureByIdRequest(GetFeatureOfInterestRequest getFeatureOfInterestRequest, String featureResourceIdentifier) {

@@ -34,7 +34,7 @@ import org.n52.sos.ogc.om.OmObservation;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationResponse extends AbstractServiceResponse {

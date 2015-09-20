@@ -65,11 +65,11 @@ import org.slf4j.LoggerFactory;
 public abstract class RequestHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestHandler.class);
-    
+
     protected Constants bindingConstants = Constants.getInstance();
-    
+
     public abstract RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException;
-    
+
     protected OwsExceptionReport logRequestTypeNotSupportedByThisHandlerAndCreateException(final RestRequest request, final String requestHandlerClassName) throws OwsExceptionReport
     {
         final String exceptionText = String.format("Handling of request failed but no exception is thrown. The request '%s' is not supported by this request handler '%s'",
@@ -78,7 +78,7 @@ public abstract class RequestHandler {
         LOGGER.debug(exceptionText);
         return new EncoderResponseUnsupportedException().withMessage(exceptionText);
     }
-    
+
     protected ObservationOfferingType getOfferingForProcedureFromSos(final GetCapabilitiesRequest getCapabilitiesRequest, final String procedureId) throws OwsExceptionReport, XmlException, IOException
     {
         final Offering[] xb_offerings = getOfferingsFromSosCore(getCapabilitiesRequest);
@@ -93,7 +93,7 @@ public abstract class RequestHandler {
         }
         return null;
     }
-    
+
     protected Offering[] getOfferingsFromSosCore(GetCapabilitiesRequest req) throws OwsExceptionReport, XmlException
     {
         // if response is an OWSException report -> cancel whole process and throw it
@@ -104,7 +104,7 @@ public abstract class RequestHandler {
         {
             final CapabilitiesDocument xb_capabilitiesDocument = (CapabilitiesDocument) xb_getCapabilitiesResponse;
             final CapabilitiesType xb_capabilities = xb_capabilitiesDocument.getCapabilities();
-            
+
             if (isOfferingArrayAvailable(xb_capabilities))
             {
                 return xb_capabilities.getContents().getContents().getOfferingArray();
@@ -126,12 +126,12 @@ public abstract class RequestHandler {
                 xb_capabilities.getContents().getContents() != null &&
                 xb_capabilities.getContents().getContents().getOfferingArray() != null;
     }
-    
+
     protected ObservationOfferingType getObservationOfferingFromOffering(final Offering xb_offering) throws XmlException, IOException
     {
         return ObservationOfferingDocument.Factory.parse(xb_offering.newInputStream()).getObservationOffering();
     }
-    
+
     private ServiceOperator getServiceOperator(AbstractServiceRequest<?> req) throws OwsExceptionReport
     {
         for (ServiceOperatorKey sok : req.getServiceOperatorKeys()) {

@@ -37,16 +37,16 @@ package org.n52.sos.ds.datasource;
 public class OracleCustomDatasource extends OracleCoreDatasource {
 
     private static final String DIALECT_NAME = "Oracle Spatial Custom Core";
-    
+
     public OracleCustomDatasource() {
         super();
     }
-    
+
     @Override
     public String getDialectName() {
         return DIALECT_NAME;
     }
-    
+
     @Override
     public boolean needsSchema() {
         return false;

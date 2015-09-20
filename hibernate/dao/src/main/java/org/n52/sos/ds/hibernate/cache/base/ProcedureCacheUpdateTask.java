@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     @SuppressWarnings("unused")
@@ -55,7 +55,7 @@ class ProcedureCacheUpdateTask extends AbstractThreadableDatasourceCacheUpdate {
     /**
      * Constructor. Note: never pass in Hibernate objects that have been loaded
      * by a session in a different thread *
-     * 
+     *
      * @param procedureId
      *            Procedure identifier
      */

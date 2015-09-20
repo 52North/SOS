@@ -37,9 +37,9 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class FeatureByIdResponse implements RestResponse {
-    
+
     private String featureResourceIdentifier;
-    
+
     private FeaturePropertyType featurePropertyType;
 
     public FeatureByIdResponse(String featureResourceIdentifier, FeaturePropertyType featurePropertyType) {

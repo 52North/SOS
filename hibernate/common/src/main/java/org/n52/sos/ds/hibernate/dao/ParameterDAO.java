@@ -34,15 +34,15 @@ import org.n52.sos.ogc.om.NamedValue;
 
 /**
  * Hibernate DAO class to om:pramameter
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class ParameterDAO {
 
     /**
      * Insert a new om:parameter into the datasource
-     * 
+     *
      * @param namedValue
      *            Parameter definition
      * @param observationId

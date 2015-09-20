@@ -82,7 +82,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
     private FeatureQueryHandler featureQueryHandler;
     private ServiceMetadataRepository serviceMetadataRepository;
     private HibernateSessionHolder sessionHolder;
-    
+
     @Inject
     private ObservationSettingProvider observationSettingProvider;
 

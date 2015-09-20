@@ -35,15 +35,15 @@ import org.apache.xmlbeans.XmlObject;
 /**
  * Class to hold the {@link XmlObject} which should be encoded and written to
  * the {@link OutputStream}.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public class EXIObject {
-    
+
     private XmlObject doc;
-    
+
     /**
      * @param doc the {@link XmlObject} to encode
      */

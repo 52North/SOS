@@ -111,7 +111,7 @@ public class RestBinding extends Binding implements Constructable {
     private DecoderRepository decoderRepository;
 
     private Producer<XmlOptions> xmlOptions;
-    
+
     private HttpUtils httpUtils;
 
     public HttpUtils getHttpUtils() {

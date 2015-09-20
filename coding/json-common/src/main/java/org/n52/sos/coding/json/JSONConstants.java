@@ -377,7 +377,7 @@ public interface JSONConstants {
     String WITHIN = "within";
 
     String PARAMETER = "parameter";
-    
+
     String NAMED_VALUE = "NamedValue";
-    
+
 }

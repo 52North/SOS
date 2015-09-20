@@ -58,9 +58,9 @@ import net.opengis.om.x20.NamedValuePropertyType;
 import net.opengis.om.x20.NamedValueType;
 
 public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object, Object> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmDecoderv20.class);
-    
+
     @Override
     public Object decode(Object object) throws OwsExceptionReport, UnsupportedDecoderInputException {
         if (object instanceof NamedValuePropertyType) {
@@ -70,7 +70,7 @@ public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object
         }
         throw new UnsupportedDecoderInputException(this, object);
     }
-    
+
     protected Set<NamedValue<?>> parseNamedValueTypeArray(NamedValuePropertyType[] namedValuePropertyArray)
             throws OwsExceptionReport {
         Set<NamedValue<?>> parameters = Sets.newHashSet();

@@ -70,7 +70,7 @@ public class GeometryValuedLegacyObservation
             throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
+
     @Override
     public String getValueAsString() {
         return getValue().toText();

@@ -35,7 +35,7 @@ import net.opengis.sensorML.x101.SystemType;
  *
  */
 public class SensorsPostResponse extends SensorResponse {
-    
+
     public SensorsPostResponse(String assignedProcedureIdentifier, SystemType xb_smlSystem) {
         super(xb_smlSystem,assignedProcedureIdentifier);
     }

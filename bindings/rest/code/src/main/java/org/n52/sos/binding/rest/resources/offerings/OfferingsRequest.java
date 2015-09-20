@@ -36,7 +36,7 @@ import org.n52.sos.binding.rest.requests.RestRequest;
  *
  */
 public class OfferingsRequest implements RestRequest {
-    
+
     private GetCapabilitiesRequest getCapabilitiesRequest;
 
     public OfferingsRequest(GetCapabilitiesRequest getCapabilitiesRequest)

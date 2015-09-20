@@ -57,7 +57,7 @@ import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
- * 
+ *
  * @since 4.0.0
  *
  */

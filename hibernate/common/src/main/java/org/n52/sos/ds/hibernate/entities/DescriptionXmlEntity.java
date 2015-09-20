@@ -35,7 +35,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public abstract class DescriptionXmlEntity extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDescriptionXml {
 

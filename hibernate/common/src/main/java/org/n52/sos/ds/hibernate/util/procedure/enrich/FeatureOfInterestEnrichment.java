@@ -50,15 +50,15 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment {
-    
+
     private Session session;
-    
+
     public FeatureOfInterestEnrichment setSession(Session session) {
         this.session = checkNotNull(session);
         return this;
 
     }
-    
+
     @Override
     public void enrich() throws OwsExceptionReport {
         Collection<String> featureOfInterestIDs = getFeatureOfInterestIDs();

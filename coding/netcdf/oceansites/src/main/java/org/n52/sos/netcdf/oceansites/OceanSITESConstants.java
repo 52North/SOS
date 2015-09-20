@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableListMultimap;
 
 /**
  * Constants interface for OceanSITES specific constants.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -101,7 +101,7 @@ public interface OceanSITESConstants {
 
     /**
      * REQUIRED</br>
-     * 
+     *
      * example: site_code=”CIS” (OceanSITES specific)</br> note: Name of the
      * site within OceanSITES project. The site codes are available on GDAC ftp
      * servers. Required (GDAC)
@@ -110,7 +110,7 @@ public interface OceanSITESConstants {
 
     /**
      * REQUIRED</br>
-     * 
+     *
      * example: platform_code=”CIS-1” (OceanSITES specific)</br> note: The
      * unique platform code, assigned by an OceanSITES project. Required. (GDAC)
      */
@@ -118,7 +118,7 @@ public interface OceanSITESConstants {
 
     /**
      * REQUIRED</br>
-     * 
+     *
      * example: data_mode=”R” (OceanSITES specific)</br> note: Indicates if the
      * file contains real-time, provisional or delayed-mode data. The list of
      * valid data modes is in {@link DataMode}. (GDAC)
@@ -127,7 +127,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: wmo_platform_code=”48409” (OceanSITES specific)</br> note: WMO
      * (World Meteorological Organization) identifier. This platform number is
      * unique within the OceanSITES project.
@@ -136,7 +136,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: array=”TAO” (OceanSITES specific)</br> note: A grouping of sites
      * based on a common and identified scientific question, or on a common
      * geographic location.
@@ -145,7 +145,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: network=”EuroSITES” (OceanSITES specific)</br> note: A grouping
      * of sites based on common shore-based logistics or infrastructure.
      */
@@ -153,7 +153,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: principal_investigator=”Alice Juarez”</br> note: Name of the
      * person responsible for the project that produced the data contained in
      * the file.
@@ -162,7 +162,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: principal_investigator_email =”AJuarez AT whoi.edu”</br> note:
      * Email address of the project lead for the project that produced the data
      * contained in the file.
@@ -171,7 +171,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: principal_investigator_url=” whoi.edu/profile/AJuarez”</br>
      * note: URL with information about the project lead.
      */
@@ -183,7 +183,7 @@ public interface OceanSITESConstants {
 
     /**
      * REQUIRED</br>
-     * 
+     *
      * example: data_type=”OceanSITES time-series data”</br> note: From
      * {@link DataType}: OceanSITES specific. (GDAC)
      */
@@ -191,7 +191,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: area=”North Atlantic Ocean” (OceanSITES specific)</br> note:
      * Geographical coverage. Try to compose of the following:
      * North/Tropical/South Atlantic/Pacific/Indian Ocean, Southern Ocean,
@@ -209,7 +209,7 @@ public interface OceanSITESConstants {
 
     /**
      * REQUIRED</br>
-     * 
+     *
      * example: format_version=”1.3” (OceanSITES specific)</br> note: OceanSITES
      * format version; may be 1.1, 1.2, 1.3. (GDAC)
      */
@@ -219,7 +219,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: netcdf_version=”3.5” (OceanSITES specific)</br> note: NetCDF
      * version used for the data set
      */
@@ -231,7 +231,7 @@ public interface OceanSITESConstants {
 
     /**
      * REQUIRED</br>
-     * 
+     *
      * example: update_interval=”PT12H” (OceanSITES specific)</br> note: Update
      * interval for the file, in ISO 8601 Interval format: PnYnMnDTnHnM where
      * elements that are 0 may be omitted. Use “void” for data that are not
@@ -241,7 +241,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: data_assembly_center=”EUROSITES” (OceanSITES specific)</br>
      * note: Data Assembly Center (DAC) in charge of this data file. The
      * data_assembly_center are listed in {@link DACC}.
@@ -250,7 +250,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: citation={@link CITATION_DEFAULT_TEXT} (OceanSITES
      * specific)</br> note: The citation to be used in publications using the
      * dataset; should include a reference to OceanSITES but may contain any
@@ -280,7 +280,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: processing_level =” Data verified against model or other
      * contextual information” (OceanSITES specific)</br> note: Level of
      * processing and quality control applied to data. Preferred values are
@@ -290,7 +290,7 @@ public interface OceanSITESConstants {
 
     /**
      * OPTIONAL</br>
-     * 
+     *
      * example: QC_indicator =”excellent” (OceanSITES specific)</br> note: A
      * value valid for the whole dataset, one of {@link QCIndicator}
      */
@@ -315,7 +315,7 @@ public interface OceanSITESConstants {
     String PLATFORM_CODE_DEFINITION = "http://www.nexosproject.eu/dictionary/definitions.html#PLATFORM_ID";
 
     String DATA_MODE_DEFINITION = "http://www.nexosproject.eu/dictionary/definitions.html#DATA_MODE";
-    
+
     String AREA_DEFINITION = "http://www.nexosproject.eu/dictionary/definitions.html#AREA";
 
     String REFERENCE = "reference";
@@ -334,7 +334,7 @@ public interface OceanSITESConstants {
 
     /**
      * relative to sea floor up - atmospheric down - oceanic
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *
@@ -505,23 +505,23 @@ public interface OceanSITESConstants {
      * instruments, disassembly or recovery of the platform. Example: for a
      * mooring with a radio communication, this would be data obtained through
      * the radio.</br>
-     * 
+     *
      * P - Provisional data. Data obtained after instruments have been recovered
      * or serviced; some calibrations or editing may have been done, but the
      * data is not thought to be fully processed. Refer to the history attribute
      * for more detailed information.</br>
-     * 
+     *
      * D - Delayed-mode data. Data published after all calibrations and quality
      * control procedures have been applied on the internally recorded or best
      * available original data. This is the best possible version of processed
      * data.</br>
-     * 
+     *
      * M - Mixed. This value is only allowed in the global attribute “data_mode”
      * or in attributes to variables in the form “<PARAM>:DM_indicator”. It
      * indicates that the file contains data in more than one of the above
      * states. In this case, the variable(s) <PARAM>_DM specify which data is in
      * which data mode.</br>
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *
@@ -533,7 +533,7 @@ public interface OceanSITESConstants {
 
     /**
      * Data Assembly Center codes (DACC)
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *

@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public interface DeleteObservationConstants {

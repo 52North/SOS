@@ -38,7 +38,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
 /**
  * Implementation of a {@link ValuedObservation} for the legacy observation
  * concept, that holds a numeric value.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -65,7 +65,7 @@ public class NumericValuedLegacyObservation
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
+
     @Override
     public String getValueAsString() {
         return getValue().toString();

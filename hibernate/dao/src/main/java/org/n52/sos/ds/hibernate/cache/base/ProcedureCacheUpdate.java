@@ -137,7 +137,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
-    
+
     @Override
     public void execute() {
         //single threaded updates
@@ -180,7 +180,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
                         observablePropertyDAO.getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
             }
-            
+
             setTypeProcedure(procedure);
             setAggregatedProcedure(procedure);
             setTypeInstanceProcedure(procedure);

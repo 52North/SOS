@@ -116,7 +116,7 @@ public class ProcedureDescriptionEnrichments {
         this.typeOfIdentifier = typeOfIdentifier;
         return this;
     }
-    
+
     public ProcedureDescriptionEnrichments setTypeOfFormat(String typeOfFormat) {
         this.typeOfFormat = typeOfFormat;
         return this;
@@ -192,7 +192,7 @@ public class ProcedureDescriptionEnrichments {
     private TypeOfEnrichment createTypeOfEnrichmentEnrichment() {
         return setValues(new TypeOfEnrichment()).setTypeOfIdentifier(typeOfIdentifier).setTypeOfFormat(typeOfFormat);
     }
-    
+
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)

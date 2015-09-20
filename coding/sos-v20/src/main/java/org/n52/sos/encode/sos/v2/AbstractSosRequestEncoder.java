@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
  * @param <T> the request type
  */
 public abstract class AbstractSosRequestEncoder<T extends AbstractServiceRequest<? extends AbstractServiceResponse>> extends AbstractRequestEncoder<T> {
-    
+
     public AbstractSosRequestEncoder(String operation, Class<T> responseType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation, Sos2Constants.NS_SOS_20,
                 SosConstants.NS_SOS_PREFIX, responseType);
@@ -67,7 +67,7 @@ public abstract class AbstractSosRequestEncoder<T extends AbstractServiceRequest
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(Sos2Constants.SOS_SCHEMA_LOCATION);
     }
-    
+
     protected XmlObject encodeGml(Object o) throws OwsExceptionReport {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }

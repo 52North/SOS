@@ -58,7 +58,7 @@ public class EReportingObservationHelper {
         }
         return namedValues;
     }
-    
+
     public Collection<NamedValue<?>> createSamplingPointParameter(EReportingSeries series) {
         Collection<NamedValue<?>> namedValues = Lists.newArrayListWithCapacity(2);
         namedValues.add(getAssessmentType(series.getSamplingPoint()));

@@ -56,14 +56,14 @@ import org.n52.sos.ogc.wml.ObservationProcess;
 /**
  * Abstract converter for WaterML {@link ObservationProcess} and SensorML
  * {@link AbstractProcess}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 public abstract class AbstractWaterMLv20SensorMLConverter
         implements Converter<SosProcedureDescription, SosProcedureDescription> {
-    
+
     protected AbstractProcess convertObservationProcessToAbstractProcess(ObservationProcess observationProcess, AbstractProcess abstractProcess) {
         abstractProcess.addIdentifier(createUniqueIDIdentifier(observationProcess.getIdentifier()));
         // duration is not valid for validTime element
@@ -300,7 +300,7 @@ public abstract class AbstractWaterMLv20SensorMLConverter
         }
         return namedValueProperty;
     }
-    
+
     protected void convertSensorMLToObservationProcess(ObservationProcess observationProcess,
             AbstractProcess abstractProcess) {
         convertAbstractSensorMLToObservationProcess(observationProcess, abstractProcess);

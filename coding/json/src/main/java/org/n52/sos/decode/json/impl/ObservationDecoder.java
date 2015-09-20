@@ -204,7 +204,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         nv.setName(referenceType);
         return nv;
     }
-    
+
     private NamedValue<?> parseNamedValueValue(JsonNode namedValue) throws OwsExceptionReport {
         JsonNode value = namedValue.path(JSONConstants.VALUE);
         if (value.isTextual()) {
@@ -217,7 +217,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
              return nv;
         }
     }
-    
+
     protected AbstractFeature parseFeatureOfInterest(JsonNode node) throws OwsExceptionReport {
         return featureDecoder.decodeJSON(node.path(JSONConstants.FEATURE_OF_INTEREST), false);
     }
@@ -274,5 +274,5 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         GeometryValue v = new GeometryValue(geometryDecoder.decodeJSON(node.path(JSONConstants.RESULT), false));
         return new SingleObservationValue<Geometry>(parsePhenomenonTime(node), v);
     }
-    
+
 }

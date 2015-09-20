@@ -80,7 +80,7 @@ public class ComplexValuedLegacyObservation
 
     @Override
     public String getValueAsString() {
-        // TODO 
+        // TODO
         return null;
     }
 }

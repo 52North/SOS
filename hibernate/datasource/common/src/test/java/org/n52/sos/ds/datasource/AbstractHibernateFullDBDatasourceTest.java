@@ -52,9 +52,9 @@ import junit.framework.TestCase;
  */
 public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
-    
+
     private static final int CHANGEABLE_COUNT = 10;
-    
+
     private static final int MAX_COUNT = 15;
 
     @Override

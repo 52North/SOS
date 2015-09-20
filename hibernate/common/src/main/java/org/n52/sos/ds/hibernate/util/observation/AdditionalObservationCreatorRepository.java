@@ -54,7 +54,7 @@ public class AdditionalObservationCreatorRepository extends
     private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
             = Maps.newHashMap();
 
-    
+
     @Autowired(required = false)
     private Collection<AdditionalObservationCreator> components;
 

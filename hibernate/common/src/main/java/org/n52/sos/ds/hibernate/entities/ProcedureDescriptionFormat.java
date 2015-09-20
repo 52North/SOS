@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescript
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ProcedureDescriptionFormat implements Serializable {
 

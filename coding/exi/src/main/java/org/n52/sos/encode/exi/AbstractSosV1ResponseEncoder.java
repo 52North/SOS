@@ -35,7 +35,7 @@ import org.n52.sos.exi.EXIObject;
 /**
  * Abstract response encoder class for {@link EXIObject} and SOS 1.0.0
  * operations
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -47,7 +47,7 @@ public abstract class AbstractSosV1ResponseEncoder<T extends AbstractServiceResp
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            Concrete {@link AbstractServiceResponse} class
      * @param operation
@@ -59,7 +59,7 @@ public abstract class AbstractSosV1ResponseEncoder<T extends AbstractServiceResp
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            Concrete {@link AbstractServiceResponse} class
      * @param operation

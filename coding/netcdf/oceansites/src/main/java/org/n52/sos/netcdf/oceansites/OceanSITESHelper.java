@@ -38,7 +38,7 @@ import com.google.common.base.Strings;
 /**
  * Helper class for OceanSITES netCDF encoding. Holds the OceanSITES netCDF
  * setting values.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -77,7 +77,7 @@ public class OceanSITESHelper implements Constructable {
     private String references;
 
     private String areaDefinition;
-    
+
     @Deprecated
     private static OceanSITESHelper instance;
 

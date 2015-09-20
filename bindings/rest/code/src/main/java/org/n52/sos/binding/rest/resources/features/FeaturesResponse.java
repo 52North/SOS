@@ -35,7 +35,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class FeaturesResponse implements RestResponse {
-    
+
     private String[] featureIds;
 
     public FeaturesResponse(String[] featureIds) {

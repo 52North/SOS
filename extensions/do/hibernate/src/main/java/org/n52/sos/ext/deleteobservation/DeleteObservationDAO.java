@@ -141,7 +141,7 @@ public class DeleteObservationDAO extends AbstractDeleteObservationHandler {
 
     /**
      * Check if {@link Series} should be updated
-     * 
+     *
      * @param observation
      *            Deleted observation
      * @param session

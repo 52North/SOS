@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for featureofInterest types
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -51,7 +51,7 @@ public class RelatedFeatureRoleDAO {
 
     /**
      * Get related feature role objects for role
-     * 
+     *
      * @param role
      *            Related feature role
      * @param session
@@ -69,7 +69,7 @@ public class RelatedFeatureRoleDAO {
 
     /**
      * Insert and get related feature role objects
-     * 
+     *
      * @param role
      *            Related feature role
      * @param session

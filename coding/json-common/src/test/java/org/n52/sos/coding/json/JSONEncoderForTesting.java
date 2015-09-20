@@ -36,7 +36,7 @@ import org.n52.sos.encode.json.JSONEncodingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class JSONEncoderForTesting extends JSONEncoder<String> {
-    
+
     public JSONEncoderForTesting(Class<String> type, JSONEncoderKey[] additionalKeys) {
         super(type, additionalKeys);
     }

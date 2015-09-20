@@ -70,9 +70,9 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <autermann@uni-muenster.de>
- * 
+ *
  * @since 4.0.0
  */
 public class GeoJSONTest {

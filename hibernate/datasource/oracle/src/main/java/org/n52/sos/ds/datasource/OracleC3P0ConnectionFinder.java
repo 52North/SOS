@@ -42,7 +42,7 @@ import com.mchange.v2.c3p0.C3P0ProxyConnection;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OracleC3P0ConnectionFinder implements ConnectionFinder {
     public static Connection getRawConnection(Connection con) {

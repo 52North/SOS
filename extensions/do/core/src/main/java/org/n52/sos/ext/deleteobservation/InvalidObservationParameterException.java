@@ -32,7 +32,7 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 1.0.0
  */
 public class InvalidObservationParameterException extends InvalidParameterValueException {

@@ -39,7 +39,7 @@ import org.n52.sos.response.DescribeSensorResponse;
 
 public class AqdDescribeSensorResponseEncoder extends
 AbstractAqdResponseEncoder<DescribeSensorResponse> {
-    
+
     public AqdDescribeSensorResponseEncoder() {
           super(SosConstants.Operations.DescribeSensor.name(), DescribeSensorResponse.class);
     }

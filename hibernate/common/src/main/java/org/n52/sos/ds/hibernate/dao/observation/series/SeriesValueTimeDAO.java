@@ -77,7 +77,7 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
 //        return (TemporalReferencedSeriesObservation) getSeriesValueCriteriaFor(request, series, temporalFilterCriterion,
 //                SosConstants.SosIndeterminateTime.first, session).uniqueResult();
 //    }
-//    
+//
 //    /**
 //     * Query the maximum {@link TemporalReferencedSeriesObservation} for parameter
 //     *

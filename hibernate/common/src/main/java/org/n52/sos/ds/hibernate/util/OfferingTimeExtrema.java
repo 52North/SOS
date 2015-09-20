@@ -32,7 +32,7 @@ import com.google.common.base.Strings;
 
 /**
  * Hold min and max obs time for offering
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *

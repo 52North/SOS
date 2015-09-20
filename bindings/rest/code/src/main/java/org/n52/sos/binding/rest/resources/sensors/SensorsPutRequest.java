@@ -41,7 +41,7 @@ public class SensorsPutRequest extends TransactionalSensorRequest {
 
     private UpdateSensorRequest updateSensorRequest;
     private DescribeSensorRequest describeSensorRequest;
-    
+
     public SensorsPutRequest(UpdateSensorRequest updateSensorRequest,
             SystemType xb_smlSystem)
     {

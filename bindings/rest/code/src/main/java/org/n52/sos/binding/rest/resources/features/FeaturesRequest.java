@@ -36,9 +36,9 @@ import org.n52.sos.request.GetFeatureOfInterestRequest;
  *
  */
 public class FeaturesRequest implements RestRequest {
-    
+
     private GetFeatureOfInterestRequest getFeatureOfInterestRequest;
-    
+
     public FeaturesRequest(GetFeatureOfInterestRequest getFeatureOfInterestRequest) {
         this.getFeatureOfInterestRequest = getFeatureOfInterestRequest;
     }
@@ -47,7 +47,7 @@ public class FeaturesRequest implements RestRequest {
     {
         return getFeatureOfInterestRequest;
     }
-    
-    
+
+
 
 }

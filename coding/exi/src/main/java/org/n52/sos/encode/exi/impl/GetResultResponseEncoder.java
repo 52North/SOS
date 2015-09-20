@@ -34,7 +34,7 @@ import org.n52.sos.response.GetResultResponse;
 
 /**
  * Response encoder for {@link GetResultResponse}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *

@@ -41,7 +41,7 @@ public class EReportingValueTimeDAO extends AbstractSeriesValueTimeDAO {
         protected Class<?> getSeriesValueTimeClass() {
             return TemporalReferencedEReportingObservation.class;
         }
-    
+
         @Override
         protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
             // add quality restrictions

@@ -61,7 +61,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class TemporalRestrictionInstantPeriodTest extends TemporalRestrictionTest {

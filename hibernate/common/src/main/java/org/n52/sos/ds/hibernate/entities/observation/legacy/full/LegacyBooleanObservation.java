@@ -64,7 +64,7 @@ public class LegacyBooleanObservation
     public void setValue(Boolean value) {
         this.value = value;
     }
-    
+
     @Override
     public String getValueAsString() {
         return getValue().toString();

@@ -61,7 +61,7 @@ public class HibernateObservationUtilities {
              AbstractObservationRequest r, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale l, Session s) throws OwsExceptionReport, ConverterException {
         return new ObservationOmObservationCreator(o, r, serviceProvider, l, s).create();
     }
-    
+
     public static OmObservation createSosObservationFromObservation(Observation<?> o, AbstractObservationRequest r,
             LocalizedProducer<OwsServiceProvider> serviceProvider, Locale l, Session s) throws OwsExceptionReport, ConverterException {
         List<OmObservation> c = new ObservationOmObservationCreator(Sets.newHashSet(o), r, serviceProvider, l, s).create();

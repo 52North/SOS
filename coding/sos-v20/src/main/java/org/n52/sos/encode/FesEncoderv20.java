@@ -88,7 +88,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(FesEncoderv20.class);
@@ -238,7 +238,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets the FES conformance classes in the filter capabilities section.
-     * 
+     *
      * @param conformance
      *            XML FES conformence
      * @param sosConformance
@@ -257,9 +257,9 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets the SpatialFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param spatialCapabilitiesType
      *            FES SpatialCapabilities.
      * @param sosFilterCaps
@@ -293,9 +293,9 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets the TemporalFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param temporalCapabilitiesType
      *            FES TemporalCapabilities.
      * @param sosFilterCaps
@@ -329,9 +329,9 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
 
     /**
      * Sets the ScalarFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param scalarCapabilitiesType
      *            FES ScalarCapabilities.
      * @param sosFilterCaps
@@ -350,9 +350,9 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
 
     /**
      * Set the IdFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param idCapabilitiesType
      *            FES IdCapabilities.
      */

@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 public class LinkedDescriptionCreationStrategy implements DescriptionCreationStrategy {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(LinkedDescriptionCreationStrategy.class);
 
     @Override
@@ -62,7 +62,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
         return new SosProcedureDescriptionUnknowType(p.getIdentifier(), p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
     }
-    
+
     private String loadDescriptionFromHttp(String descriptionFile) throws OwsExceptionReport {
         InputStream is = null;
         Scanner scanner = null;

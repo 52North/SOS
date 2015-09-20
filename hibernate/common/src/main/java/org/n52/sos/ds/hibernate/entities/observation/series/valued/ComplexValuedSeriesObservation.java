@@ -80,7 +80,7 @@ public class ComplexValuedSeriesObservation
 
     @Override
     public String getValueAsString() {
-        // TODO 
+        // TODO
         return null;
     }
 }

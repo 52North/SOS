@@ -73,13 +73,13 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<GetCapabilitiesResponse> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GetCapabilitiesResponseEncoder.class);
 
     public GetCapabilitiesResponseEncoder() {
@@ -90,7 +90,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     protected XmlObject create(GetCapabilitiesResponse response) throws OwsExceptionReport {
         CapabilitiesDocument doc = CapabilitiesDocument.Factory.newInstance(getXmlOptions());
         CapabilitiesType xbCaps = doc.addNewCapabilities();
-        
+
         if (response.isStatic()) {
             String xml = response.getXmlString();
             LOGGER.trace("Response is static. XML-String:\n{}\n",xml);
@@ -101,10 +101,10 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
                 throw new XmlDecodingException("Static Capabilities", xml, ex);
             }
         }
-        
+
         // set version.
-        
-        
+
+
         if (response.getCapabilities().isSetVersion()) {
             xbCaps.setVersion(response.getCapabilities().getVersion());
         } else {
@@ -174,15 +174,15 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Sets the content section to the Capabilities document.
-     * 
+     *
      * @param xbContents
      *            SOS 2.0 contents section
      * @param offerings
      *            SOS offerings for contents
      * @param version
      *            SOS response version
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
@@ -207,7 +207,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Creates a XML FeatureRelationship for the relatedFeature
-     * 
+     *
      * @param featureRelationship
      *            XML feature relationship
      * @param relatedFeatureTarget
@@ -313,19 +313,19 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeObservationOffering(SosObservationOffering offering, int offeringCounter,
             ContentsType xbContType) throws OwsExceptionReport {
         final ObservationOfferingType xbObsOff = ObservationOfferingType.Factory.newInstance(getXmlOptions());
-        
+
     SosOffering sosOffering = offering.getOffering();
         xbObsOff.setIdentifier(sosOffering.getIdentifier());
         if (sosOffering.isSetName()) {
             for (CodeType name : sosOffering.getName()) {
-                xbObsOff.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, name)); 
+                xbObsOff.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, name));
             }
         }
         if (sosOffering.isSetDescription()) {
             xbObsOff.setDescription(sosOffering.getDescription());
         }
         encodeOfferingExtension(offering, xbObsOff);
-        
+
         for (String procedure : offering.getProcedures()) {
             xbObsOff.setProcedure(procedure);
         }
@@ -359,7 +359,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
                 } else {
                     xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(extention.getNamespace(), extention));
                 }
-                
+
             }
         }
     }

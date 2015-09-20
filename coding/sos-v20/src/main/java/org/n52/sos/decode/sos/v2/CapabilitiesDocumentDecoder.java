@@ -48,9 +48,9 @@ import com.google.common.base.Joiner;
 import net.opengis.sos.x20.CapabilitiesDocument;
 
 public class CapabilitiesDocumentDecoder implements Decoder<GetCapabilitiesResponse, CapabilitiesDocument> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationResponseDocumentDecoder.class);
-    
+
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
             Sos2Constants.NS_SOS_20,
             CapabilitiesDocument.class);

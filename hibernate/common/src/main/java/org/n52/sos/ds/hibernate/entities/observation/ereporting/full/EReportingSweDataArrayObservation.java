@@ -63,8 +63,8 @@ public class EReportingSweDataArrayObservation
     public String getValueAsString() {
         return getValue();
     }
-    
-    
+
+
 
     @Override
     public void accept(VoidObservationVisitor visitor)

@@ -44,20 +44,20 @@ import com.google.common.collect.Lists;
 
 /**
  * Response of a {@link GetDataAvailabilityRequest}.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityResponse extends AbstractServiceResponse {
     private final List<DataAvailability> dataAvailabilities = new LinkedList<DataAvailability>();
-    
+
     private String namespace = GetDataAvailabilityConstants.NS_GDA;
 
     /**
      * Creates a new {@code GetDataAvailabilityResponse} consisting of zero or
      * more {@code DataAvailability} objects.
-     * 
+     *
      * @param dataAvailabilities
      *            the data availabilities
      */
@@ -79,7 +79,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
 
     /**
      * Adds a new {@code DataAvailability} to the response.
-     * 
+     *
      * @param dataAvailability
      *            the {@code DataAvailability}.
      */
@@ -89,7 +89,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
 
     /**
      * Sets the {@code DataAvailabilities} of the response.
-     * 
+     *
      * @param dataAvailabilities
      *            the {@code DataAvailabilities}
      */
@@ -112,14 +112,14 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         private final ReferenceType procedure;
 
         private final TimePeriod phenomenonTime;
-        
+
         private long count = -1;
-        
+
         private List<TimeInstant> resultTimes = Lists.newArrayList();
-        
+
         /**
          * Creates a new {@code DataAvailability}.
-         * 
+         *
          * @param featureOfInterest
          *            the {@code featureOfInterest}
          * @param observedProperty
@@ -136,10 +136,10 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
             this.featureOfInterest = featureOfInterest;
             this.phenomenonTime = phenomenonTime;
         }
-        
+
         /**
          * Creates a new {@code DataAvailability}.
-         * 
+         *
          * @param featureOfInterest
          *            the {@code featureOfInterest}
          * @param observedProperty
@@ -187,14 +187,14 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public TimePeriod getPhenomenonTime() {
             return phenomenonTime;
         }
-        
+
         /**
          * @return the {@code count} for this combination.
          */
         public long getCount() {
             return count;
         }
-        
+
         /**
          * Set the {@code count} for this combination
          * @return this.
@@ -207,27 +207,27 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public boolean isSetCount() {
             return count >= 0 ;
         }
-        
+
         public DataAvailability setResultTimes(List<TimeInstant> resultTimes) {
             if (resultTimes != null) {
                 this.resultTimes = resultTimes;
             }
             return this;
         }
-        
+
         public DataAvailability addResultTime(TimeInstant resultTime) {
             getResultTimes().add(resultTime);
             return this;
         }
-        
+
         public List<TimeInstant> getResultTimes() {
             return this.resultTimes;
         }
-        
+
         public boolean isSetResultTime() {
             return CollectionHelper.isNotEmpty(getResultTimes());
         }
-        
+
     }
 
     public void setNamespace(String namespace) {
@@ -235,7 +235,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
             this.namespace = namespace;
         }
     }
-    
+
     public String getNamespace() {
         return this.namespace;
     }

@@ -55,7 +55,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InsertResultTemplateRequestDecoder extends AbstractSosRequestDecoder<InsertResultTemplateRequest> {
     private final ObservationDecoder observationDecoder = new ObservationDecoder();

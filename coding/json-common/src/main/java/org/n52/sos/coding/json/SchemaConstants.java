@@ -151,7 +151,7 @@ public interface SchemaConstants {
         String TIME_INSTANT = "http://www.52north.org/schema/json/TimeInstant#";
 
         String ENVELOPE = "http://www.52north.org/schema/json/Envelope#";
-        
+
         String PARAMETER = "http://www.52north.org/schema/json/Parameter#";
 
     }

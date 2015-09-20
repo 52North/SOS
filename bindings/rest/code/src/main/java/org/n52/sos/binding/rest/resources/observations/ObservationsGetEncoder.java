@@ -55,21 +55,21 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ObservationsGetEncoder extends AObservationsEncoder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationsGetEncoder.class);
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
     {
         if (objectToEncode != null) {
             if (objectToEncode instanceof ObservationsGetByIdResponse) {
-                
+
                 return encodeObservationsGetById(objectToEncode);
-                
+
             } else if (objectToEncode instanceof ObservationsSearchResponse) {
-                
+
                 return encodeObservationsSearch(objectToEncode);
-                
+
             }
             String exceptionText = String.format("No encoder implementation is available for RestBinding and namespace \"%s\" to encode Type \"%s\"!",
                     bindingConstants.getEncodingNamespace(),
@@ -114,7 +114,7 @@ public class ObservationsGetEncoder extends AObservationsEncoder {
     {
         ObservationsGetByIdResponse observationsGetResponse = (ObservationsGetByIdResponse) restResponse;
         ObservationDocument xb_ObservationRestDoc = createRestObservationDocumentFrom( observationsGetResponse.getObservationXB() );
-        
+
         return createServiceResponseFromXBDocument(
                 xb_ObservationRestDoc,
                 bindingConstants.getResourceObservations(),

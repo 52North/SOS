@@ -45,27 +45,27 @@ import org.n52.sos.binding.rest.resources.OptionsRestRequest;
  *
  */
 public class CapabilitiesDecoder extends ResourceDecoder {
-    
+
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
         GetCapabilitiesRequest getCapabilitiesRequest = createGetCapabilitiesRequestWithoutOperationsMetadata();
-        
+
         return new CapabilitiesRequestImpl(getCapabilitiesRequest);
     }
 
     private GetCapabilitiesRequest createGetCapabilitiesRequestWithoutOperationsMetadata()
     {
         GetCapabilitiesRequest getCapabilitiesRequest = createGetCapabilitiesRequest();
-        
+
         List<String> sections = new ArrayList<String>(4);
         sections.add("ServiceIdentification");
         sections.add("ServiceProvider");
         sections.add("FilterCapabilities");
         sections.add("Contents");
         getCapabilitiesRequest.setSections(sections);
-        
+
         return getCapabilitiesRequest;
     }
 
@@ -98,5 +98,5 @@ public class CapabilitiesDecoder extends ResourceDecoder {
     {
         return new OptionsRestRequest(bindingConstants.getResourceCapabilities(),true,false);
     }
-    
+
 }

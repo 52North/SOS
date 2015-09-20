@@ -75,7 +75,7 @@ public class BlobValuedLegacyObservation
             throws OwsExceptionReport {
         return visitor.visit(this);
     }
-    
+
     @Override
     public String getValueAsString() {
         return getValue().toString();

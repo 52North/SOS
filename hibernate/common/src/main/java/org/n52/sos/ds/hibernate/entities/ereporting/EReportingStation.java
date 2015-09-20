@@ -32,7 +32,7 @@ import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity
 
 /**
  * Entity for AQD e-Reporting Station
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -42,9 +42,9 @@ public class EReportingStation extends AbstractIdentifierNameDescriptionEntity {
     private static final long serialVersionUID = 8260589363506930631L;
 
     public static final String ID = "stationId";
-    
+
     private Long stationId;
-    
+
     /**
      * @return the stationId
      */
@@ -59,5 +59,5 @@ public class EReportingStation extends AbstractIdentifierNameDescriptionEntity {
         this.stationId = stationId;
         return this;
     }
-    
+
 }

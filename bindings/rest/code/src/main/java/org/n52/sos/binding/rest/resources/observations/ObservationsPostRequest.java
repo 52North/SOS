@@ -39,14 +39,14 @@ import org.n52.sos.request.InsertObservationRequest;
 public class ObservationsPostRequest implements IObservationsRequest {
 
     private InsertObservationRequest insertObservationRequest;
-    
+
     private OMObservationType xb_OMObservation;
 
     public ObservationsPostRequest(InsertObservationRequest insertObservationRequest, OMObservationType xb_OMObservation) {
         this.insertObservationRequest = insertObservationRequest;
         this.xb_OMObservation = xb_OMObservation;
     }
-    
+
     public InsertObservationRequest getInsertObservationRequest()
     {
         return insertObservationRequest;

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 public class EReportingQualityDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingQualityDAO.class);
-    
+
     public EReportingQuality getEReportingQuality(long series, int year, String primaryObservation, Session session) {
         Criteria c = session.createCriteria(EReportingQuality.class);
         c.add(Restrictions.eq(EReportingQuality.SERIES, series));

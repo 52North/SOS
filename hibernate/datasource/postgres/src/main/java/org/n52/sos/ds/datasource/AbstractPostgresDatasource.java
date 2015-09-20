@@ -55,7 +55,7 @@ import com.google.common.collect.Lists;
  *
  */
 public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";

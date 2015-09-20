@@ -35,7 +35,7 @@ import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
  *
  */
 public class ObservationsDeleteRequest implements IObservationsRequest{
-    
+
     private DeleteObservationRequest deleteObservationRequest;
 
     public ObservationsDeleteRequest(DeleteObservationRequest deleteObservationRequest) {

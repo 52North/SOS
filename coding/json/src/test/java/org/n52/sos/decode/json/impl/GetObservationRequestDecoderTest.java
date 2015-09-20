@@ -58,9 +58,9 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetObservationRequestDecoderTest {
@@ -236,7 +236,7 @@ public class GetObservationRequestDecoderTest {
         assertThat(time2.getEnd(),
                 is(equalTo(new DateTime(2013, 01, 01, 22, 00, 00, 00, DateTimeZone.forOffsetHours(2)))));
     }
-    
+
     @Test
     public void hasMergeObservationsIntoDataArrayExtension() throws IOException, OwsExceptionReport {
         final GetObservationRequest req = loadMergeIntoArray();
@@ -264,7 +264,7 @@ public class GetObservationRequestDecoderTest {
         assertThat(req, is(notNullValue()));
         return req;
     }
-    
+
     protected GetObservationRequest loadMergeIntoArray() throws OwsExceptionReport, IOException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/GetObservationRequest-merge-into-array.json");
         final GetObservationRequest req = decoder.decodeJSON(json, true);

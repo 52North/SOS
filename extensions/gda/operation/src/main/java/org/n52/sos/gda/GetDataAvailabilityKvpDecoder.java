@@ -45,7 +45,7 @@ import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetDataAvailabilityKvpDecoder extends AbstractKvpDecoder {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
@@ -94,7 +94,7 @@ public class GetDataAvailabilityKvpDecoder extends AbstractKvpDecoder {
                 exceptions.add(owse);
             }
         }
-        
+
         exceptions.throwIfNotEmpty();
 
         return request;

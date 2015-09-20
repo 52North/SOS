@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for unit
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -48,7 +48,7 @@ public class UnitDAO {
 
     /**
      * Get unit object for unit
-     * 
+     *
      * @param unit
      *            Unit
      * @param session
@@ -63,7 +63,7 @@ public class UnitDAO {
 
     /**
      * Insert and get unit object
-     * 
+     *
      * @param unit
      *            Unit
      * @param session

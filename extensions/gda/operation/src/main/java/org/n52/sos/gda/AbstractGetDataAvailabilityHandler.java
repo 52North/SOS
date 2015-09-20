@@ -36,20 +36,20 @@ import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
  * Handler to get the DataAvailabilities out of the database.
- * 
+ *
  * Renamed, in version 4.x called AbstractGetDataAvailabilityDAO
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 5.0.0
  */
 @Configurable
 public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperationHandler {
-    
+
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
-    
+
     public static final String SHOW_COUNT = "ShowCount";
-    
+
     private boolean forceValueCount = false;
 
     public AbstractGetDataAvailabilityHandler(String service) {
@@ -66,12 +66,12 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
 
     /**
      * Get the DataAvailability out of the Database.
-     * 
+     *
      * @param sosRequest
      *            the <code>GetDataAvailabilityRequest</code>
      * @return the <code>GetDataAvailabilityResponse</code>
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             if an error occurs
      */

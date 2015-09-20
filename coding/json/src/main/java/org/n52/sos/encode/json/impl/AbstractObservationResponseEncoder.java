@@ -44,9 +44,9 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
@@ -71,7 +71,7 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     public boolean isObservationAndMeasurmentV20Type() {
         return false;
     }
-    
+
     @Override
     public boolean supportsResultStreamingForMergedValues() {
         return false;
@@ -85,5 +85,5 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
         return Sets.newHashSet(MediaTypes.APPLICATION_JSON.toString());
-    }    
+    }
 }

@@ -42,21 +42,21 @@ import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SridCacheUpdate.class);
-    
+
     private static final String SQL_QUERY_GET_DEFAULT_FEATURE_SRID_POSTGIS = "getDefaultFeatureGeomSridPostgis";
 
     private static final String SQL_QUERY_GET_DEFAULT_FEATURE_SRID_ORACLE = "getDefaultFeatureGeomSridOracle";
 
     private static final String SQL_QUERY_GET_DEFAULT_FEATURE_SRID_H2 = "getDefaultFeatureGeomSridGeoDB";
-    
+
     @Override
     public void execute() {
         LOGGER.debug("Executing SridCacheUpdate");
@@ -87,7 +87,7 @@ public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
         }
         return false;
     }
-    
+
     private void checkEpsgCode(Session session) {
         Dialect dialect = HibernateHelper.getDialect(session);
         String namedQueryName = null;

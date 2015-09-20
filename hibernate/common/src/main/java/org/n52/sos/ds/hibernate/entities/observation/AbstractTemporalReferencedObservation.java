@@ -111,7 +111,7 @@ public abstract class AbstractTemporalReferencedObservation
 
     /**
      * Create the phenomenon time from {@link AbstractValue}
-     * 
+     *
      * @param abstractValue
      *            {@link AbstractValue} for get time from
      * @return phenomenon time

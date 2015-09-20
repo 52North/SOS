@@ -52,9 +52,9 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<DescribeSensorResponse> {
@@ -89,7 +89,7 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
     private XmlObject getSensorDescription(DescribeSensorResponse response, SosProcedureDescription sosProcedureDescription) throws OwsExceptionReport {
         if (sosProcedureDescription instanceof SosProcedureDescriptionUnknowType && sosProcedureDescription.isSetSensorDescriptionXmlString()) {
             return  XmlHelper.parseXmlString(sosProcedureDescription.getSensorDescriptionXmlString());
-        } 
+        }
         return CodingHelper.encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
     }
 

@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
 public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDatasource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMySQLDatasource.class);
-    
+
     protected static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
     protected static final Pattern JDBC_URL_PATTERN
             = Pattern.compile("^jdbc:mysql://([^:]+):([0-9]+)/(.*)$");

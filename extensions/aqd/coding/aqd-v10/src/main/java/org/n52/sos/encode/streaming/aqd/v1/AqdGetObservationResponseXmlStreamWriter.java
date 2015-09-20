@@ -73,7 +73,7 @@ import com.google.common.collect.Sets;
 
 /**
  * XML stream writer implementation for AQD eResporting
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -99,7 +99,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
 
     /**
      * constructor
-     * 
+     *
      * @param observation
      *            {@link FeatureCollection} to write to stream
      */
@@ -109,7 +109,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
 
     /**
      * Set {@link FeatureCollection} which should be written
-     * 
+     *
      * @param featureCollection
      *            the {@link FeatureCollection}
      */
@@ -119,7 +119,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
 
     /**
      * Get the {@link FeatureCollection} which should be written
-     * 
+     *
      * @return the {@link FeatureCollection}
      */
     private FeatureCollection getFeatureCollection() {
@@ -257,7 +257,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         schemaLocations.add(OmConstants.OM_20_SCHEMA_LOCATION);
         schemaLocations.add(SweConstants.SWE_20_SCHEMA_LOCATION);
         schemaLocation(schemaLocations);
-        
+
     }
 
     private String addGmlId(String gmlId) throws XMLStreamException {
@@ -267,7 +267,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
 
     private String prepareObservation(OmObservation omObservation, Encoder<XmlObject, AbstractFeature> encoder,
             EncodingValues encodingValues) throws UnsupportedEncoderInputException, OwsExceptionReport, XMLStreamException {
-        
+
         String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
                 .getInstance().getXmlOptions());
         // TODO check for better solutions
@@ -292,7 +292,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                 .getInstance().getXmlOptions()));
         // }
     }
-    
+
     private void writeMember(String memberContent) throws XMLStreamException, OwsExceptionReport {
         start(GmlConstants.QN_FEATURE_MEMBER_32);
         rawText(memberContent);
@@ -300,7 +300,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         end(GmlConstants.QN_FEATURE_MEMBER_32);
         indent++;
     }
-    
+
     private Encoder<XmlObject, AbstractFeature> getEncoder(AbstractFeature feature,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (feature instanceof AbstractFeature && feature.isSetDefaultElementEncoding()) {
@@ -357,7 +357,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
     /**
      * {@link TimerTask} to write blank strings to the {@link OutputStream} to
      * avoid conncetion timeout after 1000 ms
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.3.0
      *

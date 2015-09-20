@@ -53,15 +53,15 @@ public class Series
                    HasUnit, HasPublishedFlag {
 
     private static final long serialVersionUID = 7838379468605356753L;
-    
+
     public static String ID = "seriesId";
-    
+
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
-    
+
     public static String LAST_TIME_STAMP = "lastTimeStamp";
-    
+
     public static final String ALIAS = "s";
-    
+
     public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long seriesId;
@@ -69,7 +69,7 @@ public class Series
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private Boolean deleted = false;
-    
+
     private Boolean published = true;
 
     // the following values are used by the timeseries api
@@ -139,7 +139,7 @@ public class Series
     public boolean isDeleted() {
         return deleted;
     }
-    
+
     @Override
     public Series setPublished(final boolean published) {
         this.published = published;

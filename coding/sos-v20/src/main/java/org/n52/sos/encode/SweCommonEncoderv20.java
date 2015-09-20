@@ -593,7 +593,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         }
         return unitReference;
     }
-    
+
     private UnitReference createUnknownUnitReference() {
         final UnitReference unitReference =
                 UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());

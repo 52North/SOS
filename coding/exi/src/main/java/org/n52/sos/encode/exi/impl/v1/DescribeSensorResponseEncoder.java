@@ -34,7 +34,7 @@ import org.n52.sos.response.DescribeSensorResponse;
 
 /**
  * Response encoder for {@link DescribeSensorResponse}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *

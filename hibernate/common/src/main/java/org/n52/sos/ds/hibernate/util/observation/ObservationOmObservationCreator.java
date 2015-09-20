@@ -96,7 +96,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             this.observations = observations;
         }
     }
-    
+
     private Collection<? extends Observation<?>> getObservations() {
         return observations;
     }
@@ -193,8 +193,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      *
      * @throws OwsExceptionReport
      * @throws CodedException
-     * 
-     * 
+     *
+     *
      * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
     @Deprecated

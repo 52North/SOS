@@ -35,7 +35,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class Unit implements Serializable {
 

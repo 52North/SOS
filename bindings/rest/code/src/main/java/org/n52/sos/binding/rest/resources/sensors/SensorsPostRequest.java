@@ -36,11 +36,11 @@ import org.n52.sos.request.InsertSensorRequest;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class SensorsPostRequest extends TransactionalSensorRequest 
+public class SensorsPostRequest extends TransactionalSensorRequest
 {
-    
+
     private InsertSensorRequest insertSensorRequest;
-    
+
     public SensorsPostRequest(InsertSensorRequest insertSensorRequest,
             SystemType xb_smlSystem)
     {

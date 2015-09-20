@@ -31,7 +31,7 @@ package org.n52.sos.netcdf.oceansites;
 /**
  * Implementation of {@link SettingDefinitionProvider} for OceanSITES netCDF
  * encoding settings.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -67,6 +67,6 @@ public class OceanSITESSettingsProvider {
     public static final String OCEANSITES_PRINCIPAL_INVESTIGATOR = "oceansites.principalInvestigator";
 
     public static final String OCEANSITES_REFERENCES = "oceansites.references";
-    
+
     public static final String OCEANSITES_AREA_DEFINITION = "oceansites.area";
 }

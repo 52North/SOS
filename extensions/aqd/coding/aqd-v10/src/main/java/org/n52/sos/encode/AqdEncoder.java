@@ -126,7 +126,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
     public Set<String> getSupportedResponseFormats(String service, String version) {
         if (SosConstants.SOS.equals(service) && Sos1Constants.VERSION.equals(version)) {
           return Sets.newHashSet(AqdConstants.AQD_CONTENT_TYPE.toString());
-        } 
+        }
         return Sets.newHashSet(AqdConstants.NS_AQD);
     }
 

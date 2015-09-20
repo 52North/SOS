@@ -57,7 +57,7 @@ import com.google.common.collect.Lists;
 
 /**
  * Hibernate data access class for featureofInterest types
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -67,7 +67,7 @@ public class ResultTemplateDAO {
 
     /**
      * Get result template object for result template identifier
-     * 
+     *
      * @param identifier
      *            Result template identifier
      * @param session
@@ -85,7 +85,7 @@ public class ResultTemplateDAO {
 
     /**
      * Get all result template objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return Result template objects
@@ -101,7 +101,7 @@ public class ResultTemplateDAO {
 
     /**
      * Get result template object for observation constellation
-     * 
+     *
      * @param observationConstellation
      *            Observation constellation object
      * @param session
@@ -117,7 +117,7 @@ public class ResultTemplateDAO {
     /**
      * Get result template objects for observation constellation and
      * featureOfInterest
-     * 
+     *
      * @param observationConstellation
      *            Observation constellation object
      * @param sosAbstractFeature
@@ -137,7 +137,7 @@ public class ResultTemplateDAO {
     /**
      * Get result template object for offering identifier and observable
      * property identifier
-     * 
+     *
      * @param offering
      *            Offering identifier
      * @param observedProperty
@@ -163,7 +163,7 @@ public class ResultTemplateDAO {
     /**
      * Get result template objects for offering identifier, observable property
      * identifier and featureOfInterest identifier
-     * 
+     *
      * @param offering
      *            Offering identifier
      * @param observedProperty
@@ -193,7 +193,7 @@ public class ResultTemplateDAO {
 
     /**
      * Check or insert result template
-     * 
+     *
      * @param request
      *            Insert result template request
      * @param observationConstellation
@@ -252,7 +252,7 @@ public class ResultTemplateDAO {
 
     /**
      * Insert result template
-     * 
+     *
      * @param request
      *            Insert result template request
      * @param observationConstellation

@@ -39,7 +39,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
 public class OfferingsResponse implements RestResponse {
 
     private List<String> offeringIdentifiers;
-    
+
     public OfferingsResponse(List<String> offeringIdentifiers) {
         this.offeringIdentifiers = offeringIdentifiers;
     }

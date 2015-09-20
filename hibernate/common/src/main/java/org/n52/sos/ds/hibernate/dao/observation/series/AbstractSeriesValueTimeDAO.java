@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract value time data access object class for {@link SeriesValueTime}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -62,7 +62,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Get the concrete {@link SeriesValueTime} class.
-     * 
+     *
      * @return The concrete {@link SeriesValueTime} class
      */
     protected abstract Class<?> getSeriesValueTimeClass();
@@ -70,7 +70,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     /**
      * Get {@link ObservationTimeExtrema} for a {@link Series} with temporal
      * filter.
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest} request
      * @param series
@@ -95,7 +95,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Get {@link ObservationTimeExtrema} for a {@link Series}.
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest} request
      * @param series
@@ -113,7 +113,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Query the minimum {@link SeriesValueTime} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -134,7 +134,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Query the maximum {@link SeriesValueTime} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -155,7 +155,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Query the minimum {@link SeriesValueTime} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -176,7 +176,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Query the maximum {@link SeriesValueTime} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -197,7 +197,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Get default {@link Criteria} for {@link Class}
-     * 
+     *
      * @param clazz
      *            {@link Class} to get default {@link Criteria} for
      * @param session
@@ -240,7 +240,7 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
 
     /**
      * Create {@link Criteria} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series

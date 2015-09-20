@@ -41,14 +41,14 @@ import org.n52.sos.decode.kvp.v2.GetCapabilitiesKvpDecoder;
 import com.google.common.collect.Sets;
 
 public class AqdGetCapabilitiesKvpDecoder extends GetCapabilitiesKvpDecoder{
-    
+
     private static final Set<DecoderKey> KVP_DECODER_KEY_TYPE = Sets.<DecoderKey>newHashSet(
             new OperationDecoderKey(AqdConstants.AQD, null,                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
             new OperationDecoderKey(AqdConstants.AQD, AqdConstants.VERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
             new OperationDecoderKey(null            , AqdConstants.VERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
             new OperationDecoderKey(null            , null,                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP)
         );
-    
+
     @Override
     public Set<DecoderKey> getKeys() {
         return  Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);

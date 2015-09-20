@@ -42,7 +42,7 @@ import org.n52.sos.ogc.wml.ObservationProcess;
 
 /**
  * Test class for {@link WmlObservationProcessDecoderv20}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *

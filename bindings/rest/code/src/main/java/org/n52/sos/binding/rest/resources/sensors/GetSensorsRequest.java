@@ -37,7 +37,7 @@ import org.n52.iceland.request.GetCapabilitiesRequest;
 public class GetSensorsRequest implements ISensorsRequest {
 
     private GetCapabilitiesRequest capabilitiesRequest;
-    
+
     public GetSensorsRequest(GetCapabilitiesRequest capabilitiesRequest) {
         this.capabilitiesRequest = capabilitiesRequest;
     }

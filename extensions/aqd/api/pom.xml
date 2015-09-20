@@ -11,9 +11,21 @@
 	<name>52°North SOS - AQD 1.0 API Operator</name>
 	<description>52°North Air Quality Data 1.0 API module</description>
 	<dependencies>
+        <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+         </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>api</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax-api</artifactId>
+        </dependency>
 	</dependencies>
 </project>

@@ -62,10 +62,21 @@
 							<groupId>${project.groupId}</groupId>
 							<artifactId>webapp</artifactId>
 						</overlay>
+                        <!-- TODO check if it works -->
+                        <overlay>
+                            <groupId>org.n52.sensorweb</groupId>
+                            <artifactId>restful-timeseries-client</artifactId>
+                            <excludes>
+                                <exclude>**/WEB-INF/**</exclude>
+                                <exclude>**/META-INF/**</exclude>
+                                <exclude>settings.json</exclude>
+                            </excludes>
+                            <targetPath>static/client/jsClient</targetPath>
+                        </overlay>
 					</overlays>
 				</configuration>
 			</plugin>
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
@@ -88,7 +99,7 @@
 						</overlay>
 					</overlays>
 				</configuration>
-			</plugin>
+			</plugin> -->
 		</plugins>
 	</build>
 	<dependencies>

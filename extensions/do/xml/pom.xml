@@ -10,6 +10,9 @@
     <packaging>jar</packaging>
     <name>52°North SOS - Extension Delete Observation - XML</name>
     <description>52°North SOS Extension Delete Observation Operation XML Schema binding</description>
+    <properties>
+	   <checkstyle.skip>true</checkstyle.skip>
+	</properties>
     <build>
         <plugins>
             <plugin>
@@ -35,10 +38,12 @@
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
             <artifactId>xmlbeans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-ogc-schema</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>stax</groupId>
+                   <artifactId>stax-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>

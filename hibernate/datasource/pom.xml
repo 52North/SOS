@@ -17,6 +17,12 @@
         <module>common</module>
     </modules>
     <dependencies>
+        
+         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <!-- 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
@@ -25,11 +31,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
         </dependency>
-        <!-- Hibernate Core Dependencies -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-c3p0</artifactId>
@@ -37,7 +38,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
-        </dependency>
+        </dependency> -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

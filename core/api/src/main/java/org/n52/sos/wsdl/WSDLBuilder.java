@@ -36,14 +36,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +88,9 @@ public class WSDLBuilder {
     //
     // private Port soapPort, kvpPort, poxPort;
 
-    private URI soapEndpoint, poxEndpoint, kvpEndpoint;
+    private URI soapEndpoint;
+    private URI poxEndpoint;
+    private URI kvpEndpoint;
 
     public WSDLBuilder() {
     }

@@ -34,7 +34,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetFeatureOfInterestResponse extends AbstractServiceResponse {
 

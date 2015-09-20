@@ -33,7 +33,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InsertSensorResponse extends AbstractServiceResponse {
 

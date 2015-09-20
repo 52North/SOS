@@ -35,13 +35,13 @@ import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * Constants class for SensorML
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author ShaneStClair
- * 
+ *
  * @since 4.0.0
  */
 public interface SensorMLConstants {

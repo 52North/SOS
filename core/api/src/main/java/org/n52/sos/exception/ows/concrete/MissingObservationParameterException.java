@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class MissingObservationParameterException extends MissingParameterValueException {

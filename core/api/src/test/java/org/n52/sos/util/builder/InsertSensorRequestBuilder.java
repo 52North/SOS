@@ -51,7 +51,7 @@ public class InsertSensorRequestBuilder {
     private List<String> observableProperties;
 
     private List<String> observationTypes;
-    
+
     private List<String> featureOfInterestTypes;
 
     private List<SwesFeatureRelationship> featureRelationships;

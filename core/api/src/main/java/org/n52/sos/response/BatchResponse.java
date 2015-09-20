@@ -40,9 +40,9 @@ import org.n52.sos.util.BatchConstants;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class BatchResponse extends AbstractServiceResponse implements Iterable<ExceptionOrResponse> {

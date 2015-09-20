@@ -36,9 +36,9 @@ import com.google.common.collect.Lists;
 
 /**
  * Implementation for sml:ContactList
- * 
+ *
  * @author Shane StClair
- * 
+ *
  * @since 4.0.0
  */
 public class SmlContactList extends SmlContact {
@@ -48,7 +48,7 @@ public class SmlContactList extends SmlContact {
         return !CollectionHelper.nullEmptyOrContainsOnlyNulls(members);
     }
 
-    
+
     public List<SmlContact> getMembers() {
         return members;
     }

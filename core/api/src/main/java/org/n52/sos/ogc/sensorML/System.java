@@ -36,7 +36,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class System extends AbstractComponent implements HasComponents<System> {
 
@@ -73,7 +73,7 @@ public class System extends AbstractComponent implements HasComponents<System> {
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
     }
-    
+
     @Override
     public boolean isAggragation() {
         return true;

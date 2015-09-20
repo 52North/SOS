@@ -38,7 +38,7 @@ import java.util.List;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface GeneralQueryDAO {
     class QueryResult {
@@ -109,12 +109,12 @@ public interface GeneralQueryDAO {
 
     /**
      * Method which query the SOS DB
-     * 
+     *
      * @param query
      *            normal sql query concerning any table
-     * 
+     *
      * @return query result
-     * 
+     *
      * @throws SQLException
      * @throws FileNotFoundException
      * @throws IOException

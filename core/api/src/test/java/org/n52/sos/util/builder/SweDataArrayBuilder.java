@@ -59,7 +59,7 @@ public class SweDataArrayBuilder {
     }
 
     /**
-     * 
+     *
      * @param encodingParameter
      *            type, block separator, token separator, decimal separator
      * @return

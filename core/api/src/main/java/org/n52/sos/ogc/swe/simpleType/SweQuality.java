@@ -30,7 +30,7 @@ package org.n52.sos.ogc.swe.simpleType;
 
 /**
  * SOS internal representation of SWE simpleType quality
- * 
+ *
  * @since 4.0.0
  */
 public interface SweQuality {}

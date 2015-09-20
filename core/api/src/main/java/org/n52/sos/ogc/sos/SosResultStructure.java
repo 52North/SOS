@@ -48,7 +48,7 @@ import com.google.common.collect.Maps;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosResultStructure {
 

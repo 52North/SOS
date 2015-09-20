@@ -43,7 +43,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Abstract container class for SensorML data components.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.0
  *
@@ -56,7 +56,7 @@ public class AbstractSmlDataComponentContainer<T> extends AbstractReferenceType 
     private String typeDefinition;
 
     private DataRecord dataRecord;
-    
+
     private Set<SweAbstractDataComponent> abstractDataComponents = Sets.newHashSet();
 
     public AbstractSmlDataComponentContainer() {

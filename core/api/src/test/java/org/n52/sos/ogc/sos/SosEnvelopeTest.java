@@ -46,18 +46,18 @@ public class SosEnvelopeTest {
     final double y11 = 1;
     final double x12 = 0;
     final double x11 = 1;
-    
+
     final double x21 = 2;
     final double x22 = 3;
     final double y21 = 2;
     final double y22 = 3;
     final int srid = 4326;
-    
+
     Envelope extensionEnvelope;
     SosEnvelope originEnvelope;
     SosEnvelope emptySosEnvelope;
     Envelope emptyEnvelope;
-    
+
     @Before
     public void setUpEnvelopes() {
         extensionEnvelope = new Envelope(x21, x22, y21, y22);
@@ -65,13 +65,13 @@ public class SosEnvelopeTest {
         emptySosEnvelope = new SosEnvelope();
         emptyEnvelope = new Envelope();
     }
-    
+
     @Test public void
     testExpandToIncludeEmptyEnvelope()
             throws Exception {
-        
+
         originEnvelope.expandToInclude(emptyEnvelope);
-        
+
         assertThat(originEnvelope.getSrid(), is(4326));
         final Envelope envelope = originEnvelope.getEnvelope();
         assertThat(envelope.getMinX(),is(0.0));
@@ -80,12 +80,12 @@ public class SosEnvelopeTest {
         assertThat(envelope.getMaxY(),is(1.0));
         assertThat(envelope.getArea(),is(1.0));
     }
-    
-    @Test public void 
+
+    @Test public void
     testExpandToIncludeEnvelope()
             throws Exception {
         originEnvelope.expandToInclude(extensionEnvelope);
-        
+
         assertThat(originEnvelope.getSrid(), is(srid));
         final Envelope envelope = originEnvelope.getEnvelope();
         assertThat(envelope.getMinX(),is(0.0));
@@ -94,7 +94,7 @@ public class SosEnvelopeTest {
         assertThat(envelope.getMaxY(),is(3.0));
         assertThat(envelope.getArea(),is(9.0));
     }
-    
+
     @Test public void
     testExpandToIncludeEnvelopeWithNull()
             throws Exception {
@@ -110,7 +110,7 @@ public class SosEnvelopeTest {
         assertThat(envelope.getMinY(), is(0.0));
         assertThat(envelope.getMaxY(), is(1.0));
     }
-    
+
     @Test public void
     testExpandToIncludeSosEnvelopeWithNull() throws Exception {
         final SosEnvelope e = null;
@@ -125,12 +125,12 @@ public class SosEnvelopeTest {
         assertThat(envelope.getMinY(), is(0.0));
         assertThat(envelope.getMaxY(), is(1.0));
     }
-    
+
     @Test public void
     testExpandToIncludeEmptySosEnvelope()
             throws Exception {
         originEnvelope.expandToInclude(emptySosEnvelope);
-        
+
         assertThat(originEnvelope.getSrid(), is(4326));
         final Envelope envelope = originEnvelope.getEnvelope();
         assertThat(envelope.getMinX(),is(0.0));
@@ -139,12 +139,12 @@ public class SosEnvelopeTest {
         assertThat(envelope.getMaxY(),is(1.0));
         assertThat(envelope.getArea(),is(1.0));
     }
-    
+
     @Test public void
     testExpandToIncludeSosEnvelope()
             throws Exception {
         originEnvelope.expandToInclude(new SosEnvelope(extensionEnvelope, srid));
-        
+
         assertThat(originEnvelope.getSrid(), is(srid));
         final Envelope envelope = originEnvelope.getEnvelope();
         assertThat(envelope.getMinX(),is(0.0));
@@ -153,14 +153,14 @@ public class SosEnvelopeTest {
         assertThat(envelope.getMaxY(),is(3.0));
         assertThat(envelope.getArea(),is(9.0));
 }
-    
+
     @Test public void
     testExpandToIncludeEnvelopeToNullEnvelope()
             throws Exception {
         final SosEnvelope nullEnvelope = new SosEnvelope(null, srid);
-        
+
         nullEnvelope.expandToInclude(extensionEnvelope);
-        
+
         assertThat(nullEnvelope.getSrid(), is(srid));
         final Envelope envelope = nullEnvelope.getEnvelope();
         assertThat(envelope.getMinX(),is(2.0));
@@ -180,7 +180,7 @@ public class SosEnvelopeTest {
     }
 
     @Test public void
-    testIsSetEnvelope() 
+    testIsSetEnvelope()
             throws Exception {
         final SosEnvelope sosEnvelope = new SosEnvelope();
         sosEnvelope.setEnvelope(extensionEnvelope);
@@ -190,13 +190,13 @@ public class SosEnvelopeTest {
         assertThat(sosEnvelope.isSetEnvelope(), is(false));
     }
 
-    @Test public void 
-    testIsNotNullOrEmpty() 
+    @Test public void
+    testIsNotNullOrEmpty()
             throws Exception {
         assertThat(SosEnvelope.isNotNullOrEmpty(null), is(false));
         assertThat(SosEnvelope.isNotNullOrEmpty(emptySosEnvelope), is(false));
         assertThat(SosEnvelope.isNotNullOrEmpty(originEnvelope), is(true));
-        
+
     }
 
     @Test public void
@@ -214,7 +214,7 @@ public class SosEnvelopeTest {
         assertThat(anEnvelope.equals(anEnvelope), is(true));
         assertThat(anotherEnvelope.equals(anEnvelope), is(false));
     }
-    
+
     @Test public void
     testHashCode() {
         final SosEnvelope anEnvelope = new SosEnvelope(new Envelope(1.0, 2.0, 3.0, 4.0), 52);

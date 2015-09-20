@@ -34,9 +34,9 @@ import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.sos.wsdl.WSDLOperation;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface WSDLAwareRequestOperator extends RequestOperator {

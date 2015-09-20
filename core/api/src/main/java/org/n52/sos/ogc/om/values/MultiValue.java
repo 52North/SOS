@@ -32,9 +32,9 @@ import org.n52.iceland.ogc.gml.time.Time;
 
 /**
  * Interface for observation values with more than one value
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            type of the multi value
  */
@@ -42,7 +42,7 @@ public interface MultiValue<T> extends Value<T> {
 
     /**
      * Get the phenomenon time for the multiple values
-     * 
+     *
      * @return Phenomenon time
      */
     Time getPhenomenonTime();

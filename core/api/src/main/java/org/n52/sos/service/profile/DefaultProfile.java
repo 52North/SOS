@@ -37,7 +37,7 @@ import org.n52.iceland.ogc.om.OmConstants;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DefaultProfile implements Profile {
 

@@ -34,7 +34,7 @@ import static org.n52.iceland.util.http.HTTPStatus.BAD_REQUEST;
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class InvalidRequestException extends CodedSwesException {

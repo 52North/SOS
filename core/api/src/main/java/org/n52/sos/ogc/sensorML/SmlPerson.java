@@ -30,10 +30,10 @@ package org.n52.sos.ogc.sensorML;
 
 /**
  * Implementation for sml:Person
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SmlPerson extends SmlContact {

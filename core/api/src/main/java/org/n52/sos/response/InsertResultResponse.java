@@ -34,7 +34,7 @@ import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InsertResultResponse extends AbstractServiceResponse {
     private OmObservation observation;

@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * SOS internal representation of SensorML location
- * 
+ *
  * @since 4.0.0
  */
 public class SmlLocation {
@@ -43,7 +43,7 @@ public class SmlLocation {
 
     /**
      * constructor
-     * 
+     *
      * @param point
      *            Point
      */

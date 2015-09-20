@@ -42,11 +42,11 @@ public interface GcoConstants {
     SchemaLocation GCO_SCHEMA_LOCATION = new SchemaLocation(NS_GCO, SCHEMA_LOCATION_URL_GCO);
 
     String EN_CHARACTER_STRING = "CharacterString";
-    
+
     String AN_NIL_REASON = "nilReason";
 
     QName QN_GCO_DATE = new QName(GcoConstants.NS_GCO, "Date", GcoConstants.NS_GCO_PREFIX);
-    
+
     QName QN_GCO_CHARACTER_STRING = new QName(NS_GCO, EN_CHARACTER_STRING, NS_GCO_PREFIX);
 
     QName QN_GCO_NIL_REASON = new QName(NS_GCO, AN_NIL_REASON, NS_GCO_PREFIX);

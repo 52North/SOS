@@ -50,7 +50,7 @@ import com.google.common.collect.Maps;
 
 /**
  * SOS GetObservation request
- * 
+ *
  * @since 4.0.0
  */
 public class GetObservationRequest extends AbstractObservationRequest implements SpatialFeatureQueryRequest {
@@ -94,13 +94,13 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
-    
+
     private boolean mergeObservationValues = false;
-    
+
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
      */
     @Override
@@ -110,7 +110,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get temporal filters
-     * 
+     *
      * @return temporal filters
      */
     public List<TemporalFilter> getTemporalFilters() {
@@ -119,7 +119,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set temporal filters
-     * 
+     *
      * @param temporalFilters
      *            temporal filters
      */
@@ -129,7 +129,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get FOI identifiers
-     * 
+     *
      * @return FOI identifiers
      */
     @Override
@@ -139,7 +139,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set FOI identifiers
-     * 
+     *
      * @param featureIdentifiers
      *            FOI identifiers
      */
@@ -150,7 +150,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get observableProperties
-     * 
+     *
      * @return observableProperties
      */
     public List<String> getObservedProperties() {
@@ -159,7 +159,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set observedProperties
-     * 
+     *
      * @param observedProperties
      *            observedProperties
      */
@@ -169,7 +169,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get offerings
-     * 
+     *
      * @return offerings
      */
     public List<String> getOfferings() {
@@ -178,7 +178,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set offerings
-     * 
+     *
      * @param offerings
      *            offerings
      */
@@ -188,7 +188,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get procedures
-     * 
+     *
      * @return procedures
      */
     public List<String> getProcedures() {
@@ -197,7 +197,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set procedures
-     * 
+     *
      * @param procedures
      *            procedures
      */
@@ -208,7 +208,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get result filter(s)
-     * 
+     *
      * @return result filter(s)
      */
     @SuppressWarnings("rawtypes")
@@ -218,7 +218,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Add result filter(s)
-     * 
+     *
      * @param result
      *            result filter(s)
      */
@@ -229,7 +229,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Check if a result filter is set
-     * 
+     *
      * @return <code>true</code>, if a result filter is set
      */
     public boolean isSetResultFilter() {
@@ -239,7 +239,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     /**
 
      * Get request as String
-     * 
+     *
      * @return request as String
      */
     public String getRequestString() {
@@ -248,7 +248,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set request as String
-     * 
+     *
      * @param requestString
      *            request as String
      */
@@ -258,7 +258,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Get spatial filter
-     * 
+     *
      * @return spatial filter
      */
     @Override
@@ -268,7 +268,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Set spatial filter
-     * 
+     *
      * @param resultSpatialFilter
      *            spatial filter
      */
@@ -279,7 +279,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     /**
      * Create a copy of this request with defined observableProperties
-     * 
+     *
      * @param obsProps
      *            defined observableProperties
      * @return SOS GetObservation request copy
@@ -417,7 +417,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     public boolean isSetNamespaces() {
         return CollectionHelper.isNotEmpty(getNamespaces());
     }
-    
+
     @Override
     public AbstractObservationResponse getResponse() throws OwsExceptionReport {
         return (GetObservationResponse) new GetObservationResponse().set(this);
@@ -426,7 +426,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     public void setMergeObservationValues(boolean mergeObservationValues) {
         this.mergeObservationValues = mergeObservationValues;
      }
-     
+
      public boolean isSetMergeObservationValues(){
          return mergeObservationValues;
      }

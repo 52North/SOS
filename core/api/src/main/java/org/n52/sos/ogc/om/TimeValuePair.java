@@ -33,9 +33,9 @@ import org.n52.sos.ogc.om.values.Value;
 
 /**
  * Class representing a time value pair
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class TimeValuePair implements Comparable<TimeValuePair> {
 
@@ -51,7 +51,7 @@ public class TimeValuePair implements Comparable<TimeValuePair> {
 
     /**
      * Constructor
-     * 
+     *
      * @param time
      *            Time value pair time
      * @param value
@@ -64,7 +64,7 @@ public class TimeValuePair implements Comparable<TimeValuePair> {
 
     /**
      * Get time value pair time
-     * 
+     *
      * @return Time value pair time
      */
     public Time getTime() {
@@ -73,7 +73,7 @@ public class TimeValuePair implements Comparable<TimeValuePair> {
 
     /**
      * Get time value pair value
-     * 
+     *
      * @return Time value pair value
      */
     public Value<?> getValue() {
@@ -82,7 +82,7 @@ public class TimeValuePair implements Comparable<TimeValuePair> {
 
     /**
      * Set time value pair time
-     * 
+     *
      * @param time
      *            Time value pair time to set
      */
@@ -92,7 +92,7 @@ public class TimeValuePair implements Comparable<TimeValuePair> {
 
     /**
      * Set time value pair value
-     * 
+     *
      * @param value
      *            Time value pair value to set
      */

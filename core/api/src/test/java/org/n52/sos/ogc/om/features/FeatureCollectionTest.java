@@ -41,7 +41,7 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class FeatureCollectionTest {

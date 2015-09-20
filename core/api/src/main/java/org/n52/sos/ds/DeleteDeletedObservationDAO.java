@@ -32,7 +32,7 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface DeleteDeletedObservationDAO {

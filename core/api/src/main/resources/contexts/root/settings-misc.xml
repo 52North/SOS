@@ -136,7 +136,7 @@
         <property name="group" ref="miscellaneousSettingDefinitionGroup" />
         <property name="defaultValue" value="false" />
     </bean>
-    
+
     <!-- Remove if set on correct place -->
     <bean class="org.n52.iceland.config.settings.BooleanSettingDefinition">
 		<property name="key" value="statistics.counting-outputstream" />

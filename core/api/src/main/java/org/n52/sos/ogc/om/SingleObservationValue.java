@@ -39,9 +39,9 @@ import com.google.common.collect.Sets;
 
 /**
  * Class representing a single value observation value
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            value type
  */
@@ -74,7 +74,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
 
     /**
      * constructor
-     * 
+     *
      * @param value
      *            Measurement value
      */
@@ -84,7 +84,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
 
     /**
      * constructor
-     * 
+     *
      * @param phenomenonTime
      *            Phenomenon time
      * @param value
@@ -100,7 +100,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
 
     /**
      * constructor
-     * 
+     *
      * @param phenomenonTime
      *            Phenomenon time
      * @param value
@@ -133,7 +133,7 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
 
     /**
      * Set measurement quality
-     * 
+     *
      * @param qualityList
      *            Measurement quality to set
      */
@@ -141,12 +141,12 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
         this.qualityList = qualityList;
         return this;
     }
-    
+
     public SingleObservationValue<T> addQualityList(Set<OmResultQuality> qualityList) {
         this.qualityList.addAll(qualityList);
         return this;
     }
-    
+
     public SingleObservationValue<T> addQuality(OmResultQuality qualityList) {
         this.qualityList.add(qualityList);
         return this;
@@ -154,17 +154,17 @@ public class SingleObservationValue<T> extends AbstractObservationValue<Value<T>
 
     /**
      * Get measurement quality
-     * 
+     *
      * @return Measurement quality
      */
     public Set<OmResultQuality> getQualityList() {
         return qualityList;
     }
-    
+
     public boolean isSetQualityList() {
         return CollectionHelper.isNotEmpty(getQualityList());
     }
-    
+
     @Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isSetValue();

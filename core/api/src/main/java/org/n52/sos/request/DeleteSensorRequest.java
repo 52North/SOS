@@ -34,7 +34,7 @@ import org.n52.sos.response.DeleteSensorResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DeleteSensorRequest extends AbstractServiceRequest<DeleteSensorResponse> {
 

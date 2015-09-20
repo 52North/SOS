@@ -213,7 +213,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     protected void addProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getProcedures());
     }
-    
+
     protected void addQueryableProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
     }
@@ -273,7 +273,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);
         }
     }
-    
+
     public boolean isIncludeChildObservableProperties() {
         return includeChildObservableProperties;
     }

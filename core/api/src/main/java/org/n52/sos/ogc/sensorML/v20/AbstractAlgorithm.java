@@ -30,7 +30,7 @@ package org.n52.sos.ogc.sensorML.v20;
 
 /**
  * Class that represents SensorML 2.0 AbstractAlgorithm
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *

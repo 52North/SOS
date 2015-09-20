@@ -30,9 +30,9 @@ package org.n52.sos.util;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface BatchConstants {

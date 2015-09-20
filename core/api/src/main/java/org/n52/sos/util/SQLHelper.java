@@ -47,9 +47,9 @@ import org.slf4j.LoggerFactory;
 /**
  * SQL helper class with methods to close statements, connections, ... and to
  * load and execute a SQL script file.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class SQLHelper implements Constants {
 

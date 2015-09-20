@@ -51,7 +51,7 @@ import com.vividsolutions.jts.io.ParseException;
  * @since 4.0.0
  */
 public class SweEnvelopeTest {
-    
+
     @BeforeClass
     public static void init() throws ParseException {
         new GeometryHandler().setAuthority("EPSG").init();
@@ -59,7 +59,7 @@ public class SweEnvelopeTest {
 
     @Test public void
     should_create_valid_sosSweEnvelope_from_sosEnvelope() {
-        
+
         final int srid = 52;
         final double x1 = 1;
         final double y1 = 2;

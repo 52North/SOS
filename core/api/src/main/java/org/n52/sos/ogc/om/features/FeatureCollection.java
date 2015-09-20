@@ -41,7 +41,7 @@ import com.google.common.collect.Maps;
 
 /**
  * class represents a GMl feature collection
- * 
+ *
  * @since 4.0.0
  */
 public class FeatureCollection extends AbstractFeature implements Iterable<AbstractFeature> {
@@ -61,7 +61,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
 
     /**
      * constructor
-     * 
+     *
      * @param members
      *            collection with feature members of this collection
      */
@@ -73,7 +73,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
 
     /**
      * Get features
-     * 
+     *
      * @return the members
      */
     public Map<String, AbstractFeature> getMembers() {
@@ -82,7 +82,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
 
     /**
      * Set features
-     * 
+     *
      * @param members
      *            the members to set
      */
@@ -114,7 +114,7 @@ public class FeatureCollection extends AbstractFeature implements Iterable<Abstr
 
     /**
      * Check whether members are set
-     * 
+     *
      * @return <code>true</code>, if members are set
      */
     public boolean isSetMembers() {

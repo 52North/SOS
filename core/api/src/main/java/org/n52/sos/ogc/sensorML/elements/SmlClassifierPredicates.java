@@ -42,7 +42,7 @@ public class SmlClassifierPredicates {
     public static Predicate<SmlClassifier> name(String name) {
         return new NamePredicate(name);
     }
-    
+
     public static Predicate<SmlClassifier> definition(String definition) {
         return new DefinitionPredicate(definition);
     }

@@ -61,7 +61,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         implements StreamingEncoder<XmlObject, T>  {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
-    
+
     private final Set<EncoderKey> encoderKeys;
 
     /**
@@ -110,12 +110,12 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
         this(service, version, operation, namespace, prefix, responseType, false);
     }
-    
+
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
-    
+
     @Override
     public void encode(T element, OutputStream outputStream) throws OwsExceptionReport {
         encode(element, outputStream, new EncodingValues());

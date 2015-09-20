@@ -32,10 +32,10 @@ import com.google.common.base.Strings;
 
 /**
  * Implementation for sam:SamplingFeatureComplex
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SamplingFeatureComplex {
@@ -52,7 +52,7 @@ public class SamplingFeatureComplex {
 
     /**
      * constructor
-     * 
+     *
      * @param relatedSamplingFeatureRole
      *            Related sampling feature role
      * @param relatedSamplingFeature
@@ -75,7 +75,7 @@ public class SamplingFeatureComplex {
 
     /**
      * Get Related sampling feature role
-     * 
+     *
      * @return Related sampling feature role
      */
     public String getRelatedSamplingFeatureRole() {
@@ -84,7 +84,7 @@ public class SamplingFeatureComplex {
 
     /**
      * Get related sampling feature
-     * 
+     *
      * @return Related sampling feature
      */
     public SamplingFeature getRelatedSamplingFeature() {

@@ -30,7 +30,7 @@ package org.n52.sos.ogc.sensorML;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class Component extends AbstractComponent {
 

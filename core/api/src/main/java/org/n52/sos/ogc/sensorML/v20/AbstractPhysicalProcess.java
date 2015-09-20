@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
 
 /**
  * Class that represents SensorML 2.0 PhysicalProcess.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -58,7 +58,7 @@ public class AbstractPhysicalProcess extends DescribedObject {
 
     /**
      * @return the attachedTo
-     * @throws CodedException 
+     * @throws CodedException
      */
     public ReferenceType getAttachedTo() throws CodedException {
         // if parent procedures set
@@ -86,7 +86,7 @@ public class AbstractPhysicalProcess extends DescribedObject {
     /**
      * Set the attachedTo reference. It is automatically added to
      * parentProcedure list. If title is set, the title is used, else the href.
-     * 
+     *
      * @param attachedTo
      *            the attachedTo to set
      */

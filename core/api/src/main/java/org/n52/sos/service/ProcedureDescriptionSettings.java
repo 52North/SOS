@@ -110,7 +110,7 @@ public class ProcedureDescriptionSettings implements Constructable {
     public void init() {
         ProcedureDescriptionSettings.instance = this;
     }
-    
+
     @Deprecated
     public static ProcedureDescriptionSettings getInstance() {
         return instance;

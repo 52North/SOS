@@ -89,7 +89,7 @@ public interface WritableCompositePhenomenonCache extends
     void clearObservablePropertiesForCompositePhenomenon();
 
     void clearCompositePhenomenonsForObservableProperty();
-    
+
     void clearCompositePhenomenonsForObservableProperty(String observableProperty);
 
 

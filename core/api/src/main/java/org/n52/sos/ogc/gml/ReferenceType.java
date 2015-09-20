@@ -31,13 +31,13 @@ package org.n52.sos.ogc.gml;
 
 /**
  * Class represents a GML conform ReferenceType element
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class ReferenceType extends AbstractReferenceType {
-    
-    
+
+
     /**
      * constructor
      */
@@ -46,7 +46,7 @@ public class ReferenceType extends AbstractReferenceType {
 
     /**
      * constructor
-     * 
+     *
      * @param href
      *            Href
      */
@@ -56,7 +56,7 @@ public class ReferenceType extends AbstractReferenceType {
 
     /**
      * constructor
-     * 
+     *
      * @param href
      *            Href
      * @param title

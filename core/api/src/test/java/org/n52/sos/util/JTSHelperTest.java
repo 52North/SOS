@@ -53,9 +53,9 @@ import com.vividsolutions.jts.geom.Polygon;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class JTSHelperTest extends JTSHelper {

@@ -35,7 +35,7 @@ import org.n52.iceland.util.ServletContextPropertyFileHandler;
 
 /**
  * @since 4.0.0
- * 
+ *
  * @param <E>
  */
 public abstract class AbstractEnumPropertiesFileHandler<E extends Enum<E>> extends

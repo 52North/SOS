@@ -51,7 +51,7 @@ public class AbstractReferenceType {
 
     /**
      * Get href
-     * 
+     *
      * @return Href
      */
     public String getHref() {
@@ -63,7 +63,7 @@ public class AbstractReferenceType {
 
     /**
      * Get title
-     * 
+     *
      * @return Title
      */
     public String getTitle() {
@@ -72,7 +72,7 @@ public class AbstractReferenceType {
 
     /**
      * Get role
-     * 
+     *
      * @return Role
      */
     public String getRole() {
@@ -81,7 +81,7 @@ public class AbstractReferenceType {
 
     /**
      * Set href
-     * 
+     *
      * @param href
      *            Href to set
      */
@@ -91,7 +91,7 @@ public class AbstractReferenceType {
 
     /**
      * Set title
-     * 
+     *
      * @param title
      *            Title to set
      */
@@ -101,7 +101,7 @@ public class AbstractReferenceType {
 
     /**
      * Set role
-     * 
+     *
      * @param role
      *            Role to set
      */
@@ -111,7 +111,7 @@ public class AbstractReferenceType {
 
     /**
      * Check whether href is set
-     * 
+     *
      * @return <code>true</code>, if href is set
      */
     public boolean isSetHref() {
@@ -120,7 +120,7 @@ public class AbstractReferenceType {
 
     /**
      * Check whether title is set
-     * 
+     *
      * @return <code>true</code>, if title is set
      */
     public boolean isSetTitle() {
@@ -129,7 +129,7 @@ public class AbstractReferenceType {
 
     /**
      * Check whether role is set
-     * 
+     *
      * @return <code>true</code>, if role is set
      */
     public boolean isSetRole() {
@@ -138,7 +138,7 @@ public class AbstractReferenceType {
 
     /**
      * Check whether href, title, and role are set
-     * 
+     *
      * @return <code>true</code>, if href, title, and role are set
      */
     public boolean hasValues() {
@@ -152,7 +152,7 @@ public class AbstractReferenceType {
      * - starts with 'urn': cuts string at last {@link Constants#COLON_CHAR}<br>
      * - contains {@link Constants#NUMBER_SIGN_STRING}: cuts string at last
      * {@link Constants#NUMBER_SIGN_CHAR}<br>
-     * 
+     *
      * @return Title from href
      */
     public String getTitleFromHref() {

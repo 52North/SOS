@@ -36,14 +36,14 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 public class ProcessChain extends AbstractProcess implements HasComponents<ProcessChain> {
 
     private static final long serialVersionUID = -3101809476636384049L;
-    
+
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
 
     @Override
     public List<SmlComponent> getComponents() {
         return components;
     }
-    
+
     @Override
     public ProcessChain addComponents(final List<SmlComponent> components) {
         if (components != null) {
@@ -52,7 +52,7 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
         }
         return this;
     }
-    
+
     @Override
     public ProcessChain addComponent(final SmlComponent component) {
         if (component != null) {
@@ -61,7 +61,7 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
         }
         return this;
     }
-    
+
     @Override
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
@@ -71,5 +71,5 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
     public boolean isAggragation() {
         return true;
     }
-    
+
 }

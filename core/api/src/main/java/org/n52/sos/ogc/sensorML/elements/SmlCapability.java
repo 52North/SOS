@@ -41,7 +41,7 @@ public class SmlCapability extends AbstractDataComponentContainer<SmlCapability>
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      */
@@ -51,7 +51,7 @@ public class SmlCapability extends AbstractDataComponentContainer<SmlCapability>
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      * @param abstractDataComponent

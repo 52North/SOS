@@ -33,7 +33,7 @@ import org.n52.iceland.w3c.SchemaLocation;
 /**
  * Interface for GML coverage constants
  * @since 4.0.0
- * 
+ *
  */
 public interface GmlCoverageConstants {
 

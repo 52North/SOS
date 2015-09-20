@@ -51,7 +51,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class WSDLBuilder {
@@ -69,7 +69,7 @@ public class WSDLBuilder {
     private static final String SOS_KVP_PORT = "SosKvpPort";
 
     private static final String SOS_POX_PORT = "SosPoxPort";
-    
+
     private static final String SOAP_ENPOINT_URL_PLACEHOLDER = "SOAP_ENDPOINT_URL";
 
     // private final WSDLFactory factory;

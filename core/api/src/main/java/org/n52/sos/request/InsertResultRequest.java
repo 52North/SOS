@@ -36,7 +36,7 @@ import org.n52.sos.response.InsertResultResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InsertResultRequest extends AbstractServiceRequest<InsertResultResponse> {
 

@@ -36,7 +36,7 @@ import com.vividsolutions.jts.geom.Envelope;
  * Class for internal Envelope representation TODO should this class offer
  * merging capabilities like SosEnvelope.expandTo(SosEnvelope) considering
  * coordinate transformations?
- * 
+ *
  * @since 4.0.0
  */
 public class SosEnvelope implements Serializable {
@@ -57,7 +57,7 @@ public class SosEnvelope implements Serializable {
 
     /**
      * constructor
-     * 
+     *
      * @param envelope
      *            JTS envelope
      * @param srid
@@ -70,7 +70,7 @@ public class SosEnvelope implements Serializable {
 
     /**
      * Get envelope
-     * 
+     *
      * @return the envelope
      */
     public Envelope getEnvelope() {
@@ -105,7 +105,7 @@ public class SosEnvelope implements Serializable {
 
     /**
      * Set envelope
-     * 
+     *
      * @param envelope
      *            the envelope to set
      */
@@ -116,7 +116,7 @@ public class SosEnvelope implements Serializable {
 
     /**
      * Get SRID
-     * 
+     *
      * @return the srid
      */
     public int getSrid() {
@@ -129,7 +129,7 @@ public class SosEnvelope implements Serializable {
 
     /**
      * Set SRID
-     * 
+     *
      * @param srid
      *            the srid to set
      */
@@ -183,7 +183,7 @@ public class SosEnvelope implements Serializable {
 
     /**
      * Static method to check if an SosEnvelope is not null and is not empty
-     * 
+     *
      * @param envelope
      *            SosEnvelope to check
      * @return <code>true</code>, if SosEnvelope is not null and not empty.

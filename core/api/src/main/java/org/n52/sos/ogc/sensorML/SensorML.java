@@ -36,7 +36,7 @@ import org.n52.sos.ogc.sos.SosOffering;
 
 /**
  * SOS internal representation of a sensor description
- * 
+ *
  * @since 4.0.0
  */
 public class SensorML extends AbstractSensorML {

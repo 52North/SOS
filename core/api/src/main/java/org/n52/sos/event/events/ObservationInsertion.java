@@ -33,7 +33,7 @@ import org.n52.sos.response.InsertObservationResponse;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationInsertion extends SosInsertionEvent<InsertObservationRequest, InsertObservationResponse> {

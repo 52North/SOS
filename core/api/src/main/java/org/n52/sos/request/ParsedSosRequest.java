@@ -35,7 +35,7 @@ import org.n52.sos.response.DummyResponse;
 
 /**
  * Parsed SOS request, used for GetResult requests
- * 
+ *
  * @since 4.0.0
  */
 public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResponse> {
@@ -53,7 +53,7 @@ public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResp
 
     /**
      * Get the SOS request
-     * 
+     *
      * @return SOS request
      */
     @SuppressWarnings("rawtypes")
@@ -63,7 +63,7 @@ public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResp
 
     /**
      * Set the SOS request
-     * 
+     *
      * @param request
      *            SOS request
      */
@@ -74,7 +74,7 @@ public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResp
 
     /**
      * Get the SOS version
-     * 
+     *
      * @return SOS version
      */
     public String getVersion() {
@@ -83,7 +83,7 @@ public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResp
 
     /**
      * Set the SOS version
-     * 
+     *
      * @param version
      *            SOS version
      * @return this

@@ -34,7 +34,7 @@ import org.n52.sos.ogc.sensorML.ProcessMethod;
 
 /**
  * Class that represents SensorML 2.0 SimpleProcess
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -46,11 +46,11 @@ public class SimpleProcess extends DescribedObject implements HasProcessMethod {
     public static final String ID_PREFIX = "sp_";
 
     private ProcessMethod method;
-    
+
     public SimpleProcess() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));
     }
-    
+
     @Override
     public ProcessMethod getMethod() {
         return method;

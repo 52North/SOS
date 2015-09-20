@@ -37,9 +37,9 @@ import org.n52.sos.response.GetObservationByIdResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetObservationByIdDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetObservationByIdHandler extends AbstractOperationHandler {
     public AbstractGetObservationByIdHandler(String service) {

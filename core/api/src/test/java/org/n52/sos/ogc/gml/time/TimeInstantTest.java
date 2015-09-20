@@ -40,7 +40,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class TimeInstantTest {
 
@@ -64,7 +64,7 @@ public class TimeInstantTest {
         assertFalse("new TimeInstant(null) is empty", new TimeInstant((TimeIndeterminateValue) null)
                 .setSosIndeterminateTime(org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime.latest).isEmpty());
     }
-    
+
     @Test
     public void isNotEmptyForConstructorWithDate() {
         assertFalse("new TimeInstant(new DateTime()) is empty", new TimeInstant(new Date()).isEmpty());
@@ -77,7 +77,7 @@ public class TimeInstantTest {
         TimeInstant equalTimeInstant = new TimeInstant(dateTime);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));
     }
-        
+
     @Test
     public void shouldEqualIndeterminateValue() {
         TimeIndeterminateValue tiv = TimeIndeterminateValue.after;
@@ -85,7 +85,7 @@ public class TimeInstantTest {
         TimeInstant equalTimeInstant = new TimeInstant(tiv);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));
     }
-    
+
     @Test
     public void shouldEqualTimeAndIndeterminateValue() {
         DateTime dateTime = new DateTime();
@@ -94,7 +94,7 @@ public class TimeInstantTest {
         TimeInstant equalTimeInstant = new TimeInstant(dateTime, tiv);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));
     }
-    
+
     @Test
     public void shouldEqualSosIndeterminateValue() {
         org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime sit = org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime.first;
@@ -102,7 +102,7 @@ public class TimeInstantTest {
         TimeInstant equalTimeInstant = new TimeInstant(sit);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));
     }
-    
+
     @Test
     public void testCompareTo() {
         TimeInstant timeInstantOne = new TimeInstant();

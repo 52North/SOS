@@ -34,7 +34,7 @@ import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.w3c.SchemaLocation;
 
 public interface GmdConstants {
-    
+
     String NS_GMD = "http://www.isotc211.org/2005/gmd";
 
     String NS_GMD_PREFIX = "gmd";

@@ -30,10 +30,10 @@ package org.n52.sos.ogc.sensorML;
 
 /**
  * Implementation for sml:RulesDefinition
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class RulesDefinition {
@@ -55,7 +55,7 @@ public class RulesDefinition {
     }
 
     /**
-     * 
+     *
      * @param description
      *            a {@link String} holding the
      *            "[t]extual description of the i/o structure" (Source: SensorML
@@ -68,7 +68,7 @@ public class RulesDefinition {
     }
 
     /**
-     * 
+     *
      * @return Textual description of the i/o structure (Source: SensorML 1.0.1)
      */
     public String getDescription() {

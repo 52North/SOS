@@ -1159,5 +1159,5 @@ public interface SosWritableContentCache
     void removeTypeOfProcedure(String type, String instance);
 
     void clearTypeOfProcedure();
-    
+
 }

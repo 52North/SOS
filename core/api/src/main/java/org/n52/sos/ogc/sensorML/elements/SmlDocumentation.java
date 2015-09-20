@@ -32,7 +32,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SmlDocumentation extends AbstractSmlDocumentation {
 

@@ -37,7 +37,7 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DescribeSensorResponse extends AbstractServiceResponse {
 

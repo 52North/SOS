@@ -39,15 +39,15 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * Interface for querying featurefInterest data from a data source
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
 
     /**
      * Query feature data from data source for an identifier
-     * 
+     *
      * @param featureID
      *            FOI identifier
      * @param connection
@@ -58,8 +58,8 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      *            response srid for feature geometry, if negative not
      *            transformation
      * @return SOS representation of the FOI
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject)
@@ -69,7 +69,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
 
     /**
      * Get feature data for identifiers and/or for a spatial filter
-     * 
+     *
      * @param foiIDs
      *            FOI identifiers
      * @param list
@@ -82,15 +82,15 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      *            response srid for feature geometry, if negative not
      *            transformation
      * @return Map of identifier and SOS FOI representation
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     Map<String, AbstractFeature> getFeatures(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
     /**
      * Query the envelope for feature ids
-     * 
+     *
      * @param featureIDs
      *            FOI identifiers
      * @param connection
@@ -99,7 +99,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      *            response srid for feature geometry, if negative not
      *            transformation
      * @return Envelope of requested FOI identifiers
-     * 
+     *
      * @throws OwsExceptionReport
      */
     SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject)
@@ -107,7 +107,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
 
     /**
      * FIXME Add javadoc to clarify the semantics of this method
-     * 
+     *
      * @param samplingFeature
      *            Feature to insert into datasource
      * @param connection
@@ -120,7 +120,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
     int getStorageEPSG();
 
     int getStorage3DEPSG();
-    
+
     int getDefaultResponseEPSG();
 
     int getDefaultResponse3DEPSG();

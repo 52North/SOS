@@ -33,7 +33,7 @@ import org.n52.sos.response.InsertSensorResponse;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class SensorInsertion extends SosInsertionEvent<InsertSensorRequest, InsertSensorResponse> {

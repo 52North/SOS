@@ -31,7 +31,7 @@ package org.n52.sos.ogc.gml;
 /**
  * Class represents a GML conform MetaDataProperty element
  * @since 4.0.0
- * 
+ *
  */
 public class GmlMetaDataProperty {
 
@@ -97,7 +97,7 @@ public class GmlMetaDataProperty {
     public String getHref() {
         return href;
     }
-    
+
     @Override
     public String toString() {
         return String.format("GmlMetaDataProperty [title=%s, role=%s, href=%s]", getTitle(), getRole(), getHref());

@@ -46,7 +46,7 @@ public class ProcedureDescriptionBuilder {
     private String offeringIdentifier;
 
     private CodeType offeringName;
-    
+
     private String offeringDescription;
 
     public static ProcedureDescriptionBuilder aSensorMLProcedureDescription() {
@@ -63,7 +63,7 @@ public class ProcedureDescriptionBuilder {
         this.offeringName = new CodeType(offeringName);
         return this;
     }
-    
+
     public ProcedureDescriptionBuilder setOffering(String offeringIdentifier, CodeType offeringName) {
         this.offeringIdentifier = offeringIdentifier;
         this.offeringName = offeringName;

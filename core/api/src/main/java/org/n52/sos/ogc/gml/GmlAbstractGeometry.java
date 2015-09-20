@@ -35,9 +35,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * A class that represents a gml:AbstractGeometry (PointType, ...).
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GmlAbstractGeometry extends AbstractFeature {
 
@@ -59,7 +59,7 @@ public class GmlAbstractGeometry extends AbstractFeature {
 
     /**
      * constructor
-     * 
+     *
      * @param id
      *            GML id
      */
@@ -69,7 +69,7 @@ public class GmlAbstractGeometry extends AbstractFeature {
 
     /**
      * Get geometry
-     * 
+     *
      * @return the geometry
      */
     public Geometry getGeometry() {
@@ -78,7 +78,7 @@ public class GmlAbstractGeometry extends AbstractFeature {
 
     /**
      * set geometry
-     * 
+     *
      * @param geometry
      *            the geometry to set
      */
@@ -88,7 +88,7 @@ public class GmlAbstractGeometry extends AbstractFeature {
 
     /**
      * Is geometry set
-     * 
+     *
      * @return true if geometry is set
      */
     public boolean isSetGeometry() {

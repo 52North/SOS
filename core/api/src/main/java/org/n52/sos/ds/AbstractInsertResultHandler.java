@@ -36,9 +36,9 @@ import org.n52.sos.response.InsertResultResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertResultDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractInsertResultHandler extends AbstractResultHandlingHandler {
     public AbstractInsertResultHandler(String service) {
@@ -53,5 +53,5 @@ public abstract class AbstractInsertResultHandler extends AbstractResultHandling
     }
 
     public abstract InsertResultResponse insertResult(InsertResultRequest request) throws OwsExceptionReport;
-    
+
 }

@@ -41,7 +41,7 @@ import org.n52.sos.response.UpdateSensorResponse;
 
 /**
  * class represents a updateSensor request
- * 
+ *
  * @since 4.0.0
  */
 public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResponse> {

@@ -36,9 +36,9 @@ import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertResultTemplateDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractInsertResultTemplateHandler extends AbstractResultHandlingHandler {
     public AbstractInsertResultTemplateHandler(String service) {

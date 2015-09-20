@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InvalidObservedPropertyParameterException extends InvalidParameterValueException {

@@ -30,16 +30,16 @@ package org.n52.sos.request;
 
 /**
  * Interface for requests with srsName parameter
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public interface SrsNameRequest {
 
     /**
      * Set SrsName
-     * 
+     *
      * @param srsName
      *            SrsName
      */
@@ -47,14 +47,14 @@ public interface SrsNameRequest {
 
     /**
      * Get SrsName
-     * 
+     *
      * @return SrsName
      */
     String getSrsName();
 
     /**
      * Check if the SrsName parameter is set
-     * 
+     *
      * @return <code>true</code>, if the SrsName parameter is set;
      */
     boolean isSetSrsName();

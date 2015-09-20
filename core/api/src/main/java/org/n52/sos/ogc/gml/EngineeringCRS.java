@@ -30,9 +30,9 @@ package org.n52.sos.ogc.gml;
 
 /**
  * Class represents a GML conform EngineeringCRS element
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class EngineeringCRS {
 

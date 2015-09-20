@@ -32,7 +32,7 @@ import org.n52.iceland.ogc.sos.SosConstants;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetObservationByIdResponse extends AbstractObservationResponse {
 

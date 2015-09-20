@@ -48,7 +48,7 @@ import com.google.common.collect.Iterables;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractSensorML extends SosProcedureDescription {
     private static final long serialVersionUID = -5715790909736521952L;
@@ -61,7 +61,7 @@ public class AbstractSensorML extends SosProcedureDescription {
     private final List<AbstractSmlDocumentation> documentations = new ArrayList<AbstractSmlDocumentation>(0);
     private String history;
     private String gmlId;
-    
+
     @Override
     public SosProcedureDescription setIdentifier(final String identifier) {
         super.setIdentifier(identifier);
@@ -76,7 +76,7 @@ public class AbstractSensorML extends SosProcedureDescription {
         this.keywords = keywords;
         return this;
     }
-    
+
     public AbstractSensorML addKeywords(final List<String> keywords) {
         if (isSetKeywords()) {
             this.keywords.addAll(keywords);
@@ -135,13 +135,13 @@ public class AbstractSensorML extends SosProcedureDescription {
             return Optional.absent();
         }
     }
-    
+
 
     public AbstractSensorML addClassification(final SmlClassifier classifier) {
         classifications.add(classifier);
         return this;
     }
-    
+
     @Override
     public AbstractSensorML setValidTime(final Time validTime) {
         super.setValidTime(validTime);
@@ -160,7 +160,7 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return this;
     }
-    
+
     public Optional<SmlCharacteristics> findCharacteristics(Predicate<SmlCharacteristics> predicate) {
         if (isSetCharacteristics()) {
             return Iterables.tryFind(this.characteristics, predicate);
@@ -192,7 +192,7 @@ public class AbstractSensorML extends SosProcedureDescription {
             return Optional.absent();
         }
     }
-    
+
     public void removeCapabilities(SmlCapabilities caps) {
         if (this.capabilities != null) {
             this.capabilities.remove(caps);
@@ -215,7 +215,7 @@ public class AbstractSensorML extends SosProcedureDescription {
         }
         return this;
     }
-    
+
     public AbstractSensorML addContact(final SmlContact contact) {
         if (this.contacts == null) {
             this.contacts = new LinkedList<SmlContact>();
@@ -226,7 +226,7 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     /**
      * Get {@link SmlContact} for a specific role
-     * 
+     *
      * @param contactRole
      *            Role to get {@link SmlContact} for
      * @return The {@link SmlContact} or null if not defined
@@ -308,7 +308,7 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetContact() {
         return contacts != null && !contacts.isEmpty();
     }
-    
+
     public boolean isSetHistory() {
         return history != null && !history.isEmpty();
     }
@@ -324,7 +324,7 @@ public class AbstractSensorML extends SosProcedureDescription {
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(gmlId);
     }
-    
+
     public void copyTo(AbstractSensorML copyOf) {
         super.copyTo(copyOf);
         copyOf.setCharacteristics(getCharacteristics());

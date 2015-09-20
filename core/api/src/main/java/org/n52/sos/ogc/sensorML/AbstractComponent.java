@@ -33,7 +33,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractComponent extends AbstractProcess {
 

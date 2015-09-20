@@ -266,7 +266,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
 
     /**
      * TODO change if currently not supported types could be merged.
-     * 
+     *
      * @return <code>true</code>, if the observation can be merged
      */
     public boolean checkObservationTypeForMerging() {

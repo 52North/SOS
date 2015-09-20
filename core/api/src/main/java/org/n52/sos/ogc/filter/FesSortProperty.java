@@ -32,9 +32,9 @@ import org.n52.iceland.ogc.filter.FilterConstants.SortOrder;
 
 /**
  * SOS class for FES SortProperty element
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  *
  */

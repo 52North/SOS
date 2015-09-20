@@ -104,7 +104,7 @@ import com.google.common.collect.Sets;
 @Configurable
 public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse> implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
-    
+
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
 
     // TODO make supported ValueReferences dynamic
@@ -125,7 +125,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     private ServiceOperatorRepository serviceOperatorRepository;
     private ServiceEventBus serviceEventBus;
     private boolean includeChildObservableProperties;
-    
+
 
     private final String service;
 
@@ -453,7 +453,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             throw new InvalidParameterValueException(parameterName, procedureID);
         }
     }
-    
+
     protected void checkTransactionalProcedureID(final String procedureID, final String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
@@ -461,7 +461,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             throw new InvalidParameterValueException(parameterName, procedureID);
         }
     }
-    
+
     protected void checkQueryableProcedureID(final String procedureID, final String parameterName) throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(procedureID)) {
             throw new MissingProcedureParameterException();
@@ -499,7 +499,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             exceptions.throwIfNotEmpty();
         }
     }
-    
+
     protected void checkTransactionalProcedureIDs(final Collection<String> procedureIDs, final String parameterName)
             throws OwsExceptionReport {
         if (procedureIDs != null) {
@@ -740,7 +740,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             throw new InvalidParameterValueException(parameterName, resultTemplate);
         }
     }
-    
+
     protected void checkReservedCharacter(Collection<String> values, Enum<?> parameterName) throws OwsExceptionReport {
         checkReservedCharacter(values, parameterName.name());
     }

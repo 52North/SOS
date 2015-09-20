@@ -47,9 +47,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract super class for all sampling features
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SamplingFeature extends AbstractFeature {
 
@@ -100,7 +100,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * constructor
-     * 
+     *
      * @param featureIdentifier
      *            identifier of sampling feature
      */
@@ -110,7 +110,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * constructor
-     * 
+     *
      * @param featureIdentifier
      *            identifier of sampling feature
      * @param gmlId
@@ -122,7 +122,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get XML representation of this feature
-     * 
+     *
      * @return XML representation of this feature
      */
     public String getXmlDescription() {
@@ -131,7 +131,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether XML representation of this feature is set
-     * 
+     *
      * @return <code>true</code>, if XML representation of this feature is set
      */
     public boolean isSetXmlDescription() {
@@ -140,7 +140,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set XML representation of this feature
-     * 
+     *
      * @param xmlDescription
      *            XML representation of this feature to set
      */
@@ -150,7 +150,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get feature geometry
-     * 
+     *
      * @return Feature geometry
      */
     public Geometry getGeometry() {
@@ -159,7 +159,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set feature geometry, checks whether srid is valid
-     * 
+     *
      * @param geometry
      *            Geometry to set
      * @throws InvalidSridException
@@ -174,7 +174,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether geometry is set
-     * 
+     *
      * @return <code>true</code>, if geometry is set
      */
     public boolean isSetGeometry() {
@@ -183,7 +183,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get feature type
-     * 
+     *
      * @return Type of this feature
      */
     public String getFeatureType() {
@@ -192,7 +192,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set feature type
-     * 
+     *
      * @param featureType
      *            Type of this feature
      */
@@ -202,7 +202,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether feature type is set
-     * 
+     *
      * @return <code>true</code>, if feature type is set
      */
     public boolean isSetFeatureType() {
@@ -211,7 +211,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get URL
-     * 
+     *
      * @return URL
      */
     public String getUrl() {
@@ -220,7 +220,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set URL
-     * 
+     *
      * @param url
      *            URL to set
      */
@@ -230,7 +230,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether URL is set
-     * 
+     *
      * @return <code>true</code>, if URL is set
      */
     public boolean isSetUrl() {
@@ -239,7 +239,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set sampled features
-     * 
+     *
      * @param sampledFeatures
      *            Sampled fearure list
      */
@@ -249,7 +249,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get sampled feaures
-     * 
+     *
      * @return Sampled feature list
      */
     public List<AbstractFeature> getSampledFeatures() {
@@ -261,7 +261,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether sampled features are set
-     * 
+     *
      * @return <code>true</code>, if sampled features are set
      */
     public boolean isSetSampledFeatures() {
@@ -270,7 +270,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Add parameter
-     * 
+     *
      * @param namedValue
      *            Parameter ro add
      */
@@ -280,7 +280,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Add parameters
-     * 
+     *
      * @param parameters
      *            Parameters to add
      */
@@ -290,7 +290,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get parameters
-     * 
+     *
      * @return Parameter list
      */
     public List<NamedValue<?>> getParameters() {
@@ -299,7 +299,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether parameters are set
-     * 
+     *
      * @return <code>true</code>, if parameters are set
      */
     public boolean isSetParameter() {
@@ -308,7 +308,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether feature should be encoded
-     * 
+     *
      * @return <code>true</code>, if feature should be encoded
      */
     public boolean isEncode() {
@@ -317,7 +317,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set indicator if feature should be encoded
-     * 
+     *
      * @param encode
      *            Encoding indicator
      */
@@ -327,7 +327,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Add related sampling feature
-     * 
+     *
      * @param relatedSamplingFeature
      *            Related sampling feature to add
      */
@@ -342,7 +342,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Add related sampling features
-     * 
+     *
      * @param relatedSamplingFeatures
      *            Related sampling features to add
      */
@@ -356,7 +356,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Set related sampling features
-     * 
+     *
      * @param relatedSamplingFeatures
      *            Related sampling features to set
      */
@@ -366,7 +366,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Get related sampling features
-     * 
+     *
      * @return Related sampling features
      */
     public List<SamplingFeatureComplex> getRelatedSamplingFeatures() {
@@ -375,7 +375,7 @@ public class SamplingFeature extends AbstractFeature {
 
     /**
      * Check whether related sampling features are set
-     * 
+     *
      * @return <code>true</code>, if related sampling features are set
      */
     public boolean isSetRelatedSamplingFeatures() {

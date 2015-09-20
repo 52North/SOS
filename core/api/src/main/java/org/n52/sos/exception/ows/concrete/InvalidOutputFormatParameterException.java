@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.sos.Sos1Constants.DescribeSensorParams;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InvalidOutputFormatParameterException extends InvalidParameterValueException {
     private static final long serialVersionUID = 21928020999418921L;

@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.BlobValuedLegacyObservation"
-        extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation" 
+        extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
         table="blobValue">
         <comment>Value table for blob observation</comment>
         <key foreign-key="observationBlobValueFk">
@@ -12,7 +12,7 @@
                     "observation".observationid</comment>
             </column>
         </key>
-        <property name="value" 
+        <property name="value"
                     type="blob">
             <column name="value">
                 <comment>Blob observation value</comment>

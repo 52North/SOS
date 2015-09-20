@@ -37,7 +37,7 @@ import org.n52.sos.response.GetObservationByIdResponse;
 
 /**
  * SOS GetObservationById request
- * 
+ *
  * @since 4.0.0
  */
 public class GetObservationByIdRequest extends AbstractObservationRequest {
@@ -49,7 +49,7 @@ public class GetObservationByIdRequest extends AbstractObservationRequest {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
      */
     @Override
@@ -59,7 +59,7 @@ public class GetObservationByIdRequest extends AbstractObservationRequest {
 
     /**
      * Get observation identifier
-     * 
+     *
      * @return observation identifier
      */
     public List<String> getObservationIdentifier() {
@@ -68,7 +68,7 @@ public class GetObservationByIdRequest extends AbstractObservationRequest {
 
     /**
      * Set observation identifier
-     * 
+     *
      * @param observationIdentifier
      *            observation identifier
      */

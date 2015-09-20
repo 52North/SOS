@@ -33,9 +33,9 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 /**
  * SOS internal representation of SensorML IOs
- * 
+ *
  * @param <T>
- * 
+ *
  * @since 4.0.0
  */
 public class SmlIo<T> extends AbstractReferenceType {
@@ -53,7 +53,7 @@ public class SmlIo<T> extends AbstractReferenceType {
 
     /**
      * constructor
-     * 
+     *
      * @param ioValue
      *            The IO value
      */

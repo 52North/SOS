@@ -53,7 +53,7 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
 public class CollectionHelperTest {
     private final Set<String> EMPTY_COLLECTION = new HashSet<String>(0);
@@ -123,7 +123,7 @@ public class CollectionHelperTest {
         map.put("key", "value");
         assertThat(CollectionHelper.isEmpty(map), is(FALSE));
     }
-    
+
     @Test
     public void should_return_String() {
         String empty = "()";
@@ -135,7 +135,7 @@ public class CollectionHelperTest {
         set.add("c");
         assertThat(CollectionHelper.collectionToString(set), is(full));
     }
-    
+
     @Test
     public void should_return_set_sorted_by_value() {
         Map<String,Integer> unsorted = new HashMap<>();

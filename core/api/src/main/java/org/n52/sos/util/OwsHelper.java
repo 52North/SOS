@@ -36,15 +36,15 @@ import org.n52.iceland.ogc.ows.OWSConstants;
 
 /**
  * Helper class for OGC OWS
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class OwsHelper {
 
     /**
      * Sets the first character to UpperCase.
-     * 
+     *
      * @param name
      *            String to be modified.
      * @return Modified string.
@@ -56,7 +56,7 @@ public final class OwsHelper {
 
     /**
      * Get OWS QName for localName
-     * 
+     *
      * @param localName
      *            Local name
      * @return QName for localName

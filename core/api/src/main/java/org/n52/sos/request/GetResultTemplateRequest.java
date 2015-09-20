@@ -36,7 +36,7 @@ import org.n52.sos.response.GetResultTemplateResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetResultTemplateRequest extends AbstractServiceRequest<GetResultTemplateResponse> {
 

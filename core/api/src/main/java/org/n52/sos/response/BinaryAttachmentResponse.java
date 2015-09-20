@@ -33,9 +33,9 @@ import org.n52.iceland.util.http.MediaType;
 
 /**
  * Simple response class for binary data to be included as a response attachment (for download)
- * 
+ *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.1.0
  */
 public class BinaryAttachmentResponse {

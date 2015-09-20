@@ -34,8 +34,8 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 public class SmlClassifierTest {
-    
-    @Test public void 
+
+    @Test public void
     shouldReturnTrueIfCodeSpaceIsSetAndNotEmpty()
     {
         final String codeSpace = "test-codespace";
@@ -43,19 +43,19 @@ public class SmlClassifierTest {
         assertThat(smlClassifier.isSetCodeSpace(), is(true));
         assertThat(smlClassifier.getCodeSpace(), is(codeSpace));
     }
-    
+
     @Test public void
     shouldReturnFalseIfCodeSpaceIsEmptyOrNotSet()
     {
         final String codeSpace = null;
         final SmlClassifier smlClassifier = new SmlClassifier("name", "definition", codeSpace, "value");
         assertThat(smlClassifier.isSetCodeSpace(), is(false));
-        
+
         smlClassifier.setCodeSpace("");
         assertThat(smlClassifier.isSetCodeSpace(), is(false));
     }
 
-    @Test public void 
+    @Test public void
     shouldReturnTrueIfDefinitionIsSetAndNotEmpty()
     {
         final String definition = "test-definition";
@@ -63,14 +63,14 @@ public class SmlClassifierTest {
         assertThat(smlClassifier.isSetDefinition(), is(true));
         assertThat(smlClassifier.getDefinition(), is(definition));
     }
-    
+
     @Test public void
     shouldReturnFalseIfDefinitionIsEmptyOrNotSet()
     {
         final String definition = null;
         final SmlClassifier smlClassifier = new SmlClassifier("name", definition, "codeSpace", "value");
         assertThat(smlClassifier.isSetDefinition(), is(false));
-        
+
         smlClassifier.setDefinition("");
         assertThat(smlClassifier.isSetDefinition(), is(false));
     }

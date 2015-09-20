@@ -45,10 +45,10 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResponse> {
-    
+
     private static final String SENSOR_TYPE_FLAG = "isType";
 
     private String procedureDescriptionFormat;
@@ -94,7 +94,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     /**
      * Get the observableProperty contained in request.
-     * 
+     *
      * @return the observableProperty
      */
     public List<String> getObservableProperty() {
@@ -103,7 +103,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     /**
      * Set the observableProperty contained in request.
-     * 
+     *
      * @param observableProperty
      *            the observableProperty to set
      */
@@ -117,7 +117,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     /**
      * Get the sensor description contained in request.
-     * 
+     *
      * @return the sosSensorML
      */
     public SosProcedureDescription getProcedureDescription() {
@@ -126,7 +126,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     /**
      * Set the sensor description contained in request.
-     * 
+     *
      * @param procedureDescription
      *            the procedureDescription to set
      */
@@ -140,7 +140,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     /**
      * Get the metadata contained in request.
-     * 
+     *
      * @return the metadata
      */
     public SosInsertionMetadata getMetadata() {
@@ -149,7 +149,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     /**
      * Set the metadata contained in request.
-     * 
+     *
      * @param metadata
      *            the metadata to set
      */
@@ -208,7 +208,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     public InsertSensorResponse getResponse() throws OwsExceptionReport {
         return (InsertSensorResponse) new InsertSensorResponse().set(this);
     }
-    
+
     /**
      * @return <code>true</code>, if the sensor type flag is set
      */

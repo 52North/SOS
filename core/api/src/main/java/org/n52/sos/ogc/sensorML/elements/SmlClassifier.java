@@ -33,11 +33,11 @@ import org.n52.sos.ogc.sensorML.Term;
 
 /**
  * SOS internal representation of SensorML classifier
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SmlClassifier extends Term {
@@ -50,18 +50,18 @@ public class SmlClassifier extends Term {
      * constructor
      */
     public SmlClassifier() {
-        
+
     }
-            
+
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Classifier name
      * @param definition
      *            Classifier definition (OPTIONAL)
      * @param codeSpace
-     *            Classifier codeSpace (OPTIONAL)      
+     *            Classifier codeSpace (OPTIONAL)
      * @param value
      *            Classifier value
      */
@@ -72,6 +72,6 @@ public class SmlClassifier extends Term {
         setCodeSpace(codeSpace);
         setDefinition(definition);
         setValue(value);
- 
+
     }
 }

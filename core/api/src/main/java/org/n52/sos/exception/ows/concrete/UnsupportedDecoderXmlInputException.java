@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
 public class UnsupportedDecoderXmlInputException extends UnsupportedDecoderInputException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7244575661954080973L;
 

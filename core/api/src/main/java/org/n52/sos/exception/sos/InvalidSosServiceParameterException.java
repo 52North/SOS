@@ -35,10 +35,10 @@ import org.n52.iceland.ogc.sos.SosConstants;
 public class InvalidSosServiceParameterException extends InvalidServiceParameterException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 3160084437440473955L;
-    
+
     public InvalidSosServiceParameterException(String value) {
         super(value);
         withMessage("The value of the mandatory parameter '%s' must be '%s'. Delivered value was: %s",

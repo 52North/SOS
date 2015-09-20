@@ -32,9 +32,9 @@ import org.n52.iceland.util.Constants;
 
 /**
  * Interface for SQL constanst
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface SQLConstants extends Constants {
 

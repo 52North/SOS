@@ -36,7 +36,7 @@ import org.n52.sos.coding.encode.EncodingValues;
 
 /**
  * Generic interface for StreamingEncoders.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -46,11 +46,11 @@ import org.n52.sos.coding.encode.EncodingValues;
  *            the input type, the "Source"
  */
 public interface StreamingEncoder<T,S> extends Encoder<T, S> {
-    
+
     public void encode(S objectToEncode, OutputStream outputStream) throws OwsExceptionReport;
-    
+
     public void encode(S objectToEncode, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport;
-    
+
     public boolean forceStreaming();
 
 }

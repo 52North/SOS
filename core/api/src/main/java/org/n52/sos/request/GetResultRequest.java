@@ -43,7 +43,7 @@ import org.n52.sos.response.GetResultResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> implements SpatialFeatureQueryRequest {
 
@@ -77,7 +77,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
 
     /**
      * Get observation template identifier
-     * 
+     *
      * @return observation template identifier
      */
     public String getObservationTemplateIdentifier() {
@@ -86,7 +86,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
 
     /**
      * Set observation template identifier
-     * 
+     *
      * @param observationTemplateIdentifier
      *            observation template identifier
      */
@@ -124,7 +124,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
 
     /**
      * Get FOI identifiers
-     * 
+     *
      * @return FOI identifiers
      */
     @Override
@@ -134,7 +134,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
 
     /**
      * Set FOI identifiers
-     * 
+     *
      * @param featureIdentifiers
      *            FOI identifiers
      */

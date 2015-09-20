@@ -42,7 +42,7 @@ import org.n52.sos.response.InsertObservationResponse;
 
 /**
  * SOS InsertObservation request
- * 
+ *
  * @since 4.0.0
  */
 public class InsertObservationRequest extends AbstractServiceRequest<InsertObservationResponse> {
@@ -65,7 +65,7 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
      */
     @Override
@@ -75,7 +75,7 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
 
     /**
      * Get assigned sensor id
-     * 
+     *
      * @return assigned sensor id
      */
     public String getAssignedSensorId() {
@@ -84,7 +84,7 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
 
     /**
      * Set assigned sensor id
-     * 
+     *
      * @param assignedSensorId
      *            assigned sensor id
      */
@@ -98,7 +98,7 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
 
     /**
      * Get observations to insert
-     * 
+     *
      * @return observations to insert
      */
     public List<OmObservation> getObservations() {
@@ -107,7 +107,7 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
 
     /**
      * Set observations to insert
-     * 
+     *
      * @param observation
      *            observations to insert
      */

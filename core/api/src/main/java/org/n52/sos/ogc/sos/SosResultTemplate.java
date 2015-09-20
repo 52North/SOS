@@ -39,7 +39,7 @@ import org.n52.sos.util.CodingHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosResultTemplate {
 

@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.sos.Sos1Constants;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class MissingOutputFormatParameterException extends MissingParameterValueException {
     private static final long serialVersionUID = 690794876954213194L;

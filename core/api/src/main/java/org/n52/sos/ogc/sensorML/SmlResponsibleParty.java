@@ -35,10 +35,10 @@ import org.n52.iceland.util.CollectionHelper;
 
 /**
  * Implementation for sml:ResponsibleParty
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SmlResponsibleParty extends SmlContact {

@@ -32,8 +32,8 @@ package org.n52.sos.ogc.sensorML.v20;
  * In the OGC SensorML 2.0 specification the AbstractProcess is a subclass of
  * the DescribedObject but to avoid duplicate definition of classes, the
  * super-/subclass is inverted in the API.
- * 
- * 
+ *
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *

@@ -46,7 +46,7 @@ public class GmdQuantitativeResult extends GmdDomainConsistency {
         this.value = value;
         this.valueNilReason = null;
     }
-    
+
     public GmdQuantitativeResult(GmlBaseUnit unit, NilReason valueNilReason) {
         this.unit = unit;
         this.value = null;

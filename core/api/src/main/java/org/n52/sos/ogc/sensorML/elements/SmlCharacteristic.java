@@ -41,7 +41,7 @@ public class SmlCharacteristic extends AbstractDataComponentContainer<SmlCharact
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      */
@@ -51,7 +51,7 @@ public class SmlCharacteristic extends AbstractDataComponentContainer<SmlCharact
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      * @param abstractDataComponent

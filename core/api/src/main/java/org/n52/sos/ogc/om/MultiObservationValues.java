@@ -33,9 +33,9 @@ import org.n52.sos.ogc.om.values.MultiValue;
 
 /**
  * Class representing a multi value observation value
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            value type
  */

@@ -40,7 +40,7 @@ import org.n52.iceland.util.CollectionHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosInsertionCapabilities implements CapabilitiesExtension, MergableExtension<SosInsertionCapabilities> {
     private static final String SECTION_NAME = Sos2Constants.CapabilitiesSections.InsertionCapabilities.name();

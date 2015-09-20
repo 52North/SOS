@@ -46,7 +46,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OmObservationTest {
 

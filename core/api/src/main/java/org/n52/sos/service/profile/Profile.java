@@ -33,7 +33,7 @@ import java.util.Set;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface Profile {
 

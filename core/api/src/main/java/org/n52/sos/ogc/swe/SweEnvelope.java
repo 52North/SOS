@@ -252,7 +252,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
+
     private static boolean isNorthingFirstEpsgCode(int srid) {
         return GeometryHandler.getInstance().isNorthingFirstEpsgCode(srid);
     }

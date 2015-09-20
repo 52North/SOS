@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 
 /**
  * @author CarstenHollmann
- * 
+ *
  * @since 4.0.0
  */
 public class InvalidSpatialFilterParameterException extends InvalidParameterValueException {

@@ -31,7 +31,7 @@ package org.n52.sos.exception.swes;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class RequestExtensionNotSupportedException extends CodedSwesException {

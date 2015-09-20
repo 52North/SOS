@@ -32,7 +32,7 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * Abtract class represents SensorML 2.0 TermType
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.4.0
  *
@@ -49,13 +49,13 @@ public abstract class Term {
      * Classifier codeSpace href
      */
     private String codeSpace;
-    
+
     private String value;
-    
+
     public Term() {
-        
+
     }
-    
+
     /**
      * @return the name
      */
@@ -70,7 +70,7 @@ public abstract class Term {
     public void setName(final String name) {
         this.name = name;
     }
-    
+
     /**
      * @return the Identifier label
      */
@@ -101,7 +101,7 @@ public abstract class Term {
     public void setDefinition(final String definition) {
         this.definition = definition;
     }
-    
+
     /**
      * @return the Classifier codeSpace href
      */
@@ -131,14 +131,14 @@ public abstract class Term {
     public void setValue(final String value) {
         this.value = value;
     }
-    
+
     /**
      * @return <code>true</code>, if the name is set AND not empty
      */
     public boolean isSetName() {
         return StringHelper.isNotEmpty(name);
     }
-    
+
     /**
      * @return <code>true</code>, if the label is set AND not empty
      */

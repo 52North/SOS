@@ -32,7 +32,7 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SwesFeatureRelationship {
     private String role;

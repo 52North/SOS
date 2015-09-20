@@ -33,7 +33,7 @@ import org.n52.sos.ogc.sensorML.Term;
 
 /**
  * SOS internal representation of SensorML identifier
- * 
+ *
  * @since 4.0.0
  */
 public class SmlIdentifier extends Term {
@@ -42,12 +42,12 @@ public class SmlIdentifier extends Term {
      * constructor
      */
     public SmlIdentifier() {
-        
+
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Identifier name
      * @param definition

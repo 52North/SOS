@@ -56,11 +56,11 @@ public class GmdConformanceResult extends GmdDomainConsistency {
     public boolean isPass() {
         return pass;
     }
-    
+
     public NilReason getPassNilReason() {
         return passNilReason;
     }
-    
+
     public boolean isSetPassNilReason() {
         return getPassNilReason() != null;
     }

@@ -68,7 +68,7 @@ public class ProcedureDescriptionFormatRepository
     private final Set<ProcedureDescriptionFormatKey> keys = new HashSet<>();
     private EncoderRepository encoderRepository;
     private ServiceOperatorRepository serviceOperatorRepository;
-    
+
     private final Map<String, Map<String, Set<String>>> transactionalProcedureDescriptionFormats = Maps.newHashMap();
 
     @Override
@@ -124,7 +124,7 @@ public class ProcedureDescriptionFormatRepository
         }
         byVersion.add(key.getProcedureDescriptionFormat());
     }
-    
+
     protected void addTransactionalProcedureDescriptionFormat(ProcedureDescriptionFormatKey key) {
         this.keys.add(key);
         Map<String, Set<String>> byService = this.transactionalProcedureDescriptionFormats.get(key.getService());

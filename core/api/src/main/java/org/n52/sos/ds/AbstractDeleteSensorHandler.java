@@ -37,7 +37,7 @@ import org.n52.sos.response.DeleteSensorResponse;
 /**
  * Renamed, in version 4.x called AbstractDeleteSensorDAO
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractDeleteSensorHandler extends AbstractOperationHandler {
 

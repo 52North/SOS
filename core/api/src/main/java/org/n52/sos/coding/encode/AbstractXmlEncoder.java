@@ -70,7 +70,7 @@ public abstract class AbstractXmlEncoder<S> extends AbstractDelegatingEncoder<Xm
     public MediaType getContentType() {
         return MediaTypes.TEXT_XML;
     }
-    
+
     protected XmlObject substitute(XmlObject elementToSubstitute, XmlObject substitutionElement) {
         XmlObject substituteElement = XmlHelper.substituteElement(elementToSubstitute, substitutionElement);
         substituteElement.set(substitutionElement);

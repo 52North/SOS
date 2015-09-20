@@ -40,7 +40,7 @@ import com.google.common.collect.Sets;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class SweAbstractDataRecord extends SweAbstractDataComponent implements DataRecord {
@@ -128,7 +128,7 @@ public abstract class SweAbstractDataRecord extends SweAbstractDataComponent imp
         hash = prime * hash + (getFields() != null ? getFields().hashCode() : 0);
         return hash;
     }
-    
+
     @SuppressWarnings("rawtypes")
     @Override
     public Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz) {

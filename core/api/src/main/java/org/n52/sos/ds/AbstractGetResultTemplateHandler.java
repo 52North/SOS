@@ -39,9 +39,9 @@ import org.n52.sos.response.GetResultTemplateResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultTemplateDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetResultTemplateHandler extends AbstractOperationHandler {
     public AbstractGetResultTemplateHandler(String service) {

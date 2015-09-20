@@ -184,7 +184,7 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     private boolean checkFieldNameAndElementDefinition(SweField sweField) {
         return "StartTime".equals(sweField.getName().getValue()) || "EndTime".equals(sweField.getName().getValue())
                 || OmConstants.PHENOMENON_TIME.equals(sweField.getElement().getDefinition());
-        
+
     }
 
     @Override

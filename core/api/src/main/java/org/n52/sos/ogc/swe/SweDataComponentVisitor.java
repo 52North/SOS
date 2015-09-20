@@ -103,7 +103,7 @@ public interface SweDataComponentVisitor<T> {
 
     T visit(SmlPosition component)
             throws OwsExceptionReport;
-    
+
     T visit(SmlDataInterface component)
             throws OwsExceptionReport;
 

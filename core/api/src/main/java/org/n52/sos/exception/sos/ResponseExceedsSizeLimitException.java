@@ -32,7 +32,7 @@ import static org.n52.iceland.util.http.HTTPStatus.BAD_REQUEST;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ResponseExceedsSizeLimitException extends CodedSosException {

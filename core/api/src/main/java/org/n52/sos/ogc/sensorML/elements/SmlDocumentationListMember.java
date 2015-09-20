@@ -30,7 +30,7 @@ package org.n52.sos.ogc.sensorML.elements;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SmlDocumentationListMember {
 

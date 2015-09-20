@@ -46,7 +46,7 @@ public class SweTimeBuilder {
         SweTime sweTime = new SweTime();
         sweTime.setDefinition(OmConstants.PHENOMENON_TIME);
         return sweTime;
-        
+
     }
 
 }

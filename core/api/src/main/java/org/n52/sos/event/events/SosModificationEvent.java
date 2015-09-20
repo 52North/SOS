@@ -33,9 +33,9 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class SosModificationEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse>

@@ -30,7 +30,7 @@ package org.n52.sos.ogc.sensorML.v20;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- * 
+ *
  * @since 4.3.0
  *
  */

@@ -39,9 +39,9 @@ import com.google.common.collect.Sets;
 
 /**
  * SOS class for FES 2.0 AbstractAdHocQueryExpression
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  *
  */
@@ -56,7 +56,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
     private Set<QName> typeNames;
 
     private Set<String> aliases;
-    
+
     public AbstractAdHocQueryExpression(Collection<QName> typeNames) {
         setTypeNames(typeNames);
     }
@@ -67,7 +67,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
     public Set<AbstractProjectionClause> getProjectionClauses() {
         return projectionClauses;
     }
-    
+
     /**
      * @param projectionClause the projectionClause to add
      */
@@ -75,7 +75,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
         getProjectionClauses().add(projectionClause);
         return this;
     }
-    
+
     /**
      * @param projectionClauses the projectionClauses to add
      */
@@ -91,7 +91,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
         this.projectionClauses = projectionClauses;
         return this;
     }
-    
+
     public boolean isSetProjectionClauses() {
         return CollectionHelper.isNotEmpty(getProjectionClauses());
     }
@@ -110,7 +110,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
         this.selectionClause = selectionClause;
         return this;
     }
-    
+
     public boolean isSetSelectionClause() {
         return getSelectionClause() != null;
     }
@@ -129,7 +129,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
         this.sortingClause = sortingClause;
         return this;
     }
-    
+
     public boolean isSetSortingClause() {
         return getSortingClause() != null;
     }
@@ -162,7 +162,7 @@ public abstract class AbstractAdHocQueryExpression extends AbstractQueryExpressi
         this.aliases = Sets.newHashSet(aliases);
         return this;
     }
-    
+
     public boolean isSetAliases() {
         return CollectionHelper.isNotEmpty(getAliases());
     }

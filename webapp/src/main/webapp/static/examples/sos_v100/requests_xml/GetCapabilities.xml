@@ -6,13 +6,13 @@
 	xsi:schemaLocation="http://www.opengis.net/sos/1.0
 	http://schemas.opengis.net/sos/1.0.0/sosGetCapabilities.xsd"
 	service="SOS">
-	
+
 	<ows:AcceptVersions>
 		<ows:Version>1.0.0</ows:Version>
 	</ows:AcceptVersions>
-	
-	<ows:Sections>	
-		<ows:Section>OperationsMetadata</ows:Section>	
+
+	<ows:Sections>
+		<ows:Section>OperationsMetadata</ows:Section>
 		<ows:Section>ServiceIdentification</ows:Section>
 		<ows:Section>ServiceProvider</ows:Section>
 		<ows:Section>Filter_Capabilities</ows:Section>

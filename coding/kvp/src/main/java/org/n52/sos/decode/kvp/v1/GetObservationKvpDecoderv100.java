@@ -56,7 +56,7 @@ import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
 
@@ -86,7 +86,7 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
                         request.setOfferings(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                         foundOffering = true;
                     }
-    
+
                     // eventTime (optional)
                     else if (parameterName.equalsIgnoreCase(Sos1Constants.GetObservationParams.eventTime.name())) {
                         if (!parameterValues.contains(",")) {
@@ -100,19 +100,19 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
                             exceptions.add(new InvalidParameterValueException(parameterName, parameterValues).causedBy(e));
                         }
                     }
-    
+
                     // procedure (optional)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.procedure.name())) {
                         request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
                     }
-    
+
                     // observedProperty (mandatory)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.observedProperty.name())) {
                         request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
                                 parameterName));
                         foundObservedProperty = true;
                     }
-    
+
                     // featureOfInterest (optional)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
                         // try to detect spatial filter bbox. should this be
@@ -125,7 +125,7 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
                                     parameterName));
                         }
                     }
-    
+
                     // responseFormat (mandatory)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())
                             && !Strings.isNullOrEmpty(parameterValues)) {
@@ -134,12 +134,12 @@ public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
                                 MediaType.normalizeString(parameterValues), parameterName));
                         foundResponseFormat = true;
                     }
-    
+
                     // resultModel (optional)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.resultModel.name())) {
                         request.setResultModel(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                     }
-    
+
                     // responseMode (optional)
                     else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseMode.name())) {
                         request.setResponseMode(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));

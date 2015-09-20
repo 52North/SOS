@@ -40,9 +40,9 @@ import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
@@ -55,7 +55,7 @@ public abstract class AbstractSosResponseEncoder<T extends AbstractServiceRespon
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
         return Sets.newHashSet(Sos1Constants.SOS1_SCHEMA_LOCATION);
     }
-    
+
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(Sos1Constants.SOS1_SCHEMA_LOCATION);

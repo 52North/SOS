@@ -49,10 +49,10 @@ import com.google.common.base.Strings;
 /**
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
  * the database to use UTC instead of the JVM's timezone.
- * 
+ *
  * @author Shane StClair <shane@axiomalaska.com>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.4.0
  */
 public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor {
@@ -69,7 +69,7 @@ public class ConfigurableTimestampTypeDescriptor extends TimestampTypeDescriptor
 
     /**
      * Get instance of {@link ConfigurableTimestampTypeDescriptor}
-     * 
+     *
      * @param timeZone
      *            The {@link TimeZone} string. If null or empty, UTC is used.
      */

@@ -80,7 +80,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider im
         }
         Session session = getConnection();
         Connection conn = ((SessionImplementor) session).connection();
-       
+
         try {
             DatabaseMetadata databaseMetadata = new DatabaseMetadata(conn, dialect, configuration);
             String[] udpateSql = SchemaUpdateScript.toStringArray(configuration.generateSchemaUpdateScriptList(dialect, databaseMetadata));

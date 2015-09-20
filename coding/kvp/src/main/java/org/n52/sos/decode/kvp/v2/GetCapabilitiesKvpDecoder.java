@@ -90,19 +90,19 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
                         } else {
                             exceptions.add(new MissingParameterValueException(parameterName));
                         }
-                    } 
+                    }
                         // acceptFormats (optional)
                     else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptFormats.name())) {
                         request.setAcceptFormats(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                    } 
+                    }
                         // updateSequence (optional)
                     else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.updateSequence.name())) {
                         request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    } 
+                    }
                         // sections (optional)
                     else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Sections.name())) {
                         request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                    } 
+                    }
                         // capabilitiesId (optional; non-standard)
                 else if (parameterName.equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
                         request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));

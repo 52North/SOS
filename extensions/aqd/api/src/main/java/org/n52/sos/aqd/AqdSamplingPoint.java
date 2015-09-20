@@ -33,25 +33,25 @@ import org.n52.sos.ef.EfEnvironmentalMonitoringFacility;
 
 /**
  * Class represents an AQD_SamplingPoint
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
- 
+
     private static final long serialVersionUID = -5679922725853829576L;
-    
+
     private AssessmentType assessmentType;
-    
+
     private AqdStation station;
-    
+
     private AqdNetwork network;
-    
+
     public AqdSamplingPoint() {
         setDefaultElementEncoding(AqdConstants.NS_AQD);
     }
-    
+
     /**
      * @return the assessmentType
      */
@@ -79,7 +79,7 @@ public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
     public void setStation(AqdStation station) {
         this.station = station;
     }
-    
+
     /**
      * @return <code>true</code>, if {@link AqdStation} is not null
      */
@@ -100,13 +100,13 @@ public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
     public void setNetwork(AqdNetwork network) {
         this.network = network;
     }
-    
+
     /**
      * @return <code>true</code>, if {@link AqdNetwork} is not null
      */
     public boolean isSetNetwork() {
         return getNetwork() != null;
     }
-    
+
 
 }

@@ -122,7 +122,7 @@ public final class HibernateHelper {
 
     /**
      * Checks if the specified column is supported by this entity.
-     * 
+     *
      * @param clazz
      *            the class
      * @param column
@@ -135,7 +135,7 @@ public final class HibernateHelper {
 
     /**
      * Checks if the specified named query is supported.
-     * 
+     *
      * @param namedQuery
      *            the named query
      * @param session

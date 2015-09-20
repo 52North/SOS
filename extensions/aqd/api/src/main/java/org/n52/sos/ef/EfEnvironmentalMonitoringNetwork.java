@@ -30,7 +30,7 @@ package org.n52.sos.ef;
 
 /**
  * Class represents an EnvironmentalMonitoringNetwork
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *

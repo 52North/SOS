@@ -47,9 +47,9 @@ import org.hibernate.type.descriptor.sql.TimestampTypeDescriptor;
 /**
  * Hibernate TypeDescriptor which forces all Timestamps queried from/inserted to
  * the database to use UTC instead of the JVM's timezone.
- * 
+ *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.0.0
  */
 public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {

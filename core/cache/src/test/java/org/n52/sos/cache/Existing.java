@@ -36,7 +36,7 @@ import org.hamcrest.Factory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class Existing extends BaseMatcher<File> {

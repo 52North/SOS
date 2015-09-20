@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ProfileImpl implements Profile {
 

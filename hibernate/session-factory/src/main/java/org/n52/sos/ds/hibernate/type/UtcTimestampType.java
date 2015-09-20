@@ -45,12 +45,12 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
  * {@link java.sql.Timestamp}. Delegates to Hibernate's TimestampType, but
  * specifies UtcTimestampTypeDescriptor as the SqlTypeDescriptor so that times
  * from the database are always retrieved in UTC.
- * 
+ *
  * @see <a
  *      href="http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-utc-time-zone/3430957#3430957">http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-utc-time-zone/3430957#3430957</a>
- * 
+ *
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
- * 
+ *
  * @since 4.0.0
  */
 public class UtcTimestampType extends AbstractSingleColumnStandardBasicType<Date> implements VersionType<Date>,

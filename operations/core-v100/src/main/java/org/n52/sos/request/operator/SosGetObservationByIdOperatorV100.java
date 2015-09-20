@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetObservationByIdOperatorV100
         extends
@@ -59,7 +59,7 @@ public class SosGetObservationByIdOperatorV100
 
     /**
      * Constructor
-     * 
+     *
      */
     public SosGetObservationByIdOperatorV100() {
         super(OPERATION_NAME, GetObservationByIdRequest.class);

@@ -66,7 +66,7 @@ public class JdbcUrl implements Constants {
     private static final String USER_PROPERTY = "hibernate.connection.username";
 
     private static final String PASS_PROPERTY = "hibernate.connection.password";
-    
+
     private String scheme;
 
     private String type;

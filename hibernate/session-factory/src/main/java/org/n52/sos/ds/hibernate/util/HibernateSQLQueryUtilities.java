@@ -32,14 +32,14 @@ import java.util.List;
 
 /**
  * Utility class for Hibernate native SQL queries.
- * 
+ *
  * @since 4.0.0
  */
 public class HibernateSQLQueryUtilities {
 
     /**
      * Get distinct value for properties and table name
-     * 
+     *
      * @param properties
      *            Properties
      * @param tableName

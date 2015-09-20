@@ -50,7 +50,7 @@ import org.n52.sos.request.GetResultTemplateRequest;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetResultTemplateKvpDecoderv20 extends AbstractKvpDecoder {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,

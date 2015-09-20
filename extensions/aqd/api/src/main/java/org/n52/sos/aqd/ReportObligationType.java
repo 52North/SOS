@@ -55,7 +55,7 @@ public enum ReportObligationType {
     public String getDescription() {
         return description;
     }
-    
+
     public static ReportObligationType from(String v) {
         for (ReportObligationType rot : ReportObligationType.values()) {
             if (rot.getTitle().equalsIgnoreCase(v)) {

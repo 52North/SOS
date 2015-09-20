@@ -62,12 +62,12 @@ public class Soap11Decoder extends AbstractSoapDecoder {
 
     /**
      * Parses SOAP 1.1 Envelope to a SOS internal SOAP request.
-     * 
+     *
      * @param doc
      *            Request as xml representation
-     * 
+     *
      * @return SOS internal SOAP request
-     * 
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */

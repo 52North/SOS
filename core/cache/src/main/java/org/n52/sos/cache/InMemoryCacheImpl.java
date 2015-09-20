@@ -1713,7 +1713,8 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     @Override
     public void recalculatePhenomenonTime() {
         LOG.trace("Recalculating global phenomenon time based on offerings");
-        DateTime globalMax = null, globalMin = null;
+        DateTime globalMax = null;
+        DateTime globalMin = null;
         if (!getOfferings().isEmpty()) {
             for (final String offering : getOfferings()) {
                 if (hasMaxPhenomenonTimeForOffering(offering)) {
@@ -1777,7 +1778,8 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     @Override
     public void recalculateResultTime() {
         LOG.trace("Recalculating global result time based on offerings");
-        DateTime globalMax = null, globalMin = null;
+        DateTime globalMax = null;
+        DateTime globalMin = null;
         if (!getOfferings().isEmpty()) {
             for (final String offering : getOfferings()) {
                 if (hasMaxResultTimeForOffering(offering)) {
@@ -2495,7 +2497,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     public Set<String> getRequestableProcedureDescriptionFormat() {
         return this.requestableProcedureDescriptionFormats;
     }
-    
+
     @Override
     public boolean hasRequestableProcedureDescriptionFormat(String format) {
         return getRequestableProcedureDescriptionFormat().contains(format);
@@ -2506,13 +2508,13 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
         LOG.trace("Adding requestable procedureDescriptionFormat");
         getRequestableProcedureDescriptionFormat().addAll(formats);
     }//#################
-    
+
     @Override
     public Set<String> getOfferingsForProcedures(Set<String> procedures) {
         HashSet<String> offerings = Sets.newHashSet();
         if (procedures != null) {
             for (String procedure : procedures) {
-                offerings.addAll(getOfferingsForProcedure(procedure));   
+                offerings.addAll(getOfferingsForProcedure(procedure));
             }
         }
         return offerings;
@@ -2525,7 +2527,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
                 CollectionHelper.union(copyOf(hiddenChildProceduresForOfferings.values())),
                 CollectionHelper.union(copyOf(proceduresForOfferings.values())));
     }
-    
+
     @Override
     public boolean hasTransactionalObservationProcedure(String procedureID) {
         return getTransactionalObservationProcedures().contains(procedureID);
@@ -2541,7 +2543,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
         // showOnlyAggregatedProcedures
         if (ProcedureRequestSettingProvider.getInstance().isShowOnlyAggregatedProcedures()) {
             procedures = CollectionHelper.conjunctCollectionsToSet(procedures, getComponentAggregationProcedure(ComponentAggregation.AGGREGATION));
-            
+
         }
         return procedures;
     }
@@ -2563,7 +2565,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public Set<String> getInstancesForProcedure(String identifier) {
-        
+
         return copyOf(typeOfProcedures.get(identifier));
     }
 
@@ -2673,7 +2675,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     /**
      * Logs to trace: "Adding 'value' to 'type'".
-     * 
+     *
      * @param type
      *            Add to
      * @param value
@@ -2685,7 +2687,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     /**
      * Logs to trace: "Removing 'value' from 'type'".
-     * 
+     *
      * @param type
      *            Remove from
      * @param value
@@ -2697,14 +2699,14 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     /**
      * Logs to trace: "Clearing 'type'
-     * 
+     *
      * @param type
      *            Type to clear
      */
     protected void logClearing(String type) {
         LOG.trace("Clearing '{}'", type);
     }
-    
+
 }
 
 

@@ -36,14 +36,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class ProfileHandlerImplTest {
-    
+
     ProfileHandlerImpl phi = new ProfileHandlerImpl();
-    
+
     @Test
     public void is_aktive_profile_SOS_20_PROFILE() {
         assertThat(phi.getActiveProfile().getIdentifier(), is("SOS_20_PROFILE"));
     }
-    
+
     @Test
     public void is_two_profles_available() {
         assertThat(phi.getAvailableProfiles().size(), is(2));
@@ -69,7 +69,7 @@ public class ProfileHandlerImplTest {
         assertThat(profile.getNoDataPlaceholder().iterator().next(), is("noData"));
         assertThat(profile.isReturnLatestValueIfTemporalFilterIsMissingInGetObservation(), is(false));
     }
-    
+
     @Test
     public void check_hydrology() {
         Profile profile = phi.getAvailableProfiles().get("hydrology");

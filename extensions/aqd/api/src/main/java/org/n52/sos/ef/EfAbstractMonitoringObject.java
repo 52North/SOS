@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 
 /**
  * Class represents an AbstractMonitoringObject
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -41,7 +41,7 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 public abstract class EfAbstractMonitoringObject extends AbstractFeature {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -1741709013086970962L;
 

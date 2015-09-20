@@ -41,7 +41,7 @@ import org.n52.sos.response.GetFeatureOfInterestResponse;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetFeatureOfInterestOperatorV100
         extends

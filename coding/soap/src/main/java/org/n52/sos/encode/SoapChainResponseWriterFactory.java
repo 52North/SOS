@@ -57,7 +57,7 @@ public class SoapChainResponseWriterFactory
     private EncoderRepository encoderRepository;
     private Producer<XmlOptions> xmlOptions;
     private boolean forceStreamingEncoding;
-    
+
     @Inject
     public void setXmlOptions(Producer<XmlOptions> xmlOptions) {
         this.xmlOptions = xmlOptions;

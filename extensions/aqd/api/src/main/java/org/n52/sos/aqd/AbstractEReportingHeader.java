@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 /**
  * Abstract class for AQD e-Reporting header. Required to use defined method in
  * AQD API module.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *

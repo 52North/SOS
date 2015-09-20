@@ -141,9 +141,9 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private Set<String> northingNames = Collections.emptySet();
     private Set<String> eastingNames = Collections.emptySet();
     private Set<String> altitudeNames = Collections.emptySet();
-    
+
     /**
-     * 
+     *
      * Get the keys
      *
      * @return Set of keys
@@ -586,10 +586,10 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private void transformLocation(SmlLocation location, int targetCrs) throws OwsExceptionReport {
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
     }
-    
+
     /**
      * Check if the name is a defined altitude name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is an altitude name
@@ -602,7 +602,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if the name is a defined northing name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is a northing name
@@ -615,7 +615,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if the name is a defined easting name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is an easting name
@@ -786,7 +786,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
             if (Character.isDigit(referenceFrame.toCharArray()[i])){
                 return true;
             }
-        } 
+        }
         return false;
     }
 
@@ -964,7 +964,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private ServiceConfiguration getConfiguration() {
         return ServiceConfiguration.getInstance();
     }
-    
+
     /**
      * @return the northingNames
      */
@@ -985,7 +985,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if northing names contains name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is defined.
@@ -1014,7 +1014,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if easting names contains name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is defined.
@@ -1043,7 +1043,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if altitude names contains name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is defined.

@@ -193,7 +193,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             return Collections.unmodifiableSet(new HashSet<T>(set));
         }
     }
-    
+
     /**
      * Creates a unmodifiable copy of the specified collection of sets.
      *
@@ -363,10 +363,10 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             throw new NullPointerException(name + " may not be null!");
         }
     }
-    
+
     /**
      * Remove value from map or complete entry if values for key are empty
-     * 
+     *
      * @param map
      *            Map to check
      * @param value
@@ -383,7 +383,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             }
         }
     }
-    
+
     private int defaultEpsgCode = Constants.EPSG_WGS84;
 
     private Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
@@ -494,16 +494,16 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
 
     private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
-    
+
     private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
-    
+
     private Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
-    
+
     protected static Logger getLogger() {
         return null;
     }
-    
-    
+
+
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -855,15 +855,15 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
         return offeringIdentifierHumanReadableName.inverse();
     }
-    
+
     protected Map<TypeInstance, Set<String>> getTypeIntanceProcedureMap() {
         return typeInstanceProcedures;
     }
-    
+
     protected Map<ComponentAggregation, Set<String>> getComponentAggregationProcedureMap() {
         return componentAggregationProcedures;
     }
-    
+
     protected Map<String, Set<String>> getTypeOfProcedureMap() {
         return typeOfProceduresMap;
     }

@@ -30,7 +30,7 @@ package org.n52.sos.ds.hibernate.util;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface DefaultHibernateConstants {
 

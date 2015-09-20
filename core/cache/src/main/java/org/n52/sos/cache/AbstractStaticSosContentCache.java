@@ -159,7 +159,7 @@ public abstract class AbstractStaticSosContentCache implements SosContentCache {
             return Collections.unmodifiableSet(new HashSet<>(set));
         }
     }
-    
+
     /**
      * Creates a unmodifiable copy of the specified collection of sets.
      *
@@ -358,10 +358,10 @@ public abstract class AbstractStaticSosContentCache implements SosContentCache {
             return (TimePeriod) time;
         }
     }
-    
+
     /**
      * Remove value from map or complete entry if values for key are empty
-     * 
+     *
      * @param map
      *            Map to check
      * @param value

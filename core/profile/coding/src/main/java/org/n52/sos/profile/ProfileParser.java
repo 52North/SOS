@@ -41,7 +41,7 @@ import com.google.common.collect.Sets;
  */
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ProfileParser {
 
@@ -61,11 +61,11 @@ public class ProfileParser {
     private static final String RESPONSE_PLACEHOLDER = "responsePlaceholder";
     private static final String PLACEHOLDER = "placeholder";
     private static final String RETURN_LATEST_VALUE = "returnLatestValueIfTemporalFilterIsMissingInGetObservation";
-    
+
     private static final String ENCODE_PROCEDURE = "EncodeProcedure";
     private static final String NAMESPACE = "namespace";
     private static final String ENCCODE = "encode";
-    
+
     private static final String DEFAULT_OBS_TYPE_FOR_ENCODING = "DefaultObservationTypesForEncoding";
     private static final String  OBS_TYPE = "observationType";
 
@@ -89,7 +89,7 @@ public class ProfileParser {
         parseEncodeProcedure(profile, node);
         return profile;
     }
-    
+
     private String parseText(JsonNode node) {
         return node.textValue();
     }

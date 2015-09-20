@@ -40,7 +40,7 @@ import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetCapabilitiesOperatorV100 extends
         AbstractV1RequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {

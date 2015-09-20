@@ -43,7 +43,7 @@ public class UriSettingValue extends AbstractSettingValue<URI> {
     private static final long serialVersionUID = -8771649328574485594L;
 
     private URI value;
-    
+
     @Override
     public URI getValue() {
         return this.value;

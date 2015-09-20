@@ -54,7 +54,7 @@ public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesE
     public boolean isDisabled() {
         return !isActive();
     }
-    
+
     @Override
     public String getExtension() {
         return extension;

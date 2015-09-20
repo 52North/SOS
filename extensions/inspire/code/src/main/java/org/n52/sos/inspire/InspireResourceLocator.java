@@ -39,10 +39,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Service internal representation of INSPIRE resource locator
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireResourceLocator {
 
@@ -51,14 +51,14 @@ public class InspireResourceLocator {
 
     /* Element MediaType 0..* */
     private Set<MediaType> mediaTypes = Sets.newHashSet();
-    
+
     public InspireResourceLocator(String url) {
         setURL(url);
     }
 
     /**
      * Get the URL
-     * 
+     *
      * @return the URL
      */
     public String getURL() {
@@ -67,7 +67,7 @@ public class InspireResourceLocator {
 
     /**
      * Set the URL
-     * 
+     *
      * @param url
      *            the URL to set
      */
@@ -77,7 +77,7 @@ public class InspireResourceLocator {
 
     /**
      * Check if the URL is set
-     * 
+     *
      * @return <code>true</code>, if the URL is set
      */
     public boolean isSetUrl() {
@@ -86,7 +86,7 @@ public class InspireResourceLocator {
 
     /**
      * Get the {@link MediaType}s
-     * 
+     *
      * @return the media types
      */
     public Set<MediaType> getMediaTypes() {
@@ -95,11 +95,11 @@ public class InspireResourceLocator {
 
     /**
      * Set the {@link MediaType}s, clears the existing collection
-     * 
+     *
      * @param mediaTypes
      *            the media types to set
      * @return this
-     * 
+     *
      */
     public InspireResourceLocator setMediaTypes(Collection<MediaType> mediaTypes) {
         getMediaTypes().clear();
@@ -111,7 +111,7 @@ public class InspireResourceLocator {
 
     /**
      * Add a {@link MediaType}
-     * 
+     *
      * @param mediaType
      *            the media type to add
      * @return this
@@ -123,7 +123,7 @@ public class InspireResourceLocator {
 
     /**
      * Check if media types are set
-     * 
+     *
      * @return <code>true</code>, if media types are set
      */
     public boolean isSetMediaTypes() {

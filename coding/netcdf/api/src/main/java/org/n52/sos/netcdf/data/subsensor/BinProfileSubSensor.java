@@ -31,7 +31,7 @@ package org.n52.sos.netcdf.data.subsensor;
 /**
  * Implementation of {@link ProfileSubSensor} for bin profile sub sensors. From
  * a line string geometry.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0

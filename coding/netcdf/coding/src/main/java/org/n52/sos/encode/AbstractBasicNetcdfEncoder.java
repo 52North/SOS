@@ -35,18 +35,18 @@ import ucar.nc2.NetcdfFileWriter;
 /**
  * Abstract basic class of {@link AbstractNetcdfEncoder} to implement abstract
  * methods used by implemented encoder.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 public abstract class AbstractBasicNetcdfEncoder extends AbstractNetcdfEncoder {
-    
+
     @Override
     protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         // TODO Auto-generated method stub
     }
-    
+
 
 }

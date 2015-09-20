@@ -40,7 +40,7 @@ public class StringSettingValue extends AbstractSettingValue<String>{
     private static final long serialVersionUID = -8232540483696284048L;
 
     private String value;
-    
+
     @Override
     public String getValue() {
         return this.value;

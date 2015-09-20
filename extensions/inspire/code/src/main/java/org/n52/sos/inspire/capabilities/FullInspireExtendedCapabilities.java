@@ -61,10 +61,10 @@ import com.google.common.collect.Lists;
 
 /**
  * Service internal object to represent the full INSPIRE DLS ExtendedCapabilities
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class FullInspireExtendedCapabilities extends InspireExtendedCapabilitiesDLS implements
         InspireExtendedCapabilitiesResourceLocator, InspireExtendedCapabilitiesMetadataURL,
@@ -105,7 +105,7 @@ public class FullInspireExtendedCapabilities extends InspireExtendedCapabilities
 
     /**
      * constructor
-     * 
+     *
      * @param resourceLocator
      *            resourceLocator to set
      * @param supportedLanguages
@@ -126,7 +126,7 @@ public class FullInspireExtendedCapabilities extends InspireExtendedCapabilities
 
     /**
      * constructor
-     * 
+     *
      * @param resourceLocators
      *            resourceLocators to set
      * @param supportedLanguages
@@ -147,7 +147,7 @@ public class FullInspireExtendedCapabilities extends InspireExtendedCapabilities
 
     /**
      * constructor
-     * 
+     *
      * @param resourceLocator
      *            resourceLocator to set
      * @param supportedLanguages
@@ -168,7 +168,7 @@ public class FullInspireExtendedCapabilities extends InspireExtendedCapabilities
 
     /**
      * constructor
-     * 
+     *
      * @param resourceLocators
      *            resourceLocators to set
      * @param supportedLanguages
@@ -248,7 +248,7 @@ public class FullInspireExtendedCapabilities extends InspireExtendedCapabilities
     public InspireServiceSpatialDataResourceType getResourceType() {
         return resourceType;
     }
-    
+
     @Override
     public InspireExtendedCapabilitiesResourceType setResourceType(InspireServiceSpatialDataResourceType resourceType) {
         this.resourceType = resourceType;

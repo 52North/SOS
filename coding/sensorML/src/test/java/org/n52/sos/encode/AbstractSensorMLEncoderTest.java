@@ -50,18 +50,18 @@ import com.google.common.collect.Sets;
  *
  */
 public class AbstractSensorMLEncoderTest {
-    
+
     private TestAbstractSensorMLEncoder encoder = new TestAbstractSensorMLEncoder();
-    
+
     private final String CAPABILITIES_NAME = "featuresOfInterest";
-    
+
     private final String DEFINITION = "http://www.opengis.net/def/featureOfInterest/identifier";
-    
+
     private final String FIELD_NAME = "featureOfInterestID";
-    
+
     private final String FEATURE_ID = "http://www.52north.org/test/featureOfInterest/1";
-    
-    
+
+
     @Test
     public void testMergeFeatureCapabilities() {
        AbstractProcess abstractProcess = getAbstractProcess();

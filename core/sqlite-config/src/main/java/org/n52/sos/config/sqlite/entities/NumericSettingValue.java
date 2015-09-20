@@ -41,7 +41,7 @@ public class NumericSettingValue extends AbstractSettingValue<Double> {
     private static final long serialVersionUID = 4952159387739109274L;
 
     private Double value;
-    
+
     @Override
     public Double getValue() {
         return this.value;

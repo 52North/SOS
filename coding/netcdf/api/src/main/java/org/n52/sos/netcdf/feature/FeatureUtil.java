@@ -39,7 +39,7 @@ import com.vividsolutions.jts.geom.Point;
 
 /**
  * Utility class for features in netCDF encoding
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -48,14 +48,14 @@ import com.vividsolutions.jts.geom.Point;
 public class FeatureUtil {
     public static Set<Point> getFeaturePoints( Set<SamplingFeature> features ){
         Set<Point> featurePoints = new HashSet<Point>();
-        
-        for( SamplingFeature feature : features ){            
+
+        for( SamplingFeature feature : features ){
             featurePoints.addAll(getFeaturePoints( feature ));
         }
 
         return featurePoints;
     }
-    
+
     public static Set<Point> getFeaturePoints( SamplingFeature feature ){
         Set<Point> points = new HashSet<Point>();
         if( feature != null && feature.isSetGeometry()){
@@ -63,7 +63,7 @@ public class FeatureUtil {
         }
         return points;
     }
-    
+
     public static Set<Point> getPoints(Geometry geom){
         Set<Point> points = new HashSet<Point>();
         if( geom != null ){
@@ -80,11 +80,11 @@ public class FeatureUtil {
         }
         return points;
     }
-    
+
     public static Set<Double> getFeatureHeights( SamplingFeature feature ){
         return getHeights(getFeaturePoints( feature ));
     }
-    
+
     public static Set<Double> getHeights(Set<Point> points){
         Set<Double> heights = new HashSet<Double>();
         for (Point point : points) {
@@ -93,7 +93,7 @@ public class FeatureUtil {
             } else {
                 heights.add(0.0);
             }
-        }                
+        }
         return heights;
     }
 
@@ -111,5 +111,5 @@ public class FeatureUtil {
 
     public static boolean equal2d(Point a, Point b){
         return a.getX() == b.getX() && a.getY() == b.getY();
-    }    
+    }
 }

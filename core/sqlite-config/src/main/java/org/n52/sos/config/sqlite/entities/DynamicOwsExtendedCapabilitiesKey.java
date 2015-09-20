@@ -36,10 +36,10 @@ import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 
 /**
  * Storage key for the entity {@link DynamicOwsExtendedCapabilities}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Embeddable
 public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
@@ -50,10 +50,10 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     private String version;
 
     private String domain;
-    
+
     /**
      * constructor
-     * 
+     *
      * @param service
      *            the service to set
      * @param version
@@ -69,7 +69,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * constructor
-     * 
+     *
      * @param oeck
      *            the {@link OwsExtendedCapabilitiesProviderKey} to set
      */
@@ -83,10 +83,10 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
     public DynamicOwsExtendedCapabilitiesKey() {
         this(null, null, null);
     }
-    
+
     /**
      * Get the key service
-     * 
+     *
      * @return the service
      */
     public String getService() {
@@ -95,7 +95,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Set the key service
-     * 
+     *
      * @param service
      *            the service to set
      * @return this
@@ -107,7 +107,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Get the key version
-     * 
+     *
      * @return the version
      */
     public String getVersion() {
@@ -116,7 +116,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Set the key service
-     * 
+     *
      * @param version
      *            the version to seet
      * @return this
@@ -128,7 +128,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Get the key domain
-     * 
+     *
      * @return the domain
      */
     public String getDomain() {
@@ -137,7 +137,7 @@ public class DynamicOwsExtendedCapabilitiesKey implements Serializable {
 
     /**
      * Set the key domain
-     * 
+     *
      * @param domain
      *            the domain to set
      * @return this

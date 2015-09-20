@@ -31,10 +31,10 @@ package org.n52.sos.inspire;
 
 /**
  * Abstract service internal representation of INSPIRE keywords
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public abstract class AbstractInspireKeyword<T> {
 
@@ -48,7 +48,7 @@ public abstract class AbstractInspireKeyword<T> {
 
     /**
      * constructor
-     * 
+     *
      * @param originatingControlledVocabulary
      *            the keyword
      */
@@ -58,7 +58,7 @@ public abstract class AbstractInspireKeyword<T> {
 
     /**
      * Get the keyword
-     * 
+     *
      * @return the originatingControlledVocabulary
      */
     public InspireOriginatingControlledVocabulary getOriginatingControlledVocabulary() {
@@ -67,7 +67,7 @@ public abstract class AbstractInspireKeyword<T> {
 
     /**
      * Set the keyword
-     * 
+     *
      * @param originatingControlledVocabulary
      *            the originatingControlledVocabulary to set
      */
@@ -78,7 +78,7 @@ public abstract class AbstractInspireKeyword<T> {
 
     /**
      * Check if the keyword is set
-     * 
+     *
      * @return <code>true</code>, if the keyword is set
      */
     public boolean isSetOriginatingControlledVocabulary() {
@@ -87,14 +87,14 @@ public abstract class AbstractInspireKeyword<T> {
 
     /**
      * Get the keyword value
-     * 
+     *
      * @return the keyword value
      */
     public abstract T getKeywordValue();
 
     /**
      * Set the keyword value
-     * 
+     *
      * @param keywordValue
      *            the keyword value to set
      */

@@ -152,7 +152,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     private static final Set<String> REMOVABLE_COMPONENTS_ROLES = Collections
             .singleton(SensorMLConstants.ELEMENT_NAME_CHILD_PROCEDURES);
-    
+
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
             ImmutableMap.of(
                     SosConstants.SOS,
@@ -487,7 +487,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
                 sosCharacteristicsList.add(sosCharacteristics);
             }
         }
-        
+
         return sosCharacteristicsList;
     }
 
@@ -987,7 +987,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
             system.unsetComponents();
         }
     }
-    
+
     private XmlOptions getXmloptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }

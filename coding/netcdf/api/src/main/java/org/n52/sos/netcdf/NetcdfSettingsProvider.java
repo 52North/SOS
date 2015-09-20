@@ -30,13 +30,13 @@ package org.n52.sos.netcdf;
 
 /**
  * Implementation of {@link SettingDefinitionProvider} for netCDF encoding
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 public interface NetcdfSettingsProvider {
-    
+
     public static final String NETCDF_VERSION = "netcdf.version";
 
     public static final String NETCDF_CHUNK_SIZE_TIME = "netcdf.chunk.size";
@@ -52,11 +52,11 @@ public interface NetcdfSettingsProvider {
     public static final String NETCDF_PUBLISHER = "netcdf.publisher";
 
     public static final String NETCDF_CONTRIBUTOR = "netcdf.contributor";
-    
+
     public static final String NETCDF_PHEN_LATITUDE = "netcdf.phenomenon.latitude";
 
     public static final String NETCDF_PHEN_LONGITUDE = "netcdf.phenomenon.longitude";
 
     public static final String NETCDF_PHEN_Z = "netcdf.phenomenon.z";
-    
+
 }

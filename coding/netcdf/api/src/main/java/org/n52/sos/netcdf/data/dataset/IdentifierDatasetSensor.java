@@ -29,17 +29,17 @@
 package org.n52.sos.netcdf.data.dataset;
 
 public class IdentifierDatasetSensor extends DatasetSensor {
-    
+
     private String identifier;
 
     public IdentifierDatasetSensor(String identifier) {
         this.identifier = identifier;
     }
-    
+
     @Override
     public String getSensorIdentifier() {
         return identifier;
     }
 
-   
+
 }

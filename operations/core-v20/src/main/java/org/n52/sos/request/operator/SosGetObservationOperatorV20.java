@@ -122,7 +122,7 @@ public class SosGetObservationOperatorV20 extends
             if (sosRequest.isSetProcedure()) {
                 sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
             }
-           
+
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

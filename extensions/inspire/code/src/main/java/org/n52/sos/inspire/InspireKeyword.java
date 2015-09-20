@@ -30,10 +30,10 @@ package org.n52.sos.inspire;
 
 /**
  * Service internal representation of INSPIRE keyword
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireKeyword extends AbstractInspireKeyword<String> {
 
@@ -42,7 +42,7 @@ public class InspireKeyword extends AbstractInspireKeyword<String> {
 
     /**
      * constructor
-     * 
+     *
      * @param keywordValue
      *            the keyword value
      */
@@ -53,7 +53,7 @@ public class InspireKeyword extends AbstractInspireKeyword<String> {
 
     /**
      * constructor
-     * 
+     *
      * @param keywordValue
      *            the keyword value
      * @param originatingControlledVocabulary

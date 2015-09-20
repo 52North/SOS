@@ -33,10 +33,10 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * Service internal representation of INSPIRE date of publication
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireDateOfPublication extends TimeInstant implements InspireDateOf {
 
@@ -51,7 +51,7 @@ public class InspireDateOfPublication extends TimeInstant implements InspireDate
 
     /**
      * constructor
-     * 
+     *
      * @param dateTime
      *            the date of publication
      */

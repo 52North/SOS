@@ -37,10 +37,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Service internal representation of INSPIRE supported languages
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireSupportedLanguages implements InspireObject {
 
@@ -52,7 +52,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * constructor
-     * 
+     *
      * @param defaultLanguage
      *            the mandatory default language
      */
@@ -62,7 +62,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * Get the default language
-     * 
+     *
      * @return the defaultLanguage
      */
     public InspireLanguageISO6392B getDefaultLanguage() {
@@ -71,7 +71,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * Set the default language
-     * 
+     *
      * @param defaultLanguage
      *            the defaultLanguage to set
      */
@@ -81,7 +81,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * Get the supported languages
-     * 
+     *
      * @return the supportedLanguages
      */
     public Set<InspireLanguageISO6392B> getSupportedLanguages() {
@@ -90,7 +90,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * Set the supported languages, clears the existing collection
-     * 
+     *
      * @param supportedLanguages
      *            the supportedLanguages to set
      */
@@ -104,7 +104,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * Add the supported language
-     * 
+     *
      * @param supportedLanguage
      *            the supported language to add
      * @return this
@@ -116,7 +116,7 @@ public class InspireSupportedLanguages implements InspireObject {
 
     /**
      * Check if supported languages are set
-     * 
+     *
      * @return <code>true</code>, if supported languages are set
      */
     public boolean isSetSupportedLanguages() {

@@ -32,10 +32,10 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * Service internal representation of INSPIRE unique resource identifier
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireUniqueResourceIdentifier {
 
@@ -50,7 +50,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * constructor
-     * 
+     *
      * @param code
      *            the code of the identifier
      */
@@ -60,7 +60,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Get the code
-     * 
+     *
      * @return the code
      */
     public String getCode() {
@@ -69,7 +69,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Get the namespace
-     * 
+     *
      * @return the namespaces
      */
     public String getNamespace() {
@@ -78,7 +78,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Set the namespace
-     * 
+     *
      * @param namespace
      *            the namespace to set
      * @return this
@@ -90,7 +90,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Check if the namespace is set
-     * 
+     *
      * @return <code>true</code>, if the namespace is set
      */
     public boolean isSetNamespace() {
@@ -99,7 +99,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Get the metadata URL
-     * 
+     *
      * @return the metadataUrl
      */
     public String getMetadataUrl() {
@@ -108,7 +108,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Set the metadata URL
-     * 
+     *
      * @param metadataUrl
      *            the metadataUrl to set
      * @return this
@@ -120,7 +120,7 @@ public class InspireUniqueResourceIdentifier {
 
     /**
      * Check if the metadata URL is set
-     * 
+     *
      * @return <code>true</code>, if the metadata URL is set
      */
     public boolean isSetMetadataUrl() {

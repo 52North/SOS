@@ -35,15 +35,15 @@ import org.n52.iceland.w3c.SchemaLocation;
 /**
  * Constants interface for INSPIRE. Provides element names, prefixes,
  * namespaces, {@link SchemaLocation}, {@link QName}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public interface InspireConstants {
 
     String INSPIRE = "INSPIRE";
-    
+
     String NS_INSPIRE_COMMON = "http://inspire.ec.europa.eu/schemas/common/1.0";
 
     String NS_INSPIRE_COMMON_PREFIX = "inspire_common";
@@ -87,7 +87,7 @@ public interface InspireConstants {
     String EN_SUPPORTED_CRS = "SupportedCRS";
 
     String EN_DEFAULT_CRS = "DefaultCRS";
-    
+
     String EN_OTHER_CRS = "OtherCRS";
 
     String EN_CRS = "CRS";
@@ -168,7 +168,7 @@ public interface InspireConstants {
     QName QN_LANGUAGE = new QName(NS_INSPIRE_COMMON, EN_LANGUAGE, NS_INSPIRE_COMMON_PREFIX);
 
     QName QN_RESPONSE_LANGUAGE = new QName(NS_INSPIRE_COMMON, EN_RESPONSE_LANGUAGE, NS_INSPIRE_COMMON_PREFIX);
-    
+
     QName QN_SUPPORTED_CRS = new QName(NS_INSPIRE_DLS, EN_SUPPORTED_CRS, NS_INSPIRE_DLS_PREFIX);
 
     QName QN_OTHER_CRS = new QName(NS_INSPIRE_DLS, EN_OTHER_CRS, NS_INSPIRE_DLS_PREFIX);

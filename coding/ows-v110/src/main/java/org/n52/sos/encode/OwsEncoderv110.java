@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -63,7 +64,6 @@ import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
 import net.opengis.ows.x11.ServiceProviderDocument;
 import net.opengis.ows.x11.ServiceProviderDocument.ServiceProvider;
 
-import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

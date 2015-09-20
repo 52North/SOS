@@ -46,7 +46,7 @@ import ucar.nc2.constants.CF;
 /**
  * An netCDF compatible observation block containing all observations for a
  * feature type.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -61,7 +61,7 @@ public class NetCDFObservation {
 
     //for data block
     private Map<String, ? extends AbstractSensorDataset> sensorDatasetMap;
-    
+
     //constructor
     public NetCDFObservation(CF.FeatureType featureType, TimePeriod samplingTime,
             Map<String, ? extends AbstractSensorDataset> sensorDatasetMap, Set<OmObservableProperty> phenomena,
@@ -77,11 +77,11 @@ public class NetCDFObservation {
     public CF.FeatureType getFeatureType() {
         return featureType;
     }
-        
+
     public TimePeriod getSamplingTime() {
         return samplingTime;
     }
-        
+
     public Map<String, ? extends AbstractSensorDataset> getSensorDatasetMap() {
         return sensorDatasetMap;
     }
@@ -89,7 +89,7 @@ public class NetCDFObservation {
     public Set<OmObservableProperty> getPhenomena() {
         return phenomena;
     }
-        
+
     public Envelope getEnvelope() {
         return envelope;
     }
@@ -97,5 +97,5 @@ public class NetCDFObservation {
     public List<? extends AbstractSensorDataset> getSensorDatasets(){
         return Collections.unmodifiableList(Lists.newArrayList(sensorDatasetMap.values()));
     }
-  
+
 }

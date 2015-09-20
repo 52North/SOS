@@ -36,7 +36,7 @@ import com.axiomalaska.cf4j.CFStandardNames;
 
 /**
  * Implementation of {@link Nc4ChunkingStrategyImpl} to force time chunk.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0

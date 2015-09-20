@@ -45,18 +45,18 @@ import com.google.common.collect.Sets;
 
 /**
  * Abstract {@link Decoder} class to decode OGC SensorML
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public abstract class AbstractSensorMLDecoder implements ProcedureDecoder<AbstractSensorML, XmlObject> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLDecoder.class);
 
     /**
      * Determine if an SosSMLIdentifier is the unique identifier for a procedure
-     * 
+     *
      * @param identifier
      *            SosSMLIdentifier to example for unique identifier
      * @return whether the SosSMLIdentifier contains the unique identifier
@@ -83,7 +83,7 @@ public abstract class AbstractSensorMLDecoder implements ProcedureDecoder<Abstra
         return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
                 && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
     }
-    
+
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         return Collections.emptySet();

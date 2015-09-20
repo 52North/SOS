@@ -40,7 +40,7 @@ import ucar.nc2.constants.CF;
 
 /**
  * Implementation of {@link AbstractStringSensorDataset} for trajectory sensor datasets.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -48,13 +48,13 @@ import ucar.nc2.constants.CF;
  */
 public class TrajectorySensorDataset extends AbstractSensorDataset implements StaticAltitudeDataset{
     private Double alt;
-    
-    public TrajectorySensorDataset( DatasetSensor sensor, Double alt, 
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
+
+    public TrajectorySensorDataset( DatasetSensor sensor, Double alt,
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {
         super( CF.FeatureType.trajectory, sensor, dataValues, procedure);
         this.alt = alt;
     }
-    
+
     @Override
     public Double getAlt() {
         return alt;

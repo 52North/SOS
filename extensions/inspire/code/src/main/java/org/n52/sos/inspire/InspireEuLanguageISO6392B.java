@@ -32,41 +32,41 @@ import java.util.Locale;
 
 /**
  * Enum for European ISO6392B three character languages
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public enum InspireEuLanguageISO6392B {
-    BUL("bul"), 
-    CZE("cze"), 
-    DAN("dan"), 
-    DUT("dut"), 
-    ENG("eng"), 
-    EST("est"), 
-    FIN("fin"), 
-    FRE("fre"), 
-    GER("ger"), 
-    GRE("gre"), 
-    HUN("hun"), 
-    GLE("gle"), 
-    ITA("ita"), 
-    LAV("lav"), 
-    LIT("lit"), 
-    MLT("mlt"), 
-    POL("pol"), 
-    POR("por"), 
-    RUM("rum"), 
-    SLO("slo"), 
-    SLV("slv"), 
-    SPA("spa"), 
+    BUL("bul"),
+    CZE("cze"),
+    DAN("dan"),
+    DUT("dut"),
+    ENG("eng"),
+    EST("est"),
+    FIN("fin"),
+    FRE("fre"),
+    GER("ger"),
+    GRE("gre"),
+    HUN("hun"),
+    GLE("gle"),
+    ITA("ita"),
+    LAV("lav"),
+    LIT("lit"),
+    MLT("mlt"),
+    POL("pol"),
+    POR("por"),
+    RUM("rum"),
+    SLO("slo"),
+    SLV("slv"),
+    SPA("spa"),
     SWE("swe");
 
     private final String value;
 
     /**
      * constructor
-     * 
+     *
      * @param v the three character language string
      */
     InspireEuLanguageISO6392B(String v) {
@@ -75,7 +75,7 @@ public enum InspireEuLanguageISO6392B {
 
     /**
      * Get the value, three character language string
-     * 
+     *
      * @return the value
      */
     public String value() {
@@ -84,7 +84,7 @@ public enum InspireEuLanguageISO6392B {
 
     /**
      * Get {@link InspireEuLanguageISO6392B} for string value
-     * 
+     *
      * @param v
      *            the string value to get {@link InspireEuLanguageISO6392B} for
      * @return {@link InspireEuLanguageISO6392B} of string value
@@ -102,7 +102,7 @@ public enum InspireEuLanguageISO6392B {
 
     /**
      * Get {@link InspireEuLanguageISO6392B} for {@link InspireLanguageISO6392B}
-     * 
+     *
      * @param v
      *            {@link InspireLanguageISO6392B} to get
      *            {@link InspireEuLanguageISO6392B} for
@@ -122,7 +122,7 @@ public enum InspireEuLanguageISO6392B {
 
     /**
      * Get {@link InspireEuLanguageISO6392B} for {@link Locale}
-     * 
+     *
      * @param v
      *            {@link Locale} to get {@link InspireEuLanguageISO6392B} for
      * @return {@link InspireEuLanguageISO6392B} of {@link Locale}

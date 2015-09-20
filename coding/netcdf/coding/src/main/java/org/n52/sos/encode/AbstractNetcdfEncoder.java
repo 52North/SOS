@@ -139,7 +139,7 @@ import ucar.nc2.jni.netcdf.Nc4Iosp;
 
 /**
  * Abstract class of {@link ObservationEncoder} for netCDF encoding.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -149,7 +149,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractNetcdfEncoder.class);
 
-    private final Set<SupportedType> SUPPORTED_TYPES = 
+    private final Set<SupportedType> SUPPORTED_TYPES =
             ImmutableSet
             .<SupportedType>builder()
             .add(OmConstants.OBS_TYPE_TRUTH_OBSERVATION_TYPE)
@@ -157,14 +157,14 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     private final Set<String> CONFORMANCE_CLASSES = ImmutableSet
             .of("http://www.opengis.net/spec/OMXML/1.0/conf/measurement");
-    
+
     @Inject
     private ServiceMetadataRepository serviceMetadataRepository;
 
     public AbstractNetcdfEncoder() {
 
     }
-    
+
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
@@ -1109,7 +1109,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
 
     protected AbstractDescribeSensorHandler getDescribeSensorHandler() throws CodedException {
-        OperationHandler operationHandler = 
+        OperationHandler operationHandler =
                 OperationHandlerRepository.getInstance().getOperationHandler(SosConstants.SOS,
                         SosConstants.Operations.DescribeSensor.toString());
         if (operationHandler != null && operationHandler instanceof AbstractDescribeSensorHandler) {
@@ -1126,11 +1126,11 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return null;
     }
-    
+
     /**
      * Adds an attribute to {@link NetcdfFileWriter} if the definition was found
      * in {@link AbstractSensorML}
-     * 
+     *
      * @param writer
      *            {@link NetcdfFileWriter} to add attribute
      * @param sml
@@ -1148,11 +1148,11 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         return false;
     }
-    
+
     /**
      * Adds an attribute to {@link Variable} if the definition was found in
      * {@link AbstractSensorML}
-     * 
+     *
      * @param variable
      *            {@link Variable} to add attribute
      * @param sml
@@ -1329,7 +1329,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     protected OwsServiceProvider getServiceProvider() throws OwsExceptionReport {
         return this.serviceMetadataRepository.getServiceProviderFactory(SosConstants.SOS).get();
     }
-    
+
     protected Attribute getAttribute(NetcdfFileWriter writer, String name) {
         if (CollectionHelper.isNotEmpty(writer.getNetcdfFile().getRootGroup().getAttributes())) {
             for (Attribute attr : writer.getNetcdfFile().getRootGroup().getAttributes()) {
@@ -1350,7 +1350,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         if (identifier.lastIndexOf(splitter) < identifier.length()) {
             return identifier.substring(identifier.lastIndexOf(splitter) + 1);
-        } 
+        }
         return identifier;
     }
 

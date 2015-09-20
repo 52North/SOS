@@ -76,11 +76,11 @@ import com.google.common.collect.Lists;
 
 /**
  * @author Shane StClair
- * 
+ *
  * @since 4.0.0
  */
 public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
-    
+
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -88,7 +88,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     private static final String TEST_ID_2 = "test-id-2";
 
     private static final String TEST_NAME_2 = "test-name-2";
-    
+
     private static final String TEST_CHILD_1 = "test-id-child-1";
 
     @Test
@@ -251,9 +251,9 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         assertThat(childSystem.getOutputs(), hasItems(output2, output3));
         assertThat(grandchildSystem.getOutputs(), hasItem(output3));
     }
-    
+
     @Test public void
-    should_encode_single_contact_person() 
+    should_encode_single_contact_person()
             throws OwsExceptionReport {
         final SensorML sensorML = new SensorML();
         final System system = new System();
@@ -261,7 +261,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         final SmlPerson contact = createPerson("");
         system.addContact(contact);
         final SystemType xbSystem = encodeSystem(sensorML);
-        
+
         assertThat(xbSystem.sizeOfContactArray(), is(1));
         assertThat(xbSystem.getContactArray(0).getContactList().getMemberArray(0).isSetPerson(), is(true));
         checkPerson(contact, xbSystem.getContactArray(0).getContactList().getMemberArray(0).getPerson());
@@ -273,20 +273,20 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
-        
+
         final SmlResponsibleParty responsibleParty = createResponsibleParty("");
-        
+
         system.addContact(responsibleParty);
-        
+
         final SystemType xbSystem = encodeSystem(sensorML);
-        
+
         assertThat(xbSystem.sizeOfContactArray(), is(1));
         assertThat(xbSystem.getContactArray(0).getContactList().getMemberArray(0).isSetResponsibleParty(), is(true));
         final ResponsibleParty xbResponsibleParty = xbSystem.getContactArray(0).getContactList().getMemberArray(0).getResponsibleParty();
-        
+
         checkResponsibleParty(responsibleParty, xbResponsibleParty);
     }
-    
+
     @Test public void
     should_merge_and_encode_multiple_contacts()
             throws OwsExceptionReport{
@@ -309,7 +309,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         xbSensorML.getSensorML().setVersion("1.0.1");
         sensorML.setSensorDescriptionXmlString(xbSensorML.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         final SystemType xbEncodedSystem = encodeSystem(sensorML);
-        
+
         assertThat(xbEncodedSystem.sizeOfContactArray(), is(1));
         assertThat(xbEncodedSystem.getContactArray(0).isSetContactList(), is(true));
         assertThat(xbEncodedSystem.getContactArray(0).getContactList().sizeOfMemberArray(), is(2));
@@ -330,21 +330,21 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
             fail("sml:ResponsibleParty not found in contact/ContactList");
         }
     }
-    
+
     @Test public void
     should_encode_multiple_contacts_in_contactList()
         throws OwsExceptionReport {
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
-        
+
         final SmlPerson contact1 = createPerson("1");
         final SmlPerson contact2 = createPerson("2");
-        
+
         system.addContact(contact1);
         system.addContact(contact2);
         final SystemType xbSystem = encodeSystem(sensorML);
-        
+
         assertThat(xbSystem.sizeOfContactArray(), is(1));
         assertThat(xbSystem.getContactArray(0).isSetContactList(), is(true));
         final ContactList xbContactList = xbSystem.getContactArray(0).getContactList();
@@ -361,7 +361,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
             checkPerson(contact2, member.getPerson());
         }
     }
-    
+
     @Test public void
     should_merge_and_encode_two_same_contact_person_only_once()
             throws OwsExceptionReport {
@@ -379,12 +379,12 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         xbSensorML.getSensorML().setVersion("1.0.1");
         sensorML.setSensorDescriptionXmlString(xbSensorML.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         final SystemType xbEncodedSystem = encodeSystem(sensorML);
-        
+
         assertThat(xbEncodedSystem.sizeOfContactArray(), is(1));
         assertThat(xbEncodedSystem.getContactArray(0).isSetPerson(), is(true));
         checkPerson(p1, xbEncodedSystem.getContactArray(0).getPerson());
     }
-    
+
     @Test public void
     should_merge_and_encode_two_same_contact_responsibleParty_only_once()
             throws OwsExceptionReport {
@@ -402,12 +402,12 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         xbSensorML.getSensorML().setVersion("1.0.1");
         sensorML.setSensorDescriptionXmlString(xbSensorML.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
         final SystemType xbEncodedSystem = encodeSystem(sensorML);
-        
+
         assertThat(xbEncodedSystem.sizeOfContactArray(), is(1));
         assertThat(xbEncodedSystem.getContactArray(0).isSetResponsibleParty(), is(true));
         checkResponsibleParty(p1, xbEncodedSystem.getContactArray(0).getResponsibleParty());
     }
-    
+
     private void setResponsiblePartyValues(final SmlResponsibleParty rp1,
             final ResponsibleParty xbRP1) {
         xbRP1.setIndividualName(rp1.getIndividualName());
@@ -448,7 +448,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         assertThat(xbPerson.getSurname(), is(contact.getSurname()));
         assertThat(xbPerson.getUserID(), is(contact.getUserID()));
     }
-    
+
     private SmlPerson createPerson(String postfix) {
         if (postfix == null) {
             postfix = "";
@@ -479,7 +479,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         final String contactInstructions = "contactInstructions";
         return new SmlResponsibleParty(invidualName, organizationName, positionName, phoneVoice, phoneFax, deliveryPoint, city, administrativeArea, postalCode, country, email, onlineResource, hoursOfService, contactInstructions);
     }
-    
+
     private void checkResponsibleParty(final SmlResponsibleParty responsibleParty,
             final ResponsibleParty xbResponsibleParty) {
         assertThat(xbResponsibleParty.getIndividualName(), is(responsibleParty.getIndividualName()));

@@ -62,7 +62,7 @@ import com.google.common.collect.Lists;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SweCommonDecoderV101Test {
@@ -183,7 +183,7 @@ public class SweCommonDecoderV101Test {
         final DateTime startDate = new DateTime(1970, 1, 1, 0, 0, DateTimeZone.UTC);
         final DateTime endDate = new DateTime(2013, 12, 31, 23, 59, DateTimeZone.UTC);
         final List<String> values = Lists.newArrayList(startDate.toString(), endDate.toString());
-        xbTimeRange.setValue(values);        
+        xbTimeRange.setValue(values);
         final String iso8601Uom = "urn:ogc:def:unit:ISO:8601";
         xbTimeRange.addNewUom().setHref(iso8601Uom);
         final Object decodedObject = new SweCommonDecoderV101().decode(xbTimeRange);

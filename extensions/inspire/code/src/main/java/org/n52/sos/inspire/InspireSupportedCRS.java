@@ -37,10 +37,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Service internal representation of INSPIRE supported CRS
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireSupportedCRS implements InspireObject {
 
@@ -52,7 +52,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * constructor
-     * 
+     *
      * @param defaultCRS
      *            the mandatory default CRS
      */
@@ -62,7 +62,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * Get the default CRS
-     * 
+     *
      * @return the defaultCRS
      */
     public String getDefaultCRS() {
@@ -71,7 +71,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * Set the default CRS
-     * 
+     *
      * @param defaultCRS
      *            the defaultCRS to set
      */
@@ -81,7 +81,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * Get the other CRSs
-     * 
+     *
      * @return the other CRS
      */
     public Set<String> getOtherCRS() {
@@ -90,7 +90,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * Set the other CRSs, clears the existing collection
-     * 
+     *
      * @param otherCRS
      *            the otherCRS to set
      * @return this
@@ -105,7 +105,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * Add the other CRS
-     * 
+     *
      * @param otherCRS
      *            the other CRS to add
      * @return this
@@ -117,7 +117,7 @@ public class InspireSupportedCRS implements InspireObject {
 
     /**
      * Check if other CRSs are set
-     * 
+     *
      * @return <code>true</code>, if other CRSs are set
      */
     public boolean isSetSupportedCRSs() {

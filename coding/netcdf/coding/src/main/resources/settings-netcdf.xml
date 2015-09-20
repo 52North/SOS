@@ -6,7 +6,7 @@
         <property name="title" value="netCDF" />
         <property name="description" value="SDefine netCDF specific parameter" />
         <property name="order" value="10.5" />
-    </bean>   
+    </bean>
     <bean class="org.n52.iceland.config.settings.ChoiceSettingDefinition">
         <property name="key" value="netcdf.version" />
         <property name="title" value="NetCDF version" />
@@ -21,7 +21,7 @@
                 <entry key="netcdf4" value="NetCDF 4 version" />
             </map>
         </property>
-    </bean>                   
+    </bean>
     <bean class="org.n52.iceland.config.settings.IntegerSettingDefinition">
         <property name="key" value="netcdf.chunk.size" />
         <property name="title" value="NetCDF chunk size time" />
@@ -135,7 +135,7 @@
         <property name="group" ref="netcdfSettingDefintionGroup" />
         <property name="optional" ref="true" />
         <property name="defaultValue" value="" />
-    </bean>     
+    </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
         <property name="key" value="netcdf.phenomenon.longitude" />
         <property name="title" value="Set longitude phenomenon identifier" />
@@ -144,7 +144,7 @@
         <property name="group" ref="netcdfSettingDefintionGroup" />
         <property name="optional" ref="true" />
         <property name="defaultValue" value="" />
-    </bean>    
+    </bean>
     <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
         <property name="key" value="netcdf.phenomenon.z" />
         <property name="title" value="Set height/depth phenomenon identifier" />

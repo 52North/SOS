@@ -43,7 +43,7 @@ public class FileSettingValue extends AbstractSettingValue<File> {
     private static final long serialVersionUID = -5521753638275336043L;
 
     private File value;
-    
+
     @Override
     public File getValue() {
         return this.value;

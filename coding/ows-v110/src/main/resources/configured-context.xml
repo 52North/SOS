@@ -5,7 +5,7 @@
 
 	<!-- Encoder implementations from coding/ows-v110 -->
 	<bean class="org.n52.sos.decode.CapabilitiesBaseTypeDecoder"/>
-	
+
     <!-- Encoder implementations from coding/ows-v110 -->
     <bean class="org.n52.sos.encode.OwsEncoderv110"/>
 

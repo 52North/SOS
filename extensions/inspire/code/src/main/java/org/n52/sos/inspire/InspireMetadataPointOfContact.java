@@ -30,10 +30,10 @@ package org.n52.sos.inspire;
 
 /**
  * Service internal representation of INSPIRE metadata point of contact
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireMetadataPointOfContact {
 
@@ -45,7 +45,7 @@ public class InspireMetadataPointOfContact {
 
     /**
      * constructor
-     * 
+     *
      * @param organisationName
      *            the organisation name
      * @param emailAddress
@@ -58,7 +58,7 @@ public class InspireMetadataPointOfContact {
 
     /**
      * Get the organisation name
-     * 
+     *
      * @return the organisationName
      */
     public String getOrganisationName() {
@@ -67,7 +67,7 @@ public class InspireMetadataPointOfContact {
 
     /**
      * Set the organisation name
-     * 
+     *
      * @param organisationName
      *            the organisationName to set
      */
@@ -77,7 +77,7 @@ public class InspireMetadataPointOfContact {
 
     /**
      * Get the email address
-     * 
+     *
      * @return the emailAddress
      */
     public String getEmailAddress() {
@@ -86,7 +86,7 @@ public class InspireMetadataPointOfContact {
 
     /**
      * Set the email address
-     * 
+     *
      * @param emailAddress
      *            the emailAddress to set
      */

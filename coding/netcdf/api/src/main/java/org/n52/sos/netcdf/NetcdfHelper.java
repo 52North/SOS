@@ -47,36 +47,36 @@ import ucar.nc2.NetcdfFileWriter.Version;
 
 /**
  * Helper class for netCDF encoding. Holds the netCDF setting values.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 @Configurable
 public class NetcdfHelper implements Constructable {
-    
+
     private Version version;
-    
+
     private int chunkSizeTime;
-    
+
     private double fillValue;
-    
+
     private CFStandardName heightDepth;
-    
+
     private String variableType;
-    
+
     private boolean upperCaseNames;
-    
+
     private CiRoleCodes contributor;
-    
+
     private CiRoleCodes publisher;
-    
+
     private Set<String> latitude = Collections.emptySet();
-    
+
     private Set<String> longitude = Collections.emptySet();
-    
+
     private Set<String> z = Collections.emptySet();
-    
+
     @Deprecated
     private static NetcdfHelper instance;
     /**
@@ -91,7 +91,7 @@ public class NetcdfHelper implements Constructable {
     public void init() {
         NetcdfHelper.instance = this;
     }
-    
+
     /**
      * @param version
      * @throws ConfigurationException
@@ -100,22 +100,22 @@ public class NetcdfHelper implements Constructable {
     public void setNetcdfVersion(String version) throws ConfigurationError {
         this.version = Version.valueOf(version);
     }
-    
+
     /**
      * @return
      */
     public Version getNetcdfVersion() {
         return version;
     }
-    
-    
+
+
     /**
      * @return
      */
     public String getNetcdfVersionString() {
         return version.name();
     }
-    
+
     /**
      * @param chunkSize
      */
@@ -123,14 +123,14 @@ public class NetcdfHelper implements Constructable {
     public void setChunkSizeTime(int chunkSize) {
         this.chunkSizeTime = chunkSize;
     }
-    
+
     /**
      * @return
      */
     public int getChunkSizeTime() {
         return chunkSizeTime;
     }
-    
+
     /**
      * @param fillValue
      */
@@ -138,21 +138,21 @@ public class NetcdfHelper implements Constructable {
     public void setFillValue(double fillValue) {
         this.fillValue = fillValue;
     }
-    
+
     /**
      * @return
      */
     public double getFillValue() {
         return fillValue;
     }
-    
+
     /**
      * @return
      */
     public float getFillValueAsFloat() {
         return (float) fillValue;
     }
-    
+
     /**
      * @param heightDepth
      */
@@ -160,7 +160,7 @@ public class NetcdfHelper implements Constructable {
     public void setHeightDepth(String heightDepth) {
         this.heightDepth = getStandardName(heightDepth);
     }
-    
+
     /**
      * @return
      */
@@ -175,10 +175,10 @@ public class NetcdfHelper implements Constructable {
     private CFStandardName getStandardName(String heightDepth) {
         if (CFStandardNames.HEIGHT.getName().equals(heightDepth)) {
             return CFStandardNames.HEIGHT;
-        } 
+        }
         return CFStandardNames.DEPTH;
     }
-    
+
     /**
      * @param type
      */
@@ -186,7 +186,7 @@ public class NetcdfHelper implements Constructable {
     public void setVariableType(String type) {
         this.variableType = type;
     }
-    
+
     /**
      * @return
      */

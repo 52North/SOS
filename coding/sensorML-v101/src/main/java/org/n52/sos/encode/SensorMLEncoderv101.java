@@ -754,7 +754,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
         }
     }
-    
+
     private void addComponentValues(final ComponentType ct, final org.n52.sos.ogc.sensorML.Component component) throws OwsExceptionReport {
         // set inputs
         if (component.isSetInputs()) {
@@ -1288,7 +1288,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                 ioComponentPropertyType.addNewAbstractDataRecord().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
                 break;
             default:
-    
+
             }
         }
     }

@@ -41,10 +41,10 @@ import com.google.common.collect.Sets;
 
 /**
  * Service internal representation of INSPIRE citation
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireCitation implements InspireExtendedCapabilitiesResourceLocator {
 
@@ -62,7 +62,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * constructor
-     * 
+     *
      * @param title
      *            the title
      * @param dateOf
@@ -76,7 +76,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Get the title
-     * 
+     *
      * @return the title
      */
     public String getTitle() {
@@ -85,7 +85,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Set the title
-     * 
+     *
      * @param title
      *            the title to set
      */
@@ -95,7 +95,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Check if the title is set
-     * 
+     *
      * @return <code>true</code>, if the title is set
      */
     public boolean isSetTitle() {
@@ -104,7 +104,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Get the {@link InspireDateOf}
-     * 
+     *
      * @return the dateOf
      */
     public InspireDateOf getDateOf() {
@@ -113,7 +113,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Set the {@link InspireDateOf}
-     * 
+     *
      * @param dateOf
      *            the dateOf to set
      */
@@ -123,7 +123,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Check if the {@link InspireDateOf} is set
-     * 
+     *
      * @return <code>true</code>, if the {@link InspireDateOf} is set
      */
     public boolean isSetDateOf() {
@@ -132,7 +132,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Get the URLs
-     * 
+     *
      * @return the URLs
      */
     public Set<String> getUrls() {
@@ -141,7 +141,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Set the URLs, clears the existing collection
-     * 
+     *
      * @param urls
      *            the URLs to set
      * @return this
@@ -156,7 +156,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Add the URL
-     * 
+     *
      * @param url
      *            the URL to add
      * @return this
@@ -168,7 +168,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
 
     /**
      * Check if the URLs are set
-     * 
+     *
      * @return <code>true</code>, if URLs are set
      */
     public boolean isSetUrls() {

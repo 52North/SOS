@@ -81,7 +81,7 @@ import org.n52.sos.util.XmlOptionsHelper;
 
 /**
  * @author Shane StClair
- * 
+ *
  * @since 4.0.0
  */
 public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
@@ -341,14 +341,14 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         String phoneNumber = "phoneNumber";
         String surname = "surname";
         String userID = "userID";
-        
+
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
                         .substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
         Contact xbContact = xbSystem.addNewContact();
         ContactList xbContactList = xbContact.addNewContactList();
-        
+
         //responsible party
         ContactList.Member xbMember1 = xbContactList.addNewMember();
         xbMember1.setRole(role1);
@@ -385,7 +385,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         xbPerson.setPhoneNumber(phoneNumber);
         xbPerson.setSurname(surname);
         xbPerson.setUserID(userID);
-        
+
         AbstractProcess absProcess = decodeAbstractProcess(xbSmlDoc);
         assertThat(absProcess.getContact(), notNullValue());
         assertThat(absProcess.getContact().size(), is(1));
@@ -393,7 +393,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         SmlContactList smlContactList = (SmlContactList) absProcess.getContact().get(0);
         assertThat(smlContactList.getMembers(), notNullValue());
         assertThat(smlContactList.getMembers().size(), is(2));
-        
+
         assertThat(smlContactList.getMembers().get(0).getRole(), is(role1));
         assertThat(smlContactList.getMembers().get(0), instanceOf(SmlResponsibleParty.class));
         SmlResponsibleParty smlRespParty = (SmlResponsibleParty) smlContactList.getMembers().get(0);
@@ -419,7 +419,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         assertThat(smlRespParty.getPhoneVoice().get(1), is(phoneVoice2));
         assertThat(smlRespParty.getPositionName(), is(posName));
         assertThat(smlRespParty.getPostalCode(), is(postalCode));
-        
+
         assertThat(smlContactList.getMembers().get(1).getRole(), is(role2));
         assertThat(smlContactList.getMembers().get(1), instanceOf(SmlPerson.class));
         SmlPerson smlPerson = (SmlPerson) smlContactList.getMembers().get(1);
@@ -430,7 +430,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         assertThat(smlPerson.getSurname(), is(surname));
         assertThat(smlPerson.getUserID(), is(userID));
     }
-    
+
     private DataArrayType getDataArray() {
         DataArrayType dataArray = DataArrayType.Factory.newInstance();
         dataArray.addNewElementCount().addNewCount().setValue(new BigInteger("1"));
@@ -449,5 +449,5 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         xbSystem.setId(TEST_ID_1);
         AbstractProcess absProcess = decodeAbstractProcess(xbSmlDoc);
         assertThat(absProcess.getGmlId(), is(TEST_ID_1));
-    }    
+    }
 }

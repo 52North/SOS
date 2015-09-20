@@ -71,7 +71,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
 
 /**
  * Implementation of {@link AbstractBasicNetcdfEncoder} for netCDF encoding.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -79,7 +79,7 @@ import ucar.nc2.NetcdfFileWriter.Version;
  */
 public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
     private static final Logger LOGGER = LoggerFactory.getLogger(NetcdfEncoder.class);
-    
+
     private final Set<String> MEDIA_TYPES = Sets.newHashSet(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
             NetcdfConstants.CONTENT_TYPE_NETCDF_3.toString(), NetcdfConstants.CONTENT_TYPE_NETCDF_4.toString());
 
@@ -102,8 +102,8 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_3),
           (EncoderKey) new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                   SosConstants.Operations.GetObservation, NetcdfConstants.CONTENT_TYPE_NETCDF_4));
-    
-    
+
+
     public NetcdfEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(ENCODER_KEYS));
@@ -128,7 +128,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
         }
         return Collections.emptySet();
     }
-    
+
     protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws OwsExceptionReport {
         if (CollectionHelper.isEmpty(netCDFObsList)) {
             throw new NoApplicableCodeException().withMessage("No feature types to encode");
@@ -148,7 +148,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
         File tempDir = Files.createTempDir();
         String filename = getFilename(sensorDataset);
         File netcdfFile = new File(tempDir, filename);
-        encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);                
+        encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
 
         BinaryAttachmentResponse response = null;
         try {
@@ -178,5 +178,5 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
                 + NetcdfConstants.CONTENT_TYPE_NETCDF_ZIP.toString() + ").");
         throw new UnsupportedEncoderInputException(this, netCDFObsList).withMessage(sb.toString());
     }
-    
+
 }

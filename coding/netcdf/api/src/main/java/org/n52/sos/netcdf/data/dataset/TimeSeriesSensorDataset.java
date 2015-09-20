@@ -40,7 +40,7 @@ import ucar.nc2.constants.CF;
 
 /**
  * Implementation of {@link AbstractStringSensorDataset} for time series sensor datasets
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -50,9 +50,9 @@ public class TimeSeriesSensorDataset extends AbstractSensorDataset implements St
     private Double lng;
     private Double lat;
     private Double alt;
-    
-    public TimeSeriesSensorDataset( DatasetSensor sensor, Double lng, Double lat, Double alt, 
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
+
+    public TimeSeriesSensorDataset( DatasetSensor sensor, Double lng, Double lat, Double alt,
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {
         super( CF.FeatureType.timeSeries, sensor, dataValues, procedure);
         this.lng = lng;
         this.lat = lat;
@@ -63,7 +63,7 @@ public class TimeSeriesSensorDataset extends AbstractSensorDataset implements St
     public Double getLng() {
         return lng;
     }
-    
+
     @Override
     public Double getLat() {
         return lat;

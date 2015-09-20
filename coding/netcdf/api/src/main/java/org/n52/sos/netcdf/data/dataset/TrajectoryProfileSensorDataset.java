@@ -40,15 +40,15 @@ import ucar.nc2.constants.CF;
 
 /**
  * Implementation of {@link AbstractStringSensorDataset} for trajectory profile sensor datasets.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 public class TrajectoryProfileSensorDataset extends AbstractSensorDataset {
-    public TrajectoryProfileSensorDataset( DatasetSensor sensor,  
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
+    public TrajectoryProfileSensorDataset( DatasetSensor sensor,
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {
         super( CF.FeatureType.trajectoryProfile, sensor, dataValues, procedure);
     }
 }

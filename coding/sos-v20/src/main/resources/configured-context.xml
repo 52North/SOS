@@ -20,6 +20,7 @@
     <bean class="org.n52.sos.decode.sos.v2.CapabilitiesDocumentDecoder"/>
     <bean class="org.n52.sos.decode.sos.v2.CapabilitiesTypeDecoder"/>
     <bean class="org.n52.sos.decode.sos.v2.GetObservationResponseDocumentDecoder"/>
+    <bean class="org.n52.sos.decode.sos.v2.GetFeatureOfInterestResponseDocumentDecoder"/>
 
 
     <!-- Encoder implementations from coding/sos-v20 -->
@@ -48,6 +49,7 @@
     <!-- request encoder -->
     <bean class="org.n52.sos.encode.sos.v2.GetCapabilitiesRequestEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.GetObservationRequestEncoder"/>
+    <bean class="org.n52.sos.encode.sos.v2.GetFeatureOfInterestRequestEncoder"/>
 
 
 </beans>

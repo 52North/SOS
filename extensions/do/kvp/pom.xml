@@ -32,5 +32,20 @@
             <groupId>org.n52.sensorweb.sos</groupId>
             <artifactId>do-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-common</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-xml</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 </project>

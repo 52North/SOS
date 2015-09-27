@@ -51,9 +51,10 @@
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
         </dependency>
-       <!-- <dependency>
+        <dependency>
         	<groupId>xerces</groupId>
         	<artifactId>xercesImpl</artifactId>
-        </dependency> -->
+			<scope>runtime</scope>
+        </dependency> 
     </dependencies>
 </project>

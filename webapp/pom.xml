@@ -21,6 +21,15 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies>
+                        <usedDependency>org.springframework:spring-core</usedDependency>
+                    </usedDependencies>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <includes>
@@ -91,10 +100,6 @@
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb.sos</groupId>
-            <artifactId>third-party-ncname-resolver</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlbeans</groupId>
@@ -205,6 +210,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- CORE -->
@@ -212,6 +218,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>profile-coding</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -224,14 +231,17 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>sqlite-config</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cache</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>gc-dao</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- CODING -->
@@ -239,42 +249,52 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-ows-v110</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v100</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-json</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-wml-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-kvp</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-soap</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- OPERATIONS -->
@@ -282,27 +302,32 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>enhanced-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>transactional-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>resultHandling-v20</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>request-response-coordinate-transformer</artifactId>
+            <scope>runtime</scope>
         </dependency>
-        <!-- dependencies for integration test -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core-v100</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
 
@@ -311,6 +336,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -319,32 +345,39 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-dao</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-common</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-postgres</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-mysql</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-datasource-h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- BINDINGS -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-exi</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- REST BINDING -->
@@ -352,10 +385,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rest-code</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rest-xml</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- GET DATA AVAILABILITY -->
@@ -363,10 +398,12 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>gda-operation</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>gda-hibernate</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- DELETE OBSERVATION -->
@@ -374,22 +411,27 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>do-xml</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>do-core</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>do-json</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>do-hibernate</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>do-kvp</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
 
@@ -440,20 +482,24 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Statistics -->
         <dependency>
             <groupId>org.n52.sensorweb.sos</groupId>
             <artifactId>statistics</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>statistics</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
 
@@ -462,102 +508,124 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>client-controller</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>install-controller</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>admin-controller</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>common-controller</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>views</artifactId>
             <type>war</type>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- THIRD PARTY -->
         <dependency>
             <groupId>org.n52.sensorweb.sos</groupId>
             <artifactId>third-party-ncname-resolver</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- EREPORTING -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ereporting</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- INSPIRE -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>inspire-code</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- AQD eReporting -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-aqd-v10</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core-aqd-v10</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api-aqd-v10</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>aqd-split-and-merge</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- flexible identifiers -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>abstract-identifier</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>flexible-identifier</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>prefixed-identifier</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>ereporting-identifier</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- Split and Merge observatioons -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <!-- netCDF -->
         <dependency>
             <groupId>com.axiomalaska</groupId>
             <artifactId>cf4j</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api-netcdf</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-netcdf</artifactId>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-oceansites</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <profiles>
@@ -567,6 +635,7 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
             <build>
@@ -591,6 +660,7 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-sqlserver</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
             <build>
@@ -695,10 +765,12 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-sqlserver</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>

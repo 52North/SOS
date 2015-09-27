@@ -38,7 +38,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>core-v20</artifactId>
-            <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -78,6 +77,19 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies>
+                        <usedDependency>${project.groupId}:core-v20</usedDependency>
+                    </usedDependencies>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 	<repositories>
 		<repository>
 			<id>Apache</id>

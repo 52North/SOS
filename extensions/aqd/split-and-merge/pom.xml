@@ -22,7 +22,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>api-aqd-v10</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -33,4 +32,17 @@
             <artifactId>guava</artifactId>
         </dependency>
 	</dependencies>
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <configuration>
+                <usedDependencies>
+                    <usedDependency>${project.groupId}:api-aqd-v10</usedDependency>
+                </usedDependencies>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
 </project>

@@ -34,14 +34,24 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>
-            <scope>provided</scope>
         </dependency>
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc6</artifactId>
-			<scope>provided</scope>
 		</dependency>
-		<!-- Hibernate Core Dependencies -->
+		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <!-- Hibernate Core Dependencies -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
@@ -53,7 +63,6 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>1.9.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -72,7 +81,6 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.1</version>
 				<executions>
 					<execution>
 						<phase>verify</phase>
@@ -83,6 +91,18 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies>
+                        <usedDependency>${project.groupId}:api</usedDependency>
+                        <usedDependency>${project.groupId}:hibernate-common</usedDependency>
+                        <usedDependency>${project.groupId}:hibernate-session-factory</usedDependency>
+                        <usedDependency>org.hibernate:hibernate-c3p0</usedDependency>
+                    </usedDependencies>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<profiles>

@@ -56,10 +56,12 @@
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-swes-v20</artifactId>
-        </dependency><dependency>
+        </dependency>
+        <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sweCommon-v101</artifactId>
-        </dependency><dependency>
+        </dependency>
+        <dependency>
             <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sensorML-v101</artifactId>
         </dependency>
@@ -81,6 +83,14 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sos-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-sensorML-v101</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>do-xml</artifactId>
         </dependency>
         <dependency>
@@ -99,6 +109,16 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies>
+                        <usedDependency>${project.groupId}:coding-sensorML-v101</usedDependency>
+                        <usedDependency>${project.groupId}:coding-sos-v20</usedDependency>
+                    </usedDependencies>
                 </configuration>
             </plugin>
         </plugins>

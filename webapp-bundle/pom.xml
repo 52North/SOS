@@ -108,6 +108,7 @@
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>timeseries-web</artifactId>
 			<version>${timeseries.api.version}</version>
+            <scope>runtime</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.geotools</groupId>
@@ -130,22 +131,26 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-main</artifactId>
+            <scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
 			<artifactId>timeseries-series-dao</artifactId>
 			<version>${timeseries.api.version}</version>
+            <scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>webapp</artifactId>
 			<type>war</type>
+            <scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
     		<artifactId>restful-timeseries-client</artifactId>
     		<version>1.0.0</version>
 			<type>war</type>
+            <scope>runtime</scope>
 		</dependency>
 	</dependencies>
 	<profiles>
@@ -175,10 +180,12 @@
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-oracle</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>${project.groupId}</groupId>
                     <artifactId>hibernate-datasource-sqlserver</artifactId>
+                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>

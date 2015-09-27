@@ -559,7 +559,7 @@
             <dependency>
                 <groupId>xml-apis</groupId>
                 <artifactId>xml-apis</artifactId>
-                <version>1.0.b2</version>
+                <version>1.4.01</version>
             </dependency>
 
 			<!-- Hibernate Core Dependencies -->
@@ -1209,6 +1209,10 @@
                         <groupId>commons-httpclient</groupId>
                         <artifactId>commons-httpclient</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
                 </exclusions>
 			</dependency>
 			<dependency>
@@ -1732,7 +1736,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>generate</goal>
+                                    <goal>check</goal>
                                 </goals>
                             </execution>
                         </executions>

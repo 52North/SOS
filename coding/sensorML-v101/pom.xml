@@ -27,13 +27,14 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML</artifactId>
         </dependency>
-                <dependency>
+        <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
         </dependency>
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
+            <scope>runtime</scope>
         </dependency>        
         <dependency>
             <groupId>org.slf4j</groupId>

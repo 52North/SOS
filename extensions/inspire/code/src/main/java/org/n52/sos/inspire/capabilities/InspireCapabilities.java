@@ -188,7 +188,7 @@ public interface InspireCapabilities {
          *
          * @return <code>true</code>, if response language is set
          */
-        boolean isSetResponseLanguage();;
+        boolean isSetResponseLanguage();
 
     }
 

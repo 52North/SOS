@@ -27,6 +27,7 @@
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
+            <scope>runtime</scope>
         </dependency>        
         <dependency>
             <groupId>javax.inject</groupId>

@@ -223,7 +223,8 @@ public class FeaturesDecoder extends ResourceDecoder {
     @Override
     protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload)
     {
-        boolean isGlobal = false, isCollection = false;
+        boolean isGlobal = false;
+        boolean isCollection = false;
         if (httpRequest != null && httpRequest.getQueryString() != null)
         {
             isGlobal = true;

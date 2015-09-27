@@ -660,7 +660,7 @@ public interface SosContentCache
      * Checks whether the specified procedure exists for transactional insert
      * observation operations (InsertObservation, InsertResultTemplate).
      *
-     * @param procedure
+     * @param procedureID
      *            the procedure
      *
      * @return {@code true} if it exists

@@ -766,7 +766,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * @param multi
+     * @param multiLanguageDatasource
      *            language the multi language to set
      */
     public void setMultiLangugage(boolean multiLanguageDatasource) {
@@ -830,7 +830,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * Create the beginning character of a generated foreign key from a table
      * name hasCode()
      *
-     * @param string
+     * @param tableName
      *            Table name
      * @return Beginning characters of a generated foreign key like
      *         "FK + table name hasCode()"

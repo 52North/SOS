@@ -138,6 +138,8 @@ public class InstallDatasourceSettingsController extends AbstractInstallControll
                 SettingDefinition<?, URI> usd = (SettingDefinition<?, URI>) def;
                 usd.setDefaultValue((URI) val);
                 break;
+            default:
+                break;
             }
         }
     }

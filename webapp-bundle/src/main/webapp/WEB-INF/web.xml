@@ -10,7 +10,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<context-param>
 		<!--defines the directory in which the log files will be stored. -->
 		<param-name>logDir</param-name>
-		<!-- a relative path is not allowed, if a relative path would be supported 
+		<!-- a relative path is not allowed, if a relative path would be supported
 			the log dir has to be in the WEB-INF dir -->
 		<param-value>${conf.sos.logdir}</param-value>
 	</context-param>
@@ -36,7 +36,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	<listener>
 		<listener-class>org.n52.iceland.service.ServiceContextListener</listener-class>
 	</listener>
-	
+
 	<filter>
 		<filter-name>CORS</filter-name>
 		<filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
@@ -114,7 +114,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 			<param-value>/WEB-INF/spring/api-view-config.xml,/WEB-INF/spring/api-dispatcher.xml</param-value>
 		</init-param>
 	</servlet>
-	
+
 	<!-- Admin servlet -->
 	<servlet>
 		<servlet-name>Admin</servlet-name>
@@ -126,7 +126,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		<servlet-name>Service</servlet-name>
 		<servlet-class>org.n52.iceland.service.Service</servlet-class>
 	</servlet>
-	
+
 	<!-- mappings of endpoints -->
 	<servlet-mapping>
 		<servlet-name>Admin</servlet-name>

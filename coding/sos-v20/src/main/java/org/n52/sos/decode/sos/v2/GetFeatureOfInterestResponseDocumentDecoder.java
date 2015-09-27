@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,7 +62,7 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 public class GetFeatureOfInterestResponseDocumentDecoder implements SosResponseDecoder, Decoder<GetFeatureOfInterestResponse, GetFeatureOfInterestResponseDocument> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetFeatureOfInterestResponseDocumentDecoder.class);
-    
+
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
             Sos2Constants.NS_SOS_20,
             GetFeatureOfInterestResponseDocument.class);
@@ -76,7 +76,7 @@ public class GetFeatureOfInterestResponseDocumentDecoder implements SosResponseD
     public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
-    
+
     @Override
     public GetFeatureOfInterestResponse decode(GetFeatureOfInterestResponseDocument gfoird)
             throws OwsExceptionReport, UnsupportedDecoderInputException {

@@ -300,7 +300,8 @@ public class SensorsDecoder extends ResourceDecoder {
     protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest,
             String pathPayload)
     {
-        boolean isGlobal = false, isCollection = false;
+        boolean isGlobal = false;
+        boolean isCollection = false;
         if (httpRequest != null && httpRequest.getQueryString() == null && pathPayload == null)
         {
             isGlobal = true;

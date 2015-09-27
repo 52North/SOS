@@ -153,8 +153,9 @@ public class FeaturesRequestHandler extends RequestHandler {
 
     private FeaturePropertyType getFeatureFromSosCoreResponse(GetFeatureOfInterestResponseDocument xb_getFeatureOfInterestResponseDoc)
     {
-        if (isFeatureArrayAvailableAndContains1Feature(xb_getFeatureOfInterestResponseDoc))
+        if (isFeatureArrayAvailableAndContains1Feature(xb_getFeatureOfInterestResponseDoc)) {
             return xb_getFeatureOfInterestResponseDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray(0);
+        }
         return null;
     }
 

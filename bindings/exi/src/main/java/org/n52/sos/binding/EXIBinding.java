@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -85,7 +85,7 @@ public class EXIBinding extends SimpleBinding {
 
     private static final EXIUtils EXI_UTILS = EXIUtils.getInstance();
 
-	private static final String URL_PATTERN = "/exi";
+    private static final String URL_PATTERN = "/exi";
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/2.0/conf/exi");
@@ -173,10 +173,10 @@ public class EXIBinding extends SimpleBinding {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
             if (ef.isFragment()) {
-				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
-			}
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION,"yes");
+            }
             transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             // decode EXI encoded InputStream
             EXISource exiSource = new EXISource(ef);
             XMLReader exiReader = exiSource.getXMLReader();

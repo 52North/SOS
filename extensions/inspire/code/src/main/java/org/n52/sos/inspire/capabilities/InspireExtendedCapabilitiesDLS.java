@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,17 +45,17 @@ import com.google.common.collect.Sets;
 /**
  * Abstract service internal representation of INSPIRE DLS ExtendedCapabilities. Extends the
  * {@link InspireExtendedCapabilities} with the DLS specific data
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public abstract class InspireExtendedCapabilitiesDLS extends InspireExtendedCapabilities implements
         InspireExtendedCapabilitiesSpatialDataSetIdentifier, InspireExtendedCapabilitiesSupportedCRS {
 
     /* SpatialDataSetIdentifier 1..* */
     private Set<InspireUniqueResourceIdentifier> spatialDataSetIdentifier = Sets.newHashSet();
-    
+
     private InspireSupportedCRS supportedCRS;
 
     /**
@@ -133,12 +133,12 @@ public abstract class InspireExtendedCapabilitiesDLS extends InspireExtendedCapa
         this.supportedCRS = supportedCRS;
         return this;
     }
-    
+
     @Override
     public InspireSupportedCRS getSupportedCRS() {
         return supportedCRS;
     }
-    
+
     @Override
     public boolean isSetSupportedCRS() {
         return getSupportedCRS() != null;

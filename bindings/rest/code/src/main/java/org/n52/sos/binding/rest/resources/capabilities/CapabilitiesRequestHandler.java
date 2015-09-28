@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -61,7 +61,7 @@ public class CapabilitiesRequestHandler extends RequestHandler {
 
             // 0 submit GetCapabilities DeleteObservationRequest
             XmlObject xb_getCapabilitiesResponse = executeSosRequest(((CapabilitiesRequest) request).getGetCapabilitiesRequest());
-            
+
             // 1 get offerings
             if (xb_getCapabilitiesResponse instanceof CapabilitiesDocument) {
                 CapabilitiesDocument xb_capaCapabilitiesDocument = (CapabilitiesDocument) xb_getCapabilitiesResponse;

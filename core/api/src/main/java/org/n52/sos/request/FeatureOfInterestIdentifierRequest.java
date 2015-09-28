@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,22 +33,22 @@ import java.util.List;
 /**
  * Interface to define methods for requests that supports featureOfInterest
  * identifiers
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface FeatureOfInterestIdentifierRequest {
 
     /**
      * Get FeatureOfInterest identifiers
-     * 
+     *
      * @return FeatureOfInterest identifiers
      */
     List<String> getFeatureIdentifiers();
 
     /**
      * Set FeatureOfInterest identifiers
-     * 
+     *
      * @param featureIdentifiers
      *            FeatureOfInterest identifiers
      */
@@ -56,7 +56,7 @@ public interface FeatureOfInterestIdentifierRequest {
 
     /**
      * Check if request contains FeatureOfInterest identifiers
-     * 
+     *
      * @return True if request contains FeatureOfInterest identifiers
      */
     boolean isSetFeatureOfInterest();

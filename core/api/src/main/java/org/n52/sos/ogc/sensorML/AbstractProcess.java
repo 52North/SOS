@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,7 +40,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlIo;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class AbstractProcess extends AbstractSensorML {
 
@@ -130,7 +130,7 @@ public class AbstractProcess extends AbstractSensorML {
         super.addName(name);
         return this;
     }
-    
+
     protected void checkAndSetChildProcedures(final List<SmlComponent> components) {
         if (components != null) {
             for (final SmlComponent component : components) {
@@ -145,7 +145,7 @@ public class AbstractProcess extends AbstractSensorML {
             addChildProcedure(component.getProcess());
         }
     }
-    
+
     public void copyTo(AbstractProcess copyOf) {
         super.copyTo(copyOf);
         copyOf.setInputs(getInputs());

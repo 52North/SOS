@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,12 +52,12 @@ public class SensorsPutRequestHandler extends SensorsRequestHandler {
             // submit request to core
             SensorsPutRequest putRequest = (SensorsPutRequest)request;
             XmlObject xb_ServiceResponse = executeSosRequest(putRequest.getUpdateSensorRequest());
-            
+
             if(xb_ServiceResponse instanceof UpdateSensorDescriptionResponseDocument) {
                 UpdateSensorDescriptionResponseDocument xb_InsertSensorResponseDoc = (UpdateSensorDescriptionResponseDocument) xb_ServiceResponse;
                 UpdateSensorDescriptionResponseType xb_InsertSensorResponse = xb_InsertSensorResponseDoc.getUpdateSensorDescriptionResponse();
                 String procedureId = xb_InsertSensorResponse.getUpdatedProcedure();
-                
+
                 return new SensorsPutResponse(procedureId,putRequest.getXb_smlSystem());
             }
         }

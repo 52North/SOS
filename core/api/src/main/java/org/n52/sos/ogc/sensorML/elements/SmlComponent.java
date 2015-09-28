@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.sos.ogc.sensorML.AbstractSensorML;
 
 /**
  * SOS internal representation of SensorML component
- * 
+ *
  * @since 4.0.0
  */
 public class SmlComponent extends AbstractReferenceType {
@@ -48,7 +48,7 @@ public class SmlComponent extends AbstractReferenceType {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Component identifier
      */
@@ -87,7 +87,7 @@ public class SmlComponent extends AbstractReferenceType {
     public boolean isSetName() {
         return name != null && !name.isEmpty();
     }
-    
+
     public boolean isReferencedExternally() {
         return isSetTitle() || isSetHref();
     }

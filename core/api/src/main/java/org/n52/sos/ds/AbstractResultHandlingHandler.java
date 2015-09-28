@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,12 +36,12 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 
 /**
  * Abstract class for Result Handling operation Handlers to provide common methods
- * 
+ *
  * Renamed, in version 4.x called AbstractResultHandlingDAO
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractResultHandlingHandler extends AbstractOperationHandler {
 
@@ -51,7 +51,7 @@ public abstract class AbstractResultHandlingHandler extends AbstractOperationHan
 
     /**
      * Get internal SweDataRecord from internal ResultStructure
-     * 
+     *
      * @param resultStructure
      *            Internal ResultStructure
      * @return internal SweDataRecord

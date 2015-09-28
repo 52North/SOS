@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sos:GetObservation service="AQD" version="1.0.0" 
-	xmlns:sos="http://www.opengis.net/sos/2.0" 
-	xmlns:fes="http://www.opengis.net/fes/2.0" 
-	xmlns:gml="http://www.opengis.net/gml/3.2" 
+<sos:GetObservation service="AQD" version="1.0.0"
+	xmlns:sos="http://www.opengis.net/sos/2.0"
+	xmlns:fes="http://www.opengis.net/fes/2.0"
+	xmlns:gml="http://www.opengis.net/gml/3.2"
 	xmlns:swe="http://www.opengis.net/swe/2.0"
-	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:swes="http://www.opengis.net/swes/2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
-	
+
 	<!-- optional -->
 	<!--
     <swes:extension xsi:type="swe:TextPropertyType">
@@ -57,7 +57,7 @@
 			</gml:TimePeriod>
 		</fes:During>
 	</sos:temporalFilter>
-	
+
 	<!-- optional -->
 	<!--
 	<sos:temporalFilter>
@@ -128,7 +128,7 @@
 		</fes:BBOX>
 	</sos:spatialFilter>
 	<!-- Spatial filter for Spatial Filtering Profile -->
-	<!-- 
+	<!--
 	<sos:spatialFilter>
 		<fes:BBOX>
 			<fes:ValueReference>http://www.opengis.net/req/omxml/2.0/data/samplingGeometry

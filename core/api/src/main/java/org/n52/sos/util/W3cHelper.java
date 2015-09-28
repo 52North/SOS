@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,9 +49,9 @@ import org.w3c.dom.NodeList;
 
 /**
  * Helper class for W3C
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class W3cHelper {
 
@@ -59,12 +59,12 @@ public final class W3cHelper {
 
     /**
      * Parses w3c.Node to String
-     * 
+     *
      * @param node
      *            Node to parse.
-     * 
+     *
      * @return Node as String.
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs.
      */
@@ -95,14 +95,14 @@ public final class W3cHelper {
 
     /**
      * Get text content from element by namespace.
-     * 
+     *
      * @param element
      *            element
      * @param namespaceURI
      *            Namespace URI
      * @param localName
      *            local name
-     * 
+     *
      * @return Text content.
      */
     public static String getContentFromElement(Element element, String namespaceURI, String localName) {

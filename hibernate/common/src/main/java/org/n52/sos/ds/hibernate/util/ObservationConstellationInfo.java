@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,9 +36,9 @@ import org.n52.iceland.util.CollectionHelper;
 import com.google.common.collect.Maps;
 
 /**
- * Simple class for returning observation constellation info, designed to be fast and to 
+ * Simple class for returning observation constellation info, designed to be fast and to
  * load all necessary info for all observation constellations in a single query
- * (useful during cache loading) 
+ * (useful during cache loading)
  */
 public class ObservationConstellationInfo {
     private String offering;
@@ -81,23 +81,23 @@ public class ObservationConstellationInfo {
     public void setHiddenChild(boolean hiddenChild) {
         this.hiddenChild = hiddenChild;
     }
-    
+
     public static Map<String,Collection<ObservationConstellationInfo>> mapByOffering(
             Collection<ObservationConstellationInfo> ocis) {
         Map<String,Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
         for (ObservationConstellationInfo oci : ocis) {
             CollectionHelper.addToCollectionMap(oci.getOffering(), oci, map);
         }
-        return map;        
+        return map;
     }
-    
+
     public static Map<String,Collection<ObservationConstellationInfo>> mapByProcedure(
             Collection<ObservationConstellationInfo> ocis) {
         Map<String,Collection<ObservationConstellationInfo>> map = Maps.newHashMap();
         for (ObservationConstellationInfo oci : ocis) {
             CollectionHelper.addToCollectionMap(oci.getProcedure(), oci, map);
         }
-        return map;        
+        return map;
     }
 
     public static Map<String,Collection<ObservationConstellationInfo>> mapByObservableProperty(
@@ -106,6 +106,6 @@ public class ObservationConstellationInfo {
         for (ObservationConstellationInfo oci : ocis) {
             CollectionHelper.addToCollectionMap(oci.getObservableProperty(), oci, map);
         }
-        return map;        
+        return map;
     }
 }

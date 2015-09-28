@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ public class InsertSensorRequestBuilder {
     private List<String> observableProperties;
 
     private List<String> observationTypes;
-    
+
     private List<String> featureOfInterestTypes;
 
     private List<SwesFeatureRelationship> featureRelationships;

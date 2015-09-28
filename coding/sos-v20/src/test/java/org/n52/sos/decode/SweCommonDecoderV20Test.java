@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -55,7 +55,7 @@ import com.google.common.collect.Lists;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class SweCommonDecoderV20Test {
@@ -121,7 +121,7 @@ public class SweCommonDecoderV20Test {
          final DateTime startDate = new DateTime(1970, 1, 1, 0, 0, DateTimeZone.UTC);
          final DateTime endDate = new DateTime(2013, 12, 31, 23, 59, DateTimeZone.UTC);
          final List<String> values = Lists.newArrayList(startDate.toString(), endDate.toString());
-         xbTimeRange.setValue(values);        
+         xbTimeRange.setValue(values);
          final String iso8601Uom = "urn:ogc:def:unit:ISO:8601";
          xbTimeRange.addNewUom().setHref(iso8601Uom);
          final Object decodedObject = new SweCommonDecoderV20().decode(xbTimeRange);
@@ -132,5 +132,5 @@ public class SweCommonDecoderV20Test {
          assertThat(sweTimeRange.isSetValue(), is(true));
          assertThat(sweTimeRange.getValue().getRangeStart(), is(startDate));
          assertThat(sweTimeRange.getValue().getRangeEnd(), is(endDate));
-     }    
+     }
 }

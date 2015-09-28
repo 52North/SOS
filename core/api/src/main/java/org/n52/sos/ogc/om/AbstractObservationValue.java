@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,21 +34,21 @@ import org.n52.sos.ogc.om.values.Value;
 public abstract class AbstractObservationValue<T extends Value<?>> implements ObservationValue<T> {
 
     private static final long serialVersionUID = -8969234704767943799L;
-    
+
     private String observationID;
-    
+
     private String observationType;
-    
+
     private String observableProperty;
-    
+
     private String tokenSeparator;
-    
+
     private String tupleSeparator;
-    
+
     private String decimalSeparator;
-    
+
     private String unit;
-    
+
     public void setValuesForResultEncoding(OmObservation observation) {
         setObservationID(observation.getObservationID());
         setObservableProperty(observation.getObservationConstellation().getObservableProperty().getIdentifier());
@@ -71,7 +71,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     private void setObservationID(String observationID) {
         this.observationID = observationID;
     }
-    
+
     public boolean isSetObservationID() {
         return StringHelper.isNotEmpty(getObservationID());
     }
@@ -89,7 +89,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     private void setObservationType(String observationType) {
         this.observationType = observationType;
     }
-    
+
     public boolean isSetObservationType() {
         return StringHelper.isNotEmpty(getObservationType());
     }
@@ -107,7 +107,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     private void setObservableProperty(String observableProperty) {
         this.observableProperty = observableProperty;
     }
-    
+
     public boolean isSetObservablePropertyD() {
         return StringHelper.isNotEmpty(getObservableProperty());
     }
@@ -125,7 +125,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     private void setTokenSeparator(String tokenSeparator) {
         this.tokenSeparator = tokenSeparator;
     }
-    
+
     public boolean isSetTokenSeparator() {
         return StringHelper.isNotEmpty(getTokenSeparator());
     }
@@ -143,14 +143,14 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     private void setTupleSeparator(String tupleSeparator) {
         this.tupleSeparator = tupleSeparator;
     }
-    
+
     public boolean isSetTupleSeparator() {
         return StringHelper.isNotEmpty(getTupleSeparator());
     }
-    
+
     /**
      * Get decimal separator
-     * 
+     *
      * @return the decimalSeparator
      */
     public String getDecimalSeparator() {
@@ -159,17 +159,17 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
 
     /**
      * Set decimal separator
-     * 
+     *
      * @param decimalSeparator
      *            the decimalSeparator to set
      */
     public void setDecimalSeparator(final String decimalSeparator) {
         this.decimalSeparator = decimalSeparator;
     }
-    
+
     /**
      * Check whether decimal separator is set
-     * 
+     *
      * @return <code>true</code>, if decimal separator is set
      */
     public boolean isSetDecimalSeparator() {
@@ -189,7 +189,7 @@ public abstract class AbstractObservationValue<T extends Value<?>> implements Ob
     public void setUnit(String unit) {
         this.unit = unit;
     }
-    
+
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
     }

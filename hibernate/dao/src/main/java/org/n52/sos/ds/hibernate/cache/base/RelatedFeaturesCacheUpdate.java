@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
@@ -63,6 +63,6 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
                 getCache().setRolesForRelatedFeature(relatedFeature.getFeatureOfInterest().getIdentifier(), roles);
             }
         }
-        LOGGER.debug("Finished executing RelatedFeaturesCacheUpdate ({})", getStopwatchResult());        
+        LOGGER.debug("Finished executing RelatedFeaturesCacheUpdate ({})", getStopwatchResult());
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
 public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest<? extends AbstractServiceResponse>> extends AbstractEncoder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
-    
+
     private final Set<EncoderKey> encoderKeys;
 
     /**
@@ -106,12 +106,12 @@ public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest<? 
     public AbstractRequestEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
         this(service, version, operation, namespace, prefix, responseType, false);
     }
-    
+
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
     }
-    
+
     @Override
     public void encode(T element, OutputStream outputStream) throws OwsExceptionReport {
         encode(element, outputStream, new EncodingValues());

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -418,7 +418,7 @@ public abstract class AbstractSeriesDAO {
     /**
      * Check {@link Series} if the deleted observation time stamp corresponds to
      * the first/last series time stamp
-     * 
+     *
      * @param series
      *            Series to update
      * @param observation

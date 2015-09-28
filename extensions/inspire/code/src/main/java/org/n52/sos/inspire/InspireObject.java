@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,10 +30,10 @@ package org.n52.sos.inspire;
 
 /**
  * Interface to indicate objects which could be encoded by the INSPIRE encoder
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public interface InspireObject {
 

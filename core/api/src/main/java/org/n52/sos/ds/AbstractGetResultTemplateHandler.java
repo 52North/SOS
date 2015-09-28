@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,9 +39,9 @@ import org.n52.sos.response.GetResultTemplateResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultTemplateDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetResultTemplateHandler extends AbstractOperationHandler {
     public AbstractGetResultTemplateHandler(String service) {

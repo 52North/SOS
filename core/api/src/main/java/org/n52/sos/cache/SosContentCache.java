@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,8 +49,8 @@ import org.n52.iceland.i18n.MultilingualString;
  *
  * @since 4.0.0
  */
-public interface SosContentCache 
-            extends ContentCache, 
+public interface SosContentCache
+            extends ContentCache,
             TemporalCache,
             SpatialCache,
             CompositePhenomenonCache {
@@ -250,8 +250,8 @@ public interface SosContentCache
      * @return the offerings
      */
     Set<String> getOfferingsForProcedure(String procedure);
-    
-    
+
+
     /**
      * Get the offerings associated with the specified procedures.
      *
@@ -281,7 +281,7 @@ public interface SosContentCache
      * @return {@code true} if it exists
      */
     boolean hasProcedure(String procedure);
-    
+
     /**
      * Get the procedures associated with the specified feature of interest.
      *
@@ -651,16 +651,16 @@ public interface SosContentCache
     /**
      * Get procedures usable for transactional insert observation operations
      * (InsertObservation, InsertResultTemplate).
-     * 
+     *
      * @return the procedures
      */
     Set<String> getTransactionalObservationProcedures();
-    
+
     /**
      * Checks whether the specified procedure exists for transactional insert
      * observation operations (InsertObservation, InsertResultTemplate).
      *
-     * @param procedure
+     * @param procedureID
      *            the procedure
      *
      * @return {@code true} if it exists
@@ -669,14 +669,14 @@ public interface SosContentCache
 
     /**
      * Get procedures usable for querying.
-     * 
+     *
      * @return the procedures
      */
     Set<String> getQueryableProcedures();
 
     /**
      * Checks whether the specified procedure exists for querying.
-     * 
+     *
      * @param procedureID
      *            the procedure
      * @return {@code true} if it exists
@@ -686,7 +686,7 @@ public interface SosContentCache
     Set<String> getTypeInstanceProcedure(TypeInstance typeInstance);
 
     Set<String> getComponentAggregationProcedure(ComponentAggregation componentAggregation);
-    
+
     Set<String> getInstancesForProcedure(String identifier);
 
     boolean hasInstancesForProcedure(String identifier);
@@ -694,7 +694,7 @@ public interface SosContentCache
     enum TypeInstance {
         TYPE, INSTANCE;
     }
-    
+
     enum ComponentAggregation {
         COMPONENT, AGGREGATION;
     }

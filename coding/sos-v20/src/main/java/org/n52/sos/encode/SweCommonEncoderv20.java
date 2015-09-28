@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -593,7 +593,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         }
         return unitReference;
     }
-    
+
     private UnitReference createUnknownUnitReference() {
         final UnitReference unitReference =
                 UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());

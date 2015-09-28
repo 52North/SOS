@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,10 +34,10 @@ import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 
 /**
  * Entity to store the active/inactive dynamic offering extensions
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Entity(name = "dynamic_offering_extension")
 public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensionKey, DynamicOfferingExtension> {
@@ -53,7 +53,7 @@ public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensi
 
     /**
      * constructor
-     * 
+     *
      * @param oek
      *            the {@link OfferingExtensionKey} to set
      */
@@ -63,7 +63,7 @@ public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensi
 
     /**
      * constructor
-     * 
+     *
      * @param key
      *            the {@link DynamicOfferingExtensionKey} to set
      */
@@ -73,7 +73,7 @@ public class DynamicOfferingExtension extends Activatable<DynamicOfferingExtensi
 
     /**
      * constructor
-     * 
+     *
      * @param service
      *            the service to set
      * @param version

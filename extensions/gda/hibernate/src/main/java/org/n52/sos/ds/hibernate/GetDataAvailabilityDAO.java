@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -461,7 +461,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityHandler i
      */
     private Long getCountFor(Series series, GetDataAvailabilityRequest request, Session session) {
         Criteria criteria = session.createCriteria(TemporalReferencedSeriesObservation.class)
-        		.add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false));
+                .add(Restrictions.eq(TemporalReferencedSeriesObservation.DELETED, false));
         criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
         if (request.isSetOfferings()) {
             criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)

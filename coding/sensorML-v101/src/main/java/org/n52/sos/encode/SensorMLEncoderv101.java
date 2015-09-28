@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -754,7 +754,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
         }
     }
-    
+
     private void addComponentValues(final ComponentType ct, final org.n52.sos.ogc.sensorML.Component component) throws OwsExceptionReport {
         // set inputs
         if (component.isSetInputs()) {
@@ -1278,17 +1278,17 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                 ioComponentPropertyType.addNewTimeRange().set(encodeObjectToXml);
                 break;
             case DataArray:
-            	if (encodeObjectToXml instanceof DataArrayDocument) {
-            		ioComponentPropertyType.addNewAbstractDataArray1().set(((DataArrayDocument)encodeObjectToXml).getDataArray1()).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
-            	} else {
-            		ioComponentPropertyType.addNewAbstractDataArray1().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
-            	}
+                if (encodeObjectToXml instanceof DataArrayDocument) {
+                    ioComponentPropertyType.addNewAbstractDataArray1().set(((DataArrayDocument)encodeObjectToXml).getDataArray1()).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+                } else {
+                    ioComponentPropertyType.addNewAbstractDataArray1().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_ARRAY_SWE_101, DataArrayType.type);
+                }
                 break;
             case DataRecord:
                 ioComponentPropertyType.addNewAbstractDataRecord().set(encodeObjectToXml).substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
                 break;
             default:
-    
+
             }
         }
     }

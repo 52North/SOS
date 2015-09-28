@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -121,10 +121,10 @@ public class AdminDatasourceController extends AbstractDatasourceController {
             LOG.info("Clearing database contents by calling clear method.");
             getDatasource().clear(getSettings());
         } else {
-        	LOG.info("Clearing database contents by deleting and recreating the SOS database schema.");
-        	Map<String, Object> settings = getDatasource().parseDatasourceProperties(getSettings());
-        	getDatasource().dropSchema(settings);
-        	getDatasource().createSchema(settings);
+            LOG.info("Clearing database contents by deleting and recreating the SOS database schema.");
+            Map<String, Object> settings = getDatasource().parseDatasourceProperties(getSettings());
+            getDatasource().dropSchema(settings);
+            getDatasource().createSchema(settings);
         }
         updateCache();
     }

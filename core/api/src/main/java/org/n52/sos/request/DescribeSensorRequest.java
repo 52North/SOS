@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import org.n52.sos.response.DescribeSensorResponse;
 
 /**
  * SOS DescribeSensor request
- * 
+ *
  * @since 4.0.0
  */
 public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensorResponse> {
@@ -58,7 +58,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
      */
     @Override
@@ -68,7 +68,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /**
      * Get output format
-     * 
+     *
      * @return output format
      */
     public String getProcedureDescriptionFormat() {
@@ -77,7 +77,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /**
      * Set output format
-     * 
+     *
      * @param procedureDescriptionFormat
      *            output format
      */
@@ -91,7 +91,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /**
      * Get Procedure identifier
-     * 
+     *
      * @return Procedure identifier
      */
     public String getProcedure() {
@@ -100,7 +100,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /**
      * Set Procedure identifier
-     * 
+     *
      * @param procedure
      *            Procedure identifier
      */
@@ -114,7 +114,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /**
      * Get valid time
-     * 
+     *
      * @return valid time
      */
     public Time getValidTime() {
@@ -123,7 +123,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     /**
      * Set valid time
-     * 
+     *
      * @param validTime
      *            valid time
      */

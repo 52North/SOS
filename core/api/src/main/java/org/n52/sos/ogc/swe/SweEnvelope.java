@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -252,7 +252,7 @@ public class SweEnvelope extends SweAbstractDataComponent {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
+
     private static boolean isNorthingFirstEpsgCode(int srid) {
         return GeometryHandler.getInstance().isNorthingFirstEpsgCode(srid);
     }

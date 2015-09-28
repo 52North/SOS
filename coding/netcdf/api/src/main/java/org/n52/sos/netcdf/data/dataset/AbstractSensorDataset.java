@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,23 +49,23 @@ import ucar.nc2.constants.CF;
 
 /**
  * Abstract sensor dataset class u com.google.common.collect.Lists;sed by netCDF encoding
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
- * 
+ *
  * @param <T>
  *            sensor type
  */
 public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset>{
-    private CF.FeatureType featureType;    
+    private CF.FeatureType featureType;
     private DatasetSensor sensor;
     private SosProcedureDescription procedure;
 
     private List<OmObservableProperty> obsProps;
     private List<Time> times;
     private List<SubSensor> subSensors;
-    
+
     private Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues;
 
     public AbstractSensorDataset( CF.FeatureType featureType, DatasetSensor sensor,
@@ -84,14 +84,14 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
             Time time = dataValuesEntry.getKey();
             timeSet.add(time);
             for( Map.Entry<OmObservableProperty, Map<SubSensor,Value<?>>> phenObsEntry : dataValuesEntry.getValue().entrySet() ){
-                OmObservableProperty phen = phenObsEntry.getKey();                    
-                Set<SubSensor> phenSubSensors = phenObsEntry.getValue().keySet();                
-                obsPropSet.add(phen);                
+                OmObservableProperty phen = phenObsEntry.getKey();
+                Set<SubSensor> phenSubSensors = phenObsEntry.getValue().keySet();
+                obsPropSet.add(phen);
                 for (SubSensor subSensor : phenSubSensors) {
                     if (subSensor != null) {
                         subSensorSet.add(subSensor);
                     }
-                }                    
+                }
             }
         }
 
@@ -112,7 +112,7 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
     public DatasetSensor getSensor() {
         return sensor;
     }
-    
+
     public String getSensorIdentifier() {
        return  getSensor().getSensorIdentifier();
     }
@@ -124,15 +124,15 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
     public List<OmObservableProperty> getPhenomena() {
         return obsProps;
     }
-    
+
     public List<SubSensor> getSubSensors() {
         return subSensors;
     }
-    
+
     public SosProcedureDescription getProcedureDescription() {
         return procedure;
     }
-    
+
     public List<Time> getTimes(){
         return times;
     }
@@ -140,17 +140,17 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
     public Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> getDataValues() {
         return dataValues;
     }
-    
+
     public static Set<AbstractSensorDataset> getAbstractAssetDatasets( Set<? extends AbstractSensorDataset> stationDatasets ){
         Set<AbstractSensorDataset> abstractStationDatasets = new HashSet<AbstractSensorDataset>();
         abstractStationDatasets.addAll( stationDatasets );
         return abstractStationDatasets;
     }
-    
+
     @Override
     public int compareTo(AbstractSensorDataset o) {
         if( sensor == null && o.getSensor() == null ){
-            return 0;            
+            return 0;
         }
         if( sensor == null ){
             return -1;
@@ -163,8 +163,8 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
         }
         return -1;
     }
-    
+
     public boolean isSetSubSensors() {
         return CollectionHelper.isNotEmpty(getSubSensors());
-    }    
+    }
 }

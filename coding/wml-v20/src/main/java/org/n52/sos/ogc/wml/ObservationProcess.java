@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,12 +40,12 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ObservationProcess extends SosProcedureDescription {
 
     private static final long serialVersionUID = -2211664623972369575L;
-    
+
     /*
      * Multiplicity: 1 A defintion of the type of process used in the
      * observation. This may be a Sensor, ManualMethod, Algorithm or Simulation
@@ -108,7 +108,7 @@ public class ObservationProcess extends SosProcedureDescription {
     }
 
     public ObservationProcess setOfferingIdentifiers(final Set<SosOffering> offeringIdentifiers) {
-    	addOfferings(offeringIdentifiers);
+        addOfferings(offeringIdentifiers);
         return this;
     }
 

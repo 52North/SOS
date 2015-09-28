@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,8 +46,8 @@ import com.google.common.base.Preconditions;
 
 public class EReportingHeader extends AbstractEReportingHeader {
 
-	private static final long serialVersionUID = -552875135737898115L;
-	private InspireID inspireID;
+    private static final long serialVersionUID = -552875135737898115L;
+    private InspireID inspireID;
     private RelatedParty reportingAuthority;
     private EReportingChange change;
     private Referenceable<Time> reportingPeriod = Referenceable.of(Nillable.<Time>missing());
@@ -55,7 +55,7 @@ public class EReportingHeader extends AbstractEReportingHeader {
     private final List<Referenceable<AbstractFeature>> content= new LinkedList<>();
 
     public EReportingHeader() {
-    	setDefaultElementEncoding(AqdConstants.NS_AQD);
+        setDefaultElementEncoding(AqdConstants.NS_AQD);
     }
 
     public EReportingChange getChange() {

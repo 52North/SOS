@@ -15,6 +15,32 @@
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>stax</groupId>
+                   <artifactId>stax-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -29,19 +55,23 @@
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-swes-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sweCommon-v101</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sensorML-v101</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-sos-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-ows-v110</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
             <artifactId>52n-xml-gml-v321</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-sweCommon-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
@@ -79,6 +109,16 @@
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                         </manifest>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <configuration>
+                    <usedDependencies>
+                        <usedDependency>${project.groupId}:coding-sensorML-v101</usedDependency>
+                        <usedDependency>${project.groupId}:coding-sos-v20</usedDependency>
+                    </usedDependencies>
                 </configuration>
             </plugin>
         </plugins>

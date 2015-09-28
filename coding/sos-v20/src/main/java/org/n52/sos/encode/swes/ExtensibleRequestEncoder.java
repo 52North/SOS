@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,23 +44,23 @@ import net.opengis.swes.x20.ExtensibleRequestType;
  *
  */
 public interface ExtensibleRequestEncoder {
-    
+
     default void addService(ExtensibleRequestType ert, AbstractServiceRequest<?> request) {
         if (request.isSetService()) {
             ert.setService(request.getService());
         } else {
-            ert.setService(SosConstants.SOS); 
+            ert.setService(SosConstants.SOS);
         }
     }
-    
+
     default void addVersion(ExtensibleRequestType ert, AbstractServiceRequest<?> request) {
         if (request.isSetVersion()) {
             ert.setVersion(request.getVersion());
         } else {
-            ert.setVersion(Sos2Constants.SERVICEVERSION); 
+            ert.setVersion(Sos2Constants.SERVICEVERSION);
         }
     }
-    
+
     default void addExtension(ExtensibleRequestType ert, AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request.isSetExtensions()) {
             for (Extension<?> extension : request.getExtensions().getExtensions()) {

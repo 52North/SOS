@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -84,7 +84,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
         }
         return omObservation;
     }
-    
+
     @Override
     public OmObservation create(OmObservation omObservation, Series series) {
         EReportingSeries ereportingSeries = (EReportingSeries) series;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.kvp.v2.DescribeSensorKvpDecoderv20;
 
 public class AqdDescribeSensorKvpDecoder  extends DescribeSensorKvpDecoderv20 {
-	
+
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(AqdConstants.AQD, AqdConstants.VERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 
     @Override

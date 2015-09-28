@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,9 +45,9 @@ import org.n52.sos.response.AbstractObservationResponse;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
@@ -58,12 +58,12 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
 
     /**
      * Finds a O&Mv2 compatible {@link ObservationEncoder}
-     * 
+     *
      * @param responseFormat
      *            the response format
-     * 
+     *
      * @return the encoder or {@code null} if none is found
-     * 
+     *
      * @throws OwsExceptionReport
      *             if the found encoder is not a {@linkplain ObservationEncoder}
      */
@@ -84,10 +84,10 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
 
     /**
      * Finds a compatible response encoder to delegate to.
-     * 
+     *
      * @param responseFormat
      *            the response format
-     * 
+     *
      * @return the encoder or {@code null} if no encoder was found
      */
     private Encoder<XmlObject, T> findResponseEncoder(String responseFormat) {
@@ -113,7 +113,7 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
             throw new InvalidResponseFormatParameterException(responseFormat);
         }
     }
-    
+
     @Override
     protected void create(T response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
         final String responseFormat = response.getResponseFormat();
@@ -127,24 +127,24 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
 
     /**
      * Create a response using the provided O&M2 compatible observation encoder.
-     * 
+     *
      * @param encoder
      *            the encoder
      * @param response
      *            the response
-     * 
+     *
      * @return the encoded response
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs
      */
     protected abstract XmlObject createResponse(ObservationEncoder<XmlObject, OmObservation> encoder, T response)
             throws OwsExceptionReport;
-    
+
     /**
      * Override this method in concrete response encoder if streaming is
      * supported for this operations.
-     * 
+     *
      * @param encoder
      * @param response
      * @param outputStream

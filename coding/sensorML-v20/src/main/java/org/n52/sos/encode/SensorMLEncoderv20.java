@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -1055,9 +1055,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         return new ClassifierListPropertyType[] { xbClassification };
     }
-    
+
     private void createTerm(TermType t, Term term) {
-    	t.setLabel(term.getLabel());
+        t.setLabel(term.getLabel());
         if (term.isSetDefinition()) {
             t.setDefinition(term.getDefinition());
         }

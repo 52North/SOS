@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,14 +49,14 @@ public class EReportingAssessmentTypeDAO {
         LOGGER.debug("QUERY getEReportingAssessmentTypes(): {}", HibernateHelper.getSqlString(c));
         return (List<EReportingAssessmentType>) c.list();
     }
-    
+
     public EReportingAssessmentType getEReportingAssessmentType(AssessmentType assessmentType, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingAssessmentType.ID, assessmentType.getId()));
         LOGGER.debug("QUERY getEReportingAssessmentTypes(): {}", HibernateHelper.getSqlString(c));
         return (EReportingAssessmentType) c.uniqueResult();
     }
-    
+
     public EReportingAssessmentType getEReportingAssessmentType(String assessmentType, Session session) {
         Criteria c = getDefaultCriteria(session);
         c.add(Restrictions.eq(EReportingAssessmentType.ID, assessmentType));

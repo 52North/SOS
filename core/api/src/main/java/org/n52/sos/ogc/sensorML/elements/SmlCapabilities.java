@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,12 +38,12 @@ import com.google.common.collect.Lists;
 
 /**
  * SOS internal representation of SensorML capabilities
- * 
+ *
  * @since 4.0.0
  */
 public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabilities> {
-    
-    
+
+
     private List<SmlCapability> capabilities = Lists.newArrayList();
 
     /**
@@ -52,10 +52,10 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
     public SmlCapabilities() {
        super();
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Type
      */
@@ -65,7 +65,7 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Type
      * @param dataRecord
@@ -103,7 +103,7 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
             }
         }
     }
-    
+
     /**
      * @param capabilities the capabilities to add
      */
@@ -113,7 +113,7 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
             addAbstractDataComponents(smlCapability.getAbstractDataComponent());
         }
     }
-    
+
     /**
      * @param capability the capability to add
      */
@@ -121,13 +121,13 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
         this.capabilities.add(capability);
         addAbstractDataComponents(capability.getAbstractDataComponent());
     }
-    
+
     public boolean isSetCapabilities() {
         return hasCapabilities() || isSetAbstractDataComponents();
     }
-    
+
     private boolean hasCapabilities() {
-        return CollectionHelper.isNotEmpty(capabilities); 
+        return CollectionHelper.isNotEmpty(capabilities);
     }
 
 }

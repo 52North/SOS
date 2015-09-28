@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -82,7 +82,7 @@ public class ObservablePropertiesCacheUpdate extends AbstractThreadableDatasourc
                 boolean isParent = !children.isEmpty();
 
                 if (observableProperty.isSetName()) {
-                	getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
+                    getCache().addObservablePropertyIdentifierHumanReadableName(observablePropertyIdentifier, observableProperty.getName());
                 }
 
                 if (!observableProperty.isHiddenChild()) {

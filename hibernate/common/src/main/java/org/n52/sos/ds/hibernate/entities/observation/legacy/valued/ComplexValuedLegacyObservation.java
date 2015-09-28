@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -80,7 +80,7 @@ public class ComplexValuedLegacyObservation
 
     @Override
     public String getValueAsString() {
-        // TODO 
+        // TODO
         return null;
     }
 }

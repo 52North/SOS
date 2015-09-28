@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ public abstract class GmdDomainConsistency implements OmResultQuality {
     public static GmdConformanceResult dataCapture(boolean pass) {
         return new GmdConformanceResult(pass, GmdSpecification.dataCapture());
     }
-    
+
     public static OmResultQuality dataCapture(GmlConstants.NilReason nilReason) {
         return new GmdConformanceResult(nilReason, GmdSpecification.dataCapture());
     }
@@ -44,7 +44,7 @@ public abstract class GmdDomainConsistency implements OmResultQuality {
     public static GmdConformanceResult timeCoverage(boolean pass) {
         return new GmdConformanceResult(pass, GmdSpecification.timeCoverage());
     }
-    
+
     public static GmdConformanceResult timeCoverage(GmlConstants.NilReason nilReason) {
         return new GmdConformanceResult(nilReason, GmdSpecification.timeCoverage());
     }

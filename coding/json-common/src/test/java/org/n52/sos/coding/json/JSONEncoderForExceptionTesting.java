@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ public class JSONEncoderForExceptionTesting extends JSONEncoder<String> {
     public JSONEncoderForExceptionTesting(Class<String> type, EncoderKey[] additionalKeys) {
         super(type, additionalKeys);
     }
-    
+
     public JSONEncoderForExceptionTesting(Class<String> clazz) {
         super(clazz);
     }
@@ -48,5 +48,5 @@ public class JSONEncoderForExceptionTesting extends JSONEncoder<String> {
     public JsonNode encodeJSON(String t) throws JSONEncodingException {
         throw new JSONEncodingException("message");
     }
-    
+
 }

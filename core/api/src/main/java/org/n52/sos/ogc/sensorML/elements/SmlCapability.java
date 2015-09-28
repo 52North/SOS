@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ public class SmlCapability extends AbstractDataComponentContainer<SmlCapability>
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      */
@@ -51,7 +51,7 @@ public class SmlCapability extends AbstractDataComponentContainer<SmlCapability>
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      * @param abstractDataComponent

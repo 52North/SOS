@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,25 +43,25 @@ import org.n52.sos.request.InsertObservationRequest;
  *
  */
 public class ObservationsPostRequestHandler extends RequestHandler {
-    
+
     @Override
     public RestResponse handleRequest(RestRequest req) throws OwsExceptionReport, XmlException
     {
         if (req != null && req instanceof ObservationsPostRequest) {
             InsertObservationRequest ioReq = ((ObservationsPostRequest) req).getInsertObservationRequest();
-            
+
             // 2 handle core response
             XmlObject xb_InsertObservationResponse = executeSosRequest(ioReq);
-            
+
             if (xb_InsertObservationResponse instanceof InsertObservationResponseDocument) {
                 // 3 return response
                 // no interesting content, just check the class to be sure that the insertion was successful
                 // the restful response requires the link to the newly created observation
-            	// FIXME we are always using only the first observation in the list without checking
+                // FIXME we are always using only the first observation in the list without checking
                 return new ObservationsPostResponse(
                         ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
                         ((ObservationsPostRequest) req).getXb_OMObservation());
-            } 
+            }
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(req,this.getClass().getName());
     }

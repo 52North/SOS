@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -57,7 +57,7 @@ import org.hibernate.tool.hbm2ddl.TableMetadata;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class CustomConfiguration extends Configuration {
@@ -67,13 +67,13 @@ public class CustomConfiguration extends Configuration {
      * Based on
      * {@link org.hibernate.cfg.Configuration#generateDropSchemaScript(Dialect)}
      * . Rewritten to only create drop commands for existing tables/sequences.
-     * 
-     * 
+     *
+     *
      * @param d
      * @param m
-     * 
+     *
      * @return SQL script to drop schema as String array
-     * 
+     *
      * @throws HibernateException
      */
     public String[] generateDropSchemaScript(final Dialect d, final DatabaseMetadata m) throws HibernateException {
@@ -163,7 +163,7 @@ public class CustomConfiguration extends Configuration {
         }
         return script;
     }
-    
+
     protected boolean checkTable(Table table, DatabaseMetadata m) {
         return table.isPhysicalTable() && m.isTable(table.getQuotedName());
     }

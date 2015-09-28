@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,9 +46,9 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * class handles the DescribeSensor request
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SosDescribeSensorOperatorV20 extends
         AbstractV2RequestOperator<AbstractDescribeSensorHandler, DescribeSensorRequest, DescribeSensorResponse> {
@@ -111,7 +111,7 @@ public class SosDescribeSensorOperatorV20 extends
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.DESCRIBE_SENSOR;
     }
-    
+
     private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
         if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos2Constants.DescribeSensorParams.procedureDescriptionFormat)) {
             SosHelper.checkProcedureDescriptionFormat(sosRequest.getProcedureDescriptionFormat(),

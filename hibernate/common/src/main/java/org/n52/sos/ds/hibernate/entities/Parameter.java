@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class Parameter implements Serializable, HasValue<Object> {
 
@@ -104,9 +104,9 @@ public class Parameter implements Serializable, HasValue<Object> {
         return value != null;
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
 
 }

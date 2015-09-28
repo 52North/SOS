@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -205,10 +205,10 @@ public class MockDatasource implements Datasource {
 
     }
 
-	@Override
-	public Map<String, Object> parseDatasourceProperties(Properties current) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

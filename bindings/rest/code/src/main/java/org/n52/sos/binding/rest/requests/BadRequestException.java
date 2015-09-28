@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,13 +36,13 @@ package org.n52.sos.binding.rest.requests;
 public class BadRequestException extends Exception
 {
 
-	private static final long serialVersionUID = -469141600265656422L;
+    private static final long serialVersionUID = -469141600265656422L;
 
-	public BadRequestException(String message)
+    public BadRequestException(String message)
     {
         super(message);
     }
-    
+
     public BadRequestException()
     {
         super();

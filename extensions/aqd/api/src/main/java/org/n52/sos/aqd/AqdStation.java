@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,7 +32,7 @@ import org.n52.sos.ef.EfEnvironmentalMonitoringFacility;
 
 /**
  * Class represents an AQD_Station
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
  *
  */
 public class ObservationsDeleteRequest implements IObservationsRequest{
-    
+
     private DeleteObservationRequest deleteObservationRequest;
 
     public ObservationsDeleteRequest(DeleteObservationRequest deleteObservationRequest) {

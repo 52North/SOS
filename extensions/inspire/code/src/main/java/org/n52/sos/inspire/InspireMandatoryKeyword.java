@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,10 +30,10 @@ package org.n52.sos.inspire;
 
 /**
  * Service internal representation of INSPIRE mandatory keyword
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireMandatoryKeyword extends AbstractInspireKeyword<InspireMandatoryKeywordValue> {
 
@@ -41,7 +41,7 @@ public class InspireMandatoryKeyword extends AbstractInspireKeyword<InspireManda
 
     /**
      * constructor
-     * 
+     *
      * @param keywordValue
      *            the keyword value
      */
@@ -52,7 +52,7 @@ public class InspireMandatoryKeyword extends AbstractInspireKeyword<InspireManda
 
     /**
      * constructor
-     * 
+     *
      * @param keywordValue
      *            the keyword value
      * @param originatingControlledVocabulary

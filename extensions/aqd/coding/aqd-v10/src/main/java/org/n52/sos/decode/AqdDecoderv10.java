@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,7 +54,7 @@ import com.google.common.base.Joiner;
 
 /**
  * {@link XMLObject} decoder for AQD e-Reporting requests
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -63,10 +63,10 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AqdDecoderv10.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS = 
+    private static final Set<DecoderKey> DECODER_KEYS =
             CodingHelper.xmlDecoderKeysForOperation(
-                    AqdConstants.AQD, AqdConstants.VERSION, 
-                    AqdConstants.Operations.GetCapabilities, 
+                    AqdConstants.AQD, AqdConstants.VERSION,
+                    AqdConstants.Operations.GetCapabilities,
                     AqdConstants.Operations.GetObservation,
                     AqdConstants.Operations.DescribeSensor);
 

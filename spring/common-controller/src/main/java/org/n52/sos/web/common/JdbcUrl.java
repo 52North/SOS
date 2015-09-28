@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -66,7 +66,7 @@ public class JdbcUrl implements Constants {
     private static final String USER_PROPERTY = "hibernate.connection.username";
 
     private static final String PASS_PROPERTY = "hibernate.connection.password";
-    
+
     private String scheme;
 
     private String type;

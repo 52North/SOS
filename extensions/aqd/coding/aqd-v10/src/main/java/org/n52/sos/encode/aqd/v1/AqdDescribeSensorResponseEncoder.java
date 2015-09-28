@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,19 +39,19 @@ import org.n52.sos.response.DescribeSensorResponse;
 
 public class AqdDescribeSensorResponseEncoder extends
 AbstractAqdResponseEncoder<DescribeSensorResponse> {
-	
-	public AqdDescribeSensorResponseEncoder() {
-		  super(SosConstants.Operations.DescribeSensor.name(), DescribeSensorResponse.class);
-	}
 
-	@Override
-	protected Set<SchemaLocation> getConcreteSchemaLocations() {
-		return Collections.emptySet();
-	}
+    public AqdDescribeSensorResponseEncoder() {
+          super(SosConstants.Operations.DescribeSensor.name(), DescribeSensorResponse.class);
+    }
 
-	@Override
-	protected XmlObject create(DescribeSensorResponse response)
-			throws OwsExceptionReport {
-		return encodeWithSosEncoder(response);
-	}
+    @Override
+    protected Set<SchemaLocation> getConcreteSchemaLocations() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    protected XmlObject create(DescribeSensorResponse response)
+            throws OwsExceptionReport {
+        return encodeWithSosEncoder(response);
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import org.n52.sos.request.DeleteSensorRequest;
 
 /**
  * @since 4.0.0e
- * 
+ *
  */
 public class DeleteSensorKvpDecoderv20 extends AbstractKvpDecoder {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,

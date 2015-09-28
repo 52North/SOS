@@ -17,12 +17,32 @@
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+         </dependency>
+         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-common</artifactId>
+            <artifactId>hibernate-session-factory</artifactId>
+         </dependency>
+         <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
+            <artifactId>hibernate-common</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -31,6 +51,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>do-xml</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 </project>

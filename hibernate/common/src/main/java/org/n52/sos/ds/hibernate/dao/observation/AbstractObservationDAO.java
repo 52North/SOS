@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -132,7 +132,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractObservationDAO.class);
 
     private static final String SQL_QUERY_OBSERVATION_TIME_EXTREMA = "getObservationTimeExtrema";
-    
+
     /**
      * Add observation identifier (procedure, observableProperty,
      * featureOfInterest) to observation
@@ -346,7 +346,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkBlobObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().blobClass(), offeringIdentifier, session);
     }
-    
+
     /**
      * Check if there are geometry observations for the offering
      *
@@ -359,7 +359,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public boolean checkGeometryObservationsFor(String offeringIdentifier, Session session) {
         return checkObservationFor(getObservationFactory().geometryClass(), offeringIdentifier, session);
     }
-    
+
     /**
      * Check if there are complex observations for the offering
      *
@@ -660,12 +660,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     protected void insertParameter(Collection<NamedValue<?>> parameter, Observation<?> observation,
             Session session) throws OwsExceptionReport {
-    	for (NamedValue<?> namedValue : parameter) {
-    		if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-    			throw new OptionNotSupportedException().at("om:parameter").withMessage(
-    	                "The om:parameter support is not yet implemented!");
-    		}
-		}
+        for (NamedValue<?> namedValue : parameter) {
+            if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                throw new OptionNotSupportedException().at("om:parameter").withMessage(
+                        "The om:parameter support is not yet implemented!");
+            }
+        }
     }
 
     /**
@@ -887,7 +887,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     * 
+     *
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
@@ -1144,13 +1144,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
         return null;
     }
-    
+
     protected boolean isIncludeChildObservableProperties(){
         return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
     }
-    
+
     public abstract String addProcedureAlias(Criteria criteria);
-    
+
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session);
 
     public abstract ObservationFactory getObservationFactory();
@@ -1432,7 +1432,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if the observation table contains samplingGeometries with values
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return <code>true</code>, if the observation table contains
@@ -1465,7 +1465,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Observation time extrema {@link ResultTransformer}
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *

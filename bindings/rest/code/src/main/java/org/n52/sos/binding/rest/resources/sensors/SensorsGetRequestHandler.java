@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -123,8 +123,8 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
             final Description xb_descriptionDoc = xb_describeSensorResponseDoc.getDescribeSensorResponse().getDescriptionArray()[0];
             final SensorDescriptionType xb_description = xb_descriptionDoc.getSensorDescription();
             xb_system = getSmlSystemFromSensorDescription(xb_description);
-            
-            // 1 return result 
+
+            // 1 return result
             return new GetSensorByIdResponse(xb_system,procedureId);
 
         } else {
@@ -134,7 +134,7 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
             throw new NoApplicableCodeException().withMessage(exceptionText);
         }
     }
-    
+
     private SystemType getSmlSystemFromSensorDescription(final SensorDescriptionType sensorDescription) throws OwsExceptionReport
     {
         try {
@@ -143,17 +143,17 @@ public class SensorsGetRequestHandler extends SensorsRequestHandler {
             final SystemType xb_system = (SystemType) xb_sensorML.getSensorML().getMemberArray()[0].getProcess().substitute(SensorMLConstants.SYSTEM_QNAME,SystemType.type);
             return xb_system;
         } catch (final IOException ioe) {
-        	throw logAndCreateException(ioe,String.format("Processing of '%s' failed.",
+            throw logAndCreateException(ioe,String.format("Processing of '%s' failed.",
                     GetSensorByIdResponse.class.getName()));
         } catch (final XmlException xe) {
             throw logAndCreateException(xe,String.format("XML Processing of '%s' failed.",
-    		        GetSensorByIdResponse.class.getName()));
+                    GetSensorByIdResponse.class.getName()));
         }
     }
 
-	private CodedException logAndCreateException(final Exception e, final String exceptionText) throws CodedException
-	{
-		LOGGER.debug(exceptionText);
-		return new NoApplicableCodeException().causedBy(e).withMessage("%s Exception: %s",exceptionText,e.getMessage());
-	}
+    private CodedException logAndCreateException(final Exception e, final String exceptionText) throws CodedException
+    {
+        LOGGER.debug(exceptionText);
+        return new NoApplicableCodeException().causedBy(e).withMessage("%s Exception: %s",exceptionText,e.getMessage());
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -156,7 +156,7 @@ public abstract class XmlEventWriter<S> extends XmlWriter<XMLEventWriter, S> {
     }
 
     /**
-     * @return
+     * @return the event factory
      */
     protected XMLEventFactory getXmlEventFactory() {
         return this.eventFactory;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,19 +47,19 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class FeaturesGetEncoder extends ResourceEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
     {
         if (objectToEncode != null) {
-            
+
             if (objectToEncode instanceof FeatureByIdResponse) {
                 return encodeFeatureByIdResponse((FeatureByIdResponse)objectToEncode);
-                
+
             } else if (objectToEncode instanceof FeaturesResponse) {
                 return encodeFeaturesResponse((FeaturesResponse)objectToEncode);
             }
-            
+
         }
         return null;
     }
@@ -71,7 +71,7 @@ public class FeaturesGetEncoder extends ResourceEncoder {
         if (featureIds != null && featureIds.length > 0) {
             FeatureCollectionDocument xb_FeatureCollectionDoc = FeatureCollectionDocument.Factory.newInstance();
             ResourceCollectionType xb_FeatureCollection = xb_FeatureCollectionDoc.addNewFeatureCollection();
-            
+
             for (String featureId : featureIds) {
                 addFeatureLink(xb_FeatureCollection, featureId);
             }
@@ -112,16 +112,16 @@ public class FeaturesGetEncoder extends ResourceEncoder {
     {
         FeatureDocument xb_feature = FeatureDocument.Factory.newInstance();
         FeatureType xb_RestFeature = xb_feature.addNewFeature();
-        
+
         // add Feature from DeleteObservationResponse
         xb_RestFeature.set(featureByIdResponse.getAbstractFeature());
-        
+
         // add selflink
         setValuesOfLinkToUniqueResource(xb_RestFeature.addNewLink(),
                 featureByIdResponse.getFeatureResourceIdentifier(),
                 bindingConstants.getResourceRelationSelf(),
                 bindingConstants.getResourceFeatures());
-        
+
         return createServiceResponseFromXBDocument(
                 xb_feature, bindingConstants.getResourceFeatures(),
                 HTTPStatus.OK, false, false);

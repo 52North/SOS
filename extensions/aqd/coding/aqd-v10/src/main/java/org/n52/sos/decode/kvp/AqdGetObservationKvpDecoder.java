@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,9 +45,9 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 
 public class AqdGetObservationKvpDecoder extends GetObservationKvpDecoderv20 {
 
-	private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(
-			AqdConstants.AQD, AqdConstants.VERSION,
-			SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);
+    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(
+            AqdConstants.AQD, AqdConstants.VERSION,
+            SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);
 
     @Override
     public Set<DecoderKey> getKeys() {

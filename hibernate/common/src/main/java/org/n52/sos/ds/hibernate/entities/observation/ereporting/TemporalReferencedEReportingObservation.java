@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,7 +38,7 @@ public class TemporalReferencedEReportingObservation
         implements HasEReportingSeries, HasVerification, HasValidation, HasPrimaryObservation {
 
     private static final long serialVersionUID = -5055301771550925701L;
-    
+
     private Integer validation = EReportingValues.DEFAULT_VALIDATION;
 
     private Integer verification = EReportingValues.DEFAULT_VERIFICATION;
@@ -59,7 +59,7 @@ public class TemporalReferencedEReportingObservation
     public boolean hasEReportingSeries() {
         return getSeries() instanceof EReportingSeries;
     }
-    
+
     @Override
     public Integer getVerification() {
         return verification;
@@ -69,7 +69,7 @@ public class TemporalReferencedEReportingObservation
     public void setVerification(Integer verification) {
         this.verification = verification;
     }
-    
+
     @Override
     public boolean isSetVerification() {
         return getVerification() != null;
@@ -104,5 +104,5 @@ public class TemporalReferencedEReportingObservation
     public boolean isSetPrimaryObservation() {
         return StringHelper.isNotEmpty(getPrimaryObservation());
     }
-    
+
 }

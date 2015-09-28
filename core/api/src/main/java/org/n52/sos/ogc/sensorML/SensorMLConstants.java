@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,13 +35,13 @@ import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * Constants class for SensorML
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @author <a href="mailto:c.autermann@52north.org">Christian Autermann</a>
  * @author ShaneStClair
- * 
+ *
  * @since 4.0.0
  */
 public interface SensorMLConstants {
@@ -119,7 +119,7 @@ public interface SensorMLConstants {
 
     String ELEMENT_NAME_OBSERVED_BBOX = "observedBBOX";
 
-	String OBSERVED_BBOX_DEFINITION_URN = "urn:ogc:def:property:OGC:1.0:observedBBOX";
+    String OBSERVED_BBOX_DEFINITION_URN = "urn:ogc:def:property:OGC:1.0:observedBBOX";
 
     String DEFAULT_FIELD_NAME = "field_";
 }

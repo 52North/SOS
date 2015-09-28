@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,9 +32,9 @@ package org.n52.sos.request;
  * Interface to merge {@link SpatialFeatureQueryRequest} and
  * {@link FeatureOfInterestIdentifierRequest} interfaces to be used by
  * {@link GetObservationRequest} and {@link GetResultRequest}
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface SpatialFeatureQueryRequest extends SpatialFilteringProfileRequest, FeatureOfInterestIdentifierRequest {
 

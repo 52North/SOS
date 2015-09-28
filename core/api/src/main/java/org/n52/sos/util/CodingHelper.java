@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -122,7 +122,7 @@ public final class CodingHelper {
         }
         return set;
     }
-    
+
     public static Set<DecoderKey> xmlStringDecoderKeysForOperationAndMediaType(String service, String version, Enum<?>... operations) {
         final HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
         for (final Enum<?> o : operations) {

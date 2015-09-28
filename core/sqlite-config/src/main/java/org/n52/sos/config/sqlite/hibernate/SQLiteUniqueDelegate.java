@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,12 +37,12 @@ public class SQLiteUniqueDelegate extends DefaultUniqueDelegate {
     public SQLiteUniqueDelegate(Dialect dialect) {
         super(dialect);
     }
-    
+
     @Override
     public String getColumnDefinitionUniquenessFragment(Column column) {
             return " UNIQUE";
     }
-    
+
     @Override
     public String getColumnDefinitionUniquenessFragment(org.hibernate.mapping.Column column) {
         return " UNIQUE";

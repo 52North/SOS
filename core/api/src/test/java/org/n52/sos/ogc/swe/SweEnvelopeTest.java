@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import com.vividsolutions.jts.io.ParseException;
  * @since 4.0.0
  */
 public class SweEnvelopeTest {
-    
+
     @BeforeClass
     public static void init() throws ParseException {
         new GeometryHandler().setAuthority("EPSG").init();
@@ -59,7 +59,7 @@ public class SweEnvelopeTest {
 
     @Test public void
     should_create_valid_sosSweEnvelope_from_sosEnvelope() {
-        
+
         final int srid = 52;
         final double x1 = 1;
         final double y1 = 2;
@@ -73,12 +73,12 @@ public class SweEnvelopeTest {
         assertThat(sweEnvelope.getReferenceFrame(), is(Integer.toString(srid)));
         // x1
         final List<? extends SweCoordinate<?>> lcCoordinates = sweEnvelope.getLowerCorner().getCoordinates();
-		assertThat(((Double) lcCoordinates.get(0).getValue().getValue()).doubleValue(), is(x1));
+        assertThat(((Double) lcCoordinates.get(0).getValue().getValue()).doubleValue(), is(x1));
         // y1
         assertThat(((Double) lcCoordinates.get(1).getValue().getValue()).doubleValue(), is(y1));
         // x2
         final List<? extends SweCoordinate<?>> ucCoordinates = sweEnvelope.getUpperCorner().getCoordinates();
-		assertThat(((Double) ucCoordinates.get(0).getValue().getValue()).doubleValue(), is(x2));
+        assertThat(((Double) ucCoordinates.get(0).getValue().getValue()).doubleValue(), is(x2));
         // y2
         assertThat(((Double) ucCoordinates.get(1).getValue().getValue()).doubleValue(), is(y2));
         // uom

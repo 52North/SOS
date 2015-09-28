@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract value data access object class for {@link SeriesValue}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -66,7 +66,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -89,7 +89,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -107,7 +107,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as chunk {@link List}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -136,7 +136,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query streaming value for parameter as chunk {@link List}
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -162,7 +162,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Get {@link Criteria} for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series
@@ -200,7 +200,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Get default {@link Criteria} for {@link Class}
-     * 
+     *
      * @param clazz
      *            {@link Class} to get default {@link Criteria} for
      * @param session
@@ -215,7 +215,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
 
     /**
      * Query unit for parameter
-     * 
+     *
      * @param request
      *            {@link GetObservationRequest}
      * @param series

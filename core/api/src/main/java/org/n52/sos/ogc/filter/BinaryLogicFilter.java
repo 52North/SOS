@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,19 +36,19 @@ import com.google.common.collect.Sets;
 
 /**
  * SOS class for binary logic filters "AND" and "OR"
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class BinaryLogicFilter extends Filter<BinaryLogicOperator> {
 
     private BinaryLogicOperator operator;
 
     private Set<Filter<?>> filterPredicates = Sets.newHashSet();
-    
+
     /**
      * constructor
-     * 
+     *
      * @param operator
      *            Binary logic filter operator
      */
@@ -59,7 +59,7 @@ public class BinaryLogicFilter extends Filter<BinaryLogicOperator> {
 
     /**
      * constructor
-     * 
+     *
      * @param operator
      *            Binary logic filter operator
      * @param filterOne
@@ -108,7 +108,7 @@ public class BinaryLogicFilter extends Filter<BinaryLogicOperator> {
     public BinaryLogicFilter addFilterPredicates(Set<Filter<?>> filterPredicates) {
         this.filterPredicates.addAll(filterPredicates);
         return this;
-        
+
     }
 
 }

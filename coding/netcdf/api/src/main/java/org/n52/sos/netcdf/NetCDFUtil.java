@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -80,7 +80,7 @@ import ucar.nc2.constants.CF;
 
 /**
  * Utility class for netCDF encoding.
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -90,7 +90,7 @@ public class NetCDFUtil {
     /**
      * Organizes OmObservation collection into a list of NetCDFObservation
      * blocks, each of which contain a single feature type
-     * 
+     *
      * @param omObservations
      *            The collection of observations to transform
      * @return List<NetCDFObservation> ready for encoding
@@ -204,7 +204,7 @@ public class NetCDFUtil {
                     sensorHeights.get(sensor).add(zValue);
                 }
             }
-            
+
             // check for samplingGeometry in observation
             if (sosObs.isSetParameter() && hasSamplingGeometry(sosObs)) {
                 Geometry geometry = getSamplingGeometryGeometry(sosObs);
@@ -466,7 +466,7 @@ public class NetCDFUtil {
     // );
     // }
     // }
-    
+
     public static SubSensor createSubSensor(String sensor, SamplingFeature foi) {
         // return null if sensor or station id is same as foi
         if (sensor.equals(foi.getIdentifierCodeWithAuthority().getValue())) {
@@ -490,7 +490,7 @@ public class NetCDFUtil {
     // );
     // }
     // }
-    
+
     public static SubSensor createSubSensor(String sensor, Geometry geom) {
         SubSensor subSensor = null;
         if (geom instanceof Point) {
@@ -507,7 +507,7 @@ public class NetCDFUtil {
             if (lineString.getNumPoints() == 2) {
                 Point topPoint = lineString.getPointN(0);
                 Point bottomPoint = lineString.getPointN(1);
-    
+
                 if (FeatureUtil.equal2d(topPoint, bottomPoint) && !Double.isNaN(topPoint.getCoordinate().z)
                         && !Double.isNaN(bottomPoint.getCoordinate().z)) {
                     double topHeight = Math.max(topPoint.getCoordinate().z, bottomPoint.getCoordinate().z);
@@ -518,8 +518,8 @@ public class NetCDFUtil {
         }
         return subSensor;
     }
-    
-        
+
+
     public static boolean isLng(String phenomenon) {
         return getNetcdfHelper().getLatitude().contains(phenomenon.toLowerCase(Locale.ROOT));
     }

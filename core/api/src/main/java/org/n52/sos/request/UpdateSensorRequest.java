@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ import org.n52.sos.response.UpdateSensorResponse;
 
 /**
  * class represents a updateSensor request
- * 
+ *
  * @since 4.0.0
  */
 public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResponse> {

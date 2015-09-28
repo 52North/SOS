@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,9 +43,9 @@ import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKTReader;
 
 public class GeometryHandlerTest {
-    
+
     private static final double DISTANCE = 0.0001;
-    
+
     private static final double DISTANCE_TRANSFORMED = 10.0;
 
     private static GeometryHandler geometryHandler;
@@ -71,11 +71,11 @@ public class GeometryHandlerTest {
 
     // easting first
     private static int EPSG_31467 = 31467;
-    
+
     private static String supportedCRS = Joiner.on(Constants.COMMA_CHAR).join(EPSG_4326, EPSG_31467);
-    
+
     private static String nortingFirstCRS = Joiner.on(Constants.SEMICOLON_CHAR).join(EPSG_4326, EPSG_31467);
-    
+
     @BeforeClass
     public static void init() throws ParseException {
         geometryHandler =  new GeometryHandler()
@@ -90,8 +90,8 @@ public class GeometryHandlerTest {
         double lon_4326 = 7.52;
         double lat_31467 = 5841822;
         double lon_31467 = 3400029;
-        
-        
+
+
 
         wkt4326 = geometryHandler.getWktString(lat_4326, lon_4326);
         geometry4326 = reader.read(wkt4326);
@@ -109,19 +109,19 @@ public class GeometryHandlerTest {
         geometry31467Switched = reader.read(wkt31467Switched);
         geometry31467Switched.setSRID(EPSG_31467);
     }
-    
+
     private Geometry get4326Geometry() {
         return (Geometry)geometry4326.clone();
     }
-    
+
     private Geometry get4326SwitchedGeometry() {
         return (Geometry)geometry4326Switched.clone();
     }
-    
+
     private Geometry get31467Geometry() {
         return (Geometry)geometry31467.clone();
     }
-    
+
     private Geometry get31467SwitchedGeometry() {
         return (Geometry)geometry31467Switched.clone();
     }
@@ -134,7 +134,7 @@ public class GeometryHandlerTest {
         assertEquals(EPSG_4326, transformToStorageEpsg.getSRID());
         assertThat((transformToStorageEpsg.distance(get4326Geometry()) < DISTANCE_TRANSFORMED), is(true));
     }
-    
+
     @Test
     public void schouldTransformToStorageEPSG31467() throws OwsExceptionReport {
         geometryHandler.clearSupportedCRSMap();
@@ -143,7 +143,7 @@ public class GeometryHandlerTest {
         assertEquals(EPSG_31467, transformToStorageEpsg.getSRID());
         assertThat((transformToStorageEpsg.distance(get31467Geometry()) < DISTANCE_TRANSFORMED), is(true));
     }
-    
+
     @Test
     public void shouldSwitchGeometryForDatasourceNorthingFalseEpsg4326() throws OwsExceptionReport {
         geometryHandler.clearSupportedCRSMap();

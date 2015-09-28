@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -74,7 +74,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDecoder.class);
 
-	private Set<DecoderKey> decoderKeys;
+    private Set<DecoderKey> decoderKeys;
     private Constants constants;
 
     @Inject
@@ -99,8 +99,8 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
         if (!isAcceptHeaderOk(httpRequest))
         {
             throw new ContentTypeNotSupportedException(
-            		httpRequest.getContentType(),
-            		bindingConstants().getContentTypeDefault().toString());
+                    httpRequest.getContentType(),
+                    bindingConstants().getContentTypeDefault().toString());
         }
 
         // get decoder for method

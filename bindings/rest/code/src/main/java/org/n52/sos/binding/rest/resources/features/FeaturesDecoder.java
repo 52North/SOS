@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class FeaturesDecoder extends ResourceDecoder {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FeaturesDecoder.class);
 
     @Override
@@ -62,15 +62,15 @@ public class FeaturesDecoder extends ResourceDecoder {
     {
         // variables
         RestRequest result = null;
-        
+
         LOGGER.debug("pathpayload: {}; querystring: {}",pathPayload,httpRequest.getQueryString());
-        
+
         // Case A: By ID
         if (isByIdRequest(httpRequest, pathPayload))
         {
              result = decodeFeatureByIdRequest(pathPayload);
-          
-        } 
+
+        }
         // Case B: Search
         else if (pathPayload == null && httpRequest.getQueryString() != null)
         {
@@ -107,9 +107,9 @@ public class FeaturesDecoder extends ResourceDecoder {
     private FeaturesRequest decodeFeaturesSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
     {
         GetFeatureOfInterestRequest featureOfInterestRequest = createBasicGetFeatureOfInterestRequest();
-        
+
         Map<String,String> parameterMap = getKvPEncodedParameters(httpRequest);
-        
+
         boolean parameterMapValid = false; // if at least one parameter is valid
 
         for (String parameter : parameterMap.keySet()) {
@@ -144,24 +144,24 @@ public class FeaturesDecoder extends ResourceDecoder {
             {
                 featureOfInterestRequest.setTemporalFilters(parseTemporalFilter(splitKvpParameterValueToList(value)));
                 parameterMapValid = true;
-            } 
+            }
             else if (parameter.equalsIgnoreCase(bindingConstants.getHttpGetParameterNameNamespaces()) &&
                     value != null &&  value.length() > 0)
             {
                 featureOfInterestRequest.setNamespaces(parseNamespaces(value));
                 parameterMapValid = true;
             }
-            else 
+            else
             {
                 throw new InvalidParameterValueException(parameter, value);
             }
         }
-        
+
         if (!parameterMapValid)
         {
-        	throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
+            throw new InvalidParameterValueException().withMessage(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
         }
-        
+
         return new FeaturesSearchRequest(featureOfInterestRequest,httpRequest.getQueryString());
 
     }
@@ -169,30 +169,30 @@ public class FeaturesDecoder extends ResourceDecoder {
     private List<SpatialFilter> parseSpatialFilters(List<String> splitKvpParameterValueToList, String parameterName) throws OwsExceptionReport
     {
         List<SpatialFilter> spatialFilters = new ArrayList<SpatialFilter>(1);
-        
+
         spatialFilters.add(parseSpatialFilter(splitKvpParameterValueToList, parameterName));
-        
+
         return spatialFilters;
     }
 
     private FeatureByIdRequest decodeFeatureByIdRequest(String pathPayload)
     {
         List<String> featureIDs = new ArrayList<String>(1);
-        
+
         featureIDs.add(pathPayload);
         GetFeatureOfInterestRequest featureOfInterestRequest = createBasicGetFeatureOfInterestRequest();
         featureOfInterestRequest.setFeatureIdentifiers(featureIDs);
-        
+
         return new FeatureByIdRequest(featureOfInterestRequest, pathPayload);
     }
 
     private GetFeatureOfInterestRequest createBasicGetFeatureOfInterestRequest()
     {
         GetFeatureOfInterestRequest featureOfInterestRequest = new GetFeatureOfInterestRequest();
-        
+
         featureOfInterestRequest.setService(bindingConstants.getSosService());
         featureOfInterestRequest.setVersion(bindingConstants.getSosVersion());
-        
+
         return featureOfInterestRequest;
     }
 
@@ -219,11 +219,12 @@ public class FeaturesDecoder extends ResourceDecoder {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
                 bindingConstants.getResourceFeatures());
     }
-    
+
     @Override
     protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload)
     {
-        boolean isGlobal = false, isCollection = false;
+        boolean isGlobal = false;
+        boolean isCollection = false;
         if (httpRequest != null && httpRequest.getQueryString() != null)
         {
             isGlobal = true;

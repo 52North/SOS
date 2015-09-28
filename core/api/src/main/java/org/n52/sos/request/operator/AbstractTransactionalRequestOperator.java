@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,7 +62,7 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationHa
         this.transactionalSecurityConfiguration = config;
     }
 
-	public TransactionalSecurityConfiguration getTransactionalSecurityConfiguration() {
+    public TransactionalSecurityConfiguration getTransactionalSecurityConfiguration() {
         return transactionalSecurityConfiguration;
     }
 

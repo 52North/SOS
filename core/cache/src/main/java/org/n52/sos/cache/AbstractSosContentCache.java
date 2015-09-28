@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -193,7 +193,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             return Collections.unmodifiableSet(new HashSet<T>(set));
         }
     }
-    
+
     /**
      * Creates a unmodifiable copy of the specified collection of sets.
      *
@@ -363,10 +363,10 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             throw new NullPointerException(name + " may not be null!");
         }
     }
-    
+
     /**
      * Remove value from map or complete entry if values for key are empty
-     * 
+     *
      * @param map
      *            Map to check
      * @param value
@@ -383,7 +383,7 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
             }
         }
     }
-    
+
     private int defaultEpsgCode = Constants.EPSG_WGS84;
 
     private Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
@@ -494,16 +494,16 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
 //    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
 
     private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
-    
+
     private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
-    
+
     private Map<String, Set<String>> typeOfProceduresMap = newSynchronizedMap();
-    
+
     protected static Logger getLogger() {
         return null;
     }
-    
-    
+
+
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -825,45 +825,45 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
     }
 
     protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
-    	return featureOfInterestIdentifierHumanReadableName.inverse();
+        return featureOfInterestIdentifierHumanReadableName.inverse();
     }
 
     protected Map<String, String> getFeatureOfInterestHumanReadableNameForIdentifier() {
-    	return featureOfInterestIdentifierHumanReadableName;
+        return featureOfInterestIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getObservablePropertyIdentifierForHumanReadableName() {
-    	return observablePropertyIdentifierHumanReadableName.inverse();
+        return observablePropertyIdentifierHumanReadableName.inverse();
     }
 
     protected Map<String, String> getObservablePropertyHumanReadableNameForIdentifier() {
-    	return observablePropertyIdentifierHumanReadableName;
+        return observablePropertyIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getProcedureIdentifierForHumanReadableName() {
-    	return procedureIdentifierHumanReadableName.inverse();
+        return procedureIdentifierHumanReadableName.inverse();
     }
 
     protected Map<String, String> getProcedureHumanReadableNameForIdentifier() {
-    	return procedureIdentifierHumanReadableName;
+        return procedureIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getOfferingIdentifierForHumanReadableName() {
-    	return offeringIdentifierHumanReadableName;
+        return offeringIdentifierHumanReadableName;
     }
 
     protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
-    	return offeringIdentifierHumanReadableName.inverse();
+        return offeringIdentifierHumanReadableName.inverse();
     }
-    
+
     protected Map<TypeInstance, Set<String>> getTypeIntanceProcedureMap() {
         return typeInstanceProcedures;
     }
-    
+
     protected Map<ComponentAggregation, Set<String>> getComponentAggregationProcedureMap() {
         return componentAggregationProcedures;
     }
-    
+
     protected Map<String, Set<String>> getTypeOfProcedureMap() {
         return typeOfProceduresMap;
     }
@@ -896,8 +896,8 @@ public abstract class AbstractSosContentCache extends AbstractStaticSosContentCa
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
                 globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
                 featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
-		procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
-		typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
+        procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName,
+        typeInstanceProcedures, componentAggregationProcedures, typeOfProceduresMap);
     }
 
     @Override

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -66,7 +66,7 @@ import ucar.nc2.constants.CF.FeatureType;
 /**
  * Abstract encoder class of {@link AbstractNetcdfEncoder} for OceanSITES netCDF
  * encoding
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -220,7 +220,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
             boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
                     .getInstance().getPlatformDefinition(), OceanSITESConstants.PLATFORM_CODE);
             if (exists) {
-                return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE); 
+                return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE);
             }
         }
         return super.addPlatform(writer, sensorDataset);
@@ -343,7 +343,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
             netCDFVersion = "4.0";
         }
         return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.NETCDF_VERSION, netCDFVersion));
-    
+
     }
 
     protected CDMNode addReferences(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {

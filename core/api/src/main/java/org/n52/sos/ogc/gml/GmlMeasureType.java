@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,9 +32,9 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * Class represents a GML conform MeasureType element
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GmlMeasureType {
 
@@ -50,7 +50,7 @@ public class GmlMeasureType {
 
     /**
      * constructor
-     * 
+     *
      * @param value
      *            Measured value
      */
@@ -60,7 +60,7 @@ public class GmlMeasureType {
 
     /**
      * constructor
-     * 
+     *
      * @param value
      *            Measured value
      * @param unit
@@ -88,7 +88,7 @@ public class GmlMeasureType {
 
     /**
      * Set unit of measure
-     * 
+     *
      * @param unit
      *            Unit of measure to set
      */
@@ -98,7 +98,7 @@ public class GmlMeasureType {
 
     /**
      * Get unit of measure
-     * 
+     *
      * @return Unit of measure
      */
     public String getUnit() {
@@ -112,7 +112,7 @@ public class GmlMeasureType {
 
     /**
      * Check whether measured value is set
-     * 
+     *
      * @return <code>true</code>, if measured value is set
      */
     public boolean isSetValue() {
@@ -121,7 +121,7 @@ public class GmlMeasureType {
 
     /**
      * Check whether unit of measure is set
-     * 
+     *
      * @return <code>true</code>, if unit of measure is set
      */
     public boolean isSetUnit() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,9 +37,9 @@ import org.n52.iceland.ds.Datasource;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InstallationConfiguration {
@@ -58,7 +58,7 @@ public class InstallationConfiguration {
     private boolean createSchema = false;
 
     private boolean dropSchema = false;
-    
+
     private boolean forceUpdateSchema = false;
 
     public InstallationConfiguration() {
@@ -153,9 +153,9 @@ public class InstallationConfiguration {
     public boolean isForceUpdateSchema() {
         return forceUpdateSchema;
     }
-    
+
     public void setForceUpdateSchema(boolean forceUpdateSchema) {
         this.forceUpdateSchema = forceUpdateSchema;
     }
-    
+
 }

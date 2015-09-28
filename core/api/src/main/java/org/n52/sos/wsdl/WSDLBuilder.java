@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,14 +36,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.wsdl.WSDLConstants.Operations;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +49,7 @@ import com.google.common.annotations.VisibleForTesting;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class WSDLBuilder {
@@ -69,7 +67,7 @@ public class WSDLBuilder {
     private static final String SOS_KVP_PORT = "SosKvpPort";
 
     private static final String SOS_POX_PORT = "SosPoxPort";
-    
+
     private static final String SOAP_ENPOINT_URL_PLACEHOLDER = "SOAP_ENDPOINT_URL";
 
     // private final WSDLFactory factory;
@@ -90,7 +88,9 @@ public class WSDLBuilder {
     //
     // private Port soapPort, kvpPort, poxPort;
 
-    private URI soapEndpoint, poxEndpoint, kvpEndpoint;
+    private URI soapEndpoint;
+    private URI poxEndpoint;
+    private URI kvpEndpoint;
 
     public WSDLBuilder() {
     }

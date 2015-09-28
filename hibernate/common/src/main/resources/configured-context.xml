@@ -5,7 +5,7 @@
 
     <bean id="observationSettingProvider"
           class="org.n52.sos.ds.hibernate.util.ObservationSettingProvider" />
-          
+
     <bean id="procedureI18NDAO"
           class="org.n52.sos.ds.hibernate.dao.i18n.ProcedureI18NDAO"/>
 

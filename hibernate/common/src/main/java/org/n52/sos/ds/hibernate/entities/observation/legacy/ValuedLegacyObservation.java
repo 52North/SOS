@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,14 +49,14 @@ import org.n52.sos.ogc.swes.SwesExtensions;
 public interface ValuedLegacyObservation<T>
         extends ValuedObservation<T>,
                 HasWriteableObservationContext {
-    
+
     abstract OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
-    
+
     abstract void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport;
-    
+
     abstract void addValueSpecificDataToObservation(OmObservation observation, Session session, Extensions extensions) throws OwsExceptionReport;
-    
+
     abstract void addObservationValueToObservation(OmObservation observation, Value<?> value, String responseFormat) throws OwsExceptionReport;
-    
+
     abstract String getDiscriminator();
 }

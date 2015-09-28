@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -376,8 +376,8 @@ public interface JSONConstants {
 
     String WITHIN = "within";
 
-	String PARAMETER = "parameter";
-	
-	String NAMED_VALUE = "NamedValue";
-	
+    String PARAMETER = "parameter";
+
+    String NAMED_VALUE = "NamedValue";
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,15 +34,15 @@ import org.n52.sos.ogc.om.NamedValue;
 
 /**
  * Hibernate DAO class to om:pramameter
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class ParameterDAO {
 
     /**
      * Insert a new om:parameter into the datasource
-     * 
+     *
      * @param namedValue
      *            Parameter definition
      * @param observationId

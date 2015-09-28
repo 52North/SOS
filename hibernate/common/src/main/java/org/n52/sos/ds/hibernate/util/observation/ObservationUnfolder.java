@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -112,13 +112,13 @@ public class ObservationUnfolder {
                      */
                     if (fieldForToken instanceof SweTime) {
                         try {
-                        	if (fieldForToken.isSetDefinition() && OmConstants.RESULT_TIME.equals(fieldForToken.getDefinition())) {
-                    			resultTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
-                    		} else {
-                    			if (phenomenonTime == null) {
-                    				phenomenonTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
-                    			}
-                    		}
+                            if (fieldForToken.isSetDefinition() && OmConstants.RESULT_TIME.equals(fieldForToken.getDefinition())) {
+                                resultTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
+                            } else {
+                                if (phenomenonTime == null) {
+                                    phenomenonTime = new TimeInstant(DateTimeHelper.parseIsoString2DateTime(token));
+                                }
+                            }
                         } catch (final OwsExceptionReport e) {
                             throw e;
                         } catch (final Exception e) {
@@ -201,15 +201,15 @@ public class ObservationUnfolder {
         newObservation.setObservationConstellation(obsConst);
         newObservation.setValidTime(multiObservation.getValidTime());
         if (resultTime != null && !resultTime.isEmpty()) {
-        	newObservation.setResultTime(resultTime);
+            newObservation.setResultTime(resultTime);
         } else if (multiObservation.isSetResultTime() && !multiObservation.getResultTime().isEmpty()) {
-        	newObservation.setResultTime(multiObservation.getResultTime());
+            newObservation.setResultTime(multiObservation.getResultTime());
         } else {
-        	if (phenomenonTime instanceof TimeInstant) {
-        		newObservation.setResultTime((TimeInstant)phenomenonTime);
-        	} else if (phenomenonTime instanceof TimePeriod) {
-        		newObservation.setResultTime(new TimeInstant(((TimePeriod)phenomenonTime).getEnd()));
-        	}
+            if (phenomenonTime instanceof TimeInstant) {
+                newObservation.setResultTime((TimeInstant)phenomenonTime);
+            } else if (phenomenonTime instanceof TimePeriod) {
+                newObservation.setResultTime(new TimeInstant(((TimePeriod)phenomenonTime).getEnd()));
+            }
         }
         newObservation.setTokenSeparator(multiObservation.getTokenSeparator());
         newObservation.setTupleSeparator(multiObservation.getTupleSeparator());

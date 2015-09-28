@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -64,14 +64,14 @@ public class FeaturesRequestHandler extends RequestHandler {
                 return handleFeatureByIdRequest((FeatureByIdRequest)request);
 
             } else if (request instanceof FeaturesSearchRequest) {
-                // Case B: search features 
+                // Case B: search features
                 return handleFeaturesSearchRequest((FeaturesSearchRequest)request);
-                
+
             } else if (request instanceof FeaturesRequest) {
                 // Case C: global resource
                 return handleFeaturesRequest((FeaturesRequest)request);
             }
-            
+
         }
         throw logRequestTypeNotSupportedByThisHandlerAndCreateException(request,this.getClass().getName());
     }
@@ -89,18 +89,18 @@ public class FeaturesRequestHandler extends RequestHandler {
     {
         GetFeatureOfInterestResponseDocument xb_FeatureOfInterestResponseDoc = getFeatureOfInterestFromSosCore(request);
         Set<String> featureIds = new HashSet<String>();
-        
+
         if (isFOIMemberArrayAvailable(xb_FeatureOfInterestResponseDoc)) {
             for (FeaturePropertyType xb_feature : xb_FeatureOfInterestResponseDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray()) {
                 SFSamplingFeatureType xb_SFFeature = SFSamplingFeatureDocument.Factory.parse(xb_feature.newInputStream()).getSFSamplingFeature();
-                if (xb_SFFeature.isSetIdentifier() && 
-                        xb_SFFeature.getIdentifier().getStringValue() != null && 
+                if (xb_SFFeature.isSetIdentifier() &&
+                        xb_SFFeature.getIdentifier().getStringValue() != null &&
                         !xb_SFFeature.getIdentifier().getStringValue().isEmpty()) {
                     featureIds.add(xb_SFFeature.getIdentifier().getStringValue());
                 }
             }
         }
-        
+
         return new FeaturesResponse(featureIds.toArray(new String[featureIds.size()]));
     }
 
@@ -136,12 +136,12 @@ public class FeaturesRequestHandler extends RequestHandler {
 
     private boolean isFOIMemberArrayAvailable(GetFeatureOfInterestResponseDocument xb_getFeatureOfInterestResponseDoc)
     {
-        return xb_getFeatureOfInterestResponseDoc != null && 
+        return xb_getFeatureOfInterestResponseDoc != null &&
                 xb_getFeatureOfInterestResponseDoc.getGetFeatureOfInterestResponse() != null &&
                 xb_getFeatureOfInterestResponseDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray() != null;
     }
 
-    private GetFeatureOfInterestResponseDocument getFeatureOfInterestFromSosCore(FeaturesRequest request) throws OwsExceptionReport, XmlException 
+    private GetFeatureOfInterestResponseDocument getFeatureOfInterestFromSosCore(FeaturesRequest request) throws OwsExceptionReport, XmlException
     {
         XmlObject xb_getFeatureOfInterestResponse =executeSosRequest(request.getGetFeatureOfInterestRequest());
         if (xb_getFeatureOfInterestResponse instanceof GetFeatureOfInterestResponseDocument) {
@@ -153,8 +153,9 @@ public class FeaturesRequestHandler extends RequestHandler {
 
     private FeaturePropertyType getFeatureFromSosCoreResponse(GetFeatureOfInterestResponseDocument xb_getFeatureOfInterestResponseDoc)
     {
-        if (isFeatureArrayAvailableAndContains1Feature(xb_getFeatureOfInterestResponseDoc))
+        if (isFeatureArrayAvailableAndContains1Feature(xb_getFeatureOfInterestResponseDoc)) {
             return xb_getFeatureOfInterestResponseDoc.getGetFeatureOfInterestResponse().getFeatureMemberArray(0);
+        }
         return null;
     }
 

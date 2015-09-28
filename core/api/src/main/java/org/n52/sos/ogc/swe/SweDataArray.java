@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -143,7 +143,7 @@ public class SweDataArray extends SweAbstractDataComponent {
         }
         return values.add(blockOfTokensToAddAtTheEnd);
     }
-    
+
     public boolean addAll(List<List<String>> newValues) {
         if (values == null) {
             values = newValues;

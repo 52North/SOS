@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,7 +40,7 @@ import org.n52.sos.response.DummyResponse;
 
 /**
  * SOS RegisterSensor request
- * 
+ *
  * @since 4.0.0
  */
 public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractServiceResponse> {
@@ -72,7 +72,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * constructor
-     * 
+     *
      * @param system
      *            SOS sensor system
      * @param sosComponents
@@ -84,7 +84,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
      */
     /**
      * constructor
-     * 
+     *
      * @param observableProperties
      *            Observable properties
      * @param sensorDescription
@@ -102,7 +102,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * Get observableProperties
-     * 
+     *
      * @return observableProperties
      */
     public Collection<AbstractPhenomenon> getObservableProperties() {
@@ -111,7 +111,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * Set observableProperties
-     * 
+     *
      * @param observableProperties
      *            observableProperties
      */
@@ -121,7 +121,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * Get sensor description
-     * 
+     *
      * @return sensor description
      */
     public String getSensorDescription() {
@@ -130,7 +130,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * Set sensor description
-     * 
+     *
      * @param sensorDescription
      *            sensor description
      */
@@ -159,7 +159,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * Get featuresOfInterst
-     * 
+     *
      * @return featuresOfInterst
      */
     public Collection<AbstractFeature> getFeaturesOfInterest() {
@@ -168,7 +168,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
 
     /**
      * Set featuresOfInterst
-     * 
+     *
      * @param featuresOfInterest
      *            featuresOfInterst
      */
@@ -180,7 +180,7 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
     public String getOperationName() {
         return operationName;
     }
-    
+
     @Override
     public AbstractServiceResponse getResponse() throws OwsExceptionReport {
         return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());

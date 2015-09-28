@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -396,7 +396,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         c.add(Restrictions.not(Restrictions.in("op." + ObservableProperty.ID, observablePropertyIds)));
         c.add(Restrictions.not(Restrictions.in("f." + FeatureOfInterest.ID, featureIds)));
     }
-    
+
     @Override
     public String addProcedureAlias(Criteria criteria) {
         criteria.createAlias(Observation.PROCEDURE, Procedure.ALIAS);

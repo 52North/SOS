@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -141,9 +141,9 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private Set<String> northingNames = Collections.emptySet();
     private Set<String> eastingNames = Collections.emptySet();
     private Set<String> altitudeNames = Collections.emptySet();
-    
+
     /**
-     * 
+     *
      * Get the keys
      *
      * @return Set of keys
@@ -586,10 +586,10 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private void transformLocation(SmlLocation location, int targetCrs) throws OwsExceptionReport {
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
     }
-    
+
     /**
      * Check if the name is a defined altitude name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is an altitude name
@@ -602,7 +602,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if the name is a defined northing name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is a northing name
@@ -615,7 +615,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if the name is a defined easting name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is an easting name
@@ -652,7 +652,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
                                 int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 Envelope transformEnvelope =
                                         getGeomtryHandler().transformEnvelope(envelope.toEnvelope(),
-                                        		sourceCrs, targetCrs);
+                                                sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new SosEnvelope(transformEnvelope, targetCrs),
                                                 ProcedureDescriptionSettings.getInstance().getLatLongUom());
@@ -757,12 +757,12 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     @VisibleForTesting
     protected int getCrsFromString(String crs) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(crs) && !"NOT_SET".equalsIgnoreCase(crs)) {
-        	int lastIndex = 0;
-			if (crs.startsWith(Constants.HTTP)) {
-				lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
-			} else if (crs.indexOf(Constants.COLON_STRING) != -1) {
-				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
-			}
+            int lastIndex = 0;
+            if (crs.startsWith(Constants.HTTP)) {
+                lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
+            } else if (crs.indexOf(Constants.COLON_STRING) != -1) {
+                lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
+            }
             try {
                 return Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
@@ -786,7 +786,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
             if (Character.isDigit(referenceFrame.toCharArray()[i])){
                 return true;
             }
-        } 
+        }
         return false;
     }
 
@@ -964,7 +964,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
     private ServiceConfiguration getConfiguration() {
         return ServiceConfiguration.getInstance();
     }
-    
+
     /**
      * @return the northingNames
      */
@@ -985,7 +985,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if northing names contains name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is defined.
@@ -1014,7 +1014,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if easting names contains name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is defined.
@@ -1043,7 +1043,7 @@ public class CoordinateTransformator implements RequestResponseModifier, Constru
 
     /**
      * Check if altitude names contains name
-     * 
+     *
      * @param name
      *            Name to check
      * @return <code>true</code>, if the name is defined.

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,16 +45,16 @@ import com.vividsolutions.jts.io.WKTReader;
 
 /**
  * Utility class for the Java Topology Suite.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class JTSHelper implements Constants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JTSHelper.class);
-    
+
     public static String WKT_POLYGON = "Polygon";
-    
+
     public static String WKT_POINT = "Point";
 
     public static final CoordinateFilter COORDINATE_SWITCHING_FILTER = new CoordinateFilter() {
@@ -70,7 +70,7 @@ public class JTSHelper implements Constants {
      * Creates a JTS Geometry from an WKT representation. Switches the
      * coordinate order if needed.
      * <p/>
-     * 
+     *
      * @param wkt
      *            WKT representation of the geometry
      * @param srid
@@ -101,7 +101,7 @@ public class JTSHelper implements Constants {
 
     /**
      * Get the coordinates of a Geometry as String.
-     * 
+     *
      * @param geom
      *            Geometry to get coordinates
      *            <p/>
@@ -136,7 +136,7 @@ public class JTSHelper implements Constants {
     /**
      * Creates a WKT Polygon representation from lower and upper corner values.
      * <p/>
-     * 
+     *
      * @param lowerCorner
      *            Lower corner coordinates
      * @param upperCorner
@@ -164,7 +164,7 @@ public class JTSHelper implements Constants {
     /**
      * Switches the coordinates of a JTS Geometry.
      * <p/>
-     * 
+     *
      * @param <G>
      *            the geometry type
      * @param geometry
@@ -201,7 +201,7 @@ public class JTSHelper implements Constants {
 
     /**
      * Creates a WKT Point string form coordinate string.
-     * 
+     *
      * @param coordinates
      *            Coordinate string
      * @return WKT Point string

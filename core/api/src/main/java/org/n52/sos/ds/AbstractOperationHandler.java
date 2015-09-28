@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -213,7 +213,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     protected void addProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getProcedures());
     }
-    
+
     protected void addQueryableProcedureParameter(OwsOperation opsMeta) {
         addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
     }
@@ -273,7 +273,7 @@ public abstract class AbstractOperationHandler implements OperationHandler {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);
         }
     }
-    
+
     public boolean isIncludeChildObservableProperties() {
         return includeChildObservableProperties;
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -72,7 +72,7 @@ import org.n52.sos.util.XmlHelper;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  */
 public class SensorsDecoder extends ResourceDecoder {
 
@@ -86,7 +86,7 @@ public class SensorsDecoder extends ResourceDecoder {
         // 1 identify type of request: global resource OR with id
         if (pathPayload != null && !pathPayload.isEmpty() && httpRequest.getQueryString() == null) {
             // 2.1 with id
-            
+
             // 2.1.1 build describe sensor request with id pathPayload
             // create DescribeSensorRequest with service=SOS and version=2.0.0
             DescribeSensorRequest describeSensorRequest = createDescribeSensorRequest(pathPayload);
@@ -94,15 +94,15 @@ public class SensorsDecoder extends ResourceDecoder {
             return new GetSensorByIdRequest(describeSensorRequest);
 
         } else if (pathPayload == null && httpRequest.getQueryString() == null) {
-            
+
             GetCapabilitiesRequest capabilitiesRequest = createGetCapabilitiesRequestWithContentSectionOnly();
-            
+
             return new GetSensorsRequest(capabilitiesRequest);
-            
+
         } else {
             String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceSensors(),true,true,false);
             BadRequestException bR = new BadRequestException(errorMsg);
-            throw new NoApplicableCodeException().causedBy(bR); 
+            throw new NoApplicableCodeException().causedBy(bR);
         }
     }
 
@@ -110,7 +110,7 @@ public class SensorsDecoder extends ResourceDecoder {
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
             String pathPayload) throws OwsExceptionReport
     {
-    	throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
+        throw new OperationNotSupportedException(String.format("HTTP-DELETE + \"%s\"",
                 bindingConstants.getResourceSensors()));
     }
 
@@ -156,24 +156,24 @@ public class SensorsDecoder extends ResourceDecoder {
     {
         // - one observable property
         insertSensorRequest.setObservableProperty(getObservablePropertiesFromSmlSystem(xb_system));
-        
+
         SosInsertionMetadata insertionMetadata = new SosInsertionMetadata();
         Capabilities xb_insertionMetadata = null;
-        
+
         if (xb_system.getCapabilitiesArray().length > 0) {
-            for (Capabilities xb_Capability : xb_system.getCapabilitiesArray()) { 
+            for (Capabilities xb_Capability : xb_system.getCapabilitiesArray()) {
                 if (xb_Capability.isSetName() && xb_Capability.getName().equalsIgnoreCase(bindingConstants.getSmlCapabilityInsertMetadataName())) {
                     xb_insertionMetadata = xb_Capability;
                     break;
                 }
             }
         }
-        
+
         if (xb_insertionMetadata == null) {
-        	throw new MissingParameterValueException(bindingConstants.getSmlCapabilityInsertMetadataName());
+            throw new MissingParameterValueException(bindingConstants.getSmlCapabilityInsertMetadataName());
         }
         setAdditionalMetadata(insertionMetadata,xb_insertionMetadata);
-        
+
         return insertionMetadata;
     }
 
@@ -209,9 +209,9 @@ public class SensorsDecoder extends ResourceDecoder {
         ArrayList<String> observableProperties = new ArrayList<String>();
         // first check outputs and than inputs
         if (isOutputListAvailable(xb_system)) {
-            
+
             IoComponentPropertyType[] xb_Outputs = xb_system.getOutputs().getOutputList().getOutputArray();
-            
+
             for (IoComponentPropertyType xb_Output : xb_Outputs) {
                 if (isObservablePropertySetAndNotEmptyString(xb_Output)) {
                     observableProperties.add(xb_Output.getObservableProperty().getDefinition());
@@ -219,9 +219,9 @@ public class SensorsDecoder extends ResourceDecoder {
             }
         }
         if (isInputListAvailable(xb_system)) {
-            
+
             IoComponentPropertyType[] xb_Inputs = xb_system.getInputs().getInputList().getInputArray();
-            
+
             for (IoComponentPropertyType xb_Input : xb_Inputs) {
                 if (isObservablePropertySetAndNotEmptyString(xb_Input)) {
                     observableProperties.add(xb_Input.getObservableProperty().getDefinition());
@@ -241,7 +241,7 @@ public class SensorsDecoder extends ResourceDecoder {
     {
         return xb_system.isSetOutputs() && xb_system.getOutputs().isSetOutputList() && xb_system.getOutputs().getOutputList().getOutputArray().length > 0;
     }
-    
+
     private boolean isInputListAvailable(SystemType xb_system)
     {
         return xb_system.isSetInputs() && xb_system.getInputs().isSetInputList() && xb_system.getInputs().getInputList().getInputArray().length > 0;
@@ -250,15 +250,15 @@ public class SensorsDecoder extends ResourceDecoder {
     private AbstractSensorML createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws OwsExceptionReport
     {
         // TODO add some error handling
-    	Object decodedObject = CodingHelper.decodeXmlObject(xb_system);
-    	if (decodedObject instanceof AbstractSensorML)
-    	{
-    		return (AbstractSensorML) decodedObject;
-    	}
+        Object decodedObject = CodingHelper.decodeXmlObject(xb_system);
+        if (decodedObject instanceof AbstractSensorML)
+        {
+            return (AbstractSensorML) decodedObject;
+        }
         throw new NoApplicableCodeException().causedBy(
-        		new IllegalArgumentException(
-        				String.format("SystemType '%s' could not be decoded",
-        						decodedObject!=null?decodedObject.getClass().getName():"null")));
+                new IllegalArgumentException(
+                        String.format("SystemType '%s' could not be decoded",
+                                decodedObject!=null?decodedObject.getClass().getName():"null")));
     }
 
     @Override
@@ -271,7 +271,7 @@ public class SensorsDecoder extends ResourceDecoder {
             updateSensorRequest.setService(bindingConstants.getSosService());
             updateSensorRequest.setProcedureDescriptionFormat(bindingConstants.getDefaultDescribeSensorOutputFormat());
             updateSensorRequest.setProcedureIdentifier(pathPayload);
-            
+
             XmlObject sensorPostContent = XmlHelper.parseXmlRequest(httpRequest);
             if(sensorPostContent instanceof SensorDocument) {
                 SensorDocument xb_RestSensorDoc = (SensorDocument) sensorPostContent;
@@ -285,7 +285,7 @@ public class SensorsDecoder extends ResourceDecoder {
         }
         return null;
     }
-    
+
     private DescribeSensorRequest createDescribeSensorRequest(String procedureId)
     {
         DescribeSensorRequest describeSensorRequest = new DescribeSensorRequest();
@@ -295,12 +295,13 @@ public class SensorsDecoder extends ResourceDecoder {
         describeSensorRequest.setProcedure(procedureId);
         return describeSensorRequest;
     }
-    
+
     @Override
     protected RestRequest decodeOptionsRequest(HttpServletRequest httpRequest,
             String pathPayload)
     {
-        boolean isGlobal = false, isCollection = false;
+        boolean isGlobal = false;
+        boolean isCollection = false;
         if (httpRequest != null && httpRequest.getQueryString() == null && pathPayload == null)
         {
             isGlobal = true;
@@ -308,6 +309,6 @@ public class SensorsDecoder extends ResourceDecoder {
         }
         return new OptionsRestRequest(bindingConstants.getResourceSensors(),isGlobal,isCollection);
     }
-    
+
 
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -79,7 +79,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreDatasource implements SQLConstants {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractHibernateDatasource.class);
 
     protected static final String SCHEMA_KEY = HibernateConstants.DEFAULT_SCHEMA;
@@ -766,7 +766,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     }
 
     /**
-     * @param multi
+     * @param multiLanguageDatasource
      *            language the multi language to set
      */
     public void setMultiLangugage(boolean multiLanguageDatasource) {
@@ -820,7 +820,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         // eliminate duplicated lines while keeping the order
         return checkScriptForDuplicatedEntries(checkedSchema);
     }
-    
+
     protected String[] checkScriptForDuplicatedEntries(List<String> script) {
         Set<String> nonDublicated = Sets.newLinkedHashSet(script);
         return nonDublicated.toArray(new String[nonDublicated.size()]);
@@ -830,7 +830,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      * Create the beginning character of a generated foreign key from a table
      * name hasCode()
      *
-     * @param string
+     * @param tableName
      *            Table name
      * @return Beginning characters of a generated foreign key like
      *         "FK + table name hasCode()"
@@ -850,7 +850,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected String[] checkDropSchema(String[] dropSchema) {
         return checkScriptForGeneratedAndDuplicatedEntries(dropSchema);
     }
-    
+
     /**
      * Create quoted string with schema.table
      * @param settings Datasource settings

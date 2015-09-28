@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,9 +43,6 @@ import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.xml.namespace.QName;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.decode.DecoderRepository;
@@ -107,8 +104,9 @@ import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.sos.util.OMHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -704,6 +702,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                 operands.add(GmlConstants.QN_TIME_PERIOD);
                 operands.add(GmlConstants.QN_TIME_INSTANT);
                 break;
+            default:
+                LOGGER.trace("Not supported version '{}'", version);
+                break;
         }
 
         filterCapabilities.setTemporalOperands(operands);
@@ -722,6 +723,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
                     ops.add(op, GmlConstants.QN_TIME_INSTANT);
                     ops.add(op, GmlConstants.QN_TIME_PERIOD);
                 }
+                break;
+            default:
+                LOGGER.trace("Not supported version '{}'", version);
                 break;
         }
         filterCapabilities.setTemporalOperators(ops);

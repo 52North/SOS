@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import org.n52.sos.request.GetResultRequest;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetResultKvpDecoderv20 extends AbstractKvpDecoder {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
@@ -93,7 +93,7 @@ public class GetResultKvpDecoderv20 extends AbstractKvpDecoder {
                         } catch (OwsExceptionReport e) {
                             throw new InvalidTemporalFilterParameterException(parameterValues).causedBy(e);
                         }
-    
+
                     } // spatialFilter (optional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.spatialFilter.name())) {
                         request.setSpatialFilter(parseSpatialFilter(

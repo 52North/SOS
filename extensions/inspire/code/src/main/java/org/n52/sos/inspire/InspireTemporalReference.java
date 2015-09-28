@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,10 +38,10 @@ import com.google.common.collect.Lists;
 
 /**
  * Service internal representation of INSPIRE temporal reference
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireTemporalReference {
 
@@ -63,7 +63,7 @@ public class InspireTemporalReference {
 
     /**
      * Get the date of creation
-     * 
+     *
      * @return the dateOfCreation
      */
     public InspireDateOfCreation getDateOfCreation() {
@@ -72,7 +72,7 @@ public class InspireTemporalReference {
 
     /**
      * Set the date of creation
-     * 
+     *
      * @param dateOfCreation
      *            the dateOfCreation to set
      */
@@ -82,7 +82,7 @@ public class InspireTemporalReference {
 
     /**
      * Check if the date of creation is set
-     * 
+     *
      * @return <code>true</code>, if the date of creation is set
      */
     public boolean isSetDateOfCreation() {
@@ -91,7 +91,7 @@ public class InspireTemporalReference {
 
     /**
      * Get the date of last revision
-     * 
+     *
      * @return the dateOfLastRevision
      */
     public InspireDateOfLastRevision getDateOfLastRevision() {
@@ -100,7 +100,7 @@ public class InspireTemporalReference {
 
     /**
      * Set the date of last revision
-     * 
+     *
      * @param dateOfLastRevision
      *            the dateOfLastRevision to set
      */
@@ -110,7 +110,7 @@ public class InspireTemporalReference {
 
     /**
      * Check if the date of last revision is set
-     * 
+     *
      * @return <code>true</code>, if the date of last revision is set
      */
     public boolean isSetDateOfLastRevision() {
@@ -119,7 +119,7 @@ public class InspireTemporalReference {
 
     /**
      * gethe dates of publication
-     * 
+     *
      * @return the datesOfPublication
      */
     public List<InspireDateOfPublication> getDatesOfPublication() {
@@ -128,7 +128,7 @@ public class InspireTemporalReference {
 
     /**
      * Set the dates of publication, clears the existing collection
-     * 
+     *
      * @param datesOfPublication
      *            the datesOfPublication to set
      */
@@ -141,7 +141,7 @@ public class InspireTemporalReference {
 
     /**
      * Add a date of publication
-     * 
+     *
      * @param dateOfPublication
      *            the date of publication to add
      * @return this
@@ -153,7 +153,7 @@ public class InspireTemporalReference {
 
     /**
      * Check if date of publications are set
-     * 
+     *
      * @return <code>true</code>, if date of publications are set
      */
     public boolean isSetDatesOfPublication() {
@@ -162,7 +162,7 @@ public class InspireTemporalReference {
 
     /**
      * Get the temporal extents
-     * 
+     *
      * @return the temporalExtents
      */
     public List<Time> getTemporalExtents() {
@@ -171,7 +171,7 @@ public class InspireTemporalReference {
 
     /**
      * Set the temporal extents, clears the existing collection
-     * 
+     *
      * @param temporalExtents
      *            the temporalExtents to set
      */
@@ -184,7 +184,7 @@ public class InspireTemporalReference {
 
     /**
      * Add a temporal extent
-     * 
+     *
      * @param temporalExtent
      *            the temporal extent to add
      * @return this
@@ -196,7 +196,7 @@ public class InspireTemporalReference {
 
     /**
      * Check if temporal extents are set
-     * 
+     *
      * @return <code>true</code>, if temporal extents are set
      */
     public boolean isSetTemporalExtents() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
 public class UnsupportedDecoderXmlInputException extends UnsupportedDecoderInputException {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -7244575661954080973L;
 

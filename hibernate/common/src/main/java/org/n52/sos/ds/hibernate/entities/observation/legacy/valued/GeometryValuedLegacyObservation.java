@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -70,11 +70,11 @@ public class GeometryValuedLegacyObservation
             throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
+
+    @Override
+    public String getValueAsString() {
+        return getValue().toText();
+    }
 
     @Override
     public <T> T accept(ValuedObservationVisitor<T> visitor)

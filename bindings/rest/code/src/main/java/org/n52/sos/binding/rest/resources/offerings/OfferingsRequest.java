@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import org.n52.sos.binding.rest.requests.RestRequest;
  *
  */
 public class OfferingsRequest implements RestRequest {
-    
+
     private GetCapabilitiesRequest getCapabilitiesRequest;
 
     public OfferingsRequest(GetCapabilitiesRequest getCapabilitiesRequest)

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -63,14 +63,14 @@ import org.n52.iceland.ds.Datasource;
  *
  */
 public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDatasource {
-	
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
 
     protected static final String ORACLE_DRIVER_CLASS = "oracle.jdbc.OracleDriver";
 
     protected static final Pattern JDBC_THIN_URL_PATTERN = Pattern
             .compile("^jdbc:oracle:thin:@//([^:]+):([0-9]+)/(.*)$");
-    
+
     protected static final Pattern JDBC_THIN_SID_URL_PATTERN = Pattern
             .compile("^jdbc:oracle:thin:@([^:]+):([0-9]+):(.*)$");
 
@@ -107,7 +107,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     }
 
     private Mode mode = Mode.OCI;
-    
+
     private Syntax syntax = Syntax.SERVICE;
 
     public AbstractOracleDatasource() {
@@ -266,7 +266,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
                 mode = Mode.THIN;
             }
         }
-        
+
         try {
             return driver.connect(toThinUrl(settings), props);
         } catch (SQLException e) {

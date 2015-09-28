@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -77,7 +77,7 @@ public class SeriesValueTimeDAO extends AbstractSeriesValueTimeDAO {
 //        return (TemporalReferencedSeriesObservation) getSeriesValueCriteriaFor(request, series, temporalFilterCriterion,
 //                SosConstants.SosIndeterminateTime.first, session).uniqueResult();
 //    }
-//    
+//
 //    /**
 //     * Query the maximum {@link TemporalReferencedSeriesObservation} for parameter
 //     *

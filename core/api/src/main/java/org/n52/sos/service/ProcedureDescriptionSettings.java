@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -110,7 +110,7 @@ public class ProcedureDescriptionSettings implements Constructable {
     public void init() {
         ProcedureDescriptionSettings.instance = this;
     }
-    
+
     @Deprecated
     public static ProcedureDescriptionSettings getInstance() {
         return instance;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -60,13 +60,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RequestMapping(ControllerConstants.Paths.VALIDATION_AJAX_ENDPOINT)
 public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(XmlHelper.class);
 
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.POST, consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public String validate(@RequestBody String xml) {
-    	LOGGER.trace("Starting validation");
+        LOGGER.trace("Starting validation");
         ObjectNode result = JSONUtils.nodeFactory().objectNode();
         ArrayNode resultErrors = result.putArray(ERRORS_PROPERTY);
         LinkedList<XmlError> xmlErrors = new LinkedList<XmlError>();
@@ -105,11 +105,11 @@ public class ValidationAjaxEndpoint extends AbstractAdminCapabiltiesAjaxEndpoint
             }
         }
         if (errors.size() > 0) {
-        	for (XmlError e : errors) {
+            for (XmlError e : errors) {
                 resultErrors.add(e.toString());
             }
         } else if (errors.size() == 0) {
-        	result.put(VALID_PROPERTY, true);
+            result.put(VALID_PROPERTY, true);
         }
         // END of BLOCK
         // uncomment next lines if BLOCK is removed

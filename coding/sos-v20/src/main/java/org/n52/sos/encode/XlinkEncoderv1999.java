@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,7 +50,7 @@ import com.google.common.base.Joiner;
 
 public class XlinkEncoderv1999 extends AbstractXmlEncoder<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(XlinkEncoderv1999.class);
-    
+
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(W3CConstants.NS_XLINK,
             W3CHrefAttribute.class);
 

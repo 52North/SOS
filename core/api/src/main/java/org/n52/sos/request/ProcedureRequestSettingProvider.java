@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,30 +34,30 @@ import org.n52.iceland.lifecycle.Constructable;
 
 /**
  * ProcedureRequestSettings for procedure request/response handling
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
 @Configurable
 public class ProcedureRequestSettingProvider implements Constructable {
-    
+
     public static final String ALLOW_QUERYING_FOR_INSTANCES_ONLY = "request.procedure.instancesOnly";
-    
+
     public static final String SHOW_ONLY_AGGREGATED_PROCEDURES = "request.procedure.aggregationOnly";
-    
+
     public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
-    
+
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
-    
+
     private boolean allowQueryingForInstancesOnly;
-    
+
     private boolean showOnlyAggregatedProcedures;
-    
+
     private boolean encodeFullChildrenInDescribeSensor;
-    
+
     private boolean addOutputsToSensorML;
-        
+
     @Deprecated
     private static ProcedureRequestSettingProvider instance = null;
 
@@ -65,7 +65,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     public static synchronized ProcedureRequestSettingProvider getInstance() {
         return ProcedureRequestSettingProvider.instance;
     }
-    
+
     @Override
     public void init() {
         ProcedureRequestSettingProvider.instance = this;
@@ -103,7 +103,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     public void setShowOnlyAggregatedProcedures(boolean showOnlyAggregatedProcedures) {
         this.showOnlyAggregatedProcedures = showOnlyAggregatedProcedures;
     }
-    
+
     public boolean isEncodeFullChildrenInDescribeSensor() {
         return encodeFullChildrenInDescribeSensor;
     }
@@ -112,7 +112,7 @@ public class ProcedureRequestSettingProvider implements Constructable {
     public void setEncodeFullChildrenInDescribeSensor(final boolean encodeFullChildrenInDescribeSensor) {
         this.encodeFullChildrenInDescribeSensor = encodeFullChildrenInDescribeSensor;
     }
-    
+
     public boolean isAddOutputsToSensorML() {
         return addOutputsToSensorML;
     }

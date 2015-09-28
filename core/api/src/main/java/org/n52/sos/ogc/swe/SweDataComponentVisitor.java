@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -103,7 +103,7 @@ public interface SweDataComponentVisitor<T> {
 
     T visit(SmlPosition component)
             throws OwsExceptionReport;
-    
+
     T visit(SmlDataInterface component)
             throws OwsExceptionReport;
 

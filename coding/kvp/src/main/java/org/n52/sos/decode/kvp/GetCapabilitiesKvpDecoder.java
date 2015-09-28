@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,7 +52,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
 
@@ -76,12 +76,12 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
     /**
      * parses the String representing the getCapabilities request and creates a
      * SosGetCapabilities request
-     * 
+     *
      * @param element
      *            Map with getCapabilities parameters
-     * 
+     *
      * @return Returns SosGetCapabilitiesRequest representing the request
-     * 
+     *
      * @throws OwsExceptionReport
      *             If parsing the String failed
      */

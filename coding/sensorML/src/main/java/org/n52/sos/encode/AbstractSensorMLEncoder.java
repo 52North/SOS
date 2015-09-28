@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -84,17 +84,17 @@ import com.google.common.collect.Sets;
 
 /**
  * Abstract {@link AbstractXmlEncoder} class to encode OGC SensorML
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
  */
 public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object> implements ProcedureEncoder<XmlObject, Object> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLEncoder.class);
-    
+
     private static final String OUTPUT_PREFIX = "output#";
-    
+
     /**
      * Add special capabilities to abstract process:
      * <ul>
@@ -103,7 +103,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
      * <li>parentProcedures</li>
      * </ul>
      * but only, if available.
-     * 
+     *
      * @param abstractProcess
      *            SOS abstract process.
      */
@@ -137,8 +137,8 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
                     SensorMLConstants.PARENT_PROCEDURE_FIELD_DEFINITION, valueNamePairs);
         }
     }
-    
-    
+
+
     private void mergeCapabilities(final AbstractProcess process, final String capabilitiesName,
             final String definition, final Map<String, String> valueNamePairs) {
         final Optional<SmlCapabilities> capabilities =
@@ -230,7 +230,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Convert SOS sosOfferings to map with key == identifier and value = name
-     * 
+     *
      * @param offerings
      *            SOS sosOfferings
      * @return Map with identifier, name.
@@ -245,8 +245,8 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Convert SOS sosOfferings to map with key == identifier and value = name
-     * @param featureOfInterestFieldName 
-     * 
+     * @param featureOfInterestFieldName
+     *
      * @param map
      *            .values() SOS sosOfferings
      * @return Set with identifier, name.
@@ -269,7 +269,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Convert SOS sosOfferings to map with key == identifier and value = name
-     * 
+     *
      * @param offerings
      *            SOS sosOfferings
      * @return Set with identifier, name.
@@ -305,7 +305,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Creates a SOS capability object form data
-     * 
+     *
      * @param capabilitiesName
      *            Element name
      * @param fieldDefinition
@@ -372,7 +372,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Create SOS component list from child SOS procedure descriptions
-     * 
+     *
      * @param childProcedures
      *            Chile procedure descriptions
      * @return SOS component list
@@ -417,7 +417,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Get the output values from childs
-     * 
+     *
      * @param smlComponents
      *            SOS component list
      * @return Child outputs
@@ -448,7 +448,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
 
     /**
      * Get featureOfInterests from components
-     * 
+     *
      * @param smlComponents
      *            SOS component list
      * @return Child featureOfInterests
@@ -462,7 +462,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         }
         return features;
     }
-    
+
     protected boolean isIdentical(final XmlObject xmlObject, final XmlOptions xmlOptions,
             final XmlObject anotherXmlObject) {
         try {
@@ -481,10 +481,10 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         }
         return false;
     }
-    
+
     /**
      * Create a valvalue output element name
-     * 
+     *
      * @param counter
      *            Element counter
      * @param outputNames
@@ -498,7 +498,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         }
         return NcNameResolver.fixNcName(outputName);
     }
-    
+
     protected XmlOptions getOptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }

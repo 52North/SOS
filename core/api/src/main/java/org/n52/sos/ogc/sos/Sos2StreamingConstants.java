@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,9 +33,9 @@ import javax.xml.namespace.QName;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 
 public interface Sos2StreamingConstants extends Sos2Constants {
-    
+
     public static final String EN_GET_OBSERVATION_RESPONSE = "GetObservationResponse";
-    
+
     public static final String EN_OBSERVATION_DATA = "observationData";
 
     public static final QName GET_OBSERVATION_RESPONSE = new QName(NS_SOS_20, EN_GET_OBSERVATION_RESPONSE, NS_SOS_PREFIX);

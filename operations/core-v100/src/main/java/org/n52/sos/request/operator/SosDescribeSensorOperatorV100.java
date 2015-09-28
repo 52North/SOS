@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,7 +44,7 @@ import org.n52.sos.util.SosHelper;
 
 /**
  * class handles the DescribeSensor request
- * 
+ *
  * @since 4.0.0
  */
 public class SosDescribeSensorOperatorV100 extends
@@ -108,7 +108,7 @@ public class SosDescribeSensorOperatorV100 extends
         // }
         exceptions.throwIfNotEmpty();
     }
-    
+
     private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
         if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat)) {
             SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),

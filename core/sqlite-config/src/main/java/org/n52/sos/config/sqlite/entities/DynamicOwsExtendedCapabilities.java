@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,36 +34,36 @@ import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
 
 /**
  * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 @Entity(name = "dynamic_extended_capabilities")
 public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtendedCapabilitiesKey, DynamicOwsExtendedCapabilities> {
 
     private static final long serialVersionUID = -209286379108756824L;
-    
+
     /**
      * constructor
      */
     public DynamicOwsExtendedCapabilities() {
         super(null);
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param oeck
      *            the {@link OwsExtendedCapabilitiesProviderKey} to set
      */
     public DynamicOwsExtendedCapabilities(OwsExtendedCapabilitiesProviderKey oeck) {
        super(new DynamicOwsExtendedCapabilitiesKey(oeck));
     }
-    
+
     /**
      * constructor
-     * 
+     *
      * @param key
      *            the {@link DynamicOwsExtendedCapabilitiesKey} to set
      */
@@ -73,7 +73,7 @@ public class DynamicOwsExtendedCapabilities extends Activatable<DynamicOwsExtend
 
     /**
      * constructor
-     * 
+     *
      * @param service
      *            the service to set
      * @param version

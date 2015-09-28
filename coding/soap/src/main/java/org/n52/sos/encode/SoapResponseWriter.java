@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -62,7 +62,7 @@ public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
         try {
             t.writeTo(out);
         } catch (SOAPException soapex) {
-        	 throw new NoApplicableCodeException().causedBy(soapex);
+             throw new NoApplicableCodeException().causedBy(soapex);
         }
     }
 

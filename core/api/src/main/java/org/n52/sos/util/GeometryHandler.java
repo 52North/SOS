@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -108,7 +108,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     private boolean spatialDatasource;
     private String authority;
     private CRSAuthorityFactory crsAuthority;
-    private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();;
+    private final Map<Integer, CoordinateReferenceSystem> supportedCRSMap = Maps.newHashMap();
     private String srsNamePrefixSosV2;
 
     @Setting(SRS_NAME_PREFIX_SOS_V2)

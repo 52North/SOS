@@ -60,7 +60,7 @@
             </column>
         </property>
         <!-- supports types double, big_decimal, and string -->
-        <!--  
+        <!--
         <property name="longitude" type="double">
            <column name="longitude" unique-key="featLonLatUk">
             	<comment>The longitude of the feature. Optional</comment>
@@ -80,18 +80,18 @@
         	<column name="srid">
             	<comment>SRID of the longitude/latitude values. Optional</comment>
             </column>
-        </property> 
+        </property>
         -->
     </class>
-    
+
     <sql-query name="getEpsgPostgis">
     	<return-scalar column="srid" type="int"/>
     	SELECT srid FROM spatial_ref_sys
     </sql-query>
-    
+
    	<sql-query name="transformGeometryPostgis">
     	<return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
     	SELECT ST_Transform(:geometry, :srid) as geom
     </sql-query>
-    
+
 </hibernate-mapping>

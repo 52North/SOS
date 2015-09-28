@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -411,7 +411,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         Locale requestedLocale = query.getI18N();
         // set name as human readable identifier if set
         if (feature.isSetName()) {
-        	samplingFeature.setHumanReadableIdentifier(feature.getName());
+            samplingFeature.setHumanReadableIdentifier(feature.getName());
         }
         if (i18nDAO == null) {
             // no i18n support
@@ -538,7 +538,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                             continue;
                         }
                         if (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry)) {
-                        	coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                             if (geometry.getSRID() != srid) {
                                 srid = geometry.getSRID();

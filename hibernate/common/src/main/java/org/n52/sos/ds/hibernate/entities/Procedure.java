@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,9 +54,9 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public static final String ID = "procedureId";
 
     public static final String DESCRIPTION_URL = "descriptionUrl";
-    
+
     public static final String ALIAS = "proc";
-    
+
     public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long procedureId;
@@ -70,13 +70,13 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean disabled;
 
     private boolean reference;
-    
+
     private Procedure typeOf;
-    
+
     private boolean isType;
-    
+
     private boolean isAggregation;
-    
+
     public long getProcedureId() {
         return this.procedureId;
     }
@@ -160,7 +160,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public void setTypeOf(Procedure typeOf) {
         this.typeOf = typeOf;
     }
-    
+
     /**
      * @return <code>true</code>, if is not null
      */
@@ -174,7 +174,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public boolean isType() {
         return isType;
     }
-    
+
     /**
      * @return the isType
      */
@@ -195,7 +195,7 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     public boolean isAggregation() {
         return isAggregation;
     }
-    
+
     /**
      * @return the isAggregation
      */

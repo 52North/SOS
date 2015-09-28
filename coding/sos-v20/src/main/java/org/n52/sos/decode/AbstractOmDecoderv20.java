@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,20 +58,20 @@ import net.opengis.om.x20.NamedValuePropertyType;
 import net.opengis.om.x20.NamedValueType;
 
 public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object, Object> {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmDecoderv20.class);
-	
-	@Override
-	public Object decode(Object object) throws OwsExceptionReport, UnsupportedDecoderInputException {
-		if (object instanceof NamedValuePropertyType) {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOmDecoderv20.class);
+
+    @Override
+    public Object decode(Object object) throws OwsExceptionReport, UnsupportedDecoderInputException {
+        if (object instanceof NamedValuePropertyType) {
             return parseNamedValueType((NamedValuePropertyType) object);
         } else if (object instanceof NamedValuePropertyType[]) {
             return parseNamedValueTypeArray((NamedValuePropertyType[]) object);
         }
         throw new UnsupportedDecoderInputException(this, object);
-	}
-	
-	protected Set<NamedValue<?>> parseNamedValueTypeArray(NamedValuePropertyType[] namedValuePropertyArray)
+    }
+
+    protected Set<NamedValue<?>> parseNamedValueTypeArray(NamedValuePropertyType[] namedValuePropertyArray)
             throws OwsExceptionReport {
         Set<NamedValue<?>> parameters = Sets.newHashSet();
         for (NamedValuePropertyType namedValueProperty : namedValuePropertyArray) {
@@ -80,7 +80,7 @@ public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object
         return parameters;
     }
 
-	protected NamedValue<?> parseNamedValueType(NamedValuePropertyType namedValueProperty) throws OwsExceptionReport {
+    protected NamedValue<?> parseNamedValueType(NamedValuePropertyType namedValueProperty) throws OwsExceptionReport {
         if (namedValueProperty.isSetNamedValue()) {
             NamedValueType namedValue = namedValueProperty.getNamedValue();
             NamedValue<?> sosNamedValue = parseNamedValueValue(namedValue.getValue());
@@ -100,7 +100,7 @@ public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object
         }
     }
 
-	protected NamedValue<?> parseNamedValueValue(XmlObject xmlObject) throws OwsExceptionReport {
+    protected NamedValue<?> parseNamedValueValue(XmlObject xmlObject) throws OwsExceptionReport {
         if (xmlObject.schemaType() == XmlAnyTypeImpl.type) {
             try {
                 xmlObject = XmlObject.Factory.parse(xmlObject.xmlText().trim());

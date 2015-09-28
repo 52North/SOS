@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -760,9 +760,9 @@ public interface SosWritableContentCache
 
     void removeProcedureHumanReadableNameForIdentifier(String identifier);
 
-	void removeOfferingIdentifierForHumanReadableName(String humanReadableName);
+    void removeOfferingIdentifierForHumanReadableName(String humanReadableName);
 
-	void removeOfferingHumanReadableNameForIdentifier(String identifier);
+    void removeOfferingHumanReadableNameForIdentifier(String identifier);
 
     /**
      * Sets the allowed observation types for the specified offering.
@@ -1159,5 +1159,5 @@ public interface SosWritableContentCache
     void removeTypeOfProcedure(String type, String instance);
 
     void clearTypeOfProcedure();
-    
+
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -120,10 +120,10 @@ public abstract class AbstractValuedLegacyObservation<T>
     public void setFeatureOfInterest(FeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
-    
+
     /**
      * Create a {@link TimeValuePair} from {@link AbstractValue}
-     * 
+     *
      * @param abstractValue
      *            {@link AbstractValue} to create {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
@@ -133,13 +133,13 @@ public abstract class AbstractValuedLegacyObservation<T>
     public TimeValuePair createTimeValuePairFrom() throws OwsExceptionReport {
         return new TimeValuePair(createPhenomenonTime(), accept(new ObservationValueCreator()));
     }
-    
+
     /**
      * Add {@link AbstractValue} data to {@link OmObservation}
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to add data
-     * @param responseFormat 
+     * @param responseFormat
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value
      */
@@ -163,16 +163,16 @@ public abstract class AbstractValuedLegacyObservation<T>
         observation.setResultTime(createResutlTime(getResultTime()));
         observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
         if (hasSamplingGeometry()) {
-        	observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+            observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
         }
         addValueSpecificDataToObservation(observation, responseFormat);
         addObservationValueToObservation(observation, value, responseFormat);
         return observation;
     }
-    
+
     /**
      * Create result time from {@link Date}
-     * 
+     *
      * @param date
      *            {@link Date} to create result time from
      * @return result time
@@ -184,7 +184,7 @@ public abstract class AbstractValuedLegacyObservation<T>
 
     /**
      * Create {@link TimePeriod} from {@link Date}s
-     * 
+     *
      * @param start
      *            Start {@link Date}
      * @param end
@@ -212,7 +212,7 @@ public abstract class AbstractValuedLegacyObservation<T>
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }
-    
+
     @Override
     public OmObservation mergeValueToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
         if (!observation.isSetValue()) {
@@ -232,7 +232,7 @@ public abstract class AbstractValuedLegacyObservation<T>
     private SingleObservationValue getSingleObservationValue(Value<?> value) throws OwsExceptionReport {
         return new SingleObservationValue(createPhenomenonTime(), value);
     }
-    
+
     @Override
     public void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
         // nothing to do

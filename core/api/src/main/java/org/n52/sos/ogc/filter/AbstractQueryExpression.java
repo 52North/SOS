@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,14 +32,14 @@ import org.n52.iceland.util.StringHelper;
 
 /**
  * SOS abstract class for FES 2.0 AbstractQueryExpression
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  *
  */
 public abstract class AbstractQueryExpression {
-    
+
     private String handle;
 
     /**
@@ -56,7 +56,7 @@ public abstract class AbstractQueryExpression {
         this.handle = handle;
         return this;
     }
-    
+
     public boolean isSetHandle() {
         return StringHelper.isNotEmpty(getHandle());
     }

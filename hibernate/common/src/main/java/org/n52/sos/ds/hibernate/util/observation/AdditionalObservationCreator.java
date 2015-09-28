@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ public interface AdditionalObservationCreator extends Component<AdditionalObserv
     OmObservation create(OmObservation omObservation, Series series);
 
     OmObservation create(OmObservation omObservation, Observation<?> observation);
-    
+
     OmObservation add(OmObservation sosObservation, Observation<?> hObservation);
 
 }

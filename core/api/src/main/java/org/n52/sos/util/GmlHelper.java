@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,9 +44,9 @@ import com.vividsolutions.jts.geom.Polygon;
 /**
  * Helper class for OGC GML. Contains methods to get QName for geometry or time
  * objects.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class GmlHelper {
 
@@ -78,10 +78,10 @@ public final class GmlHelper {
         }
         return GmlConstants.QN_ABSTRACT_TIME_32;
     }
-    
+
     /**
      * Create {@link Time} from {@link DateTime}s
-     * 
+     *
      * @param start
      *            Start {@link DateTime}
      * @param end

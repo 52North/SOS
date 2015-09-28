@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -169,7 +169,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
     private static final ImmutableSet<SupportedType> SUPPORTED_TYPES = ImmutableSet.<SupportedType> builder()
             .add(new ProcedureDescriptionFormat(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_URL)).build();
 
-    
+
     private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
             ImmutableMap.of(
                     SosConstants.SOS,
@@ -177,7 +177,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                             .<String, Set<String>> builder()
                             .put(Sos2Constants.SERVICEVERSION,
                                     ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)).build());
-    
+
     public SensorMLDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(DECODER_KEYS));
@@ -503,27 +503,27 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                 ClassifierListType clt = clpt.getClassifierList();
                 if (CollectionHelper.isNotNullOrEmpty(clt.getClassifierArray()))
                 for (final Classifier c : clt.getClassifierArray()) {
-                	if (c.getTerm() != null) {
-	                    final SmlClassifier smlClassifier = new SmlClassifier();
-	                    parseTerm(c.getTerm(), smlClassifier);
-	                    sosClassifiers.add(smlClassifier);
-                	}
+                    if (c.getTerm() != null) {
+                        final SmlClassifier smlClassifier = new SmlClassifier();
+                        parseTerm(c.getTerm(), smlClassifier);
+                        sosClassifiers.add(smlClassifier);
+                    }
                 }
             }
         }
         return sosClassifiers;
     }
-    
+
     private void parseTerm(TermType t, Term term) {
-    	term.setLabel(t.getLabel());
-    	term.setName(t.getLabel());
-    	if (t.isSetDefinition()) {
-    		term.setDefinition(t.getDefinition());
-    	}
-    	if (t.isSetCodeSpace()) {
-    		term.setCodeSpace(t.getCodeSpace().getHref());
-    	}
-    	term.setValue(t.getValue());
+        term.setLabel(t.getLabel());
+        term.setName(t.getLabel());
+        if (t.isSetDefinition()) {
+            term.setDefinition(t.getDefinition());
+        }
+        if (t.isSetCodeSpace()) {
+            term.setCodeSpace(t.getCodeSpace().getHref());
+        }
+        term.setValue(t.getValue());
     }
 
     /**
@@ -741,7 +741,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                     } else {
                         if (component.isSetTitle()) {
                             sosSmlcomponent.setTitle(component.getTitle());
-                        } 
+                        }
                         if (component.isSetHref()) {
                             sosSmlcomponent.setHref(component.getHref());
                         }
@@ -821,7 +821,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         } else {
             sosIo.setIoValue(parseDataComponentOrObservablePropertyType(xbInput));
         }
-        
+
         return sosIo;
     }
 
@@ -830,7 +830,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         if (adcpt.isSetTitle()) {
             sosIo.setTitle(adcpt.getTitle());
         }
-        
+
     }
 
     @SuppressWarnings({ "rawtypes" })
@@ -899,7 +899,7 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         return new SmlDataStreamPropertyType();
     }
 
-	/**
+    /**
      * Parse {@link ObservablePropertyType}
      * @param opt Object to parse
      * @return Parsed {@link SweObservableProperty}
@@ -918,8 +918,8 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
         }
         return observableProperty;
     }
-    
-    
+
+
     private XmlOptions getXmloptions() {
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }

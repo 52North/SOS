@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -210,7 +210,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
         return session.createCriteria(clazz).add(Restrictions.eq(TemporalReferencedLegacyObservation.DELETED, false))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
         // nothing  to add

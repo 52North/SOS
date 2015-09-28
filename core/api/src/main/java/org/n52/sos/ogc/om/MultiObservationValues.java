@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,9 +33,9 @@ import org.n52.sos.ogc.om.values.MultiValue;
 
 /**
  * Class representing a multi value observation value
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            value type
  */
@@ -78,9 +78,9 @@ public class MultiObservationValues<T> extends AbstractObservationValue<MultiVal
         this.phenomenonTime = phenomenonTime;
     }
 
-	@Override
-	public boolean isSetValue() {
-		return getValue() != null && getValue().isSetValue();
-	}
+    @Override
+    public boolean isSetValue() {
+        return getValue() != null && getValue().isSetValue();
+    }
 
 }

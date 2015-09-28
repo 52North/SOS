@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -104,43 +104,43 @@ public class RangeValue<T> {
         return builder.toString();
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((rangeEnd == null) ? 0 : rangeEnd.hashCode());
-		result = prime * result
-				+ ((rangeStart == null) ? 0 : rangeStart.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result
+                + ((rangeEnd == null) ? 0 : rangeEnd.hashCode());
+        result = prime * result
+                + ((rangeStart == null) ? 0 : rangeStart.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof RangeValue)) {
-			return false;
-		}
-		final RangeValue<?> other = (RangeValue<?>) obj;
-		if (rangeEnd == null) {
-			if (other.rangeEnd != null) {
-				return false;
-			}
-		} else if (!rangeEnd.equals(other.rangeEnd)) {
-			return false;
-		}
-		if (rangeStart == null) {
-			if (other.rangeStart != null) {
-				return false;
-			}
-		} else if (!rangeStart.equals(other.rangeStart)) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof RangeValue)) {
+            return false;
+        }
+        final RangeValue<?> other = (RangeValue<?>) obj;
+        if (rangeEnd == null) {
+            if (other.rangeEnd != null) {
+                return false;
+            }
+        } else if (!rangeEnd.equals(other.rangeEnd)) {
+            return false;
+        }
+        if (rangeStart == null) {
+            if (other.rangeStart != null) {
+                return false;
+            }
+        } else if (!rangeStart.equals(other.rangeStart)) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,6 +41,8 @@ import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultDAO
@@ -49,6 +51,7 @@ import org.n52.sos.response.GetResultResponse;
  *
  */
 public abstract class AbstractGetResultHandler extends AbstractOperationHandler {
+    private static final Logger log = LoggerFactory.getLogger(AbstractGetResultHandler.class);
     public AbstractGetResultHandler(String service) {
         super(service, SosConstants.Operations.GetResult.name());
     }
@@ -81,6 +84,9 @@ public abstract class AbstractGetResultHandler extends AbstractOperationHandler 
                 // opsMeta.addParameterValue(Sos2Constants.GetResultParams.spatialFilter.name(),
                 // new OWSParameterValuePossibleValues(null));
                 break;
+             default:
+                 log.trace("Not supported version '{}'", version);
+                 break;
         }
     }
 

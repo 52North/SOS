@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,22 +33,22 @@ import org.n52.sos.ogc.filter.SpatialFilter;
 /**
  * Interface to define methods for requests that supports
  * SpatialFilteringProfile spatial filter
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface SpatialFilteringProfileRequest {
 
     /**
      * Get SpatialFilter
-     * 
+     *
      * @return SpatialFilter
      */
     SpatialFilter getSpatialFilter();
 
     /**
      * Set SpatialFilter
-     * 
+     *
      * @param spatialFilter
      *            SpatialFilter to set
      */
@@ -56,14 +56,14 @@ public interface SpatialFilteringProfileRequest {
 
     /**
      * Check if SpatialFilter is set
-     * 
+     *
      * @return True if SpatialFilter is set
      */
     boolean isSetSpatialFilter();
 
     /**
      * Check if SpatialFilter is a SpatialFilteringProfile spatial filter
-     * 
+     *
      * @return True if SpatialFilter is a SpatialFilteringProfile spatial filter
      */
     boolean hasSpatialFilteringProfileSpatialFilter();

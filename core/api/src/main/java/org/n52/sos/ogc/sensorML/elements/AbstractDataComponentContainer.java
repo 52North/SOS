@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 
 /**
  * Abstract container class for {@link SweAbstractDataComponent}s
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -55,7 +55,7 @@ public class AbstractDataComponentContainer<T> extends AbstractReferenceType {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      */
@@ -65,7 +65,7 @@ public class AbstractDataComponentContainer<T> extends AbstractReferenceType {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            name
      * @param abstractDataComponent

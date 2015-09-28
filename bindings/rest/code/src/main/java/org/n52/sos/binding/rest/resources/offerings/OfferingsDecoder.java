@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -47,27 +47,27 @@ import com.google.common.base.Strings;
  *
  */
 public class OfferingsDecoder extends ResourceDecoder {
-    
+
     @Override
     protected RestRequest decodeGetRequest(final HttpServletRequest httpRequest,
             final String pathPayload) throws OwsExceptionReport
     {
         // 0 variables
         RestRequest result = null;
-        
+
         // 1 identify type of request: by id OR search (OR atom feed)
         if (pathPayload != null && !pathPayload.isEmpty() && httpRequest.getQueryString() == null) {
              result = decodeOfferingByIdRequest(pathPayload);
-            
+
         } else if (pathPayload == null && Strings.isNullOrEmpty(httpRequest.getQueryString())) {
             // 2.2 global resource
             result = decodeOfferingsGetRequest(httpRequest);
         } else {
             final String errorMsg = createBadGetRequestMessage(bindingConstants.getResourceOfferings(),true,true,false);
             final BadRequestException bR = new BadRequestException(errorMsg);
-            throw new NoApplicableCodeException().causedBy(bR); 
+            throw new NoApplicableCodeException().causedBy(bR);
         }
-        
+
         // 3 return result
         return result;
     }
@@ -75,14 +75,14 @@ public class OfferingsDecoder extends ResourceDecoder {
     private RestRequest decodeOfferingsGetRequest(final HttpServletRequest httpRequest)
     {
         final GetCapabilitiesRequest request = createGetCapabilitiesRequestWithContentSectionOnly();
-        
+
         return new OfferingsRequest(request);
     }
 
     private RestRequest decodeOfferingByIdRequest(final String pathPayload)
     {
         final GetCapabilitiesRequest request = createGetCapabilitiesRequestWithContentSectionOnly();
-        
+
         return new OfferingByIdRequest(request, pathPayload);
     }
 
@@ -109,13 +109,13 @@ public class OfferingsDecoder extends ResourceDecoder {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
                 bindingConstants.getResourceOfferings());
     }
-    
+
     @Override
     protected RestRequest decodeOptionsRequest(final HttpServletRequest httpRequest,
             final String pathPayload)
     {
         return new OptionsRestRequest(bindingConstants.getResourceOfferings(),false,false);
     }
-    
+
 
 }

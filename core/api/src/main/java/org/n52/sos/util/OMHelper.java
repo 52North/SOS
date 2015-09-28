@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -61,6 +61,8 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class for Observation and Measurement
@@ -69,6 +71,7 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
  *
  */
 public final class OMHelper {
+    private static final Logger log = LoggerFactory.getLogger(OMHelper.class);
     private static final ValueVisitor<String> OBSERVATION_TYPE_VISITOR = new ObservationTypeVisitor();
     private OMHelper() {
     }
@@ -162,6 +165,9 @@ public final class OMHelper {
                     return OmConstants.RESULT_MODEL_TEXT_OBSERVATION;
                 case OmConstants.OBS_TYPE_COMPLEX_OBSERVATION:
                     return OmConstants.RESULT_MODEL_COMPLEX_OBSERVATION;
+                default:
+                    log.trace("Not supported observationType '{}'", observationType);
+                    break;
             }
         }
         return OmConstants.RESULT_MODEL_OBSERVATION;

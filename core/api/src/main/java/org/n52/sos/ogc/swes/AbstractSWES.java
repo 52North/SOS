@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -82,7 +82,7 @@ public abstract class AbstractSWES extends AbstractFeature implements HasExtensi
     public boolean isSetExtensions() {
         return getExtensions() != null && !getExtensions().isEmpty();
     }
-    
+
     @Override
     public boolean hasExtension(Enum identifier) {
         if (isSetExtensions()) {
@@ -90,7 +90,7 @@ public abstract class AbstractSWES extends AbstractFeature implements HasExtensi
         }
         return false;
     }
-    
+
     @Override
     public boolean hasExtension(String identifier) {
         if (isSetExtensions()) {
@@ -106,7 +106,7 @@ public abstract class AbstractSWES extends AbstractFeature implements HasExtensi
         }
         return null;
     }
-    
+
     @Override
     public Extension<?> getExtension(String identifier) throws InvalidParameterValueException {
         if (hasExtension(identifier)) {

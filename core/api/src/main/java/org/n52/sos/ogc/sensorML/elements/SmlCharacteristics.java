@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,11 +38,11 @@ import com.google.common.collect.Lists;
 
 /**
  * SOS internal representation of SensorML characteristics
- * 
+ *
  * @since 4.0.0
  */
 public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCharacteristics> {
-    
+
     private List<SmlCharacteristic> characteristics = Lists.newArrayList();
 
     /**
@@ -54,7 +54,7 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
 
     /**
      * constructor
-     * 
+     *
      * @param dataRecord
      *            dataRecord
      */
@@ -62,7 +62,7 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
         super(dataRecord);
     }
 
-    
+
     /**
      * @return the characteristics
      */
@@ -90,7 +90,7 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
             }
         }
     }
-    
+
     /**
      * @param characteristics the characteristics to add
      */
@@ -100,7 +100,7 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
             addAbstractDataComponents(smlCharacteristic.getAbstractDataComponent());
         }
     }
-    
+
     /**
      * @param characteristic the characteristic to add
      */
@@ -108,13 +108,13 @@ public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCha
         this.characteristics.add(characteristic);
         addAbstractDataComponents(characteristic.getAbstractDataComponent());
     }
-    
+
     public boolean isSetCharacteristics() {
         return hasCharacteristics() || isSetAbstractDataComponents();
     }
-    
+
     private boolean hasCharacteristics() {
-        return CollectionHelper.isNotEmpty(characteristics); 
+        return CollectionHelper.isNotEmpty(characteristics);
     }
 
 }

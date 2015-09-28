@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,75 +39,64 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * Interface for querying featurefInterest data from a data source
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
 
     /**
      * Query feature data from data source for an identifier
-     * 
-     * @param featureID
-     *            FOI identifier
-     * @param connection
-     *            Data source connection
-     * @param version
-     *            SOS version
-     * @param responseSrid
-     *            response srid for feature geometry, if negative not
-     *            transformation
+     *
+     * @param queryObject
+     *            {@link FeatureQueryHandlerQueryObject} that holds the
+     *            identifier
      * @return SOS representation of the FOI
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
-    AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject)
-            throws OwsExceptionReport;
+    AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
+    /**
+     * Query feature data from data source for identifiers
+     *
+     * @param queryObject
+     *            {@link FeatureQueryHandlerQueryObject} that holds the
+     *            identifiers
+     * @return SOS representation of the FOIs
+     * @throws OwsExceptionReport
+     */
     Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
     /**
      * Get feature data for identifiers and/or for a spatial filter
-     * 
-     * @param foiIDs
-     *            FOI identifiers
-     * @param list
-     *            Spatial filter
-     * @param connection
-     *            Data source connection
-     * @param version
-     *            SOS version
-     * @param responseSrid
-     *            response srid for feature geometry, if negative not
-     *            transformation
+     *
+     * @param queryObject
+     *            {@link FeatureQueryHandlerQueryObject} that holds the
+     *            identifiers and/or spatial filter
      * @return Map of identifier and SOS FOI representation
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      */
     Map<String, AbstractFeature> getFeatures(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
     /**
      * Query the envelope for feature ids
-     * 
-     * @param featureIDs
-     *            FOI identifiers
-     * @param connection
-     *            Data source connection
-     * @param responseSrid
-     *            response srid for feature geometry, if negative not
-     *            transformation
+     *
+     * @param queryObject
+     *            {@link FeatureQueryHandlerQueryObject} that holds the
+     *            identifiers
      * @return Envelope of requested FOI identifiers
-     * 
+     *
      * @throws OwsExceptionReport
      */
-    SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject)
-            throws OwsExceptionReport;
+    SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
     /**
      * FIXME Add javadoc to clarify the semantics of this method
-     * 
+     *
      * @param samplingFeature
      *            Feature to insert into datasource
      * @param connection
@@ -120,7 +109,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
     int getStorageEPSG();
 
     int getStorage3DEPSG();
-    
+
     int getDefaultResponseEPSG();
 
     int getDefaultResponse3DEPSG();

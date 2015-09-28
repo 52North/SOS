@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,13 +34,13 @@ import java.util.Collection;
 import com.google.common.collect.ImmutableList;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class WSDLFault {
-    
+
     public static final WSDLFault EXCEPTION_MESSAGE = new WSDLFault("ExceptionMessage",
             WSDLConstants.OWS_EXCEPTION_ACTION);
 
@@ -71,7 +71,7 @@ public class WSDLFault {
 //    public static final Collection<WSDLFault> DEFAULT_FAULTS = ImmutableList.of(MISSING_PARAMETER_VALUE_EXCEPTION,
 //            INVALID_PARAMETER_VALUE_EXCEPTION, OPERATION_NOT_SUPPORTED_EXCEPTION, NO_APPLICABLE_CODE_EXCEPTION,
 //            INVALID_REQUEST_EXCEPTION, REQUEST_EXTENSION_NOT_SUPPORTED_EXCEPTION);
-    
+
     public static final Collection<WSDLFault> DEFAULT_FAULTS = ImmutableList.of(EXCEPTION_MESSAGE);
 
     private final String name;

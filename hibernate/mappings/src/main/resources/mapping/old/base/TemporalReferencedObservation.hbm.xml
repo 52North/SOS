@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation" 
+    <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation"
     	   table="observation">
         <comment>Stores the observations. Mapping file: mapping/old/base/TemporalReferencedObservation.hbm.xml</comment>
         <id name="observationId" type="long">

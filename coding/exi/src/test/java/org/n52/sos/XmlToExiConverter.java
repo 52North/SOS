@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,11 +48,11 @@ import com.siemens.ct.exi.api.sax.EXIResult;
 import com.siemens.ct.exi.api.sax.EXISource;
 
 public class XmlToExiConverter {
-    
+
     private static final String EXI_EXTENSION = ".exi";
 
     private static final String XML_EXTENSION = ".xml";
-    
+
     private static final String XML_EXTENSION_2 = ".xml_";
 
     protected void encode(String fileName) {
@@ -71,11 +71,11 @@ public class XmlToExiConverter {
     protected void decode(String fileName) {
         try (InputStream exiIS = FileUtils.openInputStream(getFile(fileName, EXI_EXTENSION));
                 OutputStream os = FileUtils.openOutputStream(getFile(fileName, XML_EXTENSION_2))) {
-            
+
             Reader reader = new InputStreamReader(exiIS,"ISO-8859-1");
             InputSource is = new InputSource(reader);
             is.setEncoding("ISO-8859-1");
-            
+
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
 

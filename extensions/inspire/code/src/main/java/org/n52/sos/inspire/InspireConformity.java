@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,10 +30,10 @@ package org.n52.sos.inspire;
 
 /**
  * Service internal representation of INSPIRE conformity
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireConformity {
 
@@ -43,7 +43,7 @@ public class InspireConformity {
 
     /**
      * constructor
-     * 
+     *
      * @param citation
      *            the specification {@link InspireConformityCitation}
      * @param degreeOfConformity
@@ -56,7 +56,7 @@ public class InspireConformity {
 
     /**
      * Get the specification
-     * 
+     *
      * @return the inspireSpecification
      */
     public InspireConformityCitation getInspireSpecification() {
@@ -65,7 +65,7 @@ public class InspireConformity {
 
     /**
      * Set the specification
-     * 
+     *
      * @param inspireSpecification
      *            the inspireSpecification to set
      */
@@ -75,7 +75,7 @@ public class InspireConformity {
 
     /**
      * Check if the specification is set
-     * 
+     *
      * @return <code>true</code>, if the specification is set
      */
     public boolean isSetInspireSpecification() {
@@ -84,7 +84,7 @@ public class InspireConformity {
 
     /**
      * set the degree of conformity
-     * 
+     *
      * @param inspireDegreeOfConformity
      *            the degree of conformity to set
      */
@@ -94,7 +94,7 @@ public class InspireConformity {
 
     /**
      * Get the degree of conformity
-     * 
+     *
      * @return the degree of conformity
      */
     public InspireDegreeOfConformity getInspireDegreeOfConformity() {
@@ -103,10 +103,10 @@ public class InspireConformity {
 
     /**
      * Enum of degree of conformity values
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.1.0
-     * 
+     *
      */
     public enum InspireDegreeOfConformity {
         conformant, notConformant, notEvaluated;

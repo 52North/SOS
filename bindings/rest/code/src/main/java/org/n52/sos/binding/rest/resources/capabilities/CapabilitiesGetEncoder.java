@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -46,7 +46,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class CapabilitiesGetEncoder extends ResourceEncoder {
-    
+
     @Override
     public ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws OwsExceptionReport
     {
@@ -54,34 +54,34 @@ public class CapabilitiesGetEncoder extends ResourceEncoder {
             CapabilitiesGetResponse capabilitiesGetResponse = (CapabilitiesGetResponse) objectToEncode;
             CapabilitiesDocument xb_CapabilitiesRestDoc = CapabilitiesDocument.Factory.newInstance();
             CapabilitiesType xb_CapabilitiesRest = xb_CapabilitiesRestDoc.addNewCapabilities();
-            
+
             xb_CapabilitiesRest.setCapabilities(capabilitiesGetResponse.getSosCapabilitiesXB());
-            
+
             // rel:self
             addSelfLink(xb_CapabilitiesRest);
-            
+
             // rel:offering(s)
             addOfferingsLink(xb_CapabilitiesRest);
             addOfferingLinks(capabilitiesGetResponse, xb_CapabilitiesRest);
-            
+
             // rel:features
             addFeaturesLink(xb_CapabilitiesRest);
-            
+
             // rel:sensor
             addSensorCreateLink(xb_CapabilitiesRest);
             addSensorsLink(xb_CapabilitiesRest);
-            
+
             // rel:observation
             addObservationCreateLink(xb_CapabilitiesRest);
             addObservationLink(xb_CapabilitiesRest);
-            
+
             return createServiceResponseFromXBDocument(
                     xb_CapabilitiesRestDoc,
                     bindingConstants.getResourceCapabilities(),
                     HTTPStatus.OK,
                     false,
                     true);
-                
+
         }
         return null;
     }

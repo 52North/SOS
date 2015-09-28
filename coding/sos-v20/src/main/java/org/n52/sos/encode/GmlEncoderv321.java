@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -114,7 +114,7 @@ import com.vividsolutions.jts.geom.util.PolygonExtracter;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
@@ -355,13 +355,13 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML TimePeriod from the SOS time object.
-     * 
+     *
      * @param timePeriod
      *            SOS time object
      * @param timePeriodType
      * @return XML TimePeriod
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
@@ -397,13 +397,13 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML TimeInstant from the SOS time object.
-     * 
+     *
      * @param timeInstant
      *            SOS time object
      * @param timeInstantType
      * @return XML TimeInstant
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
@@ -553,7 +553,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML Point from a SOS Point.
-     * 
+     *
      * @param jtsPoint
      *            SOS Point
      * @param xbPoint
@@ -567,7 +567,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML LineString from a SOS LineString.
-     * 
+     *
      * @param jtsLineString
      *            SOS LineString
      * @param xbLst
@@ -585,7 +585,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     /**
      * Creates a XML Polygon from a SOS Polygon.
-     * 
+     *
      * @param jtsPolygon
      *            SOS Polygon
      * @param xbPolType

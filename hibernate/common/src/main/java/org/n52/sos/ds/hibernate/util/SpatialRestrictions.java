@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,22 +37,22 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class SpatialRestrictions {
     /**
      * Get spatial filter restrictions.
-     * 
+     *
      * @param propertyName
      *            column name
      * @param operator
      *            Spatial filter
      * @param geometry
      *            the geometry
-     * 
+     *
      * @return filter restriction
-     * 
+     *
      * @throws OwsExceptionReport
      *             If the spatial filter is not supported
      */

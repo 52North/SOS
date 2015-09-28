@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,17 +32,17 @@ import org.n52.iceland.util.Constants;
 
 /**
  * Helper class to create Hibernate LikeExpression
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateCriterionHelper {
 
     /**
      * Create Hibernate LikeExpression from values
-     * 
+     *
      * @param propertyName
      *            Property name
      * @param value

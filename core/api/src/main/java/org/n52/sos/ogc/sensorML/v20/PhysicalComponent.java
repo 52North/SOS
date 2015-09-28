@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,7 @@ import org.n52.sos.ogc.sensorML.ProcessMethod;
 
 /**
  * Class that represents SensorML 2.0 PhysicalComponent
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -42,11 +42,11 @@ import org.n52.sos.ogc.sensorML.ProcessMethod;
 public class PhysicalComponent extends AbstractPhysicalProcess implements HasProcessMethod {
 
     private static final long serialVersionUID = 5935212001491183960L;
-    
+
     public static final String ID_PREFIX = "pc_";
 
     private ProcessMethod method;
-    
+
     public PhysicalComponent() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));
     }

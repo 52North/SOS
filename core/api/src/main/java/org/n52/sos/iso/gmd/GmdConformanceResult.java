@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -56,11 +56,11 @@ public class GmdConformanceResult extends GmdDomainConsistency {
     public boolean isPass() {
         return pass;
     }
-    
+
     public NilReason getPassNilReason() {
         return passNilReason;
     }
-    
+
     public boolean isSetPassNilReason() {
         return getPassNilReason() != null;
     }

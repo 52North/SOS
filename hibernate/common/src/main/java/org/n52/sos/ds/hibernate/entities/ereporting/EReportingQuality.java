@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,28 +33,28 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReport
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
 
 public class EReportingQuality implements HasPrimaryObservation, EReportingQualityData {
-    
+
     public static final String YEAR = "year";
-    
+
     public static final String SERIES = "series";
-    
+
     public static final String PRIMARY_OBSERVATION = "primaryObservation";
-    
+
     private long id;
-    
+
     private int year;
-    
+
     private long series;
-    
+
     private String primaryObservation;
-    
+
     private Boolean timeCoverageFlag;
 
     private Boolean dataCaptureFlag;
-    
-    private Double uncertaintyEstimation; 
-    
-    
+
+    private Double uncertaintyEstimation;
+
+
 
     /**
      * @return the id
@@ -102,7 +102,7 @@ public class EReportingQuality implements HasPrimaryObservation, EReportingQuali
     public String getPrimaryObservation() {
         return primaryObservation;
     }
-    
+
     @Override
     public void setPrimaryObservation(String primaryObservation) {
         this.primaryObservation = primaryObservation;
@@ -127,7 +127,7 @@ public class EReportingQuality implements HasPrimaryObservation, EReportingQuali
     public boolean isSetDataCaptureFlag() {
         return this.dataCaptureFlag != null;
     }
-    
+
     @Override
     public Boolean getTimeCoverageFlag() {
         return this.timeCoverageFlag;

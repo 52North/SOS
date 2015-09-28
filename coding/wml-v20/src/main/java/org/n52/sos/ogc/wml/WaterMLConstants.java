@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public interface WaterMLConstants {
     String NS_WML_20 = "http://www.opengis.net/waterml/2.0";
@@ -46,7 +46,7 @@ public interface WaterMLConstants {
     String NS_WML_20_PREFIX = "wml2";
 
     String NS_WML_20_DR_PREFIX = "wml2dr";
-    
+
     String NS_WML_20_PROCEDURE_ENCODING = "http://www.opengis.net/waterml/2.0/observationProcess";
 
     String PROCESS_TYPE_SIMULATION = "http://www.opengis.net/def/waterml/2.0/processType/Simulation";
@@ -87,47 +87,47 @@ public interface WaterMLConstants {
     SchemaLocation WML_20_TS_SCHEMA_LOCATION = new SchemaLocation(NS_WML_20, SCHEMA_LOCATION_URL_WML_20_TS);
 
     SchemaLocation WML_20_DR_SCHEMA_LOCATION = new SchemaLocation(NS_WML_20_DR, SCHEMA_LOCATION_URL_WML_20_DR);
-    
+
     String EN_POINT = "point";
-    
+
     String EN_MEASUREMENT_TVP = "MeasurementTVP";
-    
+
     String EN_TIME = "time";
-    
+
     String EN_VALUE = "value";
-    
+
     String EN_METADATA = "metadata";
-    
+
     String EN_TVP_MEASUREMENT_METADATA = "TVPMeasurementMetadata";
-    
+
     String EN_NIL_REASON = "nilReason";
-    
+
     String EN_MEASUREMENT_TIMESERIES  = "MeasurementTimeseries";
-    
+
     String EN_TIMESERIES_METADATA = "TimeseriesMetadata";
-    
+
     String EN_TEMPORAL_EXTENT = "temporalExtent";
-    
+
     String EN_DEFAULT_POINT_METADATA = "defaultPointMetadata";
 
     String EN_DEFAULT_TVP_MEASUREMENT_METADATA = "DefaultTVPMeasurementMetadata";
-    
+
     String EN_INTERPOLATION_TYPE = "interpolationType";
-    
+
     String EN_UOM = "uom";
-    
+
     QName QN_POINT = new QName(NS_WML_20, EN_POINT, NS_WML_20_PREFIX);
-    
+
     QName QN_MEASUREMENT_TVP = new QName(NS_WML_20, EN_MEASUREMENT_TVP, NS_WML_20_PREFIX);
-    
+
     QName QN_TIME = new QName(NS_WML_20, EN_TIME, NS_WML_20_PREFIX);
-    
+
     QName QN_VALUE = new QName(NS_WML_20, EN_VALUE, NS_WML_20_PREFIX);
-    
+
     QName QN_METADATA = new QName(NS_WML_20, EN_METADATA, NS_WML_20_PREFIX);
-    
+
     QName QN_TVP_MEASUREMENT_METADATA = new QName(NS_WML_20, EN_TVP_MEASUREMENT_METADATA, NS_WML_20_PREFIX);
-    
+
     QName QN_NIL_REASON = new QName(NS_WML_20, EN_NIL_REASON, NS_WML_20_PREFIX);
 
     QName QN_MEASUREMENT_TIMESERIES = new QName(NS_WML_20, EN_MEASUREMENT_TIMESERIES, NS_WML_20_PREFIX);

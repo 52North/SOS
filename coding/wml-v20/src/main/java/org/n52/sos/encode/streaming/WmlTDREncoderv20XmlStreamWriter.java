@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.om.OmObservation;
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
  * Domain Range encoded {@link OmObservation}s to stream
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -53,7 +53,7 @@ public class WmlTDREncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * constructor
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to write to stream
      */

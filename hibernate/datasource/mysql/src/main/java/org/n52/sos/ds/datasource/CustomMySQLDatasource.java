@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,7 +52,7 @@ public class CustomMySQLDatasource extends MySQLCoreDatasource {
     public String getDialectName() {
         return DIALECT_NAME;
     }
-    
+
     @Override
     public boolean supportsClear() {
         return false;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -59,10 +59,10 @@ public class EReportingCategoryObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
     public void accept(VoidObservationVisitor visitor)

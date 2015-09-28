@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,7 +48,7 @@ public abstract class SweAbstractSimpleType<T>
         extends SweAbstractDataComponent
         implements Value<T, SweAbstractSimpleType<T>> {
 
-	// TODO quality needs to be a collection
+    // TODO quality needs to be a collection
     private Collection<SweQuality> quality;
 
     /**

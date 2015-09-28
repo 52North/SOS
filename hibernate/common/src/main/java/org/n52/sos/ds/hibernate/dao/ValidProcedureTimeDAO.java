@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -57,7 +57,7 @@ import com.google.common.collect.Maps;
 
 /**
  * Hibernate data access class for valid procedure time
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -67,7 +67,7 @@ public class ValidProcedureTimeDAO {
 
     /**
      * Insert valid procedure time for procedrue
-     * 
+     *
      * @param procedure
      *            Procedure object
      * @param xmlDescription
@@ -90,7 +90,7 @@ public class ValidProcedureTimeDAO {
 
     /**
      * Update valid procedure time object
-     * 
+     *
      * @param validProcedureTime
      *            Valid procedure time object
      * @param session
@@ -103,7 +103,7 @@ public class ValidProcedureTimeDAO {
     /**
      * Set valid end time to valid procedure time object for procedure
      * identifier
-     * 
+     *
      * @param procedureIdentifier
      *            Procedure identifier
      * @param session
@@ -129,7 +129,7 @@ public class ValidProcedureTimeDAO {
     /**
      * Set valid end time to valid procedure time object for procedure
      * identifier
-     * 
+     *
      * @param procedureIdentifier
      *            Procedure identifier
      * @param session
@@ -147,7 +147,7 @@ public class ValidProcedureTimeDAO {
 
     /**
      * Get ValidProcedureTimes for requested parameters
-     * 
+     *
      * @param procedure
      *            Requested Procedure
      * @param procedureDescriptionFormat

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,10 +39,10 @@ import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapab
 
 /**
  * Abstract service internal representation of INSPIRE  ExtendedCapabilities.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public abstract class InspireExtendedCapabilities implements OwsExtendedCapabilities,
         InspireExtendedCapabilitiesSupportedLanguage, InspireExtendedCapabilitiesResponseLanguage, InspireObject {
@@ -57,7 +57,7 @@ public abstract class InspireExtendedCapabilities implements OwsExtendedCapabili
 
     /**
      * Constructor
-     * 
+     *
      * @param supportedLanguages
      *            Supported languages to set
      * @param responseLanguage
@@ -113,7 +113,7 @@ public abstract class InspireExtendedCapabilities implements OwsExtendedCapabili
 
     /**
      * Set the INSPIRE id
-     * 
+     *
      * @param inspireId
      *            INSPIRE id to set
      * @return this
@@ -125,7 +125,7 @@ public abstract class InspireExtendedCapabilities implements OwsExtendedCapabili
 
     /**
      * Get the INSPIRE id
-     * 
+     *
      * @return the INSPIRE id
      */
     public String getInspireId() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,12 +30,12 @@ package org.n52.sos.ogc.sensorML;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class ProcessModel extends AbstractProcess implements HasProcessMethod {
 
     private static final long serialVersionUID = -5490781462864023242L;
-    
+
     private ProcessMethod method;
 
     public ProcessMethod getMethod() {

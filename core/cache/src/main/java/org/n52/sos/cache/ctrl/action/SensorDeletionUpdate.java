@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -136,13 +136,13 @@ public class SensorDeletionUpdate extends CacheFeederDAOCacheUpdate {
         }
 
         cache.clearCompositePhenomenonForProcedure(procedure);
-        
+
         // At the latest
         cache.removeOfferingsForProcedure(procedure);
         cache.recalculatePhenomenonTime();
         cache.recalculateResultTime();
         cache.recalculateGlobalEnvelope();
-        
+
         cache.removeComponentAggregationProcedure(procedure);
         cache.removeTypeInstanceProcedure(procedure);
         cache.removeTypeOfProcedure(procedure);

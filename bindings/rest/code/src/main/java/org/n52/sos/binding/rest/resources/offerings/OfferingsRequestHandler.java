@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -71,7 +71,7 @@ public class OfferingsRequestHandler extends RequestHandler {
                 {
                     // 1.1 if by id: get observation offering for id
                     Offering[] xb_offerings = xb_sosCapabilities.getContents().getContents().getOfferingArray();
-                    
+
                     for (Offering xb_offering : xb_offerings)
                     {
                         ObservationOfferingType xb_observationOffering = getObservationOfferingFromOffering(xb_offering);
@@ -94,7 +94,7 @@ public class OfferingsRequestHandler extends RequestHandler {
                 if (isByIdRequest && offeringIdentifiers.isEmpty())
                 {
                     return new ResourceNotFoundResponse(bindingConstants.getResourceOfferings(),
-                            ((OfferingByIdRequest)request).getOfferingIdentifier());    
+                            ((OfferingByIdRequest)request).getOfferingIdentifier());
                 }
                 return new OfferingsResponse(offeringIdentifiers);
             }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ import org.n52.sos.response.GetFeatureOfInterestResponse;
 
 /**
  * Sos GetFeatureOfInterst request
- * 
+ *
  * @since 4.0.0
  */
 public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatureOfInterestResponse> {
@@ -75,7 +75,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
      */
     @Override
@@ -85,7 +85,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Get temporal filters
-     * 
+     *
      * @return temporal filters
      */
     public List<TemporalFilter> getTemporalFilters() {
@@ -94,7 +94,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Set temporal filters
-     * 
+     *
      * @param temporalFilters
      *            temporal filters
      */
@@ -104,7 +104,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Get FOI identifiers
-     * 
+     *
      * @return FOI identifiers
      */
     public List<String> getFeatureIdentifiers() {
@@ -113,7 +113,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Set FOI identifiers
-     * 
+     *
      * @param featureIDs
      *            FOI identifiers
      */
@@ -123,7 +123,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Get FOI observedProperties
-     * 
+     *
      * @return FOI observedProperties
      */
     public List<String> getObservedProperties() {
@@ -132,7 +132,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Set FOI observedProperties
-     * 
+     *
      * @param observedProperties
      *            FOI observedProperties
      */
@@ -142,7 +142,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Get FOI procedures
-     * 
+     *
      * @return FOI procedures
      */
     public List<String> getProcedures() {
@@ -151,7 +151,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Set FOI procedures
-     * 
+     *
      * @param procedures
      *            FOI procedures
      */
@@ -161,7 +161,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Get spatial filters
-     * 
+     *
      * @return spatial filters
      */
     public List<SpatialFilter> getSpatialFilters() {
@@ -170,7 +170,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     /**
      * Set spatial filters
-     * 
+     *
      * @param spatialFilters
      *            spatial filters
      */

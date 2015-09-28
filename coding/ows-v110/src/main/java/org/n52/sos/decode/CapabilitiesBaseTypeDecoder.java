@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,7 +53,7 @@ import net.opengis.ows.x11.CapabilitiesBaseType;
 public class CapabilitiesBaseTypeDecoder extends AbstractCapabilitiesBaseTypeDecoder implements Decoder<OwsCapabilities, CapabilitiesBaseType>{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CapabilitiesBaseTypeDecoder.class);
-    
+
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
             OWSConstants.NS_OWS,
             CapabilitiesBaseType.class);

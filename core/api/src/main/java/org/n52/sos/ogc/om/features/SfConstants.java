@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,7 @@ import org.n52.iceland.w3c.SchemaLocation;
 
 /**
  * Interface for SamplingFeature constants
- * 
+ *
  * @since 4.0.0
  */
 public interface SfConstants {
@@ -98,13 +98,13 @@ public interface SfConstants {
     String FT_SAMPLINGSURFACE = NS_SA_PREFIX + ":" + EN_SAMPLINGSURFACE;
 
     String FT_SAMPLINGCURVE = NS_SA_PREFIX + ":" + EN_SAMPLINGCURVE;
-    
+
     String EN_SF_SAMPLING_FEATURE = "SF_SamplingFeature";
-    
+
     String EN_SAMS_SPATIAL_SAMPLING_FEATURE = "SF_SpatialSamplingFeature";
-    
+
     QName QN_SF_20_SAMPLING_FEATURE = new QName(NS_SF, EN_SF_SAMPLING_FEATURE, NS_SF_PREFIX);
-    
+
     QName QN_SAMS_20_SPATIAL_SAMPLING_FEATURE = new QName(NS_SAMS, EN_SAMS_SPATIAL_SAMPLING_FEATURE, NS_SAMS_PREFIX);
 
 }

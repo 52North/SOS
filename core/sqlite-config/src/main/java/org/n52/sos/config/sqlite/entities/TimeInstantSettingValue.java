@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,7 +43,7 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 public class TimeInstantSettingValue extends AbstractSettingValue<TimeInstant> {
 
     private static final long serialVersionUID = 5397140191924717568L;
-    
+
     private TimeInstant value;
 
     @Override

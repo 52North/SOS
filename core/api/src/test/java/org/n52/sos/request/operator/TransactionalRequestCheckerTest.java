@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,7 +49,7 @@ import com.vividsolutions.jts.io.ParseException;
  */
 public class TransactionalRequestCheckerTest {
     private static TransactionalSecurityConfiguration tsc;
-           
+
     private static final IPAddress IP = new IPAddress("123.123.123.123");
     private static final String TOKEN = "I_HAVE_THE_PERMISSION";
     private static final IPAddress INVALID_IP = new IPAddress("234.234.234.234");
@@ -57,7 +57,7 @@ public class TransactionalRequestCheckerTest {
     private static final String NULL = null;
     @Rule
     public final ExpectedException thrown = ExpectedException.none();
-    
+
     @BeforeClass
     public static void init() throws ParseException {
        tsc = new TransactionalSecurityConfiguration();

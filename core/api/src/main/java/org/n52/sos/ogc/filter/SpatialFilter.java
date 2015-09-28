@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,9 +34,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Spatial filter class
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SpatialFilter extends Filter<SpatialOperator> {
 
@@ -59,7 +59,7 @@ public class SpatialFilter extends Filter<SpatialOperator> {
 
     /**
      * constructor
-     * 
+     *
      * @param operatorp
      *            Spatial operator
      * @param geomWKTp
@@ -86,7 +86,7 @@ public class SpatialFilter extends Filter<SpatialOperator> {
 
     /**
      * Get SRID
-     * 
+     *
      * @return SRID
      */
     public int getSrid() {
@@ -95,7 +95,7 @@ public class SpatialFilter extends Filter<SpatialOperator> {
 
     /**
      * Get filter geometry
-     * 
+     *
      * @return filter geometry
      */
     public Geometry getGeometry() {
@@ -104,7 +104,7 @@ public class SpatialFilter extends Filter<SpatialOperator> {
 
     /**
      * Set filter geometry
-     * 
+     *
      * @param geometry
      *            filter geometry
      * @return This filter

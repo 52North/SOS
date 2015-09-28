@@ -4,7 +4,7 @@
 <hibernate-mapping>
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.CategoryValuedEReportingObservation"
-        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation" 
+        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
         table="categoryValue">
         <comment>Value table for category observation</comment>
         <key foreign-key="observationCategoryValueFk">
@@ -13,7 +13,7 @@
                     "observation".observationid</comment>
             </column>
         </key>
-        <property name="value" 
+        <property name="value"
                     type="string">
             <column name="value">
                 <comment>Category observation value</comment>

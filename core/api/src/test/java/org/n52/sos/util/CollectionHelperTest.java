@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,7 +53,7 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 4.0.0
- * 
+ *
  */
 public class CollectionHelperTest {
     private final Set<String> EMPTY_COLLECTION = new HashSet<String>(0);
@@ -123,7 +123,7 @@ public class CollectionHelperTest {
         map.put("key", "value");
         assertThat(CollectionHelper.isEmpty(map), is(FALSE));
     }
-    
+
     @Test
     public void should_return_String() {
         String empty = "()";
@@ -135,24 +135,24 @@ public class CollectionHelperTest {
         set.add("c");
         assertThat(CollectionHelper.collectionToString(set), is(full));
     }
-    
+
     @Test
     public void should_return_set_sorted_by_value() {
-    	Map<String,Integer> unsorted = new HashMap<>();
-    	unsorted.put("A", 3);
-    	unsorted.put("B", 4);
-    	unsorted.put("C", 2);
-    	unsorted.put("D", 1);
-    	Map<String, Integer> sorted = CollectionHelper.sortByValue(unsorted);
-    	for (Entry<String, Integer> string : unsorted.entrySet()) {
-			if (!sorted.containsKey(string.getKey()) || !sorted.containsValue(string.getValue())){
-				fail("sorted set doesn't contain all values of unsorted");
-			}
-		}
-    	Iterator<Integer> iterator = sorted.values().iterator();
-    	assertThat(iterator.next(),is(1));
-    	assertThat(iterator.next(),is(2));
-    	assertThat(iterator.next(),is(3));
-    	assertThat(iterator.next(),is(4));
+        Map<String,Integer> unsorted = new HashMap<>();
+        unsorted.put("A", 3);
+        unsorted.put("B", 4);
+        unsorted.put("C", 2);
+        unsorted.put("D", 1);
+        Map<String, Integer> sorted = CollectionHelper.sortByValue(unsorted);
+        for (Entry<String, Integer> string : unsorted.entrySet()) {
+            if (!sorted.containsKey(string.getKey()) || !sorted.containsValue(string.getValue())){
+                fail("sorted set doesn't contain all values of unsorted");
+            }
+        }
+        Iterator<Integer> iterator = sorted.values().iterator();
+        assertThat(iterator.next(),is(1));
+        assertThat(iterator.next(),is(2));
+        assertThat(iterator.next(),is(3));
+        assertThat(iterator.next(),is(4));
     }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -55,7 +55,7 @@ public enum ReportObligationType {
     public String getDescription() {
         return description;
     }
-    
+
     public static ReportObligationType from(String v) {
         for (ReportObligationType rot : ReportObligationType.values()) {
             if (rot.getTitle().equalsIgnoreCase(v)) {

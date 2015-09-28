@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -57,10 +57,10 @@ public class ReportObligation {
     }
 
     public boolean isSetChange() {
-		return getChange() != null;
-	}
+        return getChange() != null;
+    }
 
-	public InspireID getInspireID() {
+    public InspireID getInspireID() {
         return inspireID;
     }
 
@@ -70,10 +70,10 @@ public class ReportObligation {
     }
 
     public boolean isSetInspireID() {
-		return getInspireID() != null;
-	}
+        return getInspireID() != null;
+    }
 
-	public Referenceable<Time> getReportingPeriod() {
+    public Referenceable<Time> getReportingPeriod() {
         return reportingPeriod;
     }
 
@@ -84,7 +84,7 @@ public class ReportObligation {
     }
 
     public boolean isValid() {
-    	return isSetInspireID() && isSetChange();
+        return isSetInspireID() && isSetChange();
     }
 
     @Override

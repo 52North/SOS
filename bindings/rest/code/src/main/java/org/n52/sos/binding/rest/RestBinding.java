@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -111,7 +111,7 @@ public class RestBinding extends Binding implements Constructable {
     private DecoderRepository decoderRepository;
 
     private Producer<XmlOptions> xmlOptions;
-    
+
     private HttpUtils httpUtils;
 
     public HttpUtils getHttpUtils() {
@@ -227,16 +227,16 @@ public class RestBinding extends Binding implements Constructable {
     }
 
     @Override
-	public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
-			OwsExceptionReport oer) throws HTTPException {
-		try {
-			 return encodeOwsExceptionReport(oer);
-		} catch (IOException e) {
-			throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
-		}
-	}
+    public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+            OwsExceptionReport oer) throws HTTPException {
+        try {
+             return encodeOwsExceptionReport(oer);
+        } catch (IOException e) {
+            throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+        }
+    }
 
-	/*
+    /*
      * (non-Javadoc)
      *
      * @see org.n52.sos.binding.rest.Binding#doGetOperation(javax.servlet.http.
@@ -365,7 +365,7 @@ public class RestBinding extends Binding implements Constructable {
 
     private RestEncoder getEncoder() throws OwsExceptionReport
     {
-    	final EncoderKey key = new XmlEncoderKey(bindingConstants.getEncodingNamespace(), RestResponse.class);
+        final EncoderKey key = new XmlEncoderKey(bindingConstants.getEncodingNamespace(), RestResponse.class);
         final Encoder<?,?> encoder = getEncoderRepository().getEncoder(key);
         if (encoder instanceof RestEncoder) {
             return (RestEncoder) encoder;
@@ -395,7 +395,7 @@ public class RestBinding extends Binding implements Constructable {
         throw new MissingParameterValueException(bindingConstants.getResourceType());
     }
 
-	private RestDecoder getDecoder() throws OwsExceptionReport {
+    private RestDecoder getDecoder() throws OwsExceptionReport {
         final Set<Decoder<?, ?>> decoders = this.decoderRepository.getDecoders();
         for (final Decoder<?,?> decoder : decoders) {
             if (decoder instanceof RestDecoder) {

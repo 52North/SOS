@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -178,7 +178,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
         }
         return AbstractTemporalReferencedObservation.PHENOMENON_TIME_START;
     }
-    
+
     @SuppressWarnings("rawtypes")
     protected Criteria getDefaultCriteria(Class clazz, Session session) {
         Criteria criteria = session.createCriteria(clazz)
@@ -192,7 +192,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
 
         return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
-    
+
     protected boolean isIncludeChildObservableProperties(){
         return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
     }

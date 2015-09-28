@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,10 +34,10 @@ import org.n52.iceland.service.AbstractServiceCommunicationObject;
 /**
  * Response for request which are currently not supported or do not have a
  * response
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class DummyResponse extends AbstractServiceResponse {
 
@@ -50,7 +50,7 @@ public class DummyResponse extends AbstractServiceResponse {
 
     /**
      * Set the operation name from the request
-     * 
+     *
      * @param operationName
      *            the operation name to set
      * @return this

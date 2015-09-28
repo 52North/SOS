@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,9 +37,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class InsertObservationResponseEncoder extends AbstractSosResponseEncoder<InsertObservationResponse> {

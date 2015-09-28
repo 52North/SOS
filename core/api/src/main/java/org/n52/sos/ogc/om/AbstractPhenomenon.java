@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -103,12 +103,12 @@ public abstract class AbstractPhenomenon extends AbstractFeature
     }
 
 
-	@Override
-	public String toString() {
-		return Objects.toStringHelper(this)
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
                 .omitNullValues()
                 .add("identifier", getIdentifier())
                 .add("description", getDescription())
                 .toString();
-	}
+    }
 }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -58,10 +58,10 @@ import com.google.common.base.Joiner;
  */
 public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLConverter {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
 
     private static final Set<ConverterKey> CONVERTER_KEYS = CollectionHelper.set(
-            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL), 
+            new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL),
             new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE),
             new ConverterKey(SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING),
             new ConverterKey(SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
@@ -90,12 +90,12 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
     private SosProcedureDescription convertSensorML20ToWML2ObservationProcess(final SosProcedureDescription objectToConvert) {
         final ObservationProcess observationProcess = new ObservationProcess();
         if (objectToConvert instanceof AbstractProcessV20) {
-        	convertSensorMLToObservationProcess(observationProcess, (AbstractProcessV20)objectToConvert);
-        	if (objectToConvert instanceof AbstractPhysicalProcess) {
-        		observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_SENSOR));
-        	} else {
-        		observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
-        	}
+            convertSensorMLToObservationProcess(observationProcess, (AbstractProcessV20)objectToConvert);
+            if (objectToConvert instanceof AbstractPhysicalProcess) {
+                observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_SENSOR));
+            } else {
+                observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_ALGORITHM));
+            }
         } else {
             observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_UNKNOWN));
         }

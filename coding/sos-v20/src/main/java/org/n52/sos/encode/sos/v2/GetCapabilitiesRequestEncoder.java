@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import net.opengis.sos.x20.GetCapabilitiesType;
  */
 public class GetCapabilitiesRequestEncoder extends AbstractSosRequestEncoder<GetCapabilitiesRequest> {
 
-    
+
     public GetCapabilitiesRequestEncoder() {
         super(SosConstants.Operations.GetCapabilities.name(), GetCapabilitiesRequest.class);
     }
@@ -75,7 +75,7 @@ public class GetCapabilitiesRequestEncoder extends AbstractSosRequestEncoder<Get
         if (request.isSetService()) {
             gct.setService(request.getService());
         } else {
-            gct.setService(SosConstants.SOS); 
+            gct.setService(SosConstants.SOS);
         }
     }
 

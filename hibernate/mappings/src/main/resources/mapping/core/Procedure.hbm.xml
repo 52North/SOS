@@ -69,7 +69,7 @@
         -->
         <!-- supports types bigDecimal and string -->
         <!-- remove the comments around the next properties as need (leave altitude if only 2d coordinates are required) -->
-        <!--  
+        <!--
         <property name="longitude" type="bigDecimal">
            <column name="longitude" unique-key="procLonLatUk">
             	<comment>The longitude of the procedure. Optional</comment>
@@ -84,7 +84,7 @@
         	<column name="srid">
             	<comment>SRID of the longitude/latitude values. Optional</comment>
             </column>
-        </property> 
+        </property>
         -->
         <!--
         <property name="altitude" type="bigDecimal">

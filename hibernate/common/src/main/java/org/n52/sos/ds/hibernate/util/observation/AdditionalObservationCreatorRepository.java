@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,7 +54,7 @@ public class AdditionalObservationCreatorRepository extends
     private final Map<AdditionalObservationCreatorKey, Producer<AdditionalObservationCreator>> additionalObservationCreator
             = Maps.newHashMap();
 
-    
+
     @Autowired(required = false)
     private Collection<AdditionalObservationCreator> components;
 

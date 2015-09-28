@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,9 +44,9 @@ import org.n52.sos.ogc.filter.FilterCapabilities;
 
 /**
  * Class which represents the Capabilities.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class SosCapabilities extends OwsCapabilities {
 
@@ -68,14 +68,14 @@ public class SosCapabilities extends OwsCapabilities {
     public SosCapabilities(String version) {
         super(SosConstants.SOS, version);
     }
-    
+
     public SosCapabilities(OwsCapabilities owsCapabilities) {
         super(SosConstants.SOS, owsCapabilities);
     }
 
     /**
      * Get filter capabilities
-     * 
+     *
      * @return filter capabilities
      */
     public FilterCapabilities getFilterCapabilities() {
@@ -84,7 +84,7 @@ public class SosCapabilities extends OwsCapabilities {
 
     /**
      * Set filter capabilities
-     * 
+     *
      * @param filterCapabilities
      *            filter capabilities
      */
@@ -98,7 +98,7 @@ public class SosCapabilities extends OwsCapabilities {
 
     /**
      * Get contents data
-     * 
+     *
      * @return contents data
      */
     public SortedSet<SosObservationOffering> getContents() {
@@ -107,7 +107,7 @@ public class SosCapabilities extends OwsCapabilities {
 
     /**
      * Set contents data
-     * 
+     *
      * @param contents
      *            contents data
      */
@@ -123,7 +123,7 @@ public class SosCapabilities extends OwsCapabilities {
 
     /**
      * Set extension data
-     * 
+     *
      * @param extensions
      *            extension data
      */
@@ -135,7 +135,7 @@ public class SosCapabilities extends OwsCapabilities {
 
     /**
      * Get extension data
-     * 
+     *
      * @return extension data
      */
     public List<CapabilitiesExtension> getExtensions() {

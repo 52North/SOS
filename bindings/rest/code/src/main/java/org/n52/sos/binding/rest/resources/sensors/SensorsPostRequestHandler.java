@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -52,13 +52,13 @@ public class SensorsPostRequestHandler extends SensorsRequestHandler {
         if (request != null && request instanceof SensorsPostRequest) {
             // submit request to core
             XmlObject xb_ServiceResponse = executeSosRequest(((SensorsPostRequest)request).getInsertSensorRequest());
-            
+
             if(xb_ServiceResponse instanceof InsertSensorResponseDocument) {
                 InsertSensorResponseDocument xb_InsertSensorResponseDoc = (InsertSensorResponseDocument) xb_ServiceResponse;
                 InsertSensorResponseType xb_InsertSensorResponse = xb_InsertSensorResponseDoc.getInsertSensorResponse();
                 String procedureId = xb_InsertSensorResponse.getAssignedProcedure();
                 SystemType xb_SensorDescription = ((TransactionalSensorRequest)request).getXb_smlSystem();
-                
+
                 return new SensorsPostResponse(procedureId, xb_SensorDescription);
             }
         }

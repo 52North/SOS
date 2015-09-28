@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,7 +38,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
 /**
  * Implementation of a {@link ValuedObservation} for the series observation
  * concept, that holds a numeric value.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -65,11 +65,11 @@ public class NumericValuedSeriesObservation
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
+
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
 
     @Override
     public void accept(VoidValuedObservationVisitor visitor)

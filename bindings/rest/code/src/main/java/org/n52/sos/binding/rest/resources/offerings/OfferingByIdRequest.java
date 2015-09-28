@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import org.n52.iceland.request.GetCapabilitiesRequest;
  *
  */
 public class OfferingByIdRequest extends OfferingsRequest {
-    
+
     private String offeringIdentifier;
 
     public OfferingByIdRequest(GetCapabilitiesRequest getCapabilitiesRequest,
@@ -44,7 +44,7 @@ public class OfferingByIdRequest extends OfferingsRequest {
         super(getCapabilitiesRequest);
         this.offeringIdentifier = offeringIdentifier;
     }
-    
+
     public String getOfferingIdentifier()
     {
         return offeringIdentifier;

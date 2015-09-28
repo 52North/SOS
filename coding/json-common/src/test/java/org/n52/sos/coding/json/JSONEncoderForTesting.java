@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import org.n52.sos.encode.json.JSONEncodingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
 public class JSONEncoderForTesting extends JSONEncoder<String> {
-    
+
     public JSONEncoderForTesting(Class<String> type, JSONEncoderKey[] additionalKeys) {
         super(type, additionalKeys);
     }

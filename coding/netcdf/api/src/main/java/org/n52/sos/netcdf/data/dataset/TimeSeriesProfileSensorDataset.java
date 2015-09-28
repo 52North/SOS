@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ import ucar.nc2.constants.CF;
 /**
  * Implementation of {@link AbstractStringSensorDataset} for time series profile
  * sensor datasets
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -50,14 +50,14 @@ import ucar.nc2.constants.CF;
 public class TimeSeriesProfileSensorDataset extends AbstractSensorDataset implements StaticLocationDataset {
     private Double lng;
     private Double lat;
-    
-    public TimeSeriesProfileSensorDataset( DatasetSensor sensor, Double lng, Double lat, 
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {        
+
+    public TimeSeriesProfileSensorDataset( DatasetSensor sensor, Double lng, Double lat,
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {
         super( CF.FeatureType.timeSeriesProfile, sensor, dataValues, procedure);
         this.lng = lng;
         this.lat = lat;
     }
-    
+
     @Override
     public Double getLng() {
         return lng;

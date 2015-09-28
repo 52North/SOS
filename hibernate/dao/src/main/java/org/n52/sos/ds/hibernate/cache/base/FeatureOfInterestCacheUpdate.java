@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,7 +68,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         // FIXME shouldn't the identifiers be translated using
         // CacheHelper.addPrefixAndGetFeatureIdentifier()?
         try {
-        	FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
+            FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
             Map<String,Collection<String>> foisWithParents = new FeatureOfInterestDAO()
                 .getFeatureOfInterestIdentifiersWithParents(getSession());
             List<FeatureOfInterest> featureOfInterestObjects = featureOfInterestDAO.getFeatureOfInterestObjects(getSession());
@@ -77,10 +77,10 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                     .getProceduresForAllFeaturesOfInterest(getSession());
 
             for (final FeatureOfInterest featureOfInterest : featureOfInterestObjects) {
-            	String featureOfInterestIdentifier = featureOfInterest.getIdentifier();
+                String featureOfInterestIdentifier = featureOfInterest.getIdentifier();
                 getCache().addFeatureOfInterest(featureOfInterestIdentifier);
                 if (featureOfInterest.isSetName()) {
-                	getCache().addFeatureOfInterestIdentifierHumanReadableName(featureOfInterestIdentifier, featureOfInterest.getName());
+                    getCache().addFeatureOfInterestIdentifierHumanReadableName(featureOfInterestIdentifier, featureOfInterest.getName());
                 }
                 getCache().setProceduresForFeatureOfInterest(featureOfInterestIdentifier,
                         procsForAllFois.get(featureOfInterestIdentifier));

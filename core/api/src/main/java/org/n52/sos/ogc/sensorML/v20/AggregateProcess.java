@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 
 /**
  * Class that represents SensorML 2.0 AggregateProcess
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -83,7 +83,7 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
     }
-    
+
     @Override
     public boolean isAggragation() {
         return true;

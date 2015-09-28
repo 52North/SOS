@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,7 +37,7 @@ import org.n52.iceland.request.GetCapabilitiesRequest;
 public class GetSensorsRequest implements ISensorsRequest {
 
     private GetCapabilitiesRequest capabilitiesRequest;
-    
+
     public GetSensorsRequest(GetCapabilitiesRequest capabilitiesRequest) {
         this.capabilitiesRequest = capabilitiesRequest;
     }

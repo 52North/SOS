@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -198,6 +198,6 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
             return null;
         }
     }
-    
-	public abstract T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport;
+
+    public abstract T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport;
 }

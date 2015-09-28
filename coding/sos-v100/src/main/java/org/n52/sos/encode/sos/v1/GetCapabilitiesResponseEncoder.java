@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -83,14 +83,14 @@ import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<GetCapabilitiesResponse> {
 
     public GetCapabilitiesResponseEncoder() {
         super(SosConstants.Operations.GetCapabilities.name(), GetCapabilitiesResponse.class);
     }
-    
+
     @Override
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
         return Sets.newHashSet(Sos1Constants.GET_CAPABILITIES_SOS1_SCHEMA_LOCATION);
@@ -136,9 +136,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Sets the FilterCapabilities section to the capabilities document.
-     * 
+     *
      * @param filterCapabilities
-     * 
+     *
      * @param sosFilterCaps
      *            FilterCapabilities.
      */
@@ -153,15 +153,15 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Sets the content section to the Capabilities document.
-     * 
+     *
      * @param xbContents
      *            SOS 2.0 contents section
      * @param offerings
      *            SOS offerings for contents
      * @param version
      *            SOS response version
-     * 
-     * 
+     *
+     *
      * @throws OwsExceptionReport
      *             * if an error occurs.
      */
@@ -187,7 +187,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
             // set gml:name to offering's id (not ncname resolved)
             for (CodeType name : offering.getOffering().getName()) {
-                xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, name)); 
+                xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, name));
             }
 
             /*
@@ -196,7 +196,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
              * compositePhenomena = offering.getCompositePhenomena();
              * Collection<String> componentsOfCompPhens = new
              * ArrayList<String>();
-             * 
+             *
              * // set up composite phenomena if (compositePhenomena != null) {
              * first add a new compositePhenomenon for every compositePhenomenon
              * for (String compositePhenomenon : compositePhenomena) {
@@ -283,9 +283,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Set the IdFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param idCapabilities
      *            IdCapabilities.
      */
@@ -297,9 +297,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Sets the SpatialFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param spatialCapabilities
      *            SpatialCapabilities.
      * @param sosFilterCaps
@@ -332,9 +332,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Sets the TemporalFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param temporalCapabilities
      *            TemporalCapabilities.
      * @param sosFilterCaps
@@ -367,9 +367,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Sets the ScalarFilterCapabilities.
-     * 
+     *
      * !!! Modify method addicted to your implementation !!!
-     * 
+     *
      * @param scalarCapabilities
      *            ScalarCapabilities.
      * @param sosFilterCaps
@@ -387,7 +387,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Get the Enum for the spatial operator.
-     * 
+     *
      * @param spatialOperator
      *            Supported spatial operator
      * @return Enum
@@ -423,7 +423,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Get the Enum for the temporal operator.
-     * 
+     *
      * @param temporalOperator
      *            Supported temporal operator
      * @return Enum
@@ -463,7 +463,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     /**
      * Get the Enum for the comparison operator.
-     * 
+     *
      * @param comparisonOperator
      *            Supported comparison operator
      * @return Enum

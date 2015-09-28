@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class OptionsRestResponse implements RestResponse {
-    
+
     private String resourceType;
     private boolean isGlobalResource;
     private boolean isResourceCollection;

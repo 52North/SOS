@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,9 +37,9 @@ import org.n52.sos.response.GetObservationByIdResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetObservationByIdDAO
- * 
+ *
  * @since 5.0.0
- * 
+ *
  */
 public abstract class AbstractGetObservationByIdHandler extends AbstractOperationHandler {
     public AbstractGetObservationByIdHandler(String service) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import com.google.common.base.Strings;
 
 /**
  * Enrich {@link SosProcedureDescription} with typeOf information
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
@@ -53,7 +53,7 @@ public class TypeOfEnrichment extends ProcedureDescriptionEnrichment {
             setTypeOfReferenceType(getDescription());
         }
     }
-    
+
     @Override
     public boolean isApplicable() {
         return super.isApplicable() && isSetTypeOf();

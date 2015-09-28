@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.iceland.util.StringHelper;
 import org.n52.sos.aqd.AqdConstants.PrimaryObservation;
 
 public class ElementType {
-    
+
 
     public static ElementType START_TIME = new ElementType("StartTime", OmConstants.PHEN_SAMPLING_TIME,
             OmConstants.PHEN_UOM_ISO8601);
@@ -43,9 +43,9 @@ public class ElementType {
     public static ElementType VERIFICATION = new ElementType("Verification", AqdConstants.DEFINITION_VERIFICATION);
 
     public static ElementType VALIDITY = new ElementType("Validity", AqdConstants.DEFINITION_VALIDITY);
-    
+
     public static ElementType DATA_CAPTURE = new ElementType("DataCapture", AqdConstants.DEFINITION_DATA_CAPTURE, AqdConstants.DEFINITION_UOM_STATISTICS_PERCENTAGE);
-    
+
     private final String name;
 
     private final String definition;
@@ -65,7 +65,7 @@ public class ElementType {
     private ElementType(String name,PrimaryObservation primaryObs, String uom) {
         this(name, primaryObs.getConceptURI(), uom);
     }
-    
+
     public String getName() {
         return name;
     }
@@ -81,7 +81,7 @@ public class ElementType {
     public boolean isSetUOM() {
         return StringHelper.isNotEmpty(getUOM());
     }
-    
+
     public static ElementType getValueElementType(PrimaryObservation primaryObs, String uom)  {
         return new ElementType("Value", primaryObs, uom);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -67,11 +67,11 @@ public class SeriesGeometryObservation
     public boolean isSetValue() {
         return value != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
+
+    @Override
+    public String getValueAsString() {
+        return getValue().toText();
+    }
 
     @Override
     public void accept(VoidObservationVisitor visitor)

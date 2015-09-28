@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,9 +32,9 @@ import org.n52.iceland.util.Constants;
 
 /**
  * Interface for SQL constanst
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public interface SQLConstants extends Constants {
 

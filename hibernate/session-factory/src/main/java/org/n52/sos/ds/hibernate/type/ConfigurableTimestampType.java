@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -45,15 +45,15 @@ import org.hibernate.type.descriptor.java.JdbcTimestampTypeDescriptor;
  * {@link java.sql.Timestamp}. Delegates to Hibernate's TimestampType, but
  * specifies ConfigurableTimestampTypeDescriptor as the SqlTypeDescriptor so
  * that times from the database are always retrieved in UTC.
- * 
+ *
  * @see <a href=
  *      "http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-utc-time-zone/3430957#3430957">
  *      http://stackoverflow.com/questions/508019/jpa-hibernate-store-date-in-
  *      utc-time-zone/3430957#3430957</a>
- * 
+ *
  * @author Shane StClair <shane@axiomalaska.com>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.4.0
  */
 public class ConfigurableTimestampType extends AbstractSingleColumnStandardBasicType<Date>
@@ -70,7 +70,7 @@ public class ConfigurableTimestampType extends AbstractSingleColumnStandardBasic
 
     /**
      * Constructor with {@link ConfigurableTimestampTypeDescriptor} mapping
-     * 
+     *
      * @param timeZone
      *            The timeZone
      */

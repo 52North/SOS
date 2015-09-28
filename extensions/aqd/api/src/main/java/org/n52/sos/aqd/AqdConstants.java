@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -50,9 +50,9 @@ public interface AqdConstants {
     String DEFINITION_VERIFICATION = "http://dd.eionet.europa.eu/vocabularies/aq/observationverification";
 
     String DEFINITION_VALIDITY = "http://dd.eionet.europa.eu/vocabularies/aq/observationvalidity";
-    
+
     String DEFINITION_DATA_CAPTURE = "http://dd.eionet.europa.eu/vocabulary/aq/primaryObservation/dc";
-    
+
     String DEFINITION_UOM_STATISTICS_PERCENTAGE = "http://dd.eionet.europa.eu/vocabularyconcept/uom/statistics/percentage";
 
     String NAME_FIXED_OBSERVATIONS = "FixedObservations";
@@ -64,7 +64,7 @@ public interface AqdConstants {
     String NS_AQD_SCHEMA = "http://dd.eionet.europa.eu/schemas/id2011850eu-1.0/AirQualityReporting.xsd";
 
     SchemaLocation NS_AQD_SCHEMA_LOCATION = new SchemaLocation(NS_AQD, NS_AQD_SCHEMA);
-    
+
     MediaType AQD_CONTENT_TYPE = new MediaType("text", "xml", "subtype", "id2011850eu/1.0");;
 
     String NS_AD = "urn:x-inspire:specification:gmlas:Addresses:3.0";
@@ -322,11 +322,11 @@ public interface AqdConstants {
     QName QN_GN_TEXT = new QName(NS_GN, EN_TEXT, NS_GN_PREFIX);
 
     QName QN_GN_TRANSLITERATION_SCHEME = new QName(NS_GN, EN_TRANSLITERATION_SCHEME, NS_GN_PREFIX);
-    
+
     String HOUR = "hour";
-    
+
     String DAY = "day";
-    
+
     String WEEK = "week";
 
     String FORTNIGHT = "fortnight";
@@ -334,11 +334,11 @@ public interface AqdConstants {
     String MONTH = "month";
 
     String QUARTER = "quarter";
-    
+
     String VAR = "var";
 
     String EXTENSION_FLOW = "flow";
-    
+
     /**
      * the names of the operations supported by all versions of the SOS
      * specification
@@ -363,7 +363,7 @@ public interface AqdConstants {
         private final String id;
 
         private final String conceptURI;
-        
+
         private static final Set<String> multiDay = Sets.newHashSet(WEEK, FORTNIGHT, MONTH, QUARTER);
 
         PrimaryObservation(String id) {
@@ -378,7 +378,7 @@ public interface AqdConstants {
         public String getConceptURI() {
             return conceptURI;
         }
-        
+
         public static PrimaryObservation from(String v) {
             for (PrimaryObservation c : PrimaryObservation.values()) {
                 if (c.getConceptURI().equals(v) || c.getId().equals(v)) {
@@ -412,17 +412,17 @@ public interface AqdConstants {
     }
 
     enum ProcessParameter {
-        AssessmentType("AssessmentType"), 
+        AssessmentType("AssessmentType"),
         CalibrationSamplingPointsOther("CAL-SPother"),
-        CalibrationSamplingPoints("CAL-SPs"), 
-        EnvironmentalObjective("EO"), 
-        Model("model"), 
-        ObjectiveEstimation("objective-estimation"), 
-        PrimaryObservationTime("primaryObsTime"), 
-        SamplingPoint("SamplingPoint"), 
+        CalibrationSamplingPoints("CAL-SPs"),
+        EnvironmentalObjective("EO"),
+        Model("model"),
+        ObjectiveEstimation("objective-estimation"),
+        PrimaryObservationTime("primaryObsTime"),
+        SamplingPoint("SamplingPoint"),
         MonitoringStation("Station"),
         Network("Network"),
-        VerificationSamplingPoints("VER-SP"), 
+        VerificationSamplingPoints("VER-SP"),
         VerificationSamplingPointsOther("VER-SPother"),
         Unknown("Unknown");
 
@@ -444,7 +444,7 @@ public interface AqdConstants {
         public String getConceptURI() {
             return conceptURI;
         }
-        
+
         public static ProcessParameter from(String v) {
             for (ProcessParameter p : ProcessParameter.values()) {
                 if (p.getConceptURI().equals(v) || p.getId().equals(v)) {

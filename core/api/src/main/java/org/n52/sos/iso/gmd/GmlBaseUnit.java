@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,7 +38,7 @@ import org.n52.iceland.util.JavaHelper;
  * @author Christian Autermann
  */
 public class GmlBaseUnit {
-            
+
     private String id;
     private final String identifier;
     private final CodeType catalogSymbol;
@@ -55,7 +55,7 @@ public class GmlBaseUnit {
     public String getId() {
         return id;
     }
-    
+
     public GmlBaseUnit unifyId(Object object) {
         id = id + Constants.UNDERSCORE_STRING + JavaHelper.generateID(object.toString());
         return this;

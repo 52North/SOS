@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,15 +35,15 @@ import org.junit.Test;
 import org.n52.iceland.util.StringHelper;
 
 public class StringHelperTest {
-    
+
     private final String string = "this is a test string";
-    
+
     @Test
     public void testcheckIfCharscterOccursXTimes() {
         assertThat(StringHelper.checkIfCharacterOccursXTimesIgnoreCase(string, 's', 4), is(true));
         assertThat(StringHelper.checkIfCharacterOccursXTimesIgnoreCase(string, 's', 5), is(false));
         assertThat(StringHelper.checkIfCharacterOccursXTimesIgnoreCase(string, 's', 3), is(false));
-        
+
         assertThat(StringHelper.checkIfCharacterOccursXTimesIgnoreCase(string, 'S', 4), is(true));
         assertThat(StringHelper.checkIfCharacterOccursXTimesIgnoreCase(string, 'S', 5), is(false));
         assertThat(StringHelper.checkIfCharacterOccursXTimesIgnoreCase(string, 'S', 3), is(false));

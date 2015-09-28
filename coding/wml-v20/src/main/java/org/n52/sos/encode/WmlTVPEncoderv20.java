@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -125,7 +125,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     @SuppressWarnings("unchecked")
     private static Set<EncoderKey> createEncoderKeys() {
         return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
-                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class, 
+                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class,
                 SingleObservationValue.class, MultiObservationValues.class));
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,7 +32,7 @@ import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity
 
 /**
  * Entity for AQD e-Reporting Network
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -42,7 +42,7 @@ public class EReportingNetwork extends AbstractIdentifierNameDescriptionEntity {
     private static final long serialVersionUID = -3791669235434661972L;
 
     public static final String ID = "networkId";
-    
+
     private Long networkId;
 
     /**

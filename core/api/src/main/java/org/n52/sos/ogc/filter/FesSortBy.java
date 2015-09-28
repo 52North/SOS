@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,9 +34,9 @@ import com.google.common.collect.Lists;
 
 /**
  * SOS class for FES SortBy element
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  *
  */
@@ -44,12 +44,12 @@ public class FesSortBy implements AbstractSortingClause {
 
     private List<FesSortProperty> sortProperties = Lists.newArrayList();
 
-    
+
     public FesSortBy(FesSortProperty sortProperty) {
         super();
         addSortProperty(sortProperty);
     }
-    
+
     public FesSortBy(List<FesSortProperty> sortProperties) {
         super();
         setSortProperties(sortProperties);

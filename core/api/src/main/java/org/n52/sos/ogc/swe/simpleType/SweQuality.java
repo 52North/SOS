@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,7 +30,7 @@ package org.n52.sos.ogc.swe.simpleType;
 
 /**
  * SOS internal representation of SWE simpleType quality
- * 
+ *
  * @since 4.0.0
  */
 public interface SweQuality {}

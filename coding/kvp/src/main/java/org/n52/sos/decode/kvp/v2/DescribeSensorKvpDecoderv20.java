@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,10 +51,10 @@ import org.n52.sos.request.DescribeSensorRequest;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
-	
+
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 

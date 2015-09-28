@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -159,7 +159,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
-        
+
         settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -118,7 +118,7 @@ public interface HibernateRelations {
 
         boolean isDeleted();
     }
-    
+
     interface HasPublishedFlag {
         String PUBLISHED = "published";
 
@@ -461,15 +461,15 @@ public interface HibernateRelations {
 
         void setUrl(String url);
     }
-    
-    
-	interface GetStringValue {
-		
-		 boolean isSetValue();
-		
-		String getValueAsString();
-		
-	}
+
+
+    interface GetStringValue {
+
+         boolean isSetValue();
+
+        String getValueAsString();
+
+    }
 
     interface HasValue<T> extends GetStringValue {
         String VALUE = "value";

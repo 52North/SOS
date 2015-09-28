@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -107,7 +107,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object> implem
 
     @Override
     public boolean forceStreaming() {
-    	return false;
+        return false;
     }
 
     @SuppressWarnings("unchecked")

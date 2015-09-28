@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -88,7 +88,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
             AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider,
             Locale language, Session session) {
-    	super(request, language, serviceProvider, session);
+        super(request, language, serviceProvider, session);
         this.request = request;
         if (observations == null) {
             this.observations = Collections.emptyList();
@@ -96,7 +96,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             this.observations = observations;
         }
     }
-    
+
     private Collection<? extends Observation<?>> getObservations() {
         return observations;
     }
@@ -193,8 +193,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
      *
      * @throws OwsExceptionReport
      * @throws CodedException
-     * 
-     * 
+     *
+     *
      * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
      */
     @Deprecated
@@ -259,12 +259,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getObservableProperty().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {
-        	 OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getObservableProperty());
+             OmObservableProperty omObservableProperty = createObservableProperty(hObservation.getObservableProperty());
 //            final String description = hObservation.getObservableProperty().getDescription();
 //            OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
 //            if (hObservation.getObservableProperty().isSetName()) {
-//            	omObservableProperty.setHumanReadableIdentifier(hObservation.getObservableProperty().getName());
-//            	omObservableProperty.setName(new CodeType(hObservation.getObservableProperty().getName()));
+//                omObservableProperty.setHumanReadableIdentifier(hObservation.getObservableProperty().getName());
+//                omObservableProperty.setName(new CodeType(hObservation.getObservableProperty().getName()));
 //            }
             observedProperties.put(phenID, omObservableProperty);
         }

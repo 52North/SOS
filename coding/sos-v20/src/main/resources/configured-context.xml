@@ -21,7 +21,7 @@
     <bean class="org.n52.sos.decode.sos.v2.CapabilitiesTypeDecoder"/>
     <bean class="org.n52.sos.decode.sos.v2.GetObservationResponseDocumentDecoder"/>
     <bean class="org.n52.sos.decode.sos.v2.GetFeatureOfInterestResponseDocumentDecoder"/>
-    
+
 
     <!-- Encoder implementations from coding/sos-v20 -->
     <!-- response encoder -->
@@ -45,11 +45,11 @@
     <bean class="org.n52.sos.encode.sos.v2.InsertObservationResponseEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.InsertResultResponseEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.InsertResultTemplateResponseEncoder"/>
-    
+
     <!-- request encoder -->
     <bean class="org.n52.sos.encode.sos.v2.GetCapabilitiesRequestEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.GetObservationRequestEncoder"/>
     <bean class="org.n52.sos.encode.sos.v2.GetFeatureOfInterestRequestEncoder"/>
-     
+
 
 </beans>

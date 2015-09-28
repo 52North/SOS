@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -235,10 +235,10 @@ public abstract class SweAbstractDataComponent {
     /**
      * Copies all values from this {@link SweAbstractDataComponent} to the
      * passed
-     * 
+     *
      * @param copy
      *            {@link SweAbstractDataComponent} to copy values to
-     * @return 
+     * @return
      */
     public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
         copy.setDefinition(definition);

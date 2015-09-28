@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -97,7 +97,7 @@ public class EXIResponseWriter extends AbstractResponseWriter<EXIObject> {
             xmlReader.setContentHandler(result.getHandler());
             xmlReader.parse(new InputSource(is));
         } catch (EXIException | SAXException e) {
-        	throw new NoApplicableCodeException().causedBy(e);
+            throw new NoApplicableCodeException().causedBy(e);
         }
     }
 

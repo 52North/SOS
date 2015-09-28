@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,18 +35,18 @@ import com.google.common.base.Strings;
 
 /**
  * Implementation for sml:ProcessMethod
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class ProcessMethod extends AbstractReferenceType {
 
     private RulesDefinition rulesDefinition;
-    
-    private AbstractAlgorithm algorithm; 
-    
+
+    private AbstractAlgorithm algorithm;
+
     public ProcessMethod(final String href) {
         if (Strings.isNullOrEmpty(href)) {
             throw new IllegalArgumentException("attribute 'xlink:href' is MANDATORY");
@@ -64,7 +64,7 @@ public class ProcessMethod extends AbstractReferenceType {
     /**
      * Text and/or language defining rules for process profile (e.g. inputs,
      * outputs, parameters, and metadata) (Source: SensorML 1.0.1)
-     * 
+     *
      * @return SOS rules definition
      */
     public RulesDefinition getRulesDefinition() {

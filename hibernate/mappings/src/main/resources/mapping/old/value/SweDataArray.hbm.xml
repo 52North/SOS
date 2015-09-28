@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation"
-        extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation" 
+        extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
         table="sweDataArrayValue">
         <comment>Value table for SweDataArray observation</comment>
         <key foreign-key="observationSweDataArrayValueFk">
@@ -12,7 +12,7 @@
                     "observation".observationid</comment>
             </column>
         </key>
-        <property name="value" 
+        <property name="value"
                     type="org.hibernate.type.StringClobType">
             <column name="value">
                 <comment>SweDataArray observation value</comment>

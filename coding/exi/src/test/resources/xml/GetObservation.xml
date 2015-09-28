@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sos:GetObservation service="SOS" version="2.0.0" 
-	xmlns:sos="http://www.opengis.net/sos/2.0" 
-	xmlns:fes="http://www.opengis.net/fes/2.0" 
-	xmlns:gml="http://www.opengis.net/gml/3.2" 
+<sos:GetObservation service="SOS" version="2.0.0"
+	xmlns:sos="http://www.opengis.net/sos/2.0"
+	xmlns:fes="http://www.opengis.net/fes/2.0"
+	xmlns:gml="http://www.opengis.net/gml/3.2"
 	xmlns:swe="http://www.opengis.net/swe/2.0"
-	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	xmlns:xlink="http://www.w3.org/1999/xlink"
 	xmlns:swes="http://www.opengis.net/swes/2.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sos.xsd">
-	
+
 	<!-- optional -->
 	<!--
 	<swes:extension>
@@ -17,7 +17,7 @@
 		</swe:Boolean>
 	</swes:extension>
 	-->
-	<!-- 
+	<!--
 	<swes:extension xsi:type="swe:CountPropertyType">
 		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
@@ -25,7 +25,7 @@
 		</swe:Count>
 	</swes:extension>
 	 -->
-	 <!-- 
+	 <!--
 	<swes:extension xsi:type="swe:TextPropertyType">
 		<swe:Text>
 			<swe:identifier>language</swe:identifier>
@@ -56,7 +56,7 @@
 			</gml:TimePeriod>
 		</fes:During>
 	</sos:temporalFilter>
-	
+
 	<!-- optional
 	<sos:temporalFilter>
 		<fes:TEquals>
@@ -66,7 +66,7 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
-	
+
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>phenomenonTime</fes:ValueReference>
@@ -75,7 +75,7 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
-	
+
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>phenomenonTime</fes:ValueReference>
@@ -84,7 +84,7 @@
 			</gml:TimeInstant>
 		</fes:TEquals>
 	</sos:temporalFilter>
-	
+
 	<sos:temporalFilter>
 		<fes:During>
 			<fes:ValueReference>resultTime</fes:ValueReference>
@@ -94,7 +94,7 @@
 			</gml:TimePeriod>
 		</fes:During>
 	</sos:temporalFilter>
-	
+
 	<sos:temporalFilter>
 		<fes:TEquals>
 			<fes:ValueReference>resultTime</fes:ValueReference>
@@ -122,7 +122,7 @@
 		</fes:BBOX>
 	</sos:spatialFilter>
 	<!-- Spatial filter for Spatial Filtering Profile -->
-	<!-- 
+	<!--
 	<sos:spatialFilter>
 		<fes:BBOX>
 			<fes:ValueReference>http://www.opengis.net/req/omxml/2.0/data/samplingGeometry

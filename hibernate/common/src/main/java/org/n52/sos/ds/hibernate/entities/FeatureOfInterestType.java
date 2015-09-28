@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class FeatureOfInterestType implements Serializable {
 

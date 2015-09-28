@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.full.EReportingNumericObservation"
-        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation" 
+        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation"
         table="numericValue">
         <comment>Value table for numeric/Measurment observation</comment>
         <key foreign-key="observationNumericValueFk">
@@ -12,7 +12,7 @@
                     "observation".observationid</comment>
             </column>
         </key>
-        <property name="value" 
+        <property name="value"
                     type="double">
             <column name="value">
                 <comment>Numeric/Measurment observation value</comment>

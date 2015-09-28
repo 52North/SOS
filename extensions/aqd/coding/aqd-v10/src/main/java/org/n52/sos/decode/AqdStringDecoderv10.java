@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,7 +53,7 @@ public class AqdStringDecoderv10 extends AbstractStringRequestDecoder {
     private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
             CodingHelper.xmlStringDecoderKeysForOperationAndMediaType(
                     AqdConstants.AQD, AqdConstants.VERSION,
-                    AqdConstants.Operations.GetCapabilities, 
+                    AqdConstants.Operations.GetCapabilities,
                     AqdConstants.Operations.GetObservation,
                     AqdConstants.Operations.DescribeSensor),
             CodingHelper.xmlStringDecoderKeysForOperationAndMediaType(

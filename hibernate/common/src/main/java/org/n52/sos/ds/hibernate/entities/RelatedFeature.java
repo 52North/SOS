@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,7 +38,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedFeatureRol
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRelatedFeatureRoles, HasOfferings {
 
@@ -53,7 +53,7 @@ public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRe
     private Set<RelatedFeatureRole> relatedFeatureRoles = new HashSet<RelatedFeatureRole>(0);
 
     private Set<Offering> offerings = new HashSet<Offering>(0);
-    
+
     public RelatedFeature() {
     }
 
@@ -94,17 +94,17 @@ public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRe
     @Override
     public void setOfferings(final Object offerings) {
         if (offerings instanceof Set<?>) {
-            this.offerings = (Set<Offering>) offerings; 
+            this.offerings = (Set<Offering>) offerings;
         } else {
             getOfferings().add((Offering)offerings);
         }
     }
-    
+
 //    @Override
 //    public Offering getOffering() {
 //        return this.offering;
 //    }
-//    
+//
 //    @Override
 //    public void setOfferings(final Offering offering) {
 //        if (getOfferings() == null)  {

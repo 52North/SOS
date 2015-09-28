@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -36,7 +36,7 @@ import org.n52.sos.response.DummyResponse;
 
 /**
  * SOS GetFeatureOfInterestTime request
- * 
+ *
  * @since 4.0.0
  */
 public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<AbstractServiceResponse> {
@@ -53,7 +53,7 @@ public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<A
 
     /**
      * Get FOI identifier
-     * 
+     *
      * @return FOI identifier
      */
     public String getFeatureIdentifier() {
@@ -62,7 +62,7 @@ public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<A
 
     /**
      * Set FOI identifier
-     * 
+     *
      * @param featureIdentifier
      *            FOI identifier
      */
@@ -74,7 +74,7 @@ public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<A
     public String getOperationName() {
         return operationName;
     }
-    
+
     @Override
     public AbstractServiceResponse getResponse() throws OwsExceptionReport {
         return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());

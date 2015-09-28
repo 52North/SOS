@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -48,7 +48,7 @@ public class AbstractGeometry extends AbstractGML {
 
     /**
      * constructor
-     * 
+     *
      * @param id
      *            GML id
      */
@@ -58,7 +58,7 @@ public class AbstractGeometry extends AbstractGML {
 
     /**
      * Get geometry
-     * 
+     *
      * @return the geometry
      */
     public Geometry getGeometry() {
@@ -67,7 +67,7 @@ public class AbstractGeometry extends AbstractGML {
 
     /**
      * set geometry
-     * 
+     *
      * @param geometry
      *            the geometry to set
      */
@@ -77,7 +77,7 @@ public class AbstractGeometry extends AbstractGML {
 
     /**
      * Is geometry set
-     * 
+     *
      * @return true if geometry is set
      */
     public boolean isSetGeometry() {

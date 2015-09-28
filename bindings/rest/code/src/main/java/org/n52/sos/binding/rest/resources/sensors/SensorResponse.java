@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,7 +40,7 @@ public class SensorResponse implements RestResponse{
 
     private SystemType xb_smlSystem;
     protected String procedureIdentifier;
-    
+
     public SensorResponse(SystemType xb_SensorDescription,
             String procedureIdentifier)
     {

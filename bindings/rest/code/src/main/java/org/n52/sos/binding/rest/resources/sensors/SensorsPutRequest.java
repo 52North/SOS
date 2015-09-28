@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,7 +41,7 @@ public class SensorsPutRequest extends TransactionalSensorRequest {
 
     private UpdateSensorRequest updateSensorRequest;
     private DescribeSensorRequest describeSensorRequest;
-    
+
     public SensorsPutRequest(UpdateSensorRequest updateSensorRequest,
             SystemType xb_smlSystem)
     {

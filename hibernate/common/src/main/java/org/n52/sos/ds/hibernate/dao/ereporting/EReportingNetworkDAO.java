@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * DAO class for entity {@link EReportingNetwork}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -50,7 +50,7 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
 
     /**
      * Get default Hibernate Criteria for querying network
-     * 
+     *
      * @param session
      *            Hibernate Session
      * @return Default criteria
@@ -61,7 +61,7 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
 
     /**
      * Get the {@link EReportingNetwork} for the id
-     * 
+     *
      * @param networkId
      *            Id to get {@link EReportingNetwork} for
      * @param session
@@ -77,7 +77,7 @@ public class EReportingNetworkDAO extends AbstractIdentifierNameDescriptionDAO {
 
     /**
      * Get the {@link EReportingNetwork} for the identifier
-     * 
+     *
      * @param identifier
      *            Identifier to get {@link EReportingNetwork} for
      * @param session

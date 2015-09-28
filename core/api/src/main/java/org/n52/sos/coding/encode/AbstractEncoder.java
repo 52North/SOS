@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -75,7 +75,7 @@ public abstract class AbstractEncoder<T> extends AbstractXmlEncoder<T> implement
     private final Class<T> responseType;
     private boolean validate;
     private SchemaRepository schemaRepository;
-    
+
     /**
      * constructor
      *
@@ -121,7 +121,7 @@ public abstract class AbstractEncoder<T> extends AbstractXmlEncoder<T> implement
     public AbstractEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType) {
         this(service, version, operation, namespace, prefix, responseType, false);
     }
-    
+
     @Inject
     public void setSchemaRepository(SchemaRepository schemaRepository) {
         this.schemaRepository = schemaRepository;

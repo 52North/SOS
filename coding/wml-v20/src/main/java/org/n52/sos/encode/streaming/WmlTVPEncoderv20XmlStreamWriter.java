@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,7 +54,7 @@ import org.n52.sos.ogc.wml.WaterMLConstants;
 /**
  * Implementation of {@link AbstractOmV20XmlStreamWriter} to write WaterML 2.0
  * encoded {@link OmObservation}s to stream
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
  *
@@ -70,7 +70,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * constructor
-     * 
+     *
      * @param observation
      *            {@link OmObservation} to write to stream
      */
@@ -125,7 +125,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Close written wml:MeasurementTimeseries and om:result tags
-     * 
+     *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
@@ -139,7 +139,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write timeseries metadata to stream
-     * 
+     *
      * @param id
      *            Observation id
      * @throws XMLStreamException
@@ -162,7 +162,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:defaultPointMetadata to stream
-     * 
+     *
      * @param unit
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
@@ -185,7 +185,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write UOM attribute to stream
-     * 
+     *
      * @param code
      *            UOM code
      * @throws XMLStreamException
@@ -200,7 +200,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:interpolationType to stream
-     * 
+     *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
@@ -212,7 +212,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Get the {@link String} representation of {@link Value}
-     * 
+     *
      * @param value
      *            {@link Value} to get {@link String} representation from
      * @return {@link String} representation of {@link Value}
@@ -234,7 +234,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:point to stream
-     * 
+     *
      * @param time
      *            time as {@link String}
      * @param value
@@ -256,7 +256,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:MeasurementTVP to stream
-     * 
+     *
      * @param time
      *            time as {@link String}
      * @param value
@@ -278,7 +278,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:time to stream
-     * 
+     *
      * @param time
      *            time to write
      * @throws XMLStreamException
@@ -292,7 +292,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write wml:value to stream
-     * 
+     *
      * @param value
      *            value to write
      * @throws XMLStreamException
@@ -312,7 +312,7 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
 
     /**
      * Write missing value metadata to stream
-     * 
+     *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */

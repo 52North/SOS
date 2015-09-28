@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 
 /**
  * SOS internal representation of SWE coordinates
- * 
+ *
  * @param <T>
  * @since 4.0.0
  */
@@ -52,7 +52,7 @@ public class SweCoordinate<T> {
 
     /**
      * constructor
-     * 
+     *
      * @param name
      *            Coordinate name
      * @param value

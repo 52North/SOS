@@ -4,7 +4,7 @@
 <hibernate-mapping>
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.SweDataArrayValuedEReportingObservation"
-        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation" 
+        extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
         table="sweDataArrayValue">
         <comment>Value table for SweDataArray observation</comment>
         <key foreign-key="observationSweDataArrayValueFk">
@@ -13,7 +13,7 @@
                     "observation".observationid</comment>
             </column>
         </key>
-        <property name="value" 
+        <property name="value"
                     type="org.hibernate.type.StringClobType">
             <column name="value">
                 <comment>SweDataArray observation value</comment>

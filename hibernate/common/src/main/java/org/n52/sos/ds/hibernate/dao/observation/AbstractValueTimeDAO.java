@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,13 +30,13 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 /**
  * Abstract valut time data access object
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
-    
-    
+
+
 
 }

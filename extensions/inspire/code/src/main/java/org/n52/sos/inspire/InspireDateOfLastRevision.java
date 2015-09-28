@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,10 +33,10 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 
 /**
  * Service internal representation of INSPIRE date of last revision
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireDateOfLastRevision extends TimeInstant implements InspireDateOf {
 
@@ -51,7 +51,7 @@ public class InspireDateOfLastRevision extends TimeInstant implements InspireDat
 
     /**
      * constructor
-     * 
+     *
      * @param dateTime
      *            the date of last revision
      */

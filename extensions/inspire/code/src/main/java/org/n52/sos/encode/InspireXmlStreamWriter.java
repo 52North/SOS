@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -73,10 +73,10 @@ import com.google.common.html.HtmlEscapers;
 
 /**
  * XML stream writer for INSPIRE DLS ExtendedCapabilities
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> implements InspireConstants {
 
@@ -84,7 +84,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * constructor
-     * 
+     *
      * @param inspireObject
      *            SOS internal representation of the INSPIRE object to encode
      */
@@ -123,12 +123,12 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
             OwsExceptionReport {
         this.inspireObject = elementToStream;
         write(out);
-        
+
     }
 
     /**
      * Get the INSPIRE DLS ExtendedCapabilities to write
-     * 
+     *
      * @return the INSPIRE DLS ExtendedCapabilities to write
      */
     private InspireObject getInspireObject() {
@@ -137,7 +137,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Get the INSPIRE object to write
-     * 
+     *
      * @param inspireObject
      *            the INSPIRE object to set
      */
@@ -147,7 +147,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write minimal INSPIRE DLS ExtendedCapabilities
-     * 
+     *
      * @param minimalInspireExtendedCapabilities
      *            INSPIRE DLS ExtendedCapabilities to write
      * @throws XMLStreamException
@@ -178,7 +178,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write full INSPIRE DLS ExtendedCapabilities
-     * 
+     *
      * @param fullInspireExtendedCapabilities
      *            INSPIRE DLS ExtendedCapabilities to write
      * @throws XMLStreamException
@@ -241,7 +241,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireCitation} to stream
-     * 
+     *
      * @param citation
      *            {@link InspireCitation} to write to stream
      * @throws XMLStreamException
@@ -267,7 +267,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write code element to stream
-     * 
+     *
      * @param code
      *            element value
      * @throws XMLStreamException
@@ -281,7 +281,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireConformity} to stream
-     * 
+     *
      * @param conformity
      *            {@link InspireConformity} to write to stream
      * @throws XMLStreamException
@@ -301,7 +301,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireLanguageISO6392B} as default language element to
      * stream
-     * 
+     *
      * @param defaultLanguage
      *            {@link InspireLanguageISO6392B} to write to stream
      * @throws XMLStreamException
@@ -317,7 +317,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireDegreeOfConformity} to stream
-     * 
+     *
      * @param inspireDegreeOfConformity
      *            {@link InspireDegreeOfConformity} to write to stream
      * @throws XMLStreamException
@@ -331,7 +331,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireDateOf} to stream
-     * 
+     *
      * @param dateOf
      *            {@link InspireDateOf} to write to stream
      * @throws XMLStreamException
@@ -349,7 +349,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireDateOfPublication} to stream
-     * 
+     *
      * @param dateOf
      *            {@link InspireDateOfPublication} to write to stream
      * @throws XMLStreamException
@@ -363,7 +363,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireDateOfCreation} to stream
-     * 
+     *
      * @param dateOf
      *            {@link InspireDateOfCreation} to write to stream
      * @throws XMLStreamException
@@ -377,7 +377,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireDateOfLastRevision} to stream
-     * 
+     *
      * @param dateOf
      *            {@link InspireDateOfLastRevision} to write to stream
      * @throws XMLStreamException
@@ -391,7 +391,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write email address element to stream
-     * 
+     *
      * @param emailAddress
      *            email adress element to write to stream
      * @throws XMLStreamException
@@ -405,7 +405,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link TimePosition} as end date element to stream
-     * 
+     *
      * @param time
      *            {@link TimePosition} to write as end date element to stream
      * @throws XMLStreamException
@@ -420,7 +420,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link TimeInstant} as individual date element to stream
-     * 
+     *
      * @param time
      *            {@link TimeInstant} to write as individual date element to
      *            stream
@@ -436,7 +436,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write namespaces to stream
-     * 
+     *
      * @param root
      *            indicator if this is a root element and namespaces should be
      *            added
@@ -446,10 +446,10 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     private void writeInspireDLSNamespaces() throws XMLStreamException {
         namespace(NS_INSPIRE_DLS_PREFIX, NS_INSPIRE_DLS);
     }
-    
+
     /**
      * Write namespaces to stream
-     * 
+     *
      * @param root
      *            indicator if this is a root element and namespaces should be
      *            added
@@ -464,7 +464,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link TimePeriod} as interval of dates element to stream
-     * 
+     *
      * @param time
      *            {@link TimePeriod} to write as interval of dates element to
      *            stream
@@ -481,7 +481,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireKeyword} to stream
-     * 
+     *
      * @param keyword
      *            {@link InspireKeyword} to write to stream
      * @throws XMLStreamException
@@ -500,7 +500,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write keyword value element to stream
-     * 
+     *
      * @param keywordValue
      *            keyword value element to write to stream
      * @throws XMLStreamException
@@ -514,7 +514,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireMandatoryKeywordValue} to stream
-     * 
+     *
      * @param keywordValue
      *            {@link InspireMandatoryKeywordValue} to write to stream
      * @throws XMLStreamException
@@ -526,7 +526,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireLanguageISO6392B} to stream
-     * 
+     *
      * @param language
      *            {@link InspireLanguageISO6392B} to write to stream
      * @throws XMLStreamException
@@ -540,7 +540,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireMandatoryKeyword} to stream
-     * 
+     *
      * @param mandatoryKeyword
      *            {@link InspireMandatoryKeyword} to write to stream
      * @throws XMLStreamException
@@ -556,7 +556,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link MediaType} to stream
-     * 
+     *
      * @param mediaType
      *            {@link MediaType} to write to stream
      * @throws XMLStreamException
@@ -570,7 +570,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link TimeInstant} as metadata date element to stream
-     * 
+     *
      * @param metadataDate
      *            {@link TimeInstant} to write as metadata date element to
      *            stream
@@ -585,7 +585,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireMetadataPointOfContact} to stream
-     * 
+     *
      * @param metadataPointOfContact
      *            {@link InspireMetadataPointOfContact} to write to stream
      * @throws XMLStreamException
@@ -604,7 +604,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireResourceLocator} as metadata URL element to stream
-     * 
+     *
      * @param metadataUrl
      *            {@link InspireResourceLocator} to write as metadata URL
      *            element to stream
@@ -620,7 +620,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write namespace element to stream
-     * 
+     *
      * @param namespace
      *            namespace element value to write to stream
      * @throws XMLStreamException
@@ -634,7 +634,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireOriginatingControlledVocabulary} to stream
-     * 
+     *
      * @param originatingControlledVocabulary
      *            {@link InspireOriginatingControlledVocabulary} to write to
      *            stream
@@ -650,7 +650,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write organisation name element to stream
-     * 
+     *
      * @param organisationName
      *            organisation name element value to write to stream
      * @throws XMLStreamException
@@ -665,7 +665,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireLanguageISO6392B} as response language element to
      * stream
-     * 
+     *
      * @param responseLanguage
      *            {@link InspireLanguageISO6392B} to write as response language
      *            element to stream
@@ -683,7 +683,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireResourceLocator} to stream
-     * 
+     *
      * @param resourceLocator
      *            {@link InspireResourceLocator} to write to stream
      * @throws XMLStreamException
@@ -702,7 +702,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireResourceLocator} to stream
-     * 
+     *
      * @param resourceLocator
      *            {@link InspireResourceLocator} to write to stream
      * @throws XMLStreamException
@@ -720,7 +720,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireServiceSpatialDataResourceType} as resource type
      * element to stream
-     * 
+     *
      * @param resourceType
      *            {@link InspireServiceSpatialDataResourceType} to write as
      *            resource type element to stream
@@ -735,7 +735,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireSupportedLanguages} to stream
-     * 
+     *
      * @param supportedLanguages
      *            {@link InspireSupportedLanguages} to write to stream
      * @param root
@@ -762,7 +762,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireSpatialDataServiceType} to stream
-     * 
+     *
      * @param spatialDataServiceType
      *            {@link InspireSpatialDataServiceType} to write to stream
      * @throws XMLStreamException
@@ -779,7 +779,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireUniqueResourceIdentifier} as spatial dataset
      * identifier element to stream
-     * 
+     *
      * @param inspireUniqueResourceIdentifier
      *            {@link InspireUniqueResourceIdentifier} to write as spatial
      *            dataset identifier element to stream
@@ -798,7 +798,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireConformityCitation} as specification element to
      * stream
-     * 
+     *
      * @param inspireSpecification
      *            {@link InspireConformityCitation} to write as specification
      *            element to stream
@@ -814,7 +814,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link TimePosition} as starting date element to stream
-     * 
+     *
      * @param time
      *            {@link TimePosition} to write as starting date element to
      *            stream
@@ -831,7 +831,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireLanguageISO6392B} as supported language element to
      * stream
-     * 
+     *
      * @param supportedLanguage
      *            {@link InspireLanguageISO6392B} to write as supported language
      *            element to stream
@@ -849,7 +849,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link Time} as temporal extent element to stream
-     * 
+     *
      * @param temporalExtent
      *            {@link Time} to write as temporal extent element to stream
      * @throws XMLStreamException
@@ -868,7 +868,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireTemporalReference} to stream
-     * 
+     *
      * @param temporalReference
      *            {@link InspireTemporalReference} to write to stream
      * @throws XMLStreamException
@@ -908,7 +908,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireTemporalReference} to stream
-     * 
+     *
      * @param temporalReferences
      *            {@link InspireTemporalReference} to write to stream
      * @throws XMLStreamException
@@ -928,7 +928,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write title element to stream
-     * 
+     *
      * @param title
      *            title element value to write to stream
      * @throws XMLStreamException
@@ -942,7 +942,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireUniqueResourceIdentifier} to stream
-     * 
+     *
      * @param uniqueResourceIdentifier
      *            {@link InspireUniqueResourceIdentifier} to write to stream
      * @throws XMLStreamException
@@ -960,7 +960,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write URI element to stream
-     * 
+     *
      * @param url
      *            URI element value to write to stream
      * @throws XMLStreamException
@@ -974,7 +974,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write URL element to stream
-     * 
+     *
      * @param url
      *            URL element value to write to stream
      * @throws XMLStreamException
@@ -988,7 +988,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write {@link InspireSupportedCRS} to stream
-     * 
+     *
      * @param supportedCRSs
      *            {@link InspireSupportedCRS} to write to stream
      * @param root
@@ -1017,7 +1017,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write default CRS string as default CRS element to stream
-     * 
+     *
      * @param defaultCRS
      *            default CRS string to write to stream
      * @throws XMLStreamException
@@ -1031,7 +1031,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write CRS string as other CRS element to stream
-     * 
+     *
      * @param crs
      *            CRS string to write as other CRS element to stream
      * @throws XMLStreamException
@@ -1045,7 +1045,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
 
     /**
      * Write CRS string to stream
-     * 
+     *
      * @param CRS
      *            CRS string to write to stream
      * @throws XMLStreamException

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,15 +33,15 @@ import java.io.Serializable;
 import org.n52.iceland.util.StringHelper;
 
 public class EReportingAssessmentType implements Serializable {
-    
+
     private static final long serialVersionUID = 1721670905098408954L;
-    
+
     public static final String ID = "assessmentType";
-    
+
     public static final String ASSESSMENT_TYPE = ID;
 
     private String assessmentType;
-    
+
     private String uri;
 
     /**
@@ -73,11 +73,11 @@ public class EReportingAssessmentType implements Serializable {
         this.uri = uri;
         return this;
     }
-    
+
     public boolean isSetAssessmentType() {
         return StringHelper.isNotEmpty(getAssessmentType());
     }
-    
+
     public boolean isSetUri() {
         return StringHelper.isNotEmpty(getUri());
     }

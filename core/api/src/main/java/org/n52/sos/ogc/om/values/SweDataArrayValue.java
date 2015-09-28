@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -140,10 +140,10 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
                 for (int i = 0; i < fields.size(); i++) {
                     final SweField sweField = fields.get(i);
                     if (sweField.getElement() instanceof SweTime || sweField.getElement() instanceof SweTimeRange) {
-                    	if (checkFieldNameAndElementDefinition(sweField)) {
-                    		dateTokenIndizes.add(i);
-                    	}
-//                    	dateTokenIndex = i;
+                        if (checkFieldNameAndElementDefinition(sweField)) {
+                            dateTokenIndizes.add(i);
+                        }
+//                        dateTokenIndex = i;
 //                        break;
                     }
                 }
@@ -155,17 +155,17 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
                     // conform with ISO8601 (see WP))
                     // datetimehelper to DateTime from joda time
                     for (Integer index : dateTokenIndizes) {
-                    	String token = null;
-                    	try {
-	                    	token = block.get(index);
-	                    	final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
-	                        timePeriod.extendToContain(time);
-	                    } catch (final DateTimeParseException dte) {
-	                         LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
-	                         // FIXME throw exception here?
-	                         continue; // try next block;
-	                     }
-					}
+                        String token = null;
+                        try {
+                            token = block.get(index);
+                            final Time time = DateTimeHelper.parseIsoString2DateTime2Time(token);
+                            timePeriod.extendToContain(time);
+                        } catch (final DateTimeParseException dte) {
+                             LOGGER.error(String.format("Could not parse ISO8601 string \"%s\"", token), dte);
+                             // FIXME throw exception here?
+                             continue; // try next block;
+                         }
+                    }
                 }
             } else {
                 final String errorMsg
@@ -182,12 +182,12 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     }
 
     private boolean checkFieldNameAndElementDefinition(SweField sweField) {
-		return "StartTime".equals(sweField.getName().getValue()) || "EndTime".equals(sweField.getName().getValue())
-				|| OmConstants.PHENOMENON_TIME.equals(sweField.getElement().getDefinition());
-		
-	}
+        return "StartTime".equals(sweField.getName().getValue()) || "EndTime".equals(sweField.getName().getValue())
+                || OmConstants.PHENOMENON_TIME.equals(sweField.getElement().getDefinition());
 
-	@Override
+    }
+
+    @Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isEmpty();
     }

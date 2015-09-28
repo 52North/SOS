@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -44,13 +44,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetObservationByIdOperatorV100
         extends
         AbstractV1RequestOperator<AbstractGetObservationByIdHandler, GetObservationByIdRequest, GetObservationByIdResponse> {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SosGetObservationByIdOperatorV100.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(SosGetObservationByIdOperatorV100.class.getName());
 
     private static final String OPERATION_NAME = SosConstants.Operations.GetObservationById.name();
 
@@ -59,7 +59,7 @@ public class SosGetObservationByIdOperatorV100
 
     /**
      * Constructor
-     * 
+     *
      */
     public SosGetObservationByIdOperatorV100() {
         super(OPERATION_NAME, GetObservationByIdRequest.class);

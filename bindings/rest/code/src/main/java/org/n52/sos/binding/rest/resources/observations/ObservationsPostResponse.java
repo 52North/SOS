@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
 public class ObservationsPostResponse implements RestResponse {
 
     private String observationIdentifier;
-    
+
     private OMObservationType xb_OMObservation;
 
     public ObservationsPostResponse(String identifier,

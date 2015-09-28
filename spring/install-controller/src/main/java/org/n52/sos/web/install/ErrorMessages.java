@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -30,9 +30,9 @@ package org.n52.sos.web.install;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface ErrorMessages {
@@ -112,14 +112,14 @@ public interface ErrorMessages {
     String COULD_NOT_CHECK_IF_SCHEMA_EXISTS = "Could not check if schema '%s' exists: %s";
 
     String SCHEMA_DOES_NOT_EXIST = "Schema %s does not exist";
-    
+
     String EXISTING_SCHEMA_DIFFERS_DROP_CREATE_SCHEMA = "The installed schema does not accord to the schema which should be created! Please, check the checkbox 'Old observation concept' or delete existing schema manually with the according drop schema in /misc/db!";
-    
+
     String EXISTING_SCHEMA_REQUIRES_UPDATE = "The installed schema is corrupt/invalid (%s).\nTry to delete the existing tables and check 'Create tables' or check 'Force update tables' (experimental).\nOr check for update scripts in /misc/db!";
-    
+
     String EXISTING_SCHEMA_DIFFERS_UPDATE_SCHEMA = "The installed schema does not accord to the update schema! Please, check the checkbox 'Old observation concept'!";
-    
+
     String TO_CHECK_ERROR_MESSAGE_FOI_COL_IN_OBS_TAB = "Missing column: featureOfInterestId in public.observation";
-    
+
     String TO_CHECK_ERROR_MESSAGE_SERIES_COL_IN_OBS_TAB = "Missing column: seriesId in public.observation";
 }

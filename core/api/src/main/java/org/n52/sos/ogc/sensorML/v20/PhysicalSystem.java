@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 
 /**
  * Class that represents SensorML 2.0 PhysicalSystem
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  *
@@ -45,22 +45,22 @@ import org.n52.sos.ogc.sensorML.elements.SmlComponent;
 public class PhysicalSystem extends AbstractPhysicalProcess implements HasComponents<PhysicalSystem> {
 
     private static final long serialVersionUID = 2985786628770187177L;
-    
+
     public static final String ID_PREFIX = "ps_";
-    
+
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
-    
+
     private Object connections;
-    
+
     public PhysicalSystem() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));
     }
-    
+
     @Override
     public List<SmlComponent> getComponents() {
         return components;
     }
-    
+
     @Override
     public PhysicalSystem addComponents(final List<SmlComponent> components) {
         if (components != null) {
@@ -69,7 +69,7 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
         }
         return this;
     }
-    
+
     @Override
     public PhysicalSystem addComponent(final SmlComponent component) {
         if (component != null) {
@@ -78,12 +78,12 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
         }
         return this;
     }
-    
+
     @Override
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
     }
-    
+
     @Override
     public boolean isAggragation() {
         return true;

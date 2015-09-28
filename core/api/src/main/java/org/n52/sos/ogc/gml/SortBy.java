@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,7 +32,7 @@ import org.n52.iceland.ogc.gml.GmlConstants.SortingOrder;
 
 /**
  * class represents the gml:sortByType
- * 
+ *
  * @since 4.0.0
  */
 public class SortBy {
@@ -47,7 +47,7 @@ public class SortBy {
 
     /**
      * constructor
-     * 
+     *
      * @param propertyp
      *            name of property, by which should be sorted
      * @param orderp
@@ -66,7 +66,7 @@ public class SortBy {
     }
 
     /**
-     * 
+     *
      * @return Returns String representation with values of this object
      */
     public String toString() {
@@ -75,7 +75,7 @@ public class SortBy {
 
     /**
      * Get order
-     * 
+     *
      * @return the order
      */
     public SortingOrder getOrder() {
@@ -84,7 +84,7 @@ public class SortBy {
 
     /**
      * Set ordering
-     * 
+     *
      * @param order
      *            the order to set
      */
@@ -94,7 +94,7 @@ public class SortBy {
 
     /**
      * Get property
-     * 
+     *
      * @return the property
      */
     public String getProperty() {
@@ -103,7 +103,7 @@ public class SortBy {
 
     /**
      * Set property
-     * 
+     *
      * @param property
      *            the property to set
      */

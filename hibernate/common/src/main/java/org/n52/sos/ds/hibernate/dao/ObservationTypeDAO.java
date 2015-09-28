@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Hibernate data access class for observation types
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
@@ -52,7 +52,7 @@ public class ObservationTypeDAO {
 
     /**
      * Get observation type objects for observation types
-     * 
+     *
      * @param observationTypes
      *            Observation types
      * @param session
@@ -70,7 +70,7 @@ public class ObservationTypeDAO {
 
     /**
      * Get observation type object for observation type
-     * 
+     *
      * @param observationType
      * @param session
      *            Hibernate session
@@ -86,7 +86,7 @@ public class ObservationTypeDAO {
 
     /**
      * Insert or/and get observation type object for observation type
-     * 
+     *
      * @param observationType
      *            Observation type
      * @param session
@@ -106,7 +106,7 @@ public class ObservationTypeDAO {
 
     /**
      * Insert or/and get observation type objects for observation types
-     * 
+     *
      * @param observationTypes
      *            Observation types
      * @param session

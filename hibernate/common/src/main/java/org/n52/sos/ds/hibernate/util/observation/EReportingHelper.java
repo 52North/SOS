@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -68,7 +68,7 @@ import com.google.common.collect.Sets;
 
 /**
  * Helper class for eReporting.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -84,7 +84,7 @@ public class EReportingHelper {
 
     /**
      * Creates an {@link ObservationValue} from the {@link EReportingValue}
-     * 
+     *
      * @param omObservation
      *            Corresponding {@link OmObservation}
      * @param observation
@@ -106,7 +106,7 @@ public class EReportingHelper {
 
     /**
      * Creates an {@link SweDataArray} object from the {@link EReportingValue}
-     * 
+     *
      * @param omObservation
      *            Corresponding {@link OmObservation}
      * @param observation
@@ -125,7 +125,7 @@ public class EReportingHelper {
 
     /**
      * Merge {@link SweDataArray}s to a single {@link SweDataArray}
-     * 
+     *
      * @param combinedValue
      *            {@link SweDataArray} which the data is to be added
      * @param value
@@ -188,7 +188,7 @@ public class EReportingHelper {
     private static SweAbstractDataComponent createSweCatagory(ElementType elementType) {
         return new SweCategory().setDefinition(elementType.getDefinition());
     }
-    
+
     private static SweAbstractDataComponent createSweQuantity(ElementType elementType) {
         return createSweQuantity(elementType, elementType.getUOM());
     }
@@ -215,7 +215,7 @@ public class EReportingHelper {
         } else {
             list.add(Constants.EMPTY_STRING);
         }
-        
+
     }
 
     private static void addIntegerValue(List<String> list, Integer value) {
@@ -289,11 +289,11 @@ public class EReportingHelper {
         }
         return time;
     }
-    
+
     private static void addQuality(EReportingValues eReportingObservation, SingleObservationValue<?> value) {
         value.addQualityList(getGmdDomainConsistency(eReportingObservation, false));
     }
-    
+
     public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) {
         Set<OmResultQuality> set = Sets.newHashSet();
         if (eReportingObservation.isSetDataCaptureFlag()) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,11 +34,11 @@ import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.decode.ExtensibleResponseDecoder;
 
 public interface SosResponseDecoder extends ExtensibleResponseDecoder {
-    
+
     default void setService(AbstractServiceResponse response) {
         response.setService(SosConstants.SOS);
     }
-    
+
     default void setVersions(AbstractServiceResponse response) {
         response.setService(Sos2Constants.SERVICEVERSION);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,9 +33,9 @@ import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 
 public interface XPathConstants {
-    
+
     String XPATH_PREFIX_SOS_20 = XmlHelper.getXPathPrefix(SosConstants.NS_SOS_PREFIX, Sos2Constants.NS_SOS_20);
-    
+
     String XPATH_PREFIXES_SWES = XmlHelper.getXPathPrefix(SwesConstants.NS_SWES_PREFIX, SwesConstants.NS_SWES_20);
 
 }

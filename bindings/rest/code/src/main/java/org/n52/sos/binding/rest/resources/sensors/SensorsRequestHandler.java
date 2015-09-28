@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,9 +43,9 @@ import org.n52.sos.binding.rest.requests.RestResponse;
  *
  */
 public class SensorsRequestHandler extends RequestHandler {
-    
+
     Constants bindingConstants = Constants.getInstance();
-    
+
     @Override
     public RestResponse handleRequest(RestRequest request) throws OwsExceptionReport, XmlException, IOException
     {
@@ -55,11 +55,11 @@ public class SensorsRequestHandler extends RequestHandler {
         }
         if (request instanceof SensorsPostRequest) {
             return new SensorsPostRequestHandler().handleRequest(request);
-            
+
         }
         if (request instanceof SensorsPutRequest) {
             return new SensorsPutRequestHandler().handleRequest(request);
-            
+
         }
         throw new OperationNotSupportedException(request.getClass().getName());
     }

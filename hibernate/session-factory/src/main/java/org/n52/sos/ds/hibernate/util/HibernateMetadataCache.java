@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ public class HibernateMetadataCache {
     private static final Object lock = new Object();
     private final Set<String> supportedEntities;
     private Map<String, ClassMetadata> classMetadata;
-    
+
 
     private HibernateMetadataCache(Session session) {
         this.classMetadata = initClassMetadata(session);
@@ -56,7 +56,7 @@ public class HibernateMetadataCache {
     private Set<String> initSupportedEntities(Map<String, ClassMetadata> classMetadata) {
         return ImmutableSet.copyOf(classMetadata.keySet());
     }
-    
+
     public boolean isColumnSupported(Class<?> entityClass, String column) {
         if (isEntitySupported(entityClass)) {
             ClassMetadata classMetadata = this.classMetadata.get(entityClass.getName());

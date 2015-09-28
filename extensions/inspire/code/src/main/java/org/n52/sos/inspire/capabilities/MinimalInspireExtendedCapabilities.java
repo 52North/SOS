@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,10 +39,10 @@ import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapab
 
 /**
  * Service internal object to represent the minimal INSPIRE DLS ExtendedCapabilities
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.1.0
- * 
+ *
  */
 public class MinimalInspireExtendedCapabilities extends InspireExtendedCapabilitiesDLS implements
         InspireExtendedCapabilitiesMetadataURL {
@@ -52,7 +52,7 @@ public class MinimalInspireExtendedCapabilities extends InspireExtendedCapabilit
 
     /**
      * constructor
-     * 
+     *
      * @param metadataUrl
      *            Metadata URL to set
      * @param supportedLanguages

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,7 +32,7 @@ package org.n52.sos.ogc.swe.simpleType;
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
@@ -44,7 +44,7 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
 
     /**
      * Get unit of measurement
-     * 
+     *
      * @return the uom
      */
     public String getUom() {
@@ -53,7 +53,7 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
 
     /**
      * Set unit of measurement
-     * 
+     *
      * @param uom
      *            the uom to set
      * @return This SweAbstractUomType
@@ -64,7 +64,7 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
     }
 
     /**
-     * 
+     *
      * @return <tt>true</tt>, if the uom is set and not an empty string,<br>
      *         <tt>false</tt>, else.
      */

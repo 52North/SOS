@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,7 +32,7 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SwesFeatureRelationship {
     private String role;

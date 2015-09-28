@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -34,7 +34,7 @@ import com.google.common.collect.ImmutableListMultimap;
 
 /**
  * Constants interface for netCDF
- * 
+ *
  * @author <a href="mailto:shane@axiomdatascience.com">Shane StClair</a>
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
@@ -45,17 +45,17 @@ public interface NetcdfConstants {
     String PARAM_VERSION = "version";
 
     MediaType CONTENT_TYPE_NETCDF = new MediaType("application", "netcdf");
-    
+
     MediaType CONTENT_TYPE_NETCDF_3 = new MediaType("application", "netcdf", PARAM_VERSION, "3");
-    
+
     MediaType CONTENT_TYPE_NETCDF_4 = new MediaType("application", "netcdf", PARAM_VERSION, "4");
-    
+
     MediaType CONTENT_TYPE_NETCDF_ZIP = new MediaType("application", "zip", "subtype", "netcdf");
-    
+
     MediaType CONTENT_TYPE_NETCDF_3_ZIP = new MediaType("application", "zip", ImmutableListMultimap.of("subtype", "netcdf", PARAM_VERSION, "3"));
-    
+
     MediaType CONTENT_TYPE_NETCDF_4_ZIP = new MediaType("application", "zip", ImmutableListMultimap.of("subtype", "netcdf", PARAM_VERSION, "4"));
-    
+
     String CONTRIBUTOR_EMAIL = "contributor_email";
-    
+
 }

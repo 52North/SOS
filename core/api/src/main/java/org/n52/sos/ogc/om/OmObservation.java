@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,7 +51,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Class represents a SOS/O&M observation
- * 
+ *
  * @since 4.0.0
  */
 public class OmObservation extends AbstractFeature implements Serializable {
@@ -98,7 +98,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /** separator of value tuples, which are contained in the resulte element */
     private String tupleSeparator;
-    
+
     /** separator of decimal values, which are contained in the resulte element */
     private String decimalSeparator;
 
@@ -118,7 +118,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get the observation constellation
-     * 
+     *
      * @return the observationConstellation
      */
     public OmObservationConstellation getObservationConstellation() {
@@ -127,7 +127,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set the observation constellation
-     * 
+     *
      * @param observationConstellation
      *            the observationConstellation to set
      */
@@ -137,7 +137,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get observation ID
-     * 
+     *
      * @return the observationID
      */
     public String getObservationID() {
@@ -146,7 +146,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set observation ID
-     * 
+     *
      * @param observationID
      *            the observationID to set
      */
@@ -156,20 +156,20 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get phenomenon time
-     * 
+     *
      * @return the phenomenonTime
      */
     public Time getPhenomenonTime() {
         return value.getPhenomenonTime();
     }
-    
+
     public boolean isSetPhenomenonTime() {
         return getPhenomenonTime() != null && !getPhenomenonTime().isEmpty();
     }
 
     /**
      * Get result time
-     * 
+     *
      * @return the resultTime
      */
     public TimeInstant getResultTime() {
@@ -178,7 +178,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set result time
-     * 
+     *
      * @param resultTime
      *            the resultTime to set
      */
@@ -188,7 +188,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get valid time
-     * 
+     *
      * @return the validTime
      */
     public TimePeriod getValidTime() {
@@ -197,7 +197,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set valid time
-     * 
+     *
      * @param validTime
      *            the validTime to set
      */
@@ -207,7 +207,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get result type
-     * 
+     *
      * @return the resultType
      */
     public String getResultType() {
@@ -216,7 +216,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set result type
-     * 
+     *
      * @param resultType
      *            the resultType to set
      */
@@ -226,7 +226,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get token separator
-     * 
+     *
      * @return the tokenSeparator
      */
     public String getTokenSeparator() {
@@ -235,7 +235,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set token separator
-     * 
+     *
      * @param tokenSeparator
      *            the tokenSeparator to set
      */
@@ -245,7 +245,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get noData value
-     * 
+     *
      * @return the noDataValue
      */
     public String getNoDataValue() {
@@ -254,7 +254,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set noData value
-     * 
+     *
      * @param noDataValue
      *            the noDataValue to set
      */
@@ -264,7 +264,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get tuple separator
-     * 
+     *
      * @return the tupleSeparator
      */
     public String getTupleSeparator() {
@@ -273,17 +273,17 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set tuple separator
-     * 
+     *
      * @param tupleSeparator
      *            the tupleSeparator to set
      */
     public void setTupleSeparator(final String tupleSeparator) {
         this.tupleSeparator = tupleSeparator;
     }
-    
+
     /**
      * Get decimal separator
-     * 
+     *
      * @return the decimalSeparator
      */
     public String getDecimalSeparator() {
@@ -292,7 +292,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set decimal separator
-     * 
+     *
      * @param decimalSeparator
      *            the decimalSeparator to set
      */
@@ -302,7 +302,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get observation values
-     * 
+     *
      * @return the values
      */
     public ObservationValue<?> getValue() {
@@ -311,7 +311,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set observation values
-     * 
+     *
      * @param value
      *            the values to set
      */
@@ -325,7 +325,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Merge this observation with passed observation
-     * 
+     *
      * @param sosObservation
      *            Observation to merge
      */
@@ -337,7 +337,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Merge this observation with passed observation
-     * 
+     *
      * @param sosObservation
      *            Observation to merge
      */
@@ -357,7 +357,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Merge result time with passed observation result time
-     * 
+     *
      * @param sosObservation
      *            Observation to merge
      */
@@ -373,7 +373,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Merge observation values with passed observation values
-     * 
+     *
      * @param observationValue
      *            Observation to merge
      */
@@ -399,7 +399,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Convert {@link SingleObservationValue} to {@link TVPValue}
-     * 
+     *
      * @param singleValue
      *            Single observation value
      * @return Converted TVPValue value
@@ -418,7 +418,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether observation id is set
-     * 
+     *
      * @return <code>true</code>, if observation id is set
      */
     public boolean isSetObservationID() {
@@ -427,7 +427,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether tuple separator is set
-     * 
+     *
      * @return <code>true</code>, if tuple separator is set
      */
     public boolean isSetTupleSeparator() {
@@ -436,16 +436,16 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether token separator is set
-     * 
+     *
      * @return <code>true</code>, if token separator is set
      */
     public boolean isSetTokenSeparator() {
         return StringHelper.isNotEmpty(getTokenSeparator());
     }
-    
+
     /**
      * Check whether decimal separator is set
-     * 
+     *
      * @return <code>true</code>, if decimal separator is set
      */
     public boolean isSetDecimalSeparator() {
@@ -454,7 +454,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether result time is set
-     * 
+     *
      * @return <code>true</code>, if result time is set
      */
     public boolean isSetResultTime() {
@@ -463,7 +463,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether result time is template is set
-     * 
+     *
      * @return <code>true</code>, if result time is template is set
      */
     public boolean isTemplateResultTime() {
@@ -474,7 +474,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether result type is set
-     * 
+     *
      * @return <code>true</code>, if result type is set
      */
     public boolean isSetResultType() {
@@ -483,7 +483,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether valid time is set
-     * 
+     *
      * @return <code>true</code>, if valid time is set
      */
     public boolean isSetValidTime() {
@@ -492,7 +492,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get parameter
-     * 
+     *
      * @return the parameter
      */
     public Collection<NamedValue<?>> getParameter() {
@@ -501,7 +501,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set parameter
-     * 
+     *
      * @param parameter
      *            the parameter to set
      */
@@ -511,7 +511,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Add parameter
-     * 
+     *
      * @param namedValue
      *            the namedValue to add to parameter
      */
@@ -524,7 +524,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether parameter is set
-     * 
+     *
      * @return <code>true</code>, if parameter is set
      */
     public boolean isSetParameter() {
@@ -533,7 +533,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether spatial filtering profile parameter is set
-     * 
+     *
      * @return <code>true</code>, if spatial filtering profile parameter is set
      */
     public boolean isSetSpatialFilteringProfileParameter() {
@@ -549,7 +549,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get spatial filtering profile parameter
-     * 
+     *
      * @return Spatial filtering profile parameter
      */
     @SuppressWarnings("unchecked")
@@ -566,7 +566,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Check whether sampling geometry for spatial filtering profile is set
-     * 
+     *
      * @return <code>true</code>, if sampling geometry for spatial filtering
      *         profile is set
      */
@@ -597,7 +597,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Set result quality
-     * 
+     *
      * @param qualityList
      *            Result quality to set
      */
@@ -618,7 +618,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     /**
      * Get result quality
-     * 
+     *
      * @return Result quality
      */
     public Set<OmResultQuality> getResultQuality() {
@@ -652,5 +652,5 @@ public class OmObservation extends AbstractFeature implements Serializable {
         }
         return getObservationConstellation().equals(observation.getObservationConstellation()) && merge && getObservationConstellation().checkObservationTypeForMerging();
     }
-    
+
 }

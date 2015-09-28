@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,11 +37,11 @@ import org.n52.sos.request.GetObservationRequest;
 
 public class EReportingValueDAO extends AbstractSeriesValueDAO {
 
-	@Override
-	protected Class<?> getSeriesValueClass() {
-		return AbstractValuedEReportingObservation.class;
-	}
-	
+    @Override
+    protected Class<?> getSeriesValueClass() {
+        return AbstractValuedEReportingObservation.class;
+    }
+
         @Override
         protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
             // add quality restrictions

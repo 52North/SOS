@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,9 +35,9 @@ import org.n52.sos.ogc.om.values.Value;
 
 /**
  * Interface for observation values.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  * @param <T>
  *            observation value type
  */
@@ -45,14 +45,14 @@ public interface ObservationValue<T extends Value<?>> extends Serializable {
 
     /**
      * Get phenomenon or sampling time of the observation
-     * 
+     *
      * @return Phenomenon or sampling time of the observation
      */
     Time getPhenomenonTime();
 
     /**
      * Set phenomenon or sampling time of the observation
-     * 
+     *
      * @param phenomenonTime
      *            Phenomenon or sampling time of the observation
      */
@@ -60,19 +60,19 @@ public interface ObservationValue<T extends Value<?>> extends Serializable {
 
     /**
      * Get observation value
-     * 
+     *
      * @return Observation value
      */
     T getValue();
 
     /**
      * Set observation value
-     * 
+     *
      * @param value
      *            Observation value
      */
     void setValue(T value);
 
-	boolean isSetValue();
+    boolean isSetValue();
 
 }

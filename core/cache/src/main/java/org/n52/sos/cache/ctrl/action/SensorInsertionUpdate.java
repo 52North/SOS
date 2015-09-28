@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -104,11 +104,11 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                         cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(), sosOffering.getOfferingName());
                     }
                 }
-    
+
                 // add offering for procedure whether it's a normal offering or
                 // hidden child
                 cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());
-    
+
                 // allowed observation types
                 cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(), request.getMetadata()
                         .getObservationTypes());
@@ -116,7 +116,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                 cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(), request
                         .getMetadata().getFeatureOfInterestTypes());
             }
-    
+
             // related features
             final Collection<SwesFeatureRelationship> relatedFeatures = request.getRelatedFeatures();
             if (CollectionHelper.isNotEmpty(relatedFeatures)) {
@@ -129,7 +129,7 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
                     cache.addRoleForRelatedFeature(identifier, relatedFeature.getRole());
                 }
             }
-    
+
             // observable property relations
             for (String observableProperty : request.getObservableProperty()) {
                 cache.addProcedureForObservableProperty(observableProperty, procedure);

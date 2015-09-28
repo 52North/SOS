@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,10 +39,10 @@ import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse{
-    
+
     /*
      * TODO uncomment when WaterML support is activated public
      * Collection<SosObservation> mergeObservations(boolean
@@ -69,7 +69,7 @@ public class GetObservationResponse extends AbstractObservationResponse implemen
     public String getOperationName() {
         return SosConstants.Operations.GetObservation.name();
     }
-    
+
     @Override
     public boolean hasStreamingData() {
         OmObservation observation = getFirstObservation();
@@ -86,7 +86,7 @@ public class GetObservationResponse extends AbstractObservationResponse implemen
             for (OmObservation observation : getObservationCollection()) {
                 AbstractStreaming values = (AbstractStreaming) observation.getValue();
                 if (values.hasNextValue()) {
-                    if (isSetMergeObservation()) { 
+                    if (isSetMergeObservation()) {
                         observations.addAll(values.mergeObservation());
                     } else {
                         observations.addAll(values.getObservation());
@@ -96,5 +96,5 @@ public class GetObservationResponse extends AbstractObservationResponse implemen
         }
         setObservationCollection(observations);
     }
-    
+
 }

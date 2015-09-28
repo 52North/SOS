@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -69,9 +69,9 @@ import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class TemporalRestrictionPeriodPeriodTest extends TemporalRestrictionTest {

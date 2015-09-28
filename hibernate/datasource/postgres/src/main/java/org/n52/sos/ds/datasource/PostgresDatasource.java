@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -32,11 +32,11 @@ package org.n52.sos.ds.datasource;
 /**
  * ProstgreSQL datasource
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class PostgresDatasource extends AbstractPostgresDatasource {
-    
+
     private static final String DIALECT_NAME = "PostgreSQL/PostGIS";
 
     public PostgresDatasource() {

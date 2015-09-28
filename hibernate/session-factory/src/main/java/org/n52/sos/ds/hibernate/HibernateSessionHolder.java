@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -41,13 +41,13 @@ import org.n52.iceland.exception.ows.OwsExceptionReport;
  *
  */
 public class HibernateSessionHolder {
-    
+
     private final ConnectionProvider connectionProvider;
 
     public HibernateSessionHolder(ConnectionProvider connectionProvider) {
         this.connectionProvider = connectionProvider;
     }
-    
+
     public ConnectionProvider getConnectionProvider() {
         return this.connectionProvider;
     }

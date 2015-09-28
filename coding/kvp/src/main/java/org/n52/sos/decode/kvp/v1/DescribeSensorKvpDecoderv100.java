@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -53,7 +53,7 @@ import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class DescribeSensorKvpDecoderv100 extends AbstractKvpDecoder {
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,

@@ -12,7 +12,7 @@
 		<ows:Section>FilterCapabilities</ows:Section>
 		<ows:Section>Contents</ows:Section>
 	</ows:Sections>
-	<!-- 
+	<!--
 	<sos:extension xsi:type="swe:CountPropertyType">
 		<swe:Count>
 			<swe:identifier>crs</swe:identifier>
@@ -20,7 +20,7 @@
 		</swe:Count>
 	</sos:extension>
 	-->
-	<!-- 
+	<!--
 	<sos:extension xsi:type="swe:TextPropertyType">
 		<swe:Text>
 			<swe:identifier>language</swe:identifier>
@@ -28,7 +28,7 @@
 		</swe:Text>
 	</sos:extension>
 	-->
-	<!-- 
+	<!--
 	<sos:extension xsi:type="swe:BooleanPropertyType">
 		<swe:Boolean>
 			<swe:identifier>returnHumanReadableIdentifier</swe:identifier>

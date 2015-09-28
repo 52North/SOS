@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -54,7 +54,7 @@ public class CapabilitiesExtensionImpl extends Activatable<String, CapabilitiesE
     public boolean isDisabled() {
         return !isActive();
     }
-    
+
     @Override
     public String getExtension() {
         return extension;

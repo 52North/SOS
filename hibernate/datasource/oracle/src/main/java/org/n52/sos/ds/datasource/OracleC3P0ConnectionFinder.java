@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -42,7 +42,7 @@ import com.mchange.v2.c3p0.C3P0ProxyConnection;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class OracleC3P0ConnectionFinder implements ConnectionFinder {
     public static Connection getRawConnection(Connection con) {

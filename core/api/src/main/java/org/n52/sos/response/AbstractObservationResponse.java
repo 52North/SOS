@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,9 +38,9 @@ import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
@@ -55,7 +55,7 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
     }
-    
+
     protected OmObservation getFirstObservation() {
         if (observationCollection != null && observationCollection.iterator().hasNext()) {
             return observationCollection.iterator().next();
@@ -63,7 +63,7 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
         return null;
     }
 
-   
+
 
     public void setObservationCollection(final List<OmObservation> observationCollection) {
         this.observationCollection = observationCollection;

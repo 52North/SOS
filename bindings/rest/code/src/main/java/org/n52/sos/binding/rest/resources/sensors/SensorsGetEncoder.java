@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -51,13 +51,13 @@ public class SensorsGetEncoder extends ASensorsEncoder {
         {
             if(restResponse instanceof GetSensorByIdResponse)
             {
-                return encodeGetSensorByIdRequest((GetSensorByIdResponse)restResponse); 
-            } 
+                return encodeGetSensorByIdRequest((GetSensorByIdResponse)restResponse);
+            }
             else if (restResponse instanceof SensorsGetResponse)
             {
                 return encodeGetSensorsResponse((SensorsGetResponse)restResponse);
             }
-        } 
+        }
         throw createResponseNotSupportedException(
                 GetSensorByIdResponse.class.getName().concat(" or ").concat(SensorsGetResponse.class.getName()),
                 restResponse);
@@ -67,12 +67,12 @@ public class SensorsGetEncoder extends ASensorsEncoder {
     {
         SensorCollectionDocument xb_SensorsDoc = SensorCollectionDocument.Factory.newInstance();
         ResourceCollectionType xb_Sensors = xb_SensorsDoc.addNewSensorCollection();
-        
+
         // 0 add self link
         setValuesOfLinkToGlobalResource(xb_Sensors.addNewLink(),
                 bindingConstants.getResourceRelationSelf(),
                 bindingConstants.getResourceSensors());
-        
+
         // 1 add sensor links
         for (String sensorId : restResponse.getSensorIds()) {
             setValuesOfLinkToUniqueResource(xb_Sensors.addNewLink(),
@@ -80,7 +80,7 @@ public class SensorsGetEncoder extends ASensorsEncoder {
                     bindingConstants.getResourceRelationSensorGet(),
                     bindingConstants.getResourceSensors());
         }
-        
+
         return createSensorResponseWithStatusOk(xb_SensorsDoc,true,true);
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -43,7 +43,7 @@ import net.opengis.swes.x20.ExtensibleResponseType;
  *
  */
 public interface ExtensibleResponseDecoder {
-    
+
     default SwesExtensions parseExtensibleResponse(ExtensibleResponseType ert) throws OwsExceptionReport {
         return parseExtensibleResponseExtension(ert.getExtensionArray());
     }

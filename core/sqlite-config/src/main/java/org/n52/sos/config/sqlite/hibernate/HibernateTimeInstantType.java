@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.StringHelper;
 
 public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserType<Time> {
-    
+
     private static final String VALUE_SEPARATOR = "@@";
 
 
@@ -60,10 +60,10 @@ public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserTy
     protected String encode(Time t) throws HibernateException {
         if (t instanceof TimeInstant) {
             return encodeTimeInstant((TimeInstant)t);
-        } 
+        }
         return Constants.EMPTY_STRING;
     }
-    
+
     private Time decodeTimeInstant(String s) throws DateTimeParseException {
         if (StringHelper.isNotEmpty(s)) {
         String[] split = s.split(VALUE_SEPARATOR);

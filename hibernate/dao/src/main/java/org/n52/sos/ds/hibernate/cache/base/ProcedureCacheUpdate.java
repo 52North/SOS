@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -137,7 +137,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         }
         return procedureUpdateTasks.toArray(new ProcedureCacheUpdateTask[procedureUpdateTasks.size()]);
     }
-    
+
     @Override
     public void execute() {
         //single threaded updates
@@ -150,15 +150,15 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
         List<Procedure> procedures = procedureDAO.getProcedureObjects(getSession());
         for (Procedure procedure : procedures) {
-        	String procedureIdentifier = procedure.getIdentifier();
-        	 Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
-//		}
+            String procedureIdentifier = procedure.getIdentifier();
+             Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
+//        }
 //        for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {
 //            String procedureIdentifier = entry.getKey();
 //            Collection<String> parentProcedures = entry.getValue();
             getCache().addProcedure(procedureIdentifier);
             if (procedure.isSetName()) {
-            	getCache().addProcedureIdentifierHumanReadableName(procedureIdentifier, procedure.getName());
+                getCache().addProcedureIdentifierHumanReadableName(procedureIdentifier, procedure.getName());
             }
 
             if (obsConstSupported) {
@@ -180,7 +180,7 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
                 getCache().setObservablePropertiesForProcedure(procedureIdentifier, Sets.newHashSet(
                         observablePropertyDAO.getObservablePropertyIdentifiersForProcedure(procedureIdentifier, getSession())));
             }
-            
+
             setTypeProcedure(procedure);
             setAggregatedProcedure(procedure);
             setTypeInstanceProcedure(procedure);

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -64,11 +64,11 @@ public class SweDataArrayValuedSeriesObservation
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
     public void accept(VoidValuedObservationVisitor visitor)

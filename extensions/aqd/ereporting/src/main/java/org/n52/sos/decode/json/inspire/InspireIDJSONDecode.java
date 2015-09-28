@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,17 +49,17 @@ public class InspireIDJSONDecode extends AbstractJSONDecoder<InspireID> {
         inspireID.setVersionId(parseNillableString(node.path(AQDJSONConstants.VERSION_ID)));
         return inspireID;
     }
-    
+
     private String getNamespace(JsonNode node) throws OwsExceptionReport {
         String namespace = node.path(AQDJSONConstants.NAMESPACE).textValue();
         Validation.notNullOrEmpty("InspireId namespace", namespace);
-        return namespace;    
+        return namespace;
      }
-    
+
     private String getLocalId(JsonNode node) throws OwsExceptionReport {
         String localId = node.path(AQDJSONConstants.LOCAL_ID).textValue();
         Validation.notNullOrEmpty("InspireId localId", localId);
-        return localId;    
+        return localId;
      }
 
 }

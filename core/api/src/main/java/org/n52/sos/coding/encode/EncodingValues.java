@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -38,39 +38,39 @@ import org.n52.iceland.util.StringHelper;
 import com.google.common.collect.Maps;
 
 public class EncodingValues {
-    
+
     private Map<HelperValues, String> additionalValues = Maps.newHashMap();
-    
+
     private String gmlId;
-    
+
     private boolean existFoiInDoc = false;
-    
+
     private String version;
-    
+
     private String type;
-    
+
     private boolean asDocument = false;
-    
+
     private boolean asPropertyType = false;
-    
+
     private boolean encode = false;
-    
+
     private String encodingNamespace;
-    
+
     private boolean encodeOwsExceptionOnly = false;
-    
+
     private boolean addSchemaLocation = false;
-    
+
     private int indent = 0;
-    
+
     private boolean embedded = false;
-    
+
     private Encoder<?, ?> encoder;
-    
+
     public EncodingValues() {
-        
+
     }
-    
+
     public EncodingValues(Map<HelperValues, String> additionalValues) {
         setAdditionalValues(additionalValues);
     }
@@ -89,7 +89,7 @@ public class EncodingValues {
         this.additionalValues = additionalValues;
         return this;
     }
-    
+
     public boolean hasAddtitionalValues() {
         return CollectionHelper.isEmpty(getAdditionalValues());
     }
@@ -108,7 +108,7 @@ public class EncodingValues {
         this.gmlId = gmlId;
         return this;
     }
-    
+
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(getGmlId());
     }
@@ -142,7 +142,7 @@ public class EncodingValues {
         this.version = version;
         return this;
     }
-    
+
     public boolean isSetVersion() {
         return StringHelper.isNotEmpty(getVersion());
     }
@@ -161,7 +161,7 @@ public class EncodingValues {
         this.type = type;
         return this;
     }
-    
+
     public boolean isSetType() {
         return StringHelper.isNotEmpty(getType());
     }
@@ -215,12 +215,12 @@ public class EncodingValues {
      * @return the encodingNamespace
      */
     public String getEncodingNamespace() {
-    	if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().containsKey(HelperValues.ENCODE_NAMESPACE)) {
-    		setEncodingNamespace(getAdditionalValues().get(HelperValues.ENCODE_NAMESPACE));
-    	}
+        if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().containsKey(HelperValues.ENCODE_NAMESPACE)) {
+            setEncodingNamespace(getAdditionalValues().get(HelperValues.ENCODE_NAMESPACE));
+        }
         return encodingNamespace;
     }
-    
+
     public boolean isSetEncodingNamespace() {
         return StringHelper.isNotEmpty(getEncodingNamespace());
     }
@@ -307,7 +307,7 @@ public class EncodingValues {
     public void setEncoder(Encoder<?, ?> encoder) {
         this.encoder = encoder;
     }
-    
+
     public boolean isSetEncoder() {
         return getEncoder() != null;
     }

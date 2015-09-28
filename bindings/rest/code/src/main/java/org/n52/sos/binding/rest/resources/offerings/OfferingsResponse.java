@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -39,7 +39,7 @@ import org.n52.sos.binding.rest.requests.RestResponse;
 public class OfferingsResponse implements RestResponse {
 
     private List<String> offeringIdentifiers;
-    
+
     public OfferingsResponse(List<String> offeringIdentifiers) {
         this.offeringIdentifiers = offeringIdentifiers;
     }

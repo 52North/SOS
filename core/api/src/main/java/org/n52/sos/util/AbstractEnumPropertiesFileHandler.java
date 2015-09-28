@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import org.n52.iceland.util.ServletContextPropertyFileHandler;
 
 /**
  * @since 4.0.0
- * 
+ *
  * @param <E>
  */
 public abstract class AbstractEnumPropertiesFileHandler<E extends Enum<E>> extends

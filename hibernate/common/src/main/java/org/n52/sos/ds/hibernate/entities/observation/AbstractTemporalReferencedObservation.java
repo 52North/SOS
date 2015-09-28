@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -111,7 +111,7 @@ public abstract class AbstractTemporalReferencedObservation
 
     /**
      * Create the phenomenon time from {@link AbstractValue}
-     * 
+     *
      * @param abstractValue
      *            {@link AbstractValue} for get time from
      * @return phenomenon time

@@ -173,6 +173,6 @@
         <property name="group" ref="oceansitesSettingDefintionGroup" />
         <property name="optional" ref="true" />
         <property name="defaultValue" value="http://www.nexosproject.eu/dictionary/definitions.html#AREA" />
-    </bean>                       
+    </bean>
 
 </beans>

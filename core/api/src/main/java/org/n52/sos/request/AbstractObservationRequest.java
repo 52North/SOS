@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import org.n52.sos.response.AbstractObservationResponse;
 
 /**
  * SOS AbstractObservation request
- * 
+ *
  * @since 4.0.0
  */
 public abstract class AbstractObservationRequest extends AbstractServiceRequest<AbstractObservationResponse> implements ResponseFormat, SrsNameRequest {
@@ -43,7 +43,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * SRS name
      */
     private String srsName;
-    
+
     /**
      * Response format
      */
@@ -61,7 +61,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     /**
      * Get response format
-     * 
+     *
      * @return response format
      */
     @Override
@@ -71,7 +71,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     /**
      * Set response format
-     * 
+     *
      * @param responseFormat
      *            response format
      */
@@ -87,7 +87,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     /**
      * Get response mode
-     * 
+     *
      * @return response mode
      */
     public String getResponseMode() {
@@ -96,7 +96,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     /**
      * Set response mode
-     * 
+     *
      * @param responseMode
      *            response mode
      */
@@ -110,7 +110,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     /**
      * Get result model
-     * 
+     *
      * @return result model
      */
     public String getResultModel() {
@@ -119,23 +119,23 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     /**
      * Set result model
-     * 
+     *
      * @param resultModel
      *            result model
      */
     public void setResultModel(String resultModel) {
         this.resultModel = resultModel;
     }
-    
+
     public boolean isSetResultModel() {
         return StringHelper.isNotEmpty(getResultModel());
     }
-    
+
     @Override
     public String getSrsName() {
         return srsName;
     }
-    
+
     @Override
     public void setSrsName(String srsName) {
         this.srsName = srsName;
@@ -145,7 +145,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
     public boolean isSetSrsName() {
         return StringHelper.isNotEmpty(getSrsName());
     }
-    
+
     public void copyOf(AbstractObservationRequest res) {
         res.setResponseFormat(this.responseFormat);
         res.setResponseMode(this.responseMode);

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -110,28 +110,28 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
     }
 
     private void encodeParameter(OmObservation o, ObjectNode json) throws OwsExceptionReport {
-		if (o.isSetParameter()) {
-			if (o.getParameter().size() == 1) {
+        if (o.isSetParameter()) {
+            if (o.getParameter().size() == 1) {
                 json.set(JSONConstants.PARAMETER, encodeNamedValue(o.getParameter().iterator().next()));
             } else {
                 ArrayNode parameters = json.putArray(JSONConstants.PARAMETER);
                 for (NamedValue<?> namedValue : o.getParameter()) {
-                	parameters.add(encodeNamedValue(namedValue));
+                    parameters.add(encodeNamedValue(namedValue));
                 }
             }
-		}
-	}
+        }
+    }
 
-	private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
-		ObjectNode namedValueObject = nodeFactory().objectNode();
-		namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
-		namedValueObject.set(JSONConstants.VALUE, encodeObjectToJson(namedValue.getValue().getValue()));
-		ObjectNode parameterObject = nodeFactory().objectNode();
-		parameterObject.set(JSONConstants.NAMED_VALUE, namedValueObject);
-		return parameterObject;
-	}
+    private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
+        ObjectNode namedValueObject = nodeFactory().objectNode();
+        namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
+        namedValueObject.set(JSONConstants.VALUE, encodeObjectToJson(namedValue.getValue().getValue()));
+        ObjectNode parameterObject = nodeFactory().objectNode();
+        parameterObject.set(JSONConstants.NAMED_VALUE, namedValueObject);
+        return parameterObject;
+    }
 
-	private void encodeObservableProperty(OmObservation o, ObjectNode json) {
+    private void encodeObservableProperty(OmObservation o, ObjectNode json) {
         json.put(JSONConstants.OBSERVABLE_PROPERTY, o.getObservationConstellation().getObservableProperty()
                 .getIdentifier());
     }

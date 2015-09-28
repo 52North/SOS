@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.iceland.ogc.gml.time.Time;
 
 /**
  * Temporal filter class
- * 
+ *
  * @since 4.0.0
  */
 public class TemporalFilter extends Filter<TimeOperator> {
@@ -57,7 +57,7 @@ public class TemporalFilter extends Filter<TimeOperator> {
 
     /**
      * constructor
-     * 
+     *
      * @param operatorp
      *            Temporal filter operator
      * @param timep
@@ -73,7 +73,7 @@ public class TemporalFilter extends Filter<TimeOperator> {
 
     /**
      * constructor
-     * 
+     *
      * @param operatorNamep
      *            Temporal filter operator name
      * @param timep
@@ -100,7 +100,7 @@ public class TemporalFilter extends Filter<TimeOperator> {
 
     /**
      * Get filter time
-     * 
+     *
      * @return filter time
      */
     public Time getTime() {
@@ -109,7 +109,7 @@ public class TemporalFilter extends Filter<TimeOperator> {
 
     /**
      * Set filter time
-     * 
+     *
      * @param time
      *            filter time
      * @return This filter

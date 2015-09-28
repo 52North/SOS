@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -49,16 +49,14 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.ds.Datasource;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.util.DefaultHibernateConstants;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.config.sqlite.SQLiteSessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -72,12 +70,12 @@ import geodb.GeoDB;
 public class H2Configuration {
     private static final Logger LOG = LoggerFactory.getLogger(H2Configuration.class);
 
-    private static final String HIBERNATE_CONNECTION_URL = SQLiteSessionFactory.HIBERNATE_CONNECTION_URL;
+    private static final String HIBERNATE_CONNECTION_URL = DefaultHibernateConstants.CONNECTION_STRING_PROPERTY;
 
     private static final String HIBERNATE_CONNECTION_DRIVER_CLASS =
-            SQLiteSessionFactory.HIBERNATE_CONNECTION_DRIVER_CLASS;
+            DefaultHibernateConstants.DRIVER_PROPERTY;
 
-    private static final String HIBERNATE_DIALECT = SQLiteSessionFactory.HIBERNATE_DIALECT;
+    private static final String HIBERNATE_DIALECT = DefaultHibernateConstants.DIALECT_PROPERTY;
 
     private static final String H2_DRIVER = "org.h2.Driver";
 

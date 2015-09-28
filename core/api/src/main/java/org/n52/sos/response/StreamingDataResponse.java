@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -33,7 +33,7 @@ import org.n52.sos.ogc.sos.AbstractStreaming;
 
 /**
  * Interface to indicate that the response may contain streaming data.
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -42,14 +42,14 @@ public interface StreamingDataResponse {
 
     /**
      *  Check if the response contains streaming data {@link AbstractStreaming}
-     * 
+     *
      * @return <code>true</code> if the response contains streaming data
      */
     boolean hasStreamingData();
 
     /**
      * Merge the streaming data.
-     * 
+     *
      * @throws OwsExceptionReport If an error occurs.
      */
     void mergeStreamingData() throws OwsExceptionReport;

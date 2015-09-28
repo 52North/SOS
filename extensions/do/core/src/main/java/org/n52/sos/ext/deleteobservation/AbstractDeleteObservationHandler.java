@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -37,10 +37,10 @@ import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
  * Renamed, in version 4.x called DeleteObservationAbstractDAO
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 5.0.0
  */
 public abstract class AbstractDeleteObservationHandler extends AbstractOperationHandler {

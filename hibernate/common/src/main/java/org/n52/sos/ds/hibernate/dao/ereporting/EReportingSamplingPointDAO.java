@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * DAO class for entity {@link EReportingSamplingPoint}
- * 
+ *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
@@ -51,7 +51,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
 
     /**
      * Get default Hibernate Criteria for querying sampling point
-     * 
+     *
      * @param session
      *            Hibernate Session
      * @return Default criteria
@@ -63,7 +63,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
 
     /**
      * Get the {@link EReportingSamplingPoint} for the id
-     * 
+     *
      * @param samplingPointId
      *            Id to get {@link EReportingSamplingPoint} for
      * @param session
@@ -79,7 +79,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
 
     /**
      * Get the {@link EReportingSamplingPoint} for the identifier
-     * 
+     *
      * @param identifier
      *            Identifier to get {@link EReportingSamplingPoint} for
      * @param session
@@ -95,7 +95,7 @@ public class EReportingSamplingPointDAO extends AbstractIdentifierNameDescriptio
 
     /**
      * Get or insert {@link AqdSamplingPoint}
-     * 
+     *
      * @param samplingPoint
      *            {@link AqdSamplingPoint} to insert
      * @param session

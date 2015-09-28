@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -35,7 +35,7 @@ import net.opengis.sensorML.x101.SystemType;
  *
  */
 public class SensorsPostResponse extends SensorResponse {
-    
+
     public SensorsPostResponse(String assignedProcedureIdentifier, SystemType xb_smlSystem) {
         super(xb_smlSystem,assignedProcedureIdentifier);
     }

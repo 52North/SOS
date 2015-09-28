@@ -1428,7 +1428,6 @@
                     </execution>
                 </executions>
             </plugin>
-            
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -1539,6 +1538,13 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-webdav-jackrabbit</artifactId>
+				<version>1.0-beta-7</version>
+			</extension>
+		</extensions>
 	</build>
 	<scm>
 		<connection>scm:git:git://github.com/52North/SOS.git</connection>

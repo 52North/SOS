@@ -19,7 +19,8 @@ public class ObservationMerger {
                 } else {
                     boolean combined = false;
                     for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.checkForMerge(sosObservation)) {
+                        if (checkForMerge(combinedSosObs, sosObservation, observationMergeIndicator)) {
+//                        if (combinedSosObs.checkForMerge(sosObservation)) {
                             combinedSosObs.setResultTime(null);
                             combinedSosObs.mergeWithObservation(sosObservation);
                             combined = true;
@@ -72,8 +73,11 @@ public class ObservationMerger {
         if (observationMergeIndicator.isOfferings()) {
             merge = merge && checkForOfferings(observation, observationToAdd);
         }
-        if (observationMergeIndicator.isSetAdditionalMergeIndicators()) {
-            merge = merge && checkForAdditionalMergeIndicators(observation, observationToAdd, observationMergeIndicator.getAdditionalMergeIndicators());
+        if (observationMergeIndicator.isPhenomenonTime()) {
+            merge = merge && checkForPhenomenonTime(observation, observationToAdd);
+        }
+        if (observationMergeIndicator.isSamplingGeometry()) {
+            merge = merge && checkForSamplingGeometry(observation, observationToAdd);
         }
         return merge;
         
@@ -95,8 +99,15 @@ public class ObservationMerger {
         return observation.getObservationConstellation().getOfferings().equals(observationToAdd.getObservationConstellation().getOfferings());
     }
 
-    protected boolean checkForAdditionalMergeIndicators(OmObservation observation, OmObservation observationToAdd,
-            Set<String> additionalMergeIndicators) {
+    protected boolean checkForPhenomenonTime(OmObservation observation, OmObservation observationToAdd) {
+        return observation.getPhenomenonTime().equals(observationToAdd.getPhenomenonTime());
+    }
+    
+    protected boolean checkForSamplingGeometry(OmObservation observation, OmObservation observationToAdd) {
+        if (observation.isSetSpatialFilteringProfileParameter() && observationToAdd.isSetSpatialFilteringProfileParameter()) {
+            // TODO check for NULL
+            return observation.getSpatialFilteringProfileParameter().getValue().getValue().equals(observationToAdd.getSpatialFilteringProfileParameter().getValue().getValue());
+        }
         return false;
     }
 

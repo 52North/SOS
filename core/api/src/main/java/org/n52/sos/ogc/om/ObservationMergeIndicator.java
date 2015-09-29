@@ -1,11 +1,5 @@
 package org.n52.sos.ogc.om;
 
-import java.util.Set;
-
-import org.n52.sos.util.CollectionHelper;
-
-import com.google.common.collect.Sets;
-
 public class ObservationMergeIndicator {
     
     private boolean procedure = true;
@@ -16,7 +10,10 @@ public class ObservationMergeIndicator {
     
     private boolean offerings = true;
     
-    private Set<String> additionalMergeIndicators = Sets.newHashSet(); 
+    private boolean phenomenonTime = false;
+    
+    private boolean samplingGeometry = false;
+    
     
     /**
      * @return the procedure
@@ -80,28 +77,33 @@ public class ObservationMergeIndicator {
     public boolean sameObservationConstellation() {
         return isProcedure() && isObservableProperty() && isFeatureOfInterest() && isOfferings();
     }
-    
-    public ObservationMergeIndicator setAdditionalMergeIndicators(Set<String> additionalMergeIndicators) {
-        this.additionalMergeIndicators.clear();
-        this.additionalMergeIndicators.addAll(additionalMergeIndicators);
-        return this;
-    }
-    
-    public ObservationMergeIndicator addAdditionalMergeIndicator(String additionalMergeIndicator) {
-        this.additionalMergeIndicators.add(additionalMergeIndicator);
-        return this;
+
+    /**
+     * @return the phenomenonTime
+     */
+    public boolean isPhenomenonTime() {
+        return phenomenonTime;
     }
 
-    public Set<String> getAdditionalMergeIndicators() {
-        return additionalMergeIndicators;
+    /**
+     * @param phenomenonTime the phenomenonTime to set
+     */
+    public void setPhenomenonTime(boolean phenomenonTime) {
+        this.phenomenonTime = phenomenonTime;
     }
 
-    public boolean isSetAdditionalMergeIndicators() {
-        return CollectionHelper.isNotEmpty(getAdditionalMergeIndicators());
+    /**
+     * @return the samplingGeometry
+     */
+    public boolean isSamplingGeometry() {
+        return samplingGeometry;
     }
-    
-    public boolean hasAdditionalMergeIndicator(String additionalMergeIndicator) {
-       return getAdditionalMergeIndicators().contains(additionalMergeIndicator);
+
+    /**
+     * @param samplingGeometry the samplingGeometry to set
+     */
+    public void setSamplingGeometry(boolean samplingGeometry) {
+        this.samplingGeometry = samplingGeometry;
     }
     
 

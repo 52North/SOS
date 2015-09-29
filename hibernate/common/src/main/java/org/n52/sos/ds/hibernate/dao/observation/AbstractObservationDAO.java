@@ -94,6 +94,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -1259,6 +1260,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
         @Override
         public Observation<?> visit(TVPValue value)
+                throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+        
+        @Override
+        public Observation<?> visit(TLVTValue value)
                 throws OwsExceptionReport {
             throw notSupported(value);
         }

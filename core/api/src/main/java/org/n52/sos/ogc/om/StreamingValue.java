@@ -95,6 +95,10 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
     public void setObservationTemplate(OmObservation observationTemplate) {
         this.observationTemplate = observationTemplate;
     }
+    
+    public OmObservation getObservationTemplate() {
+        return observationTemplate;
+    }
 
     @Override
     public Time getPhenomenonTime() {

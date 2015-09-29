@@ -33,7 +33,7 @@ ALTER TABLE sos.`procedure` ADD COLUMN isaggregation char(1) default 'F';
 
 ALTER TABLE sos.`procedure` ADD COLUMN typeof bigint;
 
-alter table public."procedure" add constraint typeoffk foreign key (typeof) references public."procedure";
+alter table sos.`procedure` add constraint typeoffk foreign key (typeof) references sos.`procedure`;
 
 alter table sos.`procedure` add constraint typeoffk foreign key (typeof) references sos.`procedure` (procedureid);
 
@@ -44,7 +44,6 @@ ALTER TABLE sos.observation ADD COLUMN child char(1) default 'F';
 ALTER TABLE sos.observation ADD COLUMN parent char(1) default 'F';
 
 create table sos.complexValue (observationId bigint not null comment 'Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid', primary key (observationId)) comment='Value table for complex observation' ENGINE=InnoDB;
-alter table sos.complexValue add constraint observationComplexValueFk foreign key (observationId) references sos.observation (observationId);
 alter table sos.complexValue add constraint observationComplexValueFk foreign key (observationId) references sos.observation (observationId);
 
 create table sos.compositeObservation (observationId bigint not null comment 'Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid', childObservationId bigint not null comment 'Foreign Key (FK) to the related child complex observation. Contains "observation".observationid', primary key (observationId, childObservationId)) comment='Relation table for complex parent/child observations' ENGINE=InnoDB;

@@ -38,6 +38,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -125,6 +126,13 @@ public abstract class VoidValueVisitor implements ValueVisitor<Void> {
         _visit(value);
         return null;
     }
+    
+    @Override
+    public Void visit(TLVTValue value)
+            throws OwsExceptionReport {
+        _visit(value);
+        return null;
+    }
 
     @Override
     public Void visit(TextValue value)
@@ -171,6 +179,9 @@ public abstract class VoidValueVisitor implements ValueVisitor<Void> {
             throws OwsExceptionReport;
 
     protected abstract void _visit(TVPValue value)
+            throws OwsExceptionReport;
+    
+    protected abstract void _visit(TLVTValue value)
             throws OwsExceptionReport;
 
     protected abstract void _visit(TextValue value)

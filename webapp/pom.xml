@@ -193,6 +193,18 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>coding-gml-v321</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-gml-cov</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-cv-gml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v100</artifactId>
         </dependency>
         <dependency>
@@ -437,6 +449,11 @@
             <groupId>${project.groupId}</groupId>
         	<artifactId>inspire-code</artifactId>
         </dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-inspire-omso</artifactId>
+			<version>${project.version}</version>
+		</dependency>
         
         <!-- AQD eReporting -->
          <dependency>

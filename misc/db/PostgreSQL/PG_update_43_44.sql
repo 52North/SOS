@@ -42,9 +42,7 @@ ALTER TABLE public.observation ADD COLUMN parent char(1) default 'F' check (pare
 
 create table public.complexValue (observationId int8 not null, primary key (observationId));
 alter table public.complexValue add constraint observationComplexValueFk foreign key (observationId) references public.observation;
-alter table public.complexValue add constraint observationComplexValueFk foreign key (observationId) references public.observation;
 
 create table public.compositeObservation (observationId int8 not null, childObservationId int8 not null, primary key (observationId, childObservationId));
 alter table public.compositeObservation add constraint observationChildFk foreign key (childObservationId) references public.observation;
-alter table public.compositeObservation add constraint observationParentFK foreign key (observationId) references public.complexValue;
 alter table public.compositeObservation add constraint observationParentFK foreign key (observationId) references public.complexValue;

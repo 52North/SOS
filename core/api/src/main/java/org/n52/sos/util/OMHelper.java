@@ -47,6 +47,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -229,6 +230,11 @@ public final class OMHelper {
 
         @Override
         public String visit(TVPValue value) {
+            return defaultValue();
+        }
+        
+        @Override
+        public String visit(TLVTValue value) {
             return defaultValue();
         }
 

@@ -28,63 +28,22 @@
  */
 package org.n52.sos.encode;
 
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.util.http.MediaTypes;
-import org.n52.sos.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
  * 
  * @param <S>
  */
-public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-    }
+public abstract class AbstractXmlEncoder<S> extends AbstractSpecificXmlEncoder<XmlObject, S> {
 
     @Override
     public XmlObject encode(S element) throws OwsExceptionReport {
         return encode(element, new EnumMap<HelperValues, String>(HelperValues.class));
-    }
-
-    @Override
-    public MediaType getContentType() {
-        return MediaTypes.TEXT_XML;
-    }
-
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses() {
-        return Collections.emptySet();
-    }
-    
-    protected XmlObject substitute(XmlObject elementToSubstitute, XmlObject substitutionElement) {
-        XmlObject substituteElement =
-                XmlHelper.substituteElement(elementToSubstitute, substitutionElement);
-        substituteElement.set(substitutionElement);
-        return substituteElement;
     }
 
 }

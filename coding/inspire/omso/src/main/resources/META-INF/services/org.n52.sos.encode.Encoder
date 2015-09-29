@@ -1,0 +1,5 @@
+org.n52.svalbard.inspire.omso.v30.encode.PointObservationTypeEncoder
+org.n52.svalbard.inspire.omso.v30.encode.MultiPointObservationTypeEncoder
+org.n52.svalbard.inspire.omso.v30.encode.PointTimeSeriesObservationTypeEncoder
+org.n52.svalbard.inspire.omso.v30.encode.TrajectoryObservationTypeEncoder
+org.n52.svalbard.inspire.omso.v30.encode.ProfileObservationTypeEncoder

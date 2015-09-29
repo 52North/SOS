@@ -576,7 +576,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
     }
 
     public OmObservation cloneTemplate() {
-        OmObservation clone = new OmObservation();
+       return cloneTemplate(new OmObservation());
+    }
+    
+    protected OmObservation cloneTemplate(OmObservation clone) {
         clone.setObservationConstellation(this.getObservationConstellation());
         clone.setParameter(this.getParameter());
         clone.setResultType(this.getResultType());
@@ -585,6 +588,24 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setDecimalSeparator(this.getDecimalSeparator());
         return clone;
     }
+    
+    public OmObservation copyTo(OmObservation copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setObservationID(getObservationID());
+        copyOf.setResultTime(getResultTime());
+        copyOf.setValidTime(getValidTime());
+        copyOf.setObservationConstellation(getObservationConstellation());
+        copyOf.setResultType(getResultType());
+        copyOf.setParameter(getParameter());
+        copyOf.setValue(getValue());
+        copyOf.setTokenSeparator(getTokenSeparator());
+        copyOf.setNoDataValue(getNoDataValue());
+        copyOf.setTupleSeparator(getTupleSeparator());
+        copyOf.setDecimalSeparator(getDecimalSeparator());
+        copyOf.setResultQuality(getResultQuality());
+        copyOf.setAdditionalMergeIndicator(getAdditionalMergeIndicator());
+        return copyOf;
+    } 
 
     @Override
     public String getGmlId() {

@@ -35,22 +35,12 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.om.x20.NamedValueType;
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationPropertyType;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.om.x20.OMProcessPropertyType;
-import net.opengis.om.x20.TimeObjectPropertyType;
-
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlDouble;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -69,18 +59,18 @@ import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -97,12 +87,19 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import net.opengis.om.x20.NamedValueType;
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationPropertyType;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.OMProcessPropertyType;
+import net.opengis.om.x20.TimeObjectPropertyType;
 
 
 public abstract class AbstractOmEncoderv20
@@ -155,6 +152,8 @@ public abstract class AbstractOmEncoderv20
      * @return Indicator
      */
     protected abstract boolean convertEncodedProcedure();
+    
+    protected abstract OMObservationType createOmObservationType(); 
 
     @Override
     public boolean forceStreaming() {
@@ -260,7 +259,7 @@ public abstract class AbstractOmEncoderv20
             return xbObservation;
         }
     }
-
+    
     private XmlObject createObservationDocument(OMObservationType xbObservation) {
         OMObservationDocument doc = createObservationDocument();
         doc.setOMObservation(xbObservation);
@@ -303,7 +302,7 @@ public abstract class AbstractOmEncoderv20
         }
     }
 
-    private void setObservationType(OmObservation observation, OMObservationType xb) {
+    protected void setObservationType(OmObservation observation, OMObservationType xb) {
         // add observationType if set
         addObservationType(xb, observation.getObservationConstellation().getObservationType());
     }
@@ -580,10 +579,6 @@ public abstract class AbstractOmEncoderv20
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 
-    private static OMObservationType createOmObservationType() {
-        return OMObservationType.Factory.newInstance(getXmlOptions());
-    }
-
     private static OMObservationPropertyType createObservationPropertyType() {
         return OMObservationPropertyType.Factory.newInstance(getXmlOptions());
     }
@@ -680,12 +675,22 @@ public abstract class AbstractOmEncoderv20
         public XmlObject visit(TVPValue value) {
             return defaultValue(value);
         }
+        
+        @Override
+        public XmlObject visit(TLVTValue value) {
+            return defaultValue(value);
+        }
 
         @Override
         public XmlObject visit(TextValue value) {
             XmlString xmlString = XmlString.Factory.newInstance();
             xmlString.setStringValue(value.getValue());
             return xmlString;
+        }
+
+        @Override
+        public XmlObject visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            return defaultValue(value);
         }
 
         @Override

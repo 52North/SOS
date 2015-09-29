@@ -709,7 +709,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         }
         return codeType;
     }
-
+    
     protected MeasureType createMeasureType(final QuantityValue quantityValue) throws OwsExceptionReport {
         if (!quantityValue.isSetValue()) {
             throw new NoApplicableCodeException().withMessage(

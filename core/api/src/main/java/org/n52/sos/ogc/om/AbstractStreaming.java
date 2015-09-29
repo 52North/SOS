@@ -73,28 +73,30 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         // the merged Observations
         // (proc, obsProp, foi)
         if (CollectionHelper.isNotEmpty(observations)) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : observations) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.checkForMerge(sosObservation)) {
-                            combinedSosObs.setResultTime(null);
-                            combinedSosObs.mergeWithObservation(sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            return mergedObservations;
+            ObservationMerger observationMerger = new ObservationMerger();
+            return observationMerger.mergeObservations(observations, new ObservationMergeIndicator());
+//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+//            int obsIdCounter = 1;
+//            for (final OmObservation sosObservation : observations) {
+//                if (mergedObservations.isEmpty()) {
+//                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+//                    mergedObservations.add(sosObservation);
+//                } else {
+//                    boolean combined = false;
+//                    for (final OmObservation combinedSosObs : mergedObservations) {
+//                        if (combinedSosObs.checkForMerge(sosObservation)) {
+//                            combinedSosObs.setResultTime(null);
+//                            combinedSosObs.mergeWithObservation(sosObservation);
+//                            combined = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!combined) {
+//                        mergedObservations.add(sosObservation);
+//                    }
+//                }
+//            }
+//            return mergedObservations;
         }
         return observations;
     }

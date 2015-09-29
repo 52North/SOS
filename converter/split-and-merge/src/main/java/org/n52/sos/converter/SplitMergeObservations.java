@@ -47,6 +47,8 @@ import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.ObservationMergeIndicator;
+import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -306,28 +308,31 @@ public class SplitMergeObservations
         // the merged Observations
         // (proc, obsProp, foi)
         if (response.getObservationCollection() != null) {
-            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-            int obsIdCounter = 1;
-            for (final OmObservation sosObservation : response.getObservationCollection()) {
-                if (mergedObservations.isEmpty()) {
-                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-                    mergedObservations.add(sosObservation);
-                } else {
-                    boolean combined = false;
-                    for (final OmObservation combinedSosObs : mergedObservations) {
-                        if (combinedSosObs.checkForMerge(sosObservation)) {
-                            combinedSosObs.setResultTime(null);
-                            combinedSosObs.mergeWithObservation(sosObservation);
-                            combined = true;
-                            break;
-                        }
-                    }
-                    if (!combined) {
-                        mergedObservations.add(sosObservation);
-                    }
-                }
-            }
-            response.setObservationCollection(mergedObservations);
+            ObservationMerger observationMerger = new ObservationMerger();
+            response.setObservationCollection(observationMerger.mergeObservations(response.getObservationCollection(), new ObservationMergeIndicator()));
+//            
+//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
+//            int obsIdCounter = 1;
+//            for (final OmObservation sosObservation : response.getObservationCollection()) {
+//                if (mergedObservations.isEmpty()) {
+//                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
+//                    mergedObservations.add(sosObservation);
+//                } else {
+//                    boolean combined = false;
+//                    for (final OmObservation combinedSosObs : mergedObservations) {
+//                        if (combinedSosObs.checkForMerge(sosObservation)) {
+//                            combinedSosObs.setResultTime(null);
+//                            combinedSosObs.mergeWithObservation(sosObservation);
+//                            combined = true;
+//                            break;
+//                        }
+//                    }
+//                    if (!combined) {
+//                        mergedObservations.add(sosObservation);
+//                    }
+//                }
+//            }
+//            response.setObservationCollection(mergedObservations);
         }
     }
 

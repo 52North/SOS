@@ -68,6 +68,7 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -174,7 +175,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(OmConstants.OM_20_SCHEMA_LOCATION);
     }
-
+    
     @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
             UnsupportedEncoderInputException {
@@ -197,6 +198,10 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
         }
+    }
+    
+    protected OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance(getXmlOptions());
     }
 
     @Override
@@ -418,6 +423,12 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(TVPValue value)
+                throws OwsExceptionReport {
+            return null;
+        }
+        
+        @Override
+        public XmlObject visit(TLVTValue value)
                 throws OwsExceptionReport {
             return null;
         }

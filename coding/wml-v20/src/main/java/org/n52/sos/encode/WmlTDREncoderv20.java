@@ -195,6 +195,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
             super.encode(objectToEncode, outputStream, encodingValues);
         }
     }
+    
+    protected OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance(getXmlOptions());
+    }
 
     @Override
     protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {

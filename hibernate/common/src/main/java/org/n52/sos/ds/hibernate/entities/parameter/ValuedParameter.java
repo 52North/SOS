@@ -26,33 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation;
+package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasChildFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import java.io.Serializable;
+
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
-import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * A {@code BaseObservation} is an observation without time, value, procedure,
- * observed property or feature of interest.
- *
- * @author Christian Autermann
- * @see TemporalReferencedObservation
- * @see ContextualReferencedObservation
- */
-public interface BaseObservation
-        extends IdentifierNameDescriptionEntity,
-                HasDeletedFlag,
-                HasObservationId,
-                HasSamplingGeometry,
-                HasOfferings,
-                HasChildFlag,
-                HasParentFlag,
-                HasParameters {
+public interface ValuedParameter<T> extends Serializable, HasValue<T>, HasName, HasObservationId {
+    
+    void accept(VoidParameterVisitor visitor) throws OwsExceptionReport;
 
+    <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport;
 }

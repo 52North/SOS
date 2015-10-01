@@ -55,6 +55,7 @@ import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
+import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -640,14 +641,15 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Hibernate session
      * @throws OwsExceptionReport
      */
-    protected void insertParameter(Collection<NamedValue<?>> parameter, Observation<?> observation,
-            Session session) throws OwsExceptionReport {
-    	for (NamedValue<?> namedValue : parameter) {
-    		if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-    			throw new OptionNotSupportedException().at("om:parameter").withMessage(
-    	                "The om:parameter support is not yet implemented!");
-    		}
-		}
+    @Deprecated
+    protected void insertParameter(Collection<NamedValue<?>> parameter, Observation<?> observation, Session session)
+            throws OwsExceptionReport {
+        for (NamedValue<?> namedValue : parameter) {
+            if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
+                throw new OptionNotSupportedException().at("om:parameter")
+                        .withMessage("The om:parameter support is not yet implemented!");
+            }
+        }
     }
 
     /**
@@ -1363,15 +1365,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
 
-
-            if (sosObservation.isSetParameter()) {
-                daos.observation().insertParameter(sosObservation.getParameter(), observation, session);
-            }
-
             observation.setValue(value);
 
             session.saveOrUpdate(observation);
-
+            
+            if (sosObservation.isSetParameter()) {
+                daos.parameter.insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
+            }
             return observation;
         }
 
@@ -1407,12 +1407,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             private final ObservationConstellationDAO observationConstellation;
             private final AbstractObservationDAO observation;
             private final ObservationTypeDAO observationType;
+            private final ParameterDAO parameter;
 
             DAOs(AbstractObservationDAO observationDAO) {
                 this.observation = observationDAO;
                 this.observableProperty = new ObservablePropertyDAO();
                 this.observationConstellation = new ObservationConstellationDAO();
                 this.observationType = new ObservationTypeDAO();
+                this.parameter = new ParameterDAO();
             }
 
             public ObservablePropertyDAO observableProperty() {
@@ -1429,6 +1431,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
             public ObservationTypeDAO observationType() {
                 return this.observationType;
+            }
+            
+            public ParameterDAO parameter() {
+                return this.parameter;
             }
         }
     }

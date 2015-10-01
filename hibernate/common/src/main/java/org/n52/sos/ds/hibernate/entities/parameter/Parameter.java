@@ -26,88 +26,72 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities;
+package org.n52.sos.ds.hibernate.entities.parameter;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 
-/**
- * @since 4.0.0
- * 
- */
-@Deprecated
-public class Parameter implements Serializable, HasValue<Object> {
+import com.google.common.base.Strings;
 
-    private static final long serialVersionUID = -5823568610931042841L;
+public abstract class Parameter<T> implements Serializable, HasObservationId, HasName, ValuedParameter<T> {
 
+    private static final long serialVersionUID = -1927879842082507108L;
     private long parameterId;
-
     private long observationId;
-
-    private String definition;
-
-    private String title;
-
-    private Object value;
-
+    private String name;
+    
     public Parameter() {
         super();
     }
-
+    
+    /**
+     * @return the parameterId
+     */
     public long getParameterId() {
         return parameterId;
     }
 
+    /**
+     * @param parameterId the parameterId to set
+     */
     public void setParameterId(long parameterId) {
         this.parameterId = parameterId;
     }
 
+    /**
+     * @return the observationId
+     */
     public long getObservationId() {
         return observationId;
     }
 
-    public Parameter setObservationId(long observationId) {
+    /**
+     * @param observationId the observationId to set
+     */
+    public void setObservationId(long observationId) {
         this.observationId = observationId;
-        return this;
     }
 
-    public String getDefinition() {
-        return definition;
+    /**
+     * @return the name
+     */
+    @Override
+    public String getName() {
+        return name;
     }
-
-    public Parameter setDefinition(String definition) {
-        this.definition = definition;
-        return this;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public Parameter setTitle(String title) {
-        this.title = title;
-        return this;
+    /**
+     * @param name the name to set
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
-    public Object getValue() {
-        return value;
+    public boolean isSetName() {
+        return !Strings.isNullOrEmpty(getName());
     }
-
-    @Override
-    public void setValue(Object value) {
-        this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
 }

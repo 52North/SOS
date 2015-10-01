@@ -26,33 +26,46 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation;
+package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasChildFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
-import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * A {@code BaseObservation} is an observation without time, value, procedure,
- * observed property or feature of interest.
- *
- * @author Christian Autermann
- * @see TemporalReferencedObservation
- * @see ContextualReferencedObservation
- */
-public interface BaseObservation
-        extends IdentifierNameDescriptionEntity,
-                HasDeletedFlag,
-                HasObservationId,
-                HasSamplingGeometry,
-                HasOfferings,
-                HasChildFlag,
-                HasParentFlag,
-                HasParameters {
+import com.google.common.base.Strings;
+
+public class TextValuedParameter extends Parameter<String> {
+
+    private static final long serialVersionUID = -6009881349223418155L;
+    private String value;
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return !Strings.isNullOrEmpty(getValue());
+    }
+
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
+    
+    @Override
+    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
 
 }

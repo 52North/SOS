@@ -33,6 +33,8 @@ import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.util.CollectionHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -47,6 +49,7 @@ public abstract class AbstractBaseObservation
     private boolean deleted;
     private boolean child;
     private boolean parent;
+    private Set<Parameter> parameters = new HashSet<>(0);
 
     @Override
     public boolean getDeleted() {
@@ -121,6 +124,26 @@ public abstract class AbstractBaseObservation
     @Override
     public void setChild(boolean child) {
         this.child = child;
+    }
+    
+    @Override
+    public Set<Parameter> getParameters() {
+        return parameters;
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public void setParameters(Object parameters) {
+        if (parameters instanceof Set<?>) {
+            this.parameters = (Set<Parameter>) parameters;
+        } else {
+            getParameters().add((Parameter) parameters);
+        }
+    }
+    
+    @Override
+    public boolean hasParameters() {
+        return CollectionHelper.isNotEmpty(getParameters());
     }
 
 }

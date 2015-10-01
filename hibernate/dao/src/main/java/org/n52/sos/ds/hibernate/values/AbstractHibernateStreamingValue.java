@@ -195,6 +195,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      *             If an error occurs when getting the value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Deprecated
     protected void addValuesToObservation(OmObservation observation, ValuedObservation<?> abstractValue)
             throws OwsExceptionReport {
         observation.setObservationID(Long.toString(abstractValue.getObservationId()));
@@ -374,6 +375,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return value;
     }
 
+    @Deprecated
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry)
             throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<>();

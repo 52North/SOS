@@ -26,33 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation;
+package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasChildFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
-import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * A {@code BaseObservation} is an observation without time, value, procedure,
- * observed property or feature of interest.
- *
- * @author Christian Autermann
- * @see TemporalReferencedObservation
- * @see ContextualReferencedObservation
- */
-public interface BaseObservation
-        extends IdentifierNameDescriptionEntity,
-                HasDeletedFlag,
-                HasObservationId,
-                HasSamplingGeometry,
-                HasOfferings,
-                HasChildFlag,
-                HasParentFlag,
-                HasParameters {
+public class BooleanValuedParameter extends Parameter<Boolean> {
+
+    private static final long serialVersionUID = 940615372876462865L;
+    private Boolean value;
+    
+    @Override
+    public Boolean getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+       this.value = value;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return value != null;
+    }
+
+    @Override
+    public String getValueAsString() {
+        return getValue().toString();
+    }
+
+    @Override
+    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
 
 }

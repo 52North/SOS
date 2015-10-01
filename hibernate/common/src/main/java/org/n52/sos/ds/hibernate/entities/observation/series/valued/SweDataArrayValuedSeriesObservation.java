@@ -43,11 +43,11 @@ import org.n52.sos.util.StringHelper;
  *
  * @author Christian Autermann
  */
-public class SweDataArrayValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<String>
+public class SweDataArrayValuedSeriesObservation extends AbstractValuedSeriesObservation<String>
         implements SweDataArrayValuedObservation {
 
     private static final long serialVersionUID = 8620387145785871292L;
+
     private String value;
 
     @Override
@@ -64,21 +64,19 @@ public class SweDataArrayValuedSeriesObservation
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getValueAsString() {
+        return getValue();
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

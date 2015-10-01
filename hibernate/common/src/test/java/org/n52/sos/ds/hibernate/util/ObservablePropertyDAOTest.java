@@ -43,7 +43,6 @@ import org.junit.rules.ErrorCollector;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ds.hibernate.entities.TObservableProperty;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -55,10 +54,10 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
     public void clean() {
         Session session = getSession();
         try {
-            ScrollableIterable<TObservableProperty> iter
+            ScrollableIterable<ObservableProperty> iter
                     = ScrollableIterable.fromCriteria(session
-                            .createCriteria(TObservableProperty.class));
-            for (TObservableProperty observableProperty : iter) {
+                            .createCriteria(ObservableProperty.class));
+            for (ObservableProperty observableProperty : iter) {
                 session.delete(observableProperty);
             }
         } finally {
@@ -94,17 +93,17 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
         assertThat(observableProperties, is(notNullValue()));
         errors.checkThat(observableProperties.keySet(), hasSize(5));
 
-        assertThat(observableProperties.get("parent"), is(instanceOf(TObservableProperty.class)));
-        assertThat(observableProperties.get("child1"), is(instanceOf(TObservableProperty.class)));
-        assertThat(observableProperties.get("child2"), is(instanceOf(TObservableProperty.class)));
-        assertThat(observableProperties.get("child3"), is(instanceOf(TObservableProperty.class)));
-        assertThat(observableProperties.get("single"), is(instanceOf(TObservableProperty.class)));
+        assertThat(observableProperties.get("parent"), is(instanceOf(ObservableProperty.class)));
+        assertThat(observableProperties.get("child1"), is(instanceOf(ObservableProperty.class)));
+        assertThat(observableProperties.get("child2"), is(instanceOf(ObservableProperty.class)));
+        assertThat(observableProperties.get("child3"), is(instanceOf(ObservableProperty.class)));
+        assertThat(observableProperties.get("single"), is(instanceOf(ObservableProperty.class)));
 
-        TObservableProperty parent = (TObservableProperty) observableProperties.get("parent");
-        TObservableProperty child1 = (TObservableProperty) observableProperties.get("child1");
-        TObservableProperty child2 = (TObservableProperty) observableProperties.get("child2");
-        TObservableProperty child3 = (TObservableProperty) observableProperties.get("child3");
-        TObservableProperty single = (TObservableProperty) observableProperties.get("single");
+        ObservableProperty parent = (ObservableProperty) observableProperties.get("parent");
+        ObservableProperty child1 = (ObservableProperty) observableProperties.get("child1");
+        ObservableProperty child2 = (ObservableProperty) observableProperties.get("child2");
+        ObservableProperty child3 = (ObservableProperty) observableProperties.get("child3");
+        ObservableProperty single = (ObservableProperty) observableProperties.get("single");
 
         errors.checkThat(parent.isHiddenChild(), is(false));
         errors.checkThat(parent.getParents(), is(empty()));
@@ -139,7 +138,7 @@ public class ObservablePropertyDAOTest extends HibernateTestCase {
 
     @SuppressWarnings("unchecked")
     protected Map<String, ObservableProperty> load(Session session) {
-        return asMap(session.createCriteria(TObservableProperty.class).list());
+        return asMap(session.createCriteria(ObservableProperty.class).list());
     }
 
     protected Map<String, ObservableProperty> asMap(Collection<ObservableProperty> collection) {

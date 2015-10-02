@@ -29,9 +29,24 @@
 package org.n52.sos.ds.hibernate.entities.parameter;
 
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.om.values.BooleanValue;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
+import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class ParameterFactory {
+public class ParameterFactory implements ValueVisitor<ValuedParameter<?>> {
 
     protected ParameterFactory() {
     }
@@ -77,12 +92,85 @@ public class ParameterFactory {
     }
 
     private <T extends ValuedParameter<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
+    
         try {
             return c.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
             throw new NoApplicableCodeException().causedBy(ex)
                     .withMessage("Error while creating parameter instance for %s", c);
         }
+    }
+
+    @Override
+    public ValuedParameter<?> visit(BooleanValue value) throws OwsExceptionReport {
+        return truth();
+    }
+
+    @Override
+    public ValuedParameter<?> visit(CategoryValue value) throws OwsExceptionReport {
+        return category();
+    }
+
+    @Override
+    public ValuedParameter<?> visit(ComplexValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(CountValue value) throws OwsExceptionReport {
+        return count();
+    }
+
+    @Override
+    public ValuedParameter<?> visit(GeometryValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(HrefAttributeValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(NilTemplateValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(QuantityValue value) throws OwsExceptionReport {
+        return quantity();
+    }
+
+    @Override
+    public ValuedParameter<?> visit(ReferenceValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(SweDataArrayValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(TVPValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(TextValue value) throws OwsExceptionReport {
+        return text();
+    }
+
+    @Override
+    public ValuedParameter<?> visit(UnknownValue value) throws OwsExceptionReport {
+        throw notSupported(value);
+    }
+    
+    private OwsExceptionReport notSupported(Value<?> value)
+            throws OwsExceptionReport {
+        throw new NoApplicableCodeException()
+                .withMessage("Unsupported om:parameter value %s", value
+                             .getClass().getCanonicalName());
     }
 
     public static ParameterFactory getInstance() {

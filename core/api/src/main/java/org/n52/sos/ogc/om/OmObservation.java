@@ -653,6 +653,24 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 && namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH)
                 && namedValue.getValue() instanceof QuantityValue;
     }
+    
+    public boolean isSetHeightDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightDepthParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public NamedValue<Double> getHeightDepthParameter() {
+        if (isSetDepthParameter()) {
+            return getDepthParameter();
+        }
+        return getHeightParameter();
+    }
 
     private boolean isHeightDepthParameter(NamedValue<?> namedValue) {
         return isHeightParameter(namedValue) || isDepthParameter(namedValue);

@@ -60,6 +60,9 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -201,6 +204,16 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         addFeatureOfInterestRestrictionToObservationCriteria(criteria, featureOfInterest);
         return criteria;
     }
+    @Override
+    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session) throws CodedException {
+        OmObservationConstellation oc = observation.getObservationConstellation();
+        Criteria criteria = getDefaultObservationTimeCriteria(session);
+        addProcedureRestrictionToObservationCriteria(criteria, oc.getProcedureIdentifier());
+        addObservablePropertyRestrictionToObservationCriteria(criteria, oc.getObservablePropertyIdentifier());
+        addFeatureOfInterestRestrictionToObservationCriteria(criteria, oc.getFeatureOfInterestIdentifier());
+        return criteria;
+    }
+
     @SuppressWarnings("unchecked")
     public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
         Criteria criteria =
@@ -401,6 +414,11 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     public String addProcedureAlias(Criteria criteria) {
         criteria.createAlias(Observation.PROCEDURE, Procedure.ALIAS);
         return Procedure.ALIAS_DOT;
+    }
+
+    @Override
+    protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
+        return c;
     }
 
 }

@@ -18,7 +18,7 @@
             </column>
         </property>
         <property name="name" type="string">
-            <column name="name" not-null="true">
+            <column name="name" not-null="true" index="paramNameIdx">
             	<comment>Parameter name</comment>
             </column>
         </property>
@@ -34,7 +34,7 @@
         	</key>
         	<property name="value" 
         			  type="org.hibernate.type.TrueFalseType">
-         		<column name="value">
+         		<column name="value"  index="booleanParamIdx">
          			<comment>Boolean parameter value</comment>
          		</column>
          	</property>
@@ -50,7 +50,7 @@
         	</key>
          	<property name="value" 
          			  type="string">
-         		<column name="value">
+         		<column name="value" index="categoryParamIdx">
          			<comment>Category parameter value</comment>
          		</column>
          	</property>
@@ -76,7 +76,7 @@
         	</key>
         	<property name="value" 
         			  type="integer">
-         		<column name="value">
+         		<column name="value" index="countParamIdx">
          			<comment>Count parameter value</comment>
          		</column>
          	</property>
@@ -92,7 +92,7 @@
 	        </key>
             <property name="value" 
             		  type="double">
-         		<column name="value">
+         		<column name="value" index="quantityParamIdx">
          			<comment>Numeric/Quantity parameter value</comment>
          		</column>
          	</property>
@@ -118,7 +118,7 @@
         	</key>
         	<property name="value" 
         			  type="org.hibernate.type.StringClobType">
-         		<column name="value">
+         		<column name="value" index="textParamIdx">
          			<comment>Text parameter value</comment>
          		</column>
          	</property>

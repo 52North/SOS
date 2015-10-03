@@ -54,7 +54,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
@@ -62,11 +61,9 @@ import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
@@ -74,8 +71,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObserva
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -120,7 +115,6 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.SosGetFeatureOfInterestTimeRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
@@ -1207,7 +1201,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         detachedCriteria.add(Restrictions.eq(Parameter.NAME, hdp.getName().getHref()));
         detachedCriteria.add(Restrictions.eq(Parameter.VALUE, hdp.getValue().getValue()));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
-        c.add(Subqueries.eq(AbstractBaseObservation.ID, detachedCriteria));
+        c.add(Subqueries.propertyIn(AbstractBaseObservation.ID, detachedCriteria));
       
     }
 

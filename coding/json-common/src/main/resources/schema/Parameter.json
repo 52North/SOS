@@ -15,7 +15,7 @@
           "type": "string"
         },
         "value": {
-          "anyOf": [
+          "oneOf": [
             {
               "type": "string"
             },
@@ -42,6 +42,7 @@
   },
   "definitions": {
     "quantity": {
+      "type": "object",
       "required": [
         "uom",
         "value"

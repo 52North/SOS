@@ -29,11 +29,18 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
-import org.n52.sos.util.Constants;import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.util.Constants;
+
+import com.google.common.collect.Sets;
+
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 
 /**
@@ -46,7 +53,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescript
  *
  */
 public class Procedure extends SpatialEntity implements Serializable, HasDeletedFlag, HasProcedureDescriptionFormat,
-        HasGeometry, HasCoordinate, HasDisabledFlag {
+        HasGeometry, HasCoordinate, HasDisabledFlag, HasParentChilds<Procedure> {
 
     private static final long serialVersionUID = -3115365895730874831L;
 
@@ -75,6 +82,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean isType;
     
     private boolean isAggregation;
+    
+    private Set<Procedure> childs = Sets.newHashSet();
+
+    private Set<Procedure> parents = Sets.newHashSet();
     
     public long getProcedureId() {
         return this.procedureId;
@@ -207,5 +218,47 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
      */
     public void setIsAggregation(boolean isAggregation) {
         this.isAggregation = isAggregation;
+    }
+    
+    @Override
+    public Set<Procedure> getParents() {
+        return parents;
+    }
+
+    @Override
+    public void setParents(Set<Procedure> parents) {
+        this.parents = parents;
+    }
+
+    @Override
+    public Set<Procedure> getChilds() {
+        return childs;
+    }
+
+    @Override
+    public void setChilds(Set<Procedure> childs) {
+        this.childs = childs;
+    }
+
+    @Override
+    public void addParent(Procedure parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(Procedure child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
     }
 }

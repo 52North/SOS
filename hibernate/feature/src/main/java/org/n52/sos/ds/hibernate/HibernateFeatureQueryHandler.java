@@ -58,7 +58,6 @@ import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
@@ -415,15 +414,13 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (feature.isSetDescriptionXml()) {
             sampFeat.setXmlDescription(feature.getDescriptionXml());
         }
-        if (feature instanceof TFeatureOfInterest) {
-            final Set<FeatureOfInterest> parentFeatures = ((TFeatureOfInterest) feature).getParents();
-            if (parentFeatures != null && !parentFeatures.isEmpty()) {
-                final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
-                for (final FeatureOfInterest parentFeature : parentFeatures) {
-                    sampledFeatures.add(createSosAbstractFeature(parentFeature, queryObject, session));
-                }
-                sampFeat.setSampledFeatures(sampledFeatures);
+        final Set<FeatureOfInterest> parentFeatures = feature.getParents();
+        if (parentFeatures != null && !parentFeatures.isEmpty()) {
+            final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
+            for (final FeatureOfInterest parentFeature : parentFeatures) {
+                sampledFeatures.add(createSosAbstractFeature(parentFeature, queryObject, session));
             }
+            sampFeat.setSampledFeatures(sampledFeatures);
         }
         return sampFeat;
     }
@@ -484,7 +481,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         final String newId = samplingFeature.getIdentifierCodeWithAuthority().getValue();
         FeatureOfInterest feature = getFeatureOfInterest(newId, samplingFeature.getGeometry(), session);
         if (feature == null) {
-            feature = new TFeatureOfInterest();
+            feature = new FeatureOfInterest();
             featureOfInterestDAO.addIdentifierNameDescription(samplingFeature, feature, session);
             processGeometryPreSave(samplingFeature, feature, session);
             if (samplingFeature.isSetXmlDescription()) {
@@ -506,7 +503,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                         }
                     }
                 }
-                ((TFeatureOfInterest) feature).setParents(parents);
+                feature.setParents(parents);
             }
             session.save(feature);
             session.flush();

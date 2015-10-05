@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlBoolean;
-import org.apache.xmlbeans.XmlDouble;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -80,6 +79,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CodingHelper;
@@ -602,6 +603,14 @@ public abstract class AbstractOmEncoderv20
     protected static XmlObject encodeGML(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
+    
+    protected static XmlObject encodeSweCommon(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
+    }
+
+    protected static XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
+    }
 
     private static String generateObservationGMLId() {
         return "o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
@@ -618,10 +627,8 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(CategoryValue value) {
-            XmlString xmlString = XmlString.Factory.newInstance();
-            xmlString.setStringValue(value.getValue());
-            return xmlString;
+        public XmlObject visit(CategoryValue value) throws OwsExceptionReport {
+            return encodeGML(value, createHelperValues(value));
         }
 
         @Override
@@ -654,10 +661,8 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(QuantityValue value) {
-            XmlDouble xmlDouble = XmlDouble.Factory.newInstance();
-            xmlDouble.setDoubleValue(value.getValue().doubleValue());
-            return xmlDouble;
+        public XmlObject visit(QuantityValue value) throws OwsExceptionReport {
+            return encodeGML(value, createHelperValues(value));
         }
 
         @Override

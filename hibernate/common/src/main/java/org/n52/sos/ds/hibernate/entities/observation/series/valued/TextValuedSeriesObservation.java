@@ -42,11 +42,11 @@ import org.n52.sos.util.StringHelper;
  *
  * @author Christian Autermann
  */
-public class TextValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<String>
+public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation<String>
         implements TextValuedObservation {
 
     private static final long serialVersionUID = -4907297395374635905L;
+
     private String value;
 
     @Override
@@ -64,20 +64,18 @@ public class TextValuedSeriesObservation
         return StringHelper.isNotEmpty(getValue());
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

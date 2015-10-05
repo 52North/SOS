@@ -105,35 +105,34 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
     }
 
     private void encodeProcedure(OmObservation o, ObjectNode json) {
-        json.put(JSONConstants.PROCEDURE,
-                 o.getObservationConstellation().getProcedure().getIdentifier());
+        json.put(JSONConstants.PROCEDURE, o.getObservationConstellation().getProcedure().getIdentifier());
     }
 
     private void encodeParameter(OmObservation o, ObjectNode json) throws OwsExceptionReport {
-		if (o.isSetParameter()) {
-			if (o.getParameter().size() == 1) {
+        if (o.isSetParameter()) {
+            if (o.getParameter().size() == 1) {
                 json.put(JSONConstants.PARAMETER, encodeNamedValue(o.getParameter().iterator().next()));
             } else {
                 ArrayNode parameters = json.putArray(JSONConstants.PARAMETER);
                 for (NamedValue<?> namedValue : o.getParameter()) {
-                	parameters.add(encodeNamedValue(namedValue));
+                    parameters.add(encodeNamedValue(namedValue));
                 }
             }
-		}
-	}
+        }
+    }
 
-	private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
-		ObjectNode namedValueObject = nodeFactory().objectNode();
-		namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
-		namedValueObject.put(JSONConstants.VALUE, encodeObjectToJson(namedValue.getValue().getValue()));
-		ObjectNode parameterObject = nodeFactory().objectNode();
-		parameterObject.put(JSONConstants.NAMED_VALUE, namedValueObject);
-		return parameterObject;
-	}
+    private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
+        ObjectNode namedValueObject = nodeFactory().objectNode();
+        namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
+        namedValueObject.put(JSONConstants.VALUE, encodeValue(namedValue.getValue()));
+        ObjectNode parameterObject = nodeFactory().objectNode();
+        parameterObject.put(JSONConstants.NAMED_VALUE, namedValueObject);
+        return parameterObject;
+    }
 
-	private void encodeObservableProperty(OmObservation o, ObjectNode json) {
-        json.put(JSONConstants.OBSERVABLE_PROPERTY, o.getObservationConstellation().getObservableProperty()
-                .getIdentifier());
+    private void encodeObservableProperty(OmObservation o, ObjectNode json) {
+        json.put(JSONConstants.OBSERVABLE_PROPERTY,
+                o.getObservationConstellation().getObservableProperty().getIdentifier());
     }
 
     private void encodeObservationType(OmObservation o, ObjectNode json) throws OwsExceptionReport {
@@ -180,9 +179,19 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
     }
 
     private JsonNode encodeResult(OmObservation o) throws OwsExceptionReport {
-
         Value<?> value = o.getValue().getValue();
         String type = getObservationType(o);
+        if (value instanceof TVPValue) {
+            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
+                return encodeTVPValue(o);
+            }
+        } else {
+            return encodeValue(value);
+        }
+        throw new UnsupportedEncoderInputException(this, value);
+    }
+    
+    private JsonNode encodeValue(Value<?> value) throws OwsExceptionReport {
         if (value instanceof QuantityValue) {
             return encodeQualityValue(value);
         } else if (value instanceof CountValue) {
@@ -199,11 +208,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
             return encodeComplexValue(value);
         } else if (value instanceof SweDataArrayValue) {
             return encodeSweDataArrayValue(value);
-        } else if (value instanceof TVPValue) {
-            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
-                return encodeTVPValue(o);
-            }
-        }
+        }  
         throw new UnsupportedEncoderInputException(this, value);
     }
 

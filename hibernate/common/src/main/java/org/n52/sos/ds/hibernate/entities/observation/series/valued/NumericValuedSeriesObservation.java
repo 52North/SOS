@@ -41,11 +41,11 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  *
  * @author Christian Autermann
  */
-public class NumericValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Double>
+public class NumericValuedSeriesObservation extends AbstractValuedSeriesObservation<Double>
         implements NumericValuedObservation {
 
     private static final long serialVersionUID = 7487419141361171658L;
+
     private Double value;
 
     @Override
@@ -62,21 +62,19 @@ public class NumericValuedSeriesObservation
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getValueAsString() {
+        return getValue().toString();
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

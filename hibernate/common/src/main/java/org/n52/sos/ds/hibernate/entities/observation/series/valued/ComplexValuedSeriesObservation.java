@@ -44,11 +44,11 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  *
  * @author Christian Autermann
  */
-public class ComplexValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Set<Observation<?>>>
+public class ComplexValuedSeriesObservation extends AbstractValuedSeriesObservation<Set<Observation<?>>>
         implements ComplexValuedObservation {
 
     private static final long serialVersionUID = -842939633330647415L;
+
     private Set<Observation<?>> value;
 
     @Override
@@ -67,20 +67,18 @@ public class ComplexValuedSeriesObservation
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
     public String getValueAsString() {
-        // TODO 
+        // TODO
         return null;
     }
 }

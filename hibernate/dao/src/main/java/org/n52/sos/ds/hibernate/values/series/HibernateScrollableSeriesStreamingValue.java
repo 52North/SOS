@@ -107,10 +107,11 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
-            addValuesToObservation(observation, resultObject);
-            if (resultObject.hasSamplingGeometry()) {
-                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
-            }
+            resultObject.addValuesToObservation(observation, getResponseFormat());
+//            addValuesToObservation(observation, resultObject);
+//            if (resultObject.hasSamplingGeometry()) {
+//                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+//            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;

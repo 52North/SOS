@@ -335,7 +335,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             DatabaseMetadata metadata = getDatabaseMetadata(conn, getConfig(settings));
             List<SchemaUpdateScript> upSchema =
                     getConfig(settings).generateSchemaUpdateScriptList(getDialectInternal(), metadata);
-            return SchemaUpdateScript.toStringArray(upSchema);
+            Set<String> nonDublicated = Sets.newLinkedHashSet(Arrays.asList(SchemaUpdateScript.toStringArray(upSchema)));
+            return nonDublicated.toArray(new String[nonDublicated.size()]);
         } catch (SQLException ex) {
             throw new ConfigurationException(ex);
         } finally {

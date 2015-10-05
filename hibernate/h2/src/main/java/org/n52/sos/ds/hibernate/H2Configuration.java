@@ -112,6 +112,7 @@ public class H2Configuration {
             resources.add("/mapping/core/ObservationType.hbm.xml");
             resources.add("/mapping/core/FeatureOfInterestType.hbm.xml");
             resources.add("/mapping/core/Offering.hbm.xml");
+            resources.add("/mapping/core/Parameter.hbm.xml");
             resources.add("/mapping/core/Procedure.hbm.xml");
             resources.add("/mapping/core/ObservableProperty.hbm.xml");
             resources.add("/mapping/core/Unit.hbm.xml");
@@ -119,15 +120,14 @@ public class H2Configuration {
 //            resources.add("/mapping/i18n/HibernateI18NFeatureOfInterestMetadata.hbm.xml");
 //            resources.add("/mapping/i18n/HibernateI18NObservablePropertyMetadata.hbm.xml");
 //            resources.add("/mapping/i18n/HibernateI18NOfferingMetadata.hbm.xml");
-            resources.add("/mapping/transactional/TObservableProperty.hbm.xml");
+//            resources.add("/mapping/transactional/TObservableProperty.hbm.xml");
             resources.add("/mapping/transactional/RelatedFeatureRole.hbm.xml");
             resources.add("/mapping/transactional/RelatedFeature.hbm.xml");
             resources.add("/mapping/transactional/TOffering.hbm.xml");
             resources.add("/mapping/transactional/ValidProcedureTime.hbm.xml");
-            resources.add("/mapping/transactional/TFeatureOfInterest.hbm.xml");
+//            resources.add("/mapping/transactional/TFeatureOfInterest.hbm.xml");
             resources.add("/mapping/transactional/ResultTemplate.hbm.xml");
             resources.add("/mapping/transactional/TProcedure.hbm.xml");
-            resources.add("/mapping/transactional/Parameter.hbm.xml");
 //            resources.add("/mapping/old/observation/ValuedObservation.hbm.xml");
 //            resources.add("/mapping/old/observation/Observation.hbm.xml");
 //            resources.add("/mapping/old/observation/TemporalReferencedObservation.hbm.xml");

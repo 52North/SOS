@@ -43,11 +43,11 @@ import com.vividsolutions.jts.geom.Geometry;
  *
  * @author Christian Autermann
  */
-public class GeometryValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Geometry>
+public class GeometryValuedSeriesObservation extends AbstractValuedSeriesObservation<Geometry>
         implements GeometryValuedObservation {
 
     private static final long serialVersionUID = 4821542860405259404L;
+
     private Geometry value;
 
     @Override
@@ -66,19 +66,17 @@ public class GeometryValuedSeriesObservation
     }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toText();
-	}
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public String getValueAsString() {
+        return getValue().toText();
+    }
+
+    @Override
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

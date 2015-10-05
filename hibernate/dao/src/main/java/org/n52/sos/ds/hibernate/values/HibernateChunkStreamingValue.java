@@ -127,8 +127,9 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         try {
             if (hasNextValue()) {
                 OmObservation observation = observationTemplate.cloneTemplate();
-                ValuedObservation<?> resultObject = nextEntity();
-                addValuesToObservation(observation, resultObject);
+                AbstractValuedLegacyObservation<?> resultObject = nextEntity();
+                resultObject.addValuesToObservation(observation, getResponseFormat());
+//                addValuesToObservation(observation, resultObject);
                 checkForModifications(observation);
                 session.evict(resultObject);
                 return observation;

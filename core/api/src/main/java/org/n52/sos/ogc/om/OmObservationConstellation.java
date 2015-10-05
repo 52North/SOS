@@ -121,6 +121,10 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     public SosProcedureDescription getProcedure() {
         return procedure;
     }
+    
+    public String getProcedureIdentifier() {
+        return getProcedure().getIdentifier();
+    }
 
     /**
      * Set the procedure
@@ -153,6 +157,10 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     public OmObservationConstellation setObservableProperty(AbstractPhenomenon observableProperty) {
         this.observableProperty = observableProperty;
         return this;
+    }
+    
+    public String getObservablePropertyIdentifier() {
+        return getObservableProperty().getIdentifier();
     }
 
     /**
@@ -211,6 +219,10 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     public OmObservationConstellation setFeatureOfInterest(AbstractFeature featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
         return this;
+    }
+    
+    public String getFeatureOfInterestIdentifier() {
+        return getFeatureOfInterest().getIdentifier();
     }
 
     /**

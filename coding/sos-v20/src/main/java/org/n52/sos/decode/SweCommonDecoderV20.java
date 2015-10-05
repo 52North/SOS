@@ -42,6 +42,7 @@ import net.opengis.swe.x20.AbstractEncodingType;
 import net.opengis.swe.x20.AnyScalarPropertyType;
 import net.opengis.swe.x20.BooleanPropertyType;
 import net.opengis.swe.x20.BooleanType;
+import net.opengis.swe.x20.CategoryPropertyType;
 import net.opengis.swe.x20.CategoryType;
 import net.opengis.swe.x20.CountPropertyType;
 import net.opengis.swe.x20.CountRangeType;
@@ -54,6 +55,7 @@ import net.opengis.swe.x20.DataRecordPropertyType;
 import net.opengis.swe.x20.DataRecordType;
 import net.opengis.swe.x20.DataRecordType.Field;
 import net.opengis.swe.x20.EncodedValuesPropertyType;
+import net.opengis.swe.x20.QuantityPropertyType;
 import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.TextEncodingDocument;
@@ -116,7 +118,11 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
                                     AbstractDataComponentDocument.class,
                                     AbstractDataComponentType.class,
                                     AnyScalarPropertyType[].class,
+                                    BooleanPropertyType.class,
+                                    BooleanType.class,
                                     Coordinate[].class,
+                                    CategoryPropertyType.class,
+                                    CategoryType.class,
                                     CountPropertyType.class,
                                     CountType.class,
                                     DataArrayDocument.class,
@@ -125,6 +131,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
                                     DataRecordDocument.class,
                                     DataRecordPropertyType.class,
                                     DataRecordType.class,
+                                    QuantityPropertyType.class,
                                     QuantityType.class,
                                     TextEncodingDocument.class,
                                     TextEncodingType.class,
@@ -186,6 +193,10 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             return parseAbstractDataComponent(((CountPropertyType)element).getCount());
         } else if (element instanceof BooleanPropertyType) {
             return parseAbstractDataComponent(((BooleanPropertyType)element).getBoolean());
+        } else if (element instanceof CategoryPropertyType) {
+            return parseAbstractDataComponent(((CategoryPropertyType)element).getCategory());
+        } else if (element instanceof QuantityPropertyType) {
+            return parseAbstractDataComponent(((QuantityPropertyType)element).getQuantity());
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }

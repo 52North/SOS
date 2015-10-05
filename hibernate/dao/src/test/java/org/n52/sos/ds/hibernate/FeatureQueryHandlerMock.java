@@ -65,6 +65,9 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
     public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
+        if (samplingFeature.isSetIdentifier()) {
+            return samplingFeature.getIdentifier();
+        }
         return UUID.randomUUID().toString();
     }
 

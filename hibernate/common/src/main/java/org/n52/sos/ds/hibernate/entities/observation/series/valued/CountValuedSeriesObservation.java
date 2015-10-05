@@ -41,11 +41,11 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  *
  * @author Christian Autermann
  */
-public class CountValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Integer>
+public class CountValuedSeriesObservation extends AbstractValuedSeriesObservation<Integer>
         implements CountValuedObservation {
 
     private static final long serialVersionUID = 844475617058700079L;
+
     private Integer value;
 
     @Override
@@ -62,21 +62,19 @@ public class CountValuedSeriesObservation
     public boolean isSetValue() {
         return getValue() != null;
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue().toString();
-	}
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getValueAsString() {
+        return getValue().toString();
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

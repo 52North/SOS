@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -489,6 +490,17 @@ public interface HibernateRelations {
 
 //        Object getOffering();
         void setOfferings(Object offerings);
+
+    }
+    
+    interface HasParameters {
+        String PARAMETERS = "parameters";
+
+        Set<Parameter> getParameters();
+
+        void setParameters(Object offerings);
+        
+        boolean hasParameters();
 
     }
 

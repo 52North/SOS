@@ -93,7 +93,7 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
-            ValuedObservation<?> resultObject = nextEntity();
+            AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             TimeValuePair value = createTimeValuePairFrom(resultObject);
             session.evict(resultObject);
             return value;
@@ -108,11 +108,12 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             OmObservation observation = observationTemplate.cloneTemplate();
-            ValuedObservation<?> resultObject = nextEntity();
-            addValuesToObservation(observation, resultObject);
-            if (resultObject.hasSamplingGeometry()) {
-                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
-            }
+            AbstractValuedLegacyObservation<?> resultObject = nextEntity();
+            resultObject.addValuesToObservation(observation, getResponseFormat());
+//            addValuesToObservation(observation, resultObject);
+//            if (resultObject.hasSamplingGeometry()) {
+//                observation.addParameter(createSpatialFilteringProfileParameter(resultObject.getSamplingGeometry()));
+//            }
             checkForModifications(observation);
             session.evict(resultObject);
             return observation;

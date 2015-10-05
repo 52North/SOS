@@ -188,6 +188,10 @@ public interface OmConstants {
     String ATTR_SRS_NAME = "srsName";
 
     String PARAM_NAME_SAMPLING_GEOMETRY = "http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry";
+  
+    String PARAMETER_NAME_DEPTH = "http://www.opengis.net/def/param-name/OGC-OM/2.0/depth";
+  
+    String PARAMETER_NAME_HEIGHT = "http://www.opengis.net/def/param-name/OGC-OM/2.0/height";
 
     // observation types
     String OBS_TYPE_MEASUREMENT = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";

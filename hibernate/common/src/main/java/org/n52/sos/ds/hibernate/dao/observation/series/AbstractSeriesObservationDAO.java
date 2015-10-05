@@ -63,6 +63,8 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -153,13 +155,43 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     @Override
     public Criteria getObservationCriteriaFor(String procedure, String observableProperty, String featureOfInterest,
             Session session) throws CodedException {
-        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria criteria = getDefaultObservationCriteria(session);
+        addRestrictionsToCriteria(criteria, procedure, observableProperty, featureOfInterest);
+        return criteria;
+    }
+    
+    @Override
+    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session) throws CodedException {
+       Criteria criteria = getDefaultObservationTimeCriteria(session);
+       OmObservationConstellation oc = observation.getObservationConstellation();
+       Criteria seriesCriteria = addRestrictionsToCriteria(criteria, oc.getProcedureIdentifier(), oc.getObservablePropertyIdentifier(), oc.getFeatureOfInterestIdentifier());
+       addAdditionalObservationIdentification(seriesCriteria, observation);
+       return criteria;
+    }
+    
+    /**
+     * Add restirction to {@link Criteria
+     * 
+     * @param criteria
+     *            Main {@link Criteria}
+     * @param procedure
+     *            The procedure restriction
+     * @param observableProperty
+     *            The observableProperty restriction
+     * @param featureOfInterest
+     *            The featureOfInterest restriction
+     * @return The created series {@link Criteria}
+     * @throws CodedException
+     *             If an erro occurs
+     */
+    private Criteria addRestrictionsToCriteria(Criteria criteria, String procedure, String observableProperty,
+            String featureOfInterest) throws CodedException {
+        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
-        return criteria;
+        return seriesCriteria;
     }
 
     @SuppressWarnings("unchecked")

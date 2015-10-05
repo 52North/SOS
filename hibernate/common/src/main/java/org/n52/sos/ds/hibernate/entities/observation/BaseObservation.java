@@ -34,6 +34,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 
 /**
@@ -51,6 +52,7 @@ public interface BaseObservation
                 HasSamplingGeometry,
                 HasOfferings,
                 HasChildFlag,
-                HasParentFlag {
+                HasParentFlag,
+                HasParameters {
 
 }

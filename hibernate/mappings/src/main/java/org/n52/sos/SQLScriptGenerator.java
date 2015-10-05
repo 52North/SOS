@@ -34,6 +34,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
+import java.util.SortedSet;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
@@ -44,6 +46,7 @@ import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Class to generate the create and drop scripts for different databases.
@@ -187,7 +190,7 @@ public class SQLScriptGenerator {
         System.out.println(lineToPrint);
     }
 
-    private List<String> checkSchema(Dialect dia, String[] create) {
+    private Set<String> checkSchema(Dialect dia, String[] create) {
         String hexStringToCheck =
                 new StringBuilder("FK").append(Integer.toHexString("observationHasOffering".hashCode()).toUpperCase())
                         .toString();
@@ -203,7 +206,7 @@ public class SQLScriptGenerator {
                 checkedSchema.add(string);
             }
         }
-        return checkedSchema;
+        return Sets.newLinkedHashSet(checkedSchema);
     }
 
     public static void main(String[] args) {
@@ -223,7 +226,7 @@ public class SQLScriptGenerator {
             sqlScriptGenerator.setDirectoriesForModelSelection(modelSelection, concept, configuration);
             // create script
             String[] create = configuration.generateSchemaCreationScript(dia);
-            List<String> checkedSchema = sqlScriptGenerator.checkSchema(dia, create);
+            Set<String> checkedSchema = sqlScriptGenerator.checkSchema(dia, create);
             printToScreen("Scripts are created for: " + dia.toString());
             printToScreen("");
             printToScreen("#######################################");
@@ -235,7 +238,7 @@ public class SQLScriptGenerator {
             }
             // drop script
             String[] drop = configuration.generateDropSchemaScript(dia);
-            List<String> checkedDrop = sqlScriptGenerator.checkSchema(dia, drop);
+            Set<String> checkedDrop = sqlScriptGenerator.checkSchema(dia, drop);
             printToScreen("");
             printToScreen("#######################################");
             printToScreen("##            Drop-Script            ##");

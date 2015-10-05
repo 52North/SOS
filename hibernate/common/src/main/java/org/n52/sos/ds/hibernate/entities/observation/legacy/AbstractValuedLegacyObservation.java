@@ -38,6 +38,8 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -162,8 +164,9 @@ public abstract class AbstractValuedLegacyObservation<T>
         observation.setResultTime(createResutlTime(getResultTime()));
         observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
         if (hasSamplingGeometry()) {
-        	observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+            observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
         }
+        addParameter(observation);
         addValueSpecificDataToObservation(observation, responseFormat);
         addObservationValueToObservation(observation, value, responseFormat);
         return observation;
@@ -232,6 +235,14 @@ public abstract class AbstractValuedLegacyObservation<T>
         return new SingleObservationValue(createPhenomenonTime(), value);
     }
     
+    private void addParameter(OmObservation observation) throws OwsExceptionReport {
+        if (hasParameters()) {
+            for (Parameter<?> parameter : getParameters()) {
+                observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
+            }
+        }
+    }
+
     @Override
     public void addValueSpecificDataToObservation(OmObservation observation, String responseFormat) throws OwsExceptionReport {
         // nothing to do
@@ -248,7 +259,7 @@ public abstract class AbstractValuedLegacyObservation<T>
             throws OwsExceptionReport {
         observation.setValue(getSingleObservationValue(value));
     }
-
+    
     @Override
     public String getDiscriminator() {
         return null;

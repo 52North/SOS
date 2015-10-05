@@ -35,22 +35,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.om.x20.NamedValueType;
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationPropertyType;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.om.x20.OMProcessPropertyType;
-import net.opengis.om.x20.TimeObjectPropertyType;
-
 import org.apache.xmlbeans.XmlBoolean;
-import org.apache.xmlbeans.XmlDouble;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -69,8 +58,6 @@ import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -90,6 +77,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CodingHelper;
@@ -97,12 +86,19 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
-import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import net.opengis.om.x20.NamedValueType;
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationPropertyType;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.OMProcessPropertyType;
+import net.opengis.om.x20.TimeObjectPropertyType;
 
 
 public abstract class AbstractOmEncoderv20
@@ -607,6 +603,14 @@ public abstract class AbstractOmEncoderv20
     protected static XmlObject encodeGML(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
+    
+    protected static XmlObject encodeSweCommon(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
+    }
+
+    protected static XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
+    }
 
     private static String generateObservationGMLId() {
         return "o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
@@ -623,10 +627,8 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(CategoryValue value) {
-            XmlString xmlString = XmlString.Factory.newInstance();
-            xmlString.setStringValue(value.getValue());
-            return xmlString;
+        public XmlObject visit(CategoryValue value) throws OwsExceptionReport {
+            return encodeGML(value, createHelperValues(value));
         }
 
         @Override
@@ -659,10 +661,8 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(QuantityValue value) {
-            XmlDouble xmlDouble = XmlDouble.Factory.newInstance();
-            xmlDouble.setDoubleValue(value.getValue().doubleValue());
-            return xmlDouble;
+        public XmlObject visit(QuantityValue value) throws OwsExceptionReport {
+            return encodeGML(value, createHelperValues(value));
         }
 
         @Override

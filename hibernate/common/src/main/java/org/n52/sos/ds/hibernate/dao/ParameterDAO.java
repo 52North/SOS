@@ -225,7 +225,7 @@ public class ParameterDAO {
 
         @Override
         public ValuedParameter<?> visit(ReferenceValue value) throws OwsExceptionReport {
-            throw notSupported(value);
+            return persist(parameterFactory.category(), value.getValue().getHref());
         }
 
         @Override

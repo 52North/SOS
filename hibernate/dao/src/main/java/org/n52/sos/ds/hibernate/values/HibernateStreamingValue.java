@@ -28,13 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import java.util.Set;
+
 import org.n52.sos.ds.hibernate.dao.ValueDAO;
 import org.n52.sos.ds.hibernate.dao.ValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Abstract Hibernate streaming value class for old observation concept
@@ -49,9 +55,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     private static final long serialVersionUID = -7451818170087729427L;
     protected final ValueDAO valueDAO = new ValueDAO();
     protected final ValueTimeDAO valueTimeDAO = new ValueTimeDAO();
-    protected final long procedure;
-    protected final long featureOfInterest;
-    protected final long observableProperty;
+    protected final Set<Long> procedure = Sets.newHashSet();
+    protected final Set<Long> featureOfInterest = Sets.newHashSet();
+    protected final Set<Long> observableProperty = Sets.newHashSet();
 
     /**
      * constructor
@@ -70,9 +76,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
                                    long observableProperty,
                                    long featureOfInterest) {
         super(request);
-        this.procedure = procedure;
-        this.observableProperty = observableProperty;
-        this.featureOfInterest = featureOfInterest;
+        this.procedure.add(procedure);
+        this.observableProperty.add(observableProperty);
+        this.featureOfInterest.add(featureOfInterest);
     }
 
     @Override
@@ -108,6 +114,12 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         }
+    }
+    
+    @Override
+    public void mergeValue(StreamingValue<AbstractValuedLegacyObservation<?>> streamingValue) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

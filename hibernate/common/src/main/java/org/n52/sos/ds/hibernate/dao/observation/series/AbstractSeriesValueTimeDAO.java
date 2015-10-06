@@ -28,6 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.Set;
+
+import javax.sql.rowset.serial.SerialException;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -83,6 +87,32 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *             If an error occurs
      */
     public ObservationTimeExtrema getTimeExtremaForSeries(GetObservationRequest request, long series,
+            Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
+        addMinMaxTimeProjection(c);
+        LOGGER.debug("QUERY getTimeExtremaForSeries(request, series, temporalFilter): {}",
+                HibernateHelper.getSqlString(c));
+        return parseMinMaxTime((Object[]) c.uniqueResult());
+
+    }
+    
+    /**
+     * Get {@link ObservationTimeExtrema} for a {@link Series} with temporal
+     * filter.
+     * 
+     * @param request
+     *            {@link GetObservationRequest} request
+     * @param series
+     *            {@link Set} of {@link Series} to get time extrema for
+     * @param temporalFilterCriterion
+     *            Temporal filter
+     * @param session
+     *            Hibernate session
+     * @return Time extrema for {@link Series}
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    public ObservationTimeExtrema getTimeExtremaForSeries(GetObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c = getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, null, session);
         addMinMaxTimeProjection(c);

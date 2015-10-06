@@ -85,6 +85,8 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
      *             If an error occurs
      */
     public abstract TimeValuePair nextValue() throws OwsExceptionReport;
+    
+    public abstract void mergeValue(StreamingValue<S> streamingValue);
 
     /**
      * Set the observation template which contains all metadata

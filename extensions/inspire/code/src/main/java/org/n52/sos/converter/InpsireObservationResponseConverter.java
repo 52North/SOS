@@ -162,7 +162,12 @@ public class InpsireObservationResponseConverter implements RequestResponseModif
             String observedProperty = omObservation.getObservationConstellation().getObservableProperty().getIdentifier();
             if (mergedObservations.containsKey(observedProperty)) {
                 MultiPointObservation multiPointObservation = mergedObservations.get(observedProperty);
-                // TODO Merge StreamingValue to current
+                if (response.hasStreamingData()) {
+                    // TODO Merge StreamingValue to current
+                } else {
+                    
+                }
+                
             } else {
                 MultiPointObservation multiPointObservation = new MultiPointObservation(omObservation);
                 if (response.hasStreamingData()) {
@@ -192,7 +197,7 @@ public class InpsireObservationResponseConverter implements RequestResponseModif
                     sv.setObservationTemplate(new ProfileObservation(sv.getObservationTemplate()));
                 }
             } else {
-             // TODO Merge same constellation different depth same time, FOI = Curve, convert value to Rectified-/ReferencableGridCoverage
+             // TODO Merge same constellation different depth/height (param) same time, FOI = Curve, convert value to Rectified-/ReferencableGridCoverage
             }
             observations.add(profileObservation);
         }

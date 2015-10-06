@@ -2,7 +2,6 @@ package org.n52.sos.ogc.om;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.n52.sos.util.CollectionHelper;
 

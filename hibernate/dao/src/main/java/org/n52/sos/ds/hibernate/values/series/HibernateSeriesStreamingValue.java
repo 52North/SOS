@@ -28,19 +28,25 @@
  */
 package org.n52.sos.ds.hibernate.values.series;
 
+import java.util.Set;
+
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Abstract Hibernate series streaming value class for the series concept
@@ -55,7 +61,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     private static final long serialVersionUID = 201732114914686926L;
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
-    protected long series;
+    protected Set<Long> series = Sets.newHashSet();
 
     /**
      * constructor
@@ -68,7 +74,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      */
     public HibernateSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
         super(request);
-        this.series = series;
+        this.series.add(series);
         this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
         this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
     }
@@ -106,6 +112,17 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
             LOGGER.error("Error while querying unit", owse);
         } finally {
             sessionHolder.returnSession(s);
+        }
+    }
+    
+    protected Set<Long> getSeries() {
+        return series;
+    }
+    
+    @Override
+    public void mergeValue(StreamingValue<AbstractValuedLegacyObservation<?>> streamingValue) {
+        if (streamingValue instanceof HibernateSeriesStreamingValue) {
+            series.addAll(((HibernateSeriesStreamingValue) streamingValue).getSeries());
         }
     }
 

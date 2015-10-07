@@ -97,7 +97,7 @@ public class GetFeatureOfInterestRequestDecoder extends AbstractSosRequestDecode
     }
 
     private List<String> decodeFeatureOfInterests(JsonNode node) {
-        JsonNode path = node.path(JSONConstants.IDENTIFIER);
+        JsonNode path = node.path(JSONConstants.FEATURE_OF_INTEREST);
         return parseStringOrStringList(path);
     }
 }

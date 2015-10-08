@@ -56,6 +56,13 @@ import org.opengis.filter.PropertyIsEqualTo;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * Class that creates and adds a {@link Criteria} for om:parameter to the query.
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class ExtensionFesFilterCriteriaAdder {
 
     private Criteria c;
@@ -79,6 +86,14 @@ public class ExtensionFesFilterCriteriaAdder {
         this.fesFilterExtensions = fesFilterExtensions;
     }
 
+    /**
+     * Creates and adds the {@link Criteria} to the {@link Criteria} from the
+     * constructor
+     * 
+     * @return Hibernate {@link Criteria}
+     * @throws CodedException
+     *             If an error occurs or an unsupported filter is queried
+     */
     public Criteria add() throws CodedException {
         if (fesFilterExtensions.size() > 1) {
             Conjunction conj = new Conjunction();
@@ -261,9 +276,11 @@ public class ExtensionFesFilterCriteriaAdder {
             throw new NoApplicableCodeException().withMessage("The filter does not contain values for '{}' or '{}'!",
                     XPATH_OM_PARAMETER_NAMED_VALUE_NAME, XPATH_OM_PARAMETER_NAMED_VALUE_VALUE);
         } else {
-            if (!CollectionHelper.isNotEmpty(map.get(NameValue.NAME)) && !CollectionHelper.isNotEmpty(map.get(NameValue.VALUE))) {
-                throw new NoApplicableCodeException().withMessage("The filter does not contain values for '{}' or '{}'!",
-                        XPATH_OM_PARAMETER_NAMED_VALUE_NAME, XPATH_OM_PARAMETER_NAMED_VALUE_VALUE);
+            if (!CollectionHelper.isNotEmpty(map.get(NameValue.NAME))
+                    && !CollectionHelper.isNotEmpty(map.get(NameValue.VALUE))) {
+                throw new NoApplicableCodeException().withMessage(
+                        "The filter does not contain values for '{}' or '{}'!", XPATH_OM_PARAMETER_NAMED_VALUE_NAME,
+                        XPATH_OM_PARAMETER_NAMED_VALUE_VALUE);
             }
         }
     }

@@ -105,9 +105,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
-    
+
     private boolean mergeObservationValues = false;
-    
 
     /*
      * (non-Javadoc)
@@ -216,7 +215,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         this.procedures = procedures;
     }
 
-
     /**
      * Get result filters
      * 
@@ -269,7 +267,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     /**
-
+     * 
      * Get request as String
      * 
      * @return request as String
@@ -438,9 +436,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     @Override
     public boolean hasSpatialFilteringProfileSpatialFilter() {
-        return isSetSpatialFilter()
-                && getSpatialFilter().getValueReference().equals(
-                        Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
+        return isSetSpatialFilter() && getSpatialFilter().getValueReference()
+                .equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
     }
 
     public boolean isSetRequestString() {
@@ -454,7 +451,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     public boolean isSetNamespaces() {
         return CollectionHelper.isNotEmpty(getNamespaces());
     }
-    
+
     @Override
     public AbstractObservationResponse getResponse() throws OwsExceptionReport {
         return (GetObservationResponse) new GetObservationResponse().set(this);
@@ -462,36 +459,47 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     public void setMergeObservationValues(boolean mergeObservationValues) {
         this.mergeObservationValues = mergeObservationValues;
-     }
-     
-     public boolean isSetMergeObservationValues(){
-         return mergeObservationValues;
-     }
-     
-     public boolean isSetFesFilterExtension() {
-         if (isSetExtensions()) {
-             for (SwesExtension<?> extension : getExtensions().getExtensions()) {
+    }
+
+    public boolean isSetMergeObservationValues() {
+        return mergeObservationValues;
+    }
+
+    /**
+     * Check if the {@link SwesExtensions} contains {@link Filter}
+     * 
+     * @return <code>true</code>, if the {@link SwesExtensions} contains
+     *         {@link Filter}
+     */
+    public boolean isSetFesFilterExtension() {
+        if (isSetExtensions()) {
+            for (SwesExtension<?> extension : getExtensions().getExtensions()) {
                 if (isFesFilterExtension(extension)) {
                     return true;
                 }
             }
-         }
-         return false;
-     }
-     
-     public Set<SwesExtension<?>> getFesFilterExtensions() {
-         Set<SwesExtension<?>> set = Sets.newHashSet();
-         if (isSetExtensions()) {
-             for (SwesExtension<?> extension : getExtensions().getExtensions()) {
+        }
+        return false;
+    }
+
+    /**
+     * Get all {@link SwesExtensions} with {@link Filter}
+     * 
+     * @return All {@link SwesExtensions} with {@link Filter}
+     */
+    public Set<SwesExtension<?>> getFesFilterExtensions() {
+        Set<SwesExtension<?>> set = Sets.newHashSet();
+        if (isSetExtensions()) {
+            for (SwesExtension<?> extension : getExtensions().getExtensions()) {
                 if (isFesFilterExtension(extension)) {
                     set.add(extension);
                 }
             }
-         }
-         return set;
-     }
-     
-     private boolean isFesFilterExtension(SwesExtension<?> extension) {
-         return extension.getValue() instanceof Filter<?>;
-     }
+        }
+        return set;
+    }
+
+    private boolean isFesFilterExtension(SwesExtension<?> extension) {
+        return extension.getValue() instanceof Filter<?>;
+    }
 }

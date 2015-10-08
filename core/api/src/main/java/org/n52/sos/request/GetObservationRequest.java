@@ -31,6 +31,7 @@ package org.n52.sos.request;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.n52.sos.ogc.filter.ComparisonFilter;
 import org.n52.sos.ogc.filter.Filter;
@@ -41,6 +42,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.swes.SwesExtension;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
@@ -48,6 +51,7 @@ import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * SOS GetObservation request
@@ -462,5 +466,32 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      
      public boolean isSetMergeObservationValues(){
          return mergeObservationValues;
+     }
+     
+     public boolean isSetFesFilterExtension() {
+         if (isSetExtensions()) {
+             for (SwesExtension<?> extension : getExtensions().getExtensions()) {
+                if (isFesFilterExtension(extension)) {
+                    return true;
+                }
+            }
+         }
+         return false;
+     }
+     
+     public Set<SwesExtension<?>> getFesFilterExtensions() {
+         Set<SwesExtension<?>> set = Sets.newHashSet();
+         if (isSetExtensions()) {
+             for (SwesExtension<?> extension : getExtensions().getExtensions()) {
+                if (isFesFilterExtension(extension)) {
+                    set.add(extension);
+                }
+            }
+         }
+         return set;
+     }
+     
+     private boolean isFesFilterExtension(SwesExtension<?> extension) {
+         return extension.getValue() instanceof Filter<?>;
      }
 }

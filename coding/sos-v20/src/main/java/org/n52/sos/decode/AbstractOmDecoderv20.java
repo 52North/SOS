@@ -84,7 +84,7 @@ public abstract class AbstractOmDecoderv20 extends AbstractGmlDecoderv321<Object
 	
 	protected Set<NamedValue<?>> parseNamedValueTypeArray(NamedValuePropertyType[] namedValuePropertyArray)
             throws OwsExceptionReport {
-        Set<NamedValue<?>> parameters = Sets.newHashSet();
+        Set<NamedValue<?>> parameters = Sets.newTreeSet();
         for (NamedValuePropertyType namedValueProperty : namedValuePropertyArray) {
             parameters.add(parseNamedValueType(namedValueProperty));
         }

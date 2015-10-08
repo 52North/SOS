@@ -114,6 +114,7 @@ import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
 import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
@@ -1194,17 +1195,27 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     private void addParameterRestriction(Criteria c, NamedValue<?> hdp) throws OwsExceptionReport {
-//        Criteria parameterCriteria = c.createCriteria(AbstractBaseObservation.PARAMETERS);
-//        parameterCriteria.add(Restrictions.eq(Parameter.NAME, hdp.getName().getHref()));
-        DetachedCriteria detachedCriteria =
-                DetachedCriteria.forClass(hdp.getValue().accept(getParameterFactory()).getClass());
-        detachedCriteria.add(Restrictions.eq(Parameter.NAME, hdp.getName().getHref()));
-        detachedCriteria.add(Restrictions.eq(Parameter.VALUE, hdp.getValue().getValue()));
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
-        c.add(Subqueries.propertyIn(AbstractBaseObservation.ID, detachedCriteria));
-      
+        c.add(Subqueries.propertyIn(AbstractBaseObservation.ID, getParameterRestriction(c, hdp.getName().getHref(), hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
     }
-
+    
+    protected DetachedCriteria getParameterRestriction(Criteria c, String name, Object value, Class<?> clazz) {
+        DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
+        addParameterNameRestriction(detachedCriteria, name);
+        addParameterValueRestriction(detachedCriteria, value);
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
+        return detachedCriteria;
+    }
+    
+    protected DetachedCriteria addParameterNameRestriction(DetachedCriteria detachedCriteria, String name) {
+        detachedCriteria.add(Restrictions.eq(Parameter.NAME, name));
+        return detachedCriteria;
+    }
+    
+    protected DetachedCriteria addParameterValueRestriction(DetachedCriteria detachedCriteria, Object value) {
+        detachedCriteria.add(Restrictions.eq(Parameter.VALUE, value));
+        return detachedCriteria;
+    }
+    
     private TemporalFilter getPhenomeonTimeFilter(Criteria c, Time phenomenonTime) {
         return new TemporalFilter(TimeOperator.TM_Equals, phenomenonTime, Sos2Constants.EN_PHENOMENON_TIME);
     }

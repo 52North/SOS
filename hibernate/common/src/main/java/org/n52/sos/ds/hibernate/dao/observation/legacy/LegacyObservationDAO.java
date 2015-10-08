@@ -60,6 +60,7 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
@@ -307,6 +308,9 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         if (sosIndeterminateTime != null) {
             logArgs += ", sosIndeterminateTime";
             addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        }
+        if (request.isSetFesFilterExtension()) {
+            new ExtensionFesFilterCriteriaAdder(c, request.getFesFilterExtensions()).add();
         }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;

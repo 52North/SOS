@@ -12,8 +12,6 @@
             	<param name="sequence">featureOfInterestId_seq</param>
             </generator>
         </id>
-        <!-- only needed for internal purposes  -->
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" fetch="select" lazy="no-proxy" foreign-key="featureFeatureTypeFk">
             <column name="featureOfInterestTypeId" not-null="true">
             	<comment>Relation/foreign key to the featureOfInterestType table. Describes the type of the featureOfInterest. Contains "featureOfInterestType".featureOfInterestTypeId</comment>

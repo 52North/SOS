@@ -174,13 +174,14 @@ public abstract class AbstractOperationHandler implements OperationHandler {
      */
     protected Map<String, Set<DCP>> getDCP(OperationKey operationKey) throws OwsExceptionReport {
         SetMultiMap<String, DCP> dcps = MultiMaps.newSetMultiMap();
-        String serviceURL = getServiceConfiguration().getServiceURL();
+        String serviceURL = getServiceUrl(operationKey.getService());
 
         try {
             // TODO support for operation/method specific supported request and
             // response mediatypes
             for (Entry<String, Binding> entry : getBindingRepository().getBindingsByPath().entrySet()) {
-                String url = serviceURL + entry.getKey();
+                // TODO remove, not supported in 5.x
+//                String url = serviceURL + entry.getKey();
                 Binding binding = entry.getValue();
                 Constraint constraint = null;
                 if (binding.getSupportedEncodings() != null && !binding.getSupportedEncodings().isEmpty()) {
@@ -191,16 +192,16 @@ public abstract class AbstractOperationHandler implements OperationHandler {
                     constraint = new Constraint(HTTPHeaders.CONTENT_TYPE, new OwsParameterValuePossibleValues(ss));
                 }
                 if (binding.checkOperationHttpGetSupported(operationKey)) {
-                    dcps.add(HTTPMethods.GET, new DCP(url + "?", constraint));
+                    dcps.add(HTTPMethods.GET, new DCP(serviceURL + "?", constraint));
                 }
                 if (binding.checkOperationHttpPostSupported(operationKey)) {
-                    dcps.add(HTTPMethods.POST, new DCP(url, constraint));
+                    dcps.add(HTTPMethods.POST, new DCP(serviceURL, constraint));
                 }
                 if (binding.checkOperationHttpPutSupported(operationKey)) {
-                    dcps.add(HTTPMethods.PUT, new DCP(url, constraint));
+                    dcps.add(HTTPMethods.PUT, new DCP(serviceURL, constraint));
                 }
                 if (binding.checkOperationHttpDeleteSupported(operationKey)) {
-                    dcps.add(HTTPMethods.DELETE, new DCP(url, constraint));
+                    dcps.add(HTTPMethods.DELETE, new DCP(serviceURL, constraint));
                 }
             }
         } catch (Exception e) {

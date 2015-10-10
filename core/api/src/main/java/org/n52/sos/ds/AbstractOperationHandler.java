@@ -155,6 +155,10 @@ public abstract class AbstractOperationHandler implements OperationHandler {
         return operation;
     }
 
+    protected String getServiceUrl(String service) {
+        return getServiceConfiguration().getServiceURL();
+    }
+
     protected SosContentCache getCache() {
         return (SosContentCache) getCacheController().getCache();
     }

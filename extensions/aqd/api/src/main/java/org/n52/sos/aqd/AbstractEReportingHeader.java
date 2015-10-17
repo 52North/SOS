@@ -44,4 +44,8 @@ public abstract class AbstractEReportingHeader extends AbstractFeature {
 
     public abstract AbstractEReportingHeader addContent(AbstractFeature content);
 
+    public AbstractEReportingHeader() {
+        super("");
+    }
+
 }

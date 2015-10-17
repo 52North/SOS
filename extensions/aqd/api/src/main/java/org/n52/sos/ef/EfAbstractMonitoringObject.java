@@ -29,7 +29,7 @@
 package org.n52.sos.ef;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
-
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
 
 /**
  * Class represents an AbstractMonitoringObject
@@ -41,8 +41,44 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
 public abstract class EfAbstractMonitoringObject extends AbstractFeature {
 
     /**
-     *
+     * constructor
      */
     private static final long serialVersionUID = -1741709013086970962L;
+
+    public EfAbstractMonitoringObject() {
+        this("");
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public EfAbstractMonitoringObject(String identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public EfAbstractMonitoringObject(CodeWithAuthority identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     * @param gmlId
+     *            GML id
+     */
+    public EfAbstractMonitoringObject(CodeWithAuthority identifier, String gmlId) {
+        super(identifier, gmlId);
+    }
 
 }

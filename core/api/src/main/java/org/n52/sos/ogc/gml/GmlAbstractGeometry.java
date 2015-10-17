@@ -55,6 +55,7 @@ public class GmlAbstractGeometry extends AbstractFeature {
      * constructor
      */
     public GmlAbstractGeometry() {
+        super("");
     }
 
     /**
@@ -64,6 +65,7 @@ public class GmlAbstractGeometry extends AbstractFeature {
      *            GML id
      */
     public GmlAbstractGeometry(String id) {
+        this();
         setGmlId(id);
     }
 

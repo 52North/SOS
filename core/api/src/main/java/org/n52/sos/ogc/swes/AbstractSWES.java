@@ -47,6 +47,10 @@ public abstract class AbstractSWES extends AbstractFeature implements HasExtensi
 
     private Extensions extensions;
 
+    public AbstractSWES() {
+        super("");
+    }
+
     @Override
     public Extensions getExtensions() {
         return extensions;

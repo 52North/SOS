@@ -38,6 +38,7 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.sos.Sos1Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
@@ -58,6 +59,7 @@ import com.google.common.collect.Sets;
  *
  */
 public abstract class SosProcedureDescription extends AbstractFeature {
+
     private static final long serialVersionUID = 1144253800787127139L;
     private String sensorDescriptionXmlString;
     private String descriptionFormat;
@@ -69,6 +71,42 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
     private ReferenceType typeOf;
+
+    public SosProcedureDescription() {
+        super("");
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public SosProcedureDescription(String identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public SosProcedureDescription(CodeWithAuthority identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     * @param gmlId
+     *            GML id
+     */
+    public SosProcedureDescription(CodeWithAuthority identifier, String gmlId) {
+        super(identifier, gmlId);
+    }
 
     /**
      * Is it an aggregation procedure, e.g. System, PhysicalSystem

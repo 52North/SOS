@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
@@ -113,7 +114,39 @@ public class OmObservation extends AbstractFeature implements Serializable {
      * constructor
      */
     public OmObservation() {
-        super();
+        this("");
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public OmObservation(String identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public OmObservation(CodeWithAuthority identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     * @param gmlId
+     *            GML id
+     */
+    public OmObservation(CodeWithAuthority identifier, String gmlId) {
+        super(identifier, gmlId);
     }
 
     /**

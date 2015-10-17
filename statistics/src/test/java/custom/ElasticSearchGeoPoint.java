@@ -46,7 +46,7 @@ import org.n52.iceland.statistics.api.interfaces.geolocation.IAdminStatisticsLoc
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
 import org.n52.iceland.statistics.impl.ElasticsearchAdminHandler;
 import org.n52.iceland.statistics.impl.ElasticsearchDataHandler;
-import org.n52.iceland.statistics.impl.StatisticsLocationUtil;
+import org.n52.iceland.statistics.impl.geolocation.StatisticsLocationUtil;
 
 import basetest.SpringBaseTest;
 

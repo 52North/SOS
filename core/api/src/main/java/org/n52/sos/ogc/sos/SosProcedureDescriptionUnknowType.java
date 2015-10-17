@@ -39,7 +39,7 @@ public class SosProcedureDescriptionUnknowType extends SosProcedureDescription {
 
     public SosProcedureDescriptionUnknowType(final String identifier, final String procedureDescriptionFormat,
             final String xmlDescription) {
-        setIdentifier(identifier);
+        super(identifier);
         setDescriptionFormat(procedureDescriptionFormat);
         setSensorDescriptionXmlString(xmlDescription);
     }

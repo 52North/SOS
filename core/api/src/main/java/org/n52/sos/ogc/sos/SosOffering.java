@@ -70,7 +70,7 @@ public class SosOffering extends AbstractFeature implements Comparable<SosOfferi
      *            offering name
      */
     public SosOffering(final String identifier, final String name) {
-        this.setIdentifier(identifier);
+        super(identifier);
         if (Strings.isNullOrEmpty(name)) {
             setName(new CodeType(OFFERING_NAME_PREFIX + identifier));
         } else {
@@ -83,18 +83,26 @@ public class SosOffering extends AbstractFeature implements Comparable<SosOfferi
      *
      * @param identifier
      *            offering identifier
-     * @param name
-     *            offering name
+     * @param generateName
+     *            Indicator whether the name should be generated.
      */
     public SosOffering(final String identifier, boolean generateName) {
-        this.setIdentifier(identifier);
+        super(identifier);
         if (generateName) {
             setName(new CodeType(OFFERING_NAME_PREFIX + identifier));
         }
     }
 
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            offering identifier
+     * @param name
+     *            offering name
+     */
     public SosOffering(final String identifier, final CodeType name) {
-        this.setIdentifier(identifier);
+        super(identifier);
         if (!name.isSetValue()) {
             name.setValue(OFFERING_NAME_PREFIX + identifier);
         }
@@ -108,7 +116,7 @@ public class SosOffering extends AbstractFeature implements Comparable<SosOfferi
      *            Procedure identifier
      */
     public SosOffering(String procedureIdentifier) {
-        setIdentifier(procedureIdentifier + "/observations");
+        super(procedureIdentifier + "/observations");
         setName(new CodeType(OFFERING_NAME_PREFIX + procedureIdentifier));
     }
 

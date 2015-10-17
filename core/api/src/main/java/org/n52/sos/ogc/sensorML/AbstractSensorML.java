@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.iceland.ogc.gml.CodeWithAuthority;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
@@ -51,6 +52,7 @@ import com.google.common.collect.Iterables;
  *
  */
 public class AbstractSensorML extends SosProcedureDescription {
+
     private static final long serialVersionUID = -5715790909736521952L;
     private List<String> keywords = new ArrayList<String>(0);
     private List<SmlIdentifier> identifications = new ArrayList<SmlIdentifier>(0);
@@ -61,6 +63,42 @@ public class AbstractSensorML extends SosProcedureDescription {
     private final List<AbstractSmlDocumentation> documentations = new ArrayList<AbstractSmlDocumentation>(0);
     private String history;
     private String gmlId;
+
+    public AbstractSensorML() {
+        super();
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public AbstractSensorML(String identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     */
+    public AbstractSensorML(CodeWithAuthority identifier) {
+        super(identifier);
+    }
+
+    /**
+     * constructor
+     *
+     * @param identifier
+     *            Feature identifier
+     * @param gmlId
+     *            GML id
+     */
+    public AbstractSensorML(CodeWithAuthority identifier, String gmlId) {
+        super(identifier, gmlId);
+    }
 
     @Override
     public SosProcedureDescription setIdentifier(final String identifier) {

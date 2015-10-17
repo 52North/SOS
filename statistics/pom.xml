@@ -117,6 +117,11 @@
 			<groupId>org.n52.iceland</groupId>
 			<artifactId>statistics</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>statistics-geolocation</artifactId>
+        </dependency>
+        
 
 
 	</dependencies>

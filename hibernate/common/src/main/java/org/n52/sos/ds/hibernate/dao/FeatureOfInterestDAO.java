@@ -55,6 +55,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
@@ -204,8 +205,8 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
             Criteria criteria =
-                    session.createCriteria(FeatureOfInterest.class).add(
-                            Restrictions.in(FeatureOfInterest.IDENTIFIER, identifiers));
+                    session.createCriteria(FeatureOfInterest.class)
+                    .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObject(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         }

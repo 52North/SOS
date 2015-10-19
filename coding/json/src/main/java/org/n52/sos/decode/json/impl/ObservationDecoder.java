@@ -165,7 +165,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     }
 
     protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws OwsExceptionReport {
-        Set<NamedValue<?>> parameters = Sets.newHashSet();
+        Set<NamedValue<?>> parameters = Sets.newTreeSet();
         JsonNode parameter = node.path(JSONConstants.PARAMETER);
         if (parameter.isArray()) {
             for (JsonNode jsonNode : parameter) {

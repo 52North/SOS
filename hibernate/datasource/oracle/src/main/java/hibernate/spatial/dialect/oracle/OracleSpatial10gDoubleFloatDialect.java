@@ -26,35 +26,18 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.observation.series;
+package hibernate.spatial.dialect.oracle;
 
-import org.hibernate.Criteria;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.sql.Types;
 
-/**
- * Implementation of {@link AbstractValueDAO} for series concept
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
- *
- */
-public class SeriesValueDAO extends AbstractSeriesValueDAO {
+import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueDAO.class);
+public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect {
 
-    @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
-        // nothing  to add
-}
+    private static final long serialVersionUID = -1294060043623083068L;
 
-    @Override
-    protected Class<?> getSeriesValueClass() {
-        return AbstractValuedSeriesObservation.class;
+    public OracleSpatial10gDoubleFloatDialect() {
+        super();
+        registerColumnType(Types.DOUBLE, "float");
     }
-
 }

@@ -62,11 +62,13 @@ import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
@@ -348,45 +350,49 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      * @throws OwsExceptionReport
      */
     protected Criteria getSeriesObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
-                Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
-            final Criteria observationCriteria = getDefaultObservationCriteria(session);
+            Criterion filterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session)
+                    throws OwsExceptionReport {
+        final Criteria observationCriteria = getDefaultObservationCriteria(session);
 
+        Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
 
-            Criteria seriesCriteria = observationCriteria.createCriteria(AbstractSeriesObservation.SERIES);
+        checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
+        addSpecificRestrictions(seriesCriteria, request);
+        if (CollectionHelper.isNotEmpty(request.getProcedures())) {
+            seriesCriteria.createCriteria(Series.PROCEDURE)
+                    .add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
+        }
 
-            checkAndAddSpatialFilteringProfileCriterion(observationCriteria, request, session);
-			addSpecificRestrictions(seriesCriteria, request);
-            if (CollectionHelper.isNotEmpty(request.getProcedures())) {
-                seriesCriteria.createCriteria(Series.PROCEDURE)
-                        .add(Restrictions.in(Procedure.IDENTIFIER, request.getProcedures()));
-            }
+        if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
+            seriesCriteria.createCriteria(Series.OBSERVABLE_PROPERTY)
+                    .add(Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
+        }
 
-            if (CollectionHelper.isNotEmpty(request.getObservedProperties())) {
-                seriesCriteria.createCriteria(Series.OBSERVABLE_PROPERTY)
-                        .add(Restrictions.in(ObservableProperty.IDENTIFIER, request.getObservedProperties()));
-            }
+        if (CollectionHelper.isNotEmpty(features)) {
+            seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST)
+                    .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
+        }
 
-            if (CollectionHelper.isNotEmpty(features)) {
-                seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST)
-                        .add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
-            }
+        if (CollectionHelper.isNotEmpty(request.getOfferings())) {
+            observationCriteria.createCriteria(AbstractSeriesObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+        }
 
-            if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-                observationCriteria.createCriteria(AbstractSeriesObservation.OFFERINGS)
-                        .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
-            }
-
-            String logArgs = "request, features, offerings";
-            if (filterCriterion != null) {
-                logArgs += ", filterCriterion";
-                observationCriteria.add(filterCriterion);
-            }
-            if (sosIndeterminateTime != null) {
-                logArgs += ", sosIndeterminateTime";
-                addIndeterminateTimeRestriction(observationCriteria, sosIndeterminateTime);
-            }
-            LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(observationCriteria));
-            return observationCriteria;
+        String logArgs = "request, features, offerings";
+        if (filterCriterion != null) {
+            logArgs += ", filterCriterion";
+            observationCriteria.add(filterCriterion);
+        }
+        if (sosIndeterminateTime != null) {
+            logArgs += ", sosIndeterminateTime";
+            addIndeterminateTimeRestriction(observationCriteria, sosIndeterminateTime);
+        }
+        if (request.isSetFesFilterExtension()) {
+            new ExtensionFesFilterCriteriaAdder(observationCriteria, request.getFesFilterExtensions()).add();
+        }
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs,
+                HibernateHelper.getSqlString(observationCriteria));
+        return observationCriteria;
     }
 
     private String createSeriesAliasAndRestrictions(Criteria c) {

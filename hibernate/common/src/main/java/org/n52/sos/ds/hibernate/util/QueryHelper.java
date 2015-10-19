@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,7 @@ import java.util.Set;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -59,6 +61,8 @@ import com.google.common.collect.Lists;
  * 
  */
 public class QueryHelper {
+    
+    private static final int LIMIT_EXPRESSION_DEPTH = 1000;
 
     private QueryHelper() {
     }
@@ -210,5 +214,39 @@ public class QueryHelper {
                         TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE), new TemporalFilter(
                         TimeOperator.TM_MetBy, validTime,
                         TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE));
+    }
+    
+    /**
+     * Creates a criterion for GRDC ids, considers if size is > 1000 (expression
+     * limit).
+     * 
+     * @param propertyName
+     *            Column name.
+     * @param identifiers
+     *            Identifiers list
+     * @return Criterion.
+     */
+    public static Criterion getCriterionForFoiIds(String propertyName, Collection<String> identifiers) {
+        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
+            List<String> fois = new ArrayList<String>(identifiers);
+            Criterion criterion = null;
+            List<String> ids = null;
+            for (int i = 0; i < fois.size(); i++) {
+                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
+                    if (criterion == null && i != 0) {
+                        criterion = Restrictions.in(propertyName, ids);
+                    } else if (criterion != null) {
+                        criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
+                    }
+                    ids = new ArrayList<String>();
+                    ids.add(fois.get(i));
+                } else {
+                    ids.add(fois.get(i));
+                }
+            }
+            return criterion;
+        } else {
+            return Restrictions.in(propertyName, identifiers);
+        }
     }
 }

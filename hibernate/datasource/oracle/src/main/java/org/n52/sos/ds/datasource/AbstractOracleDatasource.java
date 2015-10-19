@@ -52,6 +52,8 @@ import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
+
 
 /**
  * Abstract class for Oracle datasources
@@ -238,7 +240,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
 
     @Override
     protected Dialect createDialect() {
-        return new OracleSpatial10gDialect();
+        return new OracleSpatial10gDoubleFloatDialect();
     }
 
     @Override

@@ -117,7 +117,7 @@
 	        	</column>
         	</key>
         	<property name="value" 
-        			  type="org.hibernate.type.StringClobType">
+        			  type="string">
          		<column name="value" index="textParamIdx">
          			<comment>Text parameter value</comment>
          		</column>

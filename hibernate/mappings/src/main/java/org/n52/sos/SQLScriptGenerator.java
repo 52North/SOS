@@ -41,7 +41,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect;
-import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
@@ -49,7 +48,6 @@ import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
 
 /**
  * Class to generate the create and drop scripts for different databases.
@@ -72,7 +70,8 @@ public class SQLScriptGenerator {
             return new PostgisDialect();
         case 2:
             try {
-                return new OracleSpatial10gDoubleFloatDialect();
+                return new OracleSpatial10gDialect();
+//                return new OracleSpatial10gDoubleFloatDialect();
             } catch (ExceptionInInitializerError eiie) {
                 printToScreen("The Oracle JDBC driver is missing!");
                 printToScreen("To execute the SQL script generator for Oracle you have to uncomment the dependency in the pom.xml.");
@@ -85,7 +84,8 @@ public class SQLScriptGenerator {
         case 3:
             return new GeoDBDialect();
         case 4:
-            return new MySQLSpatial5InnoDBTimestampDialect();
+            return new MySQLSpatial5InnoDBDialect();
+//            return new MySQLSpatial5InnoDBTimestampDialect();
         case 5:
             return new SqlServer2008SpatialDialect();
         default:

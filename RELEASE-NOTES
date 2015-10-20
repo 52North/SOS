@@ -31,13 +31,27 @@ RELEASE NOTES
       				response with SensorML 1.0.1 encoded procedure
   
   
+    Release 52n-sensorweb-sos-4.3.5
+===================================
+
+  --- New features ---
   
+      * Add alternative Hibernate mapping files for REST-API which can be used with e-Reporting databse concept.
+  
+  --- Changes ---
+ 
+      * Update REST-API version of bundle to 1.6.0
+  
+  --- Fixed issues ---
+  
+      * 
+ 
    Release 52n-sensorweb-sos-4.3.4
 ===================================
 
   --- New features ---
   
-        * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
+       * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
   
   --- Changes ---
   

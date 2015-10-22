@@ -12,6 +12,5 @@
         <property name="name" column="name" type="string" />
         <property name="canonicalId" column="identifier" type="string" insert="false" update="false"/>
         <property name="geom" column="geom" type="org.hibernate.spatial.GeometryType" />
-        
     </class>
 </hibernate-mapping>

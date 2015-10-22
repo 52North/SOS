@@ -68,6 +68,6 @@
 			<index column="seriesid" />
 			<one-to-many class="ObservationEntity" />
 		</list>
-	</class>
+    </class>
 
 </hibernate-mapping>

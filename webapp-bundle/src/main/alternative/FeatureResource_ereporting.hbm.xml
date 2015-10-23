@@ -7,10 +7,9 @@
             <column name="stationid" />
             <generator class="assigned" />
         </id>
-         
-        <property name="description" column="description" type="string"/>
-        <property name="name" column="name" type="string" />
         <property name="canonicalId" column="identifier" type="string" insert="false" update="false"/>
+        <property name="name" column="name" type="string" />
+        <property name="description" column="description" type="string"/>
         <property name="geom" column="geom" type="org.hibernate.spatial.GeometryType" />
     </class>
 </hibernate-mapping>

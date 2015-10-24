@@ -47,6 +47,16 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 4.0.0
  */
 public interface WritableContentCache extends ContentCache {
+    
+    
+    /**
+     * Set the last cache update time
+     * 
+     * @param time
+     *            Last cache update time
+     */
+    void setLastUpdateTime(DateTime time);
+    
     /**
      * @return all features of interest associated with an offering
      */

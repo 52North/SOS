@@ -106,6 +106,7 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
         if (!errors.isEmpty()) {
             throw new CompositeOwsException(errors);
         }
+        
     }
 
     @Override

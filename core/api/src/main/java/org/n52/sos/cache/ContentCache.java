@@ -51,6 +51,12 @@ import org.n52.sos.ogc.sos.SosEnvelope;
  * @since 4.0.0
  */
 public interface ContentCache extends Serializable {
+    
+    /**
+     * @return the last cache update time
+     */
+    DateTime getLastUpdateTime();
+    
     /**
      * @return the maximal phenomenon time for all observations
      */

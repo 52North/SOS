@@ -336,6 +336,22 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         }
     }
 
+    /**
+     * @return the updateTime
+     */
+    public DateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * @param updateTime the updateTime to set
+     */
+    public void setUpdateTime(DateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    private DateTime updateTime;
+    
     private int defaultEpsgCode = Constants.EPSG_WGS84;
 
     private Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
@@ -813,7 +829,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
+        return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
                 maxResultTimeForOfferings, minResultTimeForOfferings, maxPhenomenonTimeForProcedures,
                 minPhenomenonTimeForProcedures, allowedObservationTypeForOfferings, childFeaturesForFeatureOfInterest,
                 childProceduresForProcedures, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
@@ -834,7 +850,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     public boolean equals(Object obj) {
         if (obj instanceof AbstractContentCache) {
             final AbstractContentCache other = (AbstractContentCache) obj;
-            return Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
+            return Objects.equal(this.updateTime, other.getUpdateTime())
+                    && Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
                     && Objects.equal(this.maxPhenomenonTimeForOfferings, other.getMaxPhenomenonTimeForOfferingsMap())
                     && Objects.equal(this.minPhenomenonTimeForOfferings, other.getMinPhenomenonTimeForOfferingsMap())
                     && Objects.equal(this.maxResultTimeForOfferings, other.getMaxResultTimeForOfferingsMap())

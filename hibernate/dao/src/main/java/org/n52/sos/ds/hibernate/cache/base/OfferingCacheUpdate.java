@@ -115,28 +115,24 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         //perform single threaded updates here
         WritableContentCache cache = getCache();
 
-        for (Offering offering : getOfferingsToUpdate()){
-//            try {
-                String offeringId = offering.getIdentifier();
-                if (shouldOfferingBeProcessed(offeringId)) {
-                    String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                    cache.addOffering(prefixedOfferingId);
+        for (Offering offering : getOfferingsToUpdate()) {
+            String offeringId = offering.getIdentifier();
+            if (shouldOfferingBeProcessed(offeringId)) {
+                String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
+                cache.addOffering(prefixedOfferingId);
 
-                    if (offering instanceof TOffering) {
-                        TOffering tOffering = (TOffering) offering;
-                        // Related features
-                        cache.setRelatedFeaturesForOffering(prefixedOfferingId,
-                                                             getRelatedFeatureIdentifiersFrom(tOffering));
-                        cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
-                                                                    getObservationTypesFromObservationType(tOffering.getObservationTypes()));
-                        // featureOfInterestTypes
-                        cache.setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
-                                                                          getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
-                    }
+                if (offering instanceof TOffering) {
+                    TOffering tOffering = (TOffering) offering;
+                    // Related features
+                    cache.setRelatedFeaturesForOffering(prefixedOfferingId,
+                            getRelatedFeatureIdentifiersFrom(tOffering));
+                    cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
+                            getObservationTypesFromObservationType(tOffering.getObservationTypes()));
+                    // featureOfInterestTypes
+                    cache.setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
+                            getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                 }
-//            } catch (OwsExceptionReport ex) {
-//                getErrors().add(ex);
-//            }
+            }
         }
 
         //time ranges

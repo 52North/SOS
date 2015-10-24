@@ -111,21 +111,19 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * Get offering objects for cache update
      *
      * @param identifiers
-     *            Optional collection of offering identifiers to fetch. If null, all offerings are returned.
+     *            Optional collection of offering identifiers to fetch. If null,
+     *            all offerings are returned.
      * @param session
      *            Hibernate session
      * @return Offering objects
      */
     @SuppressWarnings("unchecked")
-    public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers, final Session session) {
-    	 Class<?> clazz = Offering.class;
-    	 if (HibernateHelper.isEntitySupported(TOffering.class)) {
-    		 clazz = TOffering.class;
-    	 }
-    	 Criteria criteria = session.createCriteria(clazz);
-		if (CollectionHelper.isNotEmpty(identifiers)) {
-		    criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
-		}
+    public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers,
+            final Session session) {
+        Criteria criteria = session.createCriteria(Offering.class);
+        if (CollectionHelper.isNotEmpty(identifiers)) {
+            criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
+        }
         LOGGER.debug("QUERY getOfferingObjectsForCacheUpdate(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }

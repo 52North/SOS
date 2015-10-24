@@ -51,6 +51,11 @@ import org.n52.sos.util.CollectionHelper;
  */
 public class ReadableCache extends AbstractContentCache {
     private static final long serialVersionUID = -2197601373007656256L;
+    
+    @Override
+    public DateTime getLastUpdateTime() {
+        return getUpdateTime();
+    }
 
     @Override
     public DateTime getMaxPhenomenonTime() {

@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.cache.ctrl.action.CompleteCacheUpdate;
+import org.joda.time.DateTime;
 import org.n52.sos.cache.ContentCachePersistenceStrategy;
 import org.n52.sos.cache.ctrl.persistence.CachePersistenceStrategyFactory;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -120,6 +121,7 @@ public class ContentCacheControllerImpl extends AbstractSchedulingContentCacheCo
             } else {
                 executePartial(new PartialUpdate(update));
             }
+            cache.setLastUpdateTime(DateTime.now());
         } else {
             throw new IllegalArgumentException("update may not be null");
         }

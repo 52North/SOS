@@ -1636,4 +1636,9 @@ public class WritableCache extends ReadableCache implements WritableContentCache
         getOfferingIdentifierForHumanReadableName().clear();
     }
 
+    @Override
+    public void setLastUpdateTime(DateTime time) {
+        setUpdateTime(time);
+    }
+
 }

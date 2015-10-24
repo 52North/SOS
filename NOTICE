@@ -98,6 +98,7 @@ This project includes:
                 License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
+  Apache Commons Codec under Apache License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
@@ -147,7 +148,6 @@ This project includes:
   Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
-  jackson-module-jsonSchema under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java Excel API under GNU Lesser General Public License
@@ -161,9 +161,9 @@ This project includes:
   JBoss Logging 3 under Apache License, version 2.0
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
-  jcommon under GNU Lesser General Public Licence
+  JCommon under GNU Lesser General Public Licence
   jdom under JDOM license (Apache style), https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
-  jfreechart under GNU Lesser General Public Licence
+  JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   Joda-Time under Apache 2
   JOpt Simple under The MIT License

@@ -94,7 +94,7 @@ public class JTSHelper implements Constants {
 
     public static WKTReader getWKTReaderForSRID(int srid) throws OwsExceptionReport {
         if (srid <= 0) {
-            throw new InvalidSridException(srid);
+            return new WKTReader(new GeometryFactory());
         }
         return new WKTReader(getGeometryFactoryForSRID(srid));
     }

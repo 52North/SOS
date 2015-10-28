@@ -54,6 +54,7 @@ import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
@@ -234,6 +235,9 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
     private Geometry parseEnvelope(EnvelopeDocument envelopeDocument) throws OwsExceptionReport {
         EnvelopeType envelopeType = envelopeDocument.getEnvelope();
         int srid = SosHelper.parseSrsName(envelopeType.getSrsName());
+        if (srid <= 0) {
+            srid = GeometryHandler.getInstance().getStorageEPSG();
+        }
         String lowerCorner = envelopeType.getLowerCorner().getStringValue();
         String upperCorner = envelopeType.getUpperCorner().getStringValue();
         return JTSHelper.createGeometryFromWKT(JTSHelper.createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid);

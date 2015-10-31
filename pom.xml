@@ -1502,10 +1502,15 @@
             </snapshots>
         </repository>
         <repository>
+			<id>boundlessgeo</id>
+			<name>Boundless Cloud Repository</name>
+			<url>https://boundless.artifactoryonline.com/boundless/main</url>
+		</repository>
+        <!-- <repository>
 			<id>boundless</id>
 			<name>Boundless, formerly OpenGeo</name>
 			<url>http://repo.boundlessgeo.com/main/</url>
-		</repository>
+		</repository> -->
 		<repository>
 			<id>unidata-releases</id>
 			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>

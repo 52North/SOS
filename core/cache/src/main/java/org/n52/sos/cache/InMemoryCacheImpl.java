@@ -28,7 +28,6 @@
  */
 package org.n52.sos.cache;
 
-import static org.n52.sos.cache.AbstractStaticContentCache.copyOf;
 import static org.n52.sos.util.MultiMaps.newSynchronizedSetMultiMap;
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
@@ -62,6 +61,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public class InMemoryCacheImpl extends AbstractStaticContentCache implements WritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheImpl.class);
     private static final long serialVersionUID = 5229487811485834059L;
+    private DateTime updateTime;
     private final Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
     private final Map<String, DateTime> minPhenomenonTimeForOfferings = newSynchronizedMap();
     private final Map<String, DateTime> maxResultTimeForOfferings = newSynchronizedMap();
@@ -133,7 +133,8 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         }
         this.globalEnvelope = envelope;
     }
-
+    
+    
     /**
      * @param defaultEpsgCode
      *            the new default EPSG code
@@ -149,7 +150,8 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(defaultEpsgCode,
+        return Objects.hashCode(updateTime,
+                                defaultEpsgCode,
                                 maxPhenomenonTimeForOfferings,
                                 minPhenomenonTimeForOfferings,
                                 maxResultTimeForOfferings,
@@ -211,7 +213,8 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public boolean equals(Object obj) {
         if (obj instanceof InMemoryCacheImpl) {
             final InMemoryCacheImpl other = (InMemoryCacheImpl) obj;
-            return Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
+            return Objects.equal(this.updateTime, other.getLastUpdateTime())
+                    && Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
                     && Objects.equal(this.maxPhenomenonTimeForOfferings, other.maxPhenomenonTimeForOfferings)
                     && Objects.equal(this.minPhenomenonTimeForOfferings, other.minPhenomenonTimeForOfferings)
                     && Objects.equal(this.maxResultTimeForOfferings, other.maxResultTimeForOfferings)
@@ -269,6 +272,18 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
             }
         return false;
     }
+
+    @Override
+    public DateTime getLastUpdateTime() {
+        return this.updateTime;
+    }
+
+
+    @Override
+    public void setLastUpdateTime(DateTime time) {
+        this.updateTime = time;
+    }
+
 
     @Override
     public DateTime getMaxPhenomenonTime() {
@@ -2713,7 +2728,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     protected void logClearing(String type) {
         LOG.trace("Clearing '{}'", type);
     }
-    
+
 }
 
 

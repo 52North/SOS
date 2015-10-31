@@ -112,30 +112,26 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        for (Offering offering : getOfferingsToUpdate()){
-//            try {
-                String offeringId = offering.getIdentifier();
-                if (shouldOfferingBeProcessed(offeringId)) {
-                    String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                    getCache().addOffering(prefixedOfferingId);
+        for (Offering offering : getOfferingsToUpdate()) {
+            String offeringId = offering.getIdentifier();
+            if (shouldOfferingBeProcessed(offeringId)) {
+                String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
+                getCache().addOffering(prefixedOfferingId);
 
-                    if (offering instanceof TOffering) {
-                        TOffering tOffering = (TOffering) offering;
-                        // Related features
-                        Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
-                        if (!relatedFeatures.isEmpty()) {
-                            getCache().setRelatedFeaturesForOffering(prefixedOfferingId, relatedFeatures);
-                        }
-                        getCache().setAllowedObservationTypeForOffering(prefixedOfferingId,
-                                                                    getObservationTypesFromObservationType(tOffering.getObservationTypes()));
-                        // featureOfInterestTypes
-                        getCache().setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
-                                                                          getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
+                if (offering instanceof TOffering) {
+                    TOffering tOffering = (TOffering) offering;
+                    // Related features
+                    Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
+                    if (!relatedFeatures.isEmpty()) {
+                        getCache().setRelatedFeaturesForOffering(prefixedOfferingId, relatedFeatures);
                     }
+                    getCache().setAllowedObservationTypeForOffering(prefixedOfferingId,
+                            getObservationTypesFromObservationType(tOffering.getObservationTypes()));
+                    // featureOfInterestTypes
+                    getCache().setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
+                            getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                 }
-//            } catch (OwsExceptionReport ex) {
-//                getErrors().add(ex);
-//            }
+            }
         }
 
         //time ranges

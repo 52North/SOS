@@ -47,7 +47,6 @@ import org.n52.sos.ds.hibernate.cache.base.SridCacheUpdate;
  * @see ObservationTimeCacheUpdate
  * @see FeatureOfInterestCacheUpdate
  * @see ObservablePropertiesCacheUpdate
- * @see ObservationIdentifiersCacheUpdate
  * @see OfferingCacheUpdate
  * @see ProcedureCacheUpdate
  * @see RelatedFeaturesCacheUpdate

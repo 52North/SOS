@@ -36,13 +36,11 @@ comment on table compositeObservation is 'Relation table for complex parent/chil
 comment on column compositeObservation.observationId is 'Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid';
 comment on column compositeObservation.childObservationId is 'Foreign Key (FK) to the related child complex observation. Contains "observation".observationid';
 alter table complexValue add constraint observationComplexValueFk foreign key (observationId) references observation;
-alter table complexValue add constraint observationComplexValueFk foreign key (observationId) references observation;
 alter table compositeObservation add constraint observationChildFk foreign key (childObservationId) references observation;
-alter table compositeObservation add constraint observationParentFK foreign key (observationId) references complexValue;
 alter table compositeObservation add constraint observationParentFK foreign key (observationId) references complexValue;
 
 -- add columns for complex observation to onbservation table 
-ALTER TABLE observation ADD COLUMN child char(1 char) default 'F' not null check (child in ('T','F')), 
-ALTER TABLE observation ADD COLUMNparent char(1 char) default 'F' not null check (parent in ('T','F'))
+ALTER TABLE observation ADD COLUMN child char(1 char) default 'F' not null check (child in ('T','F'));
+ALTER TABLE observation ADD COLUMN parent char(1 char) default 'F' not null check (parent in ('T','F'));
 comment on column observation.child is 'Flag to indicate that this observation is a child observation for complex observation';
 comment on column observation.parent is 'Flag to indicate that this observation is a parent observation for complex observation';

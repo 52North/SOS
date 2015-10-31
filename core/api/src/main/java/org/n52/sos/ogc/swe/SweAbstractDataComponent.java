@@ -237,7 +237,7 @@ public abstract class SweAbstractDataComponent {
      * 
      * @param copy
      *            {@link SweAbstractDataComponent} to copy values to
-     * @return 
+     * @return Copy of this
      */
     public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
         copy.setDefinition(definition);

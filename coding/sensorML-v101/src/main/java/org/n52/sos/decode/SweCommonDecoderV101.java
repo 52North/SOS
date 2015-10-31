@@ -386,6 +386,8 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
                 sosAbstractDataComponentType = parseAbstractDataComponentType(xbField.getTimeRange());
             } else if (xbField.isSetAbstractDataRecord()) {
                 sosAbstractDataComponentType = parseAbstractDataComponentType(xbField.getAbstractDataRecord());
+            } else if (xbField.isSetAbstractDataArray1()) {
+                sosAbstractDataComponentType = parseAbstractDataComponentType(xbField.getAbstractDataArray1());
             }
             if (sosAbstractDataComponentType != null) {
                 sosFields.add(new SweField(xbField.getName(), sosAbstractDataComponentType));

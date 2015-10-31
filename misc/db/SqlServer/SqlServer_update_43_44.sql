@@ -46,3 +46,7 @@ alter table dbo.complexValue add constraint observationComplexValueFk foreign ke
 create table dbo.compositeObservation (observationId bigint not null, childObservationId bigint not null, primary key (observationId, childObservationId));
 alter table dbo.compositeObservation add constraint observationChildFk foreign key (childObservationId) references dbo.observation;
 alter table dbo.compositeObservation add constraint observationParentFK foreign key (observationId) references dbo.complexValue;
+
+-- spatial index
+create spatial index featureGeomIdx on sdo.featureOfInterest (geom);
+create spatial index samplingGeomIdx on sdo.observation (samplingGeometry);

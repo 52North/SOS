@@ -44,3 +44,7 @@ ALTER TABLE observation ADD COLUMN child char(1 char) default 'F' not null check
 ALTER TABLE observation ADD COLUMN parent char(1 char) default 'F' not null check (parent in ('T','F'));
 comment on column observation.child is 'Flag to indicate that this observation is a child observation for complex observation';
 comment on column observation.parent is 'Flag to indicate that this observation is a parent observation for complex observation';
+
+-- spatial index
+create index featureGeomIdx on featureOfInterest (geom)  INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+create index samplingGeomIdx on observation (samplingGeometry)  INDEXTYPE IS MDSYS.SPATIAL_INDEX;

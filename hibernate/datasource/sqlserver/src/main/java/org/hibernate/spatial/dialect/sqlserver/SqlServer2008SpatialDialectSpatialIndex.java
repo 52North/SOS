@@ -26,9 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package hibernate.spatial.dialect.oracle;
+package org.hibernate.spatial.dialect.sqlserver;
 
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,23 +35,17 @@ import org.hibernate.internal.util.StringHelper;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.n52.sos.ds.datasource.SpatialIndexDialect;
 
-public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect implements SpatialIndexDialect {
+public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008SpatialDialect implements SpatialIndexDialect {
 
-    private static final long serialVersionUID = -1294060043623083068L;
+    private static final long serialVersionUID = 1L;
 
-    public OracleSpatial10gDoubleFloatDialect() {
-        super();
-        registerColumnType(Types.DOUBLE, "float");
-    }
-    
-
+    // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
-
-        // https://docs.oracle.com/cd/A97630_01/appdev.920/a96630/sdo_objindex.htm#i78196
-        // CREATE INDEX cola_spatial_idx ON cola_markets(shape) INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+        
+        // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
+        // CREATE SPATIAL INDEX SIndx_SpatialTable_geometry_col1 ON SpatialTable(geometry_col)
         
         String name = index.getName();
         Table table = index.getTable();
@@ -61,7 +54,7 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
         
         
         StringBuilder buf = new StringBuilder( "create" )
-                        .append( " index " )
+                        .append( " spatial index " )
                         .append( this.qualifyIndexName() ?
                                         name :
                                         StringHelper.unqualify( name ) )
@@ -77,7 +70,8 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
             if (columns.hasNext())
                 buf.append(", ");
         }
-        buf.append(")  INDEXTYPE IS MDSYS.SPATIAL_INDEX");
+        buf.append(")");
         return buf.toString();
     }
+
 }

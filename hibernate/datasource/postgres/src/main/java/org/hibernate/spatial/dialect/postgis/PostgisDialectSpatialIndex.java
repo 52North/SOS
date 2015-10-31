@@ -26,9 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package hibernate.spatial.dialect.oracle;
+package org.hibernate.spatial.dialect.postgis;
 
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -36,23 +35,15 @@ import org.hibernate.internal.util.StringHelper;
 import org.hibernate.mapping.Column;
 import org.hibernate.mapping.Index;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
 import org.n52.sos.ds.datasource.SpatialIndexDialect;
 
-public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect implements SpatialIndexDialect {
+public class PostgisDialectSpatialIndex extends PostgisDialect implements SpatialIndexDialect {
 
-    private static final long serialVersionUID = -1294060043623083068L;
-
-    public OracleSpatial10gDoubleFloatDialect() {
-        super();
-        registerColumnType(Types.DOUBLE, "float");
-    }
-    
+    private static final long serialVersionUID = 1L;
 
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
-
-        // https://docs.oracle.com/cd/A97630_01/appdev.920/a96630/sdo_objindex.htm#i78196
-        // CREATE INDEX cola_spatial_idx ON cola_markets(shape) INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+        // http://postgis.net/docs/manual-2.0/using_postgis_dbmanagement.html#idp60795872
+        // CREATE INDEX [indexname] ON [tablename] USING GIST ( [geometryfield] ); 
         
         String name = index.getName();
         Table table = index.getTable();
@@ -67,6 +58,7 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
                                         StringHelper.unqualify( name ) )
                         .append( " on " )
                         .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
+                        .append(" USING GIST")
                         .append( " (" );
         while (columns.hasNext()) {
             Column column = columns.next();
@@ -77,7 +69,8 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
             if (columns.hasNext())
                 buf.append(", ");
         }
-        buf.append(")  INDEXTYPE IS MDSYS.SPATIAL_INDEX");
+        buf.append(")");
         return buf.toString();
     }
+
 }

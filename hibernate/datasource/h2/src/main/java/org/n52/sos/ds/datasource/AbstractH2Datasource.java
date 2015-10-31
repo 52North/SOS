@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-
+import org.hibernate.spatial.dialect.h2geodb.GeoDBDialectSpatialIndex;
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.DatasourceCallback;
 import org.n52.sos.exception.ConfigurationException;
@@ -61,7 +61,7 @@ import geodb.GeoDB;
 public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
     protected static final String H2_DRIVER_CLASS = "org.h2.Driver";
 
-    protected static final String H2_DIALECT_CLASS = GeoDBDialect.class.getName();
+    protected static final String H2_DIALECT_CLASS = GeoDBDialectSpatialIndex.class.getName();
 
     protected static final String DEFAULT_USERNAME = "sa";
 
@@ -72,7 +72,7 @@ public abstract class AbstractH2Datasource extends AbstractHibernateDatasource {
 
     @Override
     protected Dialect createDialect() {
-        return new GeoDBDialect();
+        return new GeoDBDialectSpatialIndex();
     }
 
     @Override

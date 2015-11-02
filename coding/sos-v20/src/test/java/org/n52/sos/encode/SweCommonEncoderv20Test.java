@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.XmlHelper;
 
@@ -50,7 +51,9 @@ public class SweCommonEncoderv20Test {
 
     @Test
     public void should_encode_DataRecord_with_sweText_field() throws OwsExceptionReport {
-        final SweDataRecord record = new SweDataRecord().addField(new SweField("text", new SweText()));
+        final SweDataRecord record = new SweDataRecord();
+        record.addField(new SweField("text", new SweText().setValue("textValue").setDefinition("textDef")));
+        record.addField(new SweField("count", new SweCount().setValue(2).setDefinition("countDef")));
 
         final XmlObject encoded = new SweCommonEncoderv20().encode(record);
 

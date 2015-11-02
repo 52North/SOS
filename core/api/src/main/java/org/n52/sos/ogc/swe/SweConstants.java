@@ -149,6 +149,8 @@ public interface SweConstants {
     QName QN_COUNT_SWE_101 = new QName(NS_SWE_101, EN_COUNT, NS_SWE_PREFIX);
 
     QName QN_COUNT_SWE_200 = new QName(NS_SWE_20, EN_COUNT, NS_SWE_PREFIX);
+    
+    QName QN_COUNT_RANGE_SWE_200 = new QName(NS_SWE_20, EN_COUNT_RANGE, NS_SWE_PREFIX);
 
     QName QN_DATA_ARRAY_SWE_200 = new QName(NS_SWE_20, EN_DATA_ARRAY, NS_SWE_PREFIX);
 

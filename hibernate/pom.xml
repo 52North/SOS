@@ -18,6 +18,13 @@
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
-        <module>generator</module>
-  </modules>
+	</modules>
+	<profiles>
+        <profile>
+            <id>generator</id>
+			 <modules>
+				<module>generator</module>
+			</modules>
+		</profile>
+	</profiles>
 </project>

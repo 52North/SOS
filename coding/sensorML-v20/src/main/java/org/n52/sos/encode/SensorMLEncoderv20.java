@@ -954,7 +954,13 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                 for (SmlCapability capability : capabilities.getCapabilities()) {
                     XmlObject encodeObjectToXml = encodeObjectToXmlSwe20(capability.getAbstractDataComponent());
                     Capability c = capabilityList.addNewCapability();
-                    c.setName(NcNameResolver.fixNcName(capability.getName()));
+                    if (capability.isSetName()) {
+                        c.setName(NcNameResolver.fixNcName(capability.getName()));
+                    } else if (capability.getAbstractDataComponent().isSetName()) {
+                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getName().getValue()));
+                    } else {
+                        capability.setName(NcNameResolver.fixNcName(capability.getAbstractDataComponent().getDefinition()));
+                    }
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(c.addNewAbstractDataComponent(), encodeObjectToXml);
                     substituteElement.set(encodeObjectToXml);
@@ -964,7 +970,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                 for (SweAbstractDataComponent component : capabilities.getAbstractDataComponents()) {
                     XmlObject encodeObjectToXml = encodeObjectToXmlSwe20(component);
                     Capability capability = capabilityList.addNewCapability();
-                    capability.setName(NcNameResolver.fixNcName(component.getName().getValue()));
+                    if (component.isSetName()) {
+                        capability.setName(NcNameResolver.fixNcName(component.getName().getValue()));
+                    } else {
+                        capability.setName(NcNameResolver.fixNcName(component.getDefinition()));
+                    }
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(capability.addNewAbstractDataComponent(), encodeObjectToXml);
                     substituteElement.set(encodeObjectToXml);

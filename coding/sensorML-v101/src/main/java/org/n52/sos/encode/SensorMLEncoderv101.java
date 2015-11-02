@@ -384,6 +384,13 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                     final ProcessModel smlProcessModel = (ProcessModel) sml;
                     addAbstractProcessValues(xbProcessModel, smlProcessModel);
                     addProcessModelValues(xbProcessModel, smlProcessModel);
+                } else if (sml instanceof org.n52.sos.ogc.sensorML.Component) {
+                    final ComponentType xbCompontent =  (ComponentType) xbSensorML.addNewMember().addNewProcess().substitute(
+                            new QName(SensorMLConstants.NS_SML, SensorMLConstants.EN_COMPONENT),
+                            ComponentType.type);
+                    final org.n52.sos.ogc.sensorML.Component smlComponent = (org.n52.sos.ogc.sensorML.Component) sml;
+                    addAbstractProcessValues(xbCompontent, smlComponent);
+                    addComponentValues(xbCompontent, smlComponent);
                 }
             }
         }

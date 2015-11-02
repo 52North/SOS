@@ -87,7 +87,7 @@ public class AbstractDataComponentContainer<T> extends AbstractReferenceType {
     }
 
     public boolean isSetName() {
-        return name != null && !name.isEmpty();
+        return getName() != null && !getName().isEmpty();
     }
 
     /**
@@ -106,6 +106,6 @@ public class AbstractDataComponentContainer<T> extends AbstractReferenceType {
     }
 
     public boolean isSetAbstractDataComponent() {
-        return abstractDataComponent != null;
+        return getAbstractDataComponent() != null;
     }
 }

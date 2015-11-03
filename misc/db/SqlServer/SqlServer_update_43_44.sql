@@ -42,9 +42,11 @@ ALTER TABLE dbo.observation ADD COLUMN parent char(1) default 'F' check (parent 
 
 create table dbo.complexValue (observationId bigint not null, primary key (observationId));
 alter table dbo.complexValue add constraint observationComplexValueFk foreign key (observationId) references dbo.observation;
-alter table dbo.complexValue add constraint observationComplexValueFk foreign key (observationId) references dbo.observation;
 
 create table dbo.compositeObservation (observationId bigint not null, childObservationId bigint not null, primary key (observationId, childObservationId));
 alter table dbo.compositeObservation add constraint observationChildFk foreign key (childObservationId) references dbo.observation;
 alter table dbo.compositeObservation add constraint observationParentFK foreign key (observationId) references dbo.complexValue;
-alter table dbo.compositeObservation add constraint observationParentFK foreign key (observationId) references dbo.complexValue;
+
+-- spatial index
+create spatial index featureGeomIdx on sdo.featureOfInterest (geom);
+create spatial index samplingGeomIdx on sdo.observation (samplingGeometry);

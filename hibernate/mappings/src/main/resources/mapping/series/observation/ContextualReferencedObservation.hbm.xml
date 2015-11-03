@@ -158,7 +158,8 @@
             </many-to-many>
         </set>
         <property name="samplingGeometry"
-                  type="org.hibernate.spatial.GeometryType">
+                  type="org.hibernate.spatial.GeometryType"
+                  index="samplingGeomIdx" >
             <column name="samplingGeometry">
             	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>

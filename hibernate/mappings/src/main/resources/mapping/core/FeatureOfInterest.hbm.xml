@@ -42,7 +42,7 @@
             	<comment>Description of the featureOfInterest, gml:description. Optional</comment>
             </column>
         </property>
-        <property name="geom" type="org.hibernate.spatial.GeometryType">
+        <property name="geom" type="org.hibernate.spatial.GeometryType" index="featureGeomIdx">
             <column name="geom">
             	<comment>The geometry of the featureOfInterest (composed of the “latitude” and “longitude”) . Optional</comment>
             </column>

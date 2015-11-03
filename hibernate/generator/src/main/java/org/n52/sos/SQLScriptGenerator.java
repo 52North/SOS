@@ -35,18 +35,22 @@ import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
-import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect;
-import org.hibernate.spatial.dialect.oracle.OracleSpatial10gDialect;
+import org.hibernate.spatial.dialect.h2geodb.GeoDBDialectSpatialIndex;
+import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
+import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
+import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialectSpatialIndex;
+import org.n52.sos.ds.datasource.CustomConfiguration;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
 
 
 /**
@@ -67,11 +71,10 @@ public class SQLScriptGenerator {
     private Dialect getDialect(int selection) throws Exception {
         switch (selection) {
         case 1:
-            return new PostgisDialect();
+            return new PostgisDialectSpatialIndex();
         case 2:
             try {
-                return new OracleSpatial10gDialect();
-//                return new OracleSpatial10gDoubleFloatDialect();
+                return new OracleSpatial10gDoubleFloatDialect();
             } catch (ExceptionInInitializerError eiie) {
                 printToScreen("The Oracle JDBC driver is missing!");
                 printToScreen("To execute the SQL script generator for Oracle you have to uncomment the dependency in the pom.xml.");
@@ -82,12 +85,11 @@ public class SQLScriptGenerator {
             }
 
         case 3:
-            return new GeoDBDialect();
+            return new GeoDBDialectSpatialIndex();
         case 4:
-            return new MySQLSpatial5InnoDBDialect();
-//            return new MySQLSpatial5InnoDBTimestampDialect();
+            return new MySQLSpatial5InnoDBTimestampDialect();
         case 5:
-            return new SqlServer2008SpatialDialect();
+            return new SqlServer2008SpatialDialectSpatialIndex();
         default:
             throw new Exception("The entered value is invalid!");
         }
@@ -215,7 +217,7 @@ public class SQLScriptGenerator {
     public static void main(String[] args) {
         try {
             SQLScriptGenerator sqlScriptGenerator = new SQLScriptGenerator();
-            Configuration configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
+            Configuration configuration = new CustomConfiguration().configure("/sos-hibernate.cfg.xml");
             int dialectSelection = sqlScriptGenerator.getDialectSelection();
             Dialect dia = sqlScriptGenerator.getDialect(dialectSelection);
             int modelSelection = sqlScriptGenerator.getModelSelection();

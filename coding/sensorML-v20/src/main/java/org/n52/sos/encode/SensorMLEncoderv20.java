@@ -251,6 +251,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         } catch (final XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle);
         }
+        // check if all gml:id are unique
+        XmlHelper.makeGmlIdsUnique(encodedObject.getDomNode());
         LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                 XmlHelper.validateDocument(encodedObject));
         return encodedObject;

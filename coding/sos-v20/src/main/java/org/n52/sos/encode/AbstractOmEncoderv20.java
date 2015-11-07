@@ -40,6 +40,8 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
+import org.isotc211.x2005.gmd.AbstractDQElementDocument;
+import org.isotc211.x2005.gmd.DQElementPropertyType;
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -58,6 +60,8 @@ import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -78,7 +82,6 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CodingHelper;
@@ -86,11 +89,13 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import net.opengis.om.x20.NamedValueType;
@@ -246,6 +251,7 @@ public abstract class AbstractOmEncoderv20
         setParameter(sosObservation, xbObservation);
         setObservableProperty(sosObservation, xbObservation);
         setFeatureOfInterest(sosObservation, xbObservation);
+        setResultQualities(xbObservation, sosObservation);
         setResult(sosObservation, xbObservation);
 
         if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
@@ -570,6 +576,28 @@ public abstract class AbstractOmEncoderv20
             return value.accept(new NamedValueValueEncoder());
         }
         return null;
+    }
+    
+    private void setResultQualities(OMObservationType xbObservation, OmObservation sosObservation)
+            throws OwsExceptionReport {
+        if (sosObservation.isSetResultQuality()) {
+            encodeResultQualities(xbObservation, sosObservation.getResultQuality());
+        } else if (sosObservation.getValue() instanceof SingleObservationValue) {
+            encodeResultQualities(xbObservation,
+                    ((SingleObservationValue<?>) sosObservation.getValue()).getQualityList());
+        }
+    }
+
+    private void encodeResultQualities(OMObservationType xbObservation, Set<OmResultQuality> resultQuality)
+            throws OwsExceptionReport {
+        for (OmResultQuality quality : resultQuality) {
+            AbstractDQElementDocument encodedQuality = (AbstractDQElementDocument) CodingHelper.encodeObjectToXml(null,
+                    quality, ImmutableMap.of(HelperValues.DOCUMENT, "true"));
+            DQElementPropertyType addNewResultQuality = xbObservation.addNewResultQuality();
+            addNewResultQuality.setAbstractDQElement(encodedQuality.getAbstractDQElement());
+            XmlHelper.substituteElement(addNewResultQuality.getAbstractDQElement(),
+                    encodedQuality.getAbstractDQElement());
+        }
     }
 
     protected static XmlOptions getXmlOptions() {

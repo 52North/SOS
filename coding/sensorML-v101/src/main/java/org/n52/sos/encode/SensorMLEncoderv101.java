@@ -103,7 +103,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -400,24 +399,35 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     private ContactList createContactList(final List<SmlContact> contacts) {
         final ContactList xbContacts = ContactList.Factory.newInstance();
         for (final SmlContact smlContact : contacts) {
-            if (smlContact instanceof SmlPerson) {
+            if (smlContact.isSetHref()) {
                 ContactList.Member member = xbContacts.addNewMember();
-                member.addNewPerson().set(createPerson((SmlPerson) smlContact));
-                if (!Strings.isNullOrEmpty(smlContact.getRole())) {
+                member.setHref(smlContact.getHref());
+                if (smlContact.isSetTitle()) {
+                    member.setTitle(smlContact.getTitle());
+                }
+                if (smlContact.isSetRole()) {
                     member.setRole(smlContact.getRole());
                 }
-            } else if (smlContact instanceof SmlResponsibleParty) {
-                ContactList.Member member = xbContacts.addNewMember();
-                member.addNewResponsibleParty().set(createResponsibleParty((SmlResponsibleParty) smlContact));
-                if (!Strings.isNullOrEmpty(smlContact.getRole())) {
-                    member.setRole(smlContact.getRole());
-                }
-            } else if (smlContact instanceof SmlContactList) {
-                SmlContactList contactList = (SmlContactList) smlContact;
-                ContactList innerContactList = createContactList(contactList.getMembers());
-                int innerContactLength = innerContactList.getMemberArray().length;
-                for (int i = 0; i < innerContactLength; i++) {
-                    xbContacts.addNewMember().set(innerContactList.getMemberArray(i));
+            } else {
+                if (smlContact instanceof SmlPerson) {
+                    ContactList.Member member = xbContacts.addNewMember();
+                    member.addNewPerson().set(createPerson((SmlPerson) smlContact));
+                    if (smlContact.isSetRole()) {
+                        member.setRole(smlContact.getRole());
+                    }
+                } else if (smlContact instanceof SmlResponsibleParty) {
+                    ContactList.Member member = xbContacts.addNewMember();
+                    member.addNewResponsibleParty().set(createResponsibleParty((SmlResponsibleParty) smlContact));
+                    if (smlContact.isSetRole()) {
+                        member.setRole(smlContact.getRole());
+                    }
+                } else if (smlContact instanceof SmlContactList) {
+                    SmlContactList contactList = (SmlContactList) smlContact;
+                    ContactList innerContactList = createContactList(contactList.getMembers());
+                    int innerContactLength = innerContactList.getMemberArray().length;
+                    for (int i = 0; i < innerContactLength; i++) {
+                        xbContacts.addNewMember().set(innerContactList.getMemberArray(i));
+                    }
                 }
             }
         }

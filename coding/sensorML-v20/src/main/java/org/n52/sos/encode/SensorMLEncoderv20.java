@@ -653,10 +653,18 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             ContactListType cl = ContactListType.Factory.newInstance();
             for (SmlContact contact : describedObject.getContact()) {
                 if (contact instanceof SmlResponsibleParty) {
-                    XmlObject encodeObjectToXml =
-                            CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
-                    if (encodeObjectToXml != null) {
-                        cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
+                    if (contact.isSetHref()) {
+                        Map<SosConstants.HelperValues, String> additionalValues = Maps.newHashMap();
+                        additionalValues.put(HelperValues.PROPERTY_TYPE, "true");
+                        XmlObject encodeObjectToXml =
+                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, additionalValues);
+                        cl.addNewContact().set(encodeObjectToXml);
+                    } else {
+                        XmlObject encodeObjectToXml =
+                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
+                        if (encodeObjectToXml != null) {
+                            cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
+                        }
                     }
                 }
             }

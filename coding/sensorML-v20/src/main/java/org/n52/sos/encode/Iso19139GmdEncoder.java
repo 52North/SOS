@@ -168,6 +168,18 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
 
     private XmlObject encodeResponsibleParty(SmlResponsibleParty responsibleParty,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (responsibleParty.isSetHref()) {
+            CIResponsiblePartyPropertyType cirppt =
+                    CIResponsiblePartyPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+            cirppt.setHref(responsibleParty.getHref());
+            if (responsibleParty.isSetTitle()) {
+                cirppt.setTitle(responsibleParty.getTitle());
+            }
+            if (responsibleParty.isSetRole()) {
+                cirppt.setRole(responsibleParty.getRole());
+            }
+            return cirppt;
+        }
         CIResponsiblePartyType cirpt =
                 CIResponsiblePartyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (responsibleParty.isSetIndividualName()) {

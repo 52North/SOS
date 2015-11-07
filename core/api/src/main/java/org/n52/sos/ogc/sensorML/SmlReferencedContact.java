@@ -28,39 +28,6 @@
  */
 package org.n52.sos.ogc.sensorML;
 
-import org.n52.sos.ogc.gml.AbstractReferenceType;
+public class SmlReferencedContact extends SmlContact {
 
-/**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
- * 
- * @since 4.0.0
- */
-public abstract class SmlContact extends AbstractReferenceType {
-    
-    private Role role;
-    
-    @Override
-    public String getRole() {
-        if (role != null) {
-            return role.getValue();
-        }
-        if (super.isSetRole()) {
-            return super.getRole();
-        }
-        return null;
-    }
-    
-    public Role getRoleObject() {
-        return role;
-    }
-
-    @Override
-    public void setRole(String role) {
-        this.role = new Role(role);
-    }
-    
-    public void setRole(Role role) {
-        this.role = role;
-    }
 }

@@ -643,7 +643,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             }
             if (tp.getStart().isAfter(tp.getEnd())) {
                 throw new InvalidParameterValueException(SosConstants.Filter.TimePeriod, tp.toString()).withMessage(
-                        "It is not allowed that begin time is before end time! Begin '%s' > End '%s'", tp.getStart(),
+                        "It is not allowed that begin time is after end time! Begin '%s' > End '%s'", tp.getStart(),
                         tp.getEnd());
             }
         }

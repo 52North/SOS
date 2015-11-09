@@ -114,7 +114,6 @@ import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
 import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
@@ -1484,12 +1483,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 observationContext.setObservableProperty(first.getObservableProperty());
                 observationContext.setProcedure(first.getProcedure());
             }
-
+            // set value before ObservationContext is added otherwise the first/last value is not updated in series table. 
+            observation.setValue(value);
+            
             observationContext.setFeatureOfInterest(featureOfInterest);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
-
-            observation.setValue(value);
 
             session.saveOrUpdate(observation);
             

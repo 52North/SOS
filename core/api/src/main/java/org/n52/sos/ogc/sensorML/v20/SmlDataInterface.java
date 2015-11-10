@@ -82,4 +82,15 @@ public class SmlDataInterface extends SweAbstractDataComponent {
         visitor.visit(this);
     }
 
+    @Override
+    public SmlDataInterface clone() throws CloneNotSupportedException {
+        SmlDataInterface clone = new SmlDataInterface();
+        copyValueTo(clone);
+        clone.setData(getData());
+        if (isSetInterfaceParameters()) {
+            clone.setInputParameters(getInterfaceParameters().clone());
+        }
+        return clone;
+    }
+
 }

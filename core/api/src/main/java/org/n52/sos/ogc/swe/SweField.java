@@ -148,4 +148,11 @@ public class SweField extends SweAbstractDataComponent {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    @Override
+    public SweField clone() throws CloneNotSupportedException {
+        SweField clone = new SweField(getName().clone(), getElement().clone());
+        copyValueTo(clone);
+        return clone;
+    }
 }

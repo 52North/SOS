@@ -78,6 +78,10 @@ public interface DataRecord {
      *         if not found.
      */
     int getFieldIndexByIdentifier(String fieldNameOrElementDefinition);
+    
+    SweAbstractDataComponent getFieldByIdentifier(String fieldNameOrElementDefinition);
+    
+    boolean existsFieldForIdentifier(String fieldNameOrElementDefinition);
 
     Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class<?> clazz);
 

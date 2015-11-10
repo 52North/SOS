@@ -160,35 +160,27 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
     
 
-	private void checkResultStructure(SosResultStructure resultStructure,
-			String observedProperty) throws OwsExceptionReport {
-		// TODO modify or remove if complex field elements are supported
-		final SweDataRecord record = setRecordFrom(resultStructure
-				.getResultStructure());
+    private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
+            throws OwsExceptionReport {
+        // TODO modify or remove if complex field elements are supported
+        final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
 
-		for (final SweField swefield : record.getFields()) {
-			if (!(swefield.getElement() instanceof SweAbstractSimpleType<?>)) {
-				throw new NoApplicableCodeException()
-						.withMessage(
-								"The swe:Field element of type %s is not yet supported!",
-								swefield.getElement().getClass().getName());
-			}
-		}
-		if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
-			throw new NoApplicableCodeException()
-					.at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-					.withMessage(
-							"Missing swe:Time or swe:TimeRange with definition %s",
-							OmConstants.PHENOMENON_TIME);
-		}
-		if (ResultHandlingHelper.checkFields(record.getFields(),
-				observedProperty) == -1) {
-			throw new NoApplicableCodeException()
-					.at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-					.withMessage(
-							"Missing swe:field content with element definition %s",
-							observedProperty);
-		}
-	}
+        for (final SweField swefield : record.getFields()) {
+            
+            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>) || (swefield.getElement() instanceof SweDataRecord))) {
+                throw new NoApplicableCodeException().withMessage(
+                        "The swe:Field element of type %s is not yet supported!",
+                        swefield.getElement().getClass().getName());
+            }
+        }
+        if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:Time or swe:TimeRange with definition %s", OmConstants.PHENOMENON_TIME);
+        }
+        if (ResultHandlingHelper.checkFields(record.getFields(), observedProperty) == -1) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:field content with element definition %s", observedProperty);
+        }
+    }
 
 }

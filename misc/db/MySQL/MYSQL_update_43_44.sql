@@ -33,8 +33,6 @@ ALTER TABLE sos.`procedure` ADD COLUMN isaggregation char(1) default 'F';
 
 ALTER TABLE sos.`procedure` ADD COLUMN typeof bigint;
 
-alter table public."procedure" add constraint typeoffk foreign key (typeof) references public."procedure";
-
 alter table sos.`procedure` add constraint typeoffk foreign key (typeof) references sos.`procedure` (procedureid);
 
 -- complex observation
@@ -49,7 +47,3 @@ alter table sos.complexValue add constraint observationComplexValueFk foreign ke
 create table sos.compositeObservation (observationId bigint not null comment 'Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid', childObservationId bigint not null comment 'Foreign Key (FK) to the related child complex observation. Contains "observation".observationid', primary key (observationId, childObservationId)) comment='Relation table for complex parent/child observations' ENGINE=InnoDB;
 alter table sos.compositeObservation add constraint observationChildFk foreign key (childObservationId) references sos.observation (observationId);
 alter table sos.compositeObservation add constraint observationParentFK foreign key (observationId) references sos.complexValue (observationId);
-
--- spatial index
-create spatial index featureGeomIdx on sos.featureOfInterest (geom);
-create spatial index samplingGeomIdx on sos.observation (samplingGeometry);

@@ -76,34 +76,36 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
     // https://dev.mysql.com/doc/refman/5.0/en/creating-spatial-indexes.html
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
         
-        // https://dev.mysql.com/doc/refman/5.0/en/creating-spatial-indexes.html
-        // CREATE SPATIAL INDEX sp_index ON geom (g);
+       
+        // only for NOT NULL columns and ENGINE=MyISAM
+        // https://dev.mysql.com/doc/refman/5.7/en/creating-spatial-indexes.html
         
-        String name = index.getName();
-        Table table = index.getTable();
-        Iterator<Column> columns = index.getColumnIterator();
-        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
-        
-        
-        StringBuilder buf = new StringBuilder( "create" )
-                        .append( " spatial index " )
-                        .append( this.qualifyIndexName() ?
-                                        name :
-                                        StringHelper.unqualify( name ) )
-                        .append( " on " )
-                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
-                        .append( " (" );
-        while (columns.hasNext()) {
-            Column column = columns.next();
-            buf.append(column.getQuotedName(this));
-            if (columnOrderMap.containsKey(column)) {
-                buf.append(" ").append(columnOrderMap.get(column));
-            }
-            if (columns.hasNext())
-                buf.append(", ");
-        }
-        buf.append(")");
-        return buf.toString();
+//        String name = index.getName();
+//        Table table = index.getTable();
+//        Iterator<Column> columns = index.getColumnIterator();
+//        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
+//        
+//        
+//        StringBuilder buf = new StringBuilder( "create" )
+//                        .append( " spatial index " )
+//                        .append( this.qualifyIndexName() ?
+//                                        name :
+//                                        StringHelper.unqualify( name ) )
+//                        .append( " on " )
+//                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
+//                        .append( " (" );
+//        while (columns.hasNext()) {
+//            Column column = columns.next();
+//            buf.append(column.getQuotedName(this));
+//            if (columnOrderMap.containsKey(column)) {
+//                buf.append(" ").append(columnOrderMap.get(column));
+//            }
+//            if (columns.hasNext())
+//                buf.append(", ");
+//        }
+//        buf.append(")");
+//        return buf.toString();
+        return "";
     }
 
 }

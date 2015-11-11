@@ -76,4 +76,14 @@ public class SweSimpleDataRecord extends SweAbstractDataRecord {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    @Override
+    public SweAbstractDataComponent clone() throws CloneNotSupportedException {
+        SweSimpleDataRecord clone = new SweSimpleDataRecord();
+        copyValueTo(clone);
+        for (SweField field : getFields()) {
+            clone.addField(field.clone());
+        }
+        return clone;
+    }
 }

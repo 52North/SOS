@@ -316,6 +316,11 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
                     @Override
                     public void accept(VoidSweDataComponentVisitor visitor) {
                     }
+
+                    @Override
+                    public SweAbstractDataComponent clone() throws CloneNotSupportedException {
+                        return null;
+                    }
                 })));
     }
 

@@ -725,6 +725,18 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
         return Lists.newArrayList(allFeatures);
     }
+    
+    protected List<String> addChildObservableProperties(List<String> observedProperties) {
+        Set<String> allObservedProperties = Sets.newHashSet(observedProperties);
+        if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
+            for (String observedProperty : observedProperties) {
+                if (getCache().isCompositePhenomenon(observedProperty)) {
+                    allObservedProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(observedProperty));
+                }
+            }
+        }
+        return Lists.newArrayList(allObservedProperties);
+    }
 
     protected void checkObservationType(final String observationType, final String parameterName)
             throws OwsExceptionReport {

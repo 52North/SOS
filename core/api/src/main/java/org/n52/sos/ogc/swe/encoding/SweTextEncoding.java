@@ -116,5 +116,16 @@ public class SweTextEncoding extends SweAbstractEncoding {
         }
         return true;
     }
+    
+    @Override
+    public SweTextEncoding clone() {
+        SweTextEncoding clone = new SweTextEncoding();
+        clone.setBlockSeparator(getBlockSeparator());
+        clone.setCollapseWhiteSpaces(isCollapseWhiteSpaces());
+        clone.setDecimalSeparator(getDecimalSeparator());
+        clone.setTokenSeparator(getTokenSeparator());
+        clone.setXml(getXml());
+        return clone;
+    }
 
 }

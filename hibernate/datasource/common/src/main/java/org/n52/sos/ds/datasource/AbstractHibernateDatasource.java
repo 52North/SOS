@@ -68,6 +68,7 @@ import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -536,9 +537,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             stmt = conn.createStatement();
             LOG.debug("Start executing SQL commands: ");
             for (String cmd : sql) {
-                lastCmd = cmd;
-                LOG.debug("Execute: {}", cmd);
-                stmt.execute(cmd);
+                if (!Strings.isNullOrEmpty(cmd)) {
+                    lastCmd = cmd;
+                    LOG.debug("Execute: {}", cmd);
+                    stmt.execute(cmd);
+                }
             }
         } catch (SQLException ex) {
             if (lastCmd != null) {

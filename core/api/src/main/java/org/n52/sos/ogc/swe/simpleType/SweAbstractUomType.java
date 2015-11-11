@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -75,5 +77,13 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
     public String toString() {
         return String.format("%s [simpleType=%s, value=%s, uom=%s, quality=%s]", getClass().getSimpleName(),
                 getDataComponentType(), getValue(), getUom(), getQuality());
+    }
+    
+    @Override
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        if (copy instanceof SweAbstractUomType<?>) {
+            ((SweAbstractUomType<?>) copy).setUom(getUom());
+        }
+        return super.copyValueTo(copy);
     }
 }

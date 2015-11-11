@@ -33,6 +33,9 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.om.OmCompositePhenomenon;
+import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.util.Action;
@@ -80,6 +83,21 @@ public class ResultTemplateInsertionUpdate extends InMemoryCacheUpdate {
         AbstractFeature featureOfInterest = request.getObservationTemplate().getFeatureOfInterest();
         if (featureOfInterest != null && featureOfInterest.isSetName()) {
         	cache.addFeatureOfInterestIdentifierHumanReadableName(featureOfInterest.getIdentifier(), featureOfInterest.getFirstName().getValue());
+        }
+        
+        AbstractPhenomenon observableProperty = request.getObservationTemplate().getObservableProperty();
+        if (observableProperty instanceof OmCompositePhenomenon) {
+            OmCompositePhenomenon parent = (OmCompositePhenomenon) observableProperty;
+            cache.addCompositePhenomenon(parent.getIdentifier());
+            cache.addCompositePhenomenonForProcedure(request.getObservationTemplate().getProcedureIdentifier(), parent.getIdentifier());
+            for (String offering : request.getObservationTemplate().getOfferings()) {
+                cache.addCompositePhenomenonForOffering(offering, parent.getIdentifier());
+            }
+
+            for (OmObservableProperty child : parent) {
+                cache.addObservablePropertyForCompositePhenomenon(parent.getIdentifier(), child.getIdentifier());
+                cache.addCompositePhenomenonForObservableProperty(child.getIdentifier(), parent.getIdentifier());
+            }
         }
     }
 }

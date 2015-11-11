@@ -251,4 +251,18 @@ public class SweEnvelope extends SweAbstractDataComponent {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    @Override
+    public SweEnvelope clone() throws CloneNotSupportedException {
+        SweEnvelope clone = new SweEnvelope();
+        copyValueTo(clone);
+        clone.setReferenceFrame(getReferenceFrame());
+        if (isLowerCornerSet()) {
+            clone.setLowerCorner(getLowerCorner().clone());
+        }
+        if (isUpperCornerSet()) {
+            clone.setUpperCorner(getUpperCorner().clone());
+        }
+        return clone;
+    }
 }

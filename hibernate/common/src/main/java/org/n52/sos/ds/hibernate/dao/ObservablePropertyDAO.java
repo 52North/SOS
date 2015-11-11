@@ -281,7 +281,7 @@ public class ObservablePropertyDAO extends AbstractIdentifierNameDescriptionDAO 
      * @return Observable property objects
      */
     public List<ObservableProperty> getOrInsertObservableProperty(
-            List<? extends AbstractPhenomenon> observableProperties,boolean hiddenChild,  Session session) {
+            List<? extends AbstractPhenomenon> observableProperties, boolean hiddenChild, Session session) {
         return new ArrayList<>(getOrInsertObservablePropertyAsMap(observableProperties, hiddenChild, session).values());
     }
 

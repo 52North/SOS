@@ -46,20 +46,13 @@ import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
@@ -217,10 +210,8 @@ public class SosInsertObservationOperatorV20 extends
         AbstractPhenomenon observableProperty = obsConstallation.getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
-        if (hasObservations(observablePropertyIdentifier, obsConstallation.getOfferings()) &&
-            observableProperty.isComposite() != getCache().isCompositePhenomenon(observablePropertyIdentifier)) {
-            throw new InvalidParameterValueException(Sos2Constants.InsertObservationParams.observedProperty, observablePropertyIdentifier);
-        }
+        checkForCompositeObservableProperty(observableProperty, obsConstallation.getOfferings(),
+                Sos2Constants.InsertObservationParams.observedProperty);
 
         checkProcedureID(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure);
         checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
@@ -228,14 +219,6 @@ public class SosInsertObservationOperatorV20 extends
                 Sos2Constants.InsertObservationParams.featureOfInterest);
     }
 
-    private boolean hasObservations(String observableProperty, Set<String> offerings) {
-        for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-            if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)
             throws OwsExceptionReport {
@@ -264,45 +247,11 @@ public class SosInsertObservationOperatorV20 extends
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.INSERT_OBSERVATION;
     }
-
+    
     private void createCompositePhenomenons(InsertObservationRequest request) {
         for (OmObservation observation : request.getObservations()) {
-            if (isComplexObservation(observation)) {
-                createCompositePhenomenon(observation);
-            }
+            createCompositePhenomenon(observation);
         }
     }
 
-    protected void createCompositePhenomenon(OmObservation observation) {
-        OmObservationConstellation oc = observation.getObservationConstellation();
-        AbstractPhenomenon observableProperty = oc.getObservableProperty();
-
-        if (!(observableProperty instanceof  OmCompositePhenomenon)) {
-            final OmCompositePhenomenon parent;
-            parent = new OmCompositePhenomenon(observableProperty.getIdentifier());
-            parent.setDefaultElementEncoding(observableProperty.getDefaultElementEncoding());
-            parent.setHumanReadableIdentifier(observableProperty.getHumanReadableIdentifierCodeWithAuthority());
-            parent.setIdentifier(observableProperty.getIdentifierCodeWithAuthority());
-            parent.setDescription(observableProperty.getDescription());
-            parent.setName(observableProperty.getName());
-
-            ComplexValue value = (ComplexValue) observation.getValue().getValue();
-            SweAbstractDataRecord dataRecord = value.getValue();
-            for (SweField field : dataRecord.getFields()) {
-                SweAbstractDataComponent element = field.getElement();
-                OmObservableProperty child = new OmObservableProperty(element.getDefinition());
-                child.setName(element.getNames());
-                child.setDescription(element.getDescription());
-                parent.addPhenomenonComponent(child);
-            }
-
-            oc.setObservableProperty(parent);
-        }
-    }
-
-    protected static boolean isComplexObservation(OmObservation observation) {
-        return observation.getObservationConstellation().getObservationType()
-                .equalsIgnoreCase(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION) &&
-               observation.getValue().getValue() instanceof ComplexValue;
-    }
 }

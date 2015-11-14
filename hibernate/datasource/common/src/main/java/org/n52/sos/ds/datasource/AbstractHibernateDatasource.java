@@ -153,7 +153,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC driver";
 
     protected static final String PROVIDED_JDBC_DRIVER_DESCRIPTION =
-            "Is the JDBC driver provided and should not be derigistered during shutdown?";
+            "Is the JDBC driver provided and should not be deregistered during shutdown?";
 
     protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
 

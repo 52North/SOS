@@ -21,7 +21,7 @@
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>hibernate-mapping</id>
+						<id>rest-api</id>
 						<phase>generate-resources</phase>
 						<goals>
 							<goal>unpack</goal>
@@ -69,12 +69,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
-					 <webResources>
-                        <resource>
-                            <directory>src/main/webapp</directory>
-                            <filtering>false</filtering>
-                        </resource>
-                    </webResources>
 					<overlays>
 						<overlay>
 							<groupId>org.n52.sensorweb</groupId>

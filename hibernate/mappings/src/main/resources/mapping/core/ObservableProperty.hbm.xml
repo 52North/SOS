@@ -12,7 +12,6 @@
             	<param name="sequence">observablePropertyId_seq</param>
             </generator>
         </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="obsPropIdentifierUK">
             	<comment>The identifier of the observableProperty, gml:identifier. Used as parameter for queries. Unique</comment>

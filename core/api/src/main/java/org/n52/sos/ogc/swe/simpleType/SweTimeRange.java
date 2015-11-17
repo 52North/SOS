@@ -83,4 +83,18 @@ public class SweTimeRange extends SweAbstractUomType<RangeValue<DateTime>> {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public SweTimeRange clone() {
+        SweTimeRange clone = new SweTimeRange();
+        copyValueTo(clone);
+        if (isSetQuality()) {
+            clone.setQuality(cloneQuality());
+        }
+        if (isSetValue()) {
+            clone.setValue((RangeValue<DateTime>)getValue().clone());
+        }
+        return clone;
+    }
 }

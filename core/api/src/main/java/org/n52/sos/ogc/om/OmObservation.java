@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -517,7 +518,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public void addParameter(NamedValue<?> namedValue) {
         if (parameter == null) {
-            parameter = Sets.newHashSet();
+            parameter = Sets.newTreeSet();
         }
         parameter.add(namedValue);
     }

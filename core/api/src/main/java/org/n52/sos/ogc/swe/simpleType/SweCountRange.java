@@ -79,5 +79,19 @@ public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public SweCountRange clone() {
+        SweCountRange clone = new SweCountRange();
+        copyValueTo(clone);
+        if (isSetQuality()) {
+            clone.setQuality(cloneQuality());
+        }
+        if (isSetValue()) {
+            clone.setValue((RangeValue<Integer>)getValue().clone());
+        }
+        return clone;
+    }
 
 }

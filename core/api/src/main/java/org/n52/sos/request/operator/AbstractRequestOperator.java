@@ -643,7 +643,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             }
             if (tp.getStart().isAfter(tp.getEnd())) {
                 throw new InvalidParameterValueException(SosConstants.Filter.TimePeriod, tp.toString()).withMessage(
-                        "It is not allowed that begin time is before end time! Begin '%s' > End '%s'", tp.getStart(),
+                        "It is not allowed that begin time is after end time! Begin '%s' > End '%s'", tp.getStart(),
                         tp.getEnd());
             }
         }
@@ -724,6 +724,18 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             }
         }
         return Lists.newArrayList(allFeatures);
+    }
+    
+    protected List<String> addChildObservableProperties(List<String> observedProperties) {
+        Set<String> allObservedProperties = Sets.newHashSet(observedProperties);
+        if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
+            for (String observedProperty : observedProperties) {
+                if (getCache().isCompositePhenomenon(observedProperty)) {
+                    allObservedProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(observedProperty));
+                }
+            }
+        }
+        return Lists.newArrayList(allObservedProperties);
     }
 
     protected void checkObservationType(final String observationType, final String parameterName)

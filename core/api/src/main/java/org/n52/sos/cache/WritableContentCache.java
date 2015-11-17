@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.n52.sos.i18n.MultilingualString;
 
 /**
@@ -46,6 +47,16 @@ public interface WritableContentCache
                 WritableSpatialCache,
                 WriteableTimeCache,
                 WritableCompositePhenomenonCache {
+    
+    
+    
+    /**
+     * Set the last cache update time
+     * 
+     * @param time
+     *            Last cache update time
+     */
+    void setLastUpdateTime(DateTime time);
     
     /**
      * @return all features of interest associated with an offering

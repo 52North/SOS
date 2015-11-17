@@ -88,4 +88,12 @@ public class SweObservableProperty extends SweAbstractSimpleType<String> {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    @Override
+    public SweObservableProperty clone() {
+        SweObservableProperty clone = new SweObservableProperty();
+        copyValueTo(clone);
+        clone.setValue(getValue());
+        return clone;
+    }
 }

@@ -159,4 +159,23 @@ public class StreamingSweDataArray extends SweAbstractDataComponent {
         visitor.visit(this);
     }
 
+    @Override
+    public StreamingSweDataArray clone() throws CloneNotSupportedException {
+        StreamingSweDataArray clone = new StreamingSweDataArray();
+        copyValueTo(clone);
+        if (isSetElementTyp()) {
+            clone.setElementType(getElementType().clone());
+        }
+        if (isSetElementCount()) {
+            clone.setElementCount(getElementCount().clone());
+        }
+        if (isSetEncoding()) {
+            clone.setEncoding(getEncoding().clone());
+        }
+        if (isSetValues()) {
+            clone.setValues(getValues());
+        }
+        return clone;
+    }
+
 }

@@ -45,7 +45,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public abstract class SweAbstractDataComponent {
+public abstract class SweAbstractDataComponent implements Cloneable {
 
     private String definition;
 
@@ -230,14 +230,17 @@ public abstract class SweAbstractDataComponent {
     public abstract SweDataComponentType getDataComponentType();
     public abstract <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport;
     public abstract void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport;
-
+    
+    @Override
+    public abstract SweAbstractDataComponent clone() throws CloneNotSupportedException;
+    
     /**
      * Copies all values from this {@link SweAbstractDataComponent} to the
      * passed
      * 
      * @param copy
      *            {@link SweAbstractDataComponent} to copy values to
-     * @return 
+     * @return Copy of this
      */
     public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
         copy.setDefinition(definition);
@@ -247,5 +250,5 @@ public abstract class SweAbstractDataComponent {
         copy.setName(names);
         return copy;
     }
-
+    
 }

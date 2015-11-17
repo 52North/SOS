@@ -232,11 +232,8 @@ public class ResultHandlingHelper {
         int i = 0;
         for (final SweField f : fields) {
             final SweAbstractDataComponent element = f.getElement();
-            if (element instanceof SweAbstractSimpleType) {
-                final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
-                if (simpleType.isSetDefinition() && simpleType.getDefinition().equals(definition)) {
-                    return i;
-                }
+            if (element.isSetDefinition() && element.getDefinition().equals(definition)) {
+                return i;
             }
             ++i;
         }

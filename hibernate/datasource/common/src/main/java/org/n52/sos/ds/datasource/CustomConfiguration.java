@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.datasource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -40,20 +41,29 @@ import org.hibernate.MappingException;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.MySQLDialect;
+import org.hibernate.engine.spi.Mapping;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.IdentifierGeneratorAggregator;
 import org.hibernate.id.PersistentIdentifierGenerator;
 import org.hibernate.id.SequenceGenerator;
+import org.hibernate.internal.util.StringHelper;
 import org.hibernate.internal.util.collections.ArrayHelper;
 import org.hibernate.mapping.AuxiliaryDatabaseObject;
 import org.hibernate.mapping.Collection;
+import org.hibernate.mapping.Column;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.IdentifierCollection;
+import org.hibernate.mapping.Index;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.RootClass;
 import org.hibernate.mapping.Table;
+import org.hibernate.mapping.UniqueKey;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+import org.hibernate.tool.hbm2ddl.IndexMetadata;
+import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.hibernate.tool.hbm2ddl.TableMetadata;
+import org.hibernate.tool.hbm2ddl.UniqueConstraintSchemaUpdateStrategy;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -62,6 +72,247 @@ import org.hibernate.tool.hbm2ddl.TableMetadata;
  */
 public class CustomConfiguration extends Configuration {
     private static final long serialVersionUID = 149360549522727961L;
+    
+    private transient Mapping mappingCC = buildMapping();
+    
+    @SuppressWarnings({ "unchecked" })
+    public String[] generateSchemaCreationScript(Dialect dialect) throws HibernateException {
+        secondPassCompile();
+
+        ArrayList<String> script = new ArrayList<String>(50);
+        String defaultCatalog = getProperties().getProperty(Environment.DEFAULT_CATALOG);
+        String defaultSchema = getProperties().getProperty(Environment.DEFAULT_SCHEMA);
+
+        Iterator<Table> iter = getTableMappings();
+        while (iter.hasNext()) {
+            Table table = (Table) iter.next();
+            if (table.isPhysicalTable()) {
+                script.add(table.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
+                Iterator<String> comments = table.sqlCommentStrings(dialect, defaultCatalog, defaultSchema);
+                while (comments.hasNext()) {
+                    script.add(comments.next());
+                }
+            }
+        }
+
+        iter = getTableMappings();
+        while (iter.hasNext()) {
+            Table table = (Table) iter.next();
+            if (table.isPhysicalTable()) {
+
+                Iterator<UniqueKey> subIterUK = table.getUniqueKeyIterator();
+                while (subIterUK.hasNext()) {
+                    UniqueKey uk = (UniqueKey) subIterUK.next();
+                    String constraintString = uk.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema);
+                    if (constraintString != null)
+                        script.add(constraintString);
+                }
+
+                Iterator<Index> subIterIdx = table.getIndexIterator();
+                while (subIterIdx.hasNext()) {
+                    Index index = (Index) subIterIdx.next();
+                    if (checkIndexForGeometry(index, dialect)) {
+                        if (dialect instanceof SpatialIndexDialect) {
+                            script.add((((SpatialIndexDialect)dialect).buildSqlCreateSpatialIndexString(index, defaultCatalog, defaultSchema)));
+                        }
+                    } else {
+                        script.add(index.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
+                    }
+                }
+            }
+        }
+
+        // Foreign keys must be created *after* unique keys for numerous DBs.
+        // See HH-8390.
+        iter = getTableMappings();
+        while (iter.hasNext()) {
+            Table table = (Table) iter.next();
+            if (table.isPhysicalTable()) {
+
+                if (dialect.hasAlterTable()) {
+                    Iterator<ForeignKey> subIterFK = table.getForeignKeyIterator();
+                    while (subIterFK.hasNext()) {
+                        ForeignKey fk = (ForeignKey) subIterFK.next();
+                        if (fk.isPhysicalConstraint()) {
+                            script.add(fk.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
+                        }
+                    }
+                }
+
+            }
+        }
+
+        Iterator<IdentifierGenerator> iterG = iterateGenerators(dialect);
+        while (iterG.hasNext()) {
+            String[] lines = ((PersistentIdentifierGenerator) iterG.next()).sqlCreateStrings(dialect);
+            script.addAll(Arrays.asList(lines));
+        }
+
+        for (AuxiliaryDatabaseObject auxiliaryDatabaseObject : auxiliaryDatabaseObjects) {
+            if (auxiliaryDatabaseObject.appliesToDialect(dialect)) {
+                script.add(auxiliaryDatabaseObject.sqlCreateString(dialect, mappingCC, defaultCatalog, defaultSchema));
+            }
+        }
+
+        return ArrayHelper.toStringArray(script);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<SchemaUpdateScript> generateSchemaUpdateScriptList(Dialect dialect, DatabaseMetadata databaseMetadata)
+            throws HibernateException {
+        secondPassCompile();
+
+        String defaultCatalog = getProperties().getProperty(Environment.DEFAULT_CATALOG);
+        String defaultSchema = getProperties().getProperty(Environment.DEFAULT_SCHEMA);
+        UniqueConstraintSchemaUpdateStrategy constraintMethod = UniqueConstraintSchemaUpdateStrategy
+                .interpret(getProperties().get(Environment.UNIQUE_CONSTRAINT_SCHEMA_UPDATE_STRATEGY));
+
+        List<SchemaUpdateScript> scripts = new ArrayList<SchemaUpdateScript>();
+
+        Iterator<Table> iter = getTableMappings();
+        while (iter.hasNext()) {
+            Table table = (Table) iter.next();
+            String tableSchema = (table.getSchema() == null) ? defaultSchema : table.getSchema();
+            String tableCatalog = (table.getCatalog() == null) ? defaultCatalog : table.getCatalog();
+            if (table.isPhysicalTable()) {
+
+                TableMetadata tableInfo = databaseMetadata.getTableMetadata(table.getName(), tableSchema, tableCatalog,
+                        table.isQuoted());
+                if (tableInfo == null) {
+                    scripts.add(new SchemaUpdateScript(
+                            table.sqlCreateString(dialect, mappingCC, tableCatalog, tableSchema), false));
+                } else {
+                    Iterator<String> subiter =
+                            table.sqlAlterStrings(dialect, mappingCC, tableInfo, tableCatalog, tableSchema);
+                    while (subiter.hasNext()) {
+                        scripts.add(new SchemaUpdateScript(subiter.next(), false));
+                    }
+                }
+
+                Iterator<String> comments = table.sqlCommentStrings(dialect, defaultCatalog, defaultSchema);
+                while (comments.hasNext()) {
+                    scripts.add(new SchemaUpdateScript(comments.next(), false));
+                }
+
+            }
+        }
+
+        iter = getTableMappings();
+        while (iter.hasNext()) {
+            Table table = (Table) iter.next();
+            String tableSchema = (table.getSchema() == null) ? defaultSchema : table.getSchema();
+            String tableCatalog = (table.getCatalog() == null) ? defaultCatalog : table.getCatalog();
+            if (table.isPhysicalTable()) {
+
+                TableMetadata tableInfo = databaseMetadata.getTableMetadata(table.getName(), tableSchema, tableCatalog,
+                        table.isQuoted());
+
+                if (!constraintMethod.equals(UniqueConstraintSchemaUpdateStrategy.SKIP)) {
+                    Iterator<UniqueKey> uniqueIter = table.getUniqueKeyIterator();
+                    while (uniqueIter.hasNext()) {
+                        final UniqueKey uniqueKey = (UniqueKey) uniqueIter.next();
+                        // Skip if index already exists. Most of the time, this
+                        // won't work since most Dialects use Constraints.
+                        // However,
+                        // keep it for the few that do use Indexes.
+                        if (tableInfo != null && StringHelper.isNotEmpty(uniqueKey.getName())) {
+                            final IndexMetadata meta = tableInfo.getIndexMetadata(uniqueKey.getName());
+                            if (meta != null) {
+                                continue;
+                            }
+                        }
+                        String constraintString =
+                                uniqueKey.sqlCreateString(dialect, mappingCC, tableCatalog, tableSchema);
+                        if (constraintString != null && !constraintString.isEmpty())
+                            if (constraintMethod.equals(UniqueConstraintSchemaUpdateStrategy.DROP_RECREATE_QUIETLY)) {
+                                String constraintDropString =
+                                        uniqueKey.sqlDropString(dialect, tableCatalog, tableSchema);
+                                scripts.add(new SchemaUpdateScript(constraintDropString, true));
+                            }
+                        scripts.add(new SchemaUpdateScript(constraintString, true));
+                    }
+                }
+
+                Iterator<Index> subIter = table.getIndexIterator();
+                while (subIter.hasNext()) {
+                    final Index index = (Index) subIter.next();
+                    // Skip if index already exists
+                    if (tableInfo != null && StringHelper.isNotEmpty(index.getName())) {
+                        final IndexMetadata meta = tableInfo.getIndexMetadata(index.getName());
+                        if (meta != null) {
+                            continue;
+                        }
+                    }
+                    if (checkIndexForGeometry(index, dialect)) {
+                        if (dialect instanceof SpatialIndexDialect) {
+                            scripts.add(new SchemaUpdateScript(((SpatialIndexDialect) dialect)
+                                    .buildSqlCreateSpatialIndexString(index, tableCatalog, tableSchema),
+                                    false));
+                        }
+                    } else {
+                        scripts.add(new SchemaUpdateScript(
+                                index.sqlCreateString(dialect, mappingCC, tableCatalog, tableSchema), false));
+                    }
+                }
+            }
+        }
+
+        // Foreign keys must be created *after* unique keys for numerous DBs.
+        // See HH-8390.
+        iter = getTableMappings();
+        while (iter.hasNext()) {
+            Table table = (Table) iter.next();
+            String tableSchema = (table.getSchema() == null) ? defaultSchema : table.getSchema();
+            String tableCatalog = (table.getCatalog() == null) ? defaultCatalog : table.getCatalog();
+            if (table.isPhysicalTable()) {
+
+                TableMetadata tableInfo = databaseMetadata.getTableMetadata(table.getName(), tableSchema, tableCatalog,
+                        table.isQuoted());
+
+                if (dialect.hasAlterTable()) {
+                    Iterator<ForeignKey> subIter = table.getForeignKeyIterator();
+                    while (subIter.hasNext()) {
+                        ForeignKey fk = (ForeignKey) subIter.next();
+                        if (fk.isPhysicalConstraint()) {
+                            boolean create = tableInfo == null || (tableInfo.getForeignKeyMetadata(fk) == null && (
+                            // Icky workaround for MySQL bug:
+                            !(dialect instanceof MySQLDialect) || tableInfo.getIndexMetadata(fk.getName()) == null));
+                            if (create) {
+                                scripts.add(new SchemaUpdateScript(
+                                        fk.sqlCreateString(dialect, mappingCC, tableCatalog, tableSchema), false));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Iterator<IdentifierGenerator> iterG = iterateGenerators(dialect);
+        while (iterG.hasNext()) {
+            PersistentIdentifierGenerator generator = (PersistentIdentifierGenerator) iterG.next();
+            Object key = generator.generatorKey();
+            if (!databaseMetadata.isSequence(key) && !databaseMetadata.isTable(key)) {
+                String[] lines = generator.sqlCreateStrings(dialect);
+                scripts.addAll(SchemaUpdateScript.fromStringArray(lines, false));
+            }
+        }
+
+        return scripts;
+    }
+
+
+    private boolean checkIndexForGeometry(Index index, Dialect dialect) {
+        if (index.getColumnSpan() == 1) {
+            Iterator<Column> columnIterator = index.getColumnIterator();
+            while (columnIterator.hasNext()) {
+                Column column = (Column) columnIterator.next();
+                if (column.getSqlTypeCode(mappingCC) == 3000) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     /**
      * Based on

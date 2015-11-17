@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
 
@@ -53,6 +54,16 @@ public interface ContentCache
                 TemporalCache,
                 SpatialCache,
                 CompositePhenomenonCache {
+
+    /**
+     * @return the last cache update time
+     */
+    DateTime getLastUpdateTime();
+    
+    /**
+     * @return the maximal phenomenon time for all observations
+     */
+    DateTime getMaxPhenomenonTime();
 
     /**
      * Returns the allowed observation types for the specified offering.

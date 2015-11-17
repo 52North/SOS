@@ -41,6 +41,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -60,6 +61,7 @@ import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
@@ -226,7 +228,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                     Geometry geom =
                             (Geometry) session
                                     .createCriteria(FeatureOfInterest.class)
-                                    .add(Restrictions.in(FeatureOfInterest.IDENTIFIER,
+                                    .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER,
                                             queryObject.getFeatureIdentifiers()))
                                     .setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY))
                                     .uniqueResult();
@@ -269,6 +271,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         }
         return null;
     }
+    
 
     /*
      * (non-Javadoc)
@@ -620,7 +623,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         boolean filtered = false;
         if (queryObject.isSetFeatureIdentifiers()) {
-            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifiers()));
+            c.add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifiers()));
             filtered = true;
         }
         if (queryObject.isSetSpatialFilters()) {

@@ -68,6 +68,7 @@ import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -121,7 +122,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC driver";
 
     protected static final String PROVIDED_JDBC_DRIVER_DESCRIPTION =
-            "Is the JDBC driver provided and should not be derigistered during shutdown?";
+            "Is the JDBC driver provided and should not be deregistered during shutdown?";
 
     protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
 
@@ -536,9 +537,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             stmt = conn.createStatement();
             LOG.debug("Start executing SQL commands: ");
             for (String cmd : sql) {
-                lastCmd = cmd;
-                LOG.debug("Execute: {}", cmd);
-                stmt.execute(cmd);
+                if (!Strings.isNullOrEmpty(cmd)) {
+                    lastCmd = cmd;
+                    LOG.debug("Execute: {}", cmd);
+                    stmt.execute(cmd);
+                }
             }
         } catch (SQLException ex) {
             if (lastCmd != null) {

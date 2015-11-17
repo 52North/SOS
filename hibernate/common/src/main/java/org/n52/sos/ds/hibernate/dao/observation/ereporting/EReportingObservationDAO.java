@@ -204,8 +204,8 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation observation) {
         String identifier = getSamplingPointIdentifier(observation);
         if (!Strings.isNullOrEmpty(identifier)) {
-            c.createCriteria(Series.OBSERVABLE_PROPERTY)
-            .add(Restrictions.eq(ObservableProperty.IDENTIFIER, identifier));
+            c.createCriteria(EReportingSeries.SAMPLING_POINT)
+            .add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, identifier));
         }
         return c;
     }

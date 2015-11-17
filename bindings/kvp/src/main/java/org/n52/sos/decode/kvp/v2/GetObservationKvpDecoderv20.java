@@ -48,11 +48,15 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.Sos2Constants.Extensions;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.KvpHelper;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaTypes;
 
 /**
@@ -159,6 +163,24 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
         exceptions.throwIfNotEmpty();
 
         return request;
+    }
+    
+    @Override
+    protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
+            String parameterName) throws OwsExceptionReport {
+        if ("extension".equalsIgnoreCase(parameterName)) {
+            List<String> checkParameterMultipleValues = KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
+            for (String parameterValue : checkParameterMultipleValues) {
+                final Object obj = CodingHelper.decodeXmlElement(XmlHelper.parseXmlString(parameterValue));
+                if (obj instanceof SwesExtension<?>) {
+                    request.addExtension((SwesExtension<?>) obj);
+                } else {
+                    request.addExtension(new SwesExtensionImpl<Object>().setValue(obj));
+                }
+            }
+            return true;
+        }
+        return super.parseExtensionParameter(request, parameterValues, parameterName);
     }
 
     private SwesExtensions parseExtension(final Extensions extension, final String parameterValues,

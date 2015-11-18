@@ -193,7 +193,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>coding-gml-v321</artifactId>
+            <artifactId>coding-gml</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

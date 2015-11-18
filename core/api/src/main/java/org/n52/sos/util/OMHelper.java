@@ -41,8 +41,10 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -250,6 +252,16 @@ public final class OMHelper {
 
         private static String defaultValue() {
             return OmConstants.OBS_TYPE_OBSERVATION;
+        }
+
+        @Override
+        public String visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+            return defaultValue();
         }
     }
 }

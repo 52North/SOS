@@ -62,8 +62,10 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -452,6 +454,16 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         @Override
         public XmlObject visit(UnknownValue value)
                 throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
             return null;
         }
     }

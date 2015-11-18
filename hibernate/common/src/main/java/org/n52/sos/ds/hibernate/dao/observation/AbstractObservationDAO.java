@@ -97,8 +97,10 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -1392,6 +1394,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         @Override
         public Observation<?> visit(TLVTValue value)
                 throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 

@@ -28,6 +28,7 @@
  */
 package org.n52.svalbard.gmlcov.v10.encode;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.CollectionHelper;
 
 import net.opengis.gmlcov.x10.AbstractDiscreteCoverageType;
 import net.opengis.gmlcov.x10.ReferenceableGridCoverageDocument;
@@ -46,7 +48,7 @@ public class ReverencableGridCoverageDocumentEncoder extends AbstractReverencabl
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         // TODO Auto-generated method stub
-        return null;
+        return Collections.emptySet();
     }
     
     @Override

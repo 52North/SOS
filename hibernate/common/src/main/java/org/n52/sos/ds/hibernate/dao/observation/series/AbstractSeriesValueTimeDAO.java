@@ -311,4 +311,30 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }
+
+    private Criteria getSeriesValueCriteriaFor(GetObservationRequest request, Set<Long> series,
+            Criterion temporalFilterCriterion, SosIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+        final Criteria c = getDefaultObservationCriteria(session).createAlias(TemporalReferencedSeriesObservation.SERIES, "s");
+        checkAndAddSpatialFilteringProfileCriterion(c, request, session);
+
+        c.add(Restrictions.in("s." + Series.ID, series));
+
+        if (CollectionHelper.isNotEmpty(request.getOfferings())) {
+            c.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
+                    Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+        }
+
+        String logArgs = "request, series, offerings";
+        if (temporalFilterCriterion != null) {
+            logArgs += ", filterCriterion";
+            c.add(temporalFilterCriterion);
+        }
+        if (sosIndeterminateTime != null) {
+            logArgs += ", sosIndeterminateTime";
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        }
+        addSpecificRestrictions(c, request);
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        return c;
+    }
 }

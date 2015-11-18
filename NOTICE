@@ -21,6 +21,7 @@ This project includes:
   52°North SOS - AQD Split and Merge observations module under GPLv2
   52°North SOS - Binding Modules under GPLv2
   52°North SOS - Cache under GPLv2
+  52°North SOS - Coding Module for INSPIRE under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Converter Modules under GPLv2
   52°North SOS - Coordinate transformation module under GPLv2
@@ -101,6 +102,7 @@ This project includes:
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
   52°North Svalbard - GML 3.2.1 XML Request Coding under GPLv2
+  52°North Svalbard - GML XML Request Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
@@ -210,6 +212,7 @@ This project includes:
   OGC GML Coverage schema (spec. v1.0) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.1.1) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
+  OGC GML schema (spec. v3.3) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
@@ -267,7 +270,7 @@ This project includes:
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   xalan under The Apache Software License, Version 2.0
-  Xerces2 Java Parser under The Apache Software License, Version 2.0
+  Xerces2-j under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0

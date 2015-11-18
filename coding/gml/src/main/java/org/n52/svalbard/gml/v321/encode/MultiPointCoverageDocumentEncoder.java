@@ -28,10 +28,12 @@
  */
 package org.n52.svalbard.gml.v321.encode;
 
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -42,9 +44,9 @@ import net.opengis.gml.x32.MultiPointCoverageDocument;
 public class MultiPointCoverageDocumentEncoder extends AbstractMultiPointCoverageTypeEncoder<MultiPointCoverageDocument> {
 
     @Override
-    public Set getEncoderKeyType() {
+    public Set<EncoderKey> getEncoderKeyType() {
         // TODO Auto-generated method stub
-        return null;
+        return Collections.emptySet();
     }
     
     @Override

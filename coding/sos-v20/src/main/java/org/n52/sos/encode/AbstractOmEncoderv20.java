@@ -69,6 +69,7 @@ import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -723,6 +724,11 @@ public abstract class AbstractOmEncoderv20
 
         @Override
         public XmlObject visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            return defaultValue(value);
+        }
+
+        @Override
+        public XmlObject visit(MultiPointCoverage value) throws OwsExceptionReport {
             return defaultValue(value);
         }
 

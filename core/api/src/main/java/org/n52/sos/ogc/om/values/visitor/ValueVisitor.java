@@ -94,7 +94,7 @@ public interface ValueVisitor<T> {
     T visit(CvDiscretePointCoverage value)
             throws OwsExceptionReport;
 
-    T visit(MultiPointCoverage multiPointCoverage)
+    T visit(MultiPointCoverage value)
             throws OwsExceptionReport;
 
     T visit(UnknownValue value)

@@ -89,6 +89,12 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
                 ScrollMode.FORWARD_ONLY);
     }
 
+    public ScrollableResults getStreamingSeriesValuesFor(GetObservationRequest request, Set<Long> series,
+            Criterion temporalFilterCriterion, Session session) throws HibernateException, OwsExceptionReport {
+        return getSeriesValueCriteriaFor(request, series, temporalFilterCriterion, session).scroll(
+                ScrollMode.FORWARD_ONLY);
+    }
+
     /**
      * Query streaming value for parameter as {@link ScrollableResults}
      * 
@@ -104,6 +110,11 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
      */
     public ScrollableResults getStreamingSeriesValuesFor(GetObservationRequest request, long series, Session session)
             throws OwsExceptionReport {
+        return getSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
+    }
+
+    public ScrollableResults getStreamingSeriesValuesFor(GetObservationRequest request, Set<Long> series,
+            Session session) throws HibernateException, OwsExceptionReport {
         return getSeriesValueCriteriaFor(request, series, null, session).scroll(ScrollMode.FORWARD_ONLY);
     }
 

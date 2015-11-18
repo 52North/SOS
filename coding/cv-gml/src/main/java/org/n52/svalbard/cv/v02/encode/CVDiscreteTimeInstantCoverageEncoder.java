@@ -28,6 +28,7 @@
  */
 package org.n52.svalbard.cv.v02.encode;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,7 +50,7 @@ public class CVDiscreteTimeInstantCoverageEncoder extends AbstractXmlEncoder<Obj
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         // TODO Auto-generated method stub
-        return null;
+        return Collections.emptySet();
     }
 
     @Override

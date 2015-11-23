@@ -36,6 +36,26 @@ RELEASE NOTES
 
   --- New features ---
   
+      * Add last cache update time and list in cache summary
+  
+  --- Changes ---
+ 
+      * Harmonize REST-API feature mapping
+      * Remove TOffering usage in offering cache update
+  
+  --- Fixed issues ---
+  
+      * REST-API FeatureResource mapping tale name, set name as in SOS FeatureOfInterest mapping
+      * Issue #359: Missing "Version" and "Build date"
+      * Issue #362: Minor typo in "Datasource configuration" wizard  
+      * Issue #365: SOS Client InsertResultTemplate example '[POX] InsertResultTemplate - with ResultTime (SOS 2.0.0)'
+      
+ 
+    Release 52n-sensorweb-sos-4.3.4
+===================================
+
+  --- New features ---
+  
       * Add alternative Hibernate mapping files for REST-API which can be used with e-Reporting databse concept.
   
   --- Changes ---

@@ -28,7 +28,11 @@
  */
 package org.n52.sos.inspire.omso;
 
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+
+import com.google.common.collect.Sets;
 
 public class PointTimeSeriesObservation extends OmObservation {
 
@@ -38,6 +42,15 @@ public class PointTimeSeriesObservation extends OmObservation {
     }
     
     public PointTimeSeriesObservation(OmObservation observation) {
+        observation.setParameter(Sets.<NamedValue<?>>newHashSet());
         observation.copyTo(this);
+    }
+    
+    @Override
+    public OmObservation cloneTemplate() {
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
+            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        }
+        return cloneTemplate(new PointTimeSeriesObservation());
     }
 }

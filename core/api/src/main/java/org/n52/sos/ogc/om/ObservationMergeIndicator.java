@@ -29,20 +29,29 @@
 package org.n52.sos.ogc.om;
 
 public class ObservationMergeIndicator {
-    
-    private boolean procedure = true;
-    
-    private boolean observableProperty = true;
-    
-    private boolean featureOfInterest = true;
-    
-    private boolean offerings = true;
-    
+
+    private boolean procedure = false;
+
+    private boolean observableProperty = false;
+
+    private boolean featureOfInterest = false;
+
+    private boolean offerings = false;
+
     private boolean phenomenonTime = false;
     
+    private boolean resultTime = false;
+
     private boolean samplingGeometry = false;
-    
-    
+
+    public ObservationMergeIndicator() {
+    }
+
+    public static ObservationMergeIndicator defaultObservationMergerIndicator() {
+        return new ObservationMergeIndicator().setFeatureOfInterest(true).setObservableProperty(true)
+                .setProcedure(true).setOfferings(true);
+    }
+
     /**
      * @return the procedure
      */
@@ -51,7 +60,8 @@ public class ObservationMergeIndicator {
     }
 
     /**
-     * @param procedure the procedure to set
+     * @param procedure
+     *            the procedure to set
      */
     public ObservationMergeIndicator setProcedure(boolean procedure) {
         this.procedure = procedure;
@@ -66,7 +76,8 @@ public class ObservationMergeIndicator {
     }
 
     /**
-     * @param observableProperty the observableProperty to set
+     * @param observableProperty
+     *            the observableProperty to set
      */
     public ObservationMergeIndicator setObservableProperty(boolean observableProperty) {
         this.observableProperty = observableProperty;
@@ -81,13 +92,14 @@ public class ObservationMergeIndicator {
     }
 
     /**
-     * @param featureOfInterest the featureOfInterest to set
+     * @param featureOfInterest
+     *            the featureOfInterest to set
      */
     public ObservationMergeIndicator setFeatureOfInterest(boolean featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
         return this;
     }
-    
+
     /**
      * @return the offerings
      */
@@ -96,10 +108,12 @@ public class ObservationMergeIndicator {
     }
 
     /**
-     * @param offerings the offerings to set
+     * @param offerings
+     *            the offerings to set
      */
-    public void setOfferings(boolean offerings) {
+    public ObservationMergeIndicator setOfferings(boolean offerings) {
         this.offerings = offerings;
+        return this;
     }
 
     public boolean sameObservationConstellation() {
@@ -114,10 +128,28 @@ public class ObservationMergeIndicator {
     }
 
     /**
-     * @param phenomenonTime the phenomenonTime to set
+     * @param phenomenonTime
+     *            the phenomenonTime to set
      */
-    public void setPhenomenonTime(boolean phenomenonTime) {
+    public ObservationMergeIndicator setPhenomenonTime(boolean phenomenonTime) {
         this.phenomenonTime = phenomenonTime;
+        return this;
+    }
+    
+    /**
+     * @return the resultTime
+     */
+    public boolean isSetResultTime() {
+        return resultTime;
+    }
+
+    /**
+     * @param resultTime
+     *            the resultTime to set
+     */
+    public ObservationMergeIndicator setResultTime(boolean resultTime) {
+        this.resultTime = resultTime;
+        return this;
     }
 
     /**
@@ -128,11 +160,12 @@ public class ObservationMergeIndicator {
     }
 
     /**
-     * @param samplingGeometry the samplingGeometry to set
+     * @param samplingGeometry
+     *            the samplingGeometry to set
      */
-    public void setSamplingGeometry(boolean samplingGeometry) {
+    public ObservationMergeIndicator setSamplingGeometry(boolean samplingGeometry) {
         this.samplingGeometry = samplingGeometry;
+        return this;
     }
-    
 
 }

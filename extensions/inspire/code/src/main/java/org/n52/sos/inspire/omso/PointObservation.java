@@ -28,7 +28,19 @@
  */
 package org.n52.sos.inspire.omso;
 
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.PointValuePair;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.sos.util.JavaHelper;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 public class PointObservation extends OmObservation {
 
@@ -39,5 +51,57 @@ public class PointObservation extends OmObservation {
     
     public PointObservation(OmObservation observation) {
         observation.copyTo(this);
+    }
+    
+    @Override
+    public OmObservation cloneTemplate() {
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
+            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        }
+        return cloneTemplate(new PointObservation());
+    }
+    
+    @Override
+    public void setValue(ObservationValue<?> value) {
+        if (value instanceof StreamingValue<?>) {
+            super.setValue(value);
+        } else if (value.getValue() instanceof CvDiscretePointCoverage) {
+            super.setValue(value);
+        } else {
+            CvDiscretePointCoverage cvDiscretePointCoverage = new CvDiscretePointCoverage(getObservationID());
+            cvDiscretePointCoverage.setRangeType(new ReferenceType(getObservationConstellation().getObservablePropertyIdentifier()));
+            cvDiscretePointCoverage.setUnit(((AbstractObservationValue<?>) value).getUnit());
+            Geometry geometry = null;
+            String domainExtent = "";
+            if (isSetSpatialFilteringProfileParameter()) {
+                geometry = getSpatialFilteringProfileParameter().getValue().getValue();
+                domainExtent = "sp_" + JavaHelper.generateID(getSpatialFilteringProfileParameter().getValue().toString());
+            } else if (checkForFeatureGeometry(this)) {
+                geometry = getGeometryFromFeature(this);
+                domainExtent = getObservationConstellation().getFeatureOfInterest().getGmlId();
+            }
+            cvDiscretePointCoverage.setDomainExtent("#" + geometry.getGeometryType() + "_" + domainExtent);
+            Point point = null;
+            if (geometry != null) {
+                if (geometry instanceof Point) {
+                    point = (Point)geometry;
+                } else {
+                    point = geometry.getCentroid();
+                }
+            }
+            cvDiscretePointCoverage.setValue(new PointValuePair(point, value.getValue()));
+            super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), cvDiscretePointCoverage));
+        }
+    }
+
+    private boolean checkForFeatureGeometry(OmObservation observation) {
+        if (observation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+            return ((SamplingFeature)observation.getObservationConstellation().getFeatureOfInterest()).isSetGeometry();
+        }
+        return false;
+    }
+
+    private Geometry getGeometryFromFeature(OmObservation observation) {
+        return ((SamplingFeature)observation.getObservationConstellation().getFeatureOfInterest()).getGeometry();
     }
 }

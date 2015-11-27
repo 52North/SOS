@@ -30,23 +30,38 @@ package org.n52.svalbard.gml.v321.encode;
 
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlDouble;
+import org.n52.sos.encode.ClassToClassEncoderKey;
 import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import net.opengis.gml.x32.CoordinatesType;
+import net.opengis.gml.x32.DataBlockType;
+import net.opengis.gml.x32.RangeSetType;
 import net.opengis.gml.x32.RectifiedGridCoverageDocument;
+import net.opengis.gml.x32.ValueArrayType;
 
 public class RectifiedGridCoverageDocumentEncoder extends AbstractRectifiedGridCoverageTypeEncoder<RectifiedGridCoverageDocument> {
 
+    protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
+            new ClassToClassEncoderKey(RectifiedGridCoverageDocument.class, RectifiedGridCoverage.class),
+            new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, RectifiedGridCoverage.class));
+
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
-        // TODO Auto-generated method stub
-        return Collections.emptySet();
+        return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
@@ -61,6 +76,31 @@ public class RectifiedGridCoverageDocumentEncoder extends AbstractRectifiedGridC
         RectifiedGridCoverageDocument rgcd = RectifiedGridCoverageDocument.Factory.newInstance();
         rgcd.setRectifiedGridCoverage(encodeRectifiedGridCoverage(rectifiedGridCoverage));
         return rgcd;
+    }
+    
+    public static void main(String[] args) {
+        CoordinatesType ct = CoordinatesType.Factory.newInstance();
+        ct.setDecimal("15.5,44.5,45.2");
+        ct.setCs(".");
+        ct.setTs(",");
+        System.out.println(ct.xmlText());
+        
+        List<?> list = Lists.newArrayList(45.2, 76.6, "unknown", 64);
+        RangeSetType rst = RangeSetType.Factory.newInstance();
+        DataBlockType dbt = rst.addNewDataBlock();
+        dbt.setDoubleOrNilReasonTupleList(list);
+        System.out.println(rst.xmlText());
+        
+        RangeSetType rst2 = RangeSetType.Factory.newInstance();
+        ValueArrayType addNewValueArray1 = rst2.addNewValueArray1();
+        addNewValueArray1.setUom("uom");
+        XmlDouble xd1 = XmlDouble.Factory.newInstance();
+        xd1.setStringValue("32.2");;
+        addNewValueArray1.addNewValueComponent().set(xd1);
+        XmlDouble xd2 = XmlDouble.Factory.newInstance();
+        xd2.setStringValue("368.2");
+        addNewValueArray1.addNewValueComponent().set(xd2);
+        System.out.println(rst2.xmlText());
     }
 
 }

@@ -378,7 +378,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      * @param observationValue
      *            Observation to merge
      */
-    private void mergeValues(final ObservationValue<?> observationValue) {
+    protected void mergeValues(final ObservationValue<?> observationValue) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
             tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);

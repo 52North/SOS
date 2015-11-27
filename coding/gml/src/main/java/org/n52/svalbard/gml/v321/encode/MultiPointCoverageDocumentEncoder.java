@@ -33,20 +33,30 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.encode.ClassToClassEncoderKey;
 import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
+import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Point;
+
 import net.opengis.gml.x32.MultiPointCoverageDocument;
+import net.opengis.gml.x32.PointPropertyType;
 
 public class MultiPointCoverageDocumentEncoder extends AbstractMultiPointCoverageTypeEncoder<MultiPointCoverageDocument> {
 
+    protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
+            new ClassToClassEncoderKey(MultiPointCoverageDocument.class, MultiPointCoverage.class),
+            new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, MultiPointCoverage.class));
+
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
-        // TODO Auto-generated method stub
-        return Collections.emptySet();
+        return Collections.unmodifiableSet(ENCODER_KEYS);
     }
     
     @Override

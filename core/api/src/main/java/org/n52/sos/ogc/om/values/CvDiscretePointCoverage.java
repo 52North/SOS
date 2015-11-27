@@ -28,19 +28,75 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Strings;
 
 public class CvDiscretePointCoverage implements Value<PointValuePair> {
 
     private static final long serialVersionUID = 7475586076168740072L;
     
+    private String gmlId;
+    
+    private String domainExtent;
+    
+    private ReferenceType rangeType;
+
     private PointValuePair value;
     
     private String unit;
+    
+    public CvDiscretePointCoverage(String gmlId) {
+        if (Strings.isNullOrEmpty(gmlId)) {
+            gmlId = JavaHelper.generateID(toString());
+        } else if (!gmlId.startsWith("dpc_")) {
+            gmlId = "dpc_" + gmlId;
+        }
+        this.gmlId = gmlId;
+    }
+
+
+    public String getGmlId() {
+        return gmlId;
+    }
+
+    /**
+     * @return the domainExtent
+     */
+    public String getDomainExtent() {
+        return domainExtent;
+    }
+
+    /**
+     * @param domainExtent the domainExtent to set
+     */
+    public void setDomainExtent(String domainExtent) {
+        this.domainExtent = domainExtent;
+    }
+    
+    public boolean isSetDomainExtent() {
+        return !Strings.isNullOrEmpty(domainExtent);
+    }
+
+    /**
+     * @return the rangeType
+     */
+    public ReferenceType getRangeType() {
+        return rangeType;
+    }
+
+    /**
+     * @param rangeType the rangeType to set
+     */
+    public void setRangeType(ReferenceType rangeType) {
+        this.rangeType = rangeType;
+    }
 
     @Override
     public void setValue(PointValuePair value) {

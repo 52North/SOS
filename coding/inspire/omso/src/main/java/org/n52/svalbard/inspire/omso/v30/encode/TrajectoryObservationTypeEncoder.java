@@ -54,7 +54,7 @@ import net.opengis.om.x20.OMObservationType;
 public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(CvConstants.NS_CV, TrajectoryObservation.class);
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, TrajectoryObservation.class);
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {

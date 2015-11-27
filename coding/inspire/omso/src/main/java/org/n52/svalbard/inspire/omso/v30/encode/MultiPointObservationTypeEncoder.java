@@ -48,6 +48,7 @@ import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 
 import eu.europa.ec.inspire.schemas.omso.x30.MultiPointObservationType;
 import net.opengis.om.x20.OMObservationType;
@@ -55,7 +56,7 @@ import net.opengis.om.x20.OMObservationType;
 public class MultiPointObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(CvConstants.NS_CV, MultiPointObservation.class);
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, MultiPointObservation.class);
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {

@@ -42,11 +42,13 @@ import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.PointObservation;
 import org.n52.sos.ogc.cv.CvConstants;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
 
 import eu.europa.ec.inspire.schemas.omso.x30.PointObservationType;
@@ -55,7 +57,7 @@ import net.opengis.om.x20.OMObservationType;
 public class PointObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(CvConstants.NS_CV, PointObservation.class);
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, PointObservation.class);
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -70,14 +72,18 @@ public class PointObservationTypeEncoder extends AbstractOmInspireEncoder {
     @SuppressWarnings("unchecked")
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        if (observationValue instanceof CvDiscretePointCoverage) {
+        if (observationValue.getValue() instanceof CvDiscretePointCoverage) {
             Encoder<?, CvDiscretePointCoverage> encoder = (Encoder<?, CvDiscretePointCoverage>) getEncoder(
                     new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, CvDiscretePointCoverage.class));
             if (encoder != null) {
-                return (XmlObject) encoder.encode((CvDiscretePointCoverage) observationValue);
+                return (XmlObject) encoder.encode((CvDiscretePointCoverage) observationValue.getValue());
             }
         }
-        return null;
+        return encodeWML(observationValue);
+    }
+
+    private XmlObject encodeWML(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(WaterMLConstants.NS_WML_20, o);
     }
 
     @Override

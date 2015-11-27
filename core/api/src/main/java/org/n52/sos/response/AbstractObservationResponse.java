@@ -31,6 +31,7 @@ package org.n52.sos.response;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.StringHelper;
@@ -50,6 +51,8 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     private String resultModel;
 
     private boolean mergeObservation = false;
+    
+    private ObservationMerger observationMerger;
 
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
@@ -113,4 +116,22 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
         return mergeObservation;
     }
 
+    /**
+     * @return the observationMerger
+     */
+    public ObservationMerger getObservationMerger() {
+        if (observationMerger == null) {
+            observationMerger = new ObservationMerger();
+        }
+        return observationMerger;
+    }
+
+    /**
+     * @param observationMerger the observationMerger to set
+     */
+    public void setObservationMerger(ObservationMerger observationMerger) {
+        this.observationMerger = observationMerger;
+        setMergeObservations(true);
+    }
+    
 }

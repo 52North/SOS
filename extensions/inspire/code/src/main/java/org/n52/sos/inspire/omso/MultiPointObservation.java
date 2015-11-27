@@ -28,7 +28,20 @@
  */
 package org.n52.sos.inspire.omso;
 
+import java.util.List;
+
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.PointValuePair;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 
 public class MultiPointObservation extends OmObservation {
 
@@ -41,4 +54,49 @@ public class MultiPointObservation extends OmObservation {
         observation.copyTo(this);
     }
     
+    @Override
+    public OmObservation cloneTemplate() {
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
+            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        }
+        return cloneTemplate(new MultiPointObservation());
+    }
+    
+    @Override
+    public void setValue(ObservationValue<?> value) {
+        if (value.getValue() instanceof MultiPointCoverage) {
+            super.setValue(value);
+        } else {
+            MultiPointCoverage multiPointCoverage = new MultiPointCoverage();
+            multiPointCoverage.setUnit(((AbstractObservationValue<?>) value).getUnit());
+            Point point = null;
+            if (isSetSpatialFilteringProfileParameter()) {
+                Geometry geometry = getSpatialFilteringProfileParameter().getValue().getValue();
+                point = geometry.getInteriorPoint();
+            } else {
+                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                    point = geometry.getInteriorPoint();
+                }
+            }
+            multiPointCoverage.addValue(new PointValuePair(point, value.getValue()));
+            MultiObservationValues<List<PointValuePair>> multiObservationValues = new MultiObservationValues<>();
+            multiObservationValues.setValue(multiPointCoverage);
+            super.setValue(multiObservationValues);
+        }
+    }
+    
+    @Override
+    public void mergeWithObservation(OmObservation sosObservation) {
+        // TODO Auto-generated method stub
+        super.mergeWithObservation(sosObservation);
+    }
+    
+    @Override
+    protected void mergeValues(ObservationValue<?> observationValue) {
+        // if SampPoint
+        // How to get FOI-Geom????
+        
+        super.mergeValues(observationValue);
+    }
 }

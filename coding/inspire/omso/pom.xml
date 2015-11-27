@@ -15,9 +15,13 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>inspire-code</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-wml-v20</artifactId>
         </dependency>
         <!-- XML Beans Generated Classes -->
         <dependency>

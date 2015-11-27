@@ -488,7 +488,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         String foiId = additionalValues.get(HelperValues.GMLID);
         if (geom instanceof Point) {
             final PointType xbPoint = PointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbPoint.setId("point_" + foiId);
+            xbPoint.setId(geom.getGeometryType() + "_" + foiId);
             createPointFromJtsGeometry((Point) geom, xbPoint);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 PointDocument xbPointDoc =
@@ -508,7 +508,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         else if (geom instanceof LineString) {
             final LineStringType xbLineString =
                     LineStringType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbLineString.setId("lineString_" + foiId);
+            xbLineString.setId(geom.getGeometryType() + "_" + foiId);
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 LineStringDocument xbLineStringDoc =
@@ -529,7 +529,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         else if (geom instanceof Polygon) {
             final PolygonType xbPolygon =
                     PolygonType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbPolygon.setId("polygon_" + foiId);
+            xbPolygon.setId(geom.getGeometryType() + "_" + foiId);
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 PolygonDocument xbPolygonDoc =

@@ -65,15 +65,20 @@ public class ObservationMerger {
     }
     
     public List<OmObservation> mergeObservations(List<OmObservation> observations) {
-        return mergeObservations(observations, null);
+        return mergeObservations(observations, new ObservationMergeIndicator());
     }
     
     public OmObservation mergeObservations(OmObservation observation, OmObservation observationToAdd, ObservationMergeIndicator observationMergeIndicator) {
-        return null;
+        if (checkForMerge(observation, observationToAdd, observationMergeIndicator)) {
+            observation.setResultTime(null);
+            observation.mergeWithObservation(observationToAdd);
+            return observation;
+        }
+        return observation;
     }
 
     public OmObservation mergeObservations(OmObservation observation, OmObservation observationToAdd) {
-        return mergeObservations(observation, observationToAdd, null);
+        return mergeObservations(observation, observationToAdd, new ObservationMergeIndicator());
     }
     
     protected boolean checkForMerge(OmObservation observation, OmObservation observationToAdd, ObservationMergeIndicator observationMergeIndicator) {
@@ -103,6 +108,9 @@ public class ObservationMerger {
         if (observationMergeIndicator.isPhenomenonTime()) {
             merge = merge && checkForPhenomenonTime(observation, observationToAdd);
         }
+        if (observationMergeIndicator.isSetResultTime()) {
+            merge = merge && checkForPhenomenonTime(observation, observationToAdd);
+        }
         if (observationMergeIndicator.isSamplingGeometry()) {
             merge = merge && checkForSamplingGeometry(observation, observationToAdd);
         }
@@ -128,6 +136,10 @@ public class ObservationMerger {
 
     protected boolean checkForPhenomenonTime(OmObservation observation, OmObservation observationToAdd) {
         return observation.getPhenomenonTime().equals(observationToAdd.getPhenomenonTime());
+    }
+    
+    protected boolean checkForResultTime(OmObservation observation, OmObservation observationToAdd) {
+        return observation.getResultTime().equals(observationToAdd.getResultTime());
     }
     
     protected boolean checkForSamplingGeometry(OmObservation observation, OmObservation observationToAdd) {

@@ -38,6 +38,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
@@ -362,7 +363,8 @@ public class ValueDAO extends AbstractValueDAO {
             Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion,
             Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(AbstractValuedLegacyObservation.class, session);
-
+        c.addOrder(Order.asc(getOrderColumn(request)));
+        
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
         if (CollectionHelper.isNotEmpty(procedure)) {

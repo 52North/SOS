@@ -37,6 +37,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
@@ -247,7 +248,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getSeriesValueCriteriaFor(GetObservationRequest request, long series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
-
+        c.addOrder(Order.asc(getOrderColumn(request)));
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
         c.add(Restrictions.eq("s." + Series.ID, series));
@@ -288,7 +289,7 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     private Criteria getSeriesValueCriteriaFor(GetObservationRequest request, Set<Long> series,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session).createAlias(AbstractValuedSeriesObservation.SERIES, "s");
-
+        c.addOrder(Order.asc(getOrderColumn(request)));
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
         c.add(Restrictions.in("s." + Series.ID, series));

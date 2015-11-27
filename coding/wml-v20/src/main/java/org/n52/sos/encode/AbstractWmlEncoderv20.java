@@ -335,6 +335,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 throw new NoApplicableCodeException()
                         .withMessage("Error while encoding geometry for feature, needed encoder is missing!");
             }
+            sampFeat.wasEncoded();
             return monitoringPointDoc;
         }
         throw new UnsupportedEncoderInputException(this, absFeature);

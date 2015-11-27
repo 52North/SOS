@@ -28,7 +28,19 @@
  */
 package org.n52.sos.inspire.omso;
 
+import java.util.List;
+
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.MultiObservationValues;
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.TLVTValue;
+import org.n52.sos.ogc.om.values.TVPValue;
+
+import com.vividsolutions.jts.geom.Geometry;
 
 public class TrajectoryObservation extends OmObservation {
 
@@ -41,4 +53,58 @@ public class TrajectoryObservation extends OmObservation {
         observation.copyTo(this);
     }
 
+    @Override
+    public OmObservation cloneTemplate() {
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
+            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        }
+        return cloneTemplate(new TrajectoryObservation());
+    }
+    
+    @Override
+    public void setValue(ObservationValue<?> value) {
+        if (value.getValue() instanceof TLVTValue) {
+            super.setValue(value);
+        } else {
+            Geometry geometry = null;
+            if (isSetSpatialFilteringProfileParameter()) {
+                geometry = getSpatialFilteringProfileParameter().getValue().getValue();
+            } else {
+                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                }
+            }
+            TLVTValue tlvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>)value, geometry);
+            tlvpValue.setUnit(((AbstractObservationValue<?>) value).getUnit());
+            final MultiObservationValues<List<TimeLocationValueTriple>> multiValue = new MultiObservationValues<List<TimeLocationValueTriple>>();
+            multiValue.setValue(tlvpValue);
+            super.setValue(multiValue);
+        }
+    }
+    
+    @Override
+    public void mergeWithObservation(OmObservation sosObservation) {
+        // TODO Auto-generated method stub
+        super.mergeWithObservation(sosObservation);
+    }
+    
+    @Override
+    protected void mergeValues(ObservationValue<?> observationValue) {
+        super.mergeValues(observationValue);
+    }
+    
+    /**
+     * Convert {@link SingleObservationValue} to {@link TVPValue}
+     * 
+     * @param singleValue
+     *            Single observation value
+     * @return Converted TVPValue value
+     */
+    private TLVTValue convertSingleValueToMultiValue(final SingleObservationValue<?> singleValue, Geometry geom) {
+        final TLVTValue tlvpValue = new TLVTValue();
+        tlvpValue.setUnit(singleValue.getValue().getUnit());
+        final TimeLocationValueTriple timeLocationValueTriple = new TimeLocationValueTriple(singleValue.getPhenomenonTime(), singleValue.getValue(), geom);
+        tlvpValue.addValue(timeLocationValueTriple);
+        return tlvpValue;
+    }
 }

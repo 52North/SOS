@@ -36,6 +36,8 @@ import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.MultiPointCoverage.PointValueLists;
 import org.n52.sos.util.JavaHelper;
 
+import net.opengis.gml.x32.AbstractGeometryType;
+import net.opengis.gml.x32.DataBlockType;
 import net.opengis.gml.x32.DiscreteCoverageType;
 
 public abstract class AbstractMultiPointCoverageTypeEncoder<T> extends AbstractSpecificXmlEncoder<T, MultiPointCoverage> {
@@ -44,10 +46,9 @@ public abstract class AbstractMultiPointCoverageTypeEncoder<T> extends AbstractS
         DiscreteCoverageType dct = DiscreteCoverageType.Factory.newInstance();
         dct.setId(JavaHelper.generateID(multiPointCoverage.toString()));
         PointValueLists pointValue = multiPointCoverage.getPointValue();
-        dct.addNewDomainSet().addNewAbstractGeometry();
-        dct.addNewRangeSet().addNewDataBlock();
-        
-        // TODO Auto-generated method stub
+        AbstractGeometryType agt = dct.addNewDomainSet().addNewAbstractGeometry();
+        DataBlockType dbt = dct.addNewRangeSet().addNewDataBlock();
+
         return dct;
     }
     

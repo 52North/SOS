@@ -58,7 +58,7 @@ import net.opengis.om.x20.OMObservationType;
 public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(CvConstants.NS_CV, ProfileObservation.class);
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, ProfileObservation.class);
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {

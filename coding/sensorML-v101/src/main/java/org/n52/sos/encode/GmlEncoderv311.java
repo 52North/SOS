@@ -283,7 +283,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
         if (geom instanceof Point) {
             PointType xbPoint = PointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (foiId != null) {
-                xbPoint.setId("point_" + foiId);
+                xbPoint.setId(geom.getGeometryType() + "_" + foiId);
             }
             createPointFromJtsGeometry((Point) geom, xbPoint);
             return xbPoint;
@@ -291,14 +291,14 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             LineStringType xbLineString =
                     LineStringType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (foiId != null) {
-                xbLineString.setId("lineString_" + foiId);
+                xbLineString.setId(geom.getGeometryType() + "_" + foiId);
             }
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
             return xbLineString;
         } else if (geom instanceof Polygon) {
             PolygonType xbPolygon = PolygonType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (foiId != null) {
-                xbPolygon.setId("polygon_" + foiId);
+                xbPolygon.setId(geom.getGeometryType() + "_" + foiId);
             }
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
             return xbPolygon;
@@ -476,10 +476,6 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                     }
                     return featureProperty;
                 }
-                StringBuilder builder = new StringBuilder();
-                builder.append("sf_");
-                builder.append(JavaHelper.generateID(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue()));
-                sosAbstractFeature.setGmlId(builder.toString());
                 Encoder<XmlObject, SamplingFeature> encoder = CodingHelper.getEncoder(SfConstants.NS_SA, sampFeat);
                 if (encoder != null) {
                     return encoder.encode(sampFeat);

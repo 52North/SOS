@@ -285,6 +285,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                             : encodedObj);
         }
     }
+    
     protected static XmlObject encodeSWE(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
@@ -332,9 +333,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 throws OwsExceptionReport {
             if (observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)){
                 if (value.isSetValue() && !value.getValue().isEmpty()) {
-                    Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
-                    additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId);
-                    return encodeGML(value, additionalValue);
+                    return encodeGML(value);
                 }
             }
             return null;

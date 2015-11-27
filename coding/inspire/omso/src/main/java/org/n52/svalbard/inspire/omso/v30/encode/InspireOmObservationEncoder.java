@@ -33,22 +33,47 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.encode.AbstractOmEncoderv20;
-import org.n52.sos.inspire.base.InspireBaseConstants;
-import org.n52.sos.inspire.omor.InspireOMORConstants;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.AbstractXmlEncoder;
+import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.CodingHelper;
 
-import net.opengis.om.x20.OMObservationType;
+public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
+        implements ObservationEncoder<XmlObject, Object> {
 
-public abstract class AbstractOmInspireEncoder extends AbstractOmEncoderv20 {
+    private static final Set<EncoderKey> ENCODER_KEYS =
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, OmObservation.class);
 
-    private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
-            SosConstants.SOS,
-            Collections.singletonMap(Sos2Constants.SERVICEVERSION, Collections.singleton(InspireOMSOConstants.NS_OMSO_30)));
+    private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS =
+            Collections.singletonMap(SosConstants.SOS, 
+            Collections.singletonMap(Sos2Constants.SERVICEVERSION,
+            Collections.singleton(InspireOMSOConstants.NS_OMSO_30)));
+
+    @Override
+    public Set<EncoderKey> getEncoderKeyType() {
+        return Collections.unmodifiableSet(ENCODER_KEYS);
+    }
+
+    @Override
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport, UnsupportedEncoderInputException {
+        if (element instanceof OmObservation) {
+            return encodeInspireOmsoType((OmObservation)element);
+        }
+        throw new UnsupportedEncoderInputException(this, element);
+    }
+
+    protected static XmlObject encodeInspireOmsoType(OmObservation o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(InspireOMSOConstants.NS_OMSO_30, o);
+    }
 
     @Override
     public boolean isObservationAndMeasurmentV20Type() {
@@ -73,35 +98,5 @@ public abstract class AbstractOmInspireEncoder extends AbstractOmEncoderv20 {
         }
         return new HashSet<>(0);
     }
-
-    @Override
-    public String getDefaultFeatureEncodingNamespace() {
-        return SfConstants.NS_SAMS;
-    }
-
-    @Override
-    protected String getDefaultProcedureEncodingNamspace() {
-        return SensorMLConstants.NS_SML;
-    }
-
-    @Override
-    protected boolean convertEncodedProcedure() {
-        return false;
-    }
-
-    @Override
-    protected void addObservationType(OMObservationType xbObservation, String observationType) {
-        xbObservation.addNewType().setHref(getObservationType());
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        super.addNamespacePrefixToMap(nameSpacePrefixMap);
-        nameSpacePrefixMap.put(InspireBaseConstants.NS_BASE_30, InspireBaseConstants.NS_BASE_PREFIX);
-        nameSpacePrefixMap.put(InspireOMORConstants.NS_OMOR_30, InspireOMORConstants.NS_OMOR_PREFIX);
-        nameSpacePrefixMap.put(InspireOMSOConstants.NS_OMSO_30, InspireOMSOConstants.NS_OMSO_PREFIX);
-    }
-
-    protected abstract String getObservationType();
 
 }

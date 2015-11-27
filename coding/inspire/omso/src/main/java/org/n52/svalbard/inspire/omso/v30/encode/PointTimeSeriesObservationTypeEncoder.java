@@ -47,6 +47,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
 
 import eu.europa.ec.inspire.schemas.omso.x30.PointTimeSeriesObservationType;
@@ -55,7 +56,7 @@ import net.opengis.om.x20.OMObservationType;
 public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
-            CodingHelper.encoderKeysForElements(CvConstants.NS_CV, PointTimeSeriesObservation.class);
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, PointTimeSeriesObservation.class);
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -67,18 +68,9 @@ public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEnco
         return encodeResult(sosObservation.getValue());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-     // TODO fixme
-        if (observationValue instanceof MultiPointCoverage) {
-            Encoder<?, Object> encoder = (Encoder<?, Object>) getEncoder(
-                    new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, Object.class));
-            if (encoder != null) {
-                return (XmlObject) encoder.encode((Object) observationValue);
-            }
-        }
-        return null;
+        return CodingHelper.encodeObjectToXml(WaterMLConstants.NS_WML_20, observationValue);
     }
 
     @Override

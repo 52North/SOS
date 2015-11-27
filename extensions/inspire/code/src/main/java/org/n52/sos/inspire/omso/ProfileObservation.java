@@ -28,7 +28,11 @@
  */
 package org.n52.sos.inspire.omso;
 
+import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
+import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
 
 public class ProfileObservation extends OmObservation {
 
@@ -39,5 +43,28 @@ public class ProfileObservation extends OmObservation {
     
     public ProfileObservation(OmObservation observation) {
         observation.copyTo(this);
+    }
+    
+    @Override
+    public OmObservation cloneTemplate() {
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
+            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        }
+        return cloneTemplate(new ProfileObservation());
+    }
+    
+    @Override
+    public void setValue(ObservationValue<?> value) {
+        if (value instanceof RectifiedGridCoverage || value instanceof ReverencableGridCoverage) {
+            super.setValue(value);
+        } else {
+            
+        }
+    }
+    
+    @Override
+    protected void mergeValues(ObservationValue<?> observationValue) {
+        // TODO Auto-generated method stub
+        super.mergeValues(observationValue);
     }
 }

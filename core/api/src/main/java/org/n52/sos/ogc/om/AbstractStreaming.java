@@ -29,7 +29,6 @@
 package org.n52.sos.ogc.om;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -60,12 +59,15 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     private int maxNumberOfValues = Integer.MIN_VALUE;
     
     private int currentNumberOfValues = 0;
+    
+    private ObservationMerger observationMerger;
+    
+    private ObservationMergeIndicator observationMergeIndicator;
 
     public abstract boolean hasNextValue() throws OwsExceptionReport;
 
     public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
     
-
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
         List<OmObservation> observations = getObservation();
         // TODO merge all observations with the same observationContellation
@@ -73,8 +75,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
         // the merged Observations
         // (proc, obsProp, foi)
         if (CollectionHelper.isNotEmpty(observations)) {
-            ObservationMerger observationMerger = new ObservationMerger();
-            return observationMerger.mergeObservations(observations, new ObservationMergeIndicator());
+            return getObservationMerger().mergeObservations(observations, getObservationMergeIndicator());
 //            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
 //            int obsIdCounter = 1;
 //            for (final OmObservation sosObservation : observations) {
@@ -203,5 +204,26 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
             }
         }
     }
+    
+    public void setObservationMerger(ObservationMerger merger) {
+        this.observationMerger = merger;
+    }
+     
+    private ObservationMerger getObservationMerger() {
+        if (this.observationMerger == null) {
+            setObservationMerger(new ObservationMerger());
+        }
+        return this.observationMerger;
+    }
+    
+    public void setObservationMergeIndicator(ObservationMergeIndicator indicator) {
+        this.observationMergeIndicator = indicator;
+    }
 
+    private ObservationMergeIndicator getObservationMergeIndicator() {
+        if (this.observationMergeIndicator == null) {
+            setObservationMergeIndicator(new ObservationMergeIndicator());
+        }
+        return this.observationMergeIndicator;
+    }
 }

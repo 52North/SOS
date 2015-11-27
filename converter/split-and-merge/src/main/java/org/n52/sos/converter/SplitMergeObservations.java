@@ -341,7 +341,7 @@ public class SplitMergeObservations
             // check for XML encoder
             ObservationEncoder<Object, Object> encoder =
                     (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
-                            new XmlEncoderKey(response.getResponseFormat(), new OmObservation().getClass()));
+                            new XmlEncoderKey(response.getResponseFormat(), OmObservation.class));
             // check for response contentType
             if (encoder == null && response.isSetContentType()) {
                 encoder =

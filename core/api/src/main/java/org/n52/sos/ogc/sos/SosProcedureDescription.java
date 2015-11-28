@@ -370,4 +370,27 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     private void setChildProcedures(Set<SosProcedureDescription> childProcedures) {
         this.childProcedures.addAll(childProcedures);
     }
+
+    public boolean isSetProcedureName() {
+      return isSetName();
+    }
+
+    public String getProcedureName() {
+       if (isSetName()) {
+           return getFirstName().getValue();
+       }
+       return null;
+    }
+
+    public boolean supportsObservablePropertyName() {
+        return false;
+    }
+    
+    public boolean isSetObservablePropertyNameFor(String observableProperty) {
+        return false;
+    }
+
+    public String getObservablePropertyNameFor(String observableProperty) {
+        return null;
+    }
 }

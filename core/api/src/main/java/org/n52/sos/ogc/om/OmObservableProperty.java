@@ -31,8 +31,6 @@ package org.n52.sos.ogc.om;
 
 import org.n52.sos.util.StringHelper;
 
-import com.google.common.base.Objects;
-
 /**
  * class represents a phenomenon of an observation
  *

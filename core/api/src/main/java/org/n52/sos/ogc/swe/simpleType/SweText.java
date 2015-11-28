@@ -104,6 +104,7 @@ public class SweText extends SweAbstractSimpleType<String> implements Comparable
     @Override
     public SweText clone() {
         SweText clone = new SweText();
+        copyValueTo(clone);
         if (isSetValue()) {
             clone.setValue(getValue());
         }

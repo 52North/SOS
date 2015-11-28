@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.joda.time.DateTime;
@@ -42,6 +43,7 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
@@ -61,6 +63,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.io.WKTWriter;
 
 /**
@@ -273,24 +276,38 @@ public class ResultHandlingHelper {
         if (sweDataElement instanceof SweDataArray
                 && ((SweDataArray) sweDataElement).getElementType() instanceof SweDataRecord) {
             final SweDataArray dataArray = (SweDataArray) sweDataElement;
-            addOrderAndDefinitionToMap(((SweDataRecord) dataArray.getElementType()).getFields(), valueOrder);
+            addOrderAndDefinitionToMap(((SweDataRecord) dataArray.getElementType()).getFields(), valueOrder, 0);
         } else if (sweDataElement instanceof SweDataRecord) {
             final SweDataRecord dataRecord = (SweDataRecord) sweDataElement;
-            addOrderAndDefinitionToMap(dataRecord.getFields(), valueOrder);
+            addOrderAndDefinitionToMap(dataRecord.getFields(), valueOrder, 0);
         }
         return new TreeMap<>(valueOrder);
     }
 
-    private static void addOrderAndDefinitionToMap(final List<SweField> fields, final Map<Integer, String> valueOrder) {
-        for (int i = 0; i < fields.size(); i++) {
-            final SweAbstractDataComponent element = fields.get(i).getElement();
+    private static void addOrderAndDefinitionToMap(final List<SweField> fields, final Map<Integer, String> valueOrder, int tokenIndex) {
+        for (SweField sweField : fields) {
+            final SweAbstractDataComponent element = sweField.getElement();
             if (element instanceof SweAbstractSimpleType) {
                 final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
                 if (simpleType.isSetDefinition()) {
-                    addValueToValueOrderMap(valueOrder, i, simpleType.getDefinition());
+                    addValueToValueOrderMap(valueOrder, tokenIndex, simpleType.getDefinition());
                 }
+                tokenIndex++;
+            } else if (element instanceof SweDataRecord) {
+                addOrderAndDefinitionToMap(((SweDataRecord) element).getFields(), valueOrder, tokenIndex);
             }
         }
+//        for (int i = 0; i < fields.size(); i++) {
+//            final SweAbstractDataComponent element = fields.get(i).getElement();
+//            if (element instanceof SweAbstractSimpleType) {
+//                final SweAbstractSimpleType<?> simpleType = (SweAbstractSimpleType<?>) element;
+//                if (simpleType.isSetDefinition()) {
+//                    addValueToValueOrderMap(valueOrder, i, simpleType.getDefinition());
+//                }
+//            } else if (element instanceof SweDataRecord) {
+//                
+//            }
+//        }
     }
 
     private static void addValueToValueOrderMap(final Map<Integer, String> valueOrder, final int index,
@@ -303,8 +320,14 @@ public class ResultHandlingHelper {
     private static String getValueAsStringForObservedProperty(final Observation<?> observation,
             final String definition) {
         final String observedProperty = observation.getObservableProperty().getIdentifier();
-
-        if (observedProperty.equals(definition)) {
+        if (observation instanceof ComplexObservation) {
+            for (Observation<?> contentObservation : ((ComplexObservation)observation).getValue()) {
+                String value = getValueAsStringForObservedProperty(contentObservation, definition);
+                if (!Strings.isNullOrEmpty(value)) {
+                    return value;
+                }
+            }
+        } else if (observedProperty.equals(definition)) {
             if (observation instanceof NumericObservation) {
                 return String.valueOf(((NumericObservation) observation).getValue());
             } else if (observation instanceof BooleanObservation) {
@@ -320,43 +343,9 @@ public class ResultHandlingHelper {
                 return writer.write(((GeometryObservation) observation).getValue());
             } else if (observation instanceof BlobObservation) {
                 return String.valueOf(((BlobObservation) observation).getValue());
-            }
-            // // TODO multiple values?
-            // Set<BooleanValue> booleanValues = observation.getBooleanValue();
-            // if (booleanValues != null && !booleanValues.isEmpty()) {
-            // return
-            // String.valueOf(booleanValues.iterator().next().getValue());
-            // }
-            //
-            // Set<CategoryValue> categoryValues =
-            // observation.getCategoryValue();
-            // if (categoryValues != null && !categoryValues.isEmpty()) {
-            // return categoryValues.iterator().next().getValue();
-            // }
-            //
-            // Set<CountValue> countValues = observation.getCountValue();
-            // if (countValues != null && !countValues.isEmpty()) {
-            // return String.valueOf(countValues.iterator().next().getValue());
-            // }
-            //
-            // Set<NumericValue> numericValues = observation.getNumericValues();
-            // if (numericValues != null && !numericValues.isEmpty()) {
-            // return
-            // String.valueOf(numericValues.iterator().next().getValue());
-            // }
-            //
-            // //TODO geometry values;
-            //
-            // Set<TextValue> textValues = observation.getTextValues();
-            // if (textValues != null && !textValues.isEmpty()) {
-            // StringBuilder builder = new StringBuilder();
-            // for (TextValue textValue : textValues) {
-            // builder.append(textValue.getValue());
-            // }
-            // return builder.toString();
-            // }
+            } 
         }
-        return Configurator.getInstance().getProfileHandler().getActiveProfile().getResponseNoDataPlaceholder();
+        return "";
     }
 
     private ResultHandlingHelper() {

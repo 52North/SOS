@@ -47,6 +47,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TLVTValue;
@@ -261,6 +262,11 @@ public final class OMHelper {
 
         @Override
         public String visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
             return defaultValue();
         }
     }

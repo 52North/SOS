@@ -32,15 +32,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.om.PointValuePair;
-import org.n52.sos.ogc.om.values.MultiPointCoverage.PointValueLists;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -48,10 +48,10 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-public class MultiPointCoverage implements MultiValue<List<PointValuePair>> {
+public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>>  {
 
     private static final long serialVersionUID = -2848924351209857414L;
-    
+    private String gmlId;
     /**
      * Mesurement values
      */
@@ -62,6 +62,20 @@ public class MultiPointCoverage implements MultiValue<List<PointValuePair>> {
      */
     private String unit;
 
+    public MultiPointCoverage(String gmlId) {
+        if (Strings.isNullOrEmpty(gmlId)) {
+            gmlId = JavaHelper.generateID(toString());
+        } else if (!gmlId.startsWith("mpc_")) {
+            gmlId = "mpc_" + gmlId;
+        }
+        this.gmlId = gmlId;
+    }
+
+
+    public String getGmlId() {
+        return gmlId;
+    }
+    
     @Override
     public List<PointValuePair> getValue() {
         Collections.sort(value);
@@ -118,11 +132,6 @@ public class MultiPointCoverage implements MultiValue<List<PointValuePair>> {
         return StringHelper.isNotEmpty(getUnit());
     }
 
-    @Override
-    public Time getPhenomenonTime() {
-        return null;
-    }
-
     public Polygon getExtent() {
         if (isSetValue()) {
             int srid = -1;
@@ -144,6 +153,12 @@ public class MultiPointCoverage implements MultiValue<List<PointValuePair>> {
         }
         return null;
     }
+
+    @Override
+    public List<Value<?>> getRangeSet() {
+        return getPointValue().getValues();
+    }
+
 
     @Override
     public <X> X accept(ValueVisitor<X> visitor) throws OwsExceptionReport {

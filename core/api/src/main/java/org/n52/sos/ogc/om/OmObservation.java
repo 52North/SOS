@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -97,10 +96,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /** no data value for the values contained in the result element */
     private String noDataValue;
 
-    /** separator of value tuples, which are contained in the resulte element */
+    /** separator of value tuples, which are contained in the result element */
     private String tupleSeparator;
     
-    /** separator of decimal values, which are contained in the resulte element */
+    /** separator of decimal values, which are contained in the result element */
     private String decimalSeparator;
 
     /**
@@ -333,7 +332,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void mergeWithObservation(final OmObservation sosObservation) {
         mergeValues(sosObservation.getValue());
         mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
+//        setObservationTypeToSweArrayObservation();
     }
 
     /**
@@ -345,7 +344,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void mergeWithObservation(ObservationValue<?> observationValue) {
         mergeValues(observationValue);
         // mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
+//        setObservationTypeToSweArrayObservation();
     }
 
     /**

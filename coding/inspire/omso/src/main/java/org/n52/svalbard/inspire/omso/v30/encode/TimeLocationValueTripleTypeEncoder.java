@@ -35,18 +35,22 @@ import java.util.Set;
 
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.CodingHelper;
 
 import eu.europa.ec.inspire.schemas.omso.x30.TimeLocationValueTripleType;
 
 public class TimeLocationValueTripleTypeEncoder extends AbstractTimeLocationValueTripleTypeEncoder<TimeLocationValueTripleType> {
 
+    private static final Set<EncoderKey> ENCODER_KEYS =
+            CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, TimeLocationValueTriple.class);
+    
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
-        // TODO Auto-generated method stub
-        return Collections.emptySet();
+        return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override

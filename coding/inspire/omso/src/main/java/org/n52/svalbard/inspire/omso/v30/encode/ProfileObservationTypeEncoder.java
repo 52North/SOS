@@ -73,17 +73,17 @@ public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
     @SuppressWarnings("unchecked")
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        if (observationValue instanceof RectifiedGridCoverage) {
+        if (observationValue.getValue() instanceof RectifiedGridCoverage) {
             Encoder<?, RectifiedGridCoverage> encoder = (Encoder<?, RectifiedGridCoverage>) getEncoder(
                     new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, RectifiedGridCoverage.class));
             if (encoder != null) {
-                return (XmlObject) encoder.encode((RectifiedGridCoverage) observationValue);
+                return (XmlObject) encoder.encode((RectifiedGridCoverage) observationValue.getValue());
             }
-        } else if (observationValue instanceof ReverencableGridCoverage) {
+        } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
             Encoder<?, ReverencableGridCoverage> encoder = (Encoder<?, ReverencableGridCoverage>) getEncoder(
                     new XmlPropertyTypeEncoderKey(GmlCoverageConstants.NS_GML_COV, ReverencableGridCoverage.class));
             if (encoder != null) {
-                return (XmlObject) encoder.encode((ReverencableGridCoverage) observationValue);
+                return (XmlObject) encoder.encode((ReverencableGridCoverage) observationValue.getValue());
             }
         }
         return null;

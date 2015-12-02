@@ -42,7 +42,6 @@ import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.PointObservation;
 import org.n52.sos.ogc.cv.CvConstants;
-import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
@@ -79,11 +78,7 @@ public class PointObservationTypeEncoder extends AbstractOmInspireEncoder {
                 return (XmlObject) encoder.encode((CvDiscretePointCoverage) observationValue.getValue());
             }
         }
-        return encodeWML(observationValue);
-    }
-
-    private XmlObject encodeWML(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(WaterMLConstants.NS_WML_20, o);
+        return null;
     }
 
     @Override

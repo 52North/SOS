@@ -40,7 +40,6 @@ import eu.europa.ec.inspire.schemas.omso.x30.TimeLocationValueTripleType;
 
 public abstract class AbstractTimeLocationValueTripleTypeEncoder<T> extends AbstractSpecificXmlEncoder<T, TimeLocationValueTriple> {
 
-
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         super.addNamespacePrefixToMap(nameSpacePrefixMap);
@@ -55,7 +54,7 @@ public abstract class AbstractTimeLocationValueTripleTypeEncoder<T> extends Abst
         tlvtt.addNewLocation();
         tlvtt.addNewTime();
         
-        return null;
+        return tlvtt;
     }
 
 }

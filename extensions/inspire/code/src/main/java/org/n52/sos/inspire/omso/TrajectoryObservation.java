@@ -84,13 +84,18 @@ public class TrajectoryObservation extends OmObservation {
     
     @Override
     public void mergeWithObservation(OmObservation sosObservation) {
-        // TODO Auto-generated method stub
         super.mergeWithObservation(sosObservation);
     }
     
     @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
-        super.mergeValues(observationValue);
+        if (observationValue.getValue() instanceof TLVTValue) {
+            List<TimeLocationValueTriple> valuesToMerge = ((TLVTValue)observationValue.getValue()).getValue();
+            ((TLVTValue)getValue().getValue()).addValues(valuesToMerge);
+            
+        } else {
+            super.mergeValues(observationValue);
+        }
     }
     
     /**

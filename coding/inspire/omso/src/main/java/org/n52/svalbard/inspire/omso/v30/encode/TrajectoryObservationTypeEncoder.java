@@ -41,9 +41,10 @@ import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.TrajectoryObservation;
-import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
@@ -69,12 +70,13 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
     @SuppressWarnings("unchecked")
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        // TODO fixme
-        if (observationValue instanceof Object) {
-            Encoder<?, Object> encoder = (Encoder<?, Object>) getEncoder(
-                    new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, Object.class));
+        // TODO fixme: HOW TO ENCODE TLVT
+        if (observationValue.getValue() instanceof TLVTValue) {
+            TimeLocationValueTriple value = (TimeLocationValueTriple)((TLVTValue)observationValue.getValue()).getValue().iterator().next();
+            Encoder<?, TimeLocationValueTriple> encoder = (Encoder<?, TimeLocationValueTriple>) getEncoder(
+                    new XmlPropertyTypeEncoderKey(InspireOMSOConstants.NS_OMSO_30, TimeLocationValueTriple.class));
             if (encoder != null) {
-                return (XmlObject) encoder.encode((Object) observationValue);
+                return (XmlObject) encoder.encode(value);
             }
         }
         return null;

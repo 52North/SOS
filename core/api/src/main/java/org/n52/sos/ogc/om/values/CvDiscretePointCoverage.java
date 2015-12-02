@@ -41,15 +41,10 @@ import com.google.common.base.Strings;
 public class CvDiscretePointCoverage implements Value<PointValuePair> {
 
     private static final long serialVersionUID = 7475586076168740072L;
-    
     private String gmlId;
-    
     private String domainExtent;
-    
     private ReferenceType rangeType;
-
     private PointValuePair value;
-    
     private String unit;
     
     public CvDiscretePointCoverage(String gmlId) {

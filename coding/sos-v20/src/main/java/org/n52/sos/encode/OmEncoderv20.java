@@ -68,6 +68,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TLVTValue;
@@ -463,6 +464,11 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
             return null;
         }
     }

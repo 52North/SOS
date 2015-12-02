@@ -28,6 +28,95 @@
  */
 package org.n52.sos.ogc.om.values;
 
-public class RectifiedGridCoverage {
+import java.util.Collection;
+import java.util.List;
+import java.util.SortedMap;
+
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.JavaHelper;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double, Value<?>>> {
+    
+    private static final long serialVersionUID = 5209844268871191549L;
+    private String gmlId;
+    private SortedMap<Double, Value<?>> value = Maps.newTreeMap();
+    private String unit;
+
+    public RectifiedGridCoverage(String gmlId) {
+        if (Strings.isNullOrEmpty(gmlId)) {
+            gmlId = JavaHelper.generateID(toString());
+        } else if (!gmlId.startsWith("rgc_")) {
+            gmlId = "rgc_" + gmlId;
+        }
+        this.gmlId = gmlId;
+    }
+    
+    public String getGmlId() {
+        return gmlId;
+    }
+    
+    @Override
+    public void setValue(SortedMap<Double, Value<?>> value) {
+      this.value.clear();
+      addValue(value);
+    }
+    
+    public void addValue(Double key, Value<?> value) {
+        this.value.put(key, value);
+    }
+    
+    public void addValue(SortedMap<Double, Value<?>> value) {
+        this.value.putAll(value);
+    }
+
+    @Override
+    public SortedMap<Double, Value<?>> getValue() {
+        return value;
+    }
+
+    @Override
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public String getUnit() {
+        return unit;
+    }
+
+    @Override
+    public boolean isSetValue() {
+        return CollectionHelper.isNotEmpty(value);
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return !Strings.isNullOrEmpty(unit);
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor) throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    public List<Double> getDomainSet() {
+        return Lists.newArrayList(getValue().keySet());
+    }
+
+    public Collection<Value<?>> getRangeSet() {
+        return getValue().values();
+    }
 
 }

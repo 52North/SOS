@@ -37,24 +37,24 @@ import java.util.Set;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.MultiPointObservation;
 import org.n52.sos.inspire.omso.PointObservation;
 import org.n52.sos.inspire.omso.PointTimeSeriesObservation;
 import org.n52.sos.inspire.omso.ProfileObservation;
 import org.n52.sos.inspire.omso.TrajectoryObservation;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.ObservationMergeIndicator;
 import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.PointValuePair;
-import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
@@ -67,7 +67,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
 
 public class InspireObservationResponseConverter implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
@@ -120,7 +119,6 @@ public class InspireObservationResponseConverter implements RequestResponseModif
                 if (resp.hasStreamingData()) {
                     checkForStreamingData(request, resp);
                 } else {
-    //                String observationType = getObservationType(request, resp);
                     checkForNonStreamingData(request, resp);
     //                for (OmObservation obs : resp.getObservationCollection()) {
     //                    if (obs.isSetHeightDepthParameter()) {
@@ -154,13 +152,16 @@ public class InspireObservationResponseConverter implements RequestResponseModif
             if (omObservation.getValue() instanceof StreamingValue<?>) {
                 List<OmObservation> observations = ((StreamingValue<?>)omObservation.getValue()).getObservation();
                 if (CollectionHelper.isNotEmpty(observations)) {
-                    OmObservation obs = observations.iterator().next();
-                    // TODO check for requested type
-                    if (obs.isSetHeightDepthParameter()) {
+                    String observationType = checkForObservationTypeForStreaming(observations, request);
+                    if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
                         putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION, convertToProfileObservations(observations));
-                    } else if (obs.isSetSpatialFilteringProfileParameter()) {
+                    } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
                         putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION, convertToTrajectoryObservations(observations));
-                    } else {
+                    } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
+                        putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION, convertToMultiPointObservations(observations));
+                    } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(observationType)) {
+                        putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION, convertToPointTimeSeriesObservations(observations));
+                    } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
                         putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION, convertToPointObservations(observations));
                     }
                 }
@@ -187,27 +188,27 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     }
 
     private List<OmObservation> mergeObservations(Map<String, List<OmObservation>> map) {
-        List<OmObservation> convertedObservations = Lists.newArrayList();
+        List<OmObservation> mergedObservations = Lists.newArrayList();
         for (String key : map.keySet()) {
             switch (key) {
             case InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION:
-                convertedObservations.addAll(mergeProfileObservation(map.get(key)));
+                mergedObservations.addAll(mergeProfileObservation(map.get(key)));
                 break;
             case InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION:
-                convertedObservations.addAll(mergeTrajectoryObservation(map.get(key)));           
+                mergedObservations.addAll(mergeTrajectoryObservation(map.get(key)));           
                 break;
             case InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION:
-                convertedObservations.addAll(mergeMultiPointObservation(map.get(key)));
+                mergedObservations.addAll(mergeMultiPointObservation(map.get(key)));
                 break;
             case InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION:
-                convertedObservations.addAll(mergePointTimeSeriesObservation(map.get(key)));
+                mergedObservations.addAll(mergePointTimeSeriesObservation(map.get(key)));
                 break;
             default:
-                convertedObservations.addAll(map.get(key));
+                mergedObservations.addAll(map.get(key));
                 break;
             }
         }
-        return convertedObservations;
+        return mergedObservations;
     }
 
     private Collection<? extends OmObservation> mergePointTimeSeriesObservation(List<OmObservation> observations) {
@@ -215,41 +216,21 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     }
 
     private Collection<? extends OmObservation> mergeMultiPointObservation(List<OmObservation> observations) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    private Collection<? extends OmObservation> mergeTrajectoryObservation(List<OmObservation> observations) {
-        // TODO Auto-generated method stub
-        return null;
+        ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
+        observationMergeIndicator.setObservableProperty(true).setPhenomenonTime(true);
+        return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }
 
     private Collection<? extends OmObservation> mergeProfileObservation(List<OmObservation> observations) {
-        // TODO Auto-generated method stub
-        return null;
+        ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
+        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true).setPhenomenonTime(true);
+        return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }
 
-    private void putOrAdd(Map<String, List<OmObservation>> map, String type,
-            List<OmObservation> observations) {
-        if (CollectionHelper.isNotEmpty(observations)) {
-            if (map.containsKey(type)) {
-                map.get(type).addAll(observations);
-            } else {
-                map.put(type, observations);
-            }
-        }
-    }
-
-    private String getObservationType(AbstractServiceRequest<?> request, GetObservationResponse resp) {
-        if (resp.hasStreamingData()) {
-            for (OmObservation omObservation : resp.getObservationCollection()) {
-                if (omObservation.getValue() instanceof StreamingValue<?>) {
-                    
-                }
-            }
-        }
-        // FIXME get requested or default
-        return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
+    private Collection<? extends OmObservation> mergeTrajectoryObservation(List<OmObservation> observations) {
+        ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
+        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true);
+        return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }
 
     private List<OmObservation> convertToPointObservations(List<OmObservation> observations) {
@@ -283,39 +264,45 @@ public class InspireObservationResponseConverter implements RequestResponseModif
         return observationMerger.mergeObservations(convertedObservations);
     }
 
-    private GetObservationResponse convertToMultipointObservations(GetObservationResponse response) {
-        List<OmObservation> observations = Lists.newArrayList();
-        Map<String, MultiPointObservation> mergedObservations = Maps.newHashMap();
-        for (OmObservation omObservation : response.getObservationCollection()) {
-            String observedProperty = omObservation.getObservationConstellation().getObservableProperty().getIdentifier();
-            // TODO reset featureOfInterest
-            if (mergedObservations.containsKey(observedProperty)) {
-                MultiPointObservation multiPointObservation = mergedObservations.get(observedProperty);
-                if (response.hasStreamingData()) {
-                    // TODO Merge StreamingValue to current
-                } else {
-                    
-                }
-                
-            } else {
-                MultiPointObservation multiPointObservation = new MultiPointObservation(omObservation);
-                if (response.hasStreamingData()) {
-                    if (multiPointObservation.getValue() instanceof StreamingValue<?>) {
-                        StreamingValue<?> sv = (StreamingValue<?>)multiPointObservation.getValue();
-                        sv.setObservationTemplate(new MultiPointObservation(sv.getObservationTemplate()));
-                        // TODO Merge StreamingValue for same observedProperty(/Procedure)
-                    }
-                } else {
-                 // TODO Merge same observedProperty(/Procedure) at same time, FOI = Surface, convert value to MultiPointCoverage
-                }
-                mergedObservations.put(observedProperty, multiPointObservation);
-                observations.add(multiPointObservation);
-            }
+    private List<OmObservation> convertToMultiPointObservations(List<OmObservation> observations) throws CodedException {
+        List<OmObservation> convertedObservations = Lists.newArrayList();
+        for (OmObservation omObservation : observations) {
+            MultiPointObservation multiPointObservation = new MultiPointObservation(omObservation);
+            convertedObservations.add(multiPointObservation);
         }
-//      ObservationMerger observationMerger = new ObservationMerger();
-//      List<OmObservation> mergeObservations = observationMerger.mergeObservations(response.getObservationCollection(), ObservationMergeIndicator.defaultObservationMergerIndicator());
-        response.setObservationCollection(observations);
-        return response;
+        return convertedObservations;
+//        List<OmObservation> observations = Lists.newArrayList();
+//        Map<String, MultiPointObservation> mergedObservations = Maps.newHashMap();
+//        for (OmObservation omObservation : response.getObservationCollection()) {
+//            String observedProperty = omObservation.getObservationConstellation().getObservableProperty().getIdentifier();
+//            // TODO reset featureOfInterest
+//            if (mergedObservations.containsKey(observedProperty)) {
+//                MultiPointObservation multiPointObservation = mergedObservations.get(observedProperty);
+//                if (response.hasStreamingData()) {
+//                    // TODO Merge StreamingValue to current
+//                } else {
+//                    
+//                }
+//                
+//            } else {
+//                MultiPointObservation multiPointObservation = new MultiPointObservation(omObservation);
+//                if (response.hasStreamingData()) {
+//                    if (multiPointObservation.getValue() instanceof StreamingValue<?>) {
+//                        StreamingValue<?> sv = (StreamingValue<?>)multiPointObservation.getValue();
+//                        sv.setObservationTemplate(new MultiPointObservation(sv.getObservationTemplate()));
+//                        // TODO Merge StreamingValue for same observedProperty(/Procedure)
+//                    }
+//                } else {
+//                 // TODO Merge same observedProperty(/Procedure) at same time, FOI = Surface, convert value to MultiPointCoverage
+//                }
+//                mergedObservations.put(observedProperty, multiPointObservation);
+//                observations.add(multiPointObservation);
+//            }
+//        }
+////      ObservationMerger observationMerger = new ObservationMerger();
+////      List<OmObservation> mergeObservations = observationMerger.mergeObservations(response.getObservationCollection(), ObservationMergeIndicator.defaultObservationMergerIndicator());
+//        response.setObservationCollection(observations);
+//        return response;
     }
 
     private List<OmObservation> convertToProfileObservations(List<OmObservation> observations) {
@@ -350,6 +337,51 @@ public class InspireObservationResponseConverter implements RequestResponseModif
             convertedObservations.add(trajectoryObservation);
         }
         return convertedObservations;
+    }
+
+    private String checkForObservationTypeForStreaming(List<OmObservation> observations, AbstractServiceRequest<?> request) {
+        OmObservation obs = observations.iterator().next();
+        if (request instanceof AbstractObservationRequest && ((AbstractObservationRequest) request).isSetResultModel()) {
+            String requestedObservationType = ((AbstractObservationRequest) request).getResultModel();
+            if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(requestedObservationType)) {
+                if (!obs.isSetHeightDepthParameter() && obs.isSetSpatialFilteringProfileParameter() && checkForTrajectory(observations)) {
+                    return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION;
+                }
+            } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(requestedObservationType)) {
+                if (!obs.isSetHeightDepthParameter()) {
+                    return InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION;
+                }
+            } else if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(requestedObservationType) && obs.isSetHeightDepthParameter()) {
+                return InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION;
+            } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(requestedObservationType) && obs.isSetSpatialFilteringProfileParameter() && checkForTrajectory(observations)) {
+                return InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION;
+            } 
+        } else {
+            if (obs.isSetHeightDepthParameter()) {
+                return InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION;
+            } else if (obs.isSetSpatialFilteringProfileParameter() && checkForTrajectory(observations)) {
+                return InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION;
+            } 
+        }
+        // TODO default setting
+        return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
+    }
+
+    private boolean checkForTrajectory(List<OmObservation> observations) {
+        NamedValue<Geometry> first = observations.get(0).getSpatialFilteringProfileParameter();
+        NamedValue<Geometry> second = observations.get(observations.size()/2).getSpatialFilteringProfileParameter();
+        return first.getValue().getValue().distance(second.getValue().getValue()) > 0.0001;
+    }
+
+    private void putOrAdd(Map<String, List<OmObservation>> map, String type,
+            List<OmObservation> observations) {
+        if (CollectionHelper.isNotEmpty(observations)) {
+            if (map.containsKey(type)) {
+                map.get(type).addAll(observations);
+            } else {
+                map.put(type, observations);
+            }
+        }
     }
 
     @Override

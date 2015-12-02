@@ -49,6 +49,8 @@ import net.opengis.gml.x32.LineStringDocument;
 import net.opengis.gml.x32.LineStringType;
 import net.opengis.gml.x32.LinearRingType;
 import net.opengis.gml.x32.MeasureType;
+import net.opengis.gml.x32.MultiPointDocument;
+import net.opengis.gml.x32.MultiPointType;
 import net.opengis.gml.x32.PointDocument;
 import net.opengis.gml.x32.PointType;
 import net.opengis.gml.x32.PolygonDocument;
@@ -106,6 +108,7 @@ import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.util.PolygonExtracter;
@@ -544,7 +547,30 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
                 return geometryPropertyType;
             }
             return xbPolygon;
-        } else {
+        } 
+        
+        else if (geom instanceof MultiPoint) {
+            final MultiPointType xbMultiPoint = MultiPointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+            String id = geom.getGeometryType() + "_" + foiId;
+            xbMultiPoint.setId(id);
+            createMultiPointFromJtsGeometry((MultiPoint) geom, xbMultiPoint, id);
+            
+            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                MultiPointDocument xbMultiPointDoc =
+                        MultiPointDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                xbMultiPointDoc.setMultiPoint(xbMultiPoint);
+                return xbMultiPointDoc;
+            } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+                GeometryPropertyType geometryPropertyType =
+                        GeometryPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                geometryPropertyType.setAbstractGeometry(xbMultiPoint);
+                geometryPropertyType.getAbstractGeometry().substitute(GmlConstants.QN_MULTI_POINT_32, PolygonType.type);
+                return geometryPropertyType;
+            }
+            return xbMultiPoint;
+        }
+        
+        else {
             throw new UnsupportedEncoderInputException(this, geom);
         }
     }
@@ -637,6 +663,17 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
                 if (cursor.toChild(GmlConstants.QN_ABSTRACT_RING_32)) {
                     cursor.setName(GmlConstants.QN_LINEAR_RING_32);
                 }
+            }
+        }
+    }
+
+    private void createMultiPointFromJtsGeometry(MultiPoint geom, MultiPointType xbMultiPoint, String id) throws OwsExceptionReport {
+        for (int i = 0; i < geom.getNumGeometries(); i++) {
+            Geometry geometry = geom.getGeometryN(i);
+            if (geometry instanceof Point) {
+                PointType pt = xbMultiPoint.addNewPointMember().addNewPoint();
+                pt.setId(id + "_" + i);
+                createPointFromJtsGeometry((Point)geometry, pt);
             }
         }
     }

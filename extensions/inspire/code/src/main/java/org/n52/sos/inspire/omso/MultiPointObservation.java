@@ -30,17 +30,24 @@ package org.n52.sos.inspire.omso;
 
 import java.util.List;
 
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.InvalidSridException;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JTSHelper;
 
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
 public class MultiPointObservation extends OmObservation {
@@ -50,8 +57,18 @@ public class MultiPointObservation extends OmObservation {
     public MultiPointObservation() {
     }
     
-    public MultiPointObservation(OmObservation observation) {
+    public MultiPointObservation(OmObservation observation) throws CodedException {
         observation.copyTo(this);
+        if (getValue().getValue() instanceof MultiPointCoverage) {
+            SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(""));
+            samplingFeature.setEncode(true);
+            try {
+                samplingFeature.setGeometry(getEnvelope(((MultiPointCoverage)getValue().getValue()).getValue()));
+            } catch (InvalidSridException e) {
+                throw new NoApplicableCodeException().causedBy(e);
+            }
+            getObservationConstellation().setFeatureOfInterest(samplingFeature);
+        }
     }
     
     @Override
@@ -67,36 +84,76 @@ public class MultiPointObservation extends OmObservation {
         if (value.getValue() instanceof MultiPointCoverage) {
             super.setValue(value);
         } else {
-            MultiPointCoverage multiPointCoverage = new MultiPointCoverage();
+            MultiPointCoverage multiPointCoverage = new MultiPointCoverage(getObservationID());
             multiPointCoverage.setUnit(((AbstractObservationValue<?>) value).getUnit());
-            Point point = null;
-            if (isSetSpatialFilteringProfileParameter()) {
-                Geometry geometry = getSpatialFilteringProfileParameter().getValue().getValue();
-                point = geometry.getInteriorPoint();
-            } else {
-                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                    Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
-                    point = geometry.getInteriorPoint();
-                }
-            }
-            multiPointCoverage.addValue(new PointValuePair(point, value.getValue()));
-            MultiObservationValues<List<PointValuePair>> multiObservationValues = new MultiObservationValues<>();
-            multiObservationValues.setValue(multiPointCoverage);
-            super.setValue(multiObservationValues);
+            multiPointCoverage.addValue(new PointValuePair(getPoint(), value.getValue()));
+            super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), multiPointCoverage));
         }
     }
     
     @Override
-    public void mergeWithObservation(OmObservation sosObservation) {
-        // TODO Auto-generated method stub
-        super.mergeWithObservation(sosObservation);
-    }
-    
-    @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
-        // if SampPoint
-        // How to get FOI-Geom????
-        
-        super.mergeValues(observationValue);
+        if (observationValue.getValue() instanceof MultiPointCoverage) {
+            List<PointValuePair> valuesToMerge = ((MultiPointCoverage)observationValue.getValue()).getValue();
+            ((MultiPointCoverage)getValue()).addValues(valuesToMerge);
+            if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+                if (((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    try {
+                        ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getEnvelope(valuesToMerge));
+                    } catch (InvalidSridException e) {
+                        // TODO
+                    }
+                }
+            }
+        } else {
+            super.mergeValues(observationValue);
+        }
+    }
+
+    private Point getPoint() {
+        Point point = null;
+        if (isSetSpatialFilteringProfileParameter()) {
+            Geometry geometry = getSpatialFilteringProfileParameter().getValue().getValue();
+            point = geometry.getInteriorPoint();
+        } else {
+            if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                point = geometry.getInteriorPoint();
+            }
+        }
+        return point;
+    }
+
+    private Geometry getEnvelope(List<PointValuePair> pointValuePairs) {
+        Envelope envelope = new Envelope();
+        GeometryFactory factory = null;
+        if (CollectionHelper.isNotEmpty(pointValuePairs)) {
+            for (PointValuePair pointValuePair : pointValuePairs) {
+                if (factory == null && pointValuePair.getPoint() != null) {
+                    factory = pointValuePair.getPoint().getFactory();
+                }
+                envelope.expandToInclude(pointValuePair.getPoint().getEnvelopeInternal());
+            }
+        } else {
+            if (isSetSpatialFilteringProfileParameter()) {
+                Geometry geometry = getSpatialFilteringProfileParameter().getValue().getValue();
+                if (factory == null && geometry != null) {
+                    factory = geometry.getFactory();
+                }
+                envelope.expandToInclude(geometry.getEnvelopeInternal());
+            } else {
+                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                    if (factory == null && geometry != null) {
+                        factory = geometry.getFactory();
+                    }
+                    envelope.expandToInclude(geometry.getEnvelopeInternal());
+                }
+            }
+        }
+        if (factory == null) {
+            JTSHelper.getGeometryFactoryForSRID(GeometryHandler.getInstance().getStorage3DEPSG());
+        }
+        return factory.toGeometry(envelope);
     }
 }

@@ -43,10 +43,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Point;
 
 import net.opengis.gml.x32.MultiPointCoverageDocument;
-import net.opengis.gml.x32.PointPropertyType;
 
 public class MultiPointCoverageDocumentEncoder extends AbstractMultiPointCoverageTypeEncoder<MultiPointCoverageDocument> {
 
@@ -69,7 +67,7 @@ public class MultiPointCoverageDocumentEncoder extends AbstractMultiPointCoverag
     public MultiPointCoverageDocument encode(MultiPointCoverage multiPointCoverage,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport, UnsupportedEncoderInputException {
          MultiPointCoverageDocument mpcd = MultiPointCoverageDocument.Factory.newInstance();
-         mpcd.setMultiPointCoverage(encodeMultiPointCoverageType(multiPointCoverage));
+         mpcd.setMultiPointCoverage(encodeMultiPointCoverageType(mpcd.addNewMultiPointCoverage(), multiPointCoverage));
         return mpcd;
     }
 

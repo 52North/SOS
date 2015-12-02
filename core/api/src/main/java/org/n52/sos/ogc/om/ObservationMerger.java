@@ -89,7 +89,7 @@ public class ObservationMerger {
                 || (!observation.isSetAdditionalMergeIndicator() && observationToAdd.isSetAdditionalMergeIndicator())) {
             merge = false;
         }
-        merge = merge && checkObservationTypeForMerging(observation.getObservationConstellation());
+        merge = merge && checkObservationTypeForMerging(observationToAdd.getObservationConstellation());
         if (observationMergeIndicator.sameObservationConstellation()) {
             return observation.getObservationConstellation().equals(observationToAdd.getObservationConstellation()) && merge;
         }

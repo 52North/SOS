@@ -30,6 +30,8 @@ package org.n52.sos.inspire.omso;
 
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
@@ -55,16 +57,30 @@ public class ProfileObservation extends OmObservation {
     
     @Override
     public void setValue(ObservationValue<?> value) {
-        if (value instanceof RectifiedGridCoverage || value instanceof ReverencableGridCoverage) {
+        if (value instanceof StreamingValue<?>) {
+            super.setValue(value);
+        } else if (value.getValue() instanceof RectifiedGridCoverage || value.getValue() instanceof ReverencableGridCoverage) {
             super.setValue(value);
         } else {
-            
+            double heightDepth = 0;
+            if (isSetHeightDepthParameter()) {
+                heightDepth = getHeightDepthParameter().getValue().getValue();
+            }
+            RectifiedGridCoverage rectifiedGridCoverage = new RectifiedGridCoverage(getObservationID());
+            rectifiedGridCoverage.setUnit(value.getValue().getUnit());
+            rectifiedGridCoverage.addValue(heightDepth, value.getValue());
+            super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), rectifiedGridCoverage));
         }
     }
     
     @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
-        // TODO Auto-generated method stub
-        super.mergeValues(observationValue);
+      if (observationValue.getValue() instanceof RectifiedGridCoverage) {
+          ((RectifiedGridCoverage)getValue().getValue()).addValue(((RectifiedGridCoverage)observationValue.getValue()).getValue());
+//      } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
+//          ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
+      } else {
+          super.mergeValues(observationValue);
+      }
     }
 }

@@ -71,11 +71,11 @@ public class MultiPointObservationTypeEncoder extends AbstractOmInspireEncoder {
     @SuppressWarnings("unchecked")
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        if (observationValue instanceof MultiPointCoverage) {
+        if (observationValue.getValue() instanceof MultiPointCoverage) {
             Encoder<?, MultiPointCoverage> encoder = (Encoder<?, MultiPointCoverage>) getEncoder(
                     new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, MultiPointCoverage.class));
             if (encoder != null) {
-                return (XmlObject) encoder.encode((MultiPointCoverage) observationValue);
+                return (XmlObject) encoder.encode((MultiPointCoverage) observationValue.getValue());
             }
         }
         return null;

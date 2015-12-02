@@ -103,6 +103,7 @@ import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TLVTValue;
@@ -1404,6 +1405,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
         @Override
         public Observation<?> visit(MultiPointCoverage value) throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(RectifiedGridCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 

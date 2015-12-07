@@ -258,8 +258,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
                 }
                 if (samplingFeature.isSetUrl()) {
                     featurePropertyType.setHref(samplingFeature.getUrl());
-                    if (samplingFeature.isSetName()) {
-                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                    if (samplingFeature.isSetIdentifier()) {
+                        featurePropertyType.setTitle(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                    } else {
+                        if (samplingFeature.isSetName()) {
+                            featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                        }
                     }
                     return featurePropertyType;
                 } else {
@@ -659,20 +663,19 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
     }
 
     private ReferenceType createReferencType(final org.n52.sos.ogc.gml.ReferenceType sosReferenceType) {
-        if (!sosReferenceType.isSetHref()) {
-            final String exceptionText =
-                    String.format("The required 'href' parameter is empty for encoding %s!",
-                            ReferenceType.class.getName());
-            LOGGER.error(exceptionText);
-            throw new IllegalArgumentException(exceptionText);
-        }
         final ReferenceType referenceType = ReferenceType.Factory.newInstance();
-        referenceType.setHref(sosReferenceType.getHref());
-        if (sosReferenceType.isSetTitle()) {
-            referenceType.setTitle(sosReferenceType.getTitle());
-        }
-        if (sosReferenceType.isSetRole()) {
-            referenceType.setRole(sosReferenceType.getRole());
+        if (sosReferenceType.isEmpty()) {
+            referenceType.setNilReason(GmlConstants.NilReason.unknown.name());
+        } else {
+            if (sosReferenceType.isSetHref()) {
+                referenceType.setHref(sosReferenceType.getHref());
+            }
+            if (sosReferenceType.isSetTitle()) {
+                referenceType.setTitle(sosReferenceType.getTitle());
+            }
+            if (sosReferenceType.isSetRole()) {
+                referenceType.setRole(sosReferenceType.getRole());
+            }
         }
         return referenceType;
     }

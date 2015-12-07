@@ -70,4 +70,8 @@ public class ReferenceType extends AbstractReferenceType {
     public String toString() {
         return String.format("ReferenceType [title=%s, role=%s, href=%s]", getTitle(), getRole(), getHref());
     }
+
+    public boolean isEmpty() {
+        return !isSetHref() && !isSetTitle() && !isSetRole();
+    }
 }

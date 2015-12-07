@@ -55,6 +55,7 @@ import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmObservationContext;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
@@ -103,6 +104,8 @@ import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationPropertyType;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.om.x20.OMProcessPropertyType;
+import net.opengis.om.x20.ObservationContextPropertyType;
+import net.opengis.om.x20.ObservationContextType;
 import net.opengis.om.x20.TimeObjectPropertyType;
 
 
@@ -244,6 +247,7 @@ public abstract class AbstractOmEncoderv20
         setObservationIdentifier(sosObservation, xbObservation);
         setDescription(sosObservation, xbObservation);
         setObservationType(sosObservation, xbObservation);
+        setRelatedObservations(sosObservation, xbObservation);
         setPhenomenonTime(sosObservation, xbObservation);
         setResultTime(sosObservation, xbObservation);
         setValidTime(sosObservation, xbObservation);
@@ -308,6 +312,20 @@ public abstract class AbstractOmEncoderv20
     private void setObservationType(OmObservation observation, OMObservationType xb) {
         // add observationType if set
         addObservationType(xb, observation.getObservationConstellation().getObservationType());
+    }
+
+    private void setRelatedObservations(OmObservation sosObservation, OMObservationType omot) throws OwsExceptionReport {
+        if (sosObservation.isSetRelatedObservations()) {
+            for (OmObservationContext observationContext : sosObservation.getRelatedObservations()) {
+                addRelatedObservation(omot.addNewRelatedObservation(), observationContext);
+            }
+        }
+    }
+
+    private void addRelatedObservation(ObservationContextPropertyType ocpt, OmObservationContext observationContext) throws OwsExceptionReport {
+        ObservationContextType oct = ocpt.addNewObservationContext();
+        oct.addNewRole().set(encodeGML(observationContext.getRole()));
+        oct.addNewRelatedObservation().set(encodeGML(observationContext.getRelatedObservation()));
     }
 
     private void setPhenomenonTime(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {

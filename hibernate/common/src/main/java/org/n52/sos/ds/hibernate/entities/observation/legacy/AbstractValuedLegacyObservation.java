@@ -38,9 +38,12 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.ds.hibernate.util.observation.ParameterAdder;
+import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -166,6 +169,7 @@ public abstract class AbstractValuedLegacyObservation<T>
         if (hasSamplingGeometry()) {
             observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
         }
+        addRelatedObservation(observation);
         addParameter(observation);
         addValueSpecificDataToObservation(observation, responseFormat);
         addObservationValueToObservation(observation, value, responseFormat);
@@ -235,12 +239,12 @@ public abstract class AbstractValuedLegacyObservation<T>
         return new SingleObservationValue(createPhenomenonTime(), value);
     }
     
+    private void addRelatedObservation(OmObservation observation) throws OwsExceptionReport {
+        new RelatedObservationAdder(observation, this).add();
+    }
+    
     private void addParameter(OmObservation observation) throws OwsExceptionReport {
-        if (hasParameters()) {
-            for (Parameter<?> parameter : getParameters()) {
-                observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
-            }
-        }
+        new ParameterAdder(observation, this).add();
     }
 
     @Override

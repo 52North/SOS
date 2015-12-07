@@ -181,6 +181,24 @@
             </key>
             <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
         </set>
+        <set name="relatedObservations" 
+        	 table="relatedobservations" 
+			 inverse="false" 
+			 lazy="true"
+			 fetch="select">
+            <key>
+                <column name="observationId" 
+                        not-null="true" 
+                        index="relatedObsObsIdx"/>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                          foreign-key="obsRelatedObsFk">
+                <column name="relatedObservation"
+                        not-null="true"
+                        index="relatedObsRelatedObsIdx">
+	            </column>
+            </many-to-many>
+        </set>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.BlobValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
                          table="blobValue">

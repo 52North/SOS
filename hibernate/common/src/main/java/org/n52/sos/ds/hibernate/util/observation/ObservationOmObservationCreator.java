@@ -42,8 +42,6 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
-import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -178,6 +176,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
             }
+            addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);
             checkForAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs
@@ -189,12 +188,13 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return sosObservation;
     }
 
+    private void addRelatedObservations(OmObservation sosObservation, Observation<?> hObservation) throws CodedException {
+        new RelatedObservationAdder(sosObservation, hObservation).add();
+    }
+
     private void addParameter(OmObservation observation, Observation<?> hObservation) throws OwsExceptionReport {
-        if (hObservation.hasParameters()) {
-            for (Parameter<?> parameter : hObservation.getParameters()) {
-                observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
-            }
-        }
+        new ParameterAdder(observation, hObservation).add();
+        
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {
@@ -261,21 +261,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private Time getPhenomenonTime(final Observation<?> hObservation) {
-        // create time element
-        final DateTime phenStartTime = new DateTime(hObservation.getPhenomenonTimeStart(), DateTimeZone.UTC);
-        DateTime phenEndTime;
-        if (hObservation.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(hObservation.getPhenomenonTimeEnd(), DateTimeZone.UTC);
-        } else {
-            phenEndTime = phenStartTime;
-        }
-        Time phenomenonTime;
-        if (phenStartTime.equals(phenEndTime)) {
-            phenomenonTime = new TimeInstant(phenStartTime);
-        } else {
-            phenomenonTime = new TimePeriod(phenStartTime, phenEndTime);
-        }
-        return phenomenonTime;
+        return new PhenomenonTimeCreator(hObservation).create();
     }
 
     private String createPhenomenon(final Observation<?> hObservation) {

@@ -108,6 +108,8 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     private Set<OmResultQuality> qualityList = Sets.newHashSet();
 
+    private Set<OmObservationContext> relatedObservations = Sets.newHashSet();
+    
     private String additionalMergeIndicator;
 
     /**
@@ -728,6 +730,56 @@ public class OmObservation extends AbstractFeature implements Serializable {
 
     public boolean isSetResultQuality() {
         return CollectionHelper.isNotEmpty(getResultQuality());
+    }
+
+    /**
+     * Get related observations
+     * 
+     * @return the relatedObservations
+     */
+    public Set<OmObservationContext> getRelatedObservations() {
+        return relatedObservations;
+    }
+
+    /**
+     * Set related observations
+     * 
+     * @param relatedObservations
+     *            the relatedObservations to set
+     */
+    public void setRelatedObservations(Set<OmObservationContext> relatedObservations) {
+        this.relatedObservations.clear();
+        this.relatedObservations.addAll(relatedObservations);
+    }
+
+    /**
+     * Add related observations
+     * 
+     * @param relatedObservations
+     *            the relatedObservations to set
+     */
+    public void addRelatedObservations(Set<OmObservationContext> relatedObservations) {
+        this.relatedObservations.addAll(relatedObservations);
+    }
+
+    /**
+     * Add a related observation
+     * 
+     * @param relatedObservations
+     *            the relatedObservations to set
+     */
+    public void addRelatedObservation(OmObservationContext relatedObservation) {
+        ;
+        this.relatedObservations.add(relatedObservation);
+    }
+
+    /**
+     * Check if related observations are set
+     * 
+     * @return <code>true</code>, if related observations are set
+     */
+    public boolean isSetRelatedObservations() {
+        return CollectionHelper.isNotEmpty(getRelatedObservations());
     }
 
     public OmObservation setAdditionalMergeIndicator(String additionalMergeIndicator) {

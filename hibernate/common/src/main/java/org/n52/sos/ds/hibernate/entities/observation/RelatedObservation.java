@@ -28,33 +28,54 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasChildFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSamplingGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedObservations;
-import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
+public class RelatedObservation {
+    
+    private long observationId;
+    
+    private String role;
+    
+    private Observation<?> relatedObservation;
 
-/**
- * A {@code BaseObservation} is an observation without time, value, procedure,
- * observed property or feature of interest.
- *
- * @author Christian Autermann
- * @see TemporalReferencedObservation
- * @see ContextualReferencedObservation
- */
-public interface BaseObservation
-        extends IdentifierNameDescriptionEntity,
-                HasDeletedFlag,
-                HasObservationId,
-                HasSamplingGeometry,
-                HasOfferings,
-                HasChildFlag,
-                HasParentFlag,
-                HasParameters,
-                HasRelatedObservations {
+    /**
+     * @return the observationId
+     */
+    public long getObservationId() {
+        return observationId;
+    }
+
+    /**
+     * @param observationId the observationId to set
+     */
+    public void setObservationId(long observationId) {
+        this.observationId = observationId;
+    }
+
+    /**
+     * @return the role
+     */
+    public String getRole() {
+        return role;
+    }
+
+    /**
+     * @param role the role to set
+     */
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    /**
+     * @return the relatedObservation
+     */
+    public Observation<?> getRelatedObservation() {
+        return relatedObservation;
+    }
+
+    /**
+     * @param relatedObservation the relatedObservation to set
+     */
+    public void setRelatedObservation(Observation<?> relatedObservation) {
+        this.relatedObservation = relatedObservation;
+    }
 
 }

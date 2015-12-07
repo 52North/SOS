@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -498,9 +499,20 @@ public interface HibernateRelations {
 
         Set<Parameter> getParameters();
 
-        void setParameters(Object offerings);
+        void setParameters(Object parameters);
         
         boolean hasParameters();
+
+    }
+    
+    interface HasRelatedObservations {
+        String PARAMETERS = "relatedObservations";
+
+        Set<Observation<?>> getRelatedObservations();
+
+        void setRelatedObservations(Set<Observation<?>> relatedObservations);
+        
+        boolean hasRelatedObservations();
 
     }
 

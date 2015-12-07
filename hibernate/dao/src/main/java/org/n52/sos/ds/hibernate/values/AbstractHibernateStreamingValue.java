@@ -47,6 +47,7 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.ds.hibernate.util.observation.PhenomenonTimeCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -241,15 +242,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * @return phenomenon time
      */
     protected Time createPhenomenonTime(TemporalReferencedObservation abstractValue) {
-        // create time element
-        final DateTime phenStartTime = new DateTime(abstractValue.getPhenomenonTimeStart(), DateTimeZone.UTC);
-        DateTime phenEndTime;
-        if (abstractValue.getPhenomenonTimeEnd() != null) {
-            phenEndTime = new DateTime(abstractValue.getPhenomenonTimeEnd(), DateTimeZone.UTC);
-        } else {
-            phenEndTime = phenStartTime;
-        }
-        return createTime(phenStartTime, phenEndTime);
+        return new PhenomenonTimeCreator(abstractValue).create();
     }
 
     /**
@@ -336,22 +329,6 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         return null;
     }
 
-    /**
-     * Create {@link Time} from {@link DateTime}s
-     *
-     * @param start
-     *            Start {@link DateTime}
-     * @param end
-     *            End {@link DateTime}
-     * @return Resulting {@link Time}
-     */
-    protected Time createTime(DateTime start, DateTime end) {
-        if (start.equals(end)) {
-            return new TimeInstant(start);
-        } else {
-            return new TimePeriod(start, end);
-        }
-    }
 
     /**
      * Get internal {@link Value} from {@link AbstractValuedLegacyObservation}

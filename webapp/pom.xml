@@ -437,6 +437,14 @@
             <groupId>${project.groupId}</groupId>
         	<artifactId>inspire-code</artifactId>
         </dependency>
+        <dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>inspire-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>inspire-coding</artifactId>
+		</dependency>
         
         <!-- AQD eReporting -->
          <dependency>

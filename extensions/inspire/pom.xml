@@ -12,7 +12,9 @@
     <name>52°North SOS - SOS 2.0 Inspire extension</name>
     <description>52°North Sensor Observation Service Inspire extension module</description>
     <modules>
+    	<module>api</module>
         <module>code</module>
+        <module>coding</module>
     </modules>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd_HH-mm</maven.build.timestamp.format>

@@ -280,6 +280,7 @@ public class OmObservationConstellation implements Serializable, Cloneable {
      * 
      * @return <code>true</code>, if the observation can be merged
      */
+    @Deprecated
     public boolean checkObservationTypeForMerging() {
         return (isSetObservationType() && !OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)
                 && !OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equals(observationType)

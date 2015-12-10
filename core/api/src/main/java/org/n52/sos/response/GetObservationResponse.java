@@ -41,30 +41,8 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  * 
  */
-public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse{
+public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse {
     
-    /*
-     * TODO uncomment when WaterML support is activated public
-     * Collection<SosObservation> mergeObservations(boolean
-     * mergeObservationValuesWithSameParameters) { Collection<SosObservation>
-     * combinedObsCol = new ArrayList<SosObservation>(); int obsIdCounter = 1;
-     * for (SosObservation sosObservation : observationCollection) { if
-     * (combinedObsCol.isEmpty()) {
-     * sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-     * combinedObsCol.add(sosObservation); } else { boolean combined = false;
-     * for (SosObservation combinedSosObs : combinedObsCol) { if
-     * (mergeObservationValuesWithSameParameters) { if
-     * (combinedSosObs.getObservationConstellation().equals(
-     * sosObservation.getObservationConstellation())) {
-     * combinedSosObs.mergeWithObservation(sosObservation, false); combined =
-     * true; break; } } else { if
-     * (combinedSosObs.getObservationConstellation().equalsExcludingObsProp(
-     * sosObservation.getObservationConstellation())) {
-     * combinedSosObs.mergeWithObservation(sosObservation, true); combined =
-     * true; break; } } } if (!combined) { combinedObsCol.add(sosObservation); }
-     * } } return combinedObsCol; }
-     */
-
     @Override
     public String getOperationName() {
         return SosConstants.Operations.GetObservation.name();

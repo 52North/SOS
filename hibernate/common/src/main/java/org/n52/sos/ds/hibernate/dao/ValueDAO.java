@@ -28,7 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -36,6 +38,7 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
@@ -54,6 +57,8 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of {@link AbstractValueDAO} for old concept
@@ -83,13 +88,45 @@ public class ValueDAO extends AbstractValueDAO {
      *            Hibernate Session
      * @return Resulting {@link ScrollableResults}
      * @throws HibernateException
-     *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
      * @throws OwsExceptionReport
-     *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
      */
     public ScrollableResults getStreamingValuesFor(GetObservationRequest request, long procedure,
             long observableProperty, long featureOfInterest, Criterion temporalFilterCriterion, Session session)
-            throws HibernateException, OwsExceptionReport {
+                    throws HibernateException, OwsExceptionReport {
+        return getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion,
+                session).scroll(ScrollMode.FORWARD_ONLY);
+    }
+
+    /**
+     * Query streaming value for parameter as {@link ScrollableResults}
+     *
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link ScrollableResults}
+     * @throws HibernateException
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
+     */
+    public ScrollableResults getStreamingValuesFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion,
+            Session session) throws HibernateException, OwsExceptionReport {
         return getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion,
                 session).scroll(ScrollMode.FORWARD_ONLY);
     }
@@ -109,12 +146,37 @@ public class ValueDAO extends AbstractValueDAO {
      *            Hibernate Session
      * @return Resulting {@link ScrollableResults}
      * @throws OwsExceptionReport
-     *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
      */
     public ScrollableResults getStreamingValuesFor(GetObservationRequest request, long procedure,
             long observableProperty, long featureOfInterest, Session session) throws OwsExceptionReport {
-        return getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session).scroll(
-                ScrollMode.FORWARD_ONLY);
+        return getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session)
+                .scroll(ScrollMode.FORWARD_ONLY);
+    }
+
+    /**
+     * Query streaming value for parameter as {@link ScrollableResults}
+     *
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link ScrollableResults}
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
+     */
+    public ScrollableResults getStreamingValuesFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Session session) throws HibernateException, OwsExceptionReport {
+        return getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session)
+                .scroll(ScrollMode.FORWARD_ONLY);
     }
 
     /**
@@ -138,15 +200,50 @@ public class ValueDAO extends AbstractValueDAO {
      *            Hibernate Session
      * @return Resulting chunk {@link List}
      * @throws OwsExceptionReport
-     *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
      */
     @SuppressWarnings("unchecked")
     public List<ValuedObservation<?>> getStreamingValuesFor(GetObservationRequest request, long procedure,
             long observableProperty, long featureOfInterest, Criterion temporalFilterCriterion, int chunkSize,
             int currentRow, Session session) throws OwsExceptionReport {
-        Criteria c =
-                getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
-                        temporalFilterCriterion, session);
+        Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
+                temporalFilterCriterion, session);
+        addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+        LOGGER.debug("QUERY getStreamingValuesFor(): {}", HibernateHelper.getSqlString(c));
+        return (List<ValuedObservation<?>>) c.list();
+    }
+
+    /**
+     * Query streaming value for parameter as chunk {@link List}
+     *
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param chunkSize
+     *            chunk size
+     * @param currentRow
+     *            Start row
+     * @param session
+     *            Hibernate Session
+     * @return Resulting chunk {@link List}
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
+     */
+    @SuppressWarnings("unchecked")
+    public Collection<ValuedObservation<?>> getStreamingValuesFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion,
+            int chunkSize, int currentRow, Session session) throws OwsExceptionReport {
+        Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
+                temporalFilterCriterion, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
         LOGGER.debug("QUERY getStreamingValuesFor(): {}", HibernateHelper.getSqlString(c));
         return (List<ValuedObservation<?>>) c.list();
@@ -171,12 +268,45 @@ public class ValueDAO extends AbstractValueDAO {
      *            Hibernate Session
      * @return Resulting chunk {@link List}
      * @throws OwsExceptionReport
-     *             If an error occurs when querying the {@link AbstractValuedLegacyObservation}s
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
      */
     @SuppressWarnings("unchecked")
     public List<ValuedObservation<?>> getStreamingValuesFor(GetObservationRequest request, long procedure,
             long observableProperty, long featureOfInterest, int chunkSize, int currentRow, Session session)
-            throws OwsExceptionReport {
+                    throws OwsExceptionReport {
+        Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session);
+        addChunkValuesToCriteria(c, chunkSize, currentRow, request);
+        LOGGER.debug("QUERY getStreamingValuesFor(): {}", HibernateHelper.getSqlString(c));
+        return (List<ValuedObservation<?>>) c.list();
+    }
+
+    /**
+     * Query streaming value for parameter as chunk {@link List}
+     *
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param chunkSize
+     *            Chunk size
+     * @param currentRow
+     *            Start row
+     * @param session
+     *            Hibernate Session
+     * @return Resulting chunk {@link List}
+     * @throws OwsExceptionReport
+     *             If an error occurs when querying the
+     *             {@link AbstractValuedLegacyObservation}s
+     */
+    @SuppressWarnings("unchecked")
+    public Collection<ValuedObservation<?>> getStreamingValuesFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, int chunkSize, int currentRow,
+            Session session) throws OwsExceptionReport {
         Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session);
         addChunkValuesToCriteria(c, chunkSize, currentRow, request);
         LOGGER.debug("QUERY getStreamingValuesFor(): {}", HibernateHelper.getSqlString(c));
@@ -205,21 +335,54 @@ public class ValueDAO extends AbstractValueDAO {
      */
     private Criteria getValueCriteriaFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
-        final Criteria c =
-                getDefaultObservationCriteria(AbstractValuedLegacyObservation.class, session)
-                        .createAlias(AbstractValuedLegacyObservation.PROCEDURE, "p")
-                        .createAlias(AbstractValuedLegacyObservation.FEATURE_OF_INTEREST, "f")
-                        .createAlias(AbstractValuedLegacyObservation.OBSERVABLE_PROPERTY, "o");
+        return getValueCriteriaFor(request, Sets.newHashSet(procedure), Sets.newHashSet(observableProperty),
+                Sets.newHashSet(featureOfInterest), temporalFilterCriterion, session);
+    }
 
+    /**
+     * Get {@link Criteria} for parameter
+     *
+     * @param request
+     *            {@link GetObservationRequest}
+     * @param procedure
+     *            Datasource procedure ids
+     * @param observableProperty
+     *            Datasource procedure ids
+     * @param featureOfInterest
+     *            Datasource procedure ids
+     * @param temporalFilterCriterion
+     *            Temporal filter {@link Criterion}
+     * @param session
+     *            Hibernate Session
+     * @return Resulting {@link Criteria}
+     * @throws OwsExceptionReport
+     *             If an error occurs when adding Spatial Filtering Profile
+     *             restrictions
+     */
+    private Criteria getValueCriteriaFor(GetObservationRequest request, Set<Long> procedure,
+            Set<Long> observableProperty, Set<Long> featureOfInterest, Criterion temporalFilterCriterion,
+            Session session) throws OwsExceptionReport {
+        final Criteria c = getDefaultObservationCriteria(AbstractValuedLegacyObservation.class, session);
+        c.addOrder(Order.asc(getOrderColumn(request)));
+        
         checkAndAddSpatialFilteringProfileCriterion(c, request, session);
 
-        c.add(Restrictions.eq("p." + Procedure.ID, procedure));
-        c.add(Restrictions.eq("o." + ObservableProperty.ID, observableProperty));
-        c.add(Restrictions.eq("f." + FeatureOfInterest.ID, featureOfInterest));
+        if (CollectionHelper.isNotEmpty(procedure)) {
+            c.createAlias(AbstractValuedLegacyObservation.PROCEDURE, "p");
+            c.add(Restrictions.in("p." + Procedure.ID, procedure));
+        }
+        if (CollectionHelper.isNotEmpty(observableProperty)) {
+            c.createAlias(AbstractValuedLegacyObservation.OBSERVABLE_PROPERTY, "o");
+            c.add(Restrictions.in("o." + ObservableProperty.ID, observableProperty));
+        }
+        if (CollectionHelper.isNotEmpty(featureOfInterest)) {
+            c.createAlias(AbstractValuedLegacyObservation.FEATURE_OF_INTEREST, "f");
+            c.add(Restrictions.in("f." + FeatureOfInterest.ID, featureOfInterest));
+        }
 
         if (CollectionHelper.isNotEmpty(request.getOfferings())) {
-            c.createCriteria(AbstractValuedLegacyObservation.OFFERINGS).add(
-                    Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
+            c.createCriteria(AbstractValuedLegacyObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, request.getOfferings()));
         }
 
         String logArgs = "request, series, offerings";
@@ -231,7 +394,7 @@ public class ValueDAO extends AbstractValueDAO {
         if (request.isSetFesFilterExtension()) {
             new ExtensionFesFilterCriteriaAdder(c, request.getFesFilterExtensions()).add();
         }
-        LOGGER.debug("QUERY getStreamingValuesFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        LOGGER.debug("QUERY getValueCriteriaFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c.setReadOnly(true);
     }
 
@@ -268,9 +431,22 @@ public class ValueDAO extends AbstractValueDAO {
      */
     public String getUnit(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Session session) throws OwsExceptionReport {
+        return getUnit(request, Sets.newHashSet(procedure), Sets.newHashSet(observableProperty),
+                Sets.newHashSet(featureOfInterest), session);
+//        Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session);
+//        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(AbstractValuedLegacyObservation.UNIT))
+//                .uniqueResult();
+//        if (unit != null && unit.isSetUnit()) {
+//            return unit.getUnit();
+//        }
+//        return null;
+    }
+
+    public String getUnit(GetObservationRequest request, Set<Long> procedure, Set<Long> observableProperty,
+            Set<Long> featureOfInterest, Session session) throws OwsExceptionReport {
         Criteria c = getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null, session);
-        Unit unit =
-                (Unit) c.setMaxResults(1).setProjection(Projections.property(AbstractValuedLegacyObservation.UNIT)).uniqueResult();
+        Unit unit = (Unit) c.setMaxResults(1).setProjection(Projections.property(AbstractValuedLegacyObservation.UNIT))
+                .uniqueResult();
         if (unit != null && unit.isSetUnit()) {
             return unit.getUnit();
         }
@@ -279,7 +455,7 @@ public class ValueDAO extends AbstractValueDAO {
 
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
-        // nothing  to add
+        // nothing to add
     }
 
 }

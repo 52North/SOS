@@ -139,11 +139,6 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
     private XmlObject createFeature(final AbstractFeature absFeature) throws OwsExceptionReport {
         if (absFeature instanceof SamplingFeature) {
             final SamplingFeature sampFeat = (SamplingFeature) absFeature;
-            final StringBuilder builder = new StringBuilder();
-            builder.append("ssf_");
-            builder.append(JavaHelper.generateID(absFeature.getIdentifierCodeWithAuthority().getValue()));
-            absFeature.setGmlId(builder.toString());
-
             final SFSpatialSamplingFeatureDocument xbSampFeatDoc = SFSpatialSamplingFeatureDocument.Factory
                     .newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
             if (sampFeat.getXmlDescription() != null) {
@@ -232,6 +227,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
 
             // set position
             encodeShape(xbSampFeature.addNewShape(), sampFeat);
+            sampFeat.wasEncoded();
             return xbSampFeatDoc;
         }
         throw new UnsupportedEncoderInputException(this, absFeature);

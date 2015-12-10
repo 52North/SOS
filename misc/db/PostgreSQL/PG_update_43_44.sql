@@ -45,7 +45,6 @@ alter table public.complexValue add constraint observationComplexValueFk foreign
 
 create table public.compositeObservation (observationId int8 not null, childObservationId int8 not null, primary key (observationId, childObservationId));
 alter table public.compositeObservation add constraint observationChildFk foreign key (childObservationId) references public.observation;
-alter table public.compositeObservation add constraint observationParentFK foreign key (observationId) references public.complexValue;
 
 -- spatial index
 create index featureGeomIdx on public.featureOfInterest USING GIST (geom);

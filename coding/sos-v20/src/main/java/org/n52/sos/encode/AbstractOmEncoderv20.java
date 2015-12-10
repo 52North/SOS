@@ -67,12 +67,16 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -159,6 +163,8 @@ public abstract class AbstractOmEncoderv20
      * @return Indicator
      */
     protected abstract boolean convertEncodedProcedure();
+    
+    protected abstract OMObservationType createOmObservationType(); 
 
     @Override
     public boolean forceStreaming() {
@@ -266,7 +272,7 @@ public abstract class AbstractOmEncoderv20
             return xbObservation;
         }
     }
-
+    
     private XmlObject createObservationDocument(OMObservationType xbObservation) {
         OMObservationDocument doc = createObservationDocument();
         doc.setOMObservation(xbObservation);
@@ -309,7 +315,7 @@ public abstract class AbstractOmEncoderv20
         }
     }
 
-    private void setObservationType(OmObservation observation, OMObservationType xb) {
+    protected void setObservationType(OmObservation observation, OMObservationType xb) {
         // add observationType if set
         addObservationType(xb, observation.getObservationConstellation().getObservationType());
     }
@@ -622,10 +628,6 @@ public abstract class AbstractOmEncoderv20
         return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 
-    private static OMObservationType createOmObservationType() {
-        return OMObservationType.Factory.newInstance(getXmlOptions());
-    }
-
     private static OMObservationPropertyType createObservationPropertyType() {
         return OMObservationPropertyType.Factory.newInstance(getXmlOptions());
     }
@@ -726,12 +728,32 @@ public abstract class AbstractOmEncoderv20
         public XmlObject visit(TVPValue value) {
             return defaultValue(value);
         }
+        
+        @Override
+        public XmlObject visit(TLVTValue value) {
+            return defaultValue(value);
+        }
 
         @Override
         public XmlObject visit(TextValue value) {
             XmlString xmlString = XmlString.Factory.newInstance();
             xmlString.setStringValue(value.getValue());
             return xmlString;
+        }
+
+        @Override
+        public XmlObject visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            return defaultValue(value);
+        }
+
+        @Override
+        public XmlObject visit(MultiPointCoverage value) throws OwsExceptionReport {
+            return defaultValue(value);
+        }
+
+        @Override
+        public XmlObject visit(RectifiedGridCoverage value) throws OwsExceptionReport {
+            return defaultValue(value);
         }
 
         @Override

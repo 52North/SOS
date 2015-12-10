@@ -56,9 +56,11 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -177,6 +179,10 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
         }
+    }
+    
+    protected OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance(getXmlOptions());
     }
 
     @Override
@@ -351,28 +357,39 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             }
         } else if (observationValue instanceof MultiObservationValues) {
             MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue;
-            TVPValue tvpValue = (TVPValue) multiObservationValue.getValue();
-            List<TimeValuePair> timeValuePairs = tvpValue.getValue();
-            unit = tvpValue.getUnit();
-            for (TimeValuePair timeValuePair : timeValuePairs) {
-                if (timeValuePair.getValue() instanceof QuantityValue) {
-                    QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-                    if (!quantityValue.getValue().equals(Double.NaN)) {
-                        timeValuePair.getTime();
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Double.toString(quantityValue.getValue().doubleValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
-                    }
-                } else if (timeValuePair.getValue() instanceof CountValue) {
-                    CountValue countValue = (CountValue) timeValuePair.getValue();
-                    if (countValue.getValue() != null) {
-                        String time = getTimeString(timeValuePair.getTime());
-                        String value = Integer.toString(countValue.getValue().intValue());
-                        addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-                                value);
+            if (multiObservationValue.getValue() instanceof TVPValue) {
+                TVPValue tvpValue = (TVPValue) multiObservationValue.getValue();
+                List<TimeValuePair> timeValuePairs = tvpValue.getValue();
+                unit = tvpValue.getUnit();
+                for (TimeValuePair timeValuePair : timeValuePairs) {
+                    if (timeValuePair.getValue() instanceof QuantityValue) {
+                        QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
+                        if (!quantityValue.getValue().equals(Double.NaN)) {
+                            timeValuePair.getTime();
+                            String time = getTimeString(timeValuePair.getTime());
+                            String value = Double.toString(quantityValue.getValue().doubleValue());
+                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                                    value);
+                        }
+                    } else if (timeValuePair.getValue() instanceof CountValue) {
+                        CountValue countValue = (CountValue) timeValuePair.getValue();
+                        if (countValue.getValue() != null) {
+                            String time = getTimeString(timeValuePair.getTime());
+                            String value = Integer.toString(countValue.getValue().intValue());
+                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                                    value);
+                        }
                     }
                 }
+//            } else if (multiObservationValue.getValue() instanceof TLVTValue) {
+//                TLVTValue tlvpValue = (TLVTValue) multiObservationValue.getValue();
+//                List<TimeLocationValueTriple> timeLocationValuePairs = tlvpValue.getValue();
+//                unit = tlvpValue.getUnit();
+//                for (TimeLocationValueTriple timeLocationValuePair : timeLocationValuePairs) {
+//                    measurementTimeseries.addNewPoint().a
+//                }
+            } else {
+                // TODO throw exception
             }
         }
         // set uom

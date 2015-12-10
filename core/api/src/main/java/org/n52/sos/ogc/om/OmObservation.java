@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -97,10 +96,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /** no data value for the values contained in the result element */
     private String noDataValue;
 
-    /** separator of value tuples, which are contained in the resulte element */
+    /** separator of value tuples, which are contained in the result element */
     private String tupleSeparator;
     
-    /** separator of decimal values, which are contained in the resulte element */
+    /** separator of decimal values, which are contained in the result element */
     private String decimalSeparator;
 
     /**
@@ -335,7 +334,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void mergeWithObservation(final OmObservation sosObservation) {
         mergeValues(sosObservation.getValue());
         mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
+//        setObservationTypeToSweArrayObservation();
     }
 
     /**
@@ -347,7 +346,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public void mergeWithObservation(ObservationValue<?> observationValue) {
         mergeValues(observationValue);
         // mergeResultTimes(sosObservation);
-        setObservationTypeToSweArrayObservation();
+//        setObservationTypeToSweArrayObservation();
     }
 
     /**
@@ -380,7 +379,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      * @param observationValue
      *            Observation to merge
      */
-    private void mergeValues(final ObservationValue<?> observationValue) {
+    protected void mergeValues(final ObservationValue<?> observationValue) {
         TVPValue tvpValue;
         if (getValue() instanceof SingleObservationValue) {
             tvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value);
@@ -680,7 +679,10 @@ public class OmObservation extends AbstractFeature implements Serializable {
     }
     
     public OmObservation cloneTemplate() {
-        OmObservation clone = new OmObservation();
+       return cloneTemplate(new OmObservation());
+    }
+    
+    protected OmObservation cloneTemplate(OmObservation clone) {
         clone.setObservationConstellation(this.getObservationConstellation());
         clone.setParameter(this.getParameter());
         clone.setResultType(this.getResultType());
@@ -689,6 +691,24 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setDecimalSeparator(this.getDecimalSeparator());
         return clone;
     }
+    
+    public OmObservation copyTo(OmObservation copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setObservationID(getObservationID());
+        copyOf.setResultTime(getResultTime());
+        copyOf.setValidTime(getValidTime());
+        copyOf.setObservationConstellation(getObservationConstellation());
+        copyOf.setResultType(getResultType());
+        copyOf.setParameter(getParameter());
+        copyOf.setValue(getValue());
+        copyOf.setTokenSeparator(getTokenSeparator());
+        copyOf.setNoDataValue(getNoDataValue());
+        copyOf.setTupleSeparator(getTupleSeparator());
+        copyOf.setDecimalSeparator(getDecimalSeparator());
+        copyOf.setResultQuality(getResultQuality());
+        copyOf.setAdditionalMergeIndicator(getAdditionalMergeIndicator());
+        return copyOf;
+    } 
 
     @Override
     public String getGmlId() {

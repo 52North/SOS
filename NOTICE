@@ -11,6 +11,7 @@ This project includes:
   52°North Aggregated Third Party modules under GPLv2
   52°North AQD - 1.0 XML Coding under GPLv2
   52°North Sensor Observation Service under GPLv2
+  52°North SOS -  GMLCOV 1.0 XML Request Coding under GPLv2
   52°North SOS - 2.0 XML Request Coding under GPLv2
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
   52°North SOS - Abstract SensorML Coding Module under GPLv2
@@ -20,6 +21,7 @@ This project includes:
   52°North SOS - AQD Split and Merge observations module under GPLv2
   52°North SOS - Binding Modules under GPLv2
   52°North SOS - Cache under GPLv2
+  52°North SOS - Coding Module for INSPIRE under GPLv2
   52°North SOS - Coding Modules under GPLv2
   52°North SOS - Converter Modules under GPLv2
   52°North SOS - Coordinate transformation module under GPLv2
@@ -98,6 +100,9 @@ This project includes:
   52°North SOS - Web Views under GPLv2
   52°North SOS - Webapp under GPLv2
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
+  52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
+  52°North Svalbard - GML XML Request Coding under GPLv2
+  52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
   AntLR Parser Generator under BSD License
@@ -154,6 +159,10 @@ This project includes:
   HSQLDB under HSQLDB License
   HttpClient under Apache License
   HttpCore under Apache License
+  INSPIRE base schema (spec. v3.3) under The Apache Software License, Version 2.0
+  INSPIRE OM Observation References schema (spec. v3.0) under The Apache Software License, Version 2.0
+  INSPIRE OM Specialised Observation schema (spec. v3.0) under The Apache Software License, Version 2.0
+  ISO 19139 CV_DiscreteCoverage model (spec. v0.2.2) under The Apache Software License, Version 2.0
   Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
@@ -202,6 +211,7 @@ This project includes:
   OGC GML Coverage schema (spec. v1.0) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.1.1) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
+  OGC GML schema (spec. v3.3) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0
@@ -259,7 +269,7 @@ This project includes:
   W3C WS-Addressing specification schemas (v1.0) under The Apache Software License, Version 2.0
   W3C xlink schema (spec. v1.1.0) under The Apache Software License, Version 2.0
   xalan under The Apache Software License, Version 2.0
-  Xerces2 Java Parser under The Apache Software License, Version 2.0
+  Xerces2-j under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs under The Apache Software License, Version 2.0
   XML Commons External Components XML APIs Extensions under The Apache Software License, Version 2.0
   XmlBeans under The Apache Software License, Version 2.0

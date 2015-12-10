@@ -37,10 +37,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.encode.AbstractResponseEncoder;
 import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
@@ -132,36 +130,26 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
      *            {@link AbstractServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
      */
+    @SuppressWarnings("unchecked")
     protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
         OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getContentType());
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
+        Encoder<?, ?> encoder = getEncoder(key);
         if (encoder == null) {
             throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
                     getContentType())));
         }
-        return encoder;
+        return (Encoder<Object, AbstractServiceResponse>)encoder;
     }
     
-    /**
-     * Getter for encoder, encapsulates the instance call
-     * 
-     * @param key
-     *            Encoder key
-     * @return Matching encoder
-     */
-    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
-        return CodingRepository.getInstance().getEncoder(key);
-    }
-    
-	protected XmlObject encodeWithSosEncoder(T response) throws OwsExceptionReport {
-		Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
-		if (encoder != null) {
-			Object encode = encoder.encode(response);
+    protected XmlObject encodeWithSosEncoder(T response) throws OwsExceptionReport {
+        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
+        if (encoder != null) {
+            Object encode = encoder.encode(response);
             if (encode != null && encode instanceof XmlObject) {
-            	return (XmlObject)encode;
+                return (XmlObject) encode;
             }
-		}
-		return null;
-	}
+        }
+        return null;
+    }
 
 }

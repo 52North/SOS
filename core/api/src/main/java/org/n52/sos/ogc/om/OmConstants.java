@@ -206,13 +206,20 @@ public interface OmConstants {
 
     String OBS_TYPE_GEOMETRY_OBSERVATION =
             "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_GeometryObservation";
-
-    // no Definition in O&M and not in Lightweight Profile
-    String OBS_TYPE_TEXT_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation";
-
+    
     String OBS_TYPE_TRUTH_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TruthObservation";
 
     String OBS_TYPE_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Observation";
+    
+    // coverage observation types
+    String OBS_TYPE_DISCRETE_COVERAGE_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_DiscreteCoverageObservation";
+    
+    String OBS_TYPE_POINT_COVERAGE_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_PointCoverageObservation";
+    
+    String OBS_TYPE_TIME_SERIES_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TimeSeriesObservation";
+
+    // no Definition in O&M and not in Lightweight Profile
+    String OBS_TYPE_TEXT_OBSERVATION = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_TextObservation";
 
     String OBS_TYPE_UNKNOWN = OGCConstants.UNKNOWN;
 

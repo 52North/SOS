@@ -165,6 +165,21 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-gml-cov</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-cv-gml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>core-v100</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -340,6 +355,11 @@
 			
 			<dependency>
 				<groupId>${project.groupId}</groupId>
+				<artifactId>coding-inspire-omso</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>inspire-api</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -506,11 +526,11 @@
                 <artifactId>joda-time</artifactId>
                 <version>2.3</version>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.9.1</version>
-            </dependency>
+            </dependency> -->
             
             <!-- Hibernate Core Dependencies -->
             <dependency>
@@ -579,6 +599,32 @@
                 <artifactId>sqlite-jdbc</artifactId>
                 <version>${sqlite.version}</version>
             </dependency>
+            <!-- TODO change if dependencies are officially released -->
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-cv-v022</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-base-v33</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omor-v30</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-inspire-omso-v30</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gml-v33</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-gml-v311</artifactId>
@@ -589,6 +635,11 @@
                 <artifactId>52n-xml-gml-v321</artifactId>
                 <version>${n52.common.xml.version}</version>
             </dependency>
+            <dependency>
+	            <groupId>org.n52.sensorweb</groupId>
+	            <artifactId>52n-xml-gmlcov-v10</artifactId>
+	            <version>${n52.common.xml.version}</version>
+	        </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-filter-v20</artifactId>
@@ -1614,7 +1665,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>check</goal>
+                                    <goal>generate</goal>
                                 </goals>
                             </execution>
                         </executions>

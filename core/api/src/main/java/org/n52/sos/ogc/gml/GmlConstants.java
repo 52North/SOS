@@ -134,6 +134,8 @@ public interface GmlConstants extends Constants {
     String EN_MULTIPOINT = "MultiPoint";
 
     String EN_POLYGON = "Polygon";
+    
+    String EN_MULTI_POINT = "MultiPoint";
 
     String EN_LOWER_CORNER = "lowerCorner";
 
@@ -171,6 +173,9 @@ public interface GmlConstants extends Constants {
 
     QName QN_POLYGON_32 = new QName(NS_GML_32, EN_POLYGON, NS_GML_PREFIX);
 
+    QName QN_MULTI_POINT_32 = new QName(NS_GML_32, EN_MULTI_POINT, NS_GML_PREFIX);
+
+    
     QName QN_TIME_INSTANT = new QName(NS_GML, EN_TIME_INSTANT, NS_GML_PREFIX);
 
     QName QN_TIME_PERIOD = new QName(NS_GML, EN_TIME_PERIOD, NS_GML_PREFIX);

@@ -66,7 +66,8 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
     @Override
     public void setValue(List<TimeValuePair> value) {
-        this.value = value;
+        this.value.clear();
+        this.value.addAll(value);
     }
 
     @Override

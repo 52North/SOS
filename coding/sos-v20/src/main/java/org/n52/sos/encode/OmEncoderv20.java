@@ -62,12 +62,16 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
@@ -174,7 +178,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(OmConstants.OM_20_SCHEMA_LOCATION);
     }
-
+    
     @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
             UnsupportedEncoderInputException {
@@ -197,6 +201,10 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
         }
+    }
+    
+    protected OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance(getXmlOptions());
     }
 
     @Override
@@ -278,6 +286,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                             : encodedObj);
         }
     }
+    
     protected static XmlObject encodeSWE(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
@@ -325,9 +334,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 throws OwsExceptionReport {
             if (observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)){
                 if (value.isSetValue() && !value.getValue().isEmpty()) {
-                    Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
-                    additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId);
-                    return encodeGML(value, additionalValue);
+                    return encodeGML(value);
                 }
             }
             return null;
@@ -421,6 +428,12 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 throws OwsExceptionReport {
             return null;
         }
+        
+        @Override
+        public XmlObject visit(TLVTValue value)
+                throws OwsExceptionReport {
+            return null;
+        }
 
         @Override
         public XmlObject visit(TextValue value)
@@ -441,6 +454,21 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         @Override
         public XmlObject visit(UnknownValue value)
                 throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(CvDiscretePointCoverage value) throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
             return null;
         }
     }

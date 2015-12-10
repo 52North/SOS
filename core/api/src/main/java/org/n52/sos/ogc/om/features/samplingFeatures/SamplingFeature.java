@@ -39,6 +39,7 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
@@ -98,6 +99,8 @@ public class SamplingFeature extends AbstractFeature {
      */
     private Collection<SamplingFeatureComplex> relatedSamplingFeatures;
 
+    private boolean wasEncoded = false;
+
     /**
      * constructor
      * 
@@ -146,6 +149,22 @@ public class SamplingFeature extends AbstractFeature {
      */
     public void setXmlDescription(final String xmlDescription) {
         this.xmlDescription = xmlDescription;
+    }
+    
+    @Override
+    public boolean isSetGmlID() {
+        return super.isSetGmlID() && wasEncoded;
+    }
+    
+    @Override
+    public String getGmlId() {
+        if (!super.isSetGmlID()) {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("ssf_");
+            builder.append(JavaHelper.generateID(getIdentifierCodeWithAuthority().getValue()));
+            setGmlId(builder.toString());
+        }
+        return super.getGmlId();
     }
 
     /**
@@ -323,6 +342,10 @@ public class SamplingFeature extends AbstractFeature {
      */
     public void setEncode(final boolean encode) {
         this.encode = encode;
+    }
+    
+    public void wasEncoded() {
+        this.wasEncoded  = true;
     }
 
     /**

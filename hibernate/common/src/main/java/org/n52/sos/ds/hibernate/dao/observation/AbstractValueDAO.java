@@ -160,13 +160,12 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * @param request 
      */
     protected void addChunkValuesToCriteria(Criteria c, int chunkSize, int currentRow, GetObservationRequest request) {
-        c.addOrder(Order.asc(getOrderColumn(request)));
         if (chunkSize > 0) {
             c.setMaxResults(chunkSize).setFirstResult(currentRow);
         }
     }
     
-    private String getOrderColumn(GetObservationRequest request) {
+    protected String getOrderColumn(GetObservationRequest request) {
         if (request.isSetTemporalFilter()) {
             TemporalFilter filter = request.getTemporalFilters().iterator().next();
             if (filter.getValueReference().contains(AbstractTemporalReferencedObservation.RESULT_TIME)) {

@@ -22,5 +22,9 @@
 		<module>json-common</module>
 		<module>exi</module>
 		<module>netcdf</module>
+		<module>cv-gml</module>
+		<module>gml</module>
+		<module>gml-cov</module>
+		<module>inspire</module>
     </modules>
 </project>

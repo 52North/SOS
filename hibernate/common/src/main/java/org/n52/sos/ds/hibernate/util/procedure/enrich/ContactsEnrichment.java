@@ -129,7 +129,7 @@ public class ContactsEnrichment extends SensorMLEnrichment {
 
     private Role createRole() {
         Role role =
-                new Role("Point of Contact").setCodeList(CodeList.CI_ROLE_CODE_URL)
+                (Role)new Role("Point of Contact").setCodeList(CodeList.CI_ROLE_CODE_URL)
                         .setCodeListValue(CodeList.CiRoleCodes.CI_RoleCode_pointOfContact.name());
         return role;
     }

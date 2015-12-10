@@ -26,10 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.base2;
+package org.n52.sos.iso.gmd;
 
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 
-public class DocumentCitation extends SimpleAttrs {
+public class MDDataIdentification extends AbstractMDIdentification {
+
+    private String language;
+
+    public MDDataIdentification(SimpleAttrs simpleAttrs) {
+        super(simpleAttrs);
+    }
+
+    public MDDataIdentification(GmdCitation citation, String abstrakt, String language) {
+        super(citation, abstrakt);
+        this.language = language;
+    }
+
+    /**
+     * @return the language
+     */
+    public String getLanguage() {
+        return language;
+    }
 
 }

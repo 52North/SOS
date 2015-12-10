@@ -26,10 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.base2;
+package org.n52.sos.iso.gco;
 
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+public class Role extends AbstractRole {
 
-public class DocumentCitation extends SimpleAttrs {
+    public Role(String value) {
+        super(value);
+    }
 
 }

@@ -26,10 +26,60 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.base2;
+package org.n52.sos.iso.gmd;
 
+import org.n52.sos.iso.gco.AbstractObject;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 
-public class DocumentCitation extends SimpleAttrs {
+public abstract class AbstractMDIdentification extends AbstractObject implements AttributeSimpleAttrs {
+
+    private SimpleAttrs simpleAttrs;
+    /**
+     * 1..1
+     */
+    private GmdCitation citation;
+    /**
+     * 1..1
+     */
+    private String abstrakt;
+    
+    public AbstractMDIdentification(SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+    }
+    
+    public AbstractMDIdentification(GmdCitation citation, String abstrakt) {
+        this.citation = citation;
+        this.abstrakt = abstrakt;
+    }
+    
+    @Override
+    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
+       this.simpleAttrs = simpleAttrs;
+    }
+
+    @Override
+    public SimpleAttrs getSimpleAttrs() {
+        return simpleAttrs;
+    }
+
+    @Override
+    public boolean isSetSimpleAttrs() {
+        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+    }
+
+    /**
+     * @return the citation
+     */
+    public GmdCitation getCitation() {
+        return citation;
+    }
+
+    /**
+     * @return the abstrakt
+     */
+    public String getAbstrakt() {
+        return abstrakt;
+    }
 
 }

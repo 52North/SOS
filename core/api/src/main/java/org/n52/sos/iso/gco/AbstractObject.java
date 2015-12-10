@@ -26,10 +26,57 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.base2;
+package org.n52.sos.iso.gco;
 
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+public abstract class AbstractObject {
 
-public class DocumentCitation extends SimpleAttrs {
+    private String id;
+    
+    private String uuid;
+    
+    protected AbstractObject() {
+        
+    }
+    
+    public AbstractObject(String id, String uuid) {
+        this.id = id;
+        this.uuid = uuid;
+    }
+
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public boolean isSetId() {
+        return id != null && !id.isEmpty();
+    }
+
+    /**
+     * @return the uuid
+     */
+    public String getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public boolean isSetUuid() {
+        return uuid != null && !uuid.isEmpty();
+    }
 
 }

@@ -26,10 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.base2;
+package org.n52.sos.w3c.xlink;
 
-import org.n52.sos.w3c.xlink.SimpleAttrs;
-
-public class DocumentCitation extends SimpleAttrs {
+public interface AttributeSimpleAttrs {
+    
+    void setSimpleAttrs(SimpleAttrs simpleAttrs);
+    
+    SimpleAttrs getSimpleAttrs();
+    
+    boolean isSetSimpleAttrs();
 
 }

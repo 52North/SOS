@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML;
 
-import org.n52.sos.iso.CodeList;
+import org.n52.sos.iso.gco.AbstractRole;
 
 /**
  * Class that represents SensorML Role
@@ -37,73 +37,9 @@ import org.n52.sos.iso.CodeList;
  * @since 4.2.0
  *
  */
-public class Role {
-
-    private String value;
-
-    private String codeList = CodeList.CI_ROLE_CODE_URL;
-
-    private String codeListValue = CodeList.CiRoleCodes.CI_RoleCode_pointOfContact.name();
+public class Role extends AbstractRole {
 
     public Role(String value) {
-        this.value = value;
+        super(value);
     }
-
-    /**
-     * @return the value
-     */
-    public String getValue() {
-        return value;
-    }
-
-    /**
-     * @param value
-     *            the value to set
-     */
-    public Role setValue(String value) {
-        this.value = value;
-        return this;
-    }
-
-    /**
-     * @return the codeList
-     */
-    public String getCodeList() {
-        return codeList;
-    }
-
-    /**
-     * @param codeList
-     *            the codeList to set
-     */
-    public Role setCodeList(String codeList) {
-        this.codeList = codeList;
-        return this;
-    }
-
-    /**
-     * @return the codeListValue
-     */
-    public String getCodeListValue() {
-        return codeListValue;
-    }
-
-    /**
-     * @param codeListValue
-     *            the codeListValue to set
-     */
-    public Role setCodeListValue(String codeListValue) {
-        this.codeListValue = codeListValue;
-        return this;
-    }
-
-    /**
-     * @param codeListValue
-     *            the codeListValue to set
-     */
-    public Role setCodeListValue(CodeList.CiRoleCodes codeListValue) {
-        this.codeListValue = codeListValue.name();
-        return this;
-    }
-
 }

@@ -26,10 +26,44 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.base2;
+package org.n52.sos.ds.hibernate.entities.observation;
 
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import java.io.Serializable;
 
-public class DocumentCitation extends SimpleAttrs {
+public class RelatedObservationId implements Serializable {
+
+    private Observation<?> observation;
+
+    private Observation<?> relatedObservation;
+
+    /**
+     * @return the observation
+     */
+    public Observation<?> getObservation() {
+        return observation;
+    }
+
+    /**
+     * @param observation
+     *            the observation to set
+     */
+    public void setObservation(Observation<?> observation) {
+        this.observation = observation;
+    }
+
+    /**
+     * @return the relatedObservation
+     */
+    public Observation<?> getRelatedObservation() {
+        return relatedObservation;
+    }
+
+    /**
+     * @param relatedObservation
+     *            the relatedObservation to set
+     */
+    public void setRelatedObservation(Observation<?> relatedObservation) {
+        this.relatedObservation = relatedObservation;
+    }
 
 }

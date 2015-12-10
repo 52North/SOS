@@ -31,7 +31,7 @@ package org.n52.sos.w3c.xlink;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.W3CConstants;
 
-public abstract class SimpleAttrs {
+public class SimpleAttrs {
     
     private String href;
     

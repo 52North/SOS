@@ -326,7 +326,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
         BaseUnitType xbBaseUnit =
                 (BaseUnitType) valueUnit.addNewUnitDefinition().substitute(QN_GML_BASE_UNIT, BaseUnitType.type);
         CodeType xbCatalogSymbol = xbBaseUnit.addNewCatalogSymbol();
-        xbCatalogSymbol.setCodeSpace(unit.getCatalogSymbol().getCodeSpace());
+        xbCatalogSymbol.setCodeSpace(unit.getCatalogSymbol().getCodeSpace().toString());
         xbCatalogSymbol.setStringValue(unit.getCatalogSymbol().getValue());
         xbBaseUnit.setId(unit.getId());
         xbBaseUnit.addNewUnitsSystem().setHref(unit.getUnitSystem());

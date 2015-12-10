@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -423,21 +424,38 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 // specific locale was requested
                 Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
                 if (name.isPresent()) {
-                    samplingFeature.addName(name.get().asCodeType());
+                    try {
+                        samplingFeature.addName(name.get().asCodeType());
+                    } catch (URISyntaxException e) {
+                        throw new NoApplicableCodeException().causedBy(e)
+                                .withMessage("Error while creating URI from '{}'", name.get().getLang().toString());
+                    }
                 }
-                Optional<LocalizedString> description = i18n.getDescription().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
+                Optional<LocalizedString> description =
+                        i18n.getDescription().getLocalizationOrDefault(requestedLocale, this.defaultLocale);
                 if (description.isPresent()) {
                     samplingFeature.setDescription(description.get().getText());
+
                 }
             } else {
                 if (this.showAllLanguages) {
                     for (LocalizedString name : i18n.getName()) {
-                        samplingFeature.addName(name.asCodeType());
+                        try {
+                            samplingFeature.addName(name.asCodeType());
+                        } catch (URISyntaxException e) {
+                            throw new NoApplicableCodeException().causedBy(e)
+                                    .withMessage("Error while creating URI from '{}'", name.getLang().toString());
+                        }
                     }
                 } else {
                     Optional<LocalizedString> name = i18n.getName().getLocalization(this.defaultLocale);
                     if (name.isPresent()) {
-                        samplingFeature.addName(name.get().asCodeType());
+                        try {
+                            samplingFeature.addName(name.get().asCodeType());
+                        } catch (URISyntaxException e) {
+                            throw new NoApplicableCodeException().causedBy(e).withMessage(
+                                    "Error while creating URI from '{}'", name.get().getLang().toString());
+                        }
                     }
                 }
                 // choose always the description in the default locale

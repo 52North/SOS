@@ -88,7 +88,7 @@
 		<sqljdbc4.version>4.0</sqljdbc4.version>
 
 		<!-- 52N dependency versions -->
-		<iceland.version>1.1.0-SNAPSHOT</iceland.version>
+		<iceland.version>1.2.0-SNAPSHOT</iceland.version>
 		<n52.common.xml.version>2.1.0</n52.common.xml.version>
 		<!-- Remove third party ncname resolver from SOS and use OXF instead -->
 		<!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->

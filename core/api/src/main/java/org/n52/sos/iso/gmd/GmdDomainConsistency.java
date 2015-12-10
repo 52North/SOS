@@ -28,6 +28,9 @@
  */
 package org.n52.sos.iso.gmd;
 
+
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 
@@ -49,12 +52,12 @@ public abstract class GmdDomainConsistency implements OmResultQuality {
         return new GmdConformanceResult(nilReason, GmdSpecification.timeCoverage());
     }
 
-    public static GmdQuantitativeResult uncertaintyEstimation(double value) {
+    public static GmdQuantitativeResult uncertaintyEstimation(double value) throws CodedException {
         return new GmdQuantitativeResult( GmlBaseUnit.uncertaintyEstimation().unifyId(value),
                                          Double.toString(value));
     }
 
-    public static GmdQuantitativeResult uncertaintyEstimation(GmlConstants.NilReason nilReason) {
+    public static GmdQuantitativeResult uncertaintyEstimation(GmlConstants.NilReason nilReason) throws CodedException {
         return new GmdQuantitativeResult(GmlBaseUnit.uncertaintyEstimation().unifyId(nilReason), nilReason);
     }
 

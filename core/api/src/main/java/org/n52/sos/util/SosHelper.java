@@ -29,6 +29,8 @@
 package org.n52.sos.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +65,6 @@ import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.MinMax;
 import org.n52.iceland.util.StringHelper;
 import org.n52.oxf.xml.NcNameResolver;
@@ -89,7 +90,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
-public class SosHelper implements Constants {
+public class SosHelper {
 
     private static Configuration config = new Configuration();
 
@@ -114,27 +115,27 @@ public class SosHelper implements Constants {
         // URL pattern for KVP
         url.append(urlPattern);
         // ?
-        url.append(Constants.QUERSTIONMARK_CHAR);
+        url.append('?');
         return url.toString();
     }
 
     private static String getRequest(String requestName) {
-        return new StringBuilder().append(RequestParams.request.name()).append(EQUAL_SIGN_CHAR).append(requestName)
+        return new StringBuilder().append(RequestParams.request.name()).append('=').append(requestName)
                 .toString();
     }
 
     private static String getServiceParam() {
-        return new StringBuilder().append(AMPERSAND_CHAR).append(OWSConstants.RequestParams.service.name())
-                .append(EQUAL_SIGN_CHAR).append(SosConstants.SOS).toString();
+        return new StringBuilder().append('&').append(OWSConstants.RequestParams.service.name())
+                .append('=').append(SosConstants.SOS).toString();
     }
 
     private static String getVersionParam(String version) {
-        return new StringBuilder().append(AMPERSAND_CHAR).append(OWSConstants.RequestParams.version.name())
-                .append(EQUAL_SIGN_CHAR).append(version).toString();
+        return new StringBuilder().append('&').append(OWSConstants.RequestParams.version.name())
+                .append('=').append(version).toString();
     }
 
     private static String getParameter(String name, String value) {
-        return new StringBuilder().append(AMPERSAND_CHAR).append(name).append(EQUAL_SIGN_CHAR).append(value)
+        return new StringBuilder().append('&').append(name).append('=').append(value)
                 .toString();
     }
 
@@ -284,8 +285,7 @@ public class SosHelper implements Constants {
             final String urlSrsPrefix = getConfiguration().getSrsNamePrefixSosV2();
             try {
                 srid =
-                        Integer.valueOf(srsName.replace(urnSrsPrefix, Constants.EMPTY_STRING).replace(urlSrsPrefix,
-                                Constants.EMPTY_STRING));
+                        Integer.valueOf(srsName.replace(urnSrsPrefix, "").replace(urlSrsPrefix, ""));
             } catch (final NumberFormatException nfe) {
                 throw new InvalidParameterValueException()
                         .causedBy(nfe)
@@ -632,24 +632,24 @@ public class SosHelper implements Constants {
             for (final CodeType value : values) {
                 builder.append(value.getValue());
                 if (value.isSetCodeSpace()) {
-                    builder.append(CSV_TOKEN_SEPARATOR);
+                    builder.append("@@");
                     builder.append(value.getCodeSpace());
                 }
-                builder.append(CSV_BLOCK_SEPARATOR);
+                builder.append(",");
             }
-            builder.delete(builder.lastIndexOf(CSV_BLOCK_SEPARATOR), builder.length());
+            builder.delete(builder.lastIndexOf(","), builder.length());
         }
         return builder.toString();
     }
 
-    public static List<CodeType> createCodeTypeListFromCSV(final String csv) {
+    public static List<CodeType> createCodeTypeListFromCSV(final String csv) throws URISyntaxException {
         final List<CodeType> names = new ArrayList<CodeType>(0);
         if (StringHelper.isNotEmpty(csv)) {
-            for (final String nameCodespaces : csv.split(CSV_BLOCK_SEPARATOR)) {
-                String[] nameCodespace = nameCodespaces.split(CSV_TOKEN_SEPARATOR);
+            for (final String nameCodespaces : csv.split(",")) {
+                String[] nameCodespace = nameCodespaces.split("@@");
                 CodeType codeType = new CodeType(nameCodespace[0]);
                 if (nameCodespace.length == 2) {
-                    codeType.setCodeSpace(nameCodespace[1]);
+                    codeType.setCodeSpace(new URI(nameCodespace[1]));
                 }
                 names.add(codeType);
             }

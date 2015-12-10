@@ -28,6 +28,11 @@
  */
 package org.n52.sos.iso.gmd;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.JavaHelper;
@@ -40,12 +45,14 @@ import org.n52.iceland.util.JavaHelper;
 public class GmlBaseUnit {
 
     private String id;
+
     private final String identifier;
+
     private final CodeType catalogSymbol;
+
     private final String unitSystem;
 
-    public GmlBaseUnit(String id, String identifier, CodeType catalogSymbol,
-                       String unitSystem) {
+    public GmlBaseUnit(String id, String identifier, CodeType catalogSymbol, String unitSystem) {
         this.id = id;
         this.identifier = identifier;
         this.catalogSymbol = catalogSymbol;
@@ -57,7 +64,7 @@ public class GmlBaseUnit {
     }
 
     public GmlBaseUnit unifyId(Object object) {
-        id = id + Constants.UNDERSCORE_STRING + JavaHelper.generateID(object.toString());
+        id = id + "_" + JavaHelper.generateID(object.toString());
         return this;
     }
 
@@ -73,8 +80,16 @@ public class GmlBaseUnit {
         return unitSystem;
     }
 
-    public static GmlBaseUnit uncertaintyEstimation() {
-        return new GmlBaseUnit("PercentageUnit", "http://dd.eionet.europa.eu/vocabularies/aq/resultquality/uncertaintyestimation/", new CodeType("%", "http://www.opengis.net/def/uom/UCUM/"), "http://www.opengis.net/def/uom/UCUM/");
+    public static GmlBaseUnit uncertaintyEstimation() throws CodedException {
+        try {
+            return new GmlBaseUnit("PercentageUnit",
+                    "http://dd.eionet.europa.eu/vocabularies/aq/resultquality/uncertaintyestimation/",
+                    new CodeType("%", new URI("http://www.opengis.net/def/uom/UCUM/")),
+                    "http://www.opengis.net/def/uom/UCUM/");
+        } catch (URISyntaxException urise) {
+            throw new NoApplicableCodeException().causedBy(urise).withMessage("Error while createing URI from '{}'!",
+                    "http://www.opengis.net/def/uom/UCUM/");
+        }
     }
 
 }

@@ -36,6 +36,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -75,7 +76,7 @@ public class ReportingHeaderReaderTest {
     @Test
     public void testValidity()
             throws XMLStreamException, OwsExceptionReport,
-                                       SAXException, MalformedURLException, IOException {
+                                       SAXException, MalformedURLException, IOException, URISyntaxException {
         EReportingHeader header
                 = new EReportingHeader()
                         .setInspireID(new InspireID()
@@ -110,8 +111,8 @@ public class ReportingHeaderReaderTest {
                                                 .addAddressArea(Nillable
                                                         .<GeographicalName>withheld())
                                                 .addAddressArea(new GeographicalName()
-                                                        .setGrammaticalGender(new CodeType("a", "b"))
-                                                        .setGrammaticalNumber(new CodeType("c", "d"))
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
                                                         .setNameStatus(Nillable
@@ -128,8 +129,8 @@ public class ReportingHeaderReaderTest {
                                                         )
                                                 )
                                                 .addAdminUnit(new GeographicalName()
-                                                        .setGrammaticalGender(new CodeType("a", "b"))
-                                                        .setGrammaticalNumber(new CodeType("c", "d"))
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
                                                         .setNameStatus(Nillable
@@ -147,8 +148,8 @@ public class ReportingHeaderReaderTest {
                                                 .addPostName(Nillable
                                                         .<GeographicalName>withheld())
                                                 .addPostName(new GeographicalName()
-                                                        .setGrammaticalGender(new CodeType("a", "b"))
-                                                        .setGrammaticalNumber(new CodeType("c", "d"))
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
                                                         .setNameStatus(Nillable
@@ -166,8 +167,8 @@ public class ReportingHeaderReaderTest {
                                                 .addThoroughfare(Nillable
                                                         .<GeographicalName>withheld())
                                                 .addThoroughfare(new GeographicalName()
-                                                        .setGrammaticalGender(new CodeType("a", "b"))
-                                                        .setGrammaticalNumber(new CodeType("c", "d"))
+                                                        .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                        .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
                                                         .setNameStatus(Nillable

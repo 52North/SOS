@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.gml.CodeType;
@@ -127,7 +128,7 @@ public class FeatureDecoder extends JSONDecoder<AbstractFeature> {
         return geometryDecoder.decodeJSON(node.path(GEOMETRY), false);
     }
 
-    private List<CodeType> parseNames(JsonNode node) {
+    private List<CodeType> parseNames(JsonNode node) throws CodedException {
         final JsonNode name = node.path(NAME);
         if (name.isArray()) {
             ArrayList<CodeType> codeTypes = new ArrayList<CodeType>(name.size());

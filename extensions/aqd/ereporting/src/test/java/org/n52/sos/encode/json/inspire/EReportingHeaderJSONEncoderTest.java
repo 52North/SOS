@@ -29,6 +29,7 @@
 package org.n52.sos.encode.json.inspire;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.joda.time.DateTime;
 import org.junit.ClassRule;
@@ -65,7 +66,7 @@ public class EReportingHeaderJSONEncoderTest {
 
     @Test
     public void test()
-            throws OwsExceptionReport {
+            throws OwsExceptionReport, URISyntaxException {
         EReportingHeader header
                 = new EReportingHeader()
                 .setInspireID(new InspireID()
@@ -100,8 +101,8 @@ public class EReportingHeaderJSONEncoderTest {
                                         .addAddressArea(Nillable
                                                 .<GeographicalName>withheld())
                                         .addAddressArea(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
@@ -118,8 +119,8 @@ public class EReportingHeaderJSONEncoderTest {
                                                 )
                                         )
                                         .addAdminUnit(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
@@ -137,8 +138,8 @@ public class EReportingHeaderJSONEncoderTest {
                                         .addPostName(Nillable
                                                 .<GeographicalName>withheld())
                                         .addPostName(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
@@ -156,8 +157,8 @@ public class EReportingHeaderJSONEncoderTest {
                                         .addThoroughfare(Nillable
                                                 .<GeographicalName>withheld())
                                         .addThoroughfare(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable

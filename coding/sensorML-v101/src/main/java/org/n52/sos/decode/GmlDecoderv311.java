@@ -28,6 +28,8 @@
  */
 package org.n52.sos.decode;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Set;
 
@@ -44,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.GmlConstants;
@@ -175,10 +178,14 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
         return ti;
     }
 
-    private org.n52.iceland.ogc.gml.CodeType parseCodeType(CodeType element) {
+    private org.n52.iceland.ogc.gml.CodeType parseCodeType(CodeType element) throws CodedException {
         org.n52.iceland.ogc.gml.CodeType codeType = new org.n52.iceland.ogc.gml.CodeType(element.getStringValue());
         if (element.isSetCodeSpace()) {
-            codeType.setCodeSpace(element.getCodeSpace());
+            try {
+                codeType.setCodeSpace(new URI(element.getCodeSpace()));
+            } catch (URISyntaxException e) {
+                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", element.getCodeSpace());
+            }
         }
         return codeType;
     }

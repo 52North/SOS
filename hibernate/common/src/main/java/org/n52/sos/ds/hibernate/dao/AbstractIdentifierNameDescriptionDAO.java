@@ -28,9 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import org.hibernate.Session;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.I18NFeatureMetadata;
@@ -82,7 +86,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         String value = name != null && name.isSetValue()
                                ? name.getValue() : null;
         String codespace = name != null && name.isSetCodeSpace()
-                                   ? name.getCodeSpace() : OGCConstants.UNKNOWN;
+                                   ? name.getCodeSpace().toString() : OGCConstants.UNKNOWN;
         entity.setName(value);
         entity.setCodespaceName(new CodespaceDAO()
                 .getOrInsertCodespace(codespace, session));
@@ -101,7 +105,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
-                                                   IdentifierNameDescriptionEntity entity) {
+                                                   IdentifierNameDescriptionEntity entity) throws CodedException {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
@@ -115,11 +119,15 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return identifier;
     }
 
-    public CodeType getName(IdentifierNameDescriptionEntity entity) {
+    public CodeType getName(IdentifierNameDescriptionEntity entity) throws CodedException {
         if (entity.isSetName()) {
             CodeType name = new CodeType(entity.getName());
             if (entity.isSetCodespaceName()) {
-                name.setCodeSpace(entity.getCodespaceName().getCodespace());
+                try {
+                    name.setCodeSpace(new URI(entity.getCodespaceName().getCodespace()));
+                } catch (URISyntaxException e) {
+                    throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", entity.getCodespaceName().getCodespace());
+                }
             }
             return name;
         }
@@ -137,7 +145,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         CodespaceDAO codespaceDAO = new CodespaceDAO();
         I18NDAO<I18NFeatureMetadata> dao = I18NDAORepository.getInstance().getDAO(I18NFeatureMetadata.class);
         for (CodeType codeType : name) {
-            Codespace codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace(), session);
+            Codespace codespace = codespaceDAO.getOrInsertCodespace(codeType.getCodeSpace().toString(), session);
 //            i18ndao.insertI18N(feature, new I18NInsertionObject(codespace, codeType.getValue()), session);
         }
     }

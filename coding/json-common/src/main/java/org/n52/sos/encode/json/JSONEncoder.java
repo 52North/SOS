@@ -142,7 +142,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
 
     protected JsonNode encodeCodeType(CodeType codeType) {
         if (codeType.isSetCodeSpace()) {
-            return nodeFactory().objectNode().put(JSONConstants.CODESPACE, codeType.getCodeSpace())
+            return nodeFactory().objectNode().put(JSONConstants.CODESPACE, codeType.getCodeSpace().toString())
                     .put(JSONConstants.VALUE, codeType.getValue());
         } else {
             return nodeFactory().textNode(codeType.getValue());

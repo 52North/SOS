@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.aqd.AqdConstants;
@@ -74,7 +75,7 @@ public class EReportingObservationCreator implements AdditionalObservationCreato
     }
 
     @Override
-    public OmObservation create(OmObservation omObservation, Observation<?> observation) {
+    public OmObservation create(OmObservation omObservation, Observation<?> observation) throws CodedException {
         if (observation instanceof EReportingObservation) {
             EReportingObservation<?> eReportingObservation = (EReportingObservation<?>) observation;
             create(omObservation, eReportingObservation.getEReportingSeries());

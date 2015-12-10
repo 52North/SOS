@@ -31,11 +31,11 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.ogc.gml.GmlConstants;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.JavaHelper;
 import org.n52.sos.aqd.AqdConstants;
@@ -91,10 +91,11 @@ public class EReportingHelper {
      *            {@link EReportingValue} to create {@link ObservationValue}
      *            from
      * @return Created {@link ObservationValue}.
+     * @throws CodedException
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static SingleObservationValue<?> createSweDataArrayValue(OmObservation omObservation,
-            EReportingValues observation) {
+            EReportingValues observation) throws CodedException {
         SweDataArrayValue sweDataArrayValue = new SweDataArrayValue();
         sweDataArrayValue.setValue(createSweDataArray(omObservation, observation));
         SingleObservationValue observationValue = new SingleObservationValue(sweDataArrayValue);
@@ -213,7 +214,7 @@ public class EReportingHelper {
         if (value != null) {
             list.add(Double.toString(value));
         } else {
-            list.add(Constants.EMPTY_STRING);
+            list.add("");
         }
 
     }
@@ -222,7 +223,7 @@ public class EReportingHelper {
         if (value != null) {
             list.add(Integer.toString(value));
         } else {
-            list.add(Constants.EMPTY_STRING);
+            list.add("");
         }
     }
 
@@ -230,7 +231,7 @@ public class EReportingHelper {
         if (omObservation.getValue() instanceof SingleObservationValue<?>) {
             value.add(JavaHelper.asString(omObservation.getValue().getValue().getValue()));
         } else {
-            value.add(Constants.EMPTY_STRING);
+            value.add("");
         }
     }
 
@@ -243,7 +244,7 @@ public class EReportingHelper {
                 value.add(observation.getValueAsString());
             }
         } else {
-            value.add(Constants.EMPTY_STRING);
+            value.add("");
         }
     }
 
@@ -269,8 +270,8 @@ public class EReportingHelper {
             value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getStart()));
             value.add(DateTimeHelper.formatDateTime2IsoString(((TimePeriod) time).getEnd()));
         } else {
-            value.add(Constants.EMPTY_STRING);
-            value.add(Constants.EMPTY_STRING);
+            value.add("");
+            value.add("");
         }
     }
 
@@ -290,11 +291,11 @@ public class EReportingHelper {
         return time;
     }
 
-    private static void addQuality(EReportingValues eReportingObservation, SingleObservationValue<?> value) {
+    private static void addQuality(EReportingValues eReportingObservation, SingleObservationValue<?> value) throws CodedException {
         value.addQualityList(getGmdDomainConsistency(eReportingObservation, false));
     }
 
-    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) {
+    public static Set<OmResultQuality> getGmdDomainConsistency(EReportingQualityData eReportingObservation, boolean force) throws CodedException {
         Set<OmResultQuality> set = Sets.newHashSet();
         if (eReportingObservation.isSetDataCaptureFlag()) {
             set.add(GmdDomainConsistency.dataCapture(eReportingObservation.getDataCaptureFlag()));

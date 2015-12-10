@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import javax.xml.XMLConstants;
@@ -69,7 +70,7 @@ public class EReportingHeaderEncoderTest {
     @Test
     public void testValidity()
             throws XMLStreamException, OwsExceptionReport, SAXException,
-                   MalformedURLException, IOException {
+                   MalformedURLException, IOException, URISyntaxException {
         EReportingHeader header
                 = new EReportingHeader()
                 .setInspireID(new InspireID()
@@ -104,8 +105,8 @@ public class EReportingHeaderEncoderTest {
                                         .addAddressArea(Nillable
                                                 .<GeographicalName>withheld())
                                         .addAddressArea(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
@@ -122,8 +123,8 @@ public class EReportingHeaderEncoderTest {
                                                 )
                                         )
                                         .addAdminUnit(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
@@ -141,8 +142,8 @@ public class EReportingHeaderEncoderTest {
                                         .addPostName(Nillable
                                                 .<GeographicalName>withheld())
                                         .addPostName(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable
@@ -160,8 +161,8 @@ public class EReportingHeaderEncoderTest {
                                         .addThoroughfare(Nillable
                                                 .<GeographicalName>withheld())
                                         .addThoroughfare(new GeographicalName()
-                                                .setGrammaticalGender(new CodeType("a", "b"))
-                                                .setGrammaticalNumber(new CodeType("c", "d"))
+                                                .setGrammaticalGender(new CodeType("a", new URI("b")))
+                                                .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                 .setLanguage("eng")
                                                 .setNativeness(new CodeType("<asdfasdf"))
                                                 .setNameStatus(Nillable

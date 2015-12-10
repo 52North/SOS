@@ -28,9 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Set;
 
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -55,7 +57,12 @@ public class ObservablePropertyEnrichment extends ProcedureDescriptionEnrichment
                     OmObservableProperty observableProperty = new OmObservableProperty(i18n.getIdentifier());
                     Optional<LocalizedString> name = i18n.getName().getLocalizationOrDefault(getLocale());
                     if (name.isPresent()) {
-                        observableProperty.addName(name.get().asCodeType());
+                        try {
+                            observableProperty.addName(name.get().asCodeType());
+                        } catch (URISyntaxException e) {
+                            throw new NoApplicableCodeException().causedBy(e).withMessage(
+                                    "Error while creating URI from '{}'", name.get().getLang().toString());
+                        }
                     }
                     getDescription().addPhenomenon(observableProperty);
                 }

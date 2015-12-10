@@ -34,6 +34,7 @@ import static org.hamcrest.core.Is.is;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -56,7 +57,7 @@ public class GeographicalNameReaderTest {
     public final ErrorCollector errors = new ErrorCollector();
 
     @Test
-    public void test() throws UnsupportedEncodingException, XMLStreamException, OwsExceptionReport {
+    public void test() throws UnsupportedEncodingException, XMLStreamException, OwsExceptionReport, URISyntaxException {
 
         String xml = "<gn:GeographicalName xmlns:gn=\"urn:x-inspire:specification:gmlas:GeographicalNames:3.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n" +
                      "  <gn:language>eng</gn:language>\n" +
@@ -83,8 +84,8 @@ public class GeographicalNameReaderTest {
         GeographicalName gn = new GeographicalNameReader()
                 .read(new ByteArrayInputStream(xml.getBytes("UTF-8")));
 
-        errors.checkThat(gn.getGrammaticalGender(), is(Nillable.of(new CodeType("a", "b"))));
-        errors.checkThat(gn.getGrammaticalNumber(), is(Nillable.of(new CodeType("c", "d"))));
+        errors.checkThat(gn.getGrammaticalGender(), is(Nillable.of(new CodeType("a", new URI("b")))));
+        errors.checkThat(gn.getGrammaticalNumber(), is(Nillable.of(new CodeType("c", new URI("d")))));
         errors.checkThat(gn.getLanguage(), is(Nillable.of("eng")));
         errors.checkThat(gn.getNativeness(), is(Nillable.of(new CodeType("<asdfasdf"))));
         errors.checkThat(gn.getNameStatus(), is(Nillable.<CodeType>unknown()));

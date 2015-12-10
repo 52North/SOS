@@ -626,7 +626,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
         return sosOfferings;
     }
-    private void addSosOfferingToObservationOffering(String offering, SosObservationOffering sosObservationOffering, GetCapabilitiesRequest request) {
+    private void addSosOfferingToObservationOffering(String offering, SosObservationOffering sosObservationOffering, GetCapabilitiesRequest request) throws CodedException {
         SosOffering sosOffering = new SosOffering(offering, false);
         sosObservationOffering.setOffering(sosOffering);
         // add offering name

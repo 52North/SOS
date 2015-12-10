@@ -442,7 +442,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     private XmlObject createCodeType(org.n52.iceland.ogc.gml.CodeType sosCodeType) {
         CodeType codeType = CodeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        codeType.setCodeSpace(sosCodeType.getCodeSpace());
+        codeType.setCodeSpace(sosCodeType.getCodeSpace().toString());
         codeType.setStringValue(sosCodeType.getValue());
         return codeType;
     }

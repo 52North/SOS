@@ -35,6 +35,7 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
@@ -67,7 +68,7 @@ public abstract class ProcedureDescriptionEnrichment {
         return Configurator.getInstance().getCache();
     }
 
-    protected Collection<SosOffering> getSosOfferings() {
+    protected Collection<SosOffering> getSosOfferings() throws CodedException {
         Collection<String> identifiers = getCache()
                 .getOfferingsForProcedure(getIdentifier());
         Collection<SosOffering> offerings = Lists

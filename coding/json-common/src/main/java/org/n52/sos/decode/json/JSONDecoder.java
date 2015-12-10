@@ -30,12 +30,13 @@ package org.n52.sos.decode.json;
 
 import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
@@ -51,8 +52,9 @@ import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
 import org.n52.sos.coding.json.JSONConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -66,6 +68,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  */
 public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JSONDecoder.class);
     private final Set<DecoderKey> decoderKeys;
 
     public JSONDecoder(Class<T> type) {
@@ -185,18 +188,22 @@ public abstract class JSONDecoder<T> implements Decoder<T, JsonNode> {
     }
 
     protected CodeType parseCodeType(JsonNode node) {
-        if (node.isObject()) {
-            String value = node.path(JSONConstants.VALUE).textValue();
-            String codespace = node.path(JSONConstants.CODESPACE).textValue();
-            if (codespace == null || codespace.isEmpty()) {
-                codespace = OGCConstants.UNKNOWN;
+        try {
+            if (node.isObject()) {
+                String value = node.path(JSONConstants.VALUE).textValue();
+                String codespace = node.path(JSONConstants.CODESPACE).textValue();
+                if (codespace == null || codespace.isEmpty()) {
+                    codespace = OGCConstants.UNKNOWN;
+                }
+                return (CodeType) new CodeType(value).setCodeSpace(new URI(codespace));
+            } else if (node.isTextual()) {
+
+                return (CodeType) new CodeType(node.textValue()).setCodeSpace(new URI(OGCConstants.UNKNOWN));
             }
-            return new CodeType(value).setCodeSpace(codespace);
-        } else if (node.isTextual()) {
-            return new CodeType(node.textValue()).setCodeSpace(OGCConstants.UNKNOWN);
-        } else {
-            return null;
+        } catch (URISyntaxException e) {
+            LOGGER.error("Error while creating URI!", e);
         }
+        return null;
     }
 
     public abstract T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport;

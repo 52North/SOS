@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
@@ -89,8 +90,9 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
      * Merge offering sosEnvelopes.
      *
      * @return merged sosEnvelope
+     * @throws CodedException
      */
-    protected SosEnvelope createEnvelopeForOfferings() {
+    protected SosEnvelope createEnvelopeForOfferings() throws CodedException {
         final SosEnvelope mergedEnvelope = new SosEnvelope();
         for (final SosOffering offering : getSosOfferings()) {
             mergedEnvelope.expandToInclude(getEnvelope(offering));

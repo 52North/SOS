@@ -183,29 +183,6 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         }
     }
 
-    /**
-     * Get observation value from all value tables for an Observation object
-     *
-     * @param hObservation
-     *            Observation object
-     *
-     * @return Observation value
-     *
-     * @throws OwsExceptionReport
-     * @throws CodedException
-     *
-     *
-     * User {@link Observation#accept(org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor)}
-     */
-    @Deprecated
-    private Value<?> getValueFromObservation(Observation<?> hObservation)
-            throws OwsExceptionReport {
-        Value<?> value = hObservation.accept(new ObservationValueCreator());
-//        if (value != null && hObservation.isSetUnit()) {
-//            value.setUnit(hObservation.getUnit().getUnit());
-//        }
-        return value;
-    }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private OmObservation createNewObservation(OmObservationConstellation oc, Observation<?> ho, Value<?> value) {
@@ -255,7 +232,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         return phenomenonTime;
     }
 
-    private String createPhenomenon(final Observation<?> hObservation) {
+    private String createPhenomenon(final Observation<?> hObservation) throws CodedException {
         LOGGER.trace("Creating Phenomenon...");
         final String phenID = hObservation.getObservableProperty().getIdentifier();
         if (!observedProperties.containsKey(phenID)) {

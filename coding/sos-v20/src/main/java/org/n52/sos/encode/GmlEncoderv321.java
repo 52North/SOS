@@ -705,7 +705,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         final CodeType codeType = CodeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         codeType.setStringValue(sosCodeType.getValue());
         if (sosCodeType.isSetCodeSpace()) {
-            codeType.setCodeSpace(sosCodeType.getCodeSpace());
+            codeType.setCodeSpace(sosCodeType.getCodeSpace().toString());
         } else {
             codeType.setCodeSpace(OGCConstants.UNKNOWN);
         }

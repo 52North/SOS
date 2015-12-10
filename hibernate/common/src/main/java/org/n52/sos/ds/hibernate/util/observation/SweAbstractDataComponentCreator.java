@@ -28,7 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.CodeType;
@@ -83,21 +87,21 @@ public class SweAbstractDataComponentCreator
     }
 
     @Override
-    public SweQuantity visit(NumericValuedObservation o) {
+    public SweQuantity visit(NumericValuedObservation o) throws CodedException {
         SweQuantity component = new SweQuantity();
         component.setValue(o.getValue().doubleValue());
         return setCommonValues(component, o);
     }
 
     @Override
-    public SweBoolean visit(BooleanValuedObservation o) {
+    public SweBoolean visit(BooleanValuedObservation o) throws CodedException {
         SweBoolean component = new SweBoolean();
         component.setValue(o.getValue());
         return setCommonValues(component, o);
     }
 
     @Override
-    public SweCategory visit(CategoryValuedObservation o) {
+    public SweCategory visit(CategoryValuedObservation o) throws CodedException {
         SweCategory component = new SweCategory();
         component.setValue(o.getValue());
         return setCommonValues(component, o);
@@ -121,7 +125,7 @@ public class SweAbstractDataComponentCreator
     }
 
     @Override
-    public SweCount visit(CountValuedObservation o) {
+    public SweCount visit(CountValuedObservation o) throws CodedException {
         SweCount component = new SweCount();
         component.setValue(o.getValue());
         return setCommonValues(component, o);
@@ -143,7 +147,7 @@ public class SweAbstractDataComponentCreator
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(
-            T component, ValuedObservation<?> valuedObservation) {
+            T component, ValuedObservation<?> valuedObservation) throws CodedException {
 
         if (valuedObservation instanceof ContextualReferencedObservation) {
             ContextualReferencedObservation observation
@@ -154,7 +158,12 @@ public class SweAbstractDataComponentCreator
             component.setDescription(op.getDescription());
             if (op.getCodespace() != null) {
                 String codespace = op.getCodespaceName().getCodespace();
-                component.setName(new CodeType(op.getName(), codespace));
+                try {
+                    component.setName(new CodeType(op.getName(), new URI(codespace)));
+                } catch (URISyntaxException e) {
+                    throw new NoApplicableCodeException().causedBy(e).withMessage(
+                            "Error while creating URI from '{}'", codespace);
+                }
             } else {
                 component.setName(op.getName());
             }

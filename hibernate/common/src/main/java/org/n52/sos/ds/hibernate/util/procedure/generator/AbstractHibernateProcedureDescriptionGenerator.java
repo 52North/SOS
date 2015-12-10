@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.generator;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -48,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
@@ -135,7 +137,11 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
                 I18NProcedureMetadata i18n = i18nDAO.getMetadata(procedure.getIdentifier(), requestedLocale);
                 Optional<LocalizedString> name = i18n.getName().getLocalization(requestedLocale);
                 if (name.isPresent()) {
-                    feature.addName(name.get().asCodeType());
+                    try {
+                        feature.addName(name.get().asCodeType());
+                    } catch (URISyntaxException e) {
+                        throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", name.get().getLang().toString());
+                    }
                 }
                 Optional<LocalizedString> description = i18n.getDescription().getLocalization(requestedLocale);
                 if (description.isPresent()) {
@@ -153,7 +159,11 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
                 }
                 for (LocalizedString name : i18n.getName()) {
                     // either all or default only
-                    feature.addName(name.asCodeType());
+                    try {
+                        feature.addName(name.asCodeType());
+                    } catch (URISyntaxException e) {
+                        throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", name.getLang().toString());
+                    }
                 }
                 // choose always the description in the default locale
                 Optional<LocalizedString> description = i18n.getDescription().getLocalization(defaultLocale);

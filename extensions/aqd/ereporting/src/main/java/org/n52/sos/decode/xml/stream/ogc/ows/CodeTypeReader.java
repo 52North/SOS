@@ -28,8 +28,13 @@
  */
 package org.n52.sos.decode.xml.stream.ogc.ows;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import javax.xml.stream.XMLStreamException;
 
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.ogc.gml.CodeType;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.xml.stream.XmlReader;
@@ -44,9 +49,13 @@ public class CodeTypeReader extends XmlReader<CodeType> {
     private CodeType codeType;
 
     @Override
-    protected void begin() throws XMLStreamException {
+    protected void begin() throws XMLStreamException, CodedException {
         String codeSpace = attr(AqdConstants.AN_CODE_SPACE).orNull();
-        this.codeType = new CodeType(chars(), codeSpace);
+        try {
+            this.codeType = new CodeType(chars(), new URI(codeSpace));
+        } catch (URISyntaxException e) {
+            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", codeSpace);
+        }
     }
 
     @Override

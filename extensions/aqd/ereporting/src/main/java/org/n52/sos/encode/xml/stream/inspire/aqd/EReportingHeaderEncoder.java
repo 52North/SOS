@@ -420,7 +420,7 @@ public class EReportingHeaderEncoder extends XmlStreamWriter<EReportingHeader> {
             } else {
                 start(qn);
                 if (v.get().isSetCodeSpace()) {
-                    attr(AqdConstants.AN_CODE_SPACE, v.get().getCodeSpace());
+                    attr(AqdConstants.AN_CODE_SPACE, v.get().getCodeSpace().toString());
                 }
                 chars(v.get().getValue());
                 endInline(qn);

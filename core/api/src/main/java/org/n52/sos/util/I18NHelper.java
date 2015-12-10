@@ -28,9 +28,12 @@
  */
 package org.n52.sos.util;
 
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.n52.sos.cache.SosContentCache;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.MultilingualString;
@@ -57,13 +60,14 @@ public class I18NHelper {
      *            {@link SosOffering} to add names
      * @param request
      *            Request with language
+     * @throws CodedException
      */
     @Deprecated
-    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request) {
+    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request) throws CodedException {
         addOfferingNames(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
     }
 
-    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) {
+    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) throws CodedException {
         addOfferingNames(cache, sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), defaultLocale, showAllLanguages);
     }
 
@@ -75,34 +79,39 @@ public class I18NHelper {
      *            {@link SosOffering} to add names
      * @param requestedLocale
      *            the specific language
+     * @throws CodedException
      */
     @Deprecated
-    public static void addOfferingNames(SosOffering offering, Locale requestedLocale) {
+    public static void addOfferingNames(SosOffering offering, Locale requestedLocale) throws CodedException {
         addOfferingNames(getCache(), offering, requestedLocale, getDefaultLanguage(),
                         isShowAllLanguageValues());
     }
 
-    public static void addOfferingNames(SosContentCache cache, SosOffering offering, Locale requestedLocale, Locale defaultLocale, boolean showAllLanguages) {
+    public static void addOfferingNames(SosContentCache cache, SosOffering offering, Locale requestedLocale, Locale defaultLocale, boolean showAllLanguages) throws CodedException {
         String identifier = offering.getIdentifier();
-        if (requestedLocale != null && cache.hasI18NNamesForOffering(identifier, requestedLocale)) {
-            offering.addName(cache.getI18nNameForOffering(identifier, requestedLocale).asCodeType());
-        } else {
-            if (showAllLanguages) {
-                MultilingualString names = cache.getI18nNamesForOffering(identifier);
-                if (names != null) {
-                    for (LocalizedString name : names) {
+        try {
+            if (requestedLocale != null && cache.hasI18NNamesForOffering(identifier, requestedLocale)) {
+                offering.addName(cache.getI18nNameForOffering(identifier, requestedLocale).asCodeType());
+            } else {
+                if (showAllLanguages) {
+                    MultilingualString names = cache.getI18nNamesForOffering(identifier);
+                    if (names != null) {
+                        for (LocalizedString name : names) {
+                            offering.addName(name.asCodeType());
+                        }
+                    }
+                } else {
+                    LocalizedString name = cache.getI18nNameForOffering(identifier, defaultLocale);
+                    if (name != null) {
                         offering.addName(name.asCodeType());
                     }
                 }
-            } else {
-                LocalizedString name = cache.getI18nNameForOffering(identifier, defaultLocale);
-                if (name != null) {
-                    offering.addName(name.asCodeType());
-                }
             }
-        }
-        if (!offering.isSetName()) {
-            offering.addName(cache.getNameForOffering(identifier));
+            if (!offering.isSetName()) {
+                offering.addName(cache.getNameForOffering(identifier));
+            }
+        } catch (URISyntaxException urise) {
+            throw new NoApplicableCodeException().causedBy(urise).withMessage("Error while creating offering name!");
         }
     }
 

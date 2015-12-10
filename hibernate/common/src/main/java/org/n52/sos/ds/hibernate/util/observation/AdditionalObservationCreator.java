@@ -29,7 +29,7 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import org.n52.iceland.component.Component;
-
+import org.n52.iceland.exception.CodedException;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ogc.om.OmObservation;
@@ -38,7 +38,7 @@ public interface AdditionalObservationCreator extends Component<AdditionalObserv
 
     OmObservation create(OmObservation omObservation, Series series);
 
-    OmObservation create(OmObservation omObservation, Observation<?> observation);
+    OmObservation create(OmObservation omObservation, Observation<?> observation) throws CodedException;
 
     OmObservation add(OmObservation sosObservation, Observation<?> hObservation);
 

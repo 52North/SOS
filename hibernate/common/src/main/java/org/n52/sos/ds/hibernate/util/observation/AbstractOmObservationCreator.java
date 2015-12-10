@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,6 +37,8 @@ import org.hibernate.Session;
 
 import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.exception.CodedException;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.gml.AbstractFeature;
 import org.n52.iceland.ogc.om.OmConstants;
@@ -155,7 +159,7 @@ public abstract class AbstractOmObservationCreator {
     }
 
 
-    protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) {
+    protected OmObservableProperty createObservableProperty(ObservableProperty observableProperty) throws CodedException {
         String phenID = observableProperty.getIdentifier();
         String description = observableProperty.getDescription();
         OmObservableProperty omObservableProperty = new OmObservableProperty(phenID, description, null, null);
@@ -196,10 +200,15 @@ public abstract class AbstractOmObservationCreator {
     /**
      * @param abstractFeature
      * @param hAbstractFeature
+     * @throws CodedException
      */
-    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature) {
+    protected void addName(AbstractFeature abstractFeature, AbstractIdentifierNameDescriptionEntity hAbstractFeature) throws CodedException {
         if (hAbstractFeature.isSetCodespaceName()) {
-            abstractFeature.addName(hAbstractFeature.getName(), hAbstractFeature.getCodespaceName().getCodespace());
+            try {
+                abstractFeature.addName(hAbstractFeature.getName(), new URI(hAbstractFeature.getCodespaceName().getCodespace()));
+            } catch (URISyntaxException e) {
+                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", hAbstractFeature.getCodespaceName().getCodespace());
+            }
         }
         abstractFeature.addName(hAbstractFeature.getName());
 
@@ -221,7 +230,7 @@ public abstract class AbstractOmObservationCreator {
         return feature;
     }
 
-    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) {
+    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
 
         if (getAdditionalObservationCreatorRepository().hasAdditionalObservationCreatorFor(key)) {

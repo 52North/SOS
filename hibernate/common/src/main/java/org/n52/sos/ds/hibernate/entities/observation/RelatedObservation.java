@@ -28,26 +28,26 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
+import com.google.common.base.Strings;
+
 public class RelatedObservation {
     
-    private long observationId;
+    private RelatedObservationId relatedObservationId;
     
     private String role;
     
-    private Observation<?> relatedObservation;
-
     /**
-     * @return the observationId
+     * @return the relatedObservationId
      */
-    public long getObservationId() {
-        return observationId;
+    public RelatedObservationId getRelatedObservationId() {
+        return relatedObservationId;
     }
 
     /**
-     * @param observationId the observationId to set
+     * @param relatedObservationId the relatedObservationId to set
      */
-    public void setObservationId(long observationId) {
-        this.observationId = observationId;
+    public void setRelatedObservationId(RelatedObservationId relatedObservationId) {
+        this.relatedObservationId = relatedObservationId;
     }
 
     /**
@@ -63,19 +63,16 @@ public class RelatedObservation {
     public void setRole(String role) {
         this.role = role;
     }
+    
+    public boolean isSetRole() {
+        return !Strings.isNullOrEmpty(getRole());
+    }
 
     /**
      * @return the relatedObservation
      */
     public Observation<?> getRelatedObservation() {
-        return relatedObservation;
-    }
-
-    /**
-     * @param relatedObservation the relatedObservation to set
-     */
-    public void setRelatedObservation(Observation<?> relatedObservation) {
-        this.relatedObservation = relatedObservation;
+        return getRelatedObservationId().getRelatedObservation();
     }
 
 }

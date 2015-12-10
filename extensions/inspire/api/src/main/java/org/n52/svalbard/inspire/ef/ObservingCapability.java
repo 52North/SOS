@@ -34,8 +34,9 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 
-public class ObservingCapability {
+public class ObservingCapability extends SimpleAttrs {
     
     /**
      * 1..1
@@ -71,4 +72,16 @@ public class ObservingCapability {
      * 1..1
      */
     private ReferenceType observedProperty;
+    
+    public ObservingCapability(String href) {
+        setHref(href);
+    }
+    
+    public ObservingCapability(Time observingTime, ReferenceType processType, ReferenceType resultNature, SosProcedureDescription procedure, ReferenceType observedProperty) {
+        this.observingTime = observingTime;
+        this.processType = processType;
+        this.resultNature = resultNature;
+        this.procedure = procedure;
+        this.observedProperty = observedProperty;
+    }
 }

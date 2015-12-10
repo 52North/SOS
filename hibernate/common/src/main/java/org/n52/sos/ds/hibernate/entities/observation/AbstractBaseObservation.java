@@ -50,7 +50,7 @@ public abstract class AbstractBaseObservation
     private boolean child;
     private boolean parent;
     private Set<Parameter> parameters = new HashSet<>(0);
-    private Set<Observation<?>> relatedObservations = new HashSet<>(0);
+    private Set<RelatedObservation> relatedObservations = new HashSet<>(0);
 
     @Override
     public boolean getDeleted() {
@@ -148,12 +148,12 @@ public abstract class AbstractBaseObservation
     }
     
     @Override
-    public Set<Observation<?>> getRelatedObservations() {
+    public Set<RelatedObservation> getRelatedObservations() {
         return relatedObservations;
     }
 
     @Override
-    public void setRelatedObservations(Set<Observation<?>> relatedObservations) {
+    public void setRelatedObservations(Set<RelatedObservation> relatedObservations) {
         this.relatedObservations = relatedObservations;
     }
     

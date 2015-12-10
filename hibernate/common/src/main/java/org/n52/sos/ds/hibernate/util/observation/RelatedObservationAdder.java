@@ -34,6 +34,7 @@ import java.net.URLEncoder;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -68,12 +69,16 @@ public class RelatedObservationAdder {
     public void add() throws CodedException { 
         try {
             if (hObservation != null && hObservation.hasRelatedObservations()) {
-                for (Observation<?> hRelatedObservation : hObservation.getRelatedObservations()) {
-                    if (hRelatedObservation.isSetIdentifier()) {
-                        observation.addRelatedObservation(new OmObservationContext(new ReferenceType(), new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getIdentifier()))));
+                for (RelatedObservation hRelatedObservation : hObservation.getRelatedObservations()) {
+                    ReferenceType role = new ReferenceType();
+                    if (hRelatedObservation.isSetRole()) {
+                        role.setHref(hRelatedObservation.getRole());
+                    }
+                    if (hRelatedObservation.getRelatedObservation().isSetIdentifier()) {
+                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getRelatedObservation().getIdentifier()))));
                     } else if (hRelatedObservation instanceof ContextualReferencedObservation) {
                         // TODO check if this should be set because result may not be a unique observation.
-                        observation.addRelatedObservation(new OmObservationContext(new ReferenceType(), new ReferenceType(createGetObservationUrl((ContextualReferencedObservation)hRelatedObservation))));
+                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl((ContextualReferencedObservation)hRelatedObservation))));
                     }
                 }
             }

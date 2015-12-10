@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class
+		name="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation"
+		table="relatedobservations">
+		<composite-id name="relatedObservationId" class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservationId">
+			<key-many-to-one name="observation"
+				class="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+				column="observationId" />
+			<key-many-to-one name="relatedObservation"
+				class="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+				column="relatedObservation" />
+		</composite-id>
+		<property name="role" type="string" column="role" />
+	</class>
+</hibernate-mapping>

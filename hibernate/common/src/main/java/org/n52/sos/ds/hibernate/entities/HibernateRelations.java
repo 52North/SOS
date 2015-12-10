@@ -508,9 +508,9 @@ public interface HibernateRelations {
     interface HasRelatedObservations {
         String PARAMETERS = "relatedObservations";
 
-        Set<Observation<?>> getRelatedObservations();
+        Set<RelatedObservation> getRelatedObservations();
 
-        void setRelatedObservations(Set<Observation<?>> relatedObservations);
+        void setRelatedObservations(Set<RelatedObservation> relatedObservations);
         
         boolean hasRelatedObservations();
 

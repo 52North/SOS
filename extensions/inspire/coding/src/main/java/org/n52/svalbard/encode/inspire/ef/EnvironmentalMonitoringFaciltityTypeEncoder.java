@@ -35,6 +35,8 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.ClassToClassEncoderKey;
 import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.XmlDocumentEncoderKey;
+import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -48,19 +50,20 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
-import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityPropertyType;
+import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType;
 
-public class EnvironmentalMonitoringFaciltityPropertyTypeEncoder
+public class EnvironmentalMonitoringFaciltityTypeEncoder
         extends AbstractEnvironmentalMonitoringFaciltityEncoder {
 
     private static final Logger LOGGER =
-            LoggerFactory.getLogger(EnvironmentalMonitoringFaciltityPropertyTypeEncoder.class);
+            LoggerFactory.getLogger(EnvironmentalMonitoringFaciltityTypeEncoder.class);
 
     protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-            new ClassToClassEncoderKey(EnvironmentalMonitoringFacility.class, EnvironmentalMonitoringFacilityPropertyType.class),
-            new XmlPropertyTypeEncoderKey(InspireEfConstants.NS_EF, EnvironmentalMonitoringFacility.class));
+            new ClassToClassEncoderKey(EnvironmentalMonitoringFacility.class,
+                    EnvironmentalMonitoringFacilityType.class),
+            new XmlEncoderKey(InspireEfConstants.NS_EF, EnvironmentalMonitoringFacility.class));
 
-    public EnvironmentalMonitoringFaciltityPropertyTypeEncoder() {
+    public EnvironmentalMonitoringFaciltityTypeEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
                 Joiner.on(", ").join(ENCODER_KEYS));
     }
@@ -74,13 +77,8 @@ public class EnvironmentalMonitoringFaciltityPropertyTypeEncoder
     public XmlObject encode(final AbstractFeature abstractFeature, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         if (abstractFeature instanceof EnvironmentalMonitoringFacility) {
-            EnvironmentalMonitoringFacilityPropertyType emfpt =
-                    EnvironmentalMonitoringFacilityPropertyType.Factory.newInstance();
-            emfpt.setEnvironmentalMonitoringFacility(
-                    createEnvironmentalMonitoringFaciltityType((EnvironmentalMonitoringFacility) abstractFeature));
-            return emfpt;
+            return createEnvironmentalMonitoringFaciltityType((EnvironmentalMonitoringFacility) abstractFeature);
         }
         throw new UnsupportedEncoderInputException(this, abstractFeature);
     }
-
 }

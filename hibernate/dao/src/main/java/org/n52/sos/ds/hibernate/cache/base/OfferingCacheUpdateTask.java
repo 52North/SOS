@@ -329,7 +329,7 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
     protected Set<String> getFeatureOfInterestTypes(List<String> featureOfInterestIdentifiers, Session session) {
         if (CollectionHelper.isNotEmpty(featureOfInterestIdentifiers)) {
             List<FeatureOfInterest> featureOfInterestObjects =
-                    featureDAO.getFeatureOfInterestObject(featureOfInterestIdentifiers, session);
+                    featureDAO.getFeatureOfInterestObjects(featureOfInterestIdentifiers, session);
             if (CollectionHelper.isNotEmpty(featureOfInterestObjects)) {
                 Set<String> featureTypes = Sets.newHashSet();
                 for (FeatureOfInterest featureOfInterest : featureOfInterestObjects) {

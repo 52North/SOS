@@ -26,46 +26,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.ef;
+package org.n52.svalbard.encode.inspire.ef;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.svalbard.inspire.ef.OperationalActivityPeriod;
 
-public class Hierarchy extends AbstractGML implements AttributeSimpleAttrs {
+import eu.europa.ec.inspire.schemas.ef.x40.OperationalActivityPeriodType;
 
-    private static final long serialVersionUID = -2838175829589280334L;
-    
-    private SimpleAttrs simpleAttrs;
+public abstract class AbstractOperationalActivityPeriodEncoder extends AbstractEnvironmentalFaciltity<OperationalActivityPeriod>{
 
-    /**
-     * 0..1
-     */
-    private Time linkingTime;
-    
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject broader;
-    
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject narrower;
-
-    @Override
-    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
-       this.simpleAttrs = simpleAttrs;
-    }
-
-    @Override
-    public SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
-    }
-
-    @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+    protected OperationalActivityPeriodType createOperationalActivityPeriod(OperationalActivityPeriod operationalActivityPeriod) throws OwsExceptionReport {
+        OperationalActivityPeriodType oapt = OperationalActivityPeriodType.Factory.newInstance();
+        oapt.addNewActivityTime().addNewAbstractTimeObject().set(encodeGML32(operationalActivityPeriod.getActivityTime()));
+        // TODO check for substitution
+        return oapt;
     }
 }

@@ -28,52 +28,16 @@
  */
 package org.n52.svalbard.inspire.ef;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.n52.sos.w3c.SchemaLocation;
 
-public class NetworkFacility extends AbstractGML implements AttributeSimpleAttrs {
+public interface InspireEfConstants {
+    
+    String NS_EF = "http://inspire.ec.europa.eu/schemas/ef/4.0";
+    
+    String NS_EF_PREFIX = "ef";
+    
+    String SCHEMA_LOCATION_URL_EF = "http://inspire.ec.europa.eu/schemas/ef/4.0/EnvironmentalMonitoringFacilities.xsd";
+    
+    SchemaLocation EF_40_SCHEMA_LOCATION = new SchemaLocation(NS_EF, SCHEMA_LOCATION_URL_EF);
 
-    private static final long serialVersionUID = -6173099139182103593L;
-    private SimpleAttrs simpleAttrs;
-    /**
-     * 1..1
-     */
-    private Time linkingTime;
-    
-    /**
-     * 1..1
-     */
-    private EnvironmentalMonitoringNetwork belongsTo;
-    
-    /**
-     * 1..1
-     */
-    private EnvironmentalMonitoringFacility contains;
-    
-    public NetworkFacility(SimpleAttrs simpleAttrs) {
-        this.simpleAttrs = simpleAttrs;
-    }
-    
-    public NetworkFacility(Time linkingTime, EnvironmentalMonitoringNetwork belongsTo, EnvironmentalMonitoringFacility contains) {
-        this.linkingTime = linkingTime;
-        this.belongsTo = belongsTo;
-        this.contains = contains;
-    }
-    
-    @Override
-    public void setSimpleAttrs(org.n52.sos.w3c.xlink.SimpleAttrs simpleAttrs) {
-        this.simpleAttrs = simpleAttrs;
-    }
-
-    @Override
-    public org.n52.sos.w3c.xlink.SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
-    }
-
-    @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
-    }
 }

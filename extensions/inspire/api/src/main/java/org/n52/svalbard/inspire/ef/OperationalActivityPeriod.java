@@ -30,15 +30,44 @@ package org.n52.svalbard.inspire.ef;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 
-public class OperationalActivityPeriod extends AbstractFeature {
-
+public class OperationalActivityPeriod extends AbstractFeature implements AttributeSimpleAttrs {
 
     private static final long serialVersionUID = 5199707904699707866L;
+    
+    private SimpleAttrs simpleAttrs;
     
     /**
      * 1..1
      */
     private Time activityTime;
+
+    public OperationalActivityPeriod(Time activityTime) {
+        this.activityTime = activityTime;
+    }
     
+    /**
+     * @return the activityTime
+     */
+    public Time getActivityTime() {
+        return activityTime;
+    }
+
+    @Override
+    public void setSimpleAttrs(org.n52.sos.w3c.xlink.SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+    }
+
+    @Override
+    public org.n52.sos.w3c.xlink.SimpleAttrs getSimpleAttrs() {
+        return simpleAttrs;
+    }
+
+    @Override
+    public boolean isSetSimpleAttrs() {
+        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+    }
+
 }

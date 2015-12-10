@@ -34,15 +34,19 @@ import java.util.Set;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 import org.n52.svalbard.inspire.base2.RelatedParty;
 
 import com.google.common.collect.Sets;
 
-public class EnvironmentalMonitoringActivity extends AbstractFeature {
+public class EnvironmentalMonitoringActivity extends AbstractFeature implements AttributeSimpleAttrs {
 
     private static final long serialVersionUID = -5702172788560838642L;
 
+    private SimpleAttrs simpleAttrs;
+    
     /**
      * 1..1
      */
@@ -83,12 +87,31 @@ public class EnvironmentalMonitoringActivity extends AbstractFeature {
      */
     private Set<AbstractMonitoringFeature> uses = Sets.newHashSet();
 
+    public EnvironmentalMonitoringActivity(SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+    }
+    
     public EnvironmentalMonitoringActivity(Time activityTime, String activityConditions, RelatedParty responsibleParty,
             Identifier inspireId) {
         this.activityTime = activityTime;
         this.activityConditions = activityConditions;
         this.responsibleParty = responsibleParty;
         this.inspireId = inspireId;
+    }
+    
+    @Override
+    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
+       this.simpleAttrs = simpleAttrs;
+    }
+
+    @Override
+    public SimpleAttrs getSimpleAttrs() {
+        return simpleAttrs;
+    }
+
+    @Override
+    public boolean isSetSimpleAttrs() {
+        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
     }
 
     /**

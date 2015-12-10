@@ -26,54 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.ef;
+package org.n52.sos.ds.hibernate.dao.inspire;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class NetworkFacility extends AbstractGML implements AttributeSimpleAttrs {
-
-    private static final long serialVersionUID = -6173099139182103593L;
-    private SimpleAttrs simpleAttrs;
-    /**
-     * 1..1
-     */
-    private Time linkingTime;
-    
-    /**
-     * 1..1
-     */
-    private EnvironmentalMonitoringNetwork belongsTo;
-    
-    /**
-     * 1..1
-     */
-    private EnvironmentalMonitoringFacility contains;
-    
-    public NetworkFacility(SimpleAttrs simpleAttrs) {
-        this.simpleAttrs = simpleAttrs;
-    }
-    
-    public NetworkFacility(Time linkingTime, EnvironmentalMonitoringNetwork belongsTo, EnvironmentalMonitoringFacility contains) {
-        this.linkingTime = linkingTime;
-        this.belongsTo = belongsTo;
-        this.contains = contains;
-    }
-    
-    @Override
-    public void setSimpleAttrs(org.n52.sos.w3c.xlink.SimpleAttrs simpleAttrs) {
-        this.simpleAttrs = simpleAttrs;
-    }
+public class EnvironmentalMonitoringFacilityDAO extends FeatureOfInterestDAO {
 
     @Override
-    public org.n52.sos.w3c.xlink.SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
+    public EnvironmentalMonitoringFacility insertFeature(AbstractFeature samplingFeature, Session session)
+            throws OwsExceptionReport {
+        // TODO implement
+        return null;
     }
 
+
     @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+    public Class<? extends FeatureOfInterest> featureClass() {
+        return EnvironmentalMonitoringFacility.class;
     }
+
 }

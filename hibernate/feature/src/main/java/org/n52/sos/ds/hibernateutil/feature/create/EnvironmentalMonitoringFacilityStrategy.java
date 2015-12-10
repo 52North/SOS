@@ -26,54 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.ef;
+package org.n52.sos.ds.hibernateutil.feature.create;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import java.util.Locale;
 
-public class NetworkFacility extends AbstractGML implements AttributeSimpleAttrs {
+import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-    private static final long serialVersionUID = -6173099139182103593L;
-    private SimpleAttrs simpleAttrs;
-    /**
-     * 1..1
-     */
-    private Time linkingTime;
-    
-    /**
-     * 1..1
-     */
-    private EnvironmentalMonitoringNetwork belongsTo;
-    
-    /**
-     * 1..1
-     */
-    private EnvironmentalMonitoringFacility contains;
-    
-    public NetworkFacility(SimpleAttrs simpleAttrs) {
-        this.simpleAttrs = simpleAttrs;
-    }
-    
-    public NetworkFacility(Time linkingTime, EnvironmentalMonitoringNetwork belongsTo, EnvironmentalMonitoringFacility contains) {
-        this.linkingTime = linkingTime;
-        this.belongsTo = belongsTo;
-        this.contains = contains;
-    }
-    
-    @Override
-    public void setSimpleAttrs(org.n52.sos.w3c.xlink.SimpleAttrs simpleAttrs) {
-        this.simpleAttrs = simpleAttrs;
+public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCreationStrategy {
+
+    public EnvironmentalMonitoringFacilityStrategy(int storageEPSG, int storage3DEPSG) {
+        super(storageEPSG, storage3DEPSG);
     }
 
     @Override
-    public org.n52.sos.w3c.xlink.SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
+    public boolean apply(FeatureOfInterest feature) {
+        return EnvironmentalMonitoringFacility.class.equals(feature.getClass()) || EnvironmentalMonitoringFacility.class.equals(feature.getClass().getSuperclass());
     }
 
     @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+    public AbstractFeature create(FeatureOfInterest f, Locale i18n, String version, Session s)
+            throws OwsExceptionReport {
+        // TODO Auto-generated method stub
+        return null;
     }
+
+
 }

@@ -38,6 +38,7 @@ import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.AbstractGML;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -143,9 +144,9 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void insertNameAndDescription(IdentifierNameDescriptionEntity entity,
-                                         SamplingFeature samplingFeature,
+                                         AbstractFeature abstractFeature,
                                          Session session) {
-        if (samplingFeature.isSetName()) {
+        if (abstractFeature.isSetName()) {
 
         }
 //        session.saveOrUpdate(

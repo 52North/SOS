@@ -26,46 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.ef;
+package org.n52.sos.ds.hibernate.entities.inspire;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 
-public class Hierarchy extends AbstractGML implements AttributeSimpleAttrs {
+public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
 
-    private static final long serialVersionUID = -2838175829589280334L;
-    
-    private SimpleAttrs simpleAttrs;
+    private static final long serialVersionUID = -4612931300484622090L;
 
-    /**
-     * 0..1
-     */
-    private Time linkingTime;
-    
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject broader;
-    
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject narrower;
-
-    @Override
-    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
-       this.simpleAttrs = simpleAttrs;
-    }
-
-    @Override
-    public SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
-    }
-
-    @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
-    }
 }

@@ -452,7 +452,6 @@
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>coding-inspire-omso</artifactId>
-			<version>${project.version}</version>
 		</dependency>
         <dependency>
 			<groupId>${project.groupId}</groupId>

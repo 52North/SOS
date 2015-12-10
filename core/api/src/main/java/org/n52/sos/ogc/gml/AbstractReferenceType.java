@@ -58,7 +58,7 @@ public class AbstractReferenceType implements Comparable<AbstractReferenceType>{
      */
     public String getHref() {
     	if (href != null) {
-    		return href.getHref();
+    	   return href.getHref();
     	}
         return null;
     }

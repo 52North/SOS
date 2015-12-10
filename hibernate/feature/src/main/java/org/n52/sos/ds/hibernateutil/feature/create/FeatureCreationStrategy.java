@@ -26,46 +26,22 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.ef;
+package org.n52.sos.ds.hibernateutil.feature.create;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import java.util.Locale;
 
-public class Hierarchy extends AbstractGML implements AttributeSimpleAttrs {
+import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-    private static final long serialVersionUID = -2838175829589280334L;
+import com.google.common.base.Predicate;
+import com.vividsolutions.jts.geom.Geometry;
+
+public interface FeatureCreationStrategy extends Predicate<FeatureOfInterest> {
     
-    private SimpleAttrs simpleAttrs;
+    AbstractFeature create(FeatureOfInterest f,Locale i18n, String version, Session s)
+            throws OwsExceptionReport;
 
-    /**
-     * 0..1
-     */
-    private Time linkingTime;
-    
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject broader;
-    
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject narrower;
-
-    @Override
-    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
-       this.simpleAttrs = simpleAttrs;
-    }
-
-    @Override
-    public SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
-    }
-
-    @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
-    }
+    Geometry createGeometry(FeatureOfInterest feature, Session session) throws OwsExceptionReport;
 }

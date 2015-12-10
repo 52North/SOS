@@ -28,12 +28,14 @@
  */
 package org.n52.svalbard.inspire.ef;
 
-import java.net.URI;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 import org.n52.svalbard.inspire.base2.LegislationCitation;
 import org.n52.svalbard.inspire.base2.RelatedParty;
@@ -42,9 +44,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
-public abstract class AbstractMonitoringObject extends AbstractFeature {
+public abstract class AbstractMonitoringObject extends AbstractFeature implements AttributeSimpleAttrs {
 
     private static final long serialVersionUID = -5682405837481118193L;
+    
+    private SimpleAttrs simpleAttrs;
     
     /**
      * 0..* name, super.name
@@ -73,17 +77,17 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
     /**
      * 0..1
      */
-    private Geometry geometry;
+    private AbstractGeometry geometry;
     
     /**
      * 0..*
      */
-    private Set<URI> onlineResource = Sets.newHashSet();
+    private Set<String> onlineResource = Sets.newHashSet();
     
     /**
      * 0..*
      */
-    private Set<String> purpose = Sets.newHashSet();
+    private Set<ReferenceType> purpose = Sets.newHashSet();
 
     /**
      * 0..*
@@ -110,6 +114,10 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
      */
     private Set<AbstractMonitoringObject> supersededBy = Sets.newHashSet();
     
+    public AbstractMonitoringObject(SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+    }
+    
     public AbstractMonitoringObject(Identifier inspireId, ReferenceType mediaMonitored) {
         this(inspireId, Sets.newHashSet(mediaMonitored));
     }
@@ -117,6 +125,21 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
     public AbstractMonitoringObject(Identifier inspireId, Set<ReferenceType> mediaMonitored) {
         super(inspireId);
         this.mediaMonitored.addAll(mediaMonitored);
+    }
+
+    @Override
+    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
+       this.simpleAttrs = simpleAttrs;
+    }
+
+    @Override
+    public SimpleAttrs getSimpleAttrs() {
+        return simpleAttrs;
+    }
+
+    @Override
+    public boolean isSetSimpleAttrs() {
+        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
     }
     
     public Identifier getInspireId() {
@@ -176,6 +199,10 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
         this.legalBackground.clear();
         this.legalBackground = legalBackground;
     }
+    
+    public boolean isSetLegalBackground() {
+        return CollectionHelper.isNotEmpty(getLegalBackground());
+    }
 
     /**
      * @return the responsibleParty
@@ -198,15 +225,22 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
     /**
      * @return the geometry
      */
-    public Geometry getGeometry() {
+    public AbstractGeometry getGeometry() {
         return geometry;
     }
 
     /**
      * @param geometry the geometry to set
      */
-    public void setGeometry(Geometry geometry) {
+    public void setGeometry(AbstractGeometry geometry) {
         this.geometry = geometry;
+    }
+    
+    /**
+     * @param geometry the geometry to set
+     */
+    public void setGeometry(Geometry geometry) {
+        this.geometry = new AbstractGeometry().setGeometry(geometry);
     }
     
     public boolean isSetGeometry() {
@@ -217,14 +251,14 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
     /**
      * @return the onlineResource
      */
-    public Set<URI> getOnlineResource() {
+    public Set<String> getOnlineResource() {
         return onlineResource;
     }
 
     /**
      * @param onlineResource the onlineResource to set
      */
-    public void setOnlineResource(Set<URI> onlineResource) {
+    public void setOnlineResource(Set<String> onlineResource) {
         this.onlineResource.clear();
         this.onlineResource = onlineResource;
     }
@@ -236,14 +270,14 @@ public abstract class AbstractMonitoringObject extends AbstractFeature {
     /**
      * @return the purpose
      */
-    public Set<String> getPurpose() {
+    public Set<ReferenceType> getPurpose() {
         return purpose;
     }
 
     /**
      * @param purpose the purpose to set
      */
-    public void setPurpose(Set<String> purpose) {
+    public void setPurpose(Set<ReferenceType> purpose) {
         this.purpose.clear();
         this.purpose = purpose;
     }

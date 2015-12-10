@@ -26,46 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.inspire.ef;
+package org.n52.svalbard.inspire.base2;
 
-import org.n52.sos.ogc.gml.AbstractGML;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
-import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.n52.sos.w3c.SchemaLocation;
 
-public class Hierarchy extends AbstractGML implements AttributeSimpleAttrs {
+public interface InspireBase2Constants {
 
-    private static final long serialVersionUID = -2838175829589280334L;
+    String NS_BASE2 = "http://inspire.ec.europa.eu/schemas/base2/2.0";
     
-    private SimpleAttrs simpleAttrs;
-
-    /**
-     * 0..1
-     */
-    private Time linkingTime;
+    String NS_BASE2_PREFIX = "base2";
     
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject broader;
+    String SCHEMA_LOCATION_URL_BASE2 = "http://inspire.ec.europa.eu/schemas/base2/2.0/BaseTypes2.xsd";
     
-    /**
-     * 0..1
-     */
-    private AbstractMonitoringObject narrower;
-
-    @Override
-    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
-       this.simpleAttrs = simpleAttrs;
-    }
-
-    @Override
-    public SimpleAttrs getSimpleAttrs() {
-        return simpleAttrs;
-    }
-
-    @Override
-    public boolean isSetSimpleAttrs() {
-        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
-    }
+    SchemaLocation BASE2_20_SCHEMA_LOCATION = new SchemaLocation(NS_BASE2, SCHEMA_LOCATION_URL_BASE2);
 }

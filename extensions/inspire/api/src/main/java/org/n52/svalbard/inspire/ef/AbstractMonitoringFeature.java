@@ -33,6 +33,7 @@ import java.util.Set;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 
 import com.google.common.collect.Sets;
@@ -55,6 +56,10 @@ public abstract class AbstractMonitoringFeature extends AbstractMonitoringObject
      * 0..*
      */
     private Set<EnvironmentalMonitoringActivity> involvedIn = Sets.newHashSet();
+    
+    public AbstractMonitoringFeature(SimpleAttrs simpleAttrs) {
+        super(simpleAttrs);
+    }
     
     public AbstractMonitoringFeature(Identifier inspireId, ReferenceType mediaMonitored) {
         super(inspireId, mediaMonitored);

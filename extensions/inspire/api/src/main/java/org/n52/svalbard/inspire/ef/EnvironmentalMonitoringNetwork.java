@@ -31,12 +31,17 @@ package org.n52.svalbard.inspire.ef;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 
 public class EnvironmentalMonitoringNetwork extends AbstractMonitoringFeature {
 
     private static final long serialVersionUID = -3726957510817488464L;
 
+    public EnvironmentalMonitoringNetwork(SimpleAttrs simpleAttrs) {
+        super(simpleAttrs);
+    }
+    
     public EnvironmentalMonitoringNetwork(Identifier inspireId, ReferenceType mediaMonitored) {
         super(inspireId, mediaMonitored);
     }

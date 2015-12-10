@@ -29,10 +29,13 @@
 package org.n52.sos.encode;
 
 import java.util.EnumMap;
+import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.CodingHelper;
 
 /**
  * @since 4.0.0
@@ -44,6 +47,23 @@ public abstract class AbstractXmlEncoder<S> extends AbstractSpecificXmlEncoder<X
     @Override
     public XmlObject encode(S element) throws OwsExceptionReport {
         return encode(element, new EnumMap<HelperValues, String>(HelperValues.class));
+    }
+    
+    
+    protected static XmlObject encodeGML311(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, o);
+    }
+
+    protected static XmlObject encodeGML311(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, o, helperValues);
+    }
+    
+    protected static XmlObject encodeGML32(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o);
+    }
+
+    protected static XmlObject encodeGML32(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
 
 }

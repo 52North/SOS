@@ -29,11 +29,13 @@
 package org.n52.svalbard.inspire.ef;
 
 import org.n52.sos.ogc.gml.AbstractGML;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 
-public class AnyDomainLink extends AbstractGML {
+public class AnyDomainLink extends AbstractGML implements AttributeSimpleAttrs {
 
     private static final long serialVersionUID = -4704003830002916864L;
-
+    private SimpleAttrs simpleAttrs;
     /**
      * 1..1
      */
@@ -44,11 +46,30 @@ public class AnyDomainLink extends AbstractGML {
      */
     private EnvironmentalMonitoringFacility relatedTo;
     
+    public AnyDomainLink(SimpleAttrs simpleAttrs) {
+       this.simpleAttrs = simpleAttrs;
+    }
+    
     public AnyDomainLink(String comment, EnvironmentalMonitoringFacility relatedTo) {
         this.comment = comment;
         this.relatedTo = relatedTo;
     }
 
+    @Override
+    public void setSimpleAttrs(org.n52.sos.w3c.xlink.SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+    }
+
+    @Override
+    public org.n52.sos.w3c.xlink.SimpleAttrs getSimpleAttrs() {
+        return simpleAttrs;
+    }
+
+    @Override
+    public boolean isSetSimpleAttrs() {
+        return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+    }
+    
     /**
      * @return the comment
      */

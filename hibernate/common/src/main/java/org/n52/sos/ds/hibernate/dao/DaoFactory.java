@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import org.n52.sos.ds.hibernate.dao.inspire.EnvironmentalMonitoringFacilityDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
@@ -44,6 +45,7 @@ import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
@@ -133,6 +135,14 @@ public class DaoFactory {
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("Implemented value time DAO is missing!");
+        }
+    }
+    
+    public AbstractFeatureOfInterestDAO getFeatureDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(EnvironmentalMonitoringFacility.class)) {
+            return new EnvironmentalMonitoringFacilityDAO();
+        } else {
+            return new FeatureOfInterestDAO();
         }
     }
 

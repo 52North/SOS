@@ -19,6 +19,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>api</artifactId>
         </dependency>
+         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>inspire-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-session-factory</artifactId>

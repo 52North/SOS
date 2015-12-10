@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 
 import com.google.common.collect.Sets;
@@ -44,6 +45,10 @@ public class EnvironmentalMonitoringProgramme extends AbstractMonitoringObject {
      * 0..1
      */
     private Set<EnvironmentalMonitoringActivity> triggers = Sets.newHashSet();
+    
+    public EnvironmentalMonitoringProgramme(SimpleAttrs simpleAttrs) {
+        super(simpleAttrs);
+    }
     
     public EnvironmentalMonitoringProgramme(Identifier inspireId, ReferenceType mediaMonitored) {
         super(inspireId, mediaMonitored);

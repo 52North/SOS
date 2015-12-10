@@ -38,6 +38,10 @@ import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithFeatureType;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithGeometry;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithUrl;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithXmlDescription;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
@@ -52,7 +56,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  * 
  */
-public class SamplingFeature extends AbstractFeature {
+public class SamplingFeature extends AbstractFeature implements FeatureWithGeometry, FeatureWithFeatureType, FeatureWithUrl, FeatureWithXmlDescription {
 
     /**
      * serial number
@@ -123,30 +127,17 @@ public class SamplingFeature extends AbstractFeature {
         super(featureIdentifier, gmlId);
     }
 
-    /**
-     * Get XML representation of this feature
-     * 
-     * @return XML representation of this feature
-     */
+    @Override
     public String getXmlDescription() {
         return xmlDescription;
     }
 
-    /**
-     * Check whether XML representation of this feature is set
-     * 
-     * @return <code>true</code>, if XML representation of this feature is set
-     */
+    @Override
     public boolean isSetXmlDescription() {
         return StringHelper.isNotEmpty(getXmlDescription());
     }
 
-    /**
-     * Set XML representation of this feature
-     * 
-     * @param xmlDescription
-     *            XML representation of this feature to set
-     */
+    @Override
     public void setXmlDescription(final String xmlDescription) {
         this.xmlDescription = xmlDescription;
     }
@@ -167,23 +158,12 @@ public class SamplingFeature extends AbstractFeature {
         return super.getGmlId();
     }
 
-    /**
-     * Get feature geometry
-     * 
-     * @return Feature geometry
-     */
+    @Override
     public Geometry getGeometry() {
         return geometry;
     }
 
-    /**
-     * Set feature geometry, checks whether srid is valid
-     * 
-     * @param geometry
-     *            Geometry to set
-     * @throws InvalidSridException
-     *             If srid is invalid
-     */
+    @Override
     public void setGeometry(final Geometry geometry) throws InvalidSridException {
         if (geometry != null && geometry.getSRID() == 0) {
             throw new InvalidSridException(0);
@@ -191,67 +171,37 @@ public class SamplingFeature extends AbstractFeature {
         this.geometry = geometry;
     }
 
-    /**
-     * Check whether geometry is set
-     * 
-     * @return <code>true</code>, if geometry is set
-     */
+    @Override
     public boolean isSetGeometry() {
         return getGeometry() != null && !getGeometry().isEmpty();
     }
 
-    /**
-     * Get feature type
-     * 
-     * @return Type of this feature
-     */
+    @Override
     public String getFeatureType() {
         return featureType;
     }
 
-    /**
-     * Set feature type
-     * 
-     * @param featureType
-     *            Type of this feature
-     */
+    @Override
     public void setFeatureType(final String featureType) {
         this.featureType = featureType;
     }
 
-    /**
-     * Check whether feature type is set
-     * 
-     * @return <code>true</code>, if feature type is set
-     */
+    @Override
     public boolean isSetFeatureType() {
         return StringHelper.isNotEmpty(getFeatureType());
     }
 
-    /**
-     * Get URL
-     * 
-     * @return URL
-     */
+    @Override
     public String getUrl() {
         return url;
     }
 
-    /**
-     * Set URL
-     * 
-     * @param url
-     *            URL to set
-     */
+    @Override
     public void setUrl(final String url) {
         this.url = url;
     }
 
-    /**
-     * Check whether URL is set
-     * 
-     * @return <code>true</code>, if URL is set
-     */
+    @Override
     public boolean isSetUrl() {
         return StringHelper.isNotEmpty(getUrl());
     }

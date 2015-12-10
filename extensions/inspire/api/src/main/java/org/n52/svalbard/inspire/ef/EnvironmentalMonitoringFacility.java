@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 
 import com.google.common.collect.Sets;
@@ -81,12 +82,17 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
      */
     private Set<NetworkFacility> belongsTo = Sets.newHashSet();
 
+    public EnvironmentalMonitoringFacility(SimpleAttrs simpleAttrs) {
+        super(simpleAttrs);
+    }
+    
     public EnvironmentalMonitoringFacility(Identifier inspireId, ReferenceType mediaMonitored,
             ReferenceType measurementRegime, boolean mobile, OperationalActivityPeriod operationalActivityPeriod) {
         super(inspireId, mediaMonitored);
         this.measurementRegime = measurementRegime;
         this.mobile = mobile;
         this.operationalActivityPeriod.add(operationalActivityPeriod);
+        setDefaultElementEncoding(InspireEfConstants.NS_EF);
     }
 
     public EnvironmentalMonitoringFacility(Identifier inspireId, Set<ReferenceType> mediaMonitored,
@@ -96,6 +102,7 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
         this.measurementRegime = measurementRegime;
         this.mobile = mobile;
         this.operationalActivityPeriod.addAll(operationalActivityPeriod);
+        setDefaultElementEncoding(InspireEfConstants.NS_EF);
     }
 
     /**
@@ -216,4 +223,5 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
     public boolean isSetBelongsTo() {
         return CollectionHelper.isNotEmpty(getBelongsTo());
     }
+    
 }

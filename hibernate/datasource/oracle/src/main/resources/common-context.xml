@@ -4,8 +4,8 @@
                            http://www.springframework.org/schema/beans/spring-beans-4.1.xsd">
 
     <!-- Datasource implementations from hibernate/datasource/oracle -->
-    <!--
     <bean class="org.n52.sos.ds.datasource.OracleDatasource"/>
-    -->
+    <bean class="org.n52.sos.ds.datasource.OracleCoreDatasource"/>
+    <bean class="org.n52.sos.ds.datasource.OracleCustomDatasource"/>
 
 </beans>

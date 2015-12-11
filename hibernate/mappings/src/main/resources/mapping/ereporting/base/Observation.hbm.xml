@@ -22,8 +22,7 @@
                      foreign-key="observationSeriesFk">
             <column index="obsSeriesIdx"
                     name="seriesId"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
            		<comment>Relation/foreign key to the associated series table. Contains "series".seriesId</comment>
            	</column>
         </many-to-one>
@@ -32,8 +31,7 @@
             <column index="obsPhenTimeStartIdx"
                     name="phenomenonTimeStart"
                     length="29"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
             	<comment>Time stamp when the observation was started or phenomenon was observed</comment>
             </column>
         </property>
@@ -42,8 +40,7 @@
             <column index="obsPhenTimeEndIdx"
                     name="phenomenonTimeEnd"
                     length="29"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
             	<comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
             </column>
         </property>
@@ -52,8 +49,7 @@
             <column index="obsResultTimeIdx"
                     name="resultTime"
                     length="29"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
             	<comment>Time stamp when the observation was published or result was published/available</comment>
             </column>
         </property>
@@ -172,11 +168,18 @@
             </many-to-many>
         </set>
         <property name="samplingGeometry"
-                  type="org.hibernate.spatial.GeometryType">
+                  type="org.hibernate.spatial.GeometryType"
+                  index="samplingGeomIdx" >
             <column name="samplingGeometry">
             	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
+        <set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="observationId" not-null="true" />
+            </key>
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+        </set>
 		<property name="validation" type="int">
             <column name="validation" not-null="true" default="-1">
             	<comment>AQD e-Reporting validation flag, see http://dd.eionet.europa.eu/vocabulary/aq/observationvalidity/view</comment>

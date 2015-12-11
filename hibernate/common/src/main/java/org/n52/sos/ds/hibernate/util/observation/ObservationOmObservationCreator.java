@@ -52,6 +52,8 @@ import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
@@ -164,6 +166,7 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
             }
+            addParameter(sosObservation, hObservation);
             checkForAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs
             // setFetchSize/setMaxResult
@@ -172,6 +175,14 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
         getSession().evict(hObservation);
         LOGGER.trace("Creating Observation done.");
         return sosObservation;
+    }
+
+    private void addParameter(OmObservation observation, Observation<?> hObservation) throws OwsExceptionReport {
+        if (hObservation.hasParameters()) {
+            for (Parameter<?> parameter : hObservation.getParameters()) {
+                observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
+            }
+        }
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {

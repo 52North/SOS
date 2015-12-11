@@ -77,6 +77,7 @@ public class SweCount extends SweAbstractSimpleType<Integer> {
     public void increaseCount(int count) {
         value += count;
     }
+
     @Override
     public <T> T accept(SweDataComponentVisitor<T> visitor)
             throws OwsExceptionReport {
@@ -87,5 +88,15 @@ public class SweCount extends SweAbstractSimpleType<Integer> {
     public void accept(VoidSweDataComponentVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);
+    }
+
+    @Override
+    public SweCount clone() {
+        SweCount clone = new SweCount();
+        copyValueTo(clone);
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        return clone;
     }
 }

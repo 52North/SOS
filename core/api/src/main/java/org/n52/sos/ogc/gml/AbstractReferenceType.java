@@ -28,11 +28,11 @@
  */
 package org.n52.sos.ogc.gml;
 
-import org.n52.iceland.util.Constants;
+import static com.google.common.base.Preconditions.checkNotNull;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
 
-public class AbstractReferenceType {
+public class AbstractReferenceType implements Comparable<AbstractReferenceType>{
 
     /**
      * Href
@@ -148,22 +148,21 @@ public class AbstractReferenceType {
     /**
      * Get title from href.<br>
      * Cuts href: <br>
-     * - starts with 'http': cuts string at last {@link Constants#SLASH_CHAR}<br>
-     * - starts with 'urn': cuts string at last {@link Constants#COLON_CHAR}<br>
-     * - contains {@link Constants#NUMBER_SIGN_STRING}: cuts string at last
-     * {@link Constants#NUMBER_SIGN_CHAR}<br>
+     * - starts with 'http': cuts string at last '/'<br>
+     * - starts with 'urn': cuts string at last ':'<br>
+     * - contains "#": cuts string at last "#"<br>
      *
      * @return Title from href
      */
     public String getTitleFromHref() {
         String title = getHref();
         if (title.startsWith("http")) {
-            title = title.substring(title.lastIndexOf(Constants.SLASH_CHAR) + 1, title.length());
+            title = title.substring(title.lastIndexOf('/') + 1, title.length());
         } else if (title.startsWith("urn")) {
-            title = title.substring(title.lastIndexOf(Constants.COLON_CHAR) + 1, title.length());
+            title = title.substring(title.lastIndexOf(':') + 1, title.length());
         }
-        if (title.contains(Constants.NUMBER_SIGN_STRING)) {
-            title = title.substring(title.lastIndexOf(Constants.NUMBER_SIGN_CHAR) + 1, title.length());
+        if (title.contains("#")) {
+            title = title.substring(title.lastIndexOf("#") + 1, title.length());
         }
         return title;
     }
@@ -171,5 +170,14 @@ public class AbstractReferenceType {
     @Override
     public String toString() {
         return String.format("AbstractReferenceType [title=%s, role=%s, href=%s]", getTitle(), getRole(), getHref());
+    }
+
+    @Override
+    public int compareTo(AbstractReferenceType o) {
+        return checkNotNull(o) == this ? 0
+                : getHref() == o.getHref() ? 0
+                        : getHref() == null ? -1
+                                : o.getHref() == null ? 1
+                                        : getHref().compareTo(o.getHref());
     }
 }

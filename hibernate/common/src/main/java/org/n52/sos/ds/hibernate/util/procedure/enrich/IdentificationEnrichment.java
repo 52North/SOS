@@ -34,6 +34,7 @@ import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.ogc.OGCConstants;
+import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
@@ -154,7 +155,11 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
 
     @Override
     public boolean isApplicable() {
-        return super.isApplicable() && (procedureSettings().isEnrichWithDiscoveryInformation() || isSetLocale());
+        return super.isApplicable() && (procedureSettings().isEnrichWithDiscoveryInformation() || isNotDefaultLocale());
+    }
+
+    private boolean isNotDefaultLocale() {
+        return isSetLocale() && !getLocale().equals(ServiceConfiguration.getInstance().getDefaultLanguage());
     }
 
 }

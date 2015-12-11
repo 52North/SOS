@@ -44,11 +44,11 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObserva
  *
  * @author Christian Autermann
  */
-public class NumericValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Double>
+public class NumericValuedSeriesObservation extends AbstractValuedSeriesObservation<Double>
         implements NumericValuedObservation {
 
     private static final long serialVersionUID = 7487419141361171658L;
+
     private Double value;
 
     @Override
@@ -78,8 +78,7 @@ public class NumericValuedSeriesObservation
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

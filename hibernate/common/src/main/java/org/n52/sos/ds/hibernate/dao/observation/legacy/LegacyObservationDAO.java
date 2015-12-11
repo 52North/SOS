@@ -44,6 +44,7 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.util.CollectionHelper;
@@ -63,6 +64,9 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
+import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
+import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -201,6 +205,16 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         addFeatureOfInterestRestrictionToObservationCriteria(criteria, featureOfInterest);
         return criteria;
     }
+    @Override
+    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session) throws CodedException {
+        OmObservationConstellation oc = observation.getObservationConstellation();
+        Criteria criteria = getDefaultObservationTimeCriteria(session);
+        addProcedureRestrictionToObservationCriteria(criteria, oc.getProcedureIdentifier());
+        addObservablePropertyRestrictionToObservationCriteria(criteria, oc.getObservablePropertyIdentifier());
+        addFeatureOfInterestRestrictionToObservationCriteria(criteria, oc.getFeatureOfInterestIdentifier());
+        return criteria;
+    }
+
     @SuppressWarnings("unchecked")
     public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
         Criteria criteria =
@@ -294,6 +308,9 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         if (sosIndeterminateTime != null) {
             logArgs += ", sosIndeterminateTime";
             addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+        }
+        if (request.isSetFesFilterExtension()) {
+            new ExtensionFesFilterCriteriaAdder(c, request.getFesFilterExtensions()).add();
         }
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
@@ -401,6 +418,11 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     public String addProcedureAlias(Criteria criteria) {
         criteria.createAlias(Observation.PROCEDURE, Procedure.ALIAS);
         return Procedure.ALIAS_DOT;
+    }
+
+    @Override
+    protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
+        return c;
     }
 
 }

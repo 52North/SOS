@@ -36,6 +36,7 @@ import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.iceland.util.StringHelper;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -64,7 +65,7 @@ public class SweVector extends SweAbstractDataComponent {
         return coordinates;
     }
 
-    public SweVector setCoordinates(final List<SweCoordinate<?>> coordinates) {
+    public SweVector setCoordinates(final List<? extends SweCoordinate<?>> coordinates) {
         this.coordinates = coordinates;
         return this;
     }
@@ -139,5 +140,29 @@ public class SweVector extends SweAbstractDataComponent {
     public void accept(VoidSweDataComponentVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);
+    }
+
+    @Override
+    public SweVector clone() throws CloneNotSupportedException {
+        SweVector clone = new SweVector();
+        copyValueTo(clone);
+        if (isSetCoordinates()) {
+            List<SweCoordinate<?>> clonedList = Lists.newArrayListWithCapacity(getCoordinates().size());
+            for (SweCoordinate<?> sweCoordinate : getCoordinates()) {
+                clonedList.add(sweCoordinate.clone());
+            }
+            clone.setCoordinates(coordinates);
+        }
+        return clone;
+    }
+    @Override
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        super.copyValueTo(copy);
+        if (copy instanceof SweVector) {
+            ((SweVector) copy).setReferenceFrame(getReferenceFrame());
+            ((SweVector) copy).setLocalFrame(getLocalFrame());
+            ((SweVector) copy).setCoordinates(getCoordinates());
+        }
+        return copy;
     }
 }

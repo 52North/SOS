@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
-import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect;
+import org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import org.n52.iceland.config.SettingDefinition;
@@ -160,7 +160,7 @@ public abstract class AbstractSqlServerDatasource extends AbstractHibernateFullD
 
     @Override
     protected Dialect createDialect() {
-        return new SqlServer2008SpatialDialect();
+        return new SqlServer2008SpatialDialectSpatialIndex();
     }
 
     @Override

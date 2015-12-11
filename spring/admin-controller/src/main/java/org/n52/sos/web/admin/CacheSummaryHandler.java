@@ -42,6 +42,8 @@ import org.n52.sos.service.Configurator;
  *
  */
 public class CacheSummaryHandler {
+
+    public static final String LAST_UPDATE_TIME = "last_update";
     public static final String MIN_PHENOMENON_TIME = "min_phenomenon_time";
     public static final String MAX_PHENOMENON_TIME = "max_phenomenon_time";
     public static final String MIN_RESULT_TIME = "min_result_time";
@@ -67,6 +69,7 @@ public class CacheSummaryHandler {
     public static Map<String, String> getCacheValues() {
         SosContentCache cache = Configurator.getInstance().getCache();
         Map<String, String> values = new TreeMap<>();
+        values.put(LAST_UPDATE_TIME, nullSafeToString(cache.getLastUpdateTime()));
         values.put(MIN_PHENOMENON_TIME, nullSafeToString(cache.getMinPhenomenonTime()));
         values.put(MAX_PHENOMENON_TIME, nullSafeToString(cache.getMaxPhenomenonTime()));
         values.put(MIN_RESULT_TIME, nullSafeToString(cache.getMinResultTime()));

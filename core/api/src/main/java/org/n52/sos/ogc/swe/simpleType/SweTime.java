@@ -87,4 +87,14 @@ public class SweTime extends SweAbstractUomType<DateTime> {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    @Override
+    public SweTime clone() {
+        SweTime clone = new SweTime();
+        copyValueTo(clone);
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        return clone;
+    }
 }

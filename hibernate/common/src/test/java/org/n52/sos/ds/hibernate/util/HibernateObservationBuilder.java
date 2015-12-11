@@ -166,17 +166,17 @@ public class HibernateObservationBuilder {
                 (FeatureOfInterest) session.createCriteria(FeatureOfInterest.class)
                         .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, FEATURE_OF_INTEREST)).uniqueResult();
         if (featureOfInterest == null) {
-            TFeatureOfInterest tFeatureOfInterest = new TFeatureOfInterest();
-            tFeatureOfInterest.setCodespace(getCodespace());
-            tFeatureOfInterest.setDescriptionXml("<xml/>");
-            tFeatureOfInterest.setFeatureOfInterestType(getFeatureOfInterestType());
-            tFeatureOfInterest.setChilds(null);
-            tFeatureOfInterest.setParents(null);
-            tFeatureOfInterest.setIdentifier(FEATURE_OF_INTEREST);
-            tFeatureOfInterest.setName(FEATURE_OF_INTEREST);
-            session.save(tFeatureOfInterest);
+            featureOfInterest = new FeatureOfInterest();
+            featureOfInterest.setCodespace(getCodespace());
+            featureOfInterest.setDescriptionXml("<xml/>");
+            featureOfInterest.setFeatureOfInterestType(getFeatureOfInterestType());
+            featureOfInterest.setChilds(null);
+            featureOfInterest.setParents(null);
+            featureOfInterest.setIdentifier(FEATURE_OF_INTEREST);
+            featureOfInterest.setName(FEATURE_OF_INTEREST);
+            session.save(featureOfInterest);
             session.flush();
-            return tFeatureOfInterest;
+            return featureOfInterest;
         }
         return featureOfInterest;
     }

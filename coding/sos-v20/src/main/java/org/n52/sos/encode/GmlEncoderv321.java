@@ -651,6 +651,9 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             } else {
                 xbRef.setTitle(categoryValue.getValue());
             }
+            if (categoryValue.isSetUnit()) {
+                xbRef.setRole(categoryValue.getUnit());
+            }
         } else {
             xbRef.setNil();
         }

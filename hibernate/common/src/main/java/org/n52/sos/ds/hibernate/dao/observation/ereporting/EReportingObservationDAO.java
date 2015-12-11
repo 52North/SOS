@@ -58,6 +58,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -73,6 +74,7 @@ import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.request.GetObservationRequest;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
@@ -196,6 +198,31 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
             }
         }
         return ctx;
+    }
+
+    @Override
+    protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation observation) {
+        String identifier = getSamplingPointIdentifier(observation);
+        if (!Strings.isNullOrEmpty(identifier)) {
+            c.createCriteria(EReportingSeries.SAMPLING_POINT)
+            .add(Restrictions.eq(EReportingSamplingPoint.IDENTIFIER, identifier));
+        }
+        return c;
+    }
+
+
+    private String getSamplingPointIdentifier(OmObservation observation) {
+        if (observation.isSetParameter()) {
+            for (NamedValue<?> namedValue : observation.getParameter()) {
+                Value<?> value = namedValue.getValue();
+                if (value instanceof ReferenceValue) {
+                    return ((ReferenceValue) value).getValue().getHref();
+                } else if (value instanceof HrefAttributeValue) {
+                    return ((HrefAttributeValue) value).getValue().getHref();
+                }
+            }
+        }
+        return null;
     }
 
     private AqdSamplingPoint addSamplingPointParameterValuesToAqdSamplingPoint(AqdSamplingPoint samplingPoint,

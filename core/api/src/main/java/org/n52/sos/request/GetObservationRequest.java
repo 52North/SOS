@@ -31,22 +31,27 @@ package org.n52.sos.request;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.ows.Extension;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * SOS GetObservation request
@@ -205,7 +210,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         this.procedures = procedures;
     }
 
-
     /**
      * Get result filter(s)
      *
@@ -237,7 +241,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     /**
-
+     *
      * Get request as String
      *
      * @return request as String
@@ -405,9 +409,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     @Override
     public boolean hasSpatialFilteringProfileSpatialFilter() {
-        return isSetSpatialFilter()
-                && getSpatialFilter().getValueReference().equals(
-                        Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
+        return isSetSpatialFilter() && getSpatialFilter().getValueReference()
+                .equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
     }
 
     public boolean isSetRequestString() {
@@ -425,9 +428,47 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     public void setMergeObservationValues(boolean mergeObservationValues) {
         this.mergeObservationValues = mergeObservationValues;
-     }
+    }
 
-     public boolean isSetMergeObservationValues(){
-         return mergeObservationValues;
-     }
+    public boolean isSetMergeObservationValues() {
+        return mergeObservationValues;
+    }
+
+    /**
+     * Check if the {@link SwesExtensions} contains {@link Filter}
+     *
+     * @return <code>true</code>, if the {@link SwesExtensions} contains
+     *         {@link Filter}
+     */
+    public boolean isSetFesFilterExtension() {
+        if (isSetExtensions()) {
+            for (Extension<?> extension : getExtensions().getExtensions()) {
+                if (isFesFilterExtension(extension)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get all {@link SwesExtensions} with {@link Filter}
+     *
+     * @return All {@link SwesExtensions} with {@link Filter}
+     */
+    public Set<Extension<?>> getFesFilterExtensions() {
+        Set<Extension<?>> set = Sets.newHashSet();
+        if (isSetExtensions()) {
+            for (Extension<?> extension : getExtensions().getExtensions()) {
+                if (isFesFilterExtension(extension)) {
+                    set.add(extension);
+                }
+            }
+        }
+        return set;
+    }
+
+    private boolean isFesFilterExtension(Extension<?> extension) {
+        return extension.getValue() instanceof Filter<?>;
+    }
 }

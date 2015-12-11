@@ -119,4 +119,18 @@ public class SmlFeatureOfInterest extends SweAbstractDataComponent {
     public void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+
+    @Override
+    public SmlFeatureOfInterest clone() throws CloneNotSupportedException {
+        SmlFeatureOfInterest clone = new SmlFeatureOfInterest();
+        copyValueTo(clone);
+        if (isSetFeaturesOfInterest()) {
+            clone.addFeaturesOfInterest(Sets.newHashSet(getFeaturesOfInterest()));
+        }
+        if (isSetFeaturesOfInterestMap()) {
+            clone.addFeaturesOfInterest(Maps.newHashMap(getFeaturesOfInterestMap()));
+        }
+        return clone;
+    }
 }

@@ -114,31 +114,25 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        SosWritableContentCache cache = getCache();
+        for (Offering offering : getOfferingsToUpdate()) {
+            String offeringId = offering.getIdentifier();
+            if (shouldOfferingBeProcessed(offeringId)) {
+                getCache().addOffering(offeringId);
 
-        for (Offering offering : getOfferingsToUpdate()){
-//            try {
-                String offeringId = offering.getIdentifier();
-                if (shouldOfferingBeProcessed(offeringId)) {
-                    cache.addOffering(offeringId);
-
-                    if (offering instanceof TOffering) {
-                        TOffering tOffering = (TOffering) offering;
-                        // Related features
-                        Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
-                        if (!relatedFeatures.isEmpty()) {
-                            getCache().setRelatedFeaturesForOffering(offeringId, relatedFeatures);
-                        }
-                        cache.setAllowedObservationTypeForOffering(offeringId,
-                                                                    getObservationTypesFromObservationType(tOffering.getObservationTypes()));
-                        // featureOfInterestTypes
-                        cache.setAllowedFeatureOfInterestTypeForOffering(offeringId,
-                                                                          getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
+                if (offering instanceof TOffering) {
+                    TOffering tOffering = (TOffering) offering;
+                    // Related features
+                    Set<String> relatedFeatures = getRelatedFeatureIdentifiersFrom(tOffering);
+                    if (!relatedFeatures.isEmpty()) {
+                        getCache().setRelatedFeaturesForOffering(offeringId, relatedFeatures);
                     }
+                    getCache().setAllowedObservationTypeForOffering(offeringId,
+                            getObservationTypesFromObservationType(tOffering.getObservationTypes()));
+                    // featureOfInterestTypes
+                    getCache().setAllowedFeatureOfInterestTypeForOffering(offeringId,
+                            getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
                 }
-//            } catch (OwsExceptionReport ex) {
-//                getErrors().add(ex);
-//            }
+            }
         }
 
         //time ranges

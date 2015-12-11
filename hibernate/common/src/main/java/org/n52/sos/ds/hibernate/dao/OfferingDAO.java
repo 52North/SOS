@@ -125,11 +125,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     @SuppressWarnings("unchecked")
     public List<Offering> getOfferingObjectsForCacheUpdate(final Collection<String> identifiers,
             final Session session) {
-        Class<?> clazz = Offering.class;
-        if (HibernateHelper.isEntitySupported(TOffering.class)) {
-            clazz = TOffering.class;
-        }
-        Criteria criteria = session.createCriteria(clazz);
+        Criteria criteria = session.createCriteria(Offering.class);
         if (CollectionHelper.isNotEmpty(identifiers)) {
             criteria.add(Restrictions.in(Offering.IDENTIFIER, identifiers));
         }

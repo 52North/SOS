@@ -47,6 +47,7 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,6 +195,9 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
             c.add(temporalFilterCriterion);
         }
         addSpecificRestrictions(c, request);
+        if (request.isSetFesFilterExtension()) {
+            new ExtensionFesFilterCriteriaAdder(c, request.getFesFilterExtensions()).add();
+        }
         LOGGER.debug("QUERY getStreamingSeriesValuesFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c.setReadOnly(true);
     }

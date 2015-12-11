@@ -41,11 +41,11 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservatio
  *
  * @author Christian Autermann
  */
-public class BlobValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Object>
+public class BlobValuedSeriesObservation extends AbstractValuedSeriesObservation<Object>
         implements BlobValuedObservation {
 
     private static final long serialVersionUID = 503922159414098744L;
+
     private Object value;
 
     @Override
@@ -75,8 +75,7 @@ public class BlobValuedSeriesObservation
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

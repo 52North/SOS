@@ -76,4 +76,13 @@ public class SweDataRecord extends SweAbstractDataRecord {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    public SweDataRecord clone() throws CloneNotSupportedException {
+        SweDataRecord clone = new SweDataRecord();
+        copyValueTo(clone);
+        for (SweField field : getFields()) {
+            clone.addField(field.clone());
+        }
+        return clone;
+    }
 }

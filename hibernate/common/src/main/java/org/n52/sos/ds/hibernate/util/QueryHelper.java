@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.util;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -39,11 +40,13 @@ import java.util.stream.Collectors;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
@@ -55,7 +58,6 @@ import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.SpatialFeatureQueryRequest;
 
 
@@ -64,6 +66,8 @@ import org.n52.sos.request.SpatialFeatureQueryRequest;
  *
  */
 public class QueryHelper {
+
+    private static final int LIMIT_EXPRESSION_DEPTH = 1000;
 
     private static final String SAMS_SHAPE = "sams:shape";
     private static final String OM_FEATURE_OF_INTEREST = "om:featureOfInterest";
@@ -222,5 +226,39 @@ public class QueryHelper {
         return Arrays.asList(operators).stream()
                 .map(op -> new TemporalFilter(op, validTime, reference))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Creates a criterion for GRDC ids, considers if size is > 1000 (expression
+     * limit).
+     *
+     * @param propertyName
+     *            Column name.
+     * @param identifiers
+     *            Identifiers list
+     * @return Criterion.
+     */
+    public static Criterion getCriterionForFoiIds(String propertyName, Collection<String> identifiers) {
+        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
+            List<String> fois = new ArrayList<String>(identifiers);
+            Criterion criterion = null;
+            List<String> ids = null;
+            for (int i = 0; i < fois.size(); i++) {
+                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
+                    if (criterion == null && i != 0) {
+                        criterion = Restrictions.in(propertyName, ids);
+                    } else if (criterion != null) {
+                        criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
+                    }
+                    ids = new ArrayList<String>();
+                    ids.add(fois.get(i));
+                } else {
+                    ids.add(fois.get(i));
+                }
+            }
+            return criterion;
+        } else {
+            return Restrictions.in(propertyName, identifiers);
+        }
     }
 }

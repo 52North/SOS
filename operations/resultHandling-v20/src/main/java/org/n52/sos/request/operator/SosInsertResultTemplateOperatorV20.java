@@ -36,7 +36,6 @@ import org.n52.iceland.exception.ows.CompositeOwsException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.MissingParameterValueException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
@@ -44,7 +43,11 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
+import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.wsdl.WSDLConstants;
@@ -84,6 +87,7 @@ public class SosInsertResultTemplateOperatorV20
 
     @Override
     protected void checkParameters(InsertResultTemplateRequest request) throws OwsExceptionReport {
+        createCompositePhenomenons(request);
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -190,6 +194,22 @@ public class SosInsertResultTemplateOperatorV20
          */
     }
 
+    private void createCompositePhenomenons(InsertResultTemplateRequest request) throws OwsExceptionReport {
+        if (request.getResultStructure().getResultStructure() instanceof SweDataRecord) {
+            SweDataRecord record = (SweDataRecord) request.getResultStructure().getResultStructure();
+            String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
+            if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
+                if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
+                    ComplexValue cv = new ComplexValue((SweDataRecord)record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
+                    OmObservation observation = new OmObservation();
+                    observation.setObservationConstellation(request.getObservationTemplate());
+                    observation.setValue(new SingleObservationValue<>(cv));
+                    createCompositePhenomenon(observation);
+                }
+            }
+        }
+    }
+
     private void checkResultTemplateIdentifier(String identifier) throws OwsExceptionReport {
         if (getCache().hasResultTemplate(identifier)) {
             throw new DuplicateIdentifierException("resultTemplate", identifier);
@@ -200,12 +220,14 @@ public class SosInsertResultTemplateOperatorV20
 
     private void checkObservationType(InsertResultTemplateRequest request) throws OwsExceptionReport {
         OmObservationConstellation observationConstellation = request.getObservationTemplate();
-        if (!observationConstellation.isSetObservationType()) {
-            observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+        if (observationConstellation.isSetObservationType()) {
+            // TODO check why setting SweArray_Observation as type
+            //observationConstellation.setObservationType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
+            // check if observation type is supported
+            checkObservationType(observationConstellation.getObservationType(),
+                    Sos2Constants.InsertResultTemplateParams.observationType.name());
         }
-        // check if observation type is supported
-        checkObservationType(observationConstellation.getObservationType(),
-                Sos2Constants.InsertResultTemplateParams.observationType.name());
+
         Set<String> validObservationTypesForOffering = new HashSet<String>(0);
         for (String offering : observationConstellation.getOfferings()) {
             validObservationTypesForOffering.addAll(Configurator.getInstance().getCache()

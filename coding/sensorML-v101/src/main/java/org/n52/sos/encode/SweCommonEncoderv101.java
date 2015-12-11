@@ -76,6 +76,7 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuality;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
@@ -85,6 +86,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -97,6 +99,7 @@ import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.BlockEncodingPropertyType;
 import net.opengis.swe.x101.CategoryDocument.Category;
 import net.opengis.swe.x101.CountDocument.Count;
+import net.opengis.swe.x101.CountRangeDocument.CountRange;
 import net.opengis.swe.x101.DataArrayDocument;
 import net.opengis.swe.x101.DataArrayType;
 import net.opengis.swe.x101.DataComponentPropertyType;
@@ -210,6 +213,8 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             abstractDataComponentType = createCategory((SweCategory) sosSimpleType);
         } else if (sosSimpleType instanceof SweCount) {
             abstractDataComponentType = createCount((SweCount) sosSimpleType);
+        } else if (sosSimpleType instanceof SweCountRange) {
+            abstractDataComponentType = createCountRange((SweCountRange) sosSimpleType);
         } else if (sosSimpleType instanceof SweObservableProperty) {
             abstractDataComponentType = createObservableProperty((SweObservableProperty) sosSimpleType);
         } else if (sosSimpleType instanceof SweQuantity) {
@@ -303,8 +308,12 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbField.addNewCategory().set(createSimpleType((SweCategory) sosElement));
         } else if (sosElement instanceof SweCount) {
             xbField.addNewCount().set(createSimpleType((SweCount) sosElement));
+        } else if (sosElement instanceof SweCountRange) {
+            xbField.addNewCount().set(createSimpleType((SweCountRange) sosElement));
         } else if (sosElement instanceof SweQuantity) {
             xbField.addNewQuantity().set(createSimpleType((SweQuantity) sosElement));
+        } else if (sosElement instanceof SweQuantityRange) {
+            xbField.addNewQuantity().set(createSimpleType((SweQuantityRange) sosElement));
         } else if (sosElement instanceof SweText) {
             xbField.addNewText().set(createSimpleType((SweText) sosElement));
         } else if (sosElement instanceof SweTimeRange) {
@@ -392,6 +401,17 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbCount.setQualityArray(createQuality(count.getQuality()));
         }
         return xbCount;
+    }
+
+    private CountRange createCountRange(final SweCountRange countRange) throws OwsExceptionReport {
+        final CountRange xbCountRange = CountRange.Factory.newInstance(getXmlOptions());
+        if (countRange.isSetValue()) {
+            xbCountRange.setValue(countRange.getValue().getRangeAsList());
+        }
+        if (countRange.isSetQuality()) {
+            xbCountRange.setQualityArray(createQuality(countRange.getQuality()));
+        }
+        return xbCountRange;
     }
 
     private ObservableProperty createObservableProperty(final SweObservableProperty observableProperty) throws OwsExceptionReport {

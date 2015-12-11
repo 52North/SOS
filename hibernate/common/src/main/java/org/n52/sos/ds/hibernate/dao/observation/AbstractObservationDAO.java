@@ -40,10 +40,12 @@ import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.spatial.criterion.SpatialProjections;
@@ -57,11 +59,13 @@ import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OptionNotSupportedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.DateTimeHelper;
@@ -70,6 +74,7 @@ import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
+import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -77,16 +82,20 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
+import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ogc.om.NamedValue;
@@ -117,6 +126,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -253,6 +263,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @return Collection of observation identifiers
      */
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
+
+    /**
+     * Get Hibernate Criteria for {@link TemporalReferencedObservation}  with restrictions observation identifiers
+     *
+     * @param observation The observation with restriction values
+     * @param session
+     *            Hibernate session
+     * @return Hibernate Criteria to query observations
+     * @throws CodedException
+     */
+    public abstract Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session) throws CodedException;
 
     /**
      * Query observation by identifier
@@ -658,12 +679,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Hibernate session
      * @throws OwsExceptionReport
      */
-    protected void insertParameter(Collection<NamedValue<?>> parameter, Observation<?> observation,
-            Session session) throws OwsExceptionReport {
+    @Deprecated
+    protected void insertParameter(Collection<NamedValue<?>> parameter, Observation<?> observation, Session session)
+            throws OwsExceptionReport {
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                throw new OptionNotSupportedException().at("om:parameter").withMessage(
-                        "The om:parameter support is not yet implemented!");
+                throw new OptionNotSupportedException().at("om:parameter")
+                        .withMessage("The om:parameter support is not yet implemented!");
             }
         }
     }
@@ -1155,7 +1177,97 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     public abstract ObservationFactory getObservationFactory();
 
-    private static class ObservationPersister implements ValueVisitor<Observation<?>> {
+    protected abstract Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation);
+
+    /**
+     * @param sosObservation {@link OmObservation} to check
+     * @param session Hibernate {@link Session}
+     * @throws OwsExceptionReport
+     */
+    public void checkForDuplicatedObservations(OmObservation sosObservation, Session session) throws OwsExceptionReport {
+        Criteria c = getTemoralReferencedObservationCriteriaFor(sosObservation, session);
+        addAdditionalObservationIdentification(c, sosObservation);
+        // add times check (start/end phen, result)
+        List<TemporalFilter> filters = Lists.newArrayListWithCapacity(2);
+        filters.add(getPhenomeonTimeFilter(c, sosObservation.getPhenomenonTime()));
+        filters.add(getResultTimeFilter(c, sosObservation.getResultTime(), sosObservation.getPhenomenonTime()));
+        c.add(TemporalRestrictions.filter(filters));
+        if (sosObservation.isSetHeightDepthParameter()) {
+            NamedValue<Double> hdp = sosObservation.getHeightDepthParameter();
+            addParameterRestriction(c, hdp);
+        }
+        c.setMaxResults(1);
+        LOGGER.debug("QUERY checkForDuplicatedObservations(): {}", HibernateHelper.getSqlString(c));
+        if (!c.list().isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("procedure=").append(sosObservation.getObservationConstellation().getProcedureIdentifier());
+            builder.append("observedProperty=").append(sosObservation.getObservationConstellation().getObservablePropertyIdentifier());
+            builder.append("featureOfInter=").append(sosObservation.getObservationConstellation().getFeatureOfInterestIdentifier());
+            builder.append("phenomenonTime=").append(sosObservation.getPhenomenonTime().toString());
+            builder.append("resultTime=").append(sosObservation.getResultTime().toString());
+            // TODO for e-Reporting SampligPoint should be added.
+            if (sosObservation.isSetHeightDepthParameter()) {
+                NamedValue<Double> hdp = sosObservation.getHeightDepthParameter();
+                builder.append("height/depth=").append(hdp.getName().getHref()).append("/").append(hdp.getValue().getValue());
+            }
+            throw new NoApplicableCodeException().withMessage("The observation for %s already exists in the database!", builder.toString());
+        }
+    }
+
+    private void addParameterRestriction(Criteria c, NamedValue<?> hdp) throws OwsExceptionReport {
+        c.add(Subqueries.propertyIn(AbstractBaseObservation.ID, getParameterRestriction(c, hdp.getName().getHref(), hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
+    }
+
+    protected DetachedCriteria getParameterRestriction(Criteria c, String name, Object value, Class<?> clazz) {
+        DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
+        addParameterNameRestriction(detachedCriteria, name);
+        addParameterValueRestriction(detachedCriteria, value);
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
+        return detachedCriteria;
+    }
+
+    protected DetachedCriteria addParameterNameRestriction(DetachedCriteria detachedCriteria, String name) {
+        detachedCriteria.add(Restrictions.eq(Parameter.NAME, name));
+        return detachedCriteria;
+    }
+
+    protected DetachedCriteria addParameterValueRestriction(DetachedCriteria detachedCriteria, Object value) {
+        detachedCriteria.add(Restrictions.eq(Parameter.VALUE, value));
+        return detachedCriteria;
+    }
+
+    private TemporalFilter getPhenomeonTimeFilter(Criteria c, Time phenomenonTime) {
+        return new TemporalFilter(TimeOperator.TM_Equals, phenomenonTime, Sos2Constants.EN_PHENOMENON_TIME);
+    }
+
+    private TemporalFilter getResultTimeFilter(Criteria c, TimeInstant resultTime, Time phenomenonTime) throws CodedException {
+        String valueReferencep = Sos2Constants.EN_RESULT_TIME;
+        if (resultTime != null) {
+            if (resultTime.getValue() != null) {
+                return new TemporalFilter(TimeOperator.TM_Equals, resultTime, valueReferencep);
+            } else if (TimeIndeterminateValue.contains(Sos2Constants.EN_PHENOMENON_TIME)
+                    && phenomenonTime instanceof TimeInstant) {
+                return new TemporalFilter(TimeOperator.TM_Equals, phenomenonTime, valueReferencep);
+            } else {
+                throw new NoApplicableCodeException()
+                        .withMessage("Error while creating result time filter for querying observations!");
+            }
+        } else {
+            if (phenomenonTime instanceof TimeInstant) {
+                return new TemporalFilter(TimeOperator.TM_Equals, phenomenonTime, valueReferencep);
+            } else {
+                throw new NoApplicableCodeException()
+                        .withMessage("Error while creating result time filter for querying observations!");
+            }
+        }
+    }
+
+    public ParameterFactory getParameterFactory() {
+        return ParameterFactory.getInstance();
+    }
+
+    private static class ObservationPersister
+            implements ValueVisitor<Observation<?>> {
         private final Set<ObservationConstellation> observationConstellations;
 
         private final FeatureOfInterest featureOfInterest;
@@ -1194,6 +1306,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             this.daos = daos;
             this.observationFactory = daos.observation().getObservationFactory();
             this.childObservation = childObservation;
+            checkForDuplicity();
+        }
+
+        private void checkForDuplicity() throws OwsExceptionReport {
+            /*
+             *  TODO check if observation exists in database for
+             *  - series, phenTimeStart, phenTimeEnd, resultTime
+             *  - series, phenTimeStart, phenTimeEnd, resultTime, depth/height parameter (same observation different depth/height)
+             */
+             daos.observation.checkForDuplicatedObservations(sosObservation, session);
+
         }
 
         @Override
@@ -1351,19 +1474,18 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 observationContext.setObservableProperty(first.getObservableProperty());
                 observationContext.setProcedure(first.getProcedure());
             }
+            // set value before ObservationContext is added otherwise the first/last value is not updated in series table.
+            observation.setValue(value);
 
             observationContext.setFeatureOfInterest(featureOfInterest);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
 
-            if (sosObservation.isSetParameter()) {
-                daos.observation().insertParameter(sosObservation.getParameter(), observation, session);
-            }
-
-            observation.setValue(value);
-
             session.saveOrUpdate(observation);
 
+            if (sosObservation.isSetParameter()) {
+                daos.parameter.insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
+            }
             return observation;
         }
 
@@ -1404,12 +1526,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             private final AbstractObservationDAO observation;
 
             private final ObservationTypeDAO observationType;
+            private final ParameterDAO parameter;
 
             DAOs(AbstractObservationDAO observationDAO) {
                 this.observation = observationDAO;
                 this.observableProperty = new ObservablePropertyDAO();
                 this.observationConstellation = new ObservationConstellationDAO();
                 this.observationType = new ObservationTypeDAO();
+                this.parameter = new ParameterDAO();
             }
 
             public ObservablePropertyDAO observableProperty() {
@@ -1426,6 +1550,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
             public ObservationTypeDAO observationType() {
                 return this.observationType;
+            }
+
+            public ParameterDAO parameter() {
+                return this.parameter;
             }
         }
     }

@@ -55,6 +55,16 @@ public interface SosContentCache
             SpatialCache,
             CompositePhenomenonCache {
     /**
+     * @return the last cache update time
+     */
+    DateTime getLastUpdateTime();
+
+    /**
+     * @param time set the last cache update time
+     */
+    void setLastUpdateTime(DateTime time);
+
+    /**
      * @return the maximal phenomenon time for all observations
      */
     DateTime getMaxPhenomenonTime();

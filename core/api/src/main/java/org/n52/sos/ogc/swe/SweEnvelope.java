@@ -256,4 +256,18 @@ public class SweEnvelope extends SweAbstractDataComponent {
     private static boolean isNorthingFirstEpsgCode(int srid) {
         return GeometryHandler.getInstance().isNorthingFirstEpsgCode(srid);
     }
+
+    @Override
+    public SweEnvelope clone() throws CloneNotSupportedException {
+        SweEnvelope clone = new SweEnvelope();
+        copyValueTo(clone);
+        clone.setReferenceFrame(getReferenceFrame());
+        if (isLowerCornerSet()) {
+            clone.setLowerCorner(getLowerCorner().clone());
+        }
+        if (isUpperCornerSet()) {
+            clone.setUpperCorner(getUpperCorner().clone());
+        }
+        return clone;
+    }
 }

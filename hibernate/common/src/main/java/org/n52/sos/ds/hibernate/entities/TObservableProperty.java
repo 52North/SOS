@@ -28,65 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
-
-import com.google.common.collect.Sets;
-
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  * @since 4.0.0
  */
+@Deprecated
 public class TObservableProperty
-        extends ObservableProperty
-        implements HasParentChilds<ObservableProperty> {
+        extends ObservableProperty {
 
     private static final long serialVersionUID = -2442057838780645108L;
-    private Set<ObservableProperty> childs = Sets.newHashSet();
-    private Set<ObservableProperty> parents = Sets.newHashSet();
-
-    @Override
-    public Set<ObservableProperty> getParents() {
-        return parents;
-    }
-
-    @Override
-    public void setParents(final Set<ObservableProperty> parents) {
-        this.parents = parents;
-    }
-
-    @Override
-    public Set<ObservableProperty> getChilds() {
-        return childs;
-    }
-
-    @Override
-    public void setChilds(final Set<ObservableProperty> childs) {
-        this.childs = childs;
-    }
-
-    @Override
-    public void addParent(ObservableProperty parent) {
-        if (parent == null) {
-            return;
-        }
-        if (parents == null) {
-            parents = new HashSet<>();
-        }
-        parents.add(parent);
-    }
-
-    @Override
-    public void addChild(ObservableProperty child) {
-        if (child == null) {
-            return;
-        }
-        if (childs == null) {
-            childs = new HashSet<>();
-        }
-        childs.add(child);
-    }
 }

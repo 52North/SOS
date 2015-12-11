@@ -42,11 +42,11 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObserv
  *
  * @author Christian Autermann
  */
-public class CategoryValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<String>
+public class CategoryValuedSeriesObservation extends AbstractValuedSeriesObservation<String>
         implements CategoryValuedObservation {
 
     private static final long serialVersionUID = -4206516111463835035L;
+
     private String value;
 
     @Override
@@ -76,8 +76,7 @@ public class CategoryValuedSeriesObservation
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

@@ -110,7 +110,6 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -245,6 +244,8 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         } else {
             throw new UnsupportedEncoderInputException(this, response);
         }
+        // check if all gml:id are unique
+        XmlHelper.makeGmlIdsUnique(encodedObject.getDomNode());
         LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
                 XmlHelper.validateDocument(encodedObject));
         return encodedObject;
@@ -387,6 +388,13 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                     final ProcessModel smlProcessModel = (ProcessModel) sml;
                     addAbstractProcessValues(xbProcessModel, smlProcessModel);
                     addProcessModelValues(xbProcessModel, smlProcessModel);
+                } else if (sml instanceof org.n52.sos.ogc.sensorML.Component) {
+                    final ComponentType xbCompontent =  (ComponentType) xbSensorML.addNewMember().addNewProcess().substitute(
+                            new QName(SensorMLConstants.NS_SML, SensorMLConstants.EN_COMPONENT),
+                            ComponentType.type);
+                    final org.n52.sos.ogc.sensorML.Component smlComponent = (org.n52.sos.ogc.sensorML.Component) sml;
+                    addAbstractProcessValues(xbCompontent, smlComponent);
+                    addComponentValues(xbCompontent, smlComponent);
                 }
             }
         }
@@ -396,24 +404,35 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     private ContactList createContactList(final List<SmlContact> contacts) {
         final ContactList xbContacts = ContactList.Factory.newInstance();
         for (final SmlContact smlContact : contacts) {
-            if (smlContact instanceof SmlPerson) {
+            if (smlContact.isSetHref()) {
                 ContactList.Member member = xbContacts.addNewMember();
-                member.addNewPerson().set(createPerson((SmlPerson) smlContact));
-                if (!Strings.isNullOrEmpty(smlContact.getRole())) {
+                member.setHref(smlContact.getHref());
+                if (smlContact.isSetTitle()) {
+                    member.setTitle(smlContact.getTitle());
+                }
+                if (smlContact.isSetRole()) {
                     member.setRole(smlContact.getRole());
                 }
-            } else if (smlContact instanceof SmlResponsibleParty) {
-                ContactList.Member member = xbContacts.addNewMember();
-                member.addNewResponsibleParty().set(createResponsibleParty((SmlResponsibleParty) smlContact));
-                if (!Strings.isNullOrEmpty(smlContact.getRole())) {
-                    member.setRole(smlContact.getRole());
-                }
-            } else if (smlContact instanceof SmlContactList) {
-                SmlContactList contactList = (SmlContactList) smlContact;
-                ContactList innerContactList = createContactList(contactList.getMembers());
-                int innerContactLength = innerContactList.getMemberArray().length;
-                for (int i = 0; i < innerContactLength; i++) {
-                    xbContacts.addNewMember().set(innerContactList.getMemberArray(i));
+            } else {
+                if (smlContact instanceof SmlPerson) {
+                    ContactList.Member member = xbContacts.addNewMember();
+                    member.addNewPerson().set(createPerson((SmlPerson) smlContact));
+                    if (smlContact.isSetRole()) {
+                        member.setRole(smlContact.getRole());
+                    }
+                } else if (smlContact instanceof SmlResponsibleParty) {
+                    ContactList.Member member = xbContacts.addNewMember();
+                    member.addNewResponsibleParty().set(createResponsibleParty((SmlResponsibleParty) smlContact));
+                    if (smlContact.isSetRole()) {
+                        member.setRole(smlContact.getRole());
+                    }
+                } else if (smlContact instanceof SmlContactList) {
+                    SmlContactList contactList = (SmlContactList) smlContact;
+                    ContactList innerContactList = createContactList(contactList.getMembers());
+                    int innerContactLength = innerContactList.getMemberArray().length;
+                    for (int i = 0; i < innerContactLength; i++) {
+                        xbContacts.addNewMember().set(innerContactList.getMemberArray(i));
+                    }
                 }
             }
         }

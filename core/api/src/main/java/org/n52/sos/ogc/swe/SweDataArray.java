@@ -37,6 +37,8 @@ import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 
+import com.google.common.collect.Lists;
+
 
 public class SweDataArray extends SweAbstractDataComponent {
 
@@ -221,5 +223,24 @@ public class SweDataArray extends SweAbstractDataComponent {
     public void accept(VoidSweDataComponentVisitor visitor)
             throws OwsExceptionReport {
         visitor.visit(this);
+    }
+
+    @Override
+    public SweDataArray clone() throws CloneNotSupportedException {
+        SweDataArray clone = new SweDataArray();
+        copyValueTo(clone);
+        if (isSetElementTyp()) {
+            clone.setElementType(getElementType().clone());
+        }
+        if (isSetElementCount()) {
+            clone.setElementCount(getElementCount().clone());
+        }
+        if (isSetEncoding()) {
+            clone.setEncoding(getEncoding().clone());
+        }
+        if (isSetValues()) {
+            clone.setValues(Lists.newArrayList(getValues()));
+        }
+        return clone;
     }
 }

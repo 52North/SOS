@@ -159,4 +159,17 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
         visitor.visit(this);
     }
 
+    @Override
+    public SweQuantity clone() {
+        SweQuantity clone = new SweQuantity();
+        copyValueTo(clone);
+        if (isSetAxisID()) {
+            clone.setAxisID(getAxisID());
+        }
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        return clone;
+    }
+
 }

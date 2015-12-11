@@ -48,7 +48,7 @@
 							<swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />
 						</swe:TimeRange>
 					</swe:field>
-					<swe:field name="phenomenonTime">
+					<swe:field name="resultTime">
 						<swe:Time
 							definition="http://www.opengis.net/def/property/OGC/0/ResultTime">
 							<swe:uom xlink:href="http://www.opengis.net/def/uom/ISO-8601/0/Gregorian" />

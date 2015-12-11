@@ -345,6 +345,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         final SmlCapabilities capabilities = new SmlCapabilities();
         capabilities.setName(capabilitiesName);
         final SweSimpleDataRecord simpleDataRecord = new SweSimpleDataRecord();
+        simpleDataRecord.setName(capabilitiesName);
         final List<SweField> fields = createCapabilitiesFieldsFrom(fieldDefinition, fieldName, sweTextSet);
         capabilities.setDataRecord(simpleDataRecord.setFields(fields));
         return capabilities;

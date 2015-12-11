@@ -68,6 +68,7 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
@@ -354,32 +355,12 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sweField.isSetName()) {
             xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
-        final AbstractDataComponentType xbDCD = xbField.addNewAbstractDataComponent();
-        xbDCD.set(createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
-                HelperValues.class)));
-        if (sosElement instanceof SweBoolean) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_BOOLEAN_SWE_200, BooleanType.type);
-        } else if (sosElement instanceof SweCategory) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_CATEGORY_SWE_200, CategoryType.type);
-        } else if (sosElement instanceof SweCount) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_COUNT_SWE_200, CountType.type);
-        } else if (sosElement instanceof SweQuantity) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_QUANTITY_SWE_200, QuantityType.type);
-        } else if (sosElement instanceof SweText) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_TEXT_SWE_200, TextType.type);
-        } else if (sosElement instanceof SweTimeRange) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_TIME_RANGE_SWE_200, TimeRangeType.type);
-        } else if (sosElement instanceof SweTime) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_TIME_SWE_200, TimeType.type);
-        } else if (sosElement instanceof SweDataArray) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_DATA_ARRAY_SWE_200, DataArrayType.type);
-        } else if (sosElement instanceof SweDataRecord) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_DATA_RECORD_SWE_200, DataRecordType.type);
-        } else if (sosElement instanceof SweVector) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_VECTOR_SWE_200, VectorType.type);
-        } else {
-            throw new NotYetSupportedException(SweAbstractDataComponent.class.getName(), sosElement);
-        }
+
+        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
+                HelperValues.class));
+        XmlObject substituteElement =
+                XmlHelper.substituteElement(xbField.addNewAbstractDataComponent(), encodeObjectToXml);
+        substituteElement.set(encodeObjectToXml);
         return xbField;
     }
 

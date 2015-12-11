@@ -42,9 +42,11 @@ ALTER TABLE observation ADD parent char(1 char) default 'F' check (parent in ('T
 
 create table complexValue (observationId number(19,0) not null, primary key (observationId));
 alter table complexValue add constraint observationComplexValueFk foreign key (observationId) references observation;
-alter table complexValue add constraint observationComplexValueFk foreign key (observationId) references observation;
 
 create table compositeObservation (observationId number(19,0) not null, childObservationId number(19,0) not null, primary key (observationId, childObservationId));
 alter table compositeObservation add constraint observationChildFk foreign key (childObservationId) references observation;
 alter table compositeObservation add constraint observationParentFK foreign key (observationId) references complexValue;
-alter table compositeObservation add constraint observationParentFK foreign key (observationId) references complexValue;
+
+-- spatial index
+create index featureGeomIdx on featureOfInterest (geom)  INDEXTYPE IS MDSYS.SPATIAL_INDEX;
+create index samplingGeomIdx on observation (samplingGeometry)  INDEXTYPE IS MDSYS.SPATIAL_INDEX;

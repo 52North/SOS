@@ -108,10 +108,8 @@ public class RangeValue<T> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((rangeEnd == null) ? 0 : rangeEnd.hashCode());
-        result = prime * result
-                + ((rangeStart == null) ? 0 : rangeStart.hashCode());
+        result = prime * result + ((rangeEnd == null) ? 0 : rangeEnd.hashCode());
+        result = prime * result + ((rangeStart == null) ? 0 : rangeStart.hashCode());
         return result;
     }
 
@@ -142,5 +140,10 @@ public class RangeValue<T> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public RangeValue<?> clone() {
+        return new RangeValue<T>(getRangeStart(), getRangeStart());
     }
 }

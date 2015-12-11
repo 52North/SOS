@@ -145,4 +145,21 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
         visitor.visit(this);
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public SweQuantityRange clone() {
+        SweQuantityRange clone = new SweQuantityRange();
+        copyValueTo(clone);
+        if (isSetQuality()) {
+            clone.setQuality(cloneQuality());
+        }
+        if (isSetAxisID()) {
+            clone.setAxisID(getAxisID());
+        }
+        if (isSetValue()) {
+            clone.setValue((RangeValue<Double>)getValue().clone());
+        }
+        return clone;
+    }
+
 }

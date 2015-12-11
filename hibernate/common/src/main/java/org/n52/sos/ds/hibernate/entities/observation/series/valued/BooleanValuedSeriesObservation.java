@@ -41,11 +41,11 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObserva
  *
  * @author Christian Autermann
  */
-public class BooleanValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Boolean>
+public class BooleanValuedSeriesObservation extends AbstractValuedSeriesObservation<Boolean>
         implements BooleanValuedObservation {
 
     private static final long serialVersionUID = 2071956765678050524L;
+
     private Boolean value;
 
     @Override
@@ -75,8 +75,7 @@ public class BooleanValuedSeriesObservation
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

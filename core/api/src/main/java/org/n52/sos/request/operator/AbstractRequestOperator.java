@@ -71,6 +71,7 @@ import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
@@ -720,7 +721,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             }
             if (tp.getStart().isAfter(tp.getEnd())) {
                 throw new InvalidParameterValueException(SosConstants.Filter.TimePeriod, tp.toString()).withMessage(
-                        "It is not allowed that begin time is before end time! Begin '%s' > End '%s'", tp.getStart(),
+                        "It is not allowed that begin time is after end time! Begin '%s' > End '%s'", tp.getStart(),
                         tp.getEnd());
             }
         }
@@ -801,6 +802,18 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
             }
         }
         return Lists.newArrayList(allFeatures);
+    }
+
+    protected List<String> addChildObservableProperties(List<String> observedProperties) {
+        Set<String> allObservedProperties = Sets.newHashSet(observedProperties);
+        if (isIncludeChildObservableProperties()) {
+            for (String observedProperty : observedProperties) {
+                if (getCache().isCompositePhenomenon(observedProperty)) {
+                    allObservedProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(observedProperty));
+                }
+            }
+        }
+        return Lists.newArrayList(allObservedProperties);
     }
 
     protected void checkObservationType(final String observationType, final String parameterName)

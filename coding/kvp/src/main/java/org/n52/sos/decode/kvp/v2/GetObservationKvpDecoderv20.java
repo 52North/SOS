@@ -44,10 +44,12 @@ import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
 import org.n52.iceland.ogc.filter.FilterConstants;
+import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.Sos2Constants.Extensions;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.http.MediaTypes;
@@ -55,6 +57,8 @@ import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
 
 /**
  * @since 4.0.0
@@ -163,6 +167,24 @@ public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
         exceptions.throwIfNotEmpty();
 
         return request;
+    }
+
+    @Override
+    protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
+            String parameterName) throws OwsExceptionReport {
+        if ("extension".equalsIgnoreCase(parameterName)) {
+            List<String> checkParameterMultipleValues = KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
+            for (String parameterValue : checkParameterMultipleValues) {
+                final Object obj = CodingHelper.decodeXmlElement(XmlHelper.parseXmlString(parameterValue));
+                if (obj instanceof Extension<?>) {
+                    request.addExtension((Extension<?>) obj);
+                } else {
+                    request.addExtension(new SwesExtension<Object>().setValue(obj));
+                }
+            }
+            return true;
+        }
+        return super.parseExtensionParameter(request, parameterValues, parameterName);
     }
 
     private org.n52.iceland.ogc.ows.Extensions parseExtension(final Extensions extension,

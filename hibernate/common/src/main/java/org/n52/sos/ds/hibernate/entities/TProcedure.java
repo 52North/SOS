@@ -28,10 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValidProcedureTimes;
 
 import com.google.common.collect.Sets;
@@ -41,18 +39,13 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public class TProcedure extends Procedure implements HasValidProcedureTimes,
-                                                     HasParentChilds<Procedure> {
+public class TProcedure extends Procedure implements HasValidProcedureTimes {
 
     private static final long serialVersionUID = 3307492687846686350L;
 
     public static final String VALID_PROCEDURE_TIME = "validProcedureTimes";
 
     private Set<ValidProcedureTime> validProcedureTimes = Sets.newHashSet();
-
-    private Set<Procedure> childs = Sets.newHashSet();
-
-    private Set<Procedure> parents = Sets.newHashSet();
 
     public TProcedure() {
         super();
@@ -68,47 +61,4 @@ public class TProcedure extends Procedure implements HasValidProcedureTimes,
             Set<ValidProcedureTime> validProcedureTimes) {
         this.validProcedureTimes = validProcedureTimes;
     }
-
-    @Override
-    public Set<Procedure> getParents() {
-        return parents;
-    }
-
-    @Override
-    public void setParents(Set<Procedure> parents) {
-        this.parents = parents;
-    }
-
-    @Override
-    public Set<Procedure> getChilds() {
-        return childs;
-    }
-
-    @Override
-    public void setChilds(Set<Procedure> childs) {
-        this.childs = childs;
-    }
-
-    @Override
-    public void addParent(Procedure parent) {
-        if (parent == null) {
-            return;
-        }
-        if (this.parents == null) {
-            this.parents = new HashSet<>();
-        }
-        this.parents.add(parent);
-    }
-
-    @Override
-    public void addChild(Procedure child) {
-        if (child == null) {
-            return;
-        }
-        if (this.childs == null) {
-            this.childs = new HashSet<>();
-        }
-        this.childs.add(child);
-    }
-
 }

@@ -206,23 +206,32 @@ public class NetCDFUtil {
             }
 
             // check for samplingGeometry in observation
-            if (sosObs.isSetParameter() && hasSamplingGeometry(sosObs)) {
-                Geometry geometry = getSamplingGeometryGeometry(sosObs);
-                Set<Point> points = FeatureUtil.getPoints(geometry);
-                for (Point point : points) {
-                    try {
-                        // TODO is this correct?
-                        point =
-                                (Point) GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                        point);
-                    } catch (OwsExceptionReport e) {
-                        throw new NoApplicableCodeException()
-                                .withMessage("Exception while normalizing sampling geometry coordinate axis order.");
+            if (sosObs.isSetParameter()) {
+                if (sosObs.isSetHeightDepthParameter()) {
+                    if (sosObs.isSetHeightParameter()) {
+                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue().doubleValue());
+                    } else if (sosObs.isSetDepthParameter()) {
+                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue().doubleValue());
                     }
-                    sensorLngs.put(sensor, point.getX());
-                    sensorLats.put(sensor, point.getY());
                 }
-                sensorHeights.putAll(sensor, FeatureUtil.getHeights(points));
+                if (hasSamplingGeometry(sosObs)) {
+                    Geometry geometry = getSamplingGeometryGeometry(sosObs);
+                    Set<Point> points = FeatureUtil.getPoints(geometry);
+                    for (Point point : points) {
+                        try {
+                            // TODO is this correct?
+                            point =
+                                    (Point) GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                            point);
+                        } catch (OwsExceptionReport e) {
+                            throw new NoApplicableCodeException()
+                                    .withMessage("Exception while normalizing sampling geometry coordinate axis order.");
+                        }
+                        sensorLngs.put(sensor, point.getX());
+                        sensorLats.put(sensor, point.getY());
+                    }
+                    sensorHeights.putAll(sensor, FeatureUtil.getHeights(points));
+                }
             }
 
             // get the sensor's data map

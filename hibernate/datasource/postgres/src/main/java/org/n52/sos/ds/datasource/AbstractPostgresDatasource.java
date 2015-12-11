@@ -39,7 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.spatial.dialect.postgis.PostgisDialect;
+import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 
 import org.n52.iceland.exception.ConfigurationError;
@@ -106,7 +106,7 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     @Override
     protected Dialect createDialect() {
-        return new PostgisDialect();
+        return new PostgisDialectSpatialIndex();
     }
 
     @Override

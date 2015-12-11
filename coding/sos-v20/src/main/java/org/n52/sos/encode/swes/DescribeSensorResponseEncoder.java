@@ -83,6 +83,10 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
                 substitution.set(xmlObjectValidtime);
             }
         }
+        // in a single observation the gml:ids must be unique
+        if (response.getProcedureDescriptions().size() > 1) {
+            XmlHelper.makeGmlIdsUnique(doc.getDomNode());
+        }
         return doc;
     }
 

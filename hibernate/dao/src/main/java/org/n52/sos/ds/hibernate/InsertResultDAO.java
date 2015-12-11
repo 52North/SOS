@@ -40,8 +40,8 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.joda.time.DateTime;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.InvalidParameterValueException;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
@@ -77,6 +77,7 @@ import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -90,12 +91,13 @@ import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -160,8 +162,13 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
             final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             LOGGER.debug("Start saving {} observations.", size);
             for (final OmObservation observation : observations) {
-                observationDAO.insertObservationSingleValue(obsConsts, resultTemplate.getFeatureOfInterest(),
-                        observation, codespaceCache, unitCache, session);
+                if (observation.getValue() instanceof SingleObservationValue) {
+                    observationDAO.insertObservationSingleValue(obsConsts, resultTemplate.getFeatureOfInterest(),
+                            observation, codespaceCache, unitCache, session);
+                } else if (observation.getValue() instanceof MultiObservationValues) {
+                    observationDAO.insertObservationMultiValue(obsConsts, resultTemplate.getFeatureOfInterest(),
+                            observation, codespaceCache, unitCache, session);
+                }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {
                     session.flush();
                     session.clear();
@@ -335,26 +342,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         final Map<Integer, String> units = new HashMap<>(record.getFields().size() - 1);
 
         int index = 0;
-        for (final SweField swefield : record.getFields()) {
-            if (index != resultTimeIndex && index != phenomenonTimeIndex) {
-                if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
-                    final SweAbstractSimpleType<?> sweAbstractSimpleType =
-                            (SweAbstractSimpleType<?>) swefield.getElement();
-                    if (sweAbstractSimpleType instanceof SweQuantity) {
-                        /* TODO units for other SosSweSimpleTypes? */
-                        units.put(index, ((SweQuantity) sweAbstractSimpleType).getUom());
-                    }
-                    observedProperties.put(index, swefield.getElement().getDefinition());
-                } else {
-                    throw new NoApplicableCodeException().withMessage("The swe:Field element of type {} is not yet supported!", swefield.getElement().getClass().getName());
-                }
-            }
-            ++index;
-        }
-
-        // TODO support for compositePhenomenon
-        // if (observedProperties.size() > 1) {
-        // }
+        getIndexForObservedPropertyAndUnit(record, index, observedProperties, units, Sets.newHashSet(resultTimeIndex, phenomenonTimeIndex));
 
         final MultiObservationValues<SweDataArray> sosValues =
                 createObservationValueFrom(blockValues, record, encoding, resultTimeIndex, phenomenonTimeIndex);
@@ -364,6 +352,32 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         observation.setResultType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         observation.setValue(sosValues);
         return observation;
+    }
+
+    @VisibleForTesting
+    protected void getIndexForObservedPropertyAndUnit(SweDataRecord record, int index,
+            Map<Integer, String> observedProperties, Map<Integer, String> units, HashSet<Integer> reserved)
+                    throws CodedException {
+        for (final SweField swefield : record.getFields()) {
+            if (!reserved.contains(index)) {
+                if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
+                    final SweAbstractSimpleType<?> sweAbstractSimpleType =
+                            (SweAbstractSimpleType<?>) swefield.getElement();
+                    observedProperties.put(index, swefield.getElement().getDefinition());
+                    if (sweAbstractSimpleType instanceof SweAbstractUomType<?>) {
+                        units.put(index, ((SweAbstractUomType<?>) sweAbstractSimpleType).getUom());
+                    }
+                } else if (swefield.getElement() instanceof SweDataRecord) {
+                    getIndexForObservedPropertyAndUnit((SweDataRecord) swefield.getElement(), index, observedProperties,
+                            units, reserved);
+                } else {
+                    throw new NoApplicableCodeException().withMessage(
+                            "The swe:Field element of type {} is not yet supported!",
+                            swefield.getElement().getClass().getName());
+                }
+            }
+            ++index;
+        }
     }
 
     /**
@@ -402,34 +416,6 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
         final MultiObservationValues<SweDataArray> sosValues = new MultiObservationValues<>();
         sosValues.setValue(dataArrayValue);
         return sosValues;
-    }
-
-    // TODO move to helper class
-    /**
-     * Get internal time object from time String
-     *
-     * @param timeString
-     *            Time String to parse
-     * @return Internal time object
-     * @throws OwsExceptionReport
-     *             If an error occurs
-     */
-    private Time getPhenomenonTime(final String timeString) throws OwsExceptionReport {
-        try {
-            Time phenomenonTime;
-            if (timeString.contains("/")) {
-                final String[] times = timeString.split("/");
-                final DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0].trim());
-                final DateTime end = DateTimeHelper.parseIsoString2DateTime(times[1].trim());
-                phenomenonTime = new TimePeriod(start, end);
-            } else {
-                final DateTime dateTime = DateTimeHelper.parseIsoString2DateTime(timeString.trim());
-                phenomenonTime = new TimeInstant(dateTime);
-            }
-            return phenomenonTime;
-        } catch (final DateTimeParseException dte) {
-            throw dte.at("phenomenonTime");
-        }
     }
 
     /**

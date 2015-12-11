@@ -57,13 +57,13 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
-import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -205,8 +205,8 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
             Criteria criteria =
-                    session.createCriteria(FeatureOfInterest.class).add(
-                            Restrictions.in(FeatureOfInterest.IDENTIFIER, identifiers));
+                    session.createCriteria(FeatureOfInterest.class)
+                    .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObject(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         }
@@ -238,13 +238,8 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         Criteria criteria = session.createCriteria(FeatureOfInterest.class);
         ProjectionList projectionList = Projections.projectionList();
         projectionList.add(Projections.property(FeatureOfInterest.IDENTIFIER));
-
-        //get parents if transactional profile is active
-        boolean tFoiSupported = HibernateHelper.isEntitySupported(TFeatureOfInterest.class);
-        if (tFoiSupported) {
-            criteria.createAlias(TFeatureOfInterest.PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN);
-            projectionList.add(Projections.property("pfoi." + FeatureOfInterest.IDENTIFIER));
-        }
+        criteria.createAlias(FeatureOfInterest.PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN);
+        projectionList.add(Projections.property("pfoi." + FeatureOfInterest.IDENTIFIER));
         criteria.setProjection(projectionList);
         //return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
@@ -256,9 +251,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         for(Object[] result : results) {
             String featureIdentifier = (String) result[0];
             String parentFeatureIdentifier = null;
-            if (tFoiSupported) {
                 parentFeatureIdentifier = (String) result[1];
-            }
             if (parentFeatureIdentifier != null) {
                 CollectionHelper.addToCollectionMap(featureIdentifier, parentFeatureIdentifier, foiMap);
             } else {
@@ -299,7 +292,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             final Session session) {
         FeatureOfInterest feature = getFeatureOfInterest(identifier, session);
         if (feature == null) {
-            feature = new TFeatureOfInterest();
+            feature = new FeatureOfInterest();
             feature.setIdentifier(identifier);
             if (url != null && !url.isEmpty()) {
                 feature.setUrl(url);
@@ -326,7 +319,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
      * @param session
      *            Hibernate session
      */
-    public void insertFeatureOfInterestRelationShip(final TFeatureOfInterest parentFeature,
+    public void insertFeatureOfInterestRelationShip(final FeatureOfInterest parentFeature,
             final FeatureOfInterest childFeature, final Session session) {
         parentFeature.getChilds().add(childFeature);
         session.saveOrUpdate(parentFeature);
@@ -350,10 +343,10 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                 new RelatedFeatureDAO().getRelatedFeatureForOffering(offering.getIdentifier(), session);
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (final RelatedFeature relatedFeature : relatedFeatures) {
-                if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
-                    insertFeatureOfInterestRelationShip((TFeatureOfInterest) relatedFeature.getFeatureOfInterest(),
-                            featureOfInterest, session);
-                }
+            	if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
+	                insertFeatureOfInterestRelationShip(relatedFeature.getFeatureOfInterest(),
+	                        featureOfInterest, session);
+            	}
             }
         }
     }

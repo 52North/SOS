@@ -41,11 +41,11 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservati
  *
  * @author Christian Autermann
  */
-public class CountValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<Integer>
+public class CountValuedSeriesObservation extends AbstractValuedSeriesObservation<Integer>
         implements CountValuedObservation {
 
     private static final long serialVersionUID = 844475617058700079L;
+
     private Integer value;
 
     @Override
@@ -75,8 +75,7 @@ public class CountValuedSeriesObservation
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 

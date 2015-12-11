@@ -32,7 +32,7 @@ package org.n52.sos.ogc.swe.encoding;
  * @since 4.0.0
  *
  */
-public abstract class SweAbstractEncoding {
+public abstract class SweAbstractEncoding implements Cloneable {
 
     private String xml;
 
@@ -54,4 +54,5 @@ public abstract class SweAbstractEncoding {
         return xml != null && !xml.isEmpty();
     }
 
+    public abstract SweAbstractEncoding clone();
 }

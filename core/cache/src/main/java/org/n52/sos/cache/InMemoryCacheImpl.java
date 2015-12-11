@@ -45,7 +45,6 @@ import org.n52.iceland.i18n.MultilingualString;
 import org.n52.iceland.ogc.gml.time.Time;
 import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.StringHelper;
 import org.n52.iceland.util.collections.SetMultiMap;
@@ -63,6 +62,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWritableContentCache, CacheConstants {
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryCacheImpl.class);
     private static final long serialVersionUID = 5229487811485834059L;
+    private DateTime updateTime;
     private final Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
     private final Map<String, DateTime> minPhenomenonTimeForOfferings = newSynchronizedMap();
     private final Map<String, DateTime> maxResultTimeForOfferings = newSynchronizedMap();
@@ -118,7 +118,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     private final SetMultiMap<String,String> observablePropertiesForCompositePhenomenon = newSynchronizedSetMultiMap();
     private final SetMultiMap<String,String> compositePhenomenonForObservableProperty = newSynchronizedSetMultiMap();
     private Set<String> requestableProcedureDescriptionFormats = newSynchronizedSet();
-    private int defaultEpsgCode = Constants.EPSG_WGS84;
+    private int defaultEpsgCode = 4326;
     private SosEnvelope globalEnvelope = new SosEnvelope(null, defaultEpsgCode);
     private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
     private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
@@ -135,6 +135,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
         this.globalEnvelope = envelope;
     }
 
+
     /**
      * @param defaultEpsgCode
      *            the new default EPSG code
@@ -150,7 +151,8 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(defaultEpsgCode,
+        return Objects.hashCode(updateTime,
+                                defaultEpsgCode,
                                 maxPhenomenonTimeForOfferings,
                                 minPhenomenonTimeForOfferings,
                                 maxResultTimeForOfferings,
@@ -212,7 +214,8 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     public boolean equals(Object obj) {
         if (obj instanceof InMemoryCacheImpl) {
             final InMemoryCacheImpl other = (InMemoryCacheImpl) obj;
-            return Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
+            return Objects.equal(this.updateTime, other.getLastUpdateTime())
+                    && Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
                     && Objects.equal(this.maxPhenomenonTimeForOfferings, other.maxPhenomenonTimeForOfferings)
                     && Objects.equal(this.minPhenomenonTimeForOfferings, other.minPhenomenonTimeForOfferings)
                     && Objects.equal(this.maxResultTimeForOfferings, other.maxResultTimeForOfferings)
@@ -270,6 +273,17 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
             }
         return false;
     }
+
+    @Override
+    public DateTime getLastUpdateTime() {
+        return this.updateTime;
+    }
+
+    @Override
+    public void setLastUpdateTime(DateTime time) {
+        this.updateTime = time;
+    }
+
 
     @Override
     public DateTime getMaxPhenomenonTime() {

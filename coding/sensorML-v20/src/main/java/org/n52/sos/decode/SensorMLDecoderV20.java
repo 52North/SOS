@@ -652,13 +652,6 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                     }
                 }
             }
-            // if (clpt.getContactList() != null) {
-            // smlContacts.add(parseContactListMembers(contact.getContactList()));
-            // } else if (contact.getPerson() != null) {
-            // smlContacts.add(parsePerson(contact.getPerson()));
-            // } else if (contact.getResponsibleParty() != null) {
-            // smlContacts.add(parseResponsibleParty(contact.getResponsibleParty()));
-            // }
         }
         return smlContacts;
     }

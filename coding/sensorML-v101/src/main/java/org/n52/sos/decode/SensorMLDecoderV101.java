@@ -65,6 +65,7 @@ import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.SmlContact;
 import org.n52.sos.ogc.sensorML.SmlContactList;
 import org.n52.sos.ogc.sensorML.SmlPerson;
+import org.n52.sos.ogc.sensorML.SmlReferencedContact;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
@@ -639,12 +640,22 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         List<SmlContact> smlContacts = Lists.newArrayList();
         if (contactArray != null && contactArray.length > 0) {
             for (Contact contact : contactArray) {
-                if (contact.getContactList() != null) {
+                if (contact.isSetContactList()) {
                     smlContacts.add(parseContactListMembers(contact.getContactList()));
-                } else if (contact.getPerson() != null) {
+                } else if (contact.isSetPerson()) {
                     smlContacts.add(parsePerson(contact.getPerson()));
-                } else if (contact.getResponsibleParty() != null) {
+                } else if (contact.isSetResponsibleParty()) {
                     smlContacts.add(parseResponsibleParty(contact.getResponsibleParty()));
+                }else if (contact.isSetHref()) {
+                    SmlReferencedContact thisSmlContact = new SmlReferencedContact();
+                    thisSmlContact.setHref(contact.getHref());
+                    if (contact.isSetTitle()) {
+                        thisSmlContact.setTitle(contact.getTitle());
+                    }
+                    if (contact.getRole() != null) {
+                        thisSmlContact.setRole(contact.getRole());
+                    }
+                    smlContacts.add(thisSmlContact);
                 }
             }
         }
@@ -660,6 +671,12 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
                     thisSmlContact = parsePerson(member.getPerson());
                 } else if (member.getResponsibleParty() != null) {
                     thisSmlContact = parseResponsibleParty(member.getResponsibleParty());
+                } else if (member.isSetHref()) {
+                    thisSmlContact = new SmlReferencedContact();
+                    thisSmlContact.setHref(member.getHref());
+                    if (member.isSetTitle()) {
+                        thisSmlContact.setTitle(member.getTitle());
+                    }
                 }
                 if (thisSmlContact != null) {
                     if (member.getRole() != null) {

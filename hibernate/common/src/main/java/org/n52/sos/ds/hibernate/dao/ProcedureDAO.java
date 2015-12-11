@@ -141,14 +141,11 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      *         identifier collections
      */
     public Map<String, Collection<String>> getProcedureIdentifiers(final Session session) {
-        boolean tProcedureSupported = HibernateHelper.isEntitySupported(TProcedure.class);
         Criteria criteria = session.createCriteria(Procedure.class).add(Restrictions.eq(Procedure.DELETED, false));
         ProjectionList projectionList = Projections.projectionList();
         projectionList.add(Projections.property(Procedure.IDENTIFIER));
-        if (tProcedureSupported) {
-            criteria.createAlias(TProcedure.PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
-            projectionList.add(Projections.property("pp." + Procedure.IDENTIFIER));
-        }
+        criteria.createAlias(Procedure.PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
+        projectionList.add(Projections.property("pp." + Procedure.IDENTIFIER));
         criteria.setProjection(projectionList);
         // return as List<Object[]> even if there's only one column for
         // consistency
@@ -161,9 +158,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
         for (Object[] result : results) {
             String procedureIdentifier = (String) result[0];
             String parentProcedureIdentifier = null;
-            if (tProcedureSupported) {
                 parentProcedureIdentifier = (String) result[1];
-            }
             if (parentProcedureIdentifier == null) {
                 map.put(procedureIdentifier, null);
             } else {

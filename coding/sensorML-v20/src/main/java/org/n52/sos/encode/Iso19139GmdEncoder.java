@@ -112,7 +112,6 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
     private static final QName QN_GML_BASE_UNIT = new QName(GmlConstants.NS_GML_32, "BaseUnit",
             GmlConstants.NS_GML_PREFIX);
 
-    @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(GmdConstants.NS_GMD, SmlResponsibleParty.class, GmdQuantitativeResult.class,
                     GmdConformanceResult.class),
@@ -169,6 +168,18 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
 
     private XmlObject encodeResponsibleParty(SmlResponsibleParty responsibleParty,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (responsibleParty.isSetHref()) {
+            CIResponsiblePartyPropertyType cirppt =
+                    CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
+            cirppt.setHref(responsibleParty.getHref());
+            if (responsibleParty.isSetTitle()) {
+                cirppt.setTitle(responsibleParty.getTitle());
+            }
+            if (responsibleParty.isSetRole()) {
+                cirppt.setRole(responsibleParty.getRole());
+            }
+            return cirppt;
+        }
         CIResponsiblePartyType cirpt =
                 CIResponsiblePartyType.Factory.newInstance(getXmlOptions());
         if (responsibleParty.isSetIndividualName()) {

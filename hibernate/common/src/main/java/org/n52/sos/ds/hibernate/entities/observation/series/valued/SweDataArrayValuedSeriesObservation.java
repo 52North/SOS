@@ -43,11 +43,11 @@ import org.n52.sos.ogc.swe.SweDataArray;
  *
  * @author Christian Autermann
  */
-public class SweDataArrayValuedSeriesObservation
-        extends AbstractValuedSeriesObservation<String>
+public class SweDataArrayValuedSeriesObservation extends AbstractValuedSeriesObservation<String>
         implements SweDataArrayValuedObservation {
 
     private static final long serialVersionUID = 8620387145785871292L;
+
     private String value;
 
     @Override
@@ -77,8 +77,7 @@ public class SweDataArrayValuedSeriesObservation
     }
 
     @Override
-    public <T> T accept(ValuedObservationVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(ValuedObservationVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 }

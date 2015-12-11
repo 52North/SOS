@@ -252,4 +252,38 @@ public class SmlPosition extends SweAbstractDataComponent {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
+    @Override
+    public SmlPosition clone() throws CloneNotSupportedException {
+        SmlPosition clone = new SmlPosition();
+        copyValueTo(clone);
+        if (isSetPosition()) {
+            clone.setPosition(getPosition());
+        }
+        if (isSetVector()) {
+            clone.setVector(getVector().clone());
+        } else if (isSetAbstractDataComponent()) {
+            clone.setAbstractDataComponent(getAbstractDataComponent().clone());
+        }
+        copyValueTo(clone);
+        return clone;
+    }
+
+    @Override
+    public SweAbstractDataComponent copyValueTo(SweAbstractDataComponent copy) {
+        super.copyValueTo(copy);
+        if (copy instanceof SmlPosition) {
+            ((SmlPosition) copy).setFixed(isFixed());
+            ((SmlPosition) copy).setReferenceFrame(getReferenceFrame());
+            if (isSetPosition()) {
+                ((SmlPosition) copy).setPosition(Lists.newArrayList(getPosition()));
+            }
+            if (isSetVector()) {
+                ((SmlPosition) copy).setVector(getVector());
+            } else if (isSetAbstractDataComponent()) {
+                ((SmlPosition) copy).setAbstractDataComponent(getAbstractDataComponent());
+            }
+        }
+        return copy;
+    }
 }

@@ -39,7 +39,7 @@ import org.n52.sos.ogc.om.values.Value;
  * @param <T>
  *            value type
  */
-public class NamedValue<T> {
+public class NamedValue<T> implements Comparable<NamedValue<T>> {
 
     /**
      * Value name
@@ -118,5 +118,19 @@ public class NamedValue<T> {
      */
     public boolean isSetValue() {
         return value != null && value.isSetValue();
+    }
+
+    @Override
+    public int compareTo(NamedValue<T> o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (getName() == null ^ o.getName() == null) {
+            return (getName() == null) ? -1 : 1;
+        }
+        if (getName() == null && o.getName() == null) {
+            return 0;
+        }
+        return getName().compareTo(o.getName());
     }
 }

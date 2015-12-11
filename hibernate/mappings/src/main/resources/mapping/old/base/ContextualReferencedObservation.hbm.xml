@@ -24,8 +24,7 @@ Useful to avoid many joins for queries where we don't care about the observation
                      foreign-key="observationFeatureFk">
             <column index="obsFeatureIdx"
                     name="featureOfInterestId"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
            		<comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
            	</column>
         </many-to-one>
@@ -36,8 +35,7 @@ Useful to avoid many joins for queries where we don't care about the observation
                      foreign-key="observationObPropFk">
             <column index="obsObsPropIdx"
                     name="observablePropertyId"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
            		<comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
            	</column>
         </many-to-one>
@@ -48,8 +46,7 @@ Useful to avoid many joins for queries where we don't care about the observation
                      foreign-key="observationProcedureFk">
             <column index="obsProcedureIdx"
                     name="procedureId"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
            		<comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
            	</column>
         </many-to-one>
@@ -58,8 +55,7 @@ Useful to avoid many joins for queries where we don't care about the observation
             <column index="obsPhenTimeStartIdx"
                     name="phenomenonTimeStart"
                     length="29"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
             	<comment>Time stamp when the observation was started or phenomenon was observed</comment>
             </column>
         </property>
@@ -68,8 +64,7 @@ Useful to avoid many joins for queries where we don't care about the observation
             <column index="obsPhenTimeEndIdx"
                     name="phenomenonTimeEnd"
                     length="29"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
             	<comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
             </column>
         </property>
@@ -78,8 +73,7 @@ Useful to avoid many joins for queries where we don't care about the observation
             <column index="obsResultTimeIdx"
                     name="resultTime"
                     length="29"
-                    not-null="true"
-                    unique-key="observationIdentity">
+                    not-null="true">
             	<comment>Time stamp when the observation was published or result was published/available</comment>
             </column>
         </property>
@@ -188,10 +182,17 @@ Useful to avoid many joins for queries where we don't care about the observation
             </many-to-many>
         </set>
         <property name="samplingGeometry"
-                  type="org.hibernate.spatial.GeometryType">
+                  type="org.hibernate.spatial.GeometryType"
+                  index="samplingGeomIdx" >
             <column name="samplingGeometry">
             	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
+        <set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="observationId" not-null="true" />
+            </key>
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+        </set>
     </class>
 </hibernate-mapping>

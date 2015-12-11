@@ -44,6 +44,8 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
@@ -165,6 +167,7 @@ public abstract class AbstractValuedLegacyObservation<T>
         if (hasSamplingGeometry()) {
             observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
         }
+        addParameter(observation);
         addValueSpecificDataToObservation(observation, responseFormat);
         addObservationValueToObservation(observation, value, responseFormat);
         return observation;
@@ -231,6 +234,14 @@ public abstract class AbstractValuedLegacyObservation<T>
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private SingleObservationValue getSingleObservationValue(Value<?> value) throws OwsExceptionReport {
         return new SingleObservationValue(createPhenomenonTime(), value);
+    }
+
+    private void addParameter(OmObservation observation) throws OwsExceptionReport {
+        if (hasParameters()) {
+            for (Parameter<?> parameter : getParameters()) {
+                observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
+            }
+        }
     }
 
     @Override

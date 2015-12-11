@@ -79,4 +79,17 @@ public class SweBoolean extends SweAbstractSimpleType<Boolean> {
         visitor.visit(this);
     }
 
+    @Override
+    public SweBoolean clone() {
+        SweBoolean clone = new SweBoolean();
+        copyValueTo(clone);
+        if (isSetQuality()) {
+            clone.setQuality(cloneQuality());
+        }
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        return clone;
+    }
+
 }

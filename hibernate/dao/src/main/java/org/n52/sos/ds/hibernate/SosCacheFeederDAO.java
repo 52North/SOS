@@ -150,6 +150,7 @@ public class SosCacheFeederDAO implements CacheFeederHandler {
         if (!errors.isEmpty()) {
             throw new CompositeOwsException(errors);
         }
+
     }
 
     @Override

@@ -101,4 +101,14 @@ public class SweText extends SweAbstractSimpleType<String> implements Comparable
         visitor.visit(this);
     }
 
+    @Override
+    public SweText clone() {
+        SweText clone = new SweText();
+        copyValueTo(clone);
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        return clone;
+    }
+
 }

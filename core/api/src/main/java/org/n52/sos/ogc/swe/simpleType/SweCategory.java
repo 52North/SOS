@@ -99,4 +99,17 @@ public class SweCategory extends SweAbstractUomType<String> implements SweQualit
         visitor.visit(this);
     }
 
+    @Override
+    public SweCategory clone() {
+        SweCategory clone = new SweCategory();
+        copyValueTo(clone);
+        if (isSetQuality()) {
+            clone.setQuality(cloneQuality());
+        }
+        if (isSetValue()) {
+            clone.setValue(getValue());
+        }
+        return clone;
+    }
+
 }

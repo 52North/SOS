@@ -113,6 +113,10 @@ public class SosGetObservationOperatorV20 extends
         }
         try {
             checkObservedProperties(sosRequest.getObservedProperties(), SosConstants.GetObservationParams.observedProperty, false);
+            // add child observedProperties if isInclude == true and requested observedProperty is parent.
+            if (sosRequest.isSetObservableProperty()) {
+                sosRequest.setObservedProperties(addChildObservableProperties(sosRequest.getObservedProperties()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

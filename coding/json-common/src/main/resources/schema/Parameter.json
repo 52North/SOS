@@ -5,6 +5,10 @@
   "properties": {
     "NamedValue": {
       "type": "object",
+      "required": [
+        "name",
+        "value"
+      ],
       "properties": {
         "name": 
         {
@@ -16,9 +20,54 @@
               "type": "string"
             },
             {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/quantity"
+            },
+            {
+              "$ref": "#/definitions/category"
+            },
+             
+            {
               "$ref": "http://www.52north.org/schema/json/Geometry#"
             }
           ]
+        }
+      }
+    }
+  },
+  "definitions": {
+    "quantity": {
+      "type": "object",
+      "required": [
+        "uom",
+        "value"
+      ],
+      "properties": {
+        "uom": {
+          "type": "string"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": [
+        "codespace",
+        "value"
+      ],
+      "properties": {
+        "codespace": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
         }
       }
     }

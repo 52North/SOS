@@ -100,19 +100,16 @@ This project includes:
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
-  ANTLR 3 Runtime under BSD licence
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
-  Apache Commons Compress under The Apache Software License, Version 2.0
+  Apache Commons Compress under Apache License, Version 2.0
   Apache Commons Logging under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache HttpClient under Apache License, Version 2.0
   Apache HttpCore under Apache License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   API interfaces under Lesser General Public License (LGPL)
-  ASM Commons under BSD
-  ASM Core under BSD
   Avalon Framework API under The Apache Software License, Version 2.0
   Avalon Framework Implementation under The Apache Software License, Version 2.0
   Batik animation engine under The Apache Software License, Version 2.0
@@ -134,17 +131,18 @@ This project includes:
   c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cf4j under GNU Lesser General Public License
-  ClassLoader leak prevention under Apache 2
+  ClassLoader Leak Prevention library under Apache 2
   Commons IO under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
-  CORS Filter under The Apache Software License, Version 2.0
+  Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Ehcache Core under The Apache Software License, Version 2.0
+  EJML under The Apache Software License, Version 2.0
   elasticsearch under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
-  EXIficient under GNU General Public License (GPL), Version 2.0
+  EXIficient under MIT License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
   Geographic COmmon (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
@@ -157,15 +155,17 @@ This project includes:
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate/c3p0 Integration under GNU Lesser General Public License
-  HSQLDB under HSQLDB License
+  HyperSQL Database under HSQLDB License, a BSD open source license
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java Excel API under GNU Lesser General Public License
+  Java implementation of GeographicLib under The MIT License(MIT)
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
+  Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
@@ -177,7 +177,7 @@ This project includes:
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
   JCommon under GNU Lesser General Public Licence
-  JDOM under JDOM license (Apache style), https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
+  JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   JNA under GNU Lesser General Public License, version 3.0 (LGPLv3)
@@ -207,7 +207,7 @@ This project includes:
   Main module under Lesser General Public License (LGPL)
   MaxMind DB Reader under Apache License 2.0
   MaxMind GeoIP2 API under Apache License, Version 2.0
-  mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
+  mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under Lesser General Public License (LGPL)
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0

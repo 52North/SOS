@@ -97,7 +97,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     @Deprecated
     private static GeometryHandler instance;
     private static final String EPSG = "EPSG";
-    private static final String EPSG_PREFIX = EPSG + Constants.COLON_STRING;
+    private static final String EPSG_PREFIX = EPSG + ":";
     private boolean datasoureUsesNorthingFirst;
     private final List<Range> epsgsWithNorthingFirstAxisOrder = Lists.newArrayList();
     private int storageEPSG;
@@ -262,7 +262,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     public GeometryHandler setSupportedCRS(final String supportedCRS) throws ConfigurationError {
         // Validation.notNull("Supported CRS codes as CSV string",
         // supportedCRS);
-        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, Constants.COMMA_STRING));
+        this.supportedCRS.addAll(StringHelper.splitToSet(supportedCRS, ","));
         return this;
     }
 
@@ -471,15 +471,15 @@ public class GeometryHandler implements Constructable, Destroyable {
      */
     public String getWktString(final Object longitude, final Object latitude) {
         final StringBuilder builder = new StringBuilder();
-        builder.append("POINT ").append(Constants.OPEN_BRACE_CHAR);
+        builder.append("POINT ").append('(');
         if (datasoureUsesNorthingFirst) {
-            builder.append(JavaHelper.asString(latitude)).append(Constants.BLANK_CHAR);
+            builder.append(JavaHelper.asString(latitude)).append(' ');
             builder.append(JavaHelper.asString(longitude));
         } else {
-            builder.append(JavaHelper.asString(longitude)).append(Constants.BLANK_CHAR);
+            builder.append(JavaHelper.asString(longitude)).append(' ');
             builder.append(JavaHelper.asString(latitude));
         }
-        builder.append(Constants.CLOSE_BRACE_CHAR);
+        builder.append(')');
         return builder.toString();
     }
 
@@ -697,7 +697,7 @@ public class GeometryHandler implements Constructable, Destroyable {
     }
 
     public String addAuthorityCrsPrefix(int crs) {
-        return new StringBuilder(getAuthority()).append(Constants.DOUBLE_COLON_STRING).append(crs).toString();
+        return new StringBuilder(getAuthority()).append("::").append(crs).toString();
     }
 
     public Set<String> addOgcCrsPrefix(Collection<Integer> crses) {

@@ -127,11 +127,27 @@
         <property name="group" ref="serviceProviderSettingsDefitionGroup" />
         <property name="defaultValue" value="TBA" />
     </bean>
+    <bean class="org.n52.iceland.config.settings.StringSettingDefinition">
+        <property name="key" value="serviceProvider.role.value" />
+        <property name="title" value="Role" />
+        <property name="description" value="Set the role" />
+        <property name="order" value="15.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
+    <bean class="org.n52.iceland.config.settings.UriSettingDefinition">
+        <property name="key" value="serviceProvider.role.codespace" />
+        <property name="title" value="Role codespace" />
+        <property name="description" value="Set the codespace for the role" />
+        <property name="order" value="16.0" />
+        <property name="group" ref="serviceProviderSettingsDefitionGroup" />
+        <property name="defaultValue" value="TBA" />
+    </bean>
     <bean class="org.n52.iceland.config.settings.FileSettingDefinition">
         <property name="key" value="serviceProvider.file" />
         <property name="title" value="Service Provider File" />
         <property name="description" value="The path to a file containing an ows:ServiceProvider overriding the above settings. It can be either an absolute path (like &lt;code&gt;/home/user/sosconfig/provider.xml&lt;/code&gt;) or a path relative to the web application directory (e.g. &lt;code&gt;WEB-INF/provider.xml&lt;/code&gt;)." />
-        <property name="order" value="15.0" />
+        <property name="order" value="17.0" />
         <property name="optional" value="true" />
         <property name="group" ref="serviceProviderSettingsDefitionGroup" />
     </bean>

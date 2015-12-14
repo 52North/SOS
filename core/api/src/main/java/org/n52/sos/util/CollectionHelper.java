@@ -332,7 +332,7 @@ public final class CollectionHelper {
      *         <tt>false</tt>
      */
     public static <T> boolean isEmpty(final Collection<T> collection) {
-        return collection != null && collection.isEmpty();
+        return !isNotEmpty(collection);
     }
 
     /**
@@ -358,7 +358,7 @@ public final class CollectionHelper {
      * @return <tt>true</tt>, if map is not null and empty, else <tt>false</tt>
      */
     public static <K, V> boolean isEmpty(final Map<K, V> map) {
-        return map != null && map.isEmpty();
+        return !isNotEmpty(map);
     }
 
     /**

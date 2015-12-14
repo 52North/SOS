@@ -64,7 +64,6 @@ import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.Constants;
 import org.n52.iceland.util.DateTimeHelper;
 import org.n52.iceland.util.KvpHelper;
 import org.n52.iceland.util.Validation;
@@ -261,11 +260,11 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
                         "The parameter value is not valid!");
             }
             String lowerCorner =
-                    String.format(Locale.US, "%s %s", new BigDecimal(coordinates.get(Constants.INT_0)).toString(),
-                            new BigDecimal(coordinates.get(Constants.INT_1)).toString());
+                    String.format(Locale.US, "%s %s", new BigDecimal(coordinates.get(0)).toString(),
+                            new BigDecimal(coordinates.get(1)).toString());
             String upperCorner =
-                    String.format(Locale.US, "%s %s", new BigDecimal(coordinates.get(Constants.INT_2)).toString(),
-                            new BigDecimal(coordinates.get(Constants.INT_3)).toString());
+                    String.format(Locale.US, "%s %s", new BigDecimal(coordinates.get(2)).toString(),
+                            new BigDecimal(coordinates.get(3)).toString());
             spatialFilter.setGeometry(JTSHelper.createGeometryFromWKT(
                     JTSHelper.createWKTPolygonFromEnvelope(lowerCorner, upperCorner), srid));
             spatialFilter.setOperator(SpatialOperator.BBOX);
@@ -422,6 +421,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
                 (SweBoolean) new SweBoolean().setValue(Boolean.parseBoolean(returnHumanReadableIdentifier))
                         .setIdentifier(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier.name());
         SwesExtension<SweBoolean> extension = new SwesExtension<>();
+        extension.setIdentifier(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier.name());
         extension.setValue(bool);
         return extension;
     }
@@ -429,6 +429,7 @@ public abstract class AbstractKvpDecoder implements Decoder<AbstractServiceReque
     protected SwesExtension<SweText> getSweTextFor(String identifier, String value) {
         SweText text = (SweText) new SweText().setValue(value).setIdentifier(identifier);
         SwesExtension<SweText> extension = new SwesExtension<>();
+        extension.setIdentifier(identifier);
         extension.setValue(text);
         return extension;
     }

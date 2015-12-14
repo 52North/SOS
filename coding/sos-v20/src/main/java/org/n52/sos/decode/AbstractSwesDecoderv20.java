@@ -35,6 +35,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.CodingHelper;
 
@@ -53,7 +54,13 @@ public class AbstractSwesDecoderv20 {
                 if (obj instanceof SwesExtension<?>) {
                     extensions.addExtension((SwesExtension<?>) obj);
                 } else {
-                    extensions.addExtension(new SwesExtension<>().setValue(obj));
+                    SwesExtension<Object> swesExtension = new SwesExtension<>();
+                    if (obj instanceof SweAbstractDataComponent) {
+                        swesExtension.setIdentifier(((SweAbstractDataComponent) obj).getIdentifier());
+                        swesExtension.setDefinition(((SweAbstractDataComponent) obj).getDefinition());
+                    }
+                    swesExtension.setValue(obj);
+                    extensions.addExtension(swesExtension);
                 }
             }
             return extensions;

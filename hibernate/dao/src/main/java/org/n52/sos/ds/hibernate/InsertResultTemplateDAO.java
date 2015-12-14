@@ -166,8 +166,9 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
 
         for (final SweField swefield : record.getFields()) {
-            
-            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>) || (swefield.getElement() instanceof SweDataRecord))) {
+
+            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>)
+                    || (swefield.getElement() instanceof SweDataRecord))) {
                 throw new NoApplicableCodeException().withMessage(
                         "The swe:Field element of type %s is not yet supported!",
                         swefield.getElement().getClass().getName());
@@ -180,6 +181,15 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
         if (ResultHandlingHelper.checkFields(record.getFields(), observedProperty) == -1) {
             throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
                     .withMessage("Missing swe:field content with element definition %s", observedProperty);
+        }
+        if ((ResultHandlingHelper.hasResultTime(record) > -1 && record.getFields().size() > 3)
+                || (ResultHandlingHelper.hasResultTime(record) == -1 && record.getFields().size() > 2)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition %s, "
+                            + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
+                            + "with element definition %s",
+                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty);
         }
     }
 

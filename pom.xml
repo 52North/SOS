@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.3.6</version>
+    <version>4.3.7-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>

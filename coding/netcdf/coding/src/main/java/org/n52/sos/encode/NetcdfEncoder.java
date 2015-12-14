@@ -130,7 +130,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
     }
 
     protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws OwsExceptionReport {
-        if (CollectionHelper.isEmpty(netCDFObsList)) {
+        if (CollectionHelper.isEmptyOrNull(netCDFObsList)) {
             throw new NoApplicableCodeException().withMessage("No feature types to encode");
         } else if (netCDFObsList.size() > 1) {
             throwTooManyFeatureTypesOrSensorsException(netCDFObsList, netCDFObsList.size(), null);

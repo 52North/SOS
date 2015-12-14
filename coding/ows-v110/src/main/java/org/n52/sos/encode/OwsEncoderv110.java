@@ -588,7 +588,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     private void setParameterValue(DomainType domainType, String name, Collection<OwsParameterValue> values)
             throws OwsExceptionReport {
         domainType.setName(name);
-        if (CollectionHelper.isEmpty(values)) {
+        if (CollectionHelper.isEmptyOrNull(values)) {
             domainType.addNewNoValues();
         } else {
             for (OwsParameterValue value : values) {

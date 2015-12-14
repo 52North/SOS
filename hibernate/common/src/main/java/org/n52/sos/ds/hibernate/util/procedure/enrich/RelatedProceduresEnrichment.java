@@ -117,7 +117,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
         final Collection<String> childIdentfiers =
                 getCache().getChildProcedures(getIdentifier(), false, false);
 
-        if (CollectionHelper.isEmpty(childIdentfiers)) {
+        if (CollectionHelper.isEmptyOrNull(childIdentfiers)) {
             return Sets.newHashSet();
         }
 

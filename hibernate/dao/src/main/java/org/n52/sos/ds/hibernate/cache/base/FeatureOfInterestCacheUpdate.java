@@ -85,7 +85,7 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                 getCache().setProceduresForFeatureOfInterest(featureOfInterestIdentifier,
                         procsForAllFois.get(featureOfInterestIdentifier));
                 Collection<String> parentFois = foisWithParents.get(featureOfInterestIdentifier);
-                if (!CollectionHelper.isEmpty(parentFois)) {
+                if (!CollectionHelper.isEmptyOrNull(parentFois)) {
                     getCache().addParentFeatures(featureOfInterestIdentifier, parentFois);
                 }
             }

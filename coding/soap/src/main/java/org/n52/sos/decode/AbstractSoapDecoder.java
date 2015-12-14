@@ -162,7 +162,7 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
     protected String checkSoapAction(String soapAction, List<SoapHeader> soapHeaders) {
         if (soapAction != null && !soapAction.isEmpty()) {
             return soapAction;
-        } else if (CollectionHelper.isEmpty(soapHeaders)) {
+        } else if (CollectionHelper.isNotEmpty(soapHeaders)) {
             for (SoapHeader soapHeader : soapHeaders) {
                 if (WsaConstants.NS_WSA.equals(soapHeader.getNamespace()) && soapHeader instanceof WsaActionHeader) {
                     return ((WsaActionHeader)soapHeader).getValue();

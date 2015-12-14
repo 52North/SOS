@@ -6,6 +6,19 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+     Release 52n-sensorweb-sos-4.3.6
+===================================
+
+  --- New features ---
+  
+  
+  --- Changes ---
+ 
+      * Update REST-API version of bundle to 1.7.2
+  
+  --- Fixed issues ---
+  
+  
      Release 52n-sensorweb-sos-4.3.5
 ===================================
 

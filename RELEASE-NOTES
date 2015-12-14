@@ -6,7 +6,7 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform
  (SensorML as well).
 
-  Changes since last release
+    Changes since last release
 ==================================
 
   --- New features ---
@@ -29,6 +29,19 @@ RELEASE NOTES
       * Issue #279: Extend the supported coordinate names
       * Issue #285: Client problem with feature capabilities in DescribeSensor 
       				response with SensorML 1.0.1 encoded procedure
+  
+  
+    Release 52n-sensorweb-sos-4.3.6
+===================================
+
+  --- New features ---
+  
+  
+  --- Changes ---
+ 
+      * Update REST-API version of bundle to 1.7.2
+  
+  --- Fixed issues ---
   
   
     Release 52n-sensorweb-sos-4.3.5

@@ -34,8 +34,8 @@ import java.util.List;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.ImmutableSettings.Builder;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.settings.Settings.Builder;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 import org.junit.Test;
@@ -48,7 +48,7 @@ public class KibanaImpExp {
 
     @Test
     public void exportSettings() throws JsonProcessingException {
-        Builder settingsBuilder = ImmutableSettings.settingsBuilder();
+        Builder settingsBuilder = Settings.settingsBuilder();
         settingsBuilder.put("discovery.zen.ping.unicast.hosts", "localhost");
         Node node = NodeBuilder.nodeBuilder().client(true).settings(settingsBuilder).clusterName("ogc-statistics-cluster").node();
         Client c = node.client();

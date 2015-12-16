@@ -102,6 +102,7 @@ This project includes:
                 License
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
+  Apache Commons CLI under Apache License, Version 2.0
   Apache Commons Codec under Apache License, Version 2.0
   Apache Commons Compress under Apache License, Version 2.0
   Apache Commons Logging under The Apache Software License, Version 2.0
@@ -135,12 +136,13 @@ This project includes:
   Commons IO under The Apache Software License, Version 2.0
   Commons Lang under The Apache Software License, Version 2.0
   Commons Pool under The Apache Software License, Version 2.0
+  Compress-LZF under Apache License 2.0
   Core Hibernate O/RM functionality under GNU Lesser General Public License
   Cross-Origin Resource Sharing (CORS) Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Ehcache Core under The Apache Software License, Version 2.0
   EJML under The Apache Software License, Version 2.0
-  elasticsearch under The Apache Software License, Version 2.0
+  Elasticsearch: Core under The Apache Software License, Version 2.0
   EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
   EXIficient under MIT License
   FindBugs-jsr305 under The Apache Software License, Version 2.0
@@ -152,13 +154,18 @@ This project includes:
   H2 Database Engine under MPL 2.0, and EPL 1.0
   Hamcrest All under New BSD License
   hatbox under GNU Lesser General Public License (LGPL) version 2.1
+  HdrHistogram under Public Domain, per Creative Commons CC0
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate/c3p0 Integration under GNU Lesser General Public License
+  HPPC Collections under The Apache Software License, Version 2.0
   HyperSQL Database under HSQLDB License, a BSD open source license
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
+  Jackson-dataformat-CBOR under The Apache Software License, Version 2.0
+  Jackson-dataformat-Smile under The Apache Software License, Version 2.0
+  Jackson-dataformat-YAML under The Apache Software License, Version 2.0
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java Excel API under GNU Lesser General Public License
@@ -181,9 +188,11 @@ This project includes:
   JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   JNA under GNU Lesser General Public License, version 3.0 (LGPLv3)
+  Joda convert under Apache 2
   Joda-Time under Apache 2
   JOpt Simple under The MIT License
   jsr-275 under BSD License
+  JSR166e under CC0 1.0 Universal
   jstl under CDDL 1.1 or GPL2 w/ CPE
   JTS Topology Suite under Lesser General Public License (LGPL)
   JUL to SLF4J bridge under MIT License
@@ -203,6 +212,7 @@ This project includes:
   Lucene QueryParsers under Apache 2
   Lucene Sandbox under Apache 2
   Lucene Spatial under Apache 2
+  Lucene Spatial 3D under Apache 2
   Lucene Suggest under Apache 2
   Main module under Lesser General Public License (LGPL)
   MaxMind DB Reader under Apache License 2.0
@@ -213,6 +223,7 @@ This project includes:
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, Version 2
   NetCDF-Java Library under (MIT-style) netCDF C library license
+  Netty under Apache License, Version 2.0
   null under Lesser General Public License, version 3 or greater or Apache Software License, version 2.0
   OASIS WS-N specification schemas - including WS-BrokeredNotification (v1.3) under The Apache Software License, Version 2.0
   OASIS WS-Resources specification schemas v1.2 under The Apache Software License, Version 2.0
@@ -271,6 +282,7 @@ This project includes:
   SQLite JDBC under The Apache Software License, Version 2.0
   sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0
+  T-Digest under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
   vecmath under GPL 2.0 license w/ CPE
   W3C SOAP specification recommondation (v1.2 part 1) under The Apache Software License, Version 2.0

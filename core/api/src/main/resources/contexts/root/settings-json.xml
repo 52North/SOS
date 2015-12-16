@@ -13,9 +13,10 @@
 
     <bean id="settingValueFactory" class="org.n52.iceland.config.json.JsonSettingValueFactory" />
 
-    <bean id="jsonConfiguration" class="org.n52.iceland.config.json.JsonConfiguration">
-        <property name="fileName" value="configuration.json" />
-        <property name="writeTimeout" value="1000" />
-    </bean>
+    <bean id="jsonConfiguration" class="org.n52.iceland.config.json.JsonConfiguration" init-method="init">
+		<property name="fileName" value="configuration.json" />
+		<property name="writeTimeout" value="1000" />
+		<property name="configLocationProvider" ref="configLocationProvider"/>
+	</bean>
 
 </beans>

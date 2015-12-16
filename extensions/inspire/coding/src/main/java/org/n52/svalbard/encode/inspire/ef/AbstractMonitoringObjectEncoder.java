@@ -44,10 +44,14 @@ import eu.europa.ec.inspire.schemas.ef.x40.AbstractMonitoringObjectType.LegalBac
 import eu.europa.ec.inspire.schemas.ef.x40.AbstractMonitoringObjectType.Narrower;
 import eu.europa.ec.inspire.schemas.ef.x40.AbstractMonitoringObjectType.Supersedes;
 
-public abstract class AbstractMonitoringObjectEncoder extends AbstractEnvironmentalFaciltity<AbstractFeature> {
+public abstract class AbstractMonitoringObjectEncoder extends AbstractEnvironmentalFaciltityEncoder<AbstractFeature> {
+    
+    protected abstract String generateGmlId();
 
     protected void encodeAbstractMonitoringObject(AbstractMonitoringObjectType amot,
             AbstractMonitoringObject abstractMonitoringObject) throws OwsExceptionReport {
+        setGmlId(amot, abstractMonitoringObject);
+        setInspireId(amot, abstractMonitoringObject);
         setName(amot, abstractMonitoringObject);
         setAdditionalDescription(amot, abstractMonitoringObject);
         setMediaMonitored(amot, abstractMonitoringObject);
@@ -61,6 +65,19 @@ public abstract class AbstractMonitoringObjectEncoder extends AbstractEnvironmen
         setNarrower(amot, abstractMonitoringObject);
         setSupersedes(amot, abstractMonitoringObject);
         setSupersededBy(amot, abstractMonitoringObject);
+    }
+
+    private void setGmlId(AbstractMonitoringObjectType amot, AbstractMonitoringObject abstractMonitoringObject) {
+        if (!abstractMonitoringObject.isSetGmlID()) {
+            if (!abstractMonitoringObject.isSetGmlID()) {
+                abstractMonitoringObject.setGmlId(generateGmlId());
+            }
+        }
+        amot.setId(abstractMonitoringObject.getGmlId());
+    }
+
+    private void setInspireId(AbstractMonitoringObjectType amot, AbstractMonitoringObject abstractMonitoringObject) throws OwsExceptionReport {
+        amot.addNewInspireId().set(encodeBASEPropertyType(abstractMonitoringObject.getInspireId()));
     }
 
     private void setName(AbstractMonitoringObjectType amot, AbstractMonitoringObject abstractMonitoringObject) {

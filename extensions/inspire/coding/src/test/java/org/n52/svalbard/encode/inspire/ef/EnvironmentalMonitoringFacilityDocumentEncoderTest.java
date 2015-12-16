@@ -26,61 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.inspire;
+package org.n52.svalbard.encode.inspire.ef;
 
-import java.util.Set;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.apache.xmlbeans.XmlObject;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
+import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityDocument;
 
-    private static final long serialVersionUID = -4612931300484622090L;
+public class EnvironmentalMonitoringFacilityDocumentEncoderTest extends AbstractEnvironmentalMonitoringFacilityEncoderTest {
 
-    private Set<String> mediaMonitored;
+    @Rule
+    public final ErrorCollector errors = new ErrorCollector();
+    private final EnvironmentalMonitoringFaciltityDocumentEncoder docEncoder = new EnvironmentalMonitoringFaciltityDocumentEncoder();
     
-    private String measurementRegime;
-    
-    private boolean mobile;
-
-    /**
-     * @return the mediaMonitored
-     */
-    public Set<String> getMediaMonitored() {
-        return mediaMonitored;
-    }
-
-    /**
-     * @param mediaMonitored the mediaMonitored to set
-     */
-    public void setMediaMonitored(Set<String> mediaMonitored) {
-        this.mediaMonitored = mediaMonitored;
-    }
-
-    /**
-     * @return the measurementRegime
-     */
-    public String getMeasurementRegime() {
-        return measurementRegime;
-    }
-
-    /**
-     * @param measurementRegime the measurementRegime to set
-     */
-    public void setMeasurementRegime(String measurementRegime) {
-        this.measurementRegime = measurementRegime;
-    }
-
-    /**
-     * @return the mobile
-     */
-    public boolean isMobile() {
-        return mobile;
-    }
-
-    /**
-     * @param mobile the mobile to set
-     */
-    public void setMobile(boolean mobile) {
-        this.mobile = mobile;
+    @Test
+    public void encodeEnvironmentalMonitoringFacility() throws OwsExceptionReport {
+        XmlObject xmlObject = docEncoder.encode(getEnvironmentalMonitoringFacility());
+        errors.checkThat(xmlObject.validate(), is(true));
+        errors.checkThat(xmlObject, instanceOf(EnvironmentalMonitoringFacilityDocument.class));
     }
 }

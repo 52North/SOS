@@ -55,7 +55,7 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
     /**
      * 1..1, nillable
      */
-    private boolean mobile;
+    private Boolean mobile;
 
     /**
      * 0..*
@@ -68,7 +68,7 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
     private ReferenceType specialisedEMFType;
 
     /**
-     * 1..*
+     * 1..*, nillable
      */
     private Set<OperationalActivityPeriod> operationalActivityPeriod = Sets.newHashSet();
 
@@ -84,6 +84,14 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
 
     public EnvironmentalMonitoringFacility(SimpleAttrs simpleAttrs) {
         super(simpleAttrs);
+    }
+    
+    public EnvironmentalMonitoringFacility(Identifier inspireId, ReferenceType mediaMonitored) {
+        super(inspireId, mediaMonitored);
+    }
+    
+    public EnvironmentalMonitoringFacility(Identifier inspireId, Set<ReferenceType> mediaMonitored) {
+        super(inspireId, mediaMonitored);
     }
     
     public EnvironmentalMonitoringFacility(Identifier inspireId, ReferenceType mediaMonitored,
@@ -130,12 +138,34 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
     public ReferenceType getMeasurementRegime() {
         return measurementRegime;
     }
+    
+    /**
+     * @param measurementRegime the measurementRegime to set
+     */
+    public void setMeasurementRegime(ReferenceType measurementRegime) {
+        this.measurementRegime = measurementRegime;
+    }
+
+    public boolean isSetMeasurementRegime() {
+        return getMeasurementRegime() != null && getMeasurementRegime().isSetHref();
+    }
 
     /**
      * @return the mobile
      */
     public boolean isMobile() {
         return mobile;
+    }
+    
+    /**
+     * @param mobile the mobile to set
+     */
+    public void setMobile(Boolean mobile) {
+        this.mobile = mobile;
+    }
+
+    public boolean isSetMobile() {
+        return mobile != null;
     }
 
     /**
@@ -182,6 +212,17 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
      */
     public Set<OperationalActivityPeriod> getOperationalActivityPeriod() {
         return operationalActivityPeriod;
+    }
+    
+    /**
+     * @param operationalActivityPeriod the operationalActivityPeriod to set
+     */
+    public void setOperationalActivityPeriod(Set<OperationalActivityPeriod> operationalActivityPeriod) {
+        this.operationalActivityPeriod = operationalActivityPeriod;
+    }
+
+    public boolean isSetOperationalActivityPeriod() {
+        return CollectionHelper.isNotEmpty(getOperationalActivityPeriod());
     }
 
     /**

@@ -462,16 +462,18 @@ public interface HibernateRelations {
         String getUrl();
 
         void setUrl(String url);
+        
+        boolean isSetUrl();
     }
     
     
-	interface GetStringValue {
-		
-		 boolean isSetValue();
-		
-		String getValueAsString();
-		
-	}
+    interface GetStringValue {
+
+        boolean isSetValue();
+
+        String getValueAsString();
+
+    }
 
     interface HasValue<T> extends GetStringValue {
         String VALUE = "value";

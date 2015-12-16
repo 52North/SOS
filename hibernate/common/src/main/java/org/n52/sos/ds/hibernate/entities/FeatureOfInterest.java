@@ -40,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -93,6 +94,11 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     @Override
     public void setUrl(String url) {
         this.url = url;
+    }
+    
+    @Override
+    public boolean isSetUrl() {
+        return !Strings.isNullOrEmpty(getUrl());
     }
 
     @Override

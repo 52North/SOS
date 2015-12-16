@@ -26,61 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.inspire;
+package org.n52.svalbard.encode.inspire.ef;
 
-import java.util.Set;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.svalbard.inspire.base.Identifier;
+import org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+public abstract class AbstractEnvironmentalMonitoringFacilityEncoderTest {
 
-public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
+    @BeforeClass
+    public static void initSettingsManager() {
+        SettingsManager.getInstance();
+    }
 
-    private static final long serialVersionUID = -4612931300484622090L;
-
-    private Set<String> mediaMonitored;
+    @AfterClass
+    public static void cleanupSettingManager() {
+        SettingsManager.getInstance().cleanup();
+    }
     
-    private String measurementRegime;
-    
-    private boolean mobile;
-
-    /**
-     * @return the mediaMonitored
-     */
-    public Set<String> getMediaMonitored() {
-        return mediaMonitored;
-    }
-
-    /**
-     * @param mediaMonitored the mediaMonitored to set
-     */
-    public void setMediaMonitored(Set<String> mediaMonitored) {
-        this.mediaMonitored = mediaMonitored;
-    }
-
-    /**
-     * @return the measurementRegime
-     */
-    public String getMeasurementRegime() {
-        return measurementRegime;
-    }
-
-    /**
-     * @param measurementRegime the measurementRegime to set
-     */
-    public void setMeasurementRegime(String measurementRegime) {
-        this.measurementRegime = measurementRegime;
-    }
-
-    /**
-     * @return the mobile
-     */
-    public boolean isMobile() {
-        return mobile;
-    }
-
-    /**
-     * @param mobile the mobile to set
-     */
-    public void setMobile(boolean mobile) {
-        this.mobile = mobile;
+    protected EnvironmentalMonitoringFacility getEnvironmentalMonitoringFacility() {
+        return new EnvironmentalMonitoringFacility(new Identifier("localId", "namespace"), new ReferenceType("mediaMonitored")); 
     }
 }

@@ -47,6 +47,10 @@ public class Identifier extends CodeWithAuthority {
         super(localId, namespace);
     }
     
+    public Identifier(CodeWithAuthority codeWithAuthority) {
+        super(codeWithAuthority.getValue(), codeWithAuthority.getCodeSpace());
+    }
+    
     /**
      * Get localId
      * 

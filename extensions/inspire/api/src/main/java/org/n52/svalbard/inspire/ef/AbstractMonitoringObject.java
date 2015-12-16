@@ -50,6 +50,10 @@ public abstract class AbstractMonitoringObject extends AbstractFeature implement
     
     private SimpleAttrs simpleAttrs;
     
+    
+    /**
+     * 1..1 inspireId, super.identifier
+     */
     /**
      * 0..* name, super.name
      */

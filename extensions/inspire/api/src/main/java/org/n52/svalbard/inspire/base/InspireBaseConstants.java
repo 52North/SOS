@@ -26,61 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.inspire;
+package org.n52.svalbard.inspire.base;
 
-import java.util.Set;
+import org.n52.sos.w3c.SchemaLocation;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+public interface InspireBaseConstants {
 
-public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
-
-    private static final long serialVersionUID = -4612931300484622090L;
-
-    private Set<String> mediaMonitored;
+    String NS_BASE = "http://inspire.ec.europa.eu/schemas/base/3.3";
     
-    private String measurementRegime;
+    String NS_BASE_PREFIX = "base";
     
-    private boolean mobile;
-
-    /**
-     * @return the mediaMonitored
-     */
-    public Set<String> getMediaMonitored() {
-        return mediaMonitored;
-    }
-
-    /**
-     * @param mediaMonitored the mediaMonitored to set
-     */
-    public void setMediaMonitored(Set<String> mediaMonitored) {
-        this.mediaMonitored = mediaMonitored;
-    }
-
-    /**
-     * @return the measurementRegime
-     */
-    public String getMeasurementRegime() {
-        return measurementRegime;
-    }
-
-    /**
-     * @param measurementRegime the measurementRegime to set
-     */
-    public void setMeasurementRegime(String measurementRegime) {
-        this.measurementRegime = measurementRegime;
-    }
-
-    /**
-     * @return the mobile
-     */
-    public boolean isMobile() {
-        return mobile;
-    }
-
-    /**
-     * @param mobile the mobile to set
-     */
-    public void setMobile(boolean mobile) {
-        this.mobile = mobile;
-    }
+    String SCHEMA_LOCATION_URL_BASE = "http://inspire.ec.europa.eu/schemas/bas/3.3/BaseTypes.xsd";
+    
+    SchemaLocation BASE_33_SCHEMA_LOCATION = new SchemaLocation(NS_BASE, SCHEMA_LOCATION_URL_BASE);
 }

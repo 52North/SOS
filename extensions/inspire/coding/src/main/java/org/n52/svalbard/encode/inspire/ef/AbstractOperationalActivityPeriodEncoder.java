@@ -33,7 +33,7 @@ import org.n52.svalbard.inspire.ef.OperationalActivityPeriod;
 
 import eu.europa.ec.inspire.schemas.ef.x40.OperationalActivityPeriodType;
 
-public abstract class AbstractOperationalActivityPeriodEncoder extends AbstractEnvironmentalFaciltity<OperationalActivityPeriod>{
+public abstract class AbstractOperationalActivityPeriodEncoder extends AbstractEnvironmentalFaciltityEncoder<OperationalActivityPeriod>{
 
     protected OperationalActivityPeriodType createOperationalActivityPeriod(OperationalActivityPeriod operationalActivityPeriod) throws OwsExceptionReport {
         OperationalActivityPeriodType oapt = OperationalActivityPeriodType.Factory.newInstance();

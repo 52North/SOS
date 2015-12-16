@@ -30,6 +30,7 @@ package org.n52.svalbard.encode.inspire.ef;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.JavaHelper;
 import org.n52.svalbard.inspire.ef.AnyDomainLink;
 import org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility;
 import org.n52.svalbard.inspire.ef.NetworkFacility;
@@ -55,6 +56,11 @@ public abstract class AbstractEnvironmentalMonitoringFaciltityEncoder extends Ab
     // return Collections.unmodifiableMap(SUPPORTED_TYPES);
     // }
 
+    @Override
+    protected String generateGmlId() {
+        return "emf_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
+    }
+    
     protected EnvironmentalMonitoringFacilityType createEnvironmentalMonitoringFaciltityType(
             EnvironmentalMonitoringFacility environmentalMonitoringFacility) throws OwsExceptionReport {
         EnvironmentalMonitoringFacilityType emft = EnvironmentalMonitoringFacilityType.Factory.newInstance();
@@ -86,12 +92,20 @@ public abstract class AbstractEnvironmentalMonitoringFaciltityEncoder extends Ab
 
     private void setMeasurementRegime(EnvironmentalMonitoringFacilityType emft,
             EnvironmentalMonitoringFacility environmentalMonitoringFacility) throws OwsExceptionReport {
-        emft.addNewMeasurementRegime().set(encodeGML32(environmentalMonitoringFacility.getMeasurementRegime()));
+        if (environmentalMonitoringFacility.isSetMeasurementRegime()) {
+            emft.addNewMeasurementRegime().set(encodeGML32(environmentalMonitoringFacility.getMeasurementRegime()));
+        } else {
+            emft.addNewMeasurementRegime().setNil();
+        }
     }
 
     private void setMobile(EnvironmentalMonitoringFacilityType emft,
             EnvironmentalMonitoringFacility environmentalMonitoringFacility) {
-        emft.addNewMobile().setBooleanValue(environmentalMonitoringFacility.isMobile());
+        if (environmentalMonitoringFacility.isSetMobile()) {
+            emft.addNewMobile().setBooleanValue(environmentalMonitoringFacility.isMobile());
+        } else {
+            emft.addNewMobile().setNil();
+        }
     }
 
     private void setResultAcquisitionSource(EnvironmentalMonitoringFacilityType emft,
@@ -113,19 +127,22 @@ public abstract class AbstractEnvironmentalMonitoringFaciltityEncoder extends Ab
 
     private void setOperationalActivityPeriod(EnvironmentalMonitoringFacilityType emft,
             EnvironmentalMonitoringFacility environmentalMonitoringFacility) throws OwsExceptionReport {
-        for (OperationalActivityPeriod operationalActivityPeriod : environmentalMonitoringFacility
-                .getOperationalActivityPeriod()) {
-            if (operationalActivityPeriod.isSetSimpleAttrs()) {
-                eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType.OperationalActivityPeriod oap =
-                        emft.addNewOperationalActivityPeriod();
-                oap.setHref(operationalActivityPeriod.getSimpleAttrs().getHref());
-                if (operationalActivityPeriod.getSimpleAttrs().isSetTitle()) {
-                    oap.setTitle(operationalActivityPeriod.getSimpleAttrs().getTitle());
+        if (environmentalMonitoringFacility.isSetOperationalActivityPeriod()) {
+            for (OperationalActivityPeriod operationalActivityPeriod : environmentalMonitoringFacility
+                    .getOperationalActivityPeriod()) {
+                if (operationalActivityPeriod.isSetSimpleAttrs()) {
+                    eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType.OperationalActivityPeriod oap =
+                            emft.addNewOperationalActivityPeriod();
+                    oap.setHref(operationalActivityPeriod.getSimpleAttrs().getHref());
+                    if (operationalActivityPeriod.getSimpleAttrs().isSetTitle()) {
+                        oap.setTitle(operationalActivityPeriod.getSimpleAttrs().getTitle());
+                    }
+                } else {
+                    emft.addNewOperationalActivityPeriod().set(encodeEF(operationalActivityPeriod));
                 }
-            } else {
-                emft.addNewOperationalActivityPeriod().set(encodeEF(operationalActivityPeriod));
             }
-
+        } else {
+            emft.addNewOperationalActivityPeriod().setNil();
         }
     }
 

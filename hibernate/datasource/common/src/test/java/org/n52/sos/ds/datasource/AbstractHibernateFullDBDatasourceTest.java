@@ -56,7 +56,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     
     private static final int CHANGEABLE_COUNT = 10;
     
-    private static final int MAX_COUNT = 15;
+    private static final int MAX_COUNT = 16;
 
     @Override
     protected void setUp() throws Exception {
@@ -111,6 +111,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions) {
         boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
+        boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
         boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
@@ -126,6 +127,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
+        assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
 
         if (changeable) {
@@ -134,6 +136,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             int counter = MAX_COUNT;
             if (!transactional) { counter--; }
             if (!concept) { counter--; }
+            if (!featureConcept) { counter--; }
             if (!multiLanguage){ counter--; }
             if (settingsDefinitions){ counter--; }
             assertEquals(counter, keys.size());

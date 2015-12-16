@@ -98,6 +98,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String DATABASE_CONCEPT_KEY = "sos.database.concept";
 
     protected static final String DATABASE_CONCEPT_DEFAULT_VALUE = DatabaseConcept.SERIES_CONCEPT.name();
+    
+    protected static final String FEATURE_CONCEPT_TITLE = "Feature concept";
+
+    protected static final String FEATURE_CONCEPT_DESCRIPTION = "Select the feature concept this SOS should use";
+
+    protected static final String FEATURE_CONCEPT_KEY = "sos.feature.concept";
+
+    protected static final String FEATURE_CONCEPT_DEFAULT_VALUE = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
 
     protected static final String TRANSACTIONAL_TITLE = "Transactional Profile";
 
@@ -137,6 +145,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private Dialect dialect;
 
     private final ChoiceSettingDefinition databaseConceptDefinition = createDatabaseConceptDefinition();
+    
+    private final ChoiceSettingDefinition featureConceptDefinition = createFeatureConceptDefinition();
 
     private final BooleanSettingDefinition transactionalDefiniton = createTransactionalDefinition();
 
@@ -180,6 +190,18 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         choiceSettingDefinition.setDefaultValue(DatabaseConcept.SERIES_CONCEPT.name());
         return choiceSettingDefinition;
     }
+    
+    protected ChoiceSettingDefinition createFeatureConceptDefinition() {
+        ChoiceSettingDefinition choiceSettingDefinition = new ChoiceSettingDefinition();
+        choiceSettingDefinition.setTitle(FEATURE_CONCEPT_TITLE).setDescription(FEATURE_CONCEPT_DESCRIPTION)
+                .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_3).setKey(FEATURE_CONCEPT_KEY);
+        choiceSettingDefinition.addOption(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name(),
+                FeatureConcept.DEFAULT_FEATURE_CONCEPT.getDisplayName());
+        choiceSettingDefinition.addOption(FeatureConcept.INSPIRE_FEATURE_CONCEPT.name(),
+                FeatureConcept.INSPIRE_FEATURE_CONCEPT.getDisplayName());
+        choiceSettingDefinition.setDefaultValue(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
+        return choiceSettingDefinition;
+    }
 
     /**
      * Create settings definition for transactional support
@@ -189,13 +211,13 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected BooleanSettingDefinition createTransactionalDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(TRANSACTIONAL_DEFAULT_VALUE)
                 .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(TRANSACTIONAL_KEY);
+                .setOrder(SettingDefinitionProvider.ORDER_4).setKey(TRANSACTIONAL_KEY);
     }
 
     protected BooleanSettingDefinition createMultilingualismDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE)
                 .setTitle(MULTILINGUALISM_TITLE).setDescription(MULTILINGUALISM_DESCRIPTION).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3).setKey(MULTILINGUALISM_KEY);
+                .setOrder(SettingDefinitionProvider.ORDER_5).setKey(MULTILINGUALISM_KEY);
     }
 
     /**
@@ -207,7 +229,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
                 .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
                 .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_5).setKey(PROVIDED_JDBC_DRIVER_KEY);
+                .setOrder(SettingDefinitionProvider.ORDER_6).setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
 
     /**
@@ -253,24 +275,50 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         config.buildMappings();
         return config;
     }
+    
+    protected String getFeatureConceptMappingDirectory(Map<String, Object> settings) {
+        String concept = (String)settings.get(this.featureConceptDefinition.getKey());
+        if (concept == null || concept.isEmpty()) {
+            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+            concept = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_INSPIRE_PATH)) {
+                    concept = FeatureConcept.INSPIRE_FEATURE_CONCEPT.name();
+            }
+            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+                    featureConceptDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+                    concept,
+                    featureConceptDefinition.getKey(),
+                    concept);
+        }
+        switch (FeatureConcept.valueOf(concept)) {
+        case DEFAULT_FEATURE_CONCEPT:
+            return HIBERNATE_MAPPING_FEATURE_CORE_PATH;
+        case INSPIRE_FEATURE_CONCEPT:
+            return HIBERNATE_MAPPING_FEATURE_INSPIRE_PATH;
+        default:
+            return HIBERNATE_MAPPING_FEATURE_CORE_PATH;
+        }
+    }
 
     protected String getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
         String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
-        	String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
-        	concept = DatabaseConcept.SERIES_CONCEPT.name();
-        	if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
-        		concept = DatabaseConcept.EREPORTING_CONCEPT.name();
-        	} else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
-        		concept = DatabaseConcept.OLD_CONCEPT.name();
-        	}
-        	LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
-        			+ " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
-        			databaseConceptDefinition.getKey(),
-        			HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
-        			concept,
-        			databaseConceptDefinition.getKey(),
-        			concept);
+            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+            concept = DatabaseConcept.SERIES_CONCEPT.name();
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+                concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+                concept = DatabaseConcept.OLD_CONCEPT.name();
+            }
+            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+                    databaseConceptDefinition.getKey(),
+                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+                    concept,
+                    databaseConceptDefinition.getKey(),
+                    concept);
         }
         switch (DatabaseConcept.valueOf(concept)) {
         case SERIES_CONCEPT:
@@ -612,6 +660,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
+    }
+    
+    protected ChoiceSettingDefinition getFeatureConceptDefinition() {
+        return featureConceptDefinition;
     }
 
     protected ChoiceSettingDefinition getDatabaseConceptDefinition() {

@@ -29,12 +29,21 @@
 package org.n52.sos.ds.hibernateutil.feature.create;
 
 import java.util.Locale;
+import java.util.Set;
 
 import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.dao.inspire.EnvironmentalMonitoringFacilityDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.SosHelper;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
+import org.n52.svalbard.inspire.base.Identifier;
+
+import com.google.common.collect.Sets;
 
 public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCreationStrategy {
 
@@ -50,8 +59,49 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
     @Override
     public AbstractFeature create(FeatureOfInterest f, Locale i18n, String version, Session s)
             throws OwsExceptionReport {
-        // TODO Auto-generated method stub
+        if (f.isSetUrl()) {
+            return new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(
+                    new SimpleAttrs().setHref(f.getUrl()));
+        }
+        if (f instanceof EnvironmentalMonitoringFacility) {
+            EnvironmentalMonitoringFacility emf = (EnvironmentalMonitoringFacility) f;
+            EnvironmentalMonitoringFacilityDAO featureDAO = new EnvironmentalMonitoringFacilityDAO();
+            final CodeWithAuthority identifier = featureDAO.getIdentifier(emf);
+            if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), version)) {
+                identifier.setValue(null);
+            }
+            final org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature =
+                    new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(new Identifier(identifier),
+                            getMediaMonitored(emf.getMediaMonitored()));
+            addNameAndDescription(i18n, emf, emFeature, featureDAO);
+            emFeature.setGeometry(createGeometry(emf, s));
+            // add measurementRegime,  mobile, operationalActivityPeriod(Set)
+            emFeature.setMeasurementRegime(new ReferenceType(emf.getMeasurementRegime()));
+            emFeature.setMobile(emf.isMobile());
+            
+            // in table or from Data
+//            emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
+            
+            
+//            final Set<FeatureOfInterest> parentFeatures = emf.getParents();
+//            if (parentFeatures != null && !parentFeatures.isEmpty()) {
+//                final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
+//                for (final FeatureOfInterest parentFeature : parentFeatures) {
+//                    sampledFeatures.add(create(parentFeature, i18n, version, s));
+//                }
+//                emFeature.setSampledFeatures(sampledFeatures);
+//            }
+            return emFeature;
+        }
         return null;
+    }
+
+    private Set<ReferenceType> getMediaMonitored(Set<String> mediaMonitored) {
+        Set<ReferenceType> referenceTypes = Sets.newHashSetWithExpectedSize(mediaMonitored.size());
+        for (String mm : mediaMonitored) {
+            referenceTypes.add(new ReferenceType(mm));
+        }
+        return referenceTypes;
     }
 
 

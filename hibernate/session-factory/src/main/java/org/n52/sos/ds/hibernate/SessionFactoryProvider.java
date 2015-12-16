@@ -130,6 +130,7 @@ public class SessionFactoryProvider extends UnspecifiedSessionFactoryProvider {
             } else {
                 // keep this as default/fallback
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_CORE_PATH).toURI()));
+                configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_FEATURE_CORE_PATH).toURI()));
                 configuration.addDirectory(new File(getClass().getResource(HIBERNATE_MAPPING_TRANSACTIONAL_PATH)
                         .toURI()));
                 configuration.addDirectory(new File(getClass().getResource(

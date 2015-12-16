@@ -68,6 +68,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         set.add(createBatchSizeDefinition(batchSizeDefault));
         set.add(createProvidedJdbcDriverDefinition(providedJdbc));
         set.add(getDatabaseConceptDefinition());
+        set.add(getFeatureConceptDefinition());
         if (isTransactionalDatasource()) {
             set.add(getTransactionalDefiniton());
         }
@@ -136,6 +137,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
+        p.put(FEATURE_CONCEPT_KEY, settings.get(FEATURE_CONCEPT_KEY));
         p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
         addMappingFileDirectories(settings, p);
 
@@ -157,6 +159,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         }
         settings.put(TRANSACTIONAL_KEY, isTransactional(current));
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
+        settings.put(FEATURE_CONCEPT_KEY,  current.getProperty(FEATURE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
         

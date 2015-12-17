@@ -34,9 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -46,7 +44,6 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.AbstractFeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -59,9 +56,6 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.i18n.I18NDAORepository;
-import org.n52.sos.i18n.LocalizedString;
-import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -69,23 +63,15 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
 
 @Configurable

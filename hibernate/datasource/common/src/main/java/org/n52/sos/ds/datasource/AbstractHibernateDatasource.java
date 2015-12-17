@@ -255,6 +255,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         config.configure("/sos-hibernate.cfg.xml");
         config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
         config.addDirectory(resource(getDatabaseConceptMappingDirectory(settings)));
+        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
+            config.addDirectory(resource(featureConceptMappingDirectory));
+        }
         if (isTransactionalDatasource()) {
             Boolean transactional = (Boolean) settings.get(this.transactionalDefiniton.getKey());
             if (transactional != null && transactional.booleanValue()) {
@@ -293,12 +297,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     concept);
         }
         switch (FeatureConcept.valueOf(concept)) {
-        case DEFAULT_FEATURE_CONCEPT:
-            return HIBERNATE_MAPPING_FEATURE_CORE_PATH;
         case INSPIRE_FEATURE_CONCEPT:
             return HIBERNATE_MAPPING_FEATURE_INSPIRE_PATH;
         default:
-            return HIBERNATE_MAPPING_FEATURE_CORE_PATH;
+            return null;
         }
     }
 
@@ -647,6 +649,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
         builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
                 getDatabaseConceptMappingDirectory(settings));
+        String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
+        if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
+                    featureConceptMappingDirectory);
+        }
         if (isTransactionalDatasource()) {
             Boolean t = (Boolean) settings.get(transactionalDefiniton.getKey());
             if (t != null && t) {

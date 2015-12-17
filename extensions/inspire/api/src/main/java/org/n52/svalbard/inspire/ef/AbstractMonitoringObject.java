@@ -305,6 +305,13 @@ public abstract class AbstractMonitoringObject extends AbstractFeature implement
         this.observingCapability = observingCapability;
     }
     
+    /**
+     * @param observingCapability the observingCapability to add
+     */
+    public void addObservingCapability(ObservingCapability observingCapability) {
+        this.observingCapability.add(observingCapability);
+    }
+    
     public boolean isSetObservingCapability() {
         return CollectionHelper.isNotEmpty(getObservingCapability());
     }

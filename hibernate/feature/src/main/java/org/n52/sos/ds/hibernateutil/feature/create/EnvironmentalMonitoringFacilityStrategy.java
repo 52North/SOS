@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernateutil.feature.create;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Set;
 
@@ -40,9 +41,12 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
+import org.n52.svalbard.inspire.ef.ObservingCapability;
 
 import com.google.common.collect.Sets;
 
@@ -83,6 +87,8 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
             // in table or from Data
 //            emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
             
+            emFeature.addObservingCapability(createObservingCapability(f.getIdentifier()));
+            
             
 //            final Set<FeatureOfInterest> parentFeatures = emf.getParents();
 //            if (parentFeatures != null && !parentFeatures.isEmpty()) {
@@ -97,6 +103,11 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
         return null;
     }
 
+    private ObservingCapability createObservingCapability(String identifier) {
+        String gdaUrl = "";
+        return new ObservingCapability(gdaUrl);
+    }
+
     private Set<ReferenceType> getMediaMonitored(Set<String> mediaMonitored) {
         Set<ReferenceType> referenceTypes = Sets.newHashSetWithExpectedSize(mediaMonitored.size());
         for (String mm : mediaMonitored) {
@@ -104,6 +115,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
         }
         return referenceTypes;
     }
+
 
 
 }

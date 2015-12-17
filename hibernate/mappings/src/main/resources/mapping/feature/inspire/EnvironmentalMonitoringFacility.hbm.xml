@@ -2,8 +2,8 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" table="featureOfInterest">
-    	<comment>Table to store the FeatureOfInterest information. Mapping file: mapping/core/FeatureOfInterest.hbm.xml</comment>
+    <class name="org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility" table="featureOfInterest">
+    	<comment>Table to store the FeatureOfInterest information. Mapping file: mapping/feature/inspire/EnvironmentalMonitoringFacility.hbm.xml</comment>
         <id name="featureOfInterestId" type="long">
             <column name="featureOfInterestId">
             	<comment>Table primary key, used for relations</comment>
@@ -64,7 +64,7 @@
 	            	<comment>Foreign Key (FK) to the related parent featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
 	            </column>
             </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="featureOfInterestChildFk">
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility" foreign-key="featureOfInterestChildFk">
                 <column name="childFeatureId" not-null="true">
 	            	<comment>Foreign Key (FK) to the related child featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
 	            </column>
@@ -74,7 +74,7 @@
             <key>
                 <column name="childFeatureId" not-null="true" />
             </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="featureOfInterestParentFk">
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility" foreign-key="featureOfInterestParentFk">
                 <column name="parentFeatureId" not-null="true" />
             </many-to-many>
         </set>
@@ -90,20 +90,9 @@
             </column>
         </property>
         <property name="mobile" type="org.hibernate.type.TrueFalseType">
-            <column name="mobile" not-null="true" default="'F'" check=""mobile" in ('T','F')">
+            <column name="mobile" not-null="true" default="'F'" check="mobile in ('T','F')">
             	<comment>Flag to indicate that this feature is mobile or not </comment>
             </column>
         </property>
-    </class>
-    
-    <sql-query name="getEpsgPostgis">
-    	<return-scalar column="srid" type="int"/>
-    	SELECT srid FROM spatial_ref_sys
-    </sql-query>
-    
-   	<sql-query name="transformGeometryPostgis">
-    	<return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
-    	SELECT ST_Transform(:geometry, :srid) as geom
-    </sql-query>
-    
+    </class>   
 </hibernate-mapping>

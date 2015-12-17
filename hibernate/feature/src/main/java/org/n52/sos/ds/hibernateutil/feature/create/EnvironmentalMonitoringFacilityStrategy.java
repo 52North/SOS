@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxyHelper;
 import org.n52.sos.ds.hibernate.dao.inspire.EnvironmentalMonitoringFacilityDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
@@ -53,7 +54,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
 
     @Override
     public boolean apply(FeatureOfInterest feature) {
-        return EnvironmentalMonitoringFacility.class.equals(feature.getClass()) || EnvironmentalMonitoringFacility.class.equals(feature.getClass().getSuperclass());
+        return EnvironmentalMonitoringFacility.class.equals(HibernateProxyHelper.getClassWithoutInitializingProxy(feature));
     }
 
     @Override

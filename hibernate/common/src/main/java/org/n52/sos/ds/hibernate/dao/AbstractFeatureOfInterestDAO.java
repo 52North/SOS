@@ -131,7 +131,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     public List<FeatureOfInterest> getFeatures(Set<String> identifiers, List<SpatialFilter> filters,
             Session session) throws OwsExceptionReport {
         final Criteria c =
-                session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+                session.createCriteria(featureClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         boolean filtered = false;
         if (CollectionHelper.isNotEmpty(identifiers)) {
             c.add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));

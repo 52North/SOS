@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.hibernate.Session;
+import org.hibernate.proxy.HibernateProxyHelper;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -50,8 +51,8 @@ public class FeatureOfInterestStrategy extends AbstractFeatureCreationStrategy {
 
     @Override
     public boolean apply(FeatureOfInterest feature) {
-        return FeatureOfInterest.class.equals(feature.getClass()) || FeatureOfInterest.class.equals(feature.getClass().getSuperclass());
-    }
+        return FeatureOfInterest.class.equals(HibernateProxyHelper.getClassWithoutInitializingProxy(feature));
+   }
 
     @Override
     public AbstractFeature create(FeatureOfInterest f, Locale i18n, String version, Session s) throws OwsExceptionReport {

@@ -39,7 +39,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType;
 
-public class EnvironmentalMonitoringFacilityTypeEncoderTest extends AbstractEnvironmentalMonitoringFacilityEncoderTest{
+public class EnvironmentalMonitoringFacilityTypeEncoderTest extends AbstractEnvironmentalMonitoringFacilityEncoderTest {
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();

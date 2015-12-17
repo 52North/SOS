@@ -26,10 +26,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.om.features.samplingFeatures;
+package org.n52.sos.ogc.gml;
 
 import org.n52.sos.exception.ows.concrete.InvalidSridException;
-import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -132,5 +131,22 @@ public interface FeatureWith {
          *            XML representation of this feature to set
          */
         void setXmlDescription(final String xmlDescription);
+    }
+    
+    interface FeatureWithEncode {
+        
+        /**
+         * Check whether parameters are set
+         * 
+         * @return <code>true</code>, if parameters are set
+         */
+        boolean isSetParameter();
+
+        /**
+         * Check whether feature should be encoded
+         * 
+         * @return <code>true</code>, if feature should be encoded
+         */
+        boolean isEncode();
     }
 }

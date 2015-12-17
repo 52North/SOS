@@ -32,6 +32,8 @@ import java.io.Serializable;
 
 public class RelatedObservationId implements Serializable {
 
+    private static final long serialVersionUID = -5434701943309191104L;
+
     private Observation<?> observation;
 
     private Observation<?> relatedObservation;

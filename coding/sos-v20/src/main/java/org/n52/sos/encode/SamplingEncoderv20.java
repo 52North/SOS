@@ -33,10 +33,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
-import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
-import net.opengis.samplingSpatial.x20.ShapeType;
-
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
@@ -56,7 +52,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.JavaHelper;
+import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -72,11 +68,16 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
+import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
+import net.opengis.samplingSpatial.x20.ShapeType;
+
 /**
  * @since 4.0.0
  * 
  */
-public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
+public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingEncoderv20.class);
 
@@ -194,29 +195,6 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
                             CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampledFeature, additionalValues);
                     xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
                 }
-                // // Old version before schema was fixed. Now sampledFeatures
-                // multiplicity is 1..* and not 1..1.
-                // if (sampFeat.getSampledFeatures().size() == 1) {
-                // final XmlObject encodeObjectToXml =
-                // CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
-                // sampFeat.getSampledFeatures()
-                // .get(0));
-                // xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
-                // } else {
-                // final FeatureCollection featureCollection = new
-                // FeatureCollection();
-                // featureCollection.setGmlId("sampledFeatures_" +
-                // absFeature.getGmlId());
-                // for (final AbstractFeature sampledFeature :
-                // sampFeat.getSampledFeatures()) {
-                // featureCollection.addMember(sampledFeature);
-                // }
-                // final XmlObject encodeObjectToXml =
-                // CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
-                // featureCollection);
-                // xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
-                // }
-
             } else {
                 xbSampFeature.addNewSampledFeature().setHref(OGCConstants.UNKNOWN);
             }
@@ -298,5 +276,42 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
                 xbSamplingFeature.removeName(i);
             }
         }
+    }
+
+    @Override
+    protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (abstractFeature instanceof SamplingFeature) {
+            final SamplingFeature samplingFeature = (SamplingFeature) abstractFeature;
+            String namespace;
+            if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
+                namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);
+            } else {
+                namespace = OMHelper.getNamespaceForFeatureType(samplingFeature.getFeatureType());
+            }
+            final XmlObject encodedXmlObject = CodingHelper.encodeObjectToXml(namespace, samplingFeature);
+
+            if (encodedXmlObject != null) {
+                return encodedXmlObject;
+            } else {
+                if (samplingFeature.getXmlDescription() != null) {
+                    try {
+                        // TODO how set gml:id in already existing
+                        // XmlDescription? <-- XmlCursor
+                        return XmlObject.Factory.parse(samplingFeature.getXmlDescription());
+                    } catch (final XmlException xmle) {
+                        throw new NoApplicableCodeException().causedBy(xmle)
+                                .withMessage("Error while encoding featurePropertyType!");
+                    }
+                } else {
+                    featurePropertyType.setHref(samplingFeature.getIdentifierCodeWithAuthority().getValue());
+                    if (samplingFeature.isSetName()) {
+                        featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
+                    }
+                    return featurePropertyType;
+                }
+            }
+        }
+        return featurePropertyType;
     }
 }

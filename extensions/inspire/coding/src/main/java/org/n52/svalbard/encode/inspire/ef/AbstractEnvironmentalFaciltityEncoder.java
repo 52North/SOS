@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.encode.AbstractXmlEncoder;
+import org.n52.sos.encode.AbstractGmlEncoderv321;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
@@ -44,7 +44,7 @@ import org.n52.svalbard.inspire.ef.InspireEfConstants;
 
 import com.google.common.collect.Sets;
 
-public abstract class AbstractEnvironmentalFaciltityEncoder<T> extends AbstractXmlEncoder<T> {
+public abstract class AbstractEnvironmentalFaciltityEncoder<T> extends AbstractGmlEncoderv321<T> {
     
     @Override
     public Set<String> getConformanceClasses() {

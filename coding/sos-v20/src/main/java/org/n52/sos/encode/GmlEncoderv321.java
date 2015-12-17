@@ -33,6 +33,54 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.gml.time.TimePosition;
+import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JTSHelper;
+import org.n52.sos.util.JavaHelper;
+import org.n52.sos.util.MinMax;
+import org.n52.sos.util.OMHelper;
+import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.util.PolygonExtracter;
+
 import net.opengis.gml.x32.AbstractGeometryType;
 import net.opengis.gml.x32.AbstractRingPropertyType;
 import net.opengis.gml.x32.AbstractRingType;
@@ -65,59 +113,11 @@ import net.opengis.gml.x32.TimePeriodPropertyType;
 import net.opengis.gml.x32.TimePeriodType;
 import net.opengis.gml.x32.TimePositionType;
 
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.AbstractGeometry;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.gml.time.TimePosition;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.MinMax;
-import org.n52.sos.util.OMHelper;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.util.PolygonExtracter;
-
 /**
  * @since 4.0.0
  * 
  */
-public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
+public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GmlEncoderv321.class);
 
@@ -168,7 +168,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             encodedObject = createCodeType((org.n52.sos.ogc.gml.CodeType) element);
         } else if (element instanceof AbstractFeature) {
             encodedObject = createFeaturePropertyType((AbstractFeature) element, additionalValues);
-        } else if (element instanceof GeometryValue) {
+        } else if (element instanceof AbstractGeometry) {
             encodedObject = createGeomteryPropertyType((AbstractGeometry) element, additionalValues);
         } else if (element instanceof SosEnvelope) {
             encodedObject = createEnvelope((SosEnvelope) element);
@@ -181,7 +181,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         return encodedObject;
     }
 
-    private XmlObject createFeaturePropertyType(final AbstractFeature feature,
+    protected XmlObject createFeaturePropertyType(final AbstractFeature feature,
             final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (feature instanceof FeatureCollection) {
             return createFeatureCollection((FeatureCollection) feature, additionalValues);
@@ -233,15 +233,14 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     private XmlObject createFeature(final AbstractFeature feature, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
-        final FeaturePropertyType featurePropertyType =
-                FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        final FeaturePropertyType featurePropertyType = createFeaturePropertyType();
         if (isNotSamplingFeature(feature) || additionalValues.containsKey(HelperValues.REFERENCED)) {
             featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
             return featurePropertyType;
         } else {
             final SamplingFeature samplingFeature = (SamplingFeature) feature;
-            if (samplingFeature.isSetGmlID()) {
-                featurePropertyType.setHref("#" + samplingFeature.getGmlId());
+            if (feature.isSetGmlID()) {
+                featurePropertyType.setHref("#" + feature.getGmlId());
                 return featurePropertyType;
             } else {
                 if (additionalValues.containsKey(HelperValues.ENCODE)
@@ -301,6 +300,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
                 }
             }
         }
+    }
+
+    @Override
+    protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        return featurePropertyType.set(createFeature(abstractFeature, additionalValues));
     }
 
     private boolean isNotSamplingFeature(final AbstractFeature feature) {
@@ -466,6 +471,9 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
 
     private AbstractGeometryType createAbstractGeometry(AbstractGeometry element,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (element.isSetGmlID() && !additionalValues.containsKey(HelperValues.GMLID)) {
+            additionalValues.put(HelperValues.GMLID, element.getGmlId());
+        }
         XmlObject xbGeometry = createPosition(element.getGeometry(), additionalValues);
         AbstractGeometryType abstractGeometryType = null;
         if (xbGeometry instanceof AbstractGeometryType) {
@@ -495,7 +503,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         String foiId = additionalValues.get(HelperValues.GMLID);
         if (geom instanceof Point) {
             final PointType xbPoint = PointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbPoint.setId(geom.getGeometryType() + "_" + foiId);
+            xbPoint.setId(getGmlID(geom, foiId));
             createPointFromJtsGeometry((Point) geom, xbPoint);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 PointDocument xbPointDoc =
@@ -515,7 +523,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         else if (geom instanceof LineString) {
             final LineStringType xbLineString =
                     LineStringType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbLineString.setId(geom.getGeometryType() + "_" + foiId);
+            xbLineString.setId(getGmlID(geom, foiId));
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 LineStringDocument xbLineStringDoc =
@@ -536,7 +544,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         else if (geom instanceof Polygon) {
             final PolygonType xbPolygon =
                     PolygonType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbPolygon.setId(geom.getGeometryType() + "_" + foiId);
+            xbPolygon.setId(getGmlID(geom, foiId));
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 PolygonDocument xbPolygonDoc =
@@ -555,7 +563,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         
         else if (geom instanceof MultiPoint) {
             final MultiPointType xbMultiPoint = MultiPointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            String id = geom.getGeometryType() + "_" + foiId;
+            String id = getGmlID(geom, foiId);
             xbMultiPoint.setId(id);
             createMultiPointFromJtsGeometry((MultiPoint) geom, xbMultiPoint, id);
             
@@ -577,6 +585,16 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
         else {
             throw new UnsupportedEncoderInputException(this, geom);
         }
+    }
+
+    private String getGmlID(Geometry geom, String foiId) {
+        String id = null;
+        if (Strings.isNullOrEmpty(foiId)) {
+            id = foiId;
+        } else {
+            id = JavaHelper.generateID(geom.toText());
+        }
+        return  geom.getGeometryType() + "_" + id;
     }
 
     /**

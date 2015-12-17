@@ -28,33 +28,27 @@
  */
 package org.n52.svalbard.encode.inspire.ef;
 
-import java.util.Map;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.ogc.gml.AbstractFeature;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.inspire.ef.OperationalActivityPeriod;
 
-import eu.europa.ec.inspire.schemas.ef.x40.OperationalActivityPeriodType;
 import net.opengis.gml.x32.FeaturePropertyType;
 
-public abstract class AbstractOperationalActivityPeriodEncoder extends AbstractEnvironmentalFaciltityEncoder<OperationalActivityPeriod>{
+public class EnvironmentalMonitoringFaciltityGmlFeaturePropertyTypeEncoderTest  extends AbstractEnvironmentalMonitoringFacilityEncoderTest {
 
-    @Override
-    protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        OperationalActivityPeriodType encodedObject = createOperationalActivityPeriod((OperationalActivityPeriod)abstractFeature);
-        featurePropertyType.addNewAbstractFeature().set(encodedObject);
-        XmlHelper.substituteElement(featurePropertyType.getAbstractFeature(), encodedObject);
-        return featurePropertyType;
-    }
+    @Rule
+    public final ErrorCollector errors = new ErrorCollector();
+    private final EnvironmentalMonitoringFaciltityForGmlFeaturePropertyTypeEncoder gmlPropertyTypeEncoder = new EnvironmentalMonitoringFaciltityForGmlFeaturePropertyTypeEncoder();
     
-    protected OperationalActivityPeriodType createOperationalActivityPeriod(OperationalActivityPeriod operationalActivityPeriod) throws OwsExceptionReport {
-        OperationalActivityPeriodType oapt = OperationalActivityPeriodType.Factory.newInstance();
-        oapt.addNewActivityTime().addNewAbstractTimeObject().set(encodeGML32(operationalActivityPeriod.getActivityTime()));
-        // TODO check for substitution
-        return oapt;
+    @Test
+    public void encodeEnvironmentalMonitoringFacility() throws OwsExceptionReport {
+        XmlObject xmlObject = gmlPropertyTypeEncoder.encode(getEnvironmentalMonitoringFacility());
+//        errors.checkThat(xmlObject.validate(), is(true));
+        errors.checkThat(xmlObject, instanceOf(FeaturePropertyType.class));
     }
 }

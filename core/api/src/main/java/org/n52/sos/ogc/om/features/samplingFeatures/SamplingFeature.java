@@ -37,11 +37,12 @@ import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithEncode;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithFeatureType;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithGeometry;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithUrl;
+import org.n52.sos.ogc.gml.FeatureWith.FeatureWithXmlDescription;
 import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithFeatureType;
-import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithGeometry;
-import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithUrl;
-import org.n52.sos.ogc.om.features.samplingFeatures.FeatureWith.FeatureWithXmlDescription;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
@@ -56,7 +57,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  * 
  */
-public class SamplingFeature extends AbstractFeature implements FeatureWithGeometry, FeatureWithFeatureType, FeatureWithUrl, FeatureWithXmlDescription {
+public class SamplingFeature extends AbstractFeature implements FeatureWithGeometry, FeatureWithFeatureType, FeatureWithUrl, FeatureWithXmlDescription, FeatureWithEncode {
 
     /**
      * serial number
@@ -266,20 +267,12 @@ public class SamplingFeature extends AbstractFeature implements FeatureWithGeome
         return parameters;
     }
 
-    /**
-     * Check whether parameters are set
-     * 
-     * @return <code>true</code>, if parameters are set
-     */
+    @Override
     public boolean isSetParameter() {
         return CollectionHelper.isNotEmpty(parameters);
     }
 
-    /**
-     * Check whether feature should be encoded
-     * 
-     * @return <code>true</code>, if feature should be encoded
-     */
+    @Override
     public boolean isEncode() {
         return encode;
     }

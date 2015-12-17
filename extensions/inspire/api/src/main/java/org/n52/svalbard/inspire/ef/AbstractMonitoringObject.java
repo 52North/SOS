@@ -248,7 +248,7 @@ public abstract class AbstractMonitoringObject extends AbstractFeature implement
     }
     
     public boolean isSetGeometry() {
-        return getGeometry() != null;
+        return getGeometry() != null && getGeometry().isSetGeometry();
     }
     
 

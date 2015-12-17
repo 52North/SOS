@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
 
@@ -81,6 +82,9 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
      * 0..*
      */
     private Set<NetworkFacility> belongsTo = Sets.newHashSet();
+    
+    
+    private boolean wasEncoded = false;
 
     public EnvironmentalMonitoringFacility(SimpleAttrs simpleAttrs) {
         super(simpleAttrs);
@@ -111,6 +115,22 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
         this.mobile = mobile;
         this.operationalActivityPeriod.addAll(operationalActivityPeriod);
         setDefaultElementEncoding(InspireEfConstants.NS_EF);
+    }
+    
+    @Override
+    public boolean isSetGmlID() {
+        return super.isSetGmlID() && wasEncoded;
+    }
+    
+    @Override
+    public String getGmlId() {
+        if (!super.isSetGmlID()) {
+            final StringBuilder builder = new StringBuilder();
+            builder.append("emf");
+            builder.append(JavaHelper.generateID(getIdentifierCodeWithAuthority().getValue()));
+            setGmlId(builder.toString());
+        }
+        return super.getGmlId();
     }
 
     /**
@@ -263,6 +283,10 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
     
     public boolean isSetBelongsTo() {
         return CollectionHelper.isNotEmpty(getBelongsTo());
+    }
+    
+    public void wasEncoded() {
+        this.wasEncoded  = true;
     }
     
 }

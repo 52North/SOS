@@ -420,6 +420,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
+    
+    private SetMultiMap<String, String> childOfferingsForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> compositePhenomenonForOfferings = newSynchronizedSetMultiMap();
 
@@ -446,6 +448,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private SetMultiMap<String, String> parentFeaturesForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> parentProceduresForProcedures = newSynchronizedSetMultiMap();
+    
+    private SetMultiMap<String, String> parentOfferingsForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> proceduresForFeaturesOfInterest = newSynchronizedSetMultiMap();
 
@@ -756,12 +760,26 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected SetMultiMap<String, String> getParentProceduresForProceduresMap() {
         return this.parentProceduresForProcedures;
     }
-
+    
     /**
      * @return the relating procedure -> child procedure
      */
     protected SetMultiMap<String, String> getChildProceduresForProceduresMap() {
         return this.childProceduresForProcedures;
+    }
+    
+    /**
+     * @return the relating offering -> parent offering
+     */
+    protected SetMultiMap<String, String> getParentOfferingsForOfferingsMap() {
+        return this.parentOfferingsForOfferings;
+    }
+    
+    /**
+     * @return the relating offering -> child offering
+     */
+    protected SetMultiMap<String, String> getChildOfferingsForOfferingsMap() {
+        return this.childOfferingsForOfferings;
     }
 
     /**
@@ -902,11 +920,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
                 maxResultTimeForOfferings, minResultTimeForOfferings, maxPhenomenonTimeForProcedures,
                 minPhenomenonTimeForProcedures, allowedObservationTypeForOfferings, childFeaturesForFeatureOfInterest,
-                childProceduresForProcedures, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
+                childProceduresForProcedures, childOfferingsForOfferings, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
                 featuresOfInterestForResultTemplates, observablePropertiesForCompositePhenomenons,
                 observablePropertiesForOfferings, observablePropertiesForProcedures,
                 observationTypesForOfferings, observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
-                parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, proceduresForFeaturesOfInterest,
+                parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, parentOfferingsForOfferings, proceduresForFeaturesOfInterest,
                 proceduresForObservableProperties, proceduresForOfferings, hiddenChildProceduresForOfferings,
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
                 envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
@@ -936,6 +954,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.childFeaturesForFeatureOfInterest,
                             other.getChildFeaturesForFeaturesOfInterestMap())
                     && Objects.equal(this.childProceduresForProcedures, other.getChildProceduresForProceduresMap())
+                    && Objects.equal(this.childOfferingsForOfferings, other.getChildOfferingsForOfferingsMap())
                     && Objects.equal(this.compositePhenomenonForOfferings,
                             other.getCompositePhenomenonsForOfferingsMap())
                     && Objects.equal(this.featuresOfInterestForOfferings, other.getFeaturesOfInterestForOfferingMap())
@@ -955,6 +974,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.parentFeaturesForFeaturesOfInterest,
                             other.getParentFeaturesForFeaturesOfInterestMap())
                     && Objects.equal(this.parentProceduresForProcedures, other.getParentProceduresForProceduresMap())
+                    && Objects.equal(this.parentOfferingsForOfferings, other.getParentOfferingsForOfferingsMap())
                     && Objects.equal(this.proceduresForFeaturesOfInterest,
                             other.getProceduresForFeaturesOfInterestMap())
                     && Objects.equal(this.proceduresForObservableProperties,

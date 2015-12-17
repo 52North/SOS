@@ -587,6 +587,77 @@ public interface ContentCache
      *         (and optionally themselves)
      */
     Set<String> getChildProcedures(Set<String> procedure, boolean fullHierarchy, boolean includeSelves);
+    
+    /**
+     * Returns collection containing parent offerings for the passed offering,
+     * optionally navigating the full hierarchy and including itself.
+     *
+     * @param offering
+     *            the offering id to find parents for
+     * @param fullHierarchy
+     *            whether or not to traverse the full offering hierarchy in one
+     *            direction starting from <tt>offering</tt>
+     * @param includeSelf
+     *            whether or not to include the passed offering id in the
+     *            result
+     *
+     * @return a set containing the passed offering id's parents (and
+     *         optionally itself)
+     */
+    Set<String> getParentOfferings(String offering, boolean fullHierarchy, boolean includeSelf);
+
+    /**
+     * Returns collection containing parent offerings for the passed
+     * offerings, optionally navigating the full hierarchy and including
+     * itself.
+     *
+     * @param offerings
+     *            the offering id's to find parents for
+     * @param fullHierarchy
+     *            whether or not to traverse the full offering hierarchy in one
+     *            direction starting from <tt>offering</tt>
+     * @param includeSelves
+     *            whether or not to include the passed offering id in the
+     *            result
+     *
+     * @return a set containing the passed offering id's parents (and
+     *         optionally itself)
+     */
+    Set<String> getParentOfferings(Set<String> offerings, boolean fullHierarchy, boolean includeSelves);
+
+    /**
+     * Returns collection containing child offerings for the passed offerings,
+     * optionally navigating the full hierarchy and including itself.
+     *
+     * @param offering
+     *            offering id to find children for
+     * @param fullHierarchy
+     *            whether or not to navigate the full offering hierarchy
+     * @param includeSelf
+     *            whether or not to include the passed offering id in the
+     *            result
+     *
+     * @return Collection containing the passed offering id's children
+     *         (and optionally itself)
+     */
+    Set<String> getChildOfferings(String offering, boolean fullHierarchy, boolean includeSelf);
+
+    /**
+     * Returns collection containing child offerings for the passed offerings,
+     * optionally navigating the full hierarchy and including itself.
+     *
+     * @param offering
+     *            offering ids to find children for
+     * @param fullHierarchy
+     *            whether or not to navigate the full offering hierarchy
+     * @param includeSelves
+     *            whether or not to include the passed offering ids in the
+     *            result
+     *
+     * @return Collection containing the passed offering ids' children
+     *         (and optionally themselves)
+     */
+    Set<String> getChildOfferings(Set<String> offering, boolean fullHierarchy, boolean includeSelves);
 
     /**
      * Checks whether the specified related feature has been used as sampling

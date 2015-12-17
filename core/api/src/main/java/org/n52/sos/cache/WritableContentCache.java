@@ -264,6 +264,26 @@ public interface WritableContentCache
      *            the parent procedures
      */
     void addParentProcedures(String procedure, Collection<String> parentProcedures);
+    
+    /**
+     * Associate the specified parent offering with the specified offering
+     *
+     * @param offering
+     *            the offering
+     * @param parentOffering
+     *            the parent offering
+     */
+    void addParentOffering(String offering, String parentOffering);
+
+    /**
+     * Associate the specified parent procedures with the specified offering
+     *
+     * @param offering
+     *            the offering
+     * @param parentOfferings
+     *            the parent offerings
+     */
+    void addParentOfferings(String offering, Collection<String> parentOfferings);
 
     /**
      * Add the specified procedure.

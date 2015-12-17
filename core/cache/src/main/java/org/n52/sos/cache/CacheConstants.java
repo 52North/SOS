@@ -105,6 +105,10 @@ public interface CacheConstants {
     String PARENT_PROCEDURE = "parentProcedure";
 
     String PARENT_PROCEDURES = "parentProcedures";
+    
+    String PARENT_OFFERING = "parentOffering";
+    
+    String PARENT_OFFERINGS = "parentOfferings";
 
     String ENVELOPE = "envelope";
 

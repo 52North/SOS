@@ -87,7 +87,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
             // in table or from Data
 //            emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
             
-            emFeature.addObservingCapability(createObservingCapability(f.getIdentifier()));
+//            emFeature.addObservingCapability(createObservingCapability(f.getIdentifier()));
             
             
 //            final Set<FeatureOfInterest> parentFeatures = emf.getParents();

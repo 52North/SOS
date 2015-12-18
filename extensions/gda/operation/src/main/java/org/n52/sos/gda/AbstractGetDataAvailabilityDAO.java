@@ -60,6 +60,7 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
         addQueryableProcedureParameter(operation);
         addObservablePropertyParameter(operation);
         addFeatureOfInterestParameter(operation, version);
+        addOfferingParameter(operation);
     }
 
     /**

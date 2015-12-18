@@ -132,7 +132,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
         this.offerings.add(offering);
     }
 
-    public void setOffering(List<String> offerings) {
+    public void setOfferings(List<String> offerings) {
         this.offerings = offerings;
     }
 

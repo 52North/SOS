@@ -72,9 +72,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private final SetMultiMap<String, String> allowedFeatureOfInterestTypeForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
-    
     private final SetMultiMap<String, String> childOfferingsForOfferings = newSynchronizedSetMultiMap();
-    
     private final SetMultiMap<String, String> featuresOfInterestForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> featuresOfInterestForResultTemplates = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> observablePropertiesForOfferings = newSynchronizedSetMultiMap();
@@ -86,9 +84,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private final SetMultiMap<String, String> offeringsForProcedures = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> parentFeaturesForFeaturesOfInterest = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> parentProceduresForProcedures = newSynchronizedSetMultiMap();
-    
     private final SetMultiMap<String, String> parentOfferingsForOfferings = newSynchronizedSetMultiMap();
-    
     private final SetMultiMap<String, String> proceduresForFeaturesOfInterest = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> proceduresForObservableProperties = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> proceduresForOfferings = newSynchronizedSetMultiMap();
@@ -566,6 +562,11 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public Set<String> getChildOfferings(final Set<String> offeringIdentifiers, final boolean fullHierarchy,
             final boolean includeSelves) {
         return getHierarchy(this.childOfferingsForOfferings, offeringIdentifiers, fullHierarchy, includeSelves);
+    }
+    
+    @Override
+    public boolean hasParentOfferings(String offering) {
+        return this.parentOfferingsForOfferings.containsKey(offering);
     }
     
     @Override

@@ -181,7 +181,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected AbstractServiceRequest<?> changeGetDataAvailabilityRequestParameterValues(
             GetDataAvailabilityRequest request) {
         if (request.isSetOfferings()) {
-            request.setOffering(checkOfferingParameterValues(request.getOfferings()));
+            request.setOfferings(checkOfferingParameterValues(request.getOfferings()));
         }
         if (request.isSetFeaturesOfInterest()) {
             request.setFeatureOfInterest(checkFeatureOfInterestParameterValues(request.getFeaturesOfInterest()));

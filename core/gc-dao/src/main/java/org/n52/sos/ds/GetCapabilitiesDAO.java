@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -502,7 +503,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             final Collection<String> responseFormats =
                     CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
                             Sos1Constants.SERVICEVERSION);
-            if (checkOfferingValues(envelopeForOffering, featuresForoffering, responseFormats)) {
+            if (checkOfferingValues(procedures, envelopeForOffering, featuresForoffering, responseFormats)) {
                 final SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
                 // insert observationTypes
@@ -578,9 +579,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         return sosEnvelope;
     }
 
-    private boolean checkOfferingValues(final SosEnvelope envelopeForOffering, final Set<String> featuresForOffering,
+    private boolean checkOfferingValues(final Collection<String> procedures, final SosEnvelope envelopeForOffering, final Set<String> featuresForOffering,
             final Collection<String> responseFormats) {
-        return SosEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering)
+        return CollectionHelper.isNotEmpty(procedures) && SosEnvelope.isNotNullOrEmpty(envelopeForOffering) && CollectionHelper.isNotEmpty(featuresForOffering)
                 && CollectionHelper.isNotEmpty(responseFormats);
     }
 
@@ -595,11 +596,9 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
      * @throws OwsExceptionReport
      *             * If an error occurs
      */
-    // FIXME why version parameter? The method signature cleary states which
-    // version is supported by this!
     private List<SosObservationOffering> getContentsForSosV2(SectionSpecificContentObject sectionSpecificContentObject)
             throws OwsExceptionReport {
-        String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
+        String version = Sos2Constants.SERVICEVERSION;
         final Collection<String> offerings = getCache().getOfferings();
         final List<SosObservationOffering> sosOfferings = new ArrayList<SosObservationOffering>(offerings.size());
         final Map<String, List<OfferingExtension>> extensions = getSettingsManager().getActiveOfferingExtensions();
@@ -608,63 +607,121 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             // Set empty offering to add empty Contents section to Capabilities
             sosOfferings.add(new SosObservationOffering());
         } else {
-            for (final String offering : offerings) {
-                final Collection<String> procedures = getProceduresForOffering(offering, version);
-                final Collection<String> observationTypes = getObservationTypes(offering);
-                if (observationTypes != null && !observationTypes.isEmpty()) {
-                    // FIXME why a loop? We are in SOS 2.0 context -> offering 1
-                    // <-> 1 procedure!
-                    for (final String procedure : procedures) {
+            
+            // TODO Parent Offering!!!
 
-                        final SosObservationOffering sosObservationOffering = new SosObservationOffering();
-
-                        // insert observationTypes
-                        sosObservationOffering.setObservationTypes(observationTypes);
-
-                        if (getCache().hasSpatialFilteringProfileEnvelopeForOffering(offering)) {
-                            sosObservationOffering.setObservedArea(processObservedArea(getCache()
-                                    .getSpatialFilteringProfileEnvelopeForOffering(offering)));
-                        } else {
-                            sosObservationOffering.setObservedArea(processObservedArea(getCache()
-                                    .getEnvelopeForOffering(offering)));
-                        }
-
-                        sosObservationOffering.setProcedures(Collections.singletonList(procedure));
-
-                        // TODO: add intended application
-
-                        // add offering to observation offering
-                        addSosOfferingToObservationOffering(offering, sosObservationOffering,
-                                sectionSpecificContentObject.getGetCapabilitiesRequest());
-                        // add offering extension
-                        if (OfferingExtensionRepository.getInstance().hasOfferingExtensionProviderFor(sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                            for (OfferingExtensionProvider provider : OfferingExtensionRepository.getInstance().getOfferingExtensionProvider(sectionSpecificContentObject.getGetCapabilitiesRequest())) {
-                                if (provider != null && provider.hasExtendedOfferingFor(offering)) {
-                                    sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering));
+            if (checkListOnlyParentOfferings()) {
+                sosOfferings.addAll(createAndGetPatentOfferings(offerings, version));
+            } else {
+                for (final String offering : offerings) {
+                    final Collection<String> observationTypes = getObservationTypes(offering);
+                    if (observationTypes != null && !observationTypes.isEmpty()) {
+                        // FIXME why a loop? We are in SOS 2.0 context -> offering 1
+                        // <-> 1 procedure!
+                        for (final String procedure : getProceduresForOffering(offering, version)) {
+    
+                            final SosObservationOffering sosObservationOffering = new SosObservationOffering();
+    
+                            // insert observationTypes
+                            sosObservationOffering.setObservationTypes(observationTypes);
+    
+                            sosObservationOffering.setObservedArea(getObservedArea(offering));
+    
+                            sosObservationOffering.setProcedures(Collections.singletonList(procedure));
+    
+                            // TODO: add intended application
+    
+                            // add offering to observation offering
+                            addSosOfferingToObservationOffering(offering, sosObservationOffering,
+                                    sectionSpecificContentObject.getGetCapabilitiesRequest());
+                            // add offering extension
+                            if (OfferingExtensionRepository.getInstance().hasOfferingExtensionProviderFor(sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+                                for (OfferingExtensionProvider provider : OfferingExtensionRepository.getInstance().getOfferingExtensionProvider(sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+                                    if (provider != null && provider.hasExtendedOfferingFor(offering)) {
+                                        sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering));
+                                    }
                                 }
                             }
-                        }
-                        if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
-                            for (OfferingExtension offeringExtension : extensions.get(sosObservationOffering.getOffering().getIdentifier())) {
-                                sosObservationOffering.addExtension(new SwesExtensionImpl<OfferingExtension>().setValue(offeringExtension));
+                            if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
+                                for (OfferingExtension offeringExtension : extensions.get(sosObservationOffering.getOffering().getIdentifier())) {
+                                    sosObservationOffering.addExtension(new SwesExtensionImpl<OfferingExtension>().setValue(offeringExtension));
+                                }
                             }
+    
+                            setUpPhenomenaForOffering(offering, procedure, sosObservationOffering);
+                            setUpTimeForOffering(offering, sosObservationOffering);
+                            setUpRelatedFeaturesForOffering(offering, version, procedure, sosObservationOffering);
+                            setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
+                            setUpProcedureDescriptionFormatForOffering(sosObservationOffering, version);
+                            setUpResponseFormatForOffering(version, sosObservationOffering);
+    
+    
+                            sosOfferings.add(sosObservationOffering);
                         }
-
-                        setUpPhenomenaForOffering(offering, procedure, sosObservationOffering);
-                        setUpTimeForOffering(offering, sosObservationOffering);
-                        setUpRelatedFeaturesForOffering(offering, version, procedure, sosObservationOffering);
-                        setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
-                        setUpProcedureDescriptionFormatForOffering(sosObservationOffering, version);
-                        setUpResponseFormatForOffering(version, sosObservationOffering);
-
-
-                        sosOfferings.add(sosObservationOffering);
                     }
                 }
             }
         }
 
         return sosOfferings;
+    }
+
+    private Collection<? extends SosObservationOffering> createAndGetPatentOfferings(Collection<String> offerings, String version) throws OwsExceptionReport {
+        Map<String, Set<String>> parentChilds = Maps.newHashMap();
+        for (String offering : offerings) {
+            if (!getCache().hasParentOfferings(offering)) {
+                parentChilds.put(offering, getCache().getChildOfferings(offering, true, false));
+            }
+        }
+        final List<SosObservationOffering> sosOfferings = new ArrayList<SosObservationOffering>(parentChilds.size());
+        for (Entry<String, Set<String>> entry : parentChilds.entrySet()) {
+            final Collection<String> observationTypes = getObservationTypes(entry.getValue());
+            if (CollectionHelper.isNotEmpty(observationTypes)) {
+                Collection<String> procedures = getProceduresForOffering(entry.getValue(), version);
+                if (CollectionHelper.isNotEmpty(procedures)) {
+                    final SosObservationOffering sosObservationOffering = new SosObservationOffering();
+                    sosObservationOffering.setObservationTypes(observationTypes);
+                    sosObservationOffering.setObservedArea(getObservedArea(entry.getValue()));
+                    
+//                    sosObservationOffering.setProcedures(Collections.singletonList(procedure));
+//
+//                    // TODO: add intended application
+//
+//                    // add offering to observation offering
+//                    addSosOfferingToObservationOffering(offering, sosObservationOffering,
+//                            sectionSpecificContentObject.getGetCapabilitiesRequest());
+//                    // add offering extension
+//                    if (OfferingExtensionRepository.getInstance().hasOfferingExtensionProviderFor(sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+//                        for (OfferingExtensionProvider provider : OfferingExtensionRepository.getInstance().getOfferingExtensionProvider(sectionSpecificContentObject.getGetCapabilitiesRequest())) {
+//                            if (provider != null && provider.hasExtendedOfferingFor(offering)) {
+//                                sosObservationOffering.addExtensions(provider.getOfferingExtensions(offering));
+//                            }
+//                        }
+//                    }
+//                    if (extensions.containsKey(sosObservationOffering.getOffering().getIdentifier())) {
+//                        for (OfferingExtension offeringExtension : extensions.get(sosObservationOffering.getOffering().getIdentifier())) {
+//                            sosObservationOffering.addExtension(new SwesExtensionImpl<OfferingExtension>().setValue(offeringExtension));
+//                        }
+//                    }
+//
+//                    setUpPhenomenaForOffering(offering, procedure, sosObservationOffering);
+                    setUpTimeForOffering(entry.getValue(), sosObservationOffering);
+//                    setUpRelatedFeaturesForOffering(offering, version, procedure, sosObservationOffering);
+//                    setUpFeatureOfInterestTypesForOffering(offering, sosObservationOffering);
+//                    setUpProcedureDescriptionFormatForOffering(sosObservationOffering, version);
+//                    setUpResponseFormatForOffering(version, sosObservationOffering);
+                    
+                    
+                    sosOfferings.add(sosObservationOffering);
+                }
+            }
+        }
+        return sosOfferings;
+    }
+
+    private boolean checkListOnlyParentOfferings() {
+        // TODO setting for this!!!
+        return false;
     }
 
     private void addSosOfferingToObservationOffering(String offering, SosObservationOffering sosObservationOffering,
@@ -805,7 +862,15 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         return featureIDs;
     }
 
-    private Collection<String> getObservationTypes(final String offering) {
+    private Collection<String> getObservationTypes(Set<String> offerings) {
+        final Set<String> observationTypes = Sets.newHashSet();
+        for (String offering : offerings) {
+            observationTypes.addAll(getObservationTypes(offering));
+        }
+        return observationTypes;
+    }
+
+    private Collection<String> getObservationTypes(String offering) {
         final Collection<String> allObservationTypes = getCache().getObservationTypesForOffering(offering);
         final List<String> observationTypes = new ArrayList<String>(allObservationTypes.size());
 
@@ -953,11 +1018,30 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
         sosOffering.setRelatedFeatures(relatedFeatures);
     }
 
+    protected void setUpTimeForOffering(Set<String> offerings, SosObservationOffering sosOffering) {
+        TimePeriod phenomenonTime = new TimePeriod();
+        TimePeriod resultTime = new TimePeriod();
+        for (String offering : offerings) {
+            phenomenonTime.extendToContain(getPhenomeonTime(offering));
+            resultTime.extendToContain(getResultTime(offering));
+        }
+        sosOffering.setPhenomenonTime(phenomenonTime);
+        sosOffering.setResultTime(resultTime);
+    }
+
     protected void setUpTimeForOffering(final String offering, final SosObservationOffering sosOffering) {
-        sosOffering.setPhenomenonTime(new TimePeriod(getCache().getMinPhenomenonTimeForOffering(offering), getCache()
-                .getMaxPhenomenonTimeForOffering(offering)));
-        sosOffering.setResultTime(new TimePeriod(getCache().getMinResultTimeForOffering(offering), getCache()
-                .getMaxResultTimeForOffering(offering)));
+        sosOffering.setPhenomenonTime(getPhenomeonTime(offering));
+        sosOffering.setResultTime(getResultTime(offering));
+    }
+    
+    private TimePeriod getPhenomeonTime(String offering) {
+        return new TimePeriod(getCache().getMinPhenomenonTimeForOffering(offering), getCache()
+                .getMaxPhenomenonTimeForOffering(offering));
+    }
+    
+    private TimePeriod getResultTime(String offering) {
+        return new TimePeriod(getCache().getMinResultTimeForOffering(offering), getCache()
+                .getMaxResultTimeForOffering(offering));
     }
 
     protected void setUpFeatureOfInterestTypesForOffering(final String offering,
@@ -981,17 +1065,37 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                 .getSupportedProcedureDescriptionFormats(SosConstants.SOS, version));
     }
 
+    private SosEnvelope getObservedArea(Set<String> offerings) throws CodedException {
+        SosEnvelope envelope = new SosEnvelope();
+        for (String offering : offerings) {
+            envelope.expandToInclude(getObservedArea(offering));
+        }
+        return envelope;
+    }
+    
+    private SosEnvelope getObservedArea(String offering) throws CodedException {
+        if (getCache().hasSpatialFilteringProfileEnvelopeForOffering(offering)) {
+            return processObservedArea(getCache()
+                    .getSpatialFilteringProfileEnvelopeForOffering(offering));
+        } else {
+            return processObservedArea(getCache()
+                    .getEnvelopeForOffering(offering));
+        }
+    }
+
+    private Collection<String> getProceduresForOffering(Set<String> offerings, String version) throws OwsExceptionReport {
+        final Collection<String> procedures = Sets.newHashSet();
+        for (String offering : offerings) {
+            procedures.addAll(getProceduresForOffering(offering, version));
+        }
+        return procedures;
+    }
+
     private Collection<String> getProceduresForOffering(final String offering, final String version)
             throws OwsExceptionReport {
         final Collection<String> procedures = Sets.newHashSet(getCache().getProceduresForOffering(offering));
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             procedures.addAll(getCache().getHiddenChildProceduresForOffering(offering));
-        }
-        if (procedures.isEmpty()) {
-            throw new NoApplicableCodeException()
-                    .withMessage(
-                            "No procedures are contained in the database for the offering '%s'! Please contact the admin of this SOS.",
-                            offering);
         }
         return procedures;
     }

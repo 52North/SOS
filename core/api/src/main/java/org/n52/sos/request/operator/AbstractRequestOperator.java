@@ -737,6 +737,17 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
         return Lists.newArrayList(allObservedProperties);
     }
+    
+    protected List<String> addChildOfferings(List<String> offerings) {
+        Set<String> allOfferings = Sets.newHashSet(offerings);
+        if (offerings != null) {
+            for (final String offering : offerings) {
+                allOfferings.add(offering);
+                allOfferings.addAll(getCache().getChildOfferings(offering, true, false));
+            }
+        }
+        return Lists.newArrayList(allOfferings);
+    }
 
     protected void checkObservationType(final String observationType, final String parameterName)
             throws OwsExceptionReport {

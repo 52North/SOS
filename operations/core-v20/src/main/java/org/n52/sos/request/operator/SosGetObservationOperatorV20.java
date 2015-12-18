@@ -106,6 +106,10 @@ public class SosGetObservationOperatorV20 extends
 
         try {
             checkOfferingId(sosRequest.getOfferings());
+            // add child offerings if isInclude == true and requested offering is parent.
+            if (sosRequest.isSetOffering()) {
+                sosRequest.setOfferings(addChildOfferings(sosRequest.getOfferings()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

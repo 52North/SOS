@@ -75,44 +75,47 @@ public class GetDataAvailabilityOperator
     }
 
     @Override
-    protected void checkParameters(GetDataAvailabilityRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetDataAvailabilityRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
 
         try {
-            checkServiceParameter(sosRequest.getService());
+            checkServiceParameter(request.getService());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkSingleVersionParameter(sosRequest);
+            checkSingleVersionParameter(request);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
 
         try {
-            checkObservedProperties(sosRequest.getObservedProperties(),
+            checkObservedProperties(request.getObservedProperties(),
                     GetDataAvailabilityParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedureIDs(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            checkQueryableProcedureIDs(request.getProcedures(), GetDataAvailabilityParams.procedure.name());
             // add instance and child procedures to request
-            if (sosRequest.isSetProcedure()) {
-                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
+            if (request.isSetProcedure()) {
+                request.setProcedures(addChildProcedures(addInstanceProcedures(request.getProcedures())));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkFeatureOfInterestIdentifiers(sosRequest.getFeaturesOfInterest(),
+            checkFeatureOfInterestIdentifiers(request.getFeaturesOfInterest(),
                     GetDataAvailabilityParams.featureOfInterest.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkOfferings(sosRequest.getOfferings(),
-                    GetDataAvailabilityParams.offering);
+            checkOfferings(request.getOfferings(), GetDataAvailabilityParams.offering);
+            // add child offerings if isInclude == true and requested offering is parent.
+            if (request.isSetOfferings()) {
+                request.setOfferings(addChildOfferings(request.getOfferings()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

@@ -148,8 +148,8 @@ public class ProcedureCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<
         Map<String, Collection<String>> procedureMap = procedureDAO.getProcedureIdentifiers(getSession());
         List<Procedure> procedures = procedureDAO.getProcedureObjects(getSession());
         for (Procedure procedure : procedures) {
-        	String procedureIdentifier = procedure.getIdentifier();
-        	 Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
+            String procedureIdentifier = procedure.getIdentifier();
+            Collection<String> parentProcedures = procedureMap.get(procedureIdentifier);
 //		}
 //        for (Entry<String, Collection<String>> entry : procedureMap.entrySet()) {
 //            String procedureIdentifier = entry.getKey();

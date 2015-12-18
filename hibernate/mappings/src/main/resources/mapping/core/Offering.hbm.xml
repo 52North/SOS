@@ -51,7 +51,7 @@
 	                </column>
 		    </key>
 		    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="offeringChildFk">
-		        <column name="childSensorId" not-null="true">
+		        <column name="childOfferingId" not-null="true">
 	                	<comment>Foreign Key (FK) to the related child offering. Contains "offering".offeringid</comment>
 	                </column>
 		    </many-to-many>
@@ -61,7 +61,7 @@
 		        <column name="childOfferingId" not-null="true" />
 		    </key>
 		    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="offeringParenfFk">
-		        <column name="parentSensorId" not-null="true" />
+		        <column name="parentOfferingId" not-null="true" />
 		    </many-to-many>
 		</set>
     </class>

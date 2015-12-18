@@ -49,6 +49,11 @@ import org.n52.sos.i18n.MultilingualString;
  *
  * @since 4.0.0
  */
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since
+ *
+ */
 public interface ContentCache
         extends Serializable,
                 TemporalCache,
@@ -658,6 +663,15 @@ public interface ContentCache
      *         (and optionally themselves)
      */
     Set<String> getChildOfferings(Set<String> offering, boolean fullHierarchy, boolean includeSelves);
+    
+    /**
+     * Returns <code>true</code> if the passed offering has parent offerings.
+     * 
+     * @param offering
+     *            offering id to check for parents
+     * @return <code>true</code> if the passed offering has parent offerings.
+     */
+    boolean hasParentOfferings(String offering);
 
     /**
      * Checks whether the specified related feature has been used as sampling

@@ -39,9 +39,11 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -59,6 +61,7 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -663,5 +666,33 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         public List transformList(List collection) {
             return collection;
         }
+    }
+
+    public Map<String, Collection<String>> getOfferingIdentifiers(Session session) {
+        Criteria criteria = session.createCriteria(Offering.class);
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.property(Offering.IDENTIFIER));
+        criteria.createAlias(Offering.PARENTS, "pp", JoinType.LEFT_OUTER_JOIN);
+        projectionList.add(Projections.property("pp." + Offering.IDENTIFIER));
+        criteria.setProjection(projectionList);
+        // return as List<Object[]> even if there's only one column for
+        // consistency
+        criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
+
+        LOGGER.debug("QUERY getProcedureIdentifiers(): {}", HibernateHelper.getSqlString(criteria));
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = criteria.list();
+        Map<String, Collection<String>> map = Maps.newHashMap();
+        for (Object[] result : results) {
+            String offeringIdentifier = (String) result[0];
+            String parentOfferingIdentifier = null;
+            parentOfferingIdentifier = (String) result[1];
+            if (parentOfferingIdentifier == null) {
+                map.put(offeringIdentifier, null);
+            } else {
+                CollectionHelper.addToCollectionMap(offeringIdentifier, parentOfferingIdentifier, map);
+            }
+        }
+        return map;
     }
 }

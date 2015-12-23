@@ -364,8 +364,10 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 if (swefield.getElement() instanceof SweAbstractSimpleType<?>) {
                     final SweAbstractSimpleType<?> sweAbstractSimpleType =
                             (SweAbstractSimpleType<?>) swefield.getElement();
-                    units.put(index, ((SweAbstractUomType<?>) sweAbstractSimpleType).getUom());
                     observedProperties.put(index, swefield.getElement().getDefinition());
+                    if (sweAbstractSimpleType instanceof SweAbstractUomType<?>) {
+                        units.put(index, ((SweAbstractUomType<?>) sweAbstractSimpleType).getUom());
+                    }
                 } else if (swefield.getElement() instanceof SweDataRecord) {
                     getIndexForObservedPropertyAndUnit((SweDataRecord) swefield.getElement(), j, observedProperties,
                             units, reserved);

@@ -18,9 +18,9 @@
 		<om:OM_Observation gml:id="o1">
 			<om:type xlink:href="http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation"/>
 			<om:phenomenonTime>
-				<gml:TimePeriod gml:id="phenomenonTime">
+				<gml:TimeInstant gml:id="phenomenonTime">
 					<gml:timePosition>2012-11-19T17:46:15.000+00:00</gml:timePosition>
-				</gml:TimePeriod>
+				</gml:TimeInstant>
 			</om:phenomenonTime>
 			<om:resultTime>
 				<gml:TimeInstant gml:id="resultTime">
@@ -50,24 +50,24 @@
 							<swe:value>35.1</swe:value>
 						</swe:Quantity>
 					</swe:field>
-					<swe:field name="test_observable_property_9_8_1">
-						<swe:Category definition="http://www.52north.org/test/observableProperty/9_1">
+					<swe:field name="test_observable_property_9_8_2">
+						<swe:Category definition="http://www.52north.org/test/observableProperty/9_8_2">
 							<swe:codeSpace xlink:href="NOT_DEFINED" />
 							<swe:value>sunny</swe:value>
 						</swe:Category>
 					</swe:field>
-					<swe:field name="test_observable_property_9_8_1">
-						<swe:Count definition="http://www.52north.org/test/observableProperty/9_2">
+					<swe:field name="test_observable_property_9_8_3">
+						<swe:Count definition="http://www.52north.org/test/observableProperty/9_8_3">
 							<swe:value>35</swe:value>
 						</swe:Count>
 					</swe:field>
-					<swe:field name="test_observable_property_9_8_1">
-						<swe:Text definition="http://www.52north.org/test/observableProperty/9_4">
+					<swe:field name="test_observable_property_9_8_4">
+						<swe:Text definition="http://www.52north.org/test/observableProperty/9_8_4">
 							<swe:value>I am text</swe:value>
 						</swe:Text>
 					</swe:field>
-					<swe:field name="test_observable_property_9_8_1">
-						<swe:Boolean definition="http://www.52north.org/test/observableProperty/9_5">
+					<swe:field name="test_observable_property_9_8_5">
+						<swe:Boolean definition="http://www.52north.org/test/observableProperty/9_8_5">
 							<swe:value>true</swe:value>
 						</swe:Boolean>
 					</swe:field>

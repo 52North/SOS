@@ -93,6 +93,7 @@ public class SweCount extends SweAbstractSimpleType<Integer> {
     @Override
     public SweCount clone() {
         SweCount clone = new SweCount();
+        copyValueTo(clone);
         if (isSetValue()) {
             clone.setValue(getValue());
         }

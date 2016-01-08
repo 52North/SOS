@@ -35,6 +35,7 @@ import java.util.Set;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
+import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.collect.Sets;
 
@@ -117,4 +118,13 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
         this.childs.add(child);
     }
 
+    @Override
+    public boolean hasParents() {
+        return CollectionHelper.isNotEmpty(getParents());
+    }
+
+    @Override
+    public boolean hasChilds() {
+        return CollectionHelper.isNotEmpty(getChilds());
+    }
 }

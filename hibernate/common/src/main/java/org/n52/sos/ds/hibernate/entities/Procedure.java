@@ -35,6 +35,7 @@ import java.util.Set;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Sets;
@@ -260,5 +261,15 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
             this.childs = new HashSet<>();
         }
         this.childs.add(child);
+    }
+    
+    @Override
+    public boolean hasParents() {
+        return CollectionHelper.isNotEmpty(getParents());
+    }
+
+    @Override
+    public boolean hasChilds() {
+        return CollectionHelper.isNotEmpty(getChilds());
     }
 }

@@ -38,6 +38,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
@@ -146,6 +147,16 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
             this.childs = new HashSet<>();
         }
         this.childs.add(child);
+    }
+
+    @Override
+    public boolean hasParents() {
+        return CollectionHelper.isNotEmpty(getParents());
+    }
+
+    @Override
+    public boolean hasChilds() {
+        return CollectionHelper.isNotEmpty(getChilds());
     }
 
 }

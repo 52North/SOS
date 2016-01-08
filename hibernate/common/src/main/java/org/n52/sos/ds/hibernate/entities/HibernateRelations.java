@@ -635,12 +635,16 @@ public interface HibernateRelations {
         void setParents(Set<T> parents);
 
         void addParent(T parent);
+        
+        boolean hasParents();
 
         Set<T> getChilds();
 
         void setChilds(Set<T> childs);
 
         void addChild(T child);
+        
+        boolean hasChilds();
     }
 
     interface HasObservationId {

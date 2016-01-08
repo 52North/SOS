@@ -28,11 +28,13 @@
  */
 package org.n52.sos.ds.hibernate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -50,6 +52,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.GetDataAvailabilityDAO.GdaRequestContext;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
@@ -87,6 +90,7 @@ import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * {@code IGetDataAvailabilityDao} to handle {@link GetDataAvailabilityRequest}
@@ -274,63 +278,72 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
     private List<?> querySeriesDataAvailabilities(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
         List<DataAvailability> dataAvailabilityValues = Lists.newLinkedList();
+        GdaRequestContext context = new GdaRequestContext()
+                .setRequest(request)
+                .setDataAvailabilityList(dataAvailabilityValues)
+                .setSeriesObservationDAO(getSeriesObservationDAO())
+                .setMinMaxTransformer(new SeriesMinMaxTransformer())
+                .setSupportsNamedQuery(HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session))
+                .setSupportsSeriesObservationTime(EntitiyHelper.getInstance().isSeriesObservationTimeSupported());
+        for (final Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request.getProcedures(),
+                request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session)) {
+            if (isForEachOffering()) {
+//                // TODO
+//                dataAvailability.setObservationTypes(getObservationTypes("offering"));
+//                Map<String, TimePeriod> map = getOfferingPeriodTimes();
+            } else {
+                processDataAvailabilityFor(series, context, session);
+            }
+        }
+        return dataAvailabilityValues;
+    }
+
+    private void processDataAvailabilityFor(Series series, GdaRequestContext context, Session session) throws OwsExceptionReport {
         Map<String, ReferenceType> procedures = new HashMap<>();
         Map<String, ReferenceType> observableProperties = new HashMap<>();
         Map<String, ReferenceType> featuresOfInterest = new HashMap<>();
-        AbstractSeriesObservationDAO seriesObservationDAO = getSeriesObservationDAO();
-        SeriesMinMaxTransformer seriesMinMaxTransformer = new SeriesMinMaxTransformer();
-        boolean supportsNamedQuery =
-                HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_DATA_AVAILABILITY_FOR_SERIES, session);
-        boolean supportsSeriesObservationTime = EntitiyHelper.getInstance().isSeriesObservationTimeSupported();
-        for (final Series series : DaoFactory
-                .getInstance()
-                .getSeriesDAO()
-                .getSeries(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(),
-                        session)) {
-            TimePeriod timePeriod = null;
-            if (!request.isSetOfferings()) {
-                // get time information from series object
-                if (series.isSetFirstLastTime()) {
-                    timePeriod = new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp());
-                }
-                // get time information from a named query
-                else if (timePeriod == null && supportsNamedQuery) {
-                    timePeriod = getTimePeriodFromNamedQuery(series.getSeriesId(), seriesMinMaxTransformer, session);
-                }
+        TimePeriod timePeriod = null;
+        if (!context.getRequest().isSetOfferings()) {
+            // get time information from series object
+            if (series.isSetFirstLastTime()) {
+                timePeriod = new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp());
             }
-            // get time information from SeriesGetDataAvailability mapping if
-            // supported
-            if (timePeriod == null && supportsSeriesObservationTime) {
-                SeriesObservationTimeDAO seriesObservationTimeDAO =
-                        (SeriesObservationTimeDAO) DaoFactory.getInstance().getObservationTimeDAO();
-                timePeriod =
-                        getTimePeriodFromSeriesGetDataAvailability(seriesObservationTimeDAO, series, request,
-                                seriesMinMaxTransformer, session);
+            // get time information from a named query
+            else if (timePeriod == null && context.isSupportsNamedQuery()) {
+                timePeriod = getTimePeriodFromNamedQuery(series.getSeriesId(), context.getMinMaxTransformer(), session);
             }
-            // get time information from SeriesObservation
-            else if (timePeriod == null) {
-                timePeriod =
-                        getTimePeriodFromSeriesObservation(seriesObservationDAO, series, request,
-                                seriesMinMaxTransformer, session);
-            }
-            // create DataAvailabilities
-            if (timePeriod != null && !timePeriod.isEmpty()) {
-                DataAvailability dataAvailability =
-                        new DataAvailability(getProcedureReference(series, procedures), getObservedPropertyReference(
-                                series, observableProperties), getFeatureOfInterestReference(series,
-                                featuresOfInterest, session), timePeriod);
-                if (isShowCount(request)) {
-                    dataAvailability.setCount(getCountFor(series, request, session));
-                }
-                if (isIncludeResultTime(request)) {
-                    dataAvailability.setResultTimes(getResultTimesFromSeriesObservation(seriesObservationDAO, series,
-                            request, session));
-                }
-                dataAvailabilityValues.add(dataAvailability);
-            }
-
         }
-        return dataAvailabilityValues;
+        // get time information from SeriesGetDataAvailability mapping if
+        // supported
+        if (timePeriod == null && context.isSupportsSeriesObservationTime()) {
+            SeriesObservationTimeDAO seriesObservationTimeDAO =
+                    (SeriesObservationTimeDAO) DaoFactory.getInstance().getObservationTimeDAO();
+
+            timePeriod =
+                    getTimePeriodFromSeriesGetDataAvailability(seriesObservationTimeDAO, series, context.getRequest(),
+                            context.getMinMaxTransformer(), session);
+        }
+        // get time information from SeriesObservation
+        else if (timePeriod == null) {
+            timePeriod =
+                    getTimePeriodFromSeriesObservation(context.getSeriesObservationDAO(), series, context.getRequest(),
+                            context.getMinMaxTransformer(), session);
+        }
+        // create DataAvailabilities
+        if (timePeriod != null && !timePeriod.isEmpty()) {
+            DataAvailability dataAvailability =
+                    new DataAvailability(getProcedureReference(series, procedures), getObservedPropertyReference(
+                            series, observableProperties), getFeatureOfInterestReference(series,
+                            featuresOfInterest, session), timePeriod);
+            if (isShowCount(context.getRequest())) {
+                dataAvailability.setCount(getCountFor(series, context.getRequest(), session));
+            }
+            if (isIncludeResultTime(context.getRequest())) {
+                dataAvailability.setResultTimes(getResultTimesFromSeriesObservation(context.getSeriesObservationDAO(), series,
+                        context.getRequest(), session));
+            }
+            context.getDataAvailabilityList().add(dataAvailability);
+        }
     }
 
     /**
@@ -455,6 +468,25 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         }
         criteria.setProjection(Projections.rowCount());
         return (Long) criteria.uniqueResult();
+    }
+
+    private Set<String> getObservationTypes(String offering) {
+        final Collection<String> allObservationTypes = getCache().getObservationTypesForOffering(offering);
+        final Set<String> observationTypes = Sets.newHashSet();
+
+        for (final String observationType : allObservationTypes) {
+            if (!observationType.equals(SosConstants.NOT_DEFINED)) {
+                observationTypes.add(observationType);
+            }
+        }
+        if (observationTypes.isEmpty()) {
+            for (final String observationType : getCache().getAllowedObservationTypesForOffering(offering)) {
+                if (!observationType.equals(SosConstants.NOT_DEFINED)) {
+                    observationTypes.add(observationType);
+                }
+            }
+        }
+        return observationTypes;
     }
 
     private boolean checkForNamedQueries(GetDataAvailabilityRequest req, Session session) {
@@ -628,6 +660,11 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         return false;
     }
 
+    private boolean isForEachOffering() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
     /**
      * Check if extensions contains a temporal filter with valueReference
      * phenomenonTime
@@ -683,6 +720,71 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
+
+    public class GdaRequestContext {
+
+        private GetDataAvailabilityRequest request;
+        private boolean seriesObservationTimeSupported;
+        private boolean namedQuerySupported;
+        private SeriesMinMaxTransformer minMaxTransformer;
+        private AbstractSeriesObservationDAO seriesObservationDAO;
+        private List<DataAvailability> dataAvailabilityValues;
+
+        public GdaRequestContext setRequest(GetDataAvailabilityRequest request) {
+            this.request = request;
+            return this;
+        }
+
+        public GdaRequestContext setDataAvailabilityList(List<DataAvailability> dataAvailabilityValues) {
+            this.dataAvailabilityValues = dataAvailabilityValues;
+            return this;
+        }
+
+        public GdaRequestContext setSupportsSeriesObservationTime(boolean seriesObservationTimeSupported) {
+            this.seriesObservationTimeSupported = seriesObservationTimeSupported;
+            return this;
+        }
+
+        public GdaRequestContext setSupportsNamedQuery(boolean namedQuerySupported) {
+            this.namedQuerySupported = namedQuerySupported;
+            return this;
+        }
+
+        public GdaRequestContext setMinMaxTransformer(SeriesMinMaxTransformer minMaxTransformer) {
+            this.minMaxTransformer = minMaxTransformer;
+            return this;
+        }
+
+        public GdaRequestContext setSeriesObservationDAO(AbstractSeriesObservationDAO seriesObservationDAO) {
+            this.seriesObservationDAO = seriesObservationDAO;
+            return this;
+        }
+
+        public GetDataAvailabilityRequest getRequest() {
+            return request;
+        }
+        
+        public List<DataAvailability> getDataAvailabilityList() {
+            return dataAvailabilityValues;
+        }
+
+        public boolean isSupportsSeriesObservationTime() {
+            return seriesObservationTimeSupported;
+        }
+
+        public boolean isSupportsNamedQuery() {
+            return namedQuerySupported;
+        }
+
+        public SeriesMinMaxTransformer getMinMaxTransformer() {
+            return minMaxTransformer;
+        }
+
+        public AbstractSeriesObservationDAO getSeriesObservationDAO() {
+            return seriesObservationDAO;
+        }
+    
     }
 
     /**

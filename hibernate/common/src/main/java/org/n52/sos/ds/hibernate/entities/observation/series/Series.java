@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
@@ -36,8 +37,10 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.util.Constants;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
@@ -51,7 +54,8 @@ public class Series
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, HasPublishedFlag {
+                   HasUnit, HasPublishedFlag,
+                   HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
     
@@ -80,6 +84,7 @@ public class Series
     private Double lastNumericValue;
     private Unit unit;
     private boolean hiddenChild;
+    private Offering offering;
 
     /**
      * Get series id
@@ -273,4 +278,19 @@ public class Series
     public boolean isSetFirstLastTime() {
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
     }
+
+    @Override
+    public void setOffering(Offering offering) {
+        this.offering = offering;
+    }
+
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
+    
+    public boolean hasOffering() {
+        return getOffering() != null;
+    }
+
 }

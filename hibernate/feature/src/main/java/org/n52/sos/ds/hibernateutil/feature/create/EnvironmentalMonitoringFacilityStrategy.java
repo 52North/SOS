@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernateutil.feature.create;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Set;
 
@@ -41,8 +40,6 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base.Identifier;
@@ -87,7 +84,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
             // in table or from Data
 //            emFeature.setOperationalActivityPeriod(operationalActivityPeriod);
             
-//            emFeature.addObservingCapability(createObservingCapability(f.getIdentifier()));
+            addObservingCapabilities(emFeature, f);
             
             
 //            final Set<FeatureOfInterest> parentFeatures = emf.getParents();
@@ -101,6 +98,17 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
             return emFeature;
         }
         return null;
+    }
+
+    private void addObservingCapabilities(org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility emFeature,
+            FeatureOfInterest feature) {
+//      emFeature.addObservingCapability(createObservingCapability(f.getIdentifier()));
+        if (feature.hasChilds()) {
+            for (FeatureOfInterest child : feature.getChilds()) {
+//              emFeature.addObservingCapability(createObservingCapability(child.getIdentifier()));
+            }
+        }
+        
     }
 
     private ObservingCapability createObservingCapability(String identifier) {

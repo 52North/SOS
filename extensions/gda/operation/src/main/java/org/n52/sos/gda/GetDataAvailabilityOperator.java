@@ -112,7 +112,7 @@ public class GetDataAvailabilityOperator
         }
         try {
             checkOfferings(request.getOfferings(), GetDataAvailabilityParams.offering);
-            // add child offerings if isInclude == true and requested offering is parent.
+            // add child offerings to request
             if (request.isSetOfferings()) {
                 request.setOfferings(addChildOfferings(request.getOfferings()));
             }

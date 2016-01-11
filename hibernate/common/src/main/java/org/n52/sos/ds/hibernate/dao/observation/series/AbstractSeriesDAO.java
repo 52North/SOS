@@ -36,6 +36,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -363,11 +364,9 @@ public abstract class AbstractSeriesDAO {
      *            Offering identifiers to add
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
-        c.createCriteria(Series.OFFERING, "off");
-        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING), Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
-        
-//        c.createCriteria(Series.OFFERING).add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
-//                Restrictions.in(Offering.IDENTIFIER, offerings)));
+        c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
+                Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
     }
 
     /**

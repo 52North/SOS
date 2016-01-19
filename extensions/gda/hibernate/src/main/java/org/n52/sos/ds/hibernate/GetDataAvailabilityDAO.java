@@ -985,5 +985,33 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             return collection;
         }
     }
+    
+    /**
+     * Class to transform ResultSets to {@link OfferingMinMaxTime}.
+     * 
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
+    private class SeriesOfferingMinMaxTransformer implements ResultTransformer {
+        private static final long serialVersionUID = -373512929481519459L;
+
+        @Override
+        public OfferingMinMaxTime transformTuple(Object[] tuple, String[] aliases) {
+            if (tuple != null) {
+                OfferingMinMaxTime offeringMinMaxTime = new OfferingMinMaxTime();
+                offeringMinMaxTime.setOffering(tuple[0]);
+                offeringMinMaxTime.setTimePeriod(new TimePeriod(tuple[1], tuple[2]));
+                 return offeringMinMaxTime;
+            }
+            return null;
+        }
+
+        @Override
+        @SuppressWarnings("rawtypes")
+        public List transformList(List collection) {
+            return collection;
+        }
+    }
 
 }

@@ -16,6 +16,7 @@ This project includes:
   52°North SOS - Abstract Identifier Modifier Modules under GPLv2
   52°North SOS - Abstract SensorML Coding Module under GPLv2
   52°North SOS - Administrator Service Operator under GPLv2
+  52°North SOS - API for INSPIRE Module under GPLv2
   52°North SOS - AQD 1.0 API Operator under GPLv2
   52°North SOS - AQD 1.0 Core Profile Operator under GPLv2
   52°North SOS - AQD Split and Merge observations module under GPLv2
@@ -38,6 +39,7 @@ This project includes:
   52°North SOS - Extension for AQD under GPLv2
   52°North SOS - Extension for AQD coding under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
+  52°North SOS - Extension for INSPIRE - Coding Module under GPLv2
   52°North SOS - Extension GetDataAvailability under GPLv2
   52°North SOS - Extension GetDataAvailability - Hibernate DAO under GPLv2
   52°North SOS - Extension GetDataAvailability - SOS 2.0 Operation under GPLv2
@@ -159,7 +161,16 @@ This project includes:
   HSQLDB under HSQLDB License
   HttpClient under Apache License
   HttpCore under Apache License
+  INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
+  INSPIRE Administrative Units schema (spec. v4.0) under The Apache Software License, Version 2.0
   INSPIRE base schema (spec. v3.3) under The Apache Software License, Version 2.0
+  INSPIRE Base Types 2 schema (spec. v2.0) under The Apache Software License, Version 2.0
+  INSPIRE Building base schema (spec. v4.0) under The Apache Software License, Version 2.0
+  INSPIRE Cadastral Parcels schema (spec. v4.0) under The Apache Software License, Version 2.0
+  INSPIRE Common Transport Elements schema (spec. v4.0) under The Apache Software License, Version 2.0
+  INSPIRE Environmental Monitoring Facilities schema (spec. v4.0) under The Apache Software License, Version 2.0
+  INSPIRE Geographical Name schema (spec. v4.0) under The Apache Software License, Version 2.0
+  INSPIRE Network schema (spec. v4.0) under The Apache Software License, Version 2.0
   INSPIRE OM Observation References schema (spec. v3.0) under The Apache Software License, Version 2.0
   INSPIRE OM Specialised Observation schema (spec. v3.0) under The Apache Software License, Version 2.0
   ISO 19139 CV_DiscreteCoverage model (spec. v0.2.2) under The Apache Software License, Version 2.0
@@ -230,6 +241,7 @@ This project includes:
   OGC XML schemas under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
+  Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
   PostgreSQL JDBC Driver under BSD License
   Protocol Buffer Java API under New BSD license

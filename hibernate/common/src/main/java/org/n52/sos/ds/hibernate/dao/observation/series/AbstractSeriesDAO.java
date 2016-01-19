@@ -205,7 +205,7 @@ public abstract class AbstractSeriesDAO {
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
-        LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features): {}",
+        LOGGER.debug("QUERY getSeries(procedures, observableProperteies, features): {}",
                 HibernateHelper.getSqlString(c));
         return c;
     }
@@ -216,7 +216,7 @@ public abstract class AbstractSeriesDAO {
         if (CollectionHelper.isNotEmpty(offerings)) {
             addOfferingToCriteria(c, offerings);
         }
-        LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features, offerings): {}",
+        LOGGER.debug("QUERY getSeries(procedures, observableProperteies, features, offerings): {}",
                 HibernateHelper.getSqlString(c));
         return c;
     }
@@ -356,7 +356,7 @@ public abstract class AbstractSeriesDAO {
     }
 
     /**
-     * Add offering restriction to Hibernate Criteria
+     * Add offering restriction to Hibernate Criteria with LEFT-OUTER-JOIN
      * 
      * @param c
      *            Hibernate Criteria to add restriction

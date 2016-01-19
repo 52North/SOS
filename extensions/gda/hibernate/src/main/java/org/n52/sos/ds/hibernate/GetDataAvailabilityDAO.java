@@ -788,6 +788,41 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
     }
 
     /**
+     * Class represents the min/max time for an offering.
+     * 
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
+    public class OfferingMinMaxTime {
+        private String offering;
+        private TimePeriod timePeriod;
+    
+        public OfferingMinMaxTime setOffering(Object offering) {
+            this.offering = (String)offering;
+            return this;
+        }
+        
+        public boolean isEmpty() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        public String getOffering() {
+            return offering;
+        }
+    
+        public OfferingMinMaxTime setTimePeriod(TimePeriod timePeriod) {
+           this.timePeriod = timePeriod;
+           return this;
+        }
+        
+        public TimePeriod getTimePeriod() {
+            return timePeriod;
+        }
+    }
+
+    /**
      * Class to transform ResultSets to DataAvailabilities.
      */
     private static class DataAvailabilityTransformer implements ResultTransformer {

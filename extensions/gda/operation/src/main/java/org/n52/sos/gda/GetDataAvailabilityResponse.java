@@ -248,6 +248,10 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public void setOffering(ReferenceType offering) {
             this.offering = offering;
         }
+        
+        public boolean isSetOffering() {
+            return getOffering() != null && getOffering().isSetHref();
+        }
 
         /**
          * @return the observationTypes
@@ -262,6 +266,10 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public void setObservationTypes(Set<String> observationTypes) {
             this.observationTypes = observationTypes;
         }
+        
+        public boolean isSetObservationTypes() {
+            return CollectionHelper.isNotEmpty(getObservationTypes());
+        }
 
         /**
          * @return the metadata
@@ -275,6 +283,10 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
          */
         public void setMetadata(Object metadata) {
             this.metadata = metadata;
+        }
+        
+        public boolean isSetMetadata() {
+            return getMetadata() != null;
         }
         
     }

@@ -36,6 +36,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
@@ -95,6 +96,23 @@ public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
 				.add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
 		return criteria;
 	}
+	
+	public Criteria getOfferingMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
+                Series series, Collection<String> offerings, Session session) {
+        Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class,
+                        series, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS, "off")
+                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
+        } else {
+            criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+        }
+        criteria.setProjection(Projections.projectionList()
+                    .add(Projections.groupProperty("off." + Offering.IDENTIFIER))
+                    .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
+                    .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+        return criteria;
+}
 
 	@Override
 	protected Class<?> getObservationTimeClass() {

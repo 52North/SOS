@@ -312,6 +312,32 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
         return criteria;
     }
+    
+    /**
+     * Create criteria to query min/max time of each offering for series from series observation
+     *
+     * @param series
+     *            Series to get values for
+     * @param offerings
+     * @param session
+     *            Hibernate session
+     * @return Criteria to get min/max time values for series
+     */
+    public Criteria getOfferingMinMaxTimeCriteriaForSeriesObservation(Series series, Collection<String> offerings,
+            Session session) {
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS, "off").add(
+                    Restrictions.in(Offering.IDENTIFIER, offerings));
+        } else {
+            criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+        }
+        criteria.setProjection(Projections.projectionList()
+                        .add(Projections.groupProperty("off." + Offering.IDENTIFIER))
+                        .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
+                        .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+        return criteria;
+    }
 
     public ScrollableResults getSeriesNotMatchingSeries(Set<Long> seriesIDs, GetObservationRequest request,
             Set<String> features, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {

@@ -147,8 +147,9 @@ public class OfferingCacheUpdateTask extends AbstractThreadableDatasourceCacheUp
         // Features of Interest
         List<String> featureOfInterestIdentifiers =
                 featureDAO.getFeatureOfInterestIdentifiersForOffering(offeringId, session);
-        getCache().setFeaturesOfInterestForOffering(prefixedOfferingId,
-                getValidFeaturesOfInterestFrom(featureOfInterestIdentifiers));
+        Collection<String> validFeaturesOfInterest = getValidFeaturesOfInterestFrom(featureOfInterestIdentifiers);
+        getCache().setFeaturesOfInterestForOffering(prefixedOfferingId, validFeaturesOfInterest);
+        getCache().addOfferingForFeaturesOfInterest(prefixedOfferingId, validFeaturesOfInterest);
         getCache().setFeatureOfInterestTypesForOffering(prefixedOfferingId,
                 getFeatureOfInterestTypes(featureOfInterestIdentifiers, session));
 

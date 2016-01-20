@@ -74,6 +74,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private final SetMultiMap<String, String> childProceduresForProcedures = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> childOfferingsForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> featuresOfInterestForOfferings = newSynchronizedSetMultiMap();
+    private final SetMultiMap<String, String> offeringsForFeaturesOfInterest = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> featuresOfInterestForResultTemplates = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> observablePropertiesForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
@@ -165,6 +166,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                                 childProceduresForProcedures,
                                 childOfferingsForOfferings,
                                 featuresOfInterestForOfferings,
+                                offeringsForFeaturesOfInterest,
                                 featuresOfInterestForResultTemplates,
                                 observablePropertiesForOfferings,
                                 observablePropertiesForProcedures,
@@ -230,6 +232,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                     && Objects.equal(this.childProceduresForProcedures, other.childProceduresForProcedures)
                     && Objects.equal(this.childOfferingsForOfferings, other.childOfferingsForOfferings)
                     && Objects.equal(this.featuresOfInterestForOfferings, other.featuresOfInterestForOfferings)
+                    && Objects.equal(this.offeringsForFeaturesOfInterest, other.offeringsForFeaturesOfInterest)
                     && Objects.equal(this.featuresOfInterestForResultTemplates, other.featuresOfInterestForResultTemplates)
                     && Objects.equal(this.observablePropertiesForOfferings, other.observablePropertiesForOfferings)
                     && Objects.equal(this.observablePropertiesForProcedures, other.observablePropertiesForProcedures)
@@ -472,6 +475,11 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     @Override
     public Set<String> getFeaturesOfInterestForOffering(final String offering) {
         return copyOf(this.featuresOfInterestForOfferings.get(offering));
+    }
+    
+    @Override
+    public Set<String> getOfferingsForFeatureOfInterest(final String featureOfInterest) {
+        return copyOf(this.offeringsForFeaturesOfInterest.get(featureOfInterest));
     }
 
     @Override
@@ -1127,6 +1135,11 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public Set<String> getFeaturesOfInterestWithOffering() {
         return CollectionHelper.unionOfListOfLists(this.featuresOfInterestForOfferings.values());
     }
+    
+    @Override
+    public Set<String> getOfferingWithFeaturesOfInterest() {
+        return CollectionHelper.unionOfListOfLists(this.offeringsForFeaturesOfInterest.values());
+    }
 
     @Override
     public void addAllowedObservationTypeForOffering(final String offering, final String allowedObservationType) {
@@ -1151,6 +1164,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Adding featureOfInterest {} to Offering {}", featureOfInterest, offering);
         this.featuresOfInterestForOfferings.add(offering, featureOfInterest);
+        this.offeringsForFeaturesOfInterest.add(featureOfInterest, offering);
     }
 
     @Override
@@ -1317,6 +1331,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         notNullOrEmpty(FEATURE_OF_INTEREST, featureOfInterest);
         LOG.trace("Removing featureOfInterest {} from offering {}", featureOfInterest, offering);
         this.featuresOfInterestForOfferings.removeWithKey(offering, featureOfInterest);
+        this.offeringsForFeaturesOfInterest.removeWithKey(featureOfInterest, offering);
     }
 
     @Override
@@ -1331,6 +1346,9 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public void removeFeaturesOfInterestForOffering(final String offering) {
         notNullOrEmpty(OFFERING, offering);
         LOG.trace("Removing featuresOfInterest for offering {}", offering);
+        for (String featureOfInterest : featuresOfInterestForOfferings.get(offering)) {
+            this.offeringsForFeaturesOfInterest.removeWithKey(featureOfInterest, offering);
+        }
         this.featuresOfInterestForOfferings.remove(offering);
     }
 
@@ -1591,6 +1609,16 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         final Set<String> newValue = newSynchronizedSet(featureOfInterest);
         LOG.trace("Setting featureOfInterest for offering {} to {}", offering, newValue);
         this.featuresOfInterestForOfferings.put(offering, newValue);
+    }
+    
+    @Override
+    public void addOfferingForFeaturesOfInterest(final String offering, final Collection<String> featuresOfInterest) {
+        notNullOrEmpty(OFFERING, offering);
+        noNullOrEmptyValues(FEATURES_OF_INTEREST, featuresOfInterest);
+        LOG.trace("Adding offering {} to featureOfInterest {}", offering, featuresOfInterest);
+        for (final String featureOfInterest : featuresOfInterest) {
+            this.offeringsForFeaturesOfInterest.add(featureOfInterest, offering);
+        }
     }
 
     @Override
@@ -2000,6 +2028,12 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public void clearFeaturesOfInterestForOfferings() {
         LOG.trace("Clearing features of interest for offerings");
         this.featuresOfInterestForOfferings.clear();
+    }
+    
+    @Override
+    public void clearOfferingsForFeaturesOfInterest() {
+        LOG.trace("Clearing offerings for features of interest");
+        this.offeringsForFeaturesOfInterest.clear();
     }
 
     @Override

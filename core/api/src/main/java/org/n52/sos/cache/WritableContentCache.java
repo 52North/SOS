@@ -62,6 +62,11 @@ public interface WritableContentCache
      * @return all features of interest associated with an offering
      */
     Set<String> getFeaturesOfInterestWithOffering();
+    
+    /**
+     * @return all offerings associated with a features of interest
+     */
+    Set<String> getOfferingWithFeaturesOfInterest();
 
     /**
      * Allow the specified observation type for the passed offering.
@@ -120,6 +125,16 @@ public interface WritableContentCache
      *            the feature of interest
      */
     void addFeatureOfInterestForOffering(String offering, String feature);
+    
+    /**
+     * Associate the specified offering with the specified features of interest.
+     * 
+     * @param offering
+     *            he offering
+     * @param featuresOfInterest
+     *            the features of interest
+     */
+    void addOfferingForFeaturesOfInterest(String offering, Collection<String> featuresOfInterest);
 
     /**
      * Associate the specified result template with the specified feature of
@@ -1081,6 +1096,11 @@ public interface WritableContentCache
      */
     void clearFeaturesOfInterestForOfferings();
 
+    /**
+     * Reset the feature of interest to offering relation.
+     */
+    void clearOfferingsForFeaturesOfInterest();
+    
     /**
      * Add the specified offering.
      *

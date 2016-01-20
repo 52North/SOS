@@ -135,6 +135,17 @@ public interface ContentCache
      */
     Set<String> getFeaturesOfInterestForOffering(String offering);
 
+    
+    /**
+     * Returns all offerings for the specified featureOfInterest.
+     *
+     * @param featureOfInterest
+     *            the featureOfInterest
+     *
+     * @return the offerings associated with the featureOfInterest
+     */
+    Set<String> getOfferingsForFeatureOfInterest(String featureOfInterest);
+    
     /**
      * Returns all FeaturesOfInterest for the specified SosResultTemplate.
      *

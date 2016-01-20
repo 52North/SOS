@@ -102,6 +102,13 @@ public abstract class AbstractMonitoringFeature extends AbstractMonitoringObject
         this.hasObservation.clear();
         this.hasObservation = hasObservation;
     }
+    
+    /**
+     * @param hasObservation the hasObservation to add
+     */
+    public void addHasObservation(OmObservation hasObservation) {
+        this.hasObservation.add(hasObservation);
+    }
 
     public boolean isSetHasObservation() {
         return CollectionHelper.isNotEmpty(getHasObservation());

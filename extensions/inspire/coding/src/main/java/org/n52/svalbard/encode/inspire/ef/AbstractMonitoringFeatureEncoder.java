@@ -60,7 +60,11 @@ public abstract class AbstractMonitoringFeatureEncoder extends AbstractMonitorin
             AbstractMonitoringFeature abstractMonitoringFeature) {
         if (abstractMonitoringFeature.isSetHasObservation()) {
             for (OmObservation omObservation : abstractMonitoringFeature.getHasObservation()) {
-                // TODO encode Observation or GET-Request via xlink:href
+                if (omObservation.isSetSimpleAttrs()) {
+                    amft.addNewHasObservation().setHref(omObservation.getSimpleAttrs().getHref());
+                } else {
+                    // TODO encode Observation or GET-Request via xlink:href or full observation
+                }
             }
         }
     }

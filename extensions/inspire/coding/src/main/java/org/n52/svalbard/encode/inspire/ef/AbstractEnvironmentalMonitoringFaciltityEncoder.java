@@ -30,21 +30,15 @@ package org.n52.svalbard.encode.inspire.ef;
 
 import java.util.Map;
 
-import javax.xml.namespace.QName;
-
-import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.svalbard.inspire.ef.AnyDomainLink;
 import org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility;
-import org.n52.svalbard.inspire.ef.InspireEfConstants;
 import org.n52.svalbard.inspire.ef.NetworkFacility;
 import org.n52.svalbard.inspire.ef.OperationalActivityPeriod;
 
@@ -52,7 +46,6 @@ import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityDocume
 import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType;
 import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType.BelongsTo;
 import eu.europa.ec.inspire.schemas.ef.x40.EnvironmentalMonitoringFacilityType.RelatedTo;
-import net.opengis.gml.x32.AbstractFeatureType;
 import net.opengis.gml.x32.FeaturePropertyType;
 
 public abstract class AbstractEnvironmentalMonitoringFaciltityEncoder extends AbstractMonitoringFeatureEncoder {

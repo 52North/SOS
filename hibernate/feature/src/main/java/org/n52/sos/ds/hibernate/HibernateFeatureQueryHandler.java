@@ -51,7 +51,7 @@ import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ds.hibernateutil.feature.HibernateFeatureConverter;
+import org.n52.sos.ds.hibernate.util.feature.HibernateFeatureConverter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidSridException;

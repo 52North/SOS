@@ -44,6 +44,8 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
+import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
@@ -54,8 +56,9 @@ import com.vividsolutions.jts.geom.Geometry;
  * 
  * @since 4.0.0
  */
-public class OmObservation extends AbstractFeature implements Serializable {
+public class OmObservation extends AbstractFeature implements Serializable, AttributeSimpleAttrs {
     private static final long serialVersionUID = 2703347670924921229L;
+    private SimpleAttrs simpleAttrs;
 
     /**
      * ID of this observation; in the standard 52n SOS PostgreSQL database, this
@@ -117,6 +120,21 @@ public class OmObservation extends AbstractFeature implements Serializable {
     public OmObservation() {
         super();
     }
+    
+    @Override
+    public void setSimpleAttrs(SimpleAttrs simpleAttrs) {
+        this.simpleAttrs = simpleAttrs;
+     }
+
+     @Override
+     public SimpleAttrs getSimpleAttrs() {
+         return simpleAttrs;
+     }
+
+     @Override
+     public boolean isSetSimpleAttrs() {
+         return getSimpleAttrs() != null && getSimpleAttrs().isSetHref();
+     }
 
     /**
      * Get the observation constellation

@@ -587,10 +587,10 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         }
     }
 
-    private String getGmlID(Geometry geom, String foiId) {
+    private String getGmlID(Geometry geom, String gmlId) {
         String id = null;
-        if (Strings.isNullOrEmpty(foiId)) {
-            id = foiId;
+        if (!Strings.isNullOrEmpty(gmlId)) {
+            id = gmlId;
         } else {
             id = JavaHelper.generateID(geom.toText());
         }

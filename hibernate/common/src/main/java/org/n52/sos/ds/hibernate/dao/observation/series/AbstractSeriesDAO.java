@@ -36,9 +36,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
@@ -102,11 +104,28 @@ public abstract class AbstractSeriesDAO {
      *            FeaturesOfInterest to get series for
      * @param session
      *            Hibernate session
-     * @return Series that fir
+     * @return Series that fit
      */
     public abstract List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session);
 
+    /**
+     * Create series for parameter
+     *
+     * @param procedures
+     *            Procedures to get series for
+     * @param observedProperties
+     *            ObservedProperties to get series for
+     * @param features
+     *            FeaturesOfInterest to get series for
+     * @param offerings
+     *            Offerings to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fit
+     */
+    public abstract List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties, Collection<String> featuresOfInterest,
+            Collection<String> offerings, Session session) ;
     /**
      * Get series for procedure, observableProperty and featureOfInterest
      *
@@ -175,6 +194,9 @@ public abstract class AbstractSeriesDAO {
             throws CodedException {
         final Criteria c =
                 createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
+        if (request.isSetOffering()) {
+            addOfferingToCriteria(c, request.getOfferings());
+        }
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
@@ -183,7 +205,18 @@ public abstract class AbstractSeriesDAO {
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
-        LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features): {}",
+        LOGGER.debug("QUERY getSeries(procedures, observableProperteies, features): {}",
+                HibernateHelper.getSqlString(c));
+        return c;
+    }
+    
+    public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
+            Collection<String> features, Collection<String> offerings, Session session) {
+        final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            addOfferingToCriteria(c, offerings);
+        }
+        LOGGER.debug("QUERY getSeries(procedures, observableProperteies, features, offerings): {}",
                 HibernateHelper.getSqlString(c));
         return c;
     }
@@ -320,6 +353,20 @@ public abstract class AbstractSeriesDAO {
     public void addProcedureToCriteria(Criteria c, Collection<String> procedures) {
         c.createCriteria(Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, procedures));
 
+    }
+
+    /**
+     * Add offering restriction to Hibernate Criteria with LEFT-OUTER-JOIN
+     * 
+     * @param c
+     *            Hibernate Criteria to add restriction
+     * @param offerings
+     *            Offering identifiers to add
+     */
+    public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
+        c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
+                Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
     }
 
     /**

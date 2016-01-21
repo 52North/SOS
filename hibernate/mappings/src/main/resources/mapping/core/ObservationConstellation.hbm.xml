@@ -24,12 +24,12 @@
         </many-to-one>
         <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" lazy="no-proxy" foreign-key="obsConstObservationIypeFk" >
             <column name="observationTypeId">
-            	<comment>Foreign Key (FK) to the related observableProperty. Contains "observationtype".observationtypeid</comment>
+            	<comment>Foreign Key (FK) to the related observation type. Contains "observationtype".observationtypeid</comment>
             </column>
         </many-to-one>
         <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity">
             <column index="obsConstOfferingIdx" name="offeringId" not-null="true">
-            	<comment>Foreign Key (FK) to the related observableProperty. Contains "offering".offeringid</comment>
+            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
             </column>
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">

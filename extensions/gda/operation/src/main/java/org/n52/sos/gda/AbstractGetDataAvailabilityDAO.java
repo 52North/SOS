@@ -49,6 +49,8 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     public static final String SHOW_COUNT = "ShowCount";
     
     private boolean forceValueCount = false;
+    
+    private boolean forEachOffering = false;
 
     public AbstractGetDataAvailabilityDAO(String service) {
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
@@ -90,5 +92,20 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     @Setting(GetDataAvailabilitySettings.FORCE_GDA_VALUE_COUNT)
     public void setForceValueCount(boolean forceValueCount) {
         this.forceValueCount = forceValueCount;
+    }
+    
+    /**
+     * @return the forEachOffering
+     */
+    protected boolean isForEachOffering() {
+        return forEachOffering;
+    }
+
+    /**
+     * @param forEachOffering the forEachOffering to set
+     */
+    @Setting(GetDataAvailabilitySettings.FOR_EACH_OFFERING)
+    public void setForEachOffering(boolean forEachOffering) {
+        this.forEachOffering = forEachOffering;
     }
 }

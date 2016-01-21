@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -42,6 +43,7 @@ import org.n52.sos.encode.XmlEventWriter;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time.TimeFormat;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -77,7 +79,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
     private int timePeriodCount = 1;
 
     private int resultTimeCount = 1;
-
+    
     public GetDataAvailabilityStreamWriter(String version, List<DataAvailability> gdas) {
         this.gdas = gdas == null ? Collections.<DataAvailability> emptyList() : gdas;
         this.times = new HashMap<TimePeriod, String>(this.gdas.size());
@@ -136,6 +138,15 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         }
         if (da.isSetResultTime()) {
             writeResultTimes(da.getResultTimes());
+        }
+        if (da.isSetOffering()) {
+            writeOffering(da.getOffering());
+        }
+        if (da.isSetObservationTypes()) {
+            writeObservationTypes(da.getObservationTypes());
+        }
+        if (da.isSetMetadata()) {
+            writeMetadata(da.getMetadata());
         }
         end(GetDataAvailabilityConstants.GDA_DATA_AVAILABILITY_MEMBER);
     }
@@ -258,6 +269,44 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         start(SweConstants.QN_VALUE_SWE_200);
         writeTimeString(ti.getValue(), ti.getTimeFormat());
         end(SweConstants.QN_VALUE_SWE_200);
+    }
+    
+    private void writeOffering(ReferenceType offering) throws XMLStreamException {
+        start(GetDataAvailabilityConstants.GDA_EXTENSION);
+        start(SweConstants.QN_TEXT_SWE_200);
+        attr("definition", "offering");
+        start(SweConstants.QN_VALUE_SWE_200);
+        chars(offering.getHref());
+        end(SweConstants.QN_VALUE_SWE_200);
+        end(SweConstants.QN_TEXT_SWE_200);
+        end(GetDataAvailabilityConstants.GDA_EXTENSION);
+        
+    }
+
+    private void writeObservationTypes(Set<String> observationTypes) throws XMLStreamException {
+        int observationTypeCount = 1;
+        start(GetDataAvailabilityConstants.GDA_EXTENSION);
+        start(SweConstants.QN_DATA_RECORD_SWE_200);
+        attr("definition", "observationTypes");
+        for (String observationType : observationTypes) {
+            start(SweConstants.QN_FIELD_200);
+            attr("name", "observationType_" + observationTypeCount++);
+            start(SweConstants.QN_TEXT_SWE_200);
+            attr("definition", "observationType");
+            start(SweConstants.QN_VALUE_SWE_200);
+            chars(observationType);
+            end(SweConstants.QN_VALUE_SWE_200);
+            end(SweConstants.QN_TEXT_SWE_200);
+            end(SweConstants.QN_FIELD_200);
+        }
+        end(SweConstants.QN_DATA_RECORD_SWE_200);
+        end(GetDataAvailabilityConstants.GDA_EXTENSION);
+    }
+
+    private void writeMetadata(Object metadata) throws XMLStreamException {
+//        start(GetDataAvailabilityConstants.GDA_EXTENSION);
+//        // TODO 
+//        end(GetDataAvailabilityConstants.GDA_EXTENSION);
     }
 
 }

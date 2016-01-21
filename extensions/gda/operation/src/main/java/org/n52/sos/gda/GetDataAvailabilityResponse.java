@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -116,6 +117,12 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         private long count = -1;
         
         private List<TimeInstant> resultTimes = Lists.newArrayList();
+        
+        private ReferenceType offering;
+        
+        private Set<String> observationTypes;
+        
+        private Object metadata;
         
         /**
          * Creates a new {@code DataAvailability}.
@@ -226,6 +233,60 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         
         public boolean isSetResultTime() {
             return CollectionHelper.isNotEmpty(getResultTimes());
+        }
+
+        /**
+         * @return the offering
+         */
+        public ReferenceType getOffering() {
+            return offering;
+        }
+
+        /**
+         * @param offering the offering to set
+         */
+        public void setOffering(ReferenceType offering) {
+            this.offering = offering;
+        }
+        
+        public boolean isSetOffering() {
+            return getOffering() != null && getOffering().isSetHref();
+        }
+
+        /**
+         * @return the observationTypes
+         */
+        public Set<String> getObservationTypes() {
+            return observationTypes;
+        }
+
+        /**
+         * @param observationTypes the observationTypes to set
+         */
+        public void setObservationTypes(Set<String> observationTypes) {
+            this.observationTypes = observationTypes;
+        }
+        
+        public boolean isSetObservationTypes() {
+            return CollectionHelper.isNotEmpty(getObservationTypes());
+        }
+
+        /**
+         * @return the metadata
+         */
+        public Object getMetadata() {
+            return metadata;
+        }
+
+        /**
+         * @param metadata the metadata to set
+         */
+        public void setMetadata(Object metadata) {
+            this.metadata = metadata;
+        }
+        
+        public boolean isSetMetadata() {
+            return getMetadata() != null;
         }
         
     }

@@ -164,8 +164,8 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
 
     private OmObservation createObservation(String feature, Set<String> offerings) {
         String getObservationUrl = getGetObservationUrl();
-        addParameter(getObservationUrl, SosConstants.GetObservationParams.featureOfInterest.name(), feature);
-        addParameter(getObservationUrl, SosConstants.GetObservationParams.offering.name(), offerings);
+        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.featureOfInterest.name(), feature);
+        getObservationUrl = addParameter(getObservationUrl, SosConstants.GetObservationParams.offering.name(), offerings);
         SimpleAttrs simpleAttrs = new SimpleAttrs().setHref(getObservationUrl);
         OmObservation omObservation = new OmObservation();
         omObservation.setSimpleAttrs(simpleAttrs);

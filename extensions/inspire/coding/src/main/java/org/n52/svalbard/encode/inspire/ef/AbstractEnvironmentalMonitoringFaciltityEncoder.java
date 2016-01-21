@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.JavaHelper;
@@ -72,12 +73,22 @@ public abstract class AbstractEnvironmentalMonitoringFaciltityEncoder extends Ab
     @Override
     protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-       EnvironmentalMonitoringFacilityType emft = createEnvironmentalMonitoringFaciltityType((EnvironmentalMonitoringFacility) abstractFeature);
-       EnvironmentalMonitoringFacilityDocument emfd = EnvironmentalMonitoringFacilityDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-       emfd.setEnvironmentalMonitoringFacility(emft);
-       return emfd;
+        if (additionalValues.containsKey(HelperValues.ENCODE)
+                && additionalValues.get(HelperValues.ENCODE).equals("false")) {
+            featurePropertyType.setHref(abstractFeature.getIdentifierCodeWithAuthority().getValue());
+            if (abstractFeature.isSetName()) {
+                featurePropertyType.setTitle(abstractFeature.getFirstName().getValue());
+            }
+            return featurePropertyType;
+        }
+        EnvironmentalMonitoringFacilityType emft =
+                createEnvironmentalMonitoringFaciltityType((EnvironmentalMonitoringFacility) abstractFeature);
+        EnvironmentalMonitoringFacilityDocument emfd = EnvironmentalMonitoringFacilityDocument.Factory
+                .newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        emfd.setEnvironmentalMonitoringFacility(emft);
+        return emfd;
     }
-    
+
     protected EnvironmentalMonitoringFacilityType createEnvironmentalMonitoringFaciltityType(
             EnvironmentalMonitoringFacility environmentalMonitoringFacility) throws OwsExceptionReport {
         EnvironmentalMonitoringFacilityType emft = EnvironmentalMonitoringFacilityType.Factory.newInstance();

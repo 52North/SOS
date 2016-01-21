@@ -28,14 +28,19 @@
  */
 package org.n52.svalbard.encode.inspire.ef;
 
+import java.util.Map;
+
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.svalbard.inspire.base2.LegislationCitation;
 import org.n52.svalbard.inspire.ef.AbstractMonitoringObject;
 import org.n52.svalbard.inspire.ef.Hierarchy;
 import org.n52.svalbard.inspire.ef.ObservingCapability;
+
+import com.google.common.collect.Maps;
 
 import eu.europa.ec.inspire.schemas.ef.x40.AbstractMonitoringObjectPropertyType;
 import eu.europa.ec.inspire.schemas.ef.x40.AbstractMonitoringObjectType;
@@ -131,7 +136,13 @@ public abstract class AbstractMonitoringObjectEncoder extends AbstractEnvironmen
 
     private void setGeometry(AbstractMonitoringObjectType amot, AbstractMonitoringObject abstractMonitoringObject) throws OwsExceptionReport {
         if (abstractMonitoringObject.isSetGeometry()) {
-            amot.addNewGeometry().set(encodeGML32(abstractMonitoringObject.getGeometry()));
+            if (abstractMonitoringObject.isSetGmlID()) {
+                Map<HelperValues, String> additionalValues = Maps.newHashMap();
+                additionalValues.put(HelperValues.GMLID, abstractMonitoringObject.getGmlId());
+                amot.addNewGeometry().set(encodeGML32(abstractMonitoringObject.getGeometry(), additionalValues));
+            } else {
+                amot.addNewGeometry().set(encodeGML32(abstractMonitoringObject.getGeometry()));
+            }
         }
     }
 

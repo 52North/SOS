@@ -500,10 +500,10 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
 
     private XmlObject createPosition(Geometry geom, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
-        String foiId = additionalValues.get(HelperValues.GMLID);
+        String gmlId = additionalValues.get(HelperValues.GMLID);
         if (geom instanceof Point) {
             final PointType xbPoint = PointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbPoint.setId(getGmlID(geom, foiId));
+            xbPoint.setId(getGmlID(geom, gmlId));
             createPointFromJtsGeometry((Point) geom, xbPoint);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 PointDocument xbPointDoc =
@@ -523,7 +523,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         else if (geom instanceof LineString) {
             final LineStringType xbLineString =
                     LineStringType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbLineString.setId(getGmlID(geom, foiId));
+            xbLineString.setId(getGmlID(geom, gmlId));
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 LineStringDocument xbLineStringDoc =
@@ -544,7 +544,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         else if (geom instanceof Polygon) {
             final PolygonType xbPolygon =
                     PolygonType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            xbPolygon.setId(getGmlID(geom, foiId));
+            xbPolygon.setId(getGmlID(geom, gmlId));
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 PolygonDocument xbPolygonDoc =
@@ -563,7 +563,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         
         else if (geom instanceof MultiPoint) {
             final MultiPointType xbMultiPoint = MultiPointType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-            String id = getGmlID(geom, foiId);
+            String id = getGmlID(geom, gmlId);
             xbMultiPoint.setId(id);
             createMultiPointFromJtsGeometry((MultiPoint) geom, xbMultiPoint, id);
             

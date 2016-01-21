@@ -42,6 +42,7 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
+import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -267,6 +268,11 @@ public final class OMHelper {
 
         @Override
         public String visit(RectifiedGridCoverage rectifiedGridCoverage) throws OwsExceptionReport {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
             return defaultValue();
         }
     }

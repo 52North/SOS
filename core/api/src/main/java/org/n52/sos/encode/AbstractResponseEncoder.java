@@ -82,7 +82,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     private final Class<T> responseType;
 
-    private final boolean validate;
+    private final boolean validationEnabled;
 
     /**
      * constructor
@@ -99,11 +99,11 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      *            Service XML schema prefix
      * @param responseType
      *            Response type
-     * @param validate
-     *            Indicator if the created/encoded object should be validated
+     * @param validationEnabled
+     *            Indicator if the created/encoded object can be validated
      */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
-            Class<T> responseType, boolean validate) {
+            Class<T> responseType, boolean validationEnabled) {
         OperationKey key = new OperationKey(service, version, operation);
         this.encoderKeys =
                 Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationEncoderKey(key,
@@ -113,7 +113,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         this.prefix = prefix;
         this.version = version;
         this.responseType = responseType;
-        this.validate = validate;
+        this.validationEnabled = validationEnabled;
     }
 
     /**
@@ -134,8 +134,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
      */
     public AbstractResponseEncoder(String service, String version, String operation, String namespace, String prefix,
             Class<T> responseType) {
-        this(service, version, operation, namespace, prefix, responseType, ServiceConfiguration.getInstance()
-                .isValidateResponse());
+        this(service, version, operation, namespace, prefix, responseType, true);
     }
 
     @Override
@@ -167,13 +166,15 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         }
         XmlObject xml = create(response);
         setSchemaLocations(xml);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
-                    XmlHelper.validateDocument(xml));
-        } else {
-            if (validate) {
-                LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
+        if (validationEnabled) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
                         XmlHelper.validateDocument(xml));
+            } else {
+                if (ServiceConfiguration.getInstance().isValidateResponse()) {
+                    LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
+                            XmlHelper.validateDocument(xml));
+                }
             }
         }
         return xml;

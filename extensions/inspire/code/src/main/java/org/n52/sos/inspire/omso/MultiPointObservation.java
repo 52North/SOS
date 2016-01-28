@@ -115,10 +115,12 @@ public class MultiPointObservation extends OmObservation {
         if (isSetSpatialFilteringProfileParameter()) {
             Geometry geometry = getSpatialFilteringProfileParameter().getValue().getValue();
             point = geometry.getInteriorPoint();
+            point.setSRID(geometry.getSRID());
         } else {
             if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
                 Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
                 point = geometry.getInteriorPoint();
+                point.setSRID(geometry.getSRID());
             }
         }
         return point;
@@ -127,10 +129,14 @@ public class MultiPointObservation extends OmObservation {
     private Geometry getEnvelope(List<PointValuePair> pointValuePairs) {
         Envelope envelope = new Envelope();
         GeometryFactory factory = null;
+        int srid = GeometryHandler.getInstance().getStorageEPSG();
         if (CollectionHelper.isNotEmpty(pointValuePairs)) {
             for (PointValuePair pointValuePair : pointValuePairs) {
                 if (factory == null && pointValuePair.getPoint() != null) {
                     factory = pointValuePair.getPoint().getFactory();
+                }
+                if (pointValuePair.getPoint().getSRID() > 0) {
+                    srid = pointValuePair.getPoint().getSRID();
                 }
                 envelope.expandToInclude(pointValuePair.getPoint().getEnvelopeInternal());
             }
@@ -140,6 +146,9 @@ public class MultiPointObservation extends OmObservation {
                 if (factory == null && geometry != null) {
                     factory = geometry.getFactory();
                 }
+                if (geometry.getSRID() > 0) {
+                    srid = geometry.getSRID();
+                }
                 envelope.expandToInclude(geometry.getEnvelopeInternal());
             } else {
                 if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
@@ -147,13 +156,18 @@ public class MultiPointObservation extends OmObservation {
                     if (factory == null && geometry != null) {
                         factory = geometry.getFactory();
                     }
+                    if (geometry.getSRID() > 0) {
+                        srid = geometry.getSRID();
+                    }
                     envelope.expandToInclude(geometry.getEnvelopeInternal());
                 }
             }
         }
         if (factory == null) {
-            JTSHelper.getGeometryFactoryForSRID(GeometryHandler.getInstance().getStorage3DEPSG());
+            JTSHelper.getGeometryFactoryForSRID(GeometryHandler.getInstance().getStorageEPSG());
         }
-        return factory.toGeometry(envelope);
+        Geometry geometry = factory.toGeometry(envelope);
+        geometry.setSRID(srid);
+        return geometry;
     }
 }

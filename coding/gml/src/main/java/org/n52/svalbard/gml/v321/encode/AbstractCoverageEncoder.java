@@ -30,11 +30,7 @@ package org.n52.svalbard.gml.v321.encode;
 
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
-import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
@@ -42,7 +38,6 @@ import org.n52.sos.ogc.om.values.DiscreteCoverage;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.XmlHelper;
 
 import com.google.common.collect.Lists;
 
@@ -64,7 +59,7 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
     }
 
     protected void encodeValueList(RangeSetType rst, DiscreteCoverage<?> discreteCoverage) throws OwsExceptionReport {
-        List list = getList(discreteCoverage);
+        List<?> list = getList(discreteCoverage);
         Value<?> value = discreteCoverage.getRangeSet().iterator().next();
         if (value instanceof BooleanValue) {
             BooleanListDocument bld = BooleanListDocument.Factory.newInstance();
@@ -73,7 +68,11 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
         } else if (value instanceof CategoryValue) {
             CategoryListDocument cld  = CategoryListDocument.Factory.newInstance();
             CodeOrNilReasonListType conrlt = cld.addNewCategoryList();
-            conrlt.setCodeSpace(discreteCoverage.getUnit());
+            if (discreteCoverage.isSetUnit()) {
+                conrlt.setCodeSpace(discreteCoverage.getUnit());
+            } else if (value.isSetUnit()) {
+                conrlt.setCodeSpace(value.getUnit());
+            }
             conrlt.setListValue(list);
             rst.set(cld);
         } else if (value instanceof CountValue) {
@@ -83,7 +82,11 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
         } else if (value instanceof QuantityValue) {
             QuantityListDocument qld = QuantityListDocument.Factory.newInstance();
             MeasureOrNilReasonListType monrlt = qld.addNewQuantityList();
-            monrlt.setUom(discreteCoverage.getUnit());
+            if (discreteCoverage.isSetUnit()) {
+                monrlt.setUom(discreteCoverage.getUnit());
+            } else if (value.isSetUnit()) {
+                monrlt.setUom(value.getUnit());
+            }
             monrlt.setListValue(list);
             rst.set(qld);
         } else {
@@ -92,7 +95,7 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
     }
 
 
-    private List getList(DiscreteCoverage<?> discreteCoverage) {
+    private List<?> getList(DiscreteCoverage<?> discreteCoverage) {
         List list = Lists.newArrayList();
         for (Object value : discreteCoverage.getRangeSet()) {
             if (value instanceof Value<?>) {

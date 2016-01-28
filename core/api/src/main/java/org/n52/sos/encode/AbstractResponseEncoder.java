@@ -28,6 +28,8 @@
  */
 package org.n52.sos.encode;
 
+import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
@@ -42,13 +44,14 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.OperationKey;
+import org.n52.sos.config.annotation.Configurable;
+import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.AbstractServiceResponse;
-import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -68,6 +71,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
+@Configurable
 public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractXmlEncoder<T>
         implements StreamingEncoder<XmlObject, T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
@@ -83,6 +87,8 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     private final Class<T> responseType;
 
     private final boolean validationEnabled;
+    
+    private boolean validateResponse = false;
 
     /**
      * constructor
@@ -171,7 +177,7 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
                 LOGGER.debug("Encoded object {} is valid: {}", xml.schemaType().toString(),
                         XmlHelper.validateDocument(xml));
             } else {
-                if (ServiceConfiguration.getInstance().isValidateResponse()) {
+                if (validateResponse) {
                     LOGGER.warn("Encoded object {} is valid: {}", xml.schemaType().toString(),
                             XmlHelper.validateDocument(xml));
                 }
@@ -196,6 +202,11 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     @Override
     public boolean forceStreaming() {
     	return false;
+    }
+    
+    @Setting(VALIDATE_RESPONSE)
+    public void setValidateResponse(final boolean validateResponse) {
+        this.validateResponse = validateResponse;
     }
 
     private void setSchemaLocations(XmlObject document) {

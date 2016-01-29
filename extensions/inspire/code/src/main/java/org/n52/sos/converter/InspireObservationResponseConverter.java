@@ -174,6 +174,7 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     
     private void checkForNonStreamingData(AbstractServiceRequest<?> request, GetObservationResponse response) {
         Map<String, List<OmObservation>> map = Maps.newHashMap(); 
+        String requestedObservationType = ((AbstractObservationRequest) request).getResultModel();
         for (OmObservation obs : response.getObservationCollection()) {
             // TODO check for requested type
             if (obs.isSetHeightDepthParameter()) {

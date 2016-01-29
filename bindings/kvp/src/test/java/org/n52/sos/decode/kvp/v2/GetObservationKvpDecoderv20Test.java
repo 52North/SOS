@@ -31,13 +31,17 @@ package org.n52.sos.decode.kvp.v2;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.Assert.assertThat;
 
 import java.util.Map;
 
 import org.junit.Test;
+import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.collect.Maps;
@@ -53,7 +57,7 @@ public class GetObservationKvpDecoderv20Test {
     @Test
     public void should_decode_extension_parameter_MergeObservationsIntoDataArray() throws OwsExceptionReport {
         final Map<String, String> mapTrue = Maps.newHashMap();
-        mapTrue.put("MergeObservationsIntoDataArray", "true");
+        mapTrue.put(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name(), "true");
         mapTrue.put("service", "SOS");
         mapTrue.put("version", "2.0.0");
         mapTrue.put("request", "GetObservation");
@@ -61,21 +65,73 @@ public class GetObservationKvpDecoderv20Test {
         final GetObservationRequest requestTrue = decoder.decode(mapTrue);
 
         final Map<String, String> mapFalse = Maps.newHashMap();
-        mapFalse.put("MergeObservationsIntoDataArray", "false");
+        mapFalse.put(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name(), "false");
         mapFalse.put("service", "SOS");
         mapFalse.put("version", "2.0.0");
         mapFalse.put("request", "GetObservation");
         final GetObservationRequest requestFalse = decoder.decode(mapFalse);
 
         assertThat(requestTrue.isSetExtensions(), is(TRUE));
-        assertThat(
-                requestTrue.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(TRUE));
+        assertThat(requestTrue.getExtensions()
+                .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(TRUE));
 
         assertThat(requestFalse.isSetExtensions(), is(TRUE));
+        assertThat(requestFalse.getExtensions()
+                .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(FALSE));
+    }
+
+    @Test
+    public void should_decode_extension_parameter_language() throws OwsExceptionReport {
+        final Map<String, String> map = Maps.newHashMap();
+        map.put(OWSConstants.AdditionalRequestParams.language.name(), "ger");
+        map.put("service", "SOS");
+        map.put("version", "2.0.0");
+        map.put("request", "GetObservation");
+        final GetObservationKvpDecoderv20 decoder = new GetObservationKvpDecoderv20();
+        final GetObservationRequest request = decoder.decode(map);
+
+        assertThat(request.isSetExtensions(), is(TRUE));
+        assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.language),
+                is(TRUE));
+        assertThat(request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.language.name())
+                .getValue(), instanceOf(SweText.class));
+        assertThat(((SweText) request.getExtensions()
+                .getExtension(OWSConstants.AdditionalRequestParams.language.name()).getValue()).getStringValue(),
+                is("ger"));
+    }
+
+    @Test
+    public void should_decode_extension_parameter_crs() throws OwsExceptionReport {
+        final Map<String, String> map = Maps.newHashMap();
+        map.put(OWSConstants.AdditionalRequestParams.crs.name(), "4852");
+        map.put("service", "SOS");
+        map.put("version", "2.0.0");
+        map.put("request", "GetObservation");
+        final GetObservationKvpDecoderv20 decoder = new GetObservationKvpDecoderv20();
+        final GetObservationRequest request = decoder.decode(map);
+
+        assertThat(request.isSetExtensions(), is(TRUE));
+        assertThat(request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.crs), is(TRUE));
         assertThat(
-                requestFalse.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name()), is(FALSE));
+                request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs.name()).getValue(),
+                instanceOf(SweText.class));
+        assertThat(((SweText) request.getExtensions()
+                .getExtension(OWSConstants.AdditionalRequestParams.crs.name()).getValue()).getValue(), is("4852"));
+    }
+
+    @Test
+    public void should_decode_extension_parameter_resultType() throws OwsExceptionReport {
+        final Map<String, String> map = Maps.newHashMap();
+        map.put("resultType", "MyObservation");
+        map.put("service", "SOS");
+        map.put("version", "2.0.0");
+        map.put("request", "GetObservation");
+        final GetObservationKvpDecoderv20 decoder = new GetObservationKvpDecoderv20();
+        final GetObservationRequest request = decoder.decode(map);
+
+        
+        assertThat(request.isSetResultModel(), is(TRUE));
+        assertThat(request.getResultModel(), is("MyObservation"));
     }
 
 }

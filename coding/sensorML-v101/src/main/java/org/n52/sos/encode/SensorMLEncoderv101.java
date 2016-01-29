@@ -241,8 +241,10 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         } else {
             throw new UnsupportedEncoderInputException(this, response);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
 
     }

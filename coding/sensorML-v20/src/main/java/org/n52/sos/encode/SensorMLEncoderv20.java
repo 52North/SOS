@@ -250,8 +250,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         } catch (final XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
     }
 

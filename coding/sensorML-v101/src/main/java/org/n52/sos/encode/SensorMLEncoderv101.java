@@ -243,8 +243,10 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         }
         // check if all gml:id are unique
         XmlHelper.makeGmlIdsUnique(encodedObject.getDomNode());
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
 
     }

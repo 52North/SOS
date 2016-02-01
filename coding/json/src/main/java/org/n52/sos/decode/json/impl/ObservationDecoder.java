@@ -178,7 +178,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 
     private NamedValue<?> parseNamedValue(JsonNode parameter) throws OwsExceptionReport {
     	JsonNode namedValue = parameter.path(JSONConstants.NAMED_VALUE);
-    	NamedValue<?> nv = parseNamedValueValue(parameter);
+    	NamedValue<?> nv = parseNamedValueValue(namedValue);
     	ReferenceType referenceType = new ReferenceType(namedValue.path(JSONConstants.NAME).asText());
     	nv.setName(referenceType);
     	return nv;

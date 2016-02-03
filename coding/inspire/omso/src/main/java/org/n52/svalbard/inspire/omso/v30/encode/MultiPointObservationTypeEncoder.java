@@ -42,6 +42,7 @@ import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.MultiPointObservation;
 import org.n52.sos.ogc.cv.CvConstants;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -73,7 +74,7 @@ public class MultiPointObservationTypeEncoder extends AbstractOmInspireEncoder {
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
         if (observationValue.getValue() instanceof MultiPointCoverage) {
             Encoder<?, MultiPointCoverage> encoder = (Encoder<?, MultiPointCoverage>) getEncoder(
-                    new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, MultiPointCoverage.class));
+                    new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, MultiPointCoverage.class));
             if (encoder != null) {
                 return (XmlObject) encoder.encode((MultiPointCoverage) observationValue.getValue());
             }

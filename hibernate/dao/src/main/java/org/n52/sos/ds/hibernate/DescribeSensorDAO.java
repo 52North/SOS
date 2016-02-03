@@ -192,7 +192,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             } else {
                 if (!request.isSetValidTime()) {
                     throw new NoApplicableCodeException().causedBy(
-                            new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
+                            new IllegalArgumentException("Parameter 'procedure' was null or invalid!")).setStatus(
                             INTERNAL_SERVER_ERROR);
                 }
             }

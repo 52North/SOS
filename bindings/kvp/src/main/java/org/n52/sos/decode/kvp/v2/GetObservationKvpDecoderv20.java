@@ -36,7 +36,6 @@ import java.util.Set;
 
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.decode.OperationDecoderKey;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
@@ -63,7 +62,7 @@ import org.n52.sos.util.http.MediaTypes;
  * @since 4.0.0
  * 
  */
-public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
+public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder {
 
     private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);

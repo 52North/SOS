@@ -46,7 +46,6 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 
-import net.opengis.gml.x32.AbstractGeometryType;
 import net.opengis.gml.x32.DiscreteCoverageType;
 import net.opengis.gml.x32.DomainSetType;
 import net.opengis.gml.x32.MultiPointDomainDocument;
@@ -64,15 +63,15 @@ public abstract class AbstractMultiPointCoverageTypeEncoder<T> extends AbstractC
     private void encodeMultiPointDomain(DiscreteCoverageType dct, PointValueLists pointValues) throws OwsExceptionReport {
         MultiPointDomainDocument mpdd = MultiPointDomainDocument.Factory.newInstance();
         DomainSetType mpdst = mpdd.addNewMultiPointDomain();
-        dct.setDomainSet(mpdst);
         GeometryFactory factory = pointValues.getPoints().get(0).getFactory();
         MultiPoint multiPoint = factory.createMultiPoint(pointValues.getPoints().toArray(new Point[0]));
-        
         Map<SosConstants.HelperValues, String> helperValues = Maps.newHashMap();
         helperValues.put(HelperValues.GMLID, JavaHelper.generateID(multiPoint.toString()));
+        helperValues.put(HelperValues.PROPERTY_TYPE, "true");
         XmlObject encodedGeometry = encodeGML(multiPoint);
-        final XmlObject substituteElement = XmlHelper.substituteElement(mpdst.addNewAbstractGeometry(), encodedGeometry);
-        substituteElement.set(encodedGeometry);
+        mpdst.addNewAbstractGeometry().set(encodedGeometry);
+        XmlHelper.substituteElement(mpdst.getAbstractGeometry(), encodedGeometry);
+        dct.setDomainSet(mpdst);
     }
 
     @Override

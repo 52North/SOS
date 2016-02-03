@@ -174,6 +174,7 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     
     private void checkForNonStreamingData(AbstractServiceRequest<?> request, GetObservationResponse response) {
         Map<String, List<OmObservation>> map = Maps.newHashMap(); 
+        String requestedObservationType = ((AbstractObservationRequest) request).getResultModel();
         for (OmObservation obs : response.getObservationCollection()) {
             // TODO check for requested type
             if (obs.isSetHeightDepthParameter()) {
@@ -217,19 +218,19 @@ public class InspireObservationResponseConverter implements RequestResponseModif
 
     private Collection<? extends OmObservation> mergeMultiPointObservation(List<OmObservation> observations) {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
-        observationMergeIndicator.setObservableProperty(true).setPhenomenonTime(true);
+        observationMergeIndicator.setObservableProperty(true).setPhenomenonTime(true).setOfferings(true);
         return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }
 
     private Collection<? extends OmObservation> mergeProfileObservation(List<OmObservation> observations) {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
-        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true).setPhenomenonTime(true);
+        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true).setPhenomenonTime(true).setOfferings(true);
         return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }
 
     private Collection<? extends OmObservation> mergeTrajectoryObservation(List<OmObservation> observations) {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
-        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true);
+        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setFeatureOfInterest(true).setOfferings(true);
         return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }
 

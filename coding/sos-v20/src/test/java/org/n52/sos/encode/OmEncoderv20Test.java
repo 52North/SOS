@@ -29,8 +29,6 @@
 package org.n52.sos.encode;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasXPath;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -50,7 +48,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
-
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -114,7 +111,7 @@ public class OmEncoderv20Test {
 
     @Rule
     public final ErrorCollector errors = new ErrorCollector();
-
+    
     @Test
     public void testComplexObservation()
             throws OwsExceptionReport {

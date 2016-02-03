@@ -30,13 +30,14 @@ package org.n52.svalbard.gml.v321.encode;
 
 import java.util.Map;
 
+import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.XmlHelper;
 
 import net.opengis.gml.x32.DiscreteCoverageType;
-import net.opengis.gml.x32.DomainSetType;
 import net.opengis.gml.x33.ce.SimpleMultiPointDocument;
 import net.opengis.gml.x33.ce.SimpleMultiPointType;
 
@@ -46,18 +47,19 @@ public abstract class AbstractRectifiedGridCoverageTypeEncoder<T> extends Abstra
     protected DiscreteCoverageType encodeRectifiedGridCoverage(RectifiedGridCoverage rectifiedGridCoverage, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         DiscreteCoverageType dct = DiscreteCoverageType.Factory.newInstance();
         dct.setId(rectifiedGridCoverage.getGmlId());
-        dct.setDomainSet(encodeDomainSet(rectifiedGridCoverage));
+        // TODO substitute SimpleMultiPoint
+        XmlObject encodedGeometry = encodeDomainSet(rectifiedGridCoverage);
+        dct.addNewDomainSet().addNewAbstractGeometry().set(encodedGeometry);
+        XmlHelper.substituteElement(dct.getDomainSet().getAbstractGeometry(), encodedGeometry);
         dct.setRangeSet(encodeRangeSet(dct, rectifiedGridCoverage));
         return dct;
     }
     
-    private DomainSetType encodeDomainSet(RectifiedGridCoverage rectifiedGridCoverage) {
-        DomainSetType dst = DomainSetType.Factory.newInstance();
+    private XmlObject encodeDomainSet(RectifiedGridCoverage rectifiedGridCoverage) {
         SimpleMultiPointDocument smpd = SimpleMultiPointDocument.Factory.newInstance();
         SimpleMultiPointType smpt = smpd.addNewSimpleMultiPoint();
         smpt.addNewPosList().setListValue(rectifiedGridCoverage.getDomainSet());
-        dst.set(smpt);
-        return dst;
+        return smpd;
     }
 
     @Override

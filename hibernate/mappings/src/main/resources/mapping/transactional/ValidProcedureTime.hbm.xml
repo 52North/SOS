@@ -28,8 +28,8 @@
 			</column>
         </property>
         <property name="endTime" type="timestamp">
-            <column index="validProcedureTimeEndTimeIdx" name="endTime" length="29">
-				<comment>Timestamp since this procedure description is invalid</comment>
+            <column index="validProcedureTimeEndTimeIdx" name="endTime" length="29" not-null="false" default="NULL">
+				<comment>Timestamp until this procedure description is invalid</comment>
 			</column>
         </property>
         <property name="descriptionXml" type="org.hibernate.type.StringClobType" >

@@ -53,6 +53,7 @@ import org.w3c.dom.Node;
 
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
@@ -60,6 +61,7 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.sos.ogc.om.OmObservationContext;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -154,6 +156,7 @@ public class OmEncoderv20Test {
         procedure.setIdentifier(new CodeWithAuthority(PROCEDURE, CODE_SPACE));
         observationConstellation.setProcedure(procedure);
         observation.setObservationConstellation(observationConstellation);
+        observation.addRelatedObservation(new OmObservationContext(new ReferenceType("role"), new ReferenceType("observation")));
         observation.setParameter(null);
         observation.setResultTime(resultTime);
         observation.setTokenSeparator(TOKEN_SEPERATOR);

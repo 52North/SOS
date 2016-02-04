@@ -96,6 +96,18 @@ public final class CodingHelper {
         helperValues.put(HelperValues.PROPERTY_TYPE, Boolean.TRUE.toString());
         return encodeObjectToXml(namespace, o, helperValues);
     }
+    
+    public static XmlObject encodeObjectToXmlPropertyType(final String namespace, final Object o,
+            Map<SosConstants.HelperValues, String> additionalValues)
+                    throws UnsupportedEncoderInputException, OwsExceptionReport {
+        Encoder<XmlObject, Object> encoder =
+                CodingRepository.getInstance().getEncoder(getPropertyTypeEncoderKey(namespace, o));
+        if (encoder != null) {
+            return encoder.encode(o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+        }
+        additionalValues.put(HelperValues.PROPERTY_TYPE, Boolean.TRUE.toString());
+        return encodeObjectToXml(namespace, o, additionalValues);
+    }
 
     public static XmlObject encodeObjectToXmlDocument(final String namespace, final Object o) throws UnsupportedEncoderInputException, OwsExceptionReport {
         Encoder<XmlObject, Object> encoder = CodingRepository.getInstance().getEncoder(getDocumentEncoderKey(namespace, o));

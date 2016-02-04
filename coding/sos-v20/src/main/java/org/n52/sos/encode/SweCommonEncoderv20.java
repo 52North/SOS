@@ -36,40 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.swe.x20.AbstractDataComponentType;
-import net.opengis.swe.x20.AbstractEncodingDocument;
-import net.opengis.swe.x20.AbstractEncodingType;
-import net.opengis.swe.x20.BooleanType;
-import net.opengis.swe.x20.CategoryType;
-import net.opengis.swe.x20.CountRangeType;
-import net.opengis.swe.x20.CountType;
-import net.opengis.swe.x20.DataArrayDocument;
-import net.opengis.swe.x20.DataArrayPropertyType;
-import net.opengis.swe.x20.DataArrayType;
-import net.opengis.swe.x20.DataArrayType.ElementType;
-import net.opengis.swe.x20.DataArrayType.Encoding;
-import net.opengis.swe.x20.DataRecordDocument;
-import net.opengis.swe.x20.DataRecordPropertyType;
-import net.opengis.swe.x20.DataRecordType;
-import net.opengis.swe.x20.DataRecordType.Field;
-import net.opengis.swe.x20.QuantityRangeType;
-import net.opengis.swe.x20.QuantityType;
-import net.opengis.swe.x20.Reference;
-import net.opengis.swe.x20.TextEncodingDocument;
-import net.opengis.swe.x20.TextEncodingType;
-import net.opengis.swe.x20.TextType;
-import net.opengis.swe.x20.TimeRangeType;
-import net.opengis.swe.x20.TimeType;
-import net.opengis.swe.x20.UnitReference;
-import net.opengis.swe.x20.VectorType;
-import net.opengis.swe.x20.VectorType.Coordinate;
-
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
-
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
@@ -93,7 +64,6 @@ import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
@@ -105,12 +75,38 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
+
+import net.opengis.swe.x20.AbstractDataComponentType;
+import net.opengis.swe.x20.AbstractEncodingDocument;
+import net.opengis.swe.x20.AbstractEncodingType;
+import net.opengis.swe.x20.BooleanType;
+import net.opengis.swe.x20.CategoryType;
+import net.opengis.swe.x20.CountType;
+import net.opengis.swe.x20.DataArrayDocument;
+import net.opengis.swe.x20.DataArrayPropertyType;
+import net.opengis.swe.x20.DataArrayType;
+import net.opengis.swe.x20.DataArrayType.ElementType;
+import net.opengis.swe.x20.DataArrayType.Encoding;
+import net.opengis.swe.x20.DataRecordDocument;
+import net.opengis.swe.x20.DataRecordPropertyType;
+import net.opengis.swe.x20.DataRecordType;
+import net.opengis.swe.x20.DataRecordType.Field;
+import net.opengis.swe.x20.QuantityRangeType;
+import net.opengis.swe.x20.QuantityType;
+import net.opengis.swe.x20.Reference;
+import net.opengis.swe.x20.TextEncodingDocument;
+import net.opengis.swe.x20.TextEncodingType;
+import net.opengis.swe.x20.TextType;
+import net.opengis.swe.x20.TimeRangeType;
+import net.opengis.swe.x20.TimeType;
+import net.opengis.swe.x20.UnitReference;
+import net.opengis.swe.x20.VectorType;
+import net.opengis.swe.x20.VectorType.Coordinate;
 
 
 public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {

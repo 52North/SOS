@@ -35,7 +35,6 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;

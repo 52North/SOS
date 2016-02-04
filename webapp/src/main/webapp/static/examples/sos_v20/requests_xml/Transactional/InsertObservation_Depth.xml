@@ -28,7 +28,7 @@
 			<om:procedure xlink:href="http://www.52north.org/test/procedure/9"/>
             <om:parameter>
                 <om:NamedValue>
-                    <om:name sxlink:href="http://www.opengis.net/def/param-name/OGC-OM/2.0/depth" />
+                    <om:name xlink:href="http://www.opengis.net/def/param-name/OGC-OM/2.0/depth" />
                     <om:value xsi:type="gml:MeasureType" uom="cm">5.0</om:value>
                 </om:NamedValue>
             </om:parameter>

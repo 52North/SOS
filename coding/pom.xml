@@ -26,5 +26,6 @@
 		<module>gml</module>
 		<module>gml-cov</module>
 		<module>inspire</module>
+		<module>gwml</module>
     </modules>
 </project>

@@ -29,20 +29,24 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationTypes;
 
 /**
  * @since 4.0.0
  *
  */
 public class Offering extends AbstractIdentifierNameDescriptionEntity
-        implements Serializable, HasDisabledFlag {
+        implements Serializable, HasDisabledFlag, HasObservationTypes {
 
     private static final long serialVersionUID = 6512574941388917166L;
     public static final String ID = "offeringId";
     private long offeringId;
     private Boolean disabled = false;
+    private Set<ObservationType> observationTypes = new HashSet<ObservationType>(0);
 
     public long getOfferingId() {
         return this.offeringId;
@@ -65,6 +69,16 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
     @Override
     public boolean getDisabled() {
         return disabled;
+    }
+    
+    @Override
+    public Set<ObservationType> getObservationTypes() {
+        return observationTypes;
+    }
+
+    @Override
+    public void setObservationTypes(final Set<ObservationType> observationTypes) {
+        this.observationTypes = observationTypes;
     }
 
 }

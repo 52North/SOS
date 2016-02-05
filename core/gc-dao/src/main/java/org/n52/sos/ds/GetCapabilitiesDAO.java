@@ -41,9 +41,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.coding.CodingRepository;
@@ -54,6 +51,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.filter.FilterCapabilities;
 import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
@@ -97,12 +95,11 @@ import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
-import org.n52.sos.i18n.LocaleHelper;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.util.MultiMaps;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SetMultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -806,19 +803,16 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     }
 
     private Collection<String> getObservationTypes(final String offering) {
-        final Collection<String> allObservationTypes = getCache().getObservationTypesForOffering(offering);
-        final List<String> observationTypes = new ArrayList<String>(allObservationTypes.size());
+        final Set<String> observationTypes = Sets.newHashSet();
 
-        for (final String observationType : allObservationTypes) {
+        for (final String observationType : getCache().getObservationTypesForOffering(offering)) {
             if (!observationType.equals(SosConstants.NOT_DEFINED)) {
                 observationTypes.add(observationType);
             }
         }
-        if (observationTypes.isEmpty()) {
-            for (final String observationType : getCache().getAllowedObservationTypesForOffering(offering)) {
-                if (!observationType.equals(SosConstants.NOT_DEFINED)) {
-                    observationTypes.add(observationType);
-                }
+        for (final String observationType : getCache().getAllowedObservationTypesForOffering(offering)) {
+            if (!observationType.equals(SosConstants.NOT_DEFINED)) {
+                observationTypes.add(observationType);
             }
         }
         return observationTypes;

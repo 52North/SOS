@@ -43,5 +43,18 @@
             	<comment>For later use by the SOS. Indicator if this offering should not be provided by the SOS.</comment>
             </column>
         </property>
+                <set name="observationTypes" table="offeringAllowedObservationType" inverse="false" fetch="select">
+        	<comment>Table to store relations between offering and observationTypes, defined in InsertSensor request. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
+            <key>
+                <column name="offeringId" not-null="true">
+	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+	            </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.ObservationType" foreign-key="offeringObservationTypeFk">
+                <column name="observationTypeId" not-null="true">
+            	<comment>Foreign Key (FK) to the related observationType. Contains "observationType".observationTypeId</comment>
+            </column>
+            </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

@@ -105,6 +105,7 @@ This project includes:
   52°North SOS - Webapp with Sensor Web REST API under GPLv2
   52°North Svalbard - CV for GML 3.2.1 XML Request Coding under GPLv2
   52°North Svalbard - GML XML Request Coding under GPLv2
+  52°North Svalbard - GWML 2.1 XML Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
@@ -224,6 +225,7 @@ This project includes:
   OGC GML schema (spec. v3.1.1) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.2.1) under The Apache Software License, Version 2.0
   OGC GML schema (spec. v3.3) under The Apache Software License, Version 2.0
+  OGC GWML 2.0 schema (spec. v2.1) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC O&M schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC OWS schema (spec. v1.1.0) under The Apache Software License, Version 2.0

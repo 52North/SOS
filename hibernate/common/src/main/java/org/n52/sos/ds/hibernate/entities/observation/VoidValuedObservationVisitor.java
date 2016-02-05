@@ -33,6 +33,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
@@ -72,6 +73,9 @@ public abstract class VoidValuedObservationVisitor
             throws OwsExceptionReport;
 
     protected abstract void _visit(SweDataArrayValuedObservation o)
+            throws OwsExceptionReport;
+    
+    protected abstract void _visit(GeologyLogCoverageValuedObservation o)
             throws OwsExceptionReport;
 
     @Override
@@ -132,6 +136,13 @@ public abstract class VoidValuedObservationVisitor
 
     @Override
     public Void visit(SweDataArrayValuedObservation o)
+            throws OwsExceptionReport {
+        _visit(o);
+        return null;
+    }
+    
+    @Override
+    public Void visit(GeologyLogCoverageValuedObservation o)
             throws OwsExceptionReport {
         _visit(o);
         return null;

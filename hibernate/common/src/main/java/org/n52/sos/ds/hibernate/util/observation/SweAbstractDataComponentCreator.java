@@ -40,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
@@ -140,6 +141,13 @@ public class SweAbstractDataComponentCreator
             throws OwsExceptionReport {
         XmlObject xml = XmlHelper.parseXmlString(o.getValue());
         return (SweDataArray) CodingHelper.decodeXmlElement(xml);
+    }
+
+    @Override
+    public SweAbstractDataComponent visit(GeologyLogCoverageValuedObservation o) throws OwsExceptionReport {
+        SweQuantity component = new SweQuantity();
+        component.setValue(o.getLogValue());
+        return setCommonValues(component, o);
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(

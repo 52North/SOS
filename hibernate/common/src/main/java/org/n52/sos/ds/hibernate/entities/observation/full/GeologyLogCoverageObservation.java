@@ -26,37 +26,12 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation;
+package org.n52.sos.ds.hibernate.entities.observation.full;
 
-import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
+import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 
-/**
- *
- */
-public abstract class AbstractObservation<T>
-        extends AbstractTemporalReferencedObservation
-        implements Observation<T> {
+public interface GeologyLogCoverageObservation extends GeologyLogCoverageValuedObservation, Observation<GWGeologyLogCoverage> {
 
-    private static final long serialVersionUID = -5638600640028433573L;
-    private Unit unit;
-
-    @Override
-    public Unit getUnit() {
-        return unit;
-    }
-
-    @Override
-    public void setUnit(final Unit unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
 }

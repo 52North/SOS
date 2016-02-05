@@ -360,5 +360,45 @@
                 </many-to-many>
             </set>
         </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesGeologyLogCoverageObservation"
+                         extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                         table="geologyLocCoverageValue">
+           <comment>Value table for GeologyLogCoverage observation</comment>
+        	<key foreign-key="observationGeoLogCovValueFk">
+	        	<column name="observationId" >
+	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
+	        	</column>
+        	</key>
+        	<property name="fromDepth" 
+        			  type="double">
+         		<column name="fromDepth"
+         				not-null="false">
+         			<comment>Value of fromDepth</comment>
+         		</column>
+         	</property>
+         	<property name="toDepth" 
+        			  type="double">
+         		<column name="toDepth"
+         				not-null="false">
+         			<comment>Value of toDepth</comment>
+         		</column>
+         	</property>
+         	<many-to-one name="depthunit"
+                     class="org.n52.sos.ds.hibernate.entities.Unit"
+                     fetch="select"
+                     lazy="no-proxy"
+                     foreign-key="geoLocCovUnitFk">
+            <column name="depthunitid"
+                    not-null="false">
+            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+            </column>
+        	</many-to-one>
+        	<property name="logValue" 
+        			  type="double">
+         		<column name="value">
+         			<comment>GeologLogCoverage observation value</comment>
+         		</column>
+         	</property>
+        </joined-subclass>
     </class>
 </hibernate-mapping>

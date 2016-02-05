@@ -36,6 +36,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
@@ -128,6 +129,14 @@ public class ObservationValueCreator
         SweDataArray array = (SweDataArray) CodingHelper.decodeXmlElement(xml);
         return new SweDataArrayValue(array);
     }
+
+    @Override
+    public Value<?> visit(GeologyLogCoverageValuedObservation o) throws OwsExceptionReport {
+        QuantityValue v = new QuantityValue(o.getLogValue());
+        addUnit(o, v);
+        return v;
+    }
+
 
     protected void addUnit(ValuedObservation<?> o, Value<?> v) {
         if (!v.isSetUnit() && o.isSetUnit()) {

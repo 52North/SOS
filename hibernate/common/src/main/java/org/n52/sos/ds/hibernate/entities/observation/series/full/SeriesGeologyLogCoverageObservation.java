@@ -28,48 +28,109 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series.full;
 
-
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.GeologyLogCoverageGeneratorSplitter;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.GeologyLogCoverageObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-/**
- * Implementation of a full {@link Observation} for the series observation
- * concept, that holds a numeric value.
- *
- * @author Christian Autermann
- */
-public class SeriesNumericObservation
-        extends AbstractSeriesObservation<Double>
-        implements NumericObservation {
+public class SeriesGeologyLogCoverageObservation extends AbstractSeriesObservation<GWGeologyLogCoverage>
+    implements GeologyLogCoverageObservation {
 
-    private static final long serialVersionUID = -835034606459038907L;
-
-    private Double value;
+    private static final long serialVersionUID = -3825062615148354938L;
+    private GWGeologyLogCoverage value;
+    private Double fromDepth;
+    private Double toDepth;
+    private Unit depthunit;
+    private Double logValue;
 
     @Override
-    public Double getValue() {
-        return this.value;
+    public GWGeologyLogCoverage getValue() {
+        if (value == null) {
+            setValue(GeologyLogCoverageGeneratorSplitter.create(this));
+        }
+        return value;
     }
 
     @Override
-    public void setValue(Double value) {
-        this.value = value;
+    public void setValue(GWGeologyLogCoverage value) {
+       this.value = value;
+       GeologyLogCoverageGeneratorSplitter.split(value, this);
     }
 
     @Override
     public boolean isSetValue() {
-        return value != null;
+        return getValue() != null;
     }
-    
+
     @Override
     public String getValueAsString() {
-        return getValue().toString();
+        return getLogValue().toString();
+    }
+
+    @Override
+    public Double getFromDepth() {
+        return fromDepth;
+    }
+
+    @Override
+    public void setFromDepth(Double fromDepth) {
+        this.fromDepth = fromDepth;
+    }
+
+    @Override
+    public boolean isSetFromDepth() {
+        return getFromDepth() != null;
+    }
+
+    @Override
+    public Double getToDepth() {
+        return toDepth;
+    }
+
+    @Override
+    public void setToDepth(Double toDepth) {
+        this.toDepth = toDepth;
+    }
+
+    @Override
+    public boolean isSetToDepth() {
+        return getToDepth() != null;
+    }
+
+    @Override
+    public Unit getDepthunit() {
+        return depthunit;
+    }
+
+    @Override
+    public void setDepthunit(Unit depthunit) {
+        this.depthunit = depthunit;
+    }
+
+    @Override
+    public boolean isSetDephtUnit() {
+        return getDepthunit() != null && getDepthunit().isSetUnit();
+    }
+
+    @Override
+    public Double getLogValue() {
+        return logValue;
+    }
+
+    @Override
+    public void setLogValue(Double logValue) {
+        this.logValue = logValue;
+    }
+
+    @Override
+    public boolean isSetLogValue() {
+        return getLogValue() != null;
     }
 
     @Override

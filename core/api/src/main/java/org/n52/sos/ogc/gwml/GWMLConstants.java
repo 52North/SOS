@@ -39,4 +39,6 @@ public interface GWMLConstants {
     String SCHEMA_LOCATION_URL_GWML_21 = "http://ngwd-bdnes.cits.nrcan.gc.ca/service/gwml/schemas/2.1/gwml2.xsd";
 
     SchemaLocation GWML_21_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_21, SCHEMA_LOCATION_URL_GWML_21);
+
+    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.1/GW_GeologyLogCoverage";
 }

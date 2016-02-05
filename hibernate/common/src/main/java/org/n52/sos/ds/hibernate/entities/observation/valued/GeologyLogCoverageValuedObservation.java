@@ -26,37 +26,61 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation;
+package org.n52.sos.ds.hibernate.entities.observation.valued;
 
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 
-/**
- *
- */
-public abstract class AbstractObservation<T>
-        extends AbstractTemporalReferencedObservation
-        implements Observation<T> {
+public interface GeologyLogCoverageValuedObservation extends ValuedObservation<GWGeologyLogCoverage> {
+    
+    /**
+     * @return the fromDepth
+     */
+    Double getFromDepth();
 
-    private static final long serialVersionUID = -5638600640028433573L;
-    private Unit unit;
+    /**
+     * @param fromDepth the fromDepth to set
+     */
+    void setFromDepth(Double fromDepth);
 
-    @Override
-    public Unit getUnit() {
-        return unit;
-    }
+    boolean isSetFromDepth();
 
-    @Override
-    public void setUnit(final Unit unit) {
-        this.unit = unit;
-    }
+    /**
+     * @return the toDepth
+     */
+    Double getToDepth();
+    /**
+     * @param toDepth the toDepth to set
+     */
+    void setToDepth(Double toDepth);
 
-    @Override
-    public boolean isSetUnit() {
-        return getUnit() != null && getUnit().isSetUnit();
-    }
+    boolean isSetToDepth();
 
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
+    /**
+     * @return the depthunit
+     */
+    Unit getDepthunit();
+
+    /**
+     * @param depthunit the depthunit to set
+     */
+    void setDepthunit(Unit depthunit);
+
+    boolean isSetDephtUnit();
+
+    /**
+     * @return the logValue
+     */
+    Double getLogValue();
+
+    /**
+     * @param logValue the logValue to set
+     */
+    void setLogValue(Double logValue);
+
+    boolean isSetLogValue();
+    
+    
+    
 }

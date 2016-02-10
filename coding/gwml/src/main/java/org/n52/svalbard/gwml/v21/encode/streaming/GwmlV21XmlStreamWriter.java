@@ -26,22 +26,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ogc.gwml;
+package org.n52.svalbard.gwml.v21.encode.streaming;
 
-import org.n52.sos.util.http.MediaType;
-import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 
-public interface GWMLConstants {
+public class GwmlV21XmlStreamWriter extends OmV20XmlStreamWriter {
 
-    String NS_GWML_21  = "http://www.opengis.net/gwml/2.1";
-    
-    String NS_GWML_21_PREFIX = "gwml2";
-    
-    String SCHEMA_LOCATION_URL_GWML_21 = "http://ngwd-bdnes.cits.nrcan.gc.ca/service/gwml/schemas/2.1/gwml2.xsd";
-
-    SchemaLocation GWML_21_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_21, SCHEMA_LOCATION_URL_GWML_21);
-
-    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.1/GW_GeologyLogCoverage";
-    
-    MediaType CONTENT_TYPE_GWML_21 = new MediaType("text", "xml", "subtype", "gwml/2.1");
 }

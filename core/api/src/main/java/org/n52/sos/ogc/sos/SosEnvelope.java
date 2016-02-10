@@ -101,6 +101,9 @@ public class SosEnvelope implements Serializable {
      */
     public void expandToInclude(final SosEnvelope e) {
         if (e != null && e.isSetEnvelope()) {
+            if (!isSetSrid() && e.isSetSrid()) {
+                setSrid(e.getSrid());
+            }
             expandToInclude(e.getEnvelope());
         }
     }

@@ -352,6 +352,11 @@
             <artifactId>do-kvp</artifactId>
         </dependency>
 
+		<!-- Related offering encoding -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-related-offering</artifactId>
+        </dependency>
 
         <!-- dependencies for integration test -->
         <dependency>

@@ -15,6 +15,6 @@
         <module>gda</module>
         <module>do</module>
         <module>inspire</module>
-        <module>gwml</module>
+        <module>related-offering</module>
     </modules>
 </project>

@@ -418,9 +418,15 @@
                 <artifactId>prefixed-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ereporting-identifier</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Related offering encoding -->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>coding-related-offering</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- Split and Merge observatioons -->

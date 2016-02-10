@@ -86,7 +86,6 @@ This project includes:
   52°North SOS - SOS 2.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Enhanced Profile Operator under GPLv2
   52°North SOS - SOS 2.0 eReporting Extension under GPLv2
-  52°North SOS - SOS 2.0 GWML 2.0 extension under GPLv2
   52°North SOS - SOS 2.0 Inspire extension under GPLv2
   52°North SOS - SOS 2.0 Result Handling Profile Operator under GPLv2
   52°North SOS - SOS 2.0 Transactional Profile Operator under GPLv2
@@ -107,6 +106,7 @@ This project includes:
   52°North Svalbard - GML XML Request Coding under GPLv2
   52°North Svalbard - GWML 2.1 XML Coding under GPLv2
   52°North Svalbard - INSPIRE XML OMSO Coding under GPLv2
+  52°North Svalbard - Svalbard Related Offering Coding extension under GPLv2
   52°North Third Party - NCName resolver under BSD 2-clause "Simplified" or "FreeBSD"
                 License
   AntLR Parser Generator under BSD License

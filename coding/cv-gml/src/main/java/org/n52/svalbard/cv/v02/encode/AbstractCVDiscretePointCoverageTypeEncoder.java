@@ -296,7 +296,7 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
 
         @Override
         public XmlObject visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
-            return null;
+            return  CodingHelper.encodeObjectToXml(value.getDefaultElementEncoding(), value);
         }
     }
 }

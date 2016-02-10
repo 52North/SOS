@@ -35,6 +35,7 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.gwml.GWMLConstants;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -273,7 +274,7 @@ public final class OMHelper {
 
         @Override
         public String visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
-            return defaultValue();
+            return GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE;
         }
     }
 }

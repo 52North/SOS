@@ -132,9 +132,7 @@ public class ObservationValueCreator
 
     @Override
     public Value<?> visit(GeologyLogCoverageValuedObservation o) throws OwsExceptionReport {
-        QuantityValue v = new QuantityValue(o.getLogValue());
-        addUnit(o, v);
-        return v;
+        return o.getValue();
     }
 
 

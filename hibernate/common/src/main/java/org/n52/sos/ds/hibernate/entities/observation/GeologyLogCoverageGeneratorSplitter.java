@@ -84,7 +84,7 @@ public class GeologyLogCoverageGeneratorSplitter {
     }
 
     private static String getFieldNameFrom(String observedProperty) {
-        return observedProperty.substring(observedProperty.lastIndexOf("/"));
+        return observedProperty.substring(observedProperty.lastIndexOf("/") + 1);
     }
 
     public static void split(GWGeologyLogCoverage coverage, GeologyLogCoverageValuedObservation entity) {

@@ -31,6 +31,7 @@ package org.n52.sos.ogc.om.values;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gwml.GWMLConstants;
 import org.n52.sos.ogc.om.values.LogValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
@@ -84,6 +85,11 @@ public class GWGeologyLogCoverage extends AbstractFeature implements Value<List<
     @Override
     public boolean isSetUnit() {
         return false;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return GWMLConstants.NS_GWML_21;
     }
 
     @Override

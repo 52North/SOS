@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gwml.GWMLConstants;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.NamedValue;
@@ -475,7 +477,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
-            return null;
+            return  CodingHelper.encodeObjectToXmlPropertyType(value.getDefaultElementEncoding(), value);
         }
+
     }
 }

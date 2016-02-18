@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationTypes;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.util.CollectionHelper;
 
@@ -44,7 +44,7 @@ import com.google.common.collect.Sets;
  *
  */
 public class Offering extends AbstractIdentifierNameDescriptionEntity
-        implements Serializable, HasDisabledFlag, HasParentChilds<Offering> {
+        implements Serializable, HasDisabledFlag, HasParentChilds<Offering>, HasObservationTypes {
 
     private static final long serialVersionUID = 6512574941388917166L;
     public static final String ID = "offeringId";
@@ -52,6 +52,7 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
     private Boolean disabled = false;
     private Set<Offering> childs = Sets.newHashSet();
     private Set<Offering> parents = Sets.newHashSet();
+    private Set<ObservationType> observationTypes = new HashSet<ObservationType>(0);
 
     public long getOfferingId() {
         return this.offeringId;
@@ -126,5 +127,15 @@ public class Offering extends AbstractIdentifierNameDescriptionEntity
     @Override
     public boolean hasChilds() {
         return CollectionHelper.isNotEmpty(getChilds());
+    }
+    
+    @Override
+    public Set<ObservationType> getObservationTypes() {
+        return observationTypes;
+    }
+
+    @Override
+    public void setObservationTypes(final Set<ObservationType> observationTypes) {
+        this.observationTypes = observationTypes;
     }
 }

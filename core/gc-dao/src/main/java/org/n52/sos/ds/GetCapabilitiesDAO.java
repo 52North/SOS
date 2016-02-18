@@ -892,21 +892,14 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     }
 
     private Collection<String> getObservationTypes(String offering) {
-        final Collection<String> allObservationTypes = getCache().getObservationTypesForOffering(offering);
-        final List<String> observationTypes = new ArrayList<String>(allObservationTypes.size());
-
-        for (final String observationType : allObservationTypes) {
-            if (!observationType.equals(SosConstants.NOT_DEFINED)) {
-                observationTypes.add(observationType);
-            }
-        }
-        if (observationTypes.isEmpty()) {
-            for (final String observationType : getCache().getAllowedObservationTypesForOffering(offering)) {
-                if (!observationType.equals(SosConstants.NOT_DEFINED)) {
-                    observationTypes.add(observationType);
-                }
-            }
-        }
+        final Collection<String> observationTypes = getCache().getAllObservationTypesForOffering(offering);
+//        final Set<String> observationTypes = Sets.newHashSet();
+        observationTypes.remove(SosConstants.NOT_DEFINED);
+//        for (final String observationType : allObservationTypes) {
+//            if (!observationType.equals(SosConstants.NOT_DEFINED)) {
+//                observationTypes.add(observationType);
+//            }
+//        }
         return observationTypes;
     }
 

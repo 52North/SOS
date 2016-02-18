@@ -34,9 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.util.collections.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -44,13 +41,10 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
-import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -118,6 +112,8 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             if (shouldOfferingBeProcessed(offeringId)) {
                 String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
                 getCache().addOffering(prefixedOfferingId);
+                getCache().setAllowedObservationTypeForOffering(prefixedOfferingId,
+                        getObservationTypesFromObservationType(offering.getObservationTypes()));
 
                 if (offering instanceof TOffering) {
                     TOffering tOffering = (TOffering) offering;
@@ -126,8 +122,6 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                     if (!relatedFeatures.isEmpty()) {
                         getCache().setRelatedFeaturesForOffering(prefixedOfferingId, relatedFeatures);
                     }
-                    getCache().setAllowedObservationTypeForOffering(prefixedOfferingId,
-                            getObservationTypesFromObservationType(tOffering.getObservationTypes()));
                     // featureOfInterestTypes
                     getCache().setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
                             getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));

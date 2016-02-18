@@ -26,57 +26,46 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.gda;
+package org.n52.svalbard.gda.v20;
 
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlAnyURI;
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlString;
-import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.n52.sos.decode.AbstractXmlDecoder;
 import org.n52.sos.decode.DecoderKey;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.gda.AbstractGetDataAvailabilityXmlDecoder;
+import org.n52.sos.gda.GetDataAvailabilityConstants;
+import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 
 /**
- * {@code Decoder} to handle {@link GetDataAvailabilityRequest}s.
+ * {@code Decoder} to handle {@link GetDataAvailabilityRequest}s for version 2.0.
  * 
  * @author Christian Autermann
  * 
- * @since 4.0.0
+ * @since 4.4.0
  */
 public class GetDataAvailabilityXmlDecoder extends AbstractGetDataAvailabilityXmlDecoder {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlDecoder.class);
 
-    private static final String BASE_PATH_SOS = getBasePath(Sos2Constants.XPATH_PREFIX_SOS_20,
-            SosConstants.NS_SOS_PREFIX);
-
-    private static final String BASE_PATH_GDA = getBasePath(GetDataAvailabilityConstants.XPATH_PREFIXES_GDA,
+    private static final String BASE_PATH_GDA = getBasePath(GetDataAvailabilityConstants.XPATH_PREFIXES_GDA_20,
             GetDataAvailabilityConstants.NS_GDA_PREFIX);
 
-    @SuppressWarnings("unchecked")
-    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
-            Sos2Constants.NS_SOS_20, XmlObject.class), CodingHelper.decoderKeysForElements(
-            GetDataAvailabilityConstants.NS_GDA, XmlObject.class), CodingHelper.xmlDecoderKeysForOperation(
-            SosConstants.SOS, Sos2Constants.SERVICEVERSION, GetDataAvailabilityConstants.OPERATION_NAME));
+    // TODO check with 1.0 for DecoderKey with OperationName
+//    @SuppressWarnings("unchecked")
+//    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
+//            GetDataAvailabilityConstants.NS_GDA_20, XmlObject.class), CodingHelper.xmlDecoderKeysForOperation(
+//            SosConstants.SOS, Sos2Constants.SERVICEVERSION, GetDataAvailabilityConstants.OPERATION_NAME));
+//    
+//    @SuppressWarnings("unchecked")
+    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper.decoderKeysForElements(
+            GetDataAvailabilityConstants.NS_GDA_20, XmlObject.class);
 
     /**
      * Constructs a new {@code GetDataAvailabilityDecoder}.
@@ -101,18 +90,12 @@ public class GetDataAvailabilityXmlDecoder extends AbstractGetDataAvailabilityXm
      */
     @Override
     public GetDataAvailabilityRequest parseGetDataAvailability(XmlObject xml) throws OwsExceptionReport {
-        XmlObject[] roots = xml.selectPath(BASE_PATH_SOS);
+        XmlObject[] roots = xml.selectPath(BASE_PATH_GDA);
         if (roots != null && roots.length > 0) {
-            return parseGetDataAvailability(xml, BASE_PATH_SOS, Sos2Constants.XPATH_PREFIX_SOS_20,
-                    SosConstants.NS_SOS_PREFIX, Sos2Constants.NS_SOS_20);
-        } else {
-            roots = xml.selectPath(BASE_PATH_GDA);
-            if (roots != null && roots.length > 0) {
-                return parseGetDataAvailability(xml, BASE_PATH_GDA, GetDataAvailabilityConstants.XPATH_PREFIXES_GDA,
-                        GetDataAvailabilityConstants.NS_GDA_PREFIX, GetDataAvailabilityConstants.NS_GDA);
-            }
+            return parseGetDataAvailability(xml, BASE_PATH_GDA, GetDataAvailabilityConstants.XPATH_PREFIXES_GDA_20,
+                    GetDataAvailabilityConstants.NS_GDA_PREFIX, GetDataAvailabilityConstants.NS_GDA_20);
         }
-        return new GetDataAvailabilityRequest();
+        return new GetDataAvailabilityRequest().setNamespace(GetDataAvailabilityConstants.NS_GDA_20);
     }
 
     /**
@@ -166,7 +149,11 @@ public class GetDataAvailabilityXmlDecoder extends AbstractGetDataAvailabilityXm
         for (XmlObject x : xml.selectPath(getPath(xpathPrefix, prefix, "offering"))) {
             request.addOffering(parseStringValue(x));
         }
+        for (XmlObject x : xml.selectPath(getPath(xpathPrefix, prefix, "responseFormat"))) {
+            request.setResponseFormat(parseStringValue(x));
+        }
         request.setExtensions(parseExtensions(xml));
         return request;
     }
+   
 }

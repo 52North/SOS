@@ -45,6 +45,7 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -66,9 +67,11 @@ import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.gda.AbstractGetDataAvailabilityDAO;
+import org.n52.sos.gda.GetDataAvailabilityConstants;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -133,9 +136,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         Session session = sessionHolder.getSession();
         try {
             List<?> dataAvailabilityValues = queryDataAvailabilityValues(req, session);
-            GetDataAvailabilityResponse response = new GetDataAvailabilityResponse();
-            response.setService(req.getService());
-            response.setVersion(req.getVersion());
+            GetDataAvailabilityResponse response = req.getResponse();
             response.setNamespace(req.getNamespace());
             for (Object o : dataAvailabilityValues) {
                 if (o != null) {
@@ -281,9 +282,10 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 .setDataAvailabilityList(dataAvailabilityValues)
                 .setSeriesObservationDAO(getSeriesObservationDAO())
                 .setSupportsSeriesObservationTime(EntitiyHelper.getInstance().isSeriesObservationTimeSupported());
+        boolean gdaV20 = checkForGDAv20(request);
         for (final Series series : DaoFactory.getInstance().getSeriesDAO().getSeries(request.getProcedures(),
                 request.getObservedProperties(), request.getFeaturesOfInterest(), request.getOfferings(), session)) {
-            if (isForEachOffering()) {
+            if (gdaV20) {
                 context.setMinMaxTransformer(new SeriesOfferingMinMaxTransformer())
                 .setSupportsNamedQuery(HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_OFFERING_DATA_AVAILABILITY_FOR_SERIES, session));
                 processDataAvailabilityForEachOffering(series, context, session);
@@ -294,6 +296,11 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
         }
         return dataAvailabilityValues;
+    }
+
+    private boolean checkForGDAv20(GetDataAvailabilityRequest request) {
+        return (request.isSetResponseFormat() && GetDataAvailabilityConstants.NS_GDA_20.equals(request.getResponseFormat()))
+                || GetDataAvailabilityConstants.NS_GDA_20.equals(request.getNamespace()) || isForceGDAv20Response();
     }
 
     /**
@@ -344,7 +351,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                                 context.getRequest(), session));
                     }
                     dataAvailability.setOffering(getOfferingReference(context.getOfferings(), ommt.getOffering(), session));
-                    dataAvailability.setObservationTypes(getObservationTypes(ommt.getOffering()));
+                    dataAvailability.setFormatDescriptors(getFormatDescriptors(ommt.getOffering(), context));
                     context.getDataAvailabilityList().add(dataAvailability);
                 }
             }
@@ -566,23 +573,23 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         return (Long) criteria.uniqueResult();
     }
 
-    private Set<String> getObservationTypes(String offering) {
-        final Collection<String> allObservationTypes = getCache().getObservationTypesForOffering(offering);
-        final Set<String> observationTypes = Sets.newHashSet();
-
-        for (final String observationType : allObservationTypes) {
-            if (!observationType.equals(SosConstants.NOT_DEFINED)) {
-                observationTypes.add(observationType);
-            }
-        }
-        if (observationTypes.isEmpty()) {
-            for (final String observationType : getCache().getAllowedObservationTypesForOffering(offering)) {
-                if (!observationType.equals(SosConstants.NOT_DEFINED)) {
-                    observationTypes.add(observationType);
+    private Set<FormatDescriptor> getFormatDescriptors(String offering, GdaRequestContext context) {
+        Map<String, Set<String>> responsFormatObservationTypesMap = Maps.newHashMap();
+        for (String observationType : getCache().getAllObservationTypesForOffering(offering)) {
+            Set<String> responseFormats = CodingRepository.getInstance().getResponseFormatsForObservationType(observationType, context.getRequest().getService(), context.getRequest().getVersion());
+            for (String responseFormat : responseFormats) {
+                if (responsFormatObservationTypesMap.containsKey(responseFormat)) {
+                    responsFormatObservationTypesMap.get(responseFormat).add(observationType);
+                } else {
+                    responsFormatObservationTypesMap.put(responseFormat, Sets.newHashSet(observationType));
                 }
             }
         }
-        return observationTypes;
+        Set<FormatDescriptor> formatDescriptors = Sets.newHashSet();
+        for (String responsFormat : responsFormatObservationTypesMap.keySet()) {
+            formatDescriptors.add(new FormatDescriptor(responsFormat, responsFormatObservationTypesMap.get(responsFormat)));
+        }
+        return formatDescriptors;
     }
 
     private boolean checkForNamedQueries(GetDataAvailabilityRequest req, Session session) {

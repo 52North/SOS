@@ -50,7 +50,7 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     
     private boolean forceValueCount = false;
     
-    private boolean forEachOffering = false;
+    private boolean forceGDAv20Response = false;
 
     public AbstractGetDataAvailabilityDAO(String service) {
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
@@ -97,15 +97,15 @@ public abstract class AbstractGetDataAvailabilityDAO extends AbstractOperationDA
     /**
      * @return the forEachOffering
      */
-    protected boolean isForEachOffering() {
-        return forEachOffering;
+    protected boolean isForceGDAv20Response() {
+        return forceGDAv20Response;
     }
 
     /**
-     * @param forEachOffering the forEachOffering to set
+     * @param forceGDAv20Response the forceGDAv20Response to set
      */
-    @Setting(GetDataAvailabilitySettings.FOR_EACH_OFFERING)
-    public void setForEachOffering(boolean forEachOffering) {
-        this.forEachOffering = forEachOffering;
+    @Setting(GetDataAvailabilitySettings.FORCE_GDA_20_RESPONSE)
+    public void setForceGDAv20Response(boolean forceGDAv20Response) {
+        this.forceGDAv20Response = forceGDAv20Response;
     }
 }

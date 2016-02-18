@@ -31,6 +31,7 @@ package org.n52.sos.gda;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -57,6 +58,22 @@ public class GetDataAvailabilityJsonEncoder extends AbstractSosResponseEncoder<G
                         .put(JSONConstants.PROCEDURE, da.getProcedure().getHref())
                         .put(JSONConstants.OBSERVED_PROPERTY, da.getObservedProperty().getHref())
                         .put(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(da.getPhenomenonTime()));
+            if (t.isSetResponseFormat() && GetDataAvailabilityConstants.NS_GDA_20.equals(t.getResponseFormat())) {
+                if (da.isSetOffering()) {
+                    objectNode.put(JSONConstants.OFFERING, da.getOffering().getHref());
+                }
+                if (da.isSetFormatDescriptors()) {
+                    ArrayNode fdArray = objectNode.putArray(GetDataAvailabilityConstants.FORMAT_DESCRIPTOR);
+                    for (FormatDescriptor fd : da.getFormatDescriptors()) {
+                        ObjectNode fdNode = fdArray.addObject();
+                        fdNode.put(GetDataAvailabilityConstants.RESPONSE_FORMAT, fd.getResponseFormat());
+                        ArrayNode otArray = fdNode.putArray(GetDataAvailabilityConstants.OBSERVATION_TYPE);
+                        for (String obsType : fd.getObservationTypes()) {
+                            otArray.add(obsType);
+                        }
+                    }
+                }
+            }
             if (da.isSetCount()) {
                 objectNode.put(JSONConstants.COUNT, da.getCount());
             }

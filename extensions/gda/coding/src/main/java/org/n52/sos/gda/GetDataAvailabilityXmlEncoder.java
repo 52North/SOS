@@ -39,6 +39,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractResponseEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
+import org.n52.sos.gda.v20.GetDataAvailabilityV20Response;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -67,7 +68,7 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
 
     @Override
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
-        return Sets.newHashSet(GetDataAvailabilityConstants.GET_DATA_AVAILABILITY_SCHEMA_LOCATION);
+        return Sets.newHashSet(GetDataAvailabilityConstants.GET_DATA_AVAILABILITY_SCHEMA_LOCATION, GetDataAvailabilityConstants.GET_DATA_AVAILABILITY_20_SCHEMA_LOCATION);
     }
 
     @Override
@@ -76,6 +77,17 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             if (Sos2Constants.NS_SOS_20.equals(response.getNamespace())) {
                 new SosGetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+            } else if (GetDataAvailabilityConstants.NS_GDA_20.equals(response.getNamespace())
+                    || GetDataAvailabilityConstants.NS_GDA_20.equals(response.getResponseFormat())
+                    || response instanceof GetDataAvailabilityV20Response) {
+                new org.n52.svalbard.gda.v20.GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities())
+                        .write(out);
+                XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                            XmlHelper.validateDocument(encodedObject));
+                }
+                return encodedObject;
             } else {
                 new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
                 XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));

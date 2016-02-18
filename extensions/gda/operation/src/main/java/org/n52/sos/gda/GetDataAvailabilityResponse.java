@@ -41,7 +41,9 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Response of a {@link GetDataAvailabilityRequest}.
@@ -52,7 +54,7 @@ import com.google.common.collect.Lists;
  */
 public class GetDataAvailabilityResponse extends AbstractServiceResponse {
     private final List<DataAvailability> dataAvailabilities = new LinkedList<DataAvailability>();
-    
+    private String responseFormat;
     private String namespace = GetDataAvailabilityConstants.NS_GDA;
 
     /**
@@ -98,6 +100,34 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         this.dataAvailabilities.clear();
         this.dataAvailabilities.addAll(dataAvailabilities);
     }
+    
+    /**
+     * @return the responseFormat
+     */
+    public String getResponseFormat() {
+        return responseFormat;
+    }
+
+    /**
+     * @param responseFormat the responseFormat to set
+     */
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+    
+    public boolean isSetResponseFormat() {
+        return !Strings.isNullOrEmpty(getResponseFormat());
+    }
+
+    public void setNamespace(String namespace) {
+        if (StringHelper.isNotEmpty(namespace)) {
+            this.namespace = namespace;
+        }
+    }
+
+    public String getNamespace() {
+        return this.namespace;
+    }
 
     /**
      * Describes the availability of observation with a specified combination of
@@ -120,7 +150,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         
         private ReferenceType offering;
         
-        private Set<String> observationTypes;
+        private Set<FormatDescriptor> formatDescriptors;
         
         private Object metadata;
         
@@ -256,19 +286,19 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         /**
          * @return the observationTypes
          */
-        public Set<String> getObservationTypes() {
-            return observationTypes;
+        public Set<FormatDescriptor> getFormatDescriptors() {
+            return formatDescriptors;
         }
 
         /**
          * @param observationTypes the observationTypes to set
          */
-        public void setObservationTypes(Set<String> observationTypes) {
-            this.observationTypes = observationTypes;
+        public void setFormatDescriptors(Set<FormatDescriptor> formatDescriptors) {
+            this.formatDescriptors = formatDescriptors;
         }
         
-        public boolean isSetObservationTypes() {
-            return CollectionHelper.isNotEmpty(getObservationTypes());
+        public boolean isSetFormatDescriptors() {
+            return CollectionHelper.isNotEmpty(getFormatDescriptors());
         }
 
         /**
@@ -288,16 +318,55 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public boolean isSetMetadata() {
             return getMetadata() != null;
         }
-        
-    }
-
-    public void setNamespace(String namespace) {
-        if (StringHelper.isNotEmpty(namespace)) {
-            this.namespace = namespace;
-        }
     }
     
-    public String getNamespace() {
-        return this.namespace;
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
+    public static class FormatDescriptor { 
+        private String responseFormat;
+        private Set<String> observationTypes;
+        
+        /**
+         * @param responseFormat
+         * @param observationTypes
+         */
+        public FormatDescriptor(String responseFormat, Set<String> observationTypes) {
+            super();
+            this.responseFormat = responseFormat;
+            this.observationTypes = observationTypes;
+        }
+        
+        /**
+         * @return the responseFormat
+         */
+        public String getResponseFormat() {
+            return responseFormat;
+        }
+        
+        /**
+         * @param responseFormat the responseFormat to set
+         */
+        public void setResponseFormat(String responseFormat) {
+            this.responseFormat = responseFormat;
+        }
+        
+        /**
+         * @return the observationTypes
+         */
+        public Set<String> getObservationTypes() {
+            return observationTypes;
+        }
+        
+        /**
+         * @param observationTypes the observationTypes to set
+         */
+        public void setObservationTypes(Set<String> observationTypes) {
+            this.observationTypes.clear();
+            this.observationTypes.addAll(observationTypes);
+        }
+        
     }
 }

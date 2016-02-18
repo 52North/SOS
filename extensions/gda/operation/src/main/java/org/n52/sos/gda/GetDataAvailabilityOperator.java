@@ -32,6 +32,9 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.exception.ows.CodedOwsException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.gda.GetDataAvailabilityConstants.GetDataAvailabilityParams;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -119,7 +122,25 @@ public class GetDataAvailabilityOperator
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
+        try {
+            if (request.isSetResponseFormat()) {
+                checkResponseFormat(request.getResponseFormat());
+            }
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        
         exceptions.throwIfNotEmpty();
+    }
+
+    private void checkResponseFormat(String responseFormat) throws CodedOwsException {
+        if (responseFormat == null || responseFormat.isEmpty()) {
+            throw new MissingParameterValueException("responseFormat");
+        }
+        if (!(GetDataAvailabilityConstants.NS_GDA.equals(responseFormat)
+                || GetDataAvailabilityConstants.NS_GDA_20.equals(responseFormat))) {
+            throw new InvalidParameterValueException("responseFormat", responseFormat);
+        }
     }
 
     @Override

@@ -13,5 +13,6 @@
     <modules>
         <module>operation</module>
         <module>hibernate</module>
+        <module>coding</module>
     </modules>
 </project>

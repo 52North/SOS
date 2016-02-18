@@ -31,10 +31,13 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.sos.gda.v20.GetDataAvailabilityV20Response;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.
@@ -52,6 +55,8 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
     private List<String> featuresOfInterest = new LinkedList<String>();
 
     private List<String> offerings = new LinkedList<String>();
+    
+    private String responseFormat;
 
     private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
@@ -94,8 +99,9 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * @param procedure
      *            the {@code procedure}
      */
-    public void addProcedure(String procedure) {
+    public GetDataAvailabilityRequest addProcedure(String procedure) {
         this.procedures.add(procedure);
+        return this;
     }
 
     /**
@@ -104,8 +110,9 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * @param observedProperty
      *            the {@code observedProperty}
      */
-    public void addObservedProperty(String observedProperty) {
+    public GetDataAvailabilityRequest addObservedProperty(String observedProperty) {
         this.observedProperties.add(observedProperty);
+        return this;
     }
 
     /**
@@ -114,12 +121,14 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * @param featureOfInterest
      *            the {@code featureOfInterest}
      */
-    public void addFeatureOfInterest(String featureOfInterest) {
+    public GetDataAvailabilityRequest addFeatureOfInterest(String featureOfInterest) {
         this.featuresOfInterest.add(featureOfInterest);
+        return this;
     }
 
-    public void setFeatureOfInterest(List<String> featuresOfInterest) {
+    public GetDataAvailabilityRequest setFeatureOfInterest(List<String> featuresOfInterest) {
         this.featuresOfInterest = featuresOfInterest;
+        return this;
     }
 
     /**
@@ -128,36 +137,41 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * @param offering
      *            the {@code offering}
      */
-    public void addOffering(String offering) {
+    public GetDataAvailabilityRequest addOffering(String offering) {
         this.offerings.add(offering);
+        return this;
     }
 
-    public void setOfferings(List<String> offerings) {
+    public GetDataAvailabilityRequest setOfferings(List<String> offerings) {
         this.offerings = offerings;
+        return this;
     }
 
     public boolean isSetProcedures() {
         return CollectionHelper.isNotEmpty(getProcedures());
     }
 
-    public void setProcedure(List<String> procedures) {
+    public GetDataAvailabilityRequest setProcedure(List<String> procedures) {
         this.procedures = procedures;
+        return this;
     }
     
     public boolean isSetProcedure() {
         return CollectionHelper.isNotEmpty(getProcedures());
     }
 
-    public void setProcedures(List<String> procedures) {
+    public GetDataAvailabilityRequest setProcedures(List<String> procedures) {
         this.procedures = procedures;
+        return this;
     }
 
     public boolean isSetObservedProperties() {
         return CollectionHelper.isNotEmpty(getObservedProperties());
     }
 
-    public void setObservedProperty(List<String> observedProperties) {
+    public GetDataAvailabilityRequest setObservedProperty(List<String> observedProperties) {
         this.observedProperties = observedProperties;
+        return this;
     }
 
     public boolean isSetFeaturesOfInterest() {
@@ -170,13 +184,45 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     @Override
     public GetDataAvailabilityResponse getResponse() throws OwsExceptionReport {
-        return (GetDataAvailabilityResponse) new GetDataAvailabilityResponse().set(this);
+        GetDataAvailabilityResponse gdaResponse = null;
+        
+        if ((isSetResponseFormat() && GetDataAvailabilityConstants.NS_GDA_20.equals(getResponseFormat()))
+                || GetDataAvailabilityConstants.NS_GDA_20.equals(getNamespace())) {
+            gdaResponse = new GetDataAvailabilityV20Response();
+        } else {
+            gdaResponse = new GetDataAvailabilityResponse();
+        }
+        if (isSetResponseFormat()) {
+            gdaResponse.setResponseFormat(getResponseFormat());
+        }
+        gdaResponse.set(this);
+        return gdaResponse;
     }
 
-    public void setNamespace(String namspace) {
+    /**
+     * @return the responseFormat
+     */
+    public String getResponseFormat() {
+        return responseFormat;
+    }
+
+    /**
+     * @param responseFormat the responseFormat to set
+     */
+    public GetDataAvailabilityRequest setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+        return this;
+    }
+    
+    public boolean isSetResponseFormat() {
+        return !Strings.isNullOrEmpty(getResponseFormat());
+    }
+
+    public GetDataAvailabilityRequest setNamespace(String namspace) {
         if (StringHelper.isNotEmpty(namspace)) {
             this.namspace = namspace;
         }
+        return this;
     }
 
     public String getNamespace() {

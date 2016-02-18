@@ -86,6 +86,10 @@ public class GetDataAvailabilityKvpDecoder extends AbstractKvpDecoder {
                         for (String offering : KvpHelper.checkParameterMultipleValues(parameterValues, name)) {
                             request.addOffering(offering);
                         }
+                    } else if (name.equalsIgnoreCase(GetDataAvailabilityConstants.GetDataAvailabilityV20Params.responseFormat
+                            .name())) {
+                        request.setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, name));
+                        request.setNamespace(GetDataAvailabilityConstants.NS_GDA_20);
                     } else {
                         exceptions.add(new ParameterNotSupportedException(name));
                     }

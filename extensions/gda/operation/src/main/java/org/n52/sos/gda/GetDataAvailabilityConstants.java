@@ -50,29 +50,166 @@ import org.n52.sos.wsdl.WSDLOperation;
  */
 public interface GetDataAvailabilityConstants {
     
+    String NS_GDA_PREFIX = "gda";
+    
+    String EN_GET_DATA_AVAILABILITY_MEMBER = "dataAvailabilityMember";
+
+    String EN_GET_DATA_AVAILABILITY = "GetDataAvailability";
+    
+    String EN_GET_DATA_AVAILABILITY_RESPONSE = "GetDataAvailabilityResponse";
+    
+    String FORMAT_DESCRIPTOR = "formatDescriptor";
+    
+    String RESPONSE_FORMAT = "responseFormat";
+    
+    String OBSERVATION_TYPE = "observationType";
+    
+    /*
+     * GDA v10
+     */
     String NS_GDA = "http://www.opengis.net/sosgda/1.0";
+    
+    String XPATH_PREFIXES_GDA = XmlHelper.getXPathPrefix(NS_GDA_PREFIX, NS_GDA);
     
     String SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY =  "http://waterml2.org/schemas/gda/1.0/gda.xsd";
     
     SchemaLocation GET_DATA_AVAILABILITY_SCHEMA_LOCATION = new SchemaLocation(NS_GDA,
             SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY);
     
-    String NS_GDA_PREFIX = "gda";
+    /**
+     * The {@code QName} for {@code gda:dataAvailabilityMember}.
+     */
+    QName GDA_DATA_AVAILABILITY_MEMBER = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_MEMBER,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
     
-    String XPATH_PREFIXES_GDA = XmlHelper.getXPathPrefix(NS_GDA_PREFIX, NS_GDA);
+    /**
+     * The {@code QName} for {@code gda:GetDataAvailabilityResponse}.
+     */
+    QName GDA_GET_DATA_AVAILABILITY_RESPONSE = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_RESPONSE,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
     
-    String EN_GET_DATA_AVAILABILITY_MEMBER = "dataAvailabilityMember";
-
-    String EN_GET_DATA_AVAILABILITY = "GetDataAvailability";
-
+    /**
+     * The {@code QName} for {@code gda:GetDataAvailability}.
+     */
+    QName GDA_GET_DATA_AVAILABILITY = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    QName GDA_EXTENSION = new QName(GetDataAvailabilityConstants.NS_GDA, "extension",
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:featureOfInterest}.
+     */
+    QName GDA_FEATURE_OF_INTEREST = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_FEATURE_OF_INTEREST,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:observedProperty}.
+     */
+    QName GDA_OBSERVED_PROPERTY = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_OBSERVED_PROPERTY,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:phenomenonTime}.
+     */
+    QName GDA_PHENOMENON_TIME =
+            new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PHENOMENON_TIME, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    /**
+     * The {@code QName} for {@code gda:procedure}.
+     */
+    QName GDA_PROCEDURE = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PROCEDURE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:procedure}.
+     */
+    QName GDA_COUNT = new QName(GetDataAvailabilityConstants.NS_GDA, "count", GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /*
+     * GDA v20
+     */
+    String NS_GDA_20 = "http://www.opengis.net/sosgda/2.0";
+    
+    String XPATH_PREFIXES_GDA_20 = XmlHelper.getXPathPrefix(NS_GDA_PREFIX, NS_GDA_20);
+    
+    String SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY_20 =  "http://waterml2.org/schemas/gda/2.0/gda.xsd";
+    
+    SchemaLocation GET_DATA_AVAILABILITY_20_SCHEMA_LOCATION = new SchemaLocation(NS_GDA_20,
+            SCHEMA_LOCATION_URL_GET_DATA_AVAILABILITY_20);
+    
+    /**
+     * The {@code QName} for {@code gda:dataAvailabilityMember}.
+     */
+    QName GDA_DATA_AVAILABILITY_20_MEMBER = new QName(GetDataAvailabilityConstants.NS_GDA_20, EN_GET_DATA_AVAILABILITY_MEMBER,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:GetDataAvailabilityResponse}.
+     */
+    QName GDA_GET_DATA_AVAILABILITY_20_RESPONSE = new QName(GetDataAvailabilityConstants.NS_GDA_20, EN_GET_DATA_AVAILABILITY_RESPONSE,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:GetDataAvailability}.
+     */
+    QName GDA_GET_DATA_AVAILABILITY_20 = new QName(GetDataAvailabilityConstants.NS_GDA_20, EN_GET_DATA_AVAILABILITY,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    QName GDA_20_EXTENSION = new QName(GetDataAvailabilityConstants.NS_GDA_20, "extension",
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:featureOfInterest}.
+     */
+    QName GDA_20_FEATURE_OF_INTEREST = new QName(GetDataAvailabilityConstants.NS_GDA_20, OmConstants.EN_FEATURE_OF_INTEREST,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:observedProperty}.
+     */
+    QName GDA_20_OBSERVED_PROPERTY = new QName(GetDataAvailabilityConstants.NS_GDA_20, OmConstants.EN_OBSERVED_PROPERTY,
+            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:phenomenonTime}.
+     */
+    QName GDA_20PHENOMENON_TIME =
+            new QName(GetDataAvailabilityConstants.NS_GDA_20, OmConstants.EN_PHENOMENON_TIME, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    /**
+     * The {@code QName} for {@code gda:procedure}.
+     */
+    QName GDA_20_PROCEDURE = new QName(GetDataAvailabilityConstants.NS_GDA_20, OmConstants.EN_PROCEDURE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:procedure}.
+     */
+    QName GDA_20_COUNT = new QName(GetDataAvailabilityConstants.NS_GDA_20, "count", GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code offering}.
+     */
+    QName GDA_20_OFFERING = new QName(GetDataAvailabilityConstants.NS_GDA_20, "offering", GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:formatDescriptor}.
+     */
+    QName GDA_20_FORMAT_DESCRIPTOR = new QName(GetDataAvailabilityConstants.NS_GDA_20, FORMAT_DESCRIPTOR, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:responseFormat}.
+     */
+    QName GDA_20_RESPONSE_FORMAT = new QName(GetDataAvailabilityConstants.NS_GDA_20, RESPONSE_FORMAT, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    /**
+     * The {@code QName} for {@code gda:observationType}.
+     */
+    QName GDA_20_OBSERVATION_TYPE = new QName(GetDataAvailabilityConstants.NS_GDA_20, OBSERVATION_TYPE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    
     String AN_VERSION = "version";
 
     String AN_SERVICE = "service";
 
-    String EN_GET_DATA_AVAILABILITY_RESPONSE = "GetDataAvailabilityResponse";
-
     String DATA_AVAILABILITY = "dataAvailability";
-
+    
     /* TODO is this one right? */
     String CONFORMANCE_CLASS = "http://www.opengis.net/spec/SOS/2.0/conf/daRetrieval";
 
@@ -88,38 +225,17 @@ public interface GetDataAvailabilityConstants {
             SosConstants.NS_SOS_PREFIX);
     
     /**
-     * The {@code QName} for {@code gda:dataAvailabilityMember}.
-     */
-    QName GDA_DATA_AVAILABILITY_MEMBER = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_MEMBER,
-            GetDataAvailabilityConstants.NS_GDA_PREFIX);
-
-    /**
      * The {@code QName} for {@code sos:GetDataAvailabilityResponse}.
      */
     QName SOS_GET_DATA_AVAILABILITY_RESPONSE = new QName(Sos2Constants.NS_SOS_20, EN_GET_DATA_AVAILABILITY_RESPONSE,
             SosConstants.NS_SOS_PREFIX);
 
     /**
-     * The {@code QName} for {@code gda:GetDataAvailabilityResponse}.
-     */
-    QName GDA_GET_DATA_AVAILABILITY_RESPONSE = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY_RESPONSE,
-            GetDataAvailabilityConstants.NS_GDA_PREFIX);
-    
-    /**
      * The {@code QName} for {@code sos:GetDataAvailability}.
      */
     QName SOS_GET_DATA_AVAILABILITY = new QName(Sos2Constants.NS_SOS_20, EN_GET_DATA_AVAILABILITY,
             SosConstants.NS_SOS_PREFIX);
     
-    /**
-     * The {@code QName} for {@code gda:GetDataAvailability}.
-     */
-    QName GDA_GET_DATA_AVAILABILITY = new QName(GetDataAvailabilityConstants.NS_GDA, EN_GET_DATA_AVAILABILITY,
-            GetDataAvailabilityConstants.NS_GDA_PREFIX);
-    
-    QName GDA_EXTENSION = new QName(GetDataAvailabilityConstants.NS_GDA, "extension",
-            GetDataAvailabilityConstants.NS_GDA_PREFIX);
-
     /**
      * The {@code QName} for {@code version}.
      */
@@ -157,11 +273,7 @@ public interface GetDataAvailabilityConstants {
     QName OM_FEATURE_OF_INTEREST = new QName(OmConstants.NS_OM_2, OmConstants.EN_FEATURE_OF_INTEREST,
             OmConstants.NS_OM_PREFIX);
     
-    /**
-     * The {@code QName} for {@code gda:featureOfInterest}.
-     */
-    QName GDA_FEATURE_OF_INTEREST = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_FEATURE_OF_INTEREST,
-            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+   
 
     /**
      * The {@code QName} for {@code om:observedProperty}.
@@ -169,11 +281,7 @@ public interface GetDataAvailabilityConstants {
     QName OM_OBSERVED_PROPERTY = new QName(OmConstants.NS_OM_2, OmConstants.EN_OBSERVED_PROPERTY,
             OmConstants.NS_OM_PREFIX);
     
-    /**
-     * The {@code QName} for {@code gda:observedProperty}.
-     */
-    QName GDA_OBSERVED_PROPERTY = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_OBSERVED_PROPERTY,
-            GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
 
     /**
      * The {@code QName} for {@code om:phenomenonTime}.
@@ -181,11 +289,7 @@ public interface GetDataAvailabilityConstants {
     QName OM_PHENOMENON_TIME =
             new QName(OmConstants.NS_OM_2, OmConstants.EN_PHENOMENON_TIME, OmConstants.NS_OM_PREFIX);
     
-    /**
-     * The {@code QName} for {@code gda:phenomenonTime}.
-     */
-    QName GDA_PHENOMENON_TIME =
-            new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PHENOMENON_TIME, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
 
     /**
      * The {@code QName} for {@code om:procedure}.
@@ -193,25 +297,19 @@ public interface GetDataAvailabilityConstants {
     QName OM_PROCEDURE = new QName(OmConstants.NS_OM_2, OmConstants.EN_PROCEDURE, OmConstants.NS_OM_PREFIX);
     
     /**
-     * The {@code QName} for {@code gda:procedure}.
-     */
-    QName GDA_PROCEDURE = new QName(GetDataAvailabilityConstants.NS_GDA, OmConstants.EN_PROCEDURE, GetDataAvailabilityConstants.NS_GDA_PREFIX);
-    
-    /**
      * The {@code QName} for {@code sos:procedure}.
      */
     QName SOS_COUNT = new QName(Sos2Constants.NS_SOS_20, "count", SosConstants.NS_SOS_PREFIX);
     
     /**
-     * The {@code QName} for {@code gda:procedure}.
-     */
-    QName GDA_COUNT = new QName(GetDataAvailabilityConstants.NS_GDA, "count", GetDataAvailabilityConstants.NS_GDA_PREFIX);
-
-    /**
      * The available parameters of the operation.
      */
     enum GetDataAvailabilityParams {
         featureOfInterest, observedProperty, procedure, offering;
+    }
+    
+    enum GetDataAvailabilityV20Params {
+        responseFormat;
     }
 
     WSDLOperation WSDL_OPERATION =

@@ -963,6 +963,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>gda-coding</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>gda-hibernate</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1681,7 +1686,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>check</goal>
+                                    <goal>generate</goal>
                                 </goals>
                             </execution>
                         </executions>

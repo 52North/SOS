@@ -28,6 +28,8 @@
  */
 package org.n52.sos.gda;
 
+import static org.n52.sos.coding.json.JSONConstants.RESPONSE_FORMAT;
+
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -77,6 +79,9 @@ public class GetDataAvailabilityJsonDecoder extends AbstractSosRequestDecoder<Ge
             for (String property : parseStringOrStringList(node.path(JSONConstants.OFFERING))) {
                 req.addOffering(property);
             }
+        }
+        if (node.has(JSONConstants.RESPONSE_FORMAT)) {
+            req.setResponseFormat(node.path(RESPONSE_FORMAT).textValue());
         }
         return req;
     }

@@ -32,9 +32,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.AbstractGetObservationDAO;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
@@ -55,6 +58,8 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+
+import com.google.common.base.Strings;
 
 /**
  * class and forwards requests to the GetObservationDAO; after query of
@@ -165,6 +170,25 @@ public class SosGetObservationOperatorV20 extends
             }
             SosHelper.checkResponseFormat(sosRequest.getResponseFormat(), sosRequest.getService(),
                     sosRequest.getVersion());
+        } catch (OwsExceptionReport owse) {
+            exceptions.add(owse);
+        }
+        
+        try {
+            if (sosRequest.isSetResultModel()) {
+                if (Strings.isNullOrEmpty(sosRequest.getResultModel())) {
+                    throw new MissingParameterValueException(SosConstants.GetObservationParams.resultType);
+                } else {
+                    if (!CodingRepository
+                            .getInstance().getResponseFormatsForObservationType(sosRequest.getResultModel(),
+                                    sosRequest.getService(), sosRequest.getVersion())
+                            .contains(sosRequest.getResponseFormat())) {
+                        throw new InvalidParameterValueException().withMessage(
+                                "The requested resultType {} is not valid for the responseFormat {}!",
+                                sosRequest.getResultModel(), sosRequest.getResponseFormat());
+                    }
+                }
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

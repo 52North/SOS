@@ -111,6 +111,11 @@ public class RelatedOfferingXmStreamWriter extends XmlStreamWriter<RelatedOfferi
     private void writeRelatedOffering(ReferenceType relatedOffering) throws XMLStreamException {
         empty(RelatedOfferingConstants.QN_RO_RELATED_OFFERING);
         addXlinkHrefAttr(relatedOffering.getHref());
+        if (relatedOffering.isSetTitle()) {
+            addXlinkTitleAttr(relatedOffering.getTitle());
+        } else {
+            addXlinkTitleAttr(relatedOffering.getTitleFromHref());
+        }
     }
 
     /**

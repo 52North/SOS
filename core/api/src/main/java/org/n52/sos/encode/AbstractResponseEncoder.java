@@ -214,7 +214,8 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
 
     private void setSchemaLocations(XmlObject document) {
         Map<String, SchemaLocation> schemaLocations = Maps.newHashMap();
-        for (String ns : N52XmlHelper.getNamespaces(document)) {
+        Set<String> namespaces = N52XmlHelper.getNamespaces(document);
+        for (String ns : namespaces) {
             for (SchemaLocation sl : CodingRepository.getInstance().getSchemaLocation(ns)) {
                 schemaLocations.put(sl.getNamespace(), sl);
             }
@@ -224,7 +225,9 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         }
         // override default schema location with concrete URL's
         for (SchemaLocation sl : getConcreteSchemaLocations()) {
-            schemaLocations.put(sl.getNamespace(), sl);
+            if (namespaces.contains(sl.getNamespace())) {
+                schemaLocations.put(sl.getNamespace(), sl);
+            }
         }
         N52XmlHelper.setSchemaLocationsToDocument(document, schemaLocations.values());
     }

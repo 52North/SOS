@@ -34,6 +34,8 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
+import com.google.common.base.Objects;
+
 public class AbstractReferenceType implements Comparable<AbstractReferenceType>{
 
     /**
@@ -182,5 +184,18 @@ public class AbstractReferenceType implements Comparable<AbstractReferenceType>{
                         : getHref() == null ? -1
                                 : o.getHref() == null ? 1 
                                         : getHref().compareTo(o.getHref());
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof AbstractReferenceType) {
+            return hashCode() == o.hashCode();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(this.href, 47);
     }
 }

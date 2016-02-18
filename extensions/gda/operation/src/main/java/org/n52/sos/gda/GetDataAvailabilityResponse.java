@@ -41,6 +41,7 @@ import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -271,6 +272,13 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public ReferenceType getOffering() {
             return offering;
         }
+        
+        public String getOfferingString() {
+            if (isSetOffering()) {
+                return getOffering().getHref();
+            }
+            return null;
+        }
 
         /**
          * @param offering the offering to set
@@ -317,6 +325,67 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         
         public boolean isSetMetadata() {
             return getMetadata() != null;
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof DataAvailability) {
+                return hashCode() == o.hashCode();
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(this.procedure, 19, this.observedProperty, 43, this.featureOfInterest, 37, this.offering);
+        }
+        
+        public boolean sameConstellation(Object o) {
+            if (o instanceof DataAvailability) {
+                return sameConstellationHashCode() == ((DataAvailability)o).sameConstellationHashCode();
+            }
+            return false;
+        }
+        
+        public int sameConstellationHashCode() {
+            return Objects.hashCode(this.procedure, 19, this.observedProperty, 43, this.featureOfInterest);
+        }
+        
+        public DataAvailability clone(ReferenceType offering) {
+            DataAvailability dataAvailability = new DataAvailability(procedure, observedProperty, featureOfInterest, new TimePeriod(phenomenonTime.getStart(), phenomenonTime.getEnd()));
+            dataAvailability.setOffering(offering);
+            dataAvailability.setCount(getCount());
+            Set<FormatDescriptor> fds = Sets.newHashSet();
+            for (FormatDescriptor fd : getFormatDescriptors()) {
+                fds.add(fd.clone());
+            }
+            dataAvailability.setFormatDescriptors(fds);
+            dataAvailability.setMetadata(getMetadata());
+            dataAvailability.setResultTimes(getResultTimes());
+            return dataAvailability;
+        }
+        
+        public boolean merge(DataAvailability toMerge, boolean differentOfferings) {
+            if (differentOfferings && sameConstellation(toMerge)) {
+                getPhenomenonTime().extendToContain(toMerge.getPhenomenonTime());
+                mergeFormatDescriptors(toMerge.getFormatDescriptors());
+                return true;
+            } else if (equals(toMerge)) {
+                getPhenomenonTime().extendToContain(toMerge.getPhenomenonTime());
+                mergeFormatDescriptors(toMerge.getFormatDescriptors());
+                return true;
+            }
+            return false;
+        }
+
+        private void mergeFormatDescriptors(Set<FormatDescriptor> fdsToMerge) {
+            for (FormatDescriptor formatDescriptor : getFormatDescriptors()) {
+                for (FormatDescriptor fdToMerge : fdsToMerge) {
+                    if (formatDescriptor.getResponseFormat().equals(fdToMerge.getResponseFormat())) {
+                        formatDescriptor.getObservationTypes().addAll(fdToMerge.getObservationTypes());
+                    }
+                }
+            }
         }
     }
     
@@ -366,6 +435,10 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public void setObservationTypes(Set<String> observationTypes) {
             this.observationTypes.clear();
             this.observationTypes.addAll(observationTypes);
+        }
+        
+        public FormatDescriptor clone() {
+            return new FormatDescriptor(responseFormat, Sets.newHashSet(observationTypes));
         }
         
     }

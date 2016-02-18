@@ -276,10 +276,8 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      */
     private List<?> querySeriesDataAvailabilities(GetDataAvailabilityRequest request, Session session)
             throws OwsExceptionReport {
-        List<DataAvailability> dataAvailabilityValues = Lists.newLinkedList();
         GdaRequestContext context = new GdaRequestContext()
                 .setRequest(request)
-                .setDataAvailabilityList(dataAvailabilityValues)
                 .setSeriesObservationDAO(getSeriesObservationDAO())
                 .setSupportsSeriesObservationTime(EntitiyHelper.getInstance().isSeriesObservationTimeSupported());
         boolean gdaV20 = checkForGDAv20(request);
@@ -295,7 +293,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 processDataAvailability(series, context, session);
             }
         }
-        return dataAvailabilityValues;
+        return context.getDataAvailabilityList();
     }
 
     private boolean checkForGDAv20(GetDataAvailabilityRequest request) {
@@ -352,10 +350,61 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                     }
                     dataAvailability.setOffering(getOfferingReference(context.getOfferings(), ommt.getOffering(), session));
                     dataAvailability.setFormatDescriptors(getFormatDescriptors(ommt.getOffering(), context));
-                    context.getDataAvailabilityList().add(dataAvailability);
+                    context.addDataAvailability(dataAvailability);
                 }
             }
         }
+        checkForParentOfferings(context);
+    }
+
+    private void checkForParentOfferings(GdaRequestContext context) {
+        if (context.isSetDataAvailabilityList()) {
+            List<String> requestedOfferings = context.getRequest().getOfferings();
+            for (String requestedOffering : requestedOfferings) {
+                Set<String> childOfferings = getCache().getChildOfferings(requestedOffering, true, false);
+                if (!childOfferings.isEmpty()) {
+                    if (context.hasDataAvailability(requestedOffering)) {
+                        Set<DataAvailability> parentDataAvailabilities =
+                                context.getDataAvailability(requestedOffering);
+                        for (String childOffering : childOfferings) {
+                            Set<DataAvailability> childDataAvailabilities = context.getDataAvailability(childOffering);
+                            for (DataAvailability childDataAvailability : childDataAvailabilities) {
+                                for (DataAvailability parentDataAvailability : parentDataAvailabilities) {
+                                    parentDataAvailability.merge(childDataAvailability, true);
+                                }
+                            }
+                        }
+                    } else {
+                        Set<DataAvailability> parentDataAvailabilities = Sets.newHashSet();
+                        for (String childOffering : childOfferings) {
+                            Set<DataAvailability> childDataAvailabilities = context.getDataAvailability(childOffering);
+                            for (DataAvailability childDataAvailability : childDataAvailabilities) {
+                                addParentDataAvailabilityIfMissing(parentDataAvailabilities, childDataAvailability,
+                                        new ReferenceType(requestedOffering));
+                                for (DataAvailability parentDataAvailability : parentDataAvailabilities) {
+                                    parentDataAvailability.merge(childDataAvailability, true);
+                                }
+                            }
+                        }
+                        context.addDataAvailabilities(parentDataAvailabilities);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean addParentDataAvailabilityIfMissing(Set<DataAvailability> parentDataAvailabilities,
+            DataAvailability childDataAvailability, ReferenceType offering) {
+        boolean notContained = true;
+        for (DataAvailability parentDataAvailability : parentDataAvailabilities) {
+            if (parentDataAvailability.sameConstellation(childDataAvailability)) {
+                notContained = false;
+            }
+        }
+        if (notContained) {
+            parentDataAvailabilities.add(childDataAvailability.clone(offering));
+        }
+        return notContained;
     }
 
     @SuppressWarnings("unchecked")
@@ -445,7 +494,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 dataAvailability.setResultTimes(getResultTimesFromSeriesObservation(context.getSeriesObservationDAO(), series,
                         context.getRequest(), session));
             }
-            context.getDataAvailabilityList().add(dataAvailability);
+            context.addDataAvailability(dataAvailability);
         }
     }
 
@@ -837,7 +886,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         private boolean namedQuerySupported;
         private ResultTransformer minMaxTransformer;
         private AbstractSeriesObservationDAO seriesObservationDAO;
-        private List<DataAvailability> dataAvailabilityValues;
+        private List<DataAvailability> dataAvailabilityValues = Lists.newArrayList();
         private Map<String, ReferenceType> procedures = new HashMap<>();
         private Map<String, ReferenceType> observableProperties = new HashMap<>();
         private Map<String, ReferenceType> featuresOfInterest = new HashMap<>();
@@ -865,7 +914,21 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         }
 
         public GdaRequestContext setDataAvailabilityList(List<DataAvailability> dataAvailabilityValues) {
-            this.dataAvailabilityValues = dataAvailabilityValues;
+            this.dataAvailabilityValues.clear();
+            return addDataAvailabilities(dataAvailabilityValues);
+        }
+
+        public GdaRequestContext addDataAvailability(DataAvailability dataAvailability) {
+            if (dataAvailability != null) {
+                this.dataAvailabilityValues.add(dataAvailability);
+            }
+            return this;
+        }
+
+        public GdaRequestContext addDataAvailabilities(Collection<DataAvailability> dataAvailabilityValues) {
+            if (dataAvailabilityValues != null) {
+                this.dataAvailabilityValues.addAll(dataAvailabilityValues);
+            }
             return this;
         }
 
@@ -894,7 +957,30 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         }
         
         public List<DataAvailability> getDataAvailabilityList() {
-            return dataAvailabilityValues;
+            return Lists.newArrayList(dataAvailabilityValues);
+        }
+        
+        public boolean hasDataAvailability(String requestedOffering) {
+            for (DataAvailability dataAvailability : dataAvailabilityValues) {
+                if (requestedOffering.equals(dataAvailability.getOfferingString())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Set<DataAvailability> getDataAvailability(String offering) {
+            Set<DataAvailability> das = Sets.newHashSet();
+            for (DataAvailability dataAvailability : dataAvailabilityValues) {
+                if (offering.equals(dataAvailability.getOfferingString())) {
+                    das.add(dataAvailability);
+                }
+            }
+            return das;
+        }
+
+        public boolean isSetDataAvailabilityList() {
+            return CollectionHelper.isNotEmpty(getDataAvailabilityList());
         }
 
         public boolean isSupportsSeriesObservationTime() {

@@ -61,6 +61,7 @@ import org.n52.sos.ogc.filter.FilterConstants.ConformanceClassConstraintNames;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.MergableExtension;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -75,6 +76,7 @@ import org.n52.sos.ogc.ows.OwsOperationsMetadata;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.ows.SosServiceIdentification;
 import org.n52.sos.ogc.ows.StaticCapabilities;
+import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionRepository;
@@ -95,6 +97,7 @@ import org.n52.sos.request.operator.RequestOperatorKey;
 import org.n52.sos.request.operator.RequestOperatorRepository;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
@@ -715,8 +718,13 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                     // add sub-level offerings
                     if (!entry.getValue().isEmpty()) {
                         RelatedOfferings relatedOfferings = new RelatedOfferings();
+                        String gdaURL = getGetDataAvailabilityUrl();
+                        gdaURL = addParameter(gdaURL, "responseFormat", "http://www.opengis.net/sosgda/2.0");
                         for (String offering : entry.getValue()) {
-                            relatedOfferings.addValue(RelatedOfferingConstants.ROLE, offering);
+                            relatedOfferings.addValue(new ReferenceType(RelatedOfferingConstants.ROLE),
+                                    new ReferenceType(
+                                            addParameter(new StringBuilder(gdaURL).toString(), "offering", offering),
+                                            offering));
                         }
                         sosObservationOffering.addExtension(relatedOfferings);
                     }
@@ -1188,6 +1196,37 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     private boolean isServiceIdentificationSectionRequested(final int sections) {
         return (sections & SERVICE_IDENTIFICATION) != 0;
+    }
+    
+    private String getGetDataAvailabilityUrl() {
+        return new StringBuilder(getBaseGetUrl()).append(getRequest("GetDataAvailability")).toString();
+    }
+    
+    private String getBaseGetUrl() {
+        final StringBuilder url = new StringBuilder();
+        // service URL
+        url.append(getServiceConfiguration().getServiceURL());
+        // ?
+        url.append('?');
+        // service
+        url.append(OWSConstants.RequestParams.service.name()).append('=').append(SosConstants.SOS);
+        // version
+        url.append('&').append(OWSConstants.RequestParams.version.name()).append('=')
+                .append(Sos2Constants.SERVICEVERSION);
+        return url.toString();
+    }
+    
+    private String addParameter(String url, String parameter, String value) {
+        return new StringBuilder(url).append('&').append(parameter).append('=').append(value).toString();
+    }
+
+    private String getRequest(String requestName) {
+        return new StringBuilder().append('&').append(RequestParams.request.name()).append('=').append(requestName)
+                .toString();
+    }
+    
+    private ServiceConfiguration getServiceConfiguration() {
+        return ServiceConfiguration.getInstance();
     }
 
     @Override

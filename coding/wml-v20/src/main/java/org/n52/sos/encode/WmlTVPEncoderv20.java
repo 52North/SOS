@@ -129,6 +129,11 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.unmodifiableMap(SUPPORTED_TYPES);
     }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(WaterMLConstants.NS_WML_20, getSupportedTypes().get(SupportedTypeKey.ObservationType));
+    }
 
     @Override
     public Set<String> getConformanceClasses() {

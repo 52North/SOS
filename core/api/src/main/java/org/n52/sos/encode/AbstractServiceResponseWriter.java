@@ -55,7 +55,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
             throws IOException, OwsExceptionReport {
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
         if (encoder != null) {
-            if (isStreaming(asr)) {
+            if (isStreaming(asr, encoder)) {
                 ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
             } else {
                 if (asr instanceof StreamingDataResponse && ((StreamingDataResponse) asr).hasStreamingData()
@@ -121,9 +121,25 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(AbstractServiceResponse asr) {
-        if (getEncoder(asr) instanceof StreamingEncoder) {
+        return isStreaming(asr, getEncoder(asr));
+    }
+
+    /**
+     * Check if streaming encoding is forced and the {@link Encoder} for the
+     * {@link AbstractServiceResponse} is a {@link StreamingEncoder}
+     * 
+     * @param asr
+     *            {@link AbstractServiceResponse} to check the {@link Encoder}
+     *            for
+     * @param encoder 
+     * @return <code>true</code>, if streaming encoding is forced and the
+     *         {@link Encoder} for the {@link AbstractServiceResponse} is a
+     *         {@link StreamingEncoder}
+     */
+    private boolean isStreaming(AbstractServiceResponse asr, Encoder<Object, AbstractServiceResponse> encoder) {
+        if (encoder instanceof StreamingEncoder) {
             return ServiceConfiguration.getInstance().isForceStreamingEncoding()
-                    || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
+                    || ((StreamingEncoder<?, ?>) encoder).forceStreaming();
         }
         return false;
     }

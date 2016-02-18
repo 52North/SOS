@@ -46,6 +46,8 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
 
+import com.google.common.collect.Maps;
+
 public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
         implements ObservationEncoder<XmlObject, Object> {
 
@@ -97,6 +99,11 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
             return SUPPORTED_RESPONSE_FORMATS.get(service).get(version);
         }
         return new HashSet<>(0);
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Maps.newHashMap();
     }
 
 }

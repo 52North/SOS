@@ -112,8 +112,11 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
             Class<T> responseType, boolean validationEnabled) {
         OperationKey key = new OperationKey(service, version, operation);
         this.encoderKeys =
-                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), new OperationEncoderKey(key,
-                        MediaTypes.TEXT_XML), new OperationEncoderKey(key, MediaTypes.APPLICATION_XML));
+                Sets.newHashSet(new XmlEncoderKey(namespace, responseType), 
+                        new OperationEncoderKey(key, MediaTypes.TEXT_XML), 
+                        new OperationEncoderKey(key, MediaTypes.APPLICATION_XML),
+                        new ResponseContentTypeEncoderKey(responseType, MediaTypes.TEXT_XML), 
+                        new ResponseContentTypeEncoderKey(responseType, MediaTypes.APPLICATION_XML));
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
         this.namespace = namespace;
         this.prefix = prefix;

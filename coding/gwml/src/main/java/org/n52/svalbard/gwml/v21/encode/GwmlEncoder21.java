@@ -93,6 +93,11 @@ public class GwmlEncoder21 extends OmEncoderv20 {
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.unmodifiableMap(SUPPORTED_TYPES);
     }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(GWMLConstants.NS_GWML_21, getSupportedTypes().get(SupportedTypeKey.ObservationType));
+    }
 
     @Override
     public boolean isObservationAndMeasurmentV20Type() {

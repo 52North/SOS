@@ -73,6 +73,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class AqdEncoder extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
@@ -125,6 +126,11 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
         }
 
         return Sets.newHashSet(AqdConstants.NS_AQD);
+    }
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Maps.newHashMap();
     }
 
     @Override

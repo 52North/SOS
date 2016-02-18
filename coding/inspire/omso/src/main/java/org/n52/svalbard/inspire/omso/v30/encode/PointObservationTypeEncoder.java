@@ -47,8 +47,9 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
+
+import com.google.common.collect.Sets;
 
 import eu.europa.ec.inspire.schemas.omso.x30.PointObservationType;
 import net.opengis.om.x20.OMObservationType;
@@ -61,6 +62,12 @@ public class PointObservationTypeEncoder extends AbstractOmInspireEncoder {
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
+    }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(InspireOMSOConstants.NS_OMSO_30,
+                (Set<String>) Sets.newHashSet(InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION));
     }
 
     @Override

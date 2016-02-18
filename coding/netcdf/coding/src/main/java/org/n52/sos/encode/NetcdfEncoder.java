@@ -43,11 +43,13 @@ import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.om.NetCDFObservation;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.response.BinaryAttachmentResponse;
+import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
@@ -108,7 +110,7 @@ public class NetcdfEncoder extends AbstractBasicNetcdfEncoder{
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
-
+    
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
         if (SUPPORTED_RESPONSE_FORMATS.get(service) != null) {

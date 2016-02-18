@@ -162,7 +162,13 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.unmodifiableMap(SUPPORTED_TYPES);
     }
-
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
+                (Set<String>) getSupportedTypes().get(SupportedTypeKey.ObservationType));
+    }
+    
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         // NOOP, no need (we're not encoding xml)

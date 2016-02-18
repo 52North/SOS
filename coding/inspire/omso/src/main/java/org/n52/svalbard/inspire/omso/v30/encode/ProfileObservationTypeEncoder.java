@@ -41,7 +41,6 @@ import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.ProfileObservation;
-import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gmlcov.GmlCoverageConstants;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -51,6 +50,8 @@ import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+
+import com.google.common.collect.Sets;
 
 import eu.europa.ec.inspire.schemas.omso.x30.ProfileObservationType;
 import net.opengis.om.x20.OMObservationType;
@@ -63,6 +64,12 @@ public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
+    }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(InspireOMSOConstants.NS_OMSO_30,
+                (Set<String>) Sets.newHashSet(InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION));
     }
 
     @Override

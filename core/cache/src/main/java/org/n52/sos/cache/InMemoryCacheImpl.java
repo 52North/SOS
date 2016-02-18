@@ -471,6 +471,13 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public Set<String> getAllowedObservationTypesForOffering(final String offering) {
         return copyOf(this.allowedObservationTypeForOfferings.get(offering));
     }
+    
+    @Override
+    public Set<String> getAllObservationTypesForOffering(final String offering) {
+        Set<String> observationTypes  =Sets.newHashSet(copyOf(this.allowedObservationTypeForOfferings.get(offering)));
+        observationTypes.addAll(getObservationTypesForOffering(offering));
+        return observationTypes;
+    }
 
     @Override
     public Set<String> getFeaturesOfInterestForOffering(final String offering) {

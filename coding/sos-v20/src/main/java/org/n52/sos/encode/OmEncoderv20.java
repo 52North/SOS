@@ -98,7 +98,6 @@ import org.n52.sos.w3c.SchemaLocation;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
-
 public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
     /**
@@ -120,7 +119,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
             SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
                     OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,
                     OmConstants.OBS_TYPE_MEASUREMENT, OmConstants.OBS_TYPE_TEXT_OBSERVATION,
-                    OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION));
+                    OmConstants.OBS_TYPE_TRUTH_OBSERVATION, OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION,
+                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -131,8 +131,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 .join(ENCODER_KEYS));
     }
 
-
-	@Override
+    @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
@@ -140,6 +139,12 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     @Override
     public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
         return Collections.unmodifiableMap(SUPPORTED_TYPES);
+    }
+    
+
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(OmConstants.NS_OM_2, getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }
 
     @Override

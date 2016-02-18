@@ -106,6 +106,8 @@ public class CodingRepository {
     private final Map<String, Map<String, Set<String>>> responseFormats = Maps.newHashMap();
 
     private final Map<ResponseFormatKey, Boolean> responseFormatStatus = Maps.newHashMap();
+    
+    private final Map<String, Set<String>> responseFormatObservationTypes = Maps.newHashMap();
 
     private final Map<String, Set<SchemaLocation>> schemaLocations = Maps.newHashMap();
 
@@ -140,6 +142,7 @@ public class CodingRepository {
         generateProcedureDescriptionFormatMaps();
         generateTransactionalProcedureDescriptionFormatMaps();
         generateSchemaLocationMap();
+        generateResponseFormatObservationTypeMaps();
     }
 
     @SuppressWarnings("unchecked")
@@ -194,6 +197,7 @@ public class CodingRepository {
         generateProcedureDescriptionFormatMaps();
         generateTransactionalProcedureDescriptionFormatMaps();
         generateSchemaLocationMap();
+        generateResponseFormatObservationTypeMaps();
         LOG.debug("Reloaded Encoder implementations");
     }
 
@@ -211,6 +215,25 @@ public class CodingRepository {
                         for (final String rf : rfs) {
                             addResponseFormat(new ResponseFormatKey(sokt, rf));
                         }
+                    }
+                }
+            }
+        }
+    }
+    
+    private void generateResponseFormatObservationTypeMaps() {
+        responseFormatObservationTypes.clear();
+        for (final Encoder<?, ?> e : getEncoders()) {
+            if (e instanceof ObservationEncoder) {
+                final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
+                Map<String, Set<String>> supportedResponseFormatObsrevationTypes = oe.getSupportedResponseFormatObsrevationTypes();
+                if (supportedResponseFormatObsrevationTypes != null && !supportedResponseFormatObsrevationTypes.isEmpty()) {
+                    for (final String responseFormat : supportedResponseFormatObsrevationTypes.keySet()) {
+                        Set<String> values = Sets.newHashSet(supportedResponseFormatObsrevationTypes.get(responseFormat));
+                        if (responseFormatObservationTypes.containsKey(responseFormat)) {
+                            values.addAll(responseFormatObservationTypes.get(responseFormat));
+                        }
+                        responseFormatObservationTypes.put(responseFormat, values);
                     }
                 }
             }
@@ -589,6 +612,19 @@ public class CodingRepository {
 
     public Set<String> getAllSupportedResponseFormats(final ServiceOperatorKey sokt) {
         return getAllSupportedResponseFormats(sokt.getService(), sokt.getVersion());
+    }
+    
+    public Set<String> getResponseFormatsForObservationType(String observationType, String service, String version) {
+        Set<String> responseFormats = Sets.newHashSet();
+        Collection<String> values = getSupportedResponseFormats(service, version);
+        for (String responseFormat : responseFormatObservationTypes.keySet()) {
+            for (String rf : values) {
+                if (rf.equals(responseFormat) && responseFormatObservationTypes.get(responseFormat).contains(observationType)) {
+                        responseFormats.add(responseFormat);
+                }
+            }
+        }
+        return responseFormats;
     }
 
     public Map<ServiceOperatorKey, Set<String>> getSupportedProcedureDescriptionFormats() {

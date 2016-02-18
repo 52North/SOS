@@ -34,21 +34,19 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.inspire.omso.PointTimeSeriesObservation;
-import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
+
+import com.google.common.collect.Sets;
 
 import eu.europa.ec.inspire.schemas.omso.x30.PointTimeSeriesObservationType;
 import net.opengis.om.x20.OMObservationType;
@@ -61,6 +59,12 @@ public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEnco
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
+    }
+    
+    @Override
+    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+        return Collections.singletonMap(InspireOMSOConstants.NS_OMSO_30,
+                (Set<String>) Sets.newHashSet(InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION));
     }
 
     @Override

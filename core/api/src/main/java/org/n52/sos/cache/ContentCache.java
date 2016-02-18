@@ -79,6 +79,17 @@ public interface ContentCache
      * @return the allowed observation types
      */
     Set<String> getAllowedObservationTypesForOffering(String offering);
+    
+    
+    /**
+     * Returns the all observation types for the specified offering.
+     *
+     * @param offering
+     *            the offering
+     *
+     * @return the all observation types
+     */
+    Set<String> getAllObservationTypesForOffering(String offering);
 
     /**
      * Returns the allowed featureOfInterest types for the specified offering.

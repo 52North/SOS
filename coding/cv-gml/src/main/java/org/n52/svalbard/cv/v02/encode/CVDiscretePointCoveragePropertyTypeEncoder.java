@@ -48,7 +48,6 @@ import net.opengis.cv.x02.gml32.CVDiscretePointCoveragePropertyType;
 
 public class CVDiscretePointCoveragePropertyTypeEncoder extends AbstractCVDiscretePointCoverageTypeEncoder<CVDiscretePointCoveragePropertyType> {
     
-    
     protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
             new ClassToClassEncoderKey(CvDiscretePointCoverage.class, CVDiscretePointCoveragePropertyType.class),
             new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, CvDiscretePointCoverage.class));

@@ -34,6 +34,7 @@ import org.n52.sos.ds.AbstractOperationDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.RequestOperatorContext;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -51,7 +52,7 @@ public abstract class DeleteObservationAbstractDAO extends AbstractOperationDAO 
             throws OwsExceptionReport;
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         opsMeta.addAnyParameterValue(PARAMETER_NAME);
     }

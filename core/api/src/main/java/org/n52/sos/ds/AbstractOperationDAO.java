@@ -30,7 +30,6 @@ package org.n52.sos.ds;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.binding.Binding;
 import org.n52.sos.binding.BindingRepository;
-import org.n52.sos.cache.ContentCache;
 import org.n52.sos.coding.OperationKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.Constraint;
@@ -50,6 +48,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.MultiMaps;
@@ -85,7 +84,7 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     }
 
     @Override
-    public OwsOperation getOperationsMetadata(String service, String version) throws OwsExceptionReport {
+    public OwsOperation getOperationsMetadata(String service, String version, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         Map<String, Set<DCP>> dcp =
                 getDCP(new OperationKey(service, version, getOperationDAOKeyType().getOperationName()));
         if (dcp == null || dcp.isEmpty()) {
@@ -96,7 +95,7 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         OwsOperation operation = new OwsOperation();
         operation.setDcp(dcp);
         operation.setOperationName(getOperationName());
-        setOperationsMetadata(operation, service, version);
+        setOperationsMetadata(operation, service, version, requestOperatorContext);
         return operation;
     }
 
@@ -110,10 +109,6 @@ public abstract class AbstractOperationDAO implements OperationDAO {
     @Override
     public Set<String> getConformanceClasses() {
         return Collections.emptySet();
-    }
-
-    protected ContentCache getCache() {
-        return getConfigurator().getCache();
     }
 
     protected Configurator getConfigurator() {
@@ -166,15 +161,15 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         return dcps;
     }
 
-    protected abstract void setOperationsMetadata(OwsOperation operation, String service, String version)
+    protected abstract void setOperationsMetadata(OwsOperation operation, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport;
 
-    protected void addProcedureParameter(OwsOperation opsMeta) {
-        addProcedureParameter(opsMeta, getCache().getProcedures());
+    protected void addProcedureParameter(OwsOperation opsMeta, final RequestOperatorContext requestOperatorContext) {
+        addProcedureParameter(opsMeta, requestOperatorContext.getCache().getProcedures());
     }
     
-    protected void addQueryableProcedureParameter(OwsOperation opsMeta) {
-        addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
+    protected void addQueryableProcedureParameter(OwsOperation opsMeta, final RequestOperatorContext requestOperatorContext) {
+        addProcedureParameter(opsMeta, requestOperatorContext.getCache().getQueryableProcedures());
     }
 
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
@@ -185,8 +180,8 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         }
     }
 
-    protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
-        addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
+    protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version, final RequestOperatorContext requestOperatorContext) {
+        addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(requestOperatorContext.getCache().getFeaturesOfInterest(), version));
     }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
@@ -197,17 +192,17 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         }
     }
 
-    protected void addObservablePropertyParameter(OwsOperation opsMeta) {
-        addObservablePropertyParameter(opsMeta, getObservableProperties());
+    protected void addObservablePropertyParameter(OwsOperation opsMeta, final RequestOperatorContext requestOperatorContext) {
+        addObservablePropertyParameter(opsMeta, getObservableProperties(requestOperatorContext));
     }
 
-    protected Collection<String> getObservableProperties() {
-        Set<String> observableProperties = getCache().getObservableProperties();
+    protected Collection<String> getObservableProperties(final RequestOperatorContext requestOperatorContext) {
+        Set<String> observableProperties = requestOperatorContext.getCache().getObservableProperties();
         if (ServiceConfiguration.getInstance().isIncludeChildObservableProperties()) {
-            Set<String> compositePhenomenons = getCache().getCompositePhenomenons();
+            Set<String> compositePhenomenons = requestOperatorContext.getCache().getCompositePhenomenons();
             observableProperties.removeAll(compositePhenomenons);
             for (String compositePhenomenon : compositePhenomenons) {
-                observableProperties.addAll(getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
+                observableProperties.addAll(requestOperatorContext.getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon));
             }
         }
         return observableProperties;
@@ -221,8 +216,8 @@ public abstract class AbstractOperationDAO implements OperationDAO {
         }
     }
 
-    protected void addOfferingParameter(OwsOperation opsMeta) {
-        addOfferingParameter(opsMeta, getCache().getOfferings());
+    protected void addOfferingParameter(OwsOperation opsMeta, final RequestOperatorContext requestOperatorContext) {
+        addOfferingParameter(opsMeta, requestOperatorContext.getCache().getOfferings());
     }
 
     protected void addOfferingParameter(OwsOperation opsMeta, Collection<String> offerings) {

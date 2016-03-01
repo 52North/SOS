@@ -32,6 +32,7 @@ import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.response.UpdateSensorResponse;
 
@@ -46,9 +47,9 @@ public abstract class AbstractUpdateSensorDescriptionDAO extends AbstractOperati
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
+        addProcedureParameter(opsMeta, requestOperatorContext);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
                     CodingRepository.getInstance().getSupportedTransactionalProcedureDescriptionFormats(service, version));

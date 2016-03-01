@@ -26,31 +26,45 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds;
+package org.n52.sos.request;
 
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.ows.OwsOperation;
-import org.n52.sos.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.RequestOperatorContext;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.service.Configurator;
 
 /**
- * @since 4.0.0
+ * Information context of SOS request operator implementations.
  * 
+ * @author Alvaro Huarte - ahuarte@tracasa.es
  */
-public abstract class AbstractGetObservationByIdDAO extends AbstractOperationDAO {
-    public AbstractGetObservationByIdDAO(String service) {
-        super(service, SosConstants.Operations.GetObservationById.name());
+public class RequestOperatorContext {
+    
+    private AbstractServiceRequest<?> request;
+    
+    private ContentCache contentCache;
+    
+    /**
+     * Sets the ServiceRequest managed by this request operator.
+     */
+    public void setServiceRequest(AbstractServiceRequest<?> request) {
+        this.request = request;
     }
-
-    @Override
-    public void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
-            opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
+    /**
+     * Gets the ServiceRequest managed by this request operator.
+     */
+    public AbstractServiceRequest<?> getServiceRequest() {
+        return request;
     }
-
-    public abstract GetObservationByIdResponse getObservationById(GetObservationByIdRequest request)
-            throws OwsExceptionReport;
-
+    
+    /**
+     * Sets the ContentCache managed by this request operator.
+     */
+    public void setCache(ContentCache contentCache) {
+        this.contentCache = contentCache;
+    }
+    /**
+     * Gets the ContentCache managed by this request operator.
+     */
+    public ContentCache getCache() {
+        return contentCache != null ? contentCache : Configurator.getInstance().getCache();
+    }
 }

@@ -35,6 +35,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.GetResultTemplateRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetResultTemplateResponse;
 
 /**
@@ -47,14 +48,14 @@ public abstract class AbstractGetResultTemplateDAO extends AbstractOperationDAO 
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        Set<String> resultTemplates = getCache().getResultTemplates();
+        Set<String> resultTemplates = requestOperatorContext.getCache().getResultTemplates();
         Collection<String> offerings = null;
         Collection<String> observableProperties = null;
         if (resultTemplates != null && !resultTemplates.isEmpty()) {
-            offerings = getCache().getOfferingsWithResultTemplate();
-            observableProperties = getCache().getObservablePropertiesWithResultTemplate();
+            offerings = requestOperatorContext.getCache().getOfferingsWithResultTemplate();
+            observableProperties = requestOperatorContext.getCache().getObservablePropertiesWithResultTemplate();
         }
         addOfferingParameter(opsMeta, offerings);
         addObservablePropertyParameter(opsMeta, observableProperties);

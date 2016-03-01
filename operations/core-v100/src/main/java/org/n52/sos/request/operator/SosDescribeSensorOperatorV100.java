@@ -38,6 +38,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.http.MediaType;
@@ -66,14 +67,14 @@ public class SosDescribeSensorOperatorV100 extends
     }
 
     @Override
-    public DescribeSensorResponse receive(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
-        DescribeSensorResponse response = getDao().getSensorDescription(sosRequest);
+    public DescribeSensorResponse receive(DescribeSensorRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        DescribeSensorResponse response = getDao().getSensorDescription(sosRequest, requestOperatorContext);
         response.setOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()));
         return response;
     }
 
     @Override
-    protected void checkParameters(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(DescribeSensorRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
@@ -86,12 +87,12 @@ public class SosDescribeSensorOperatorV100 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureID(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
+            checkProcedureID(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureDescriptionFromat(sosRequest.getProcedureDescriptionFormat(), sosRequest);
+            checkProcedureDescriptionFromat(sosRequest.getProcedureDescriptionFormat(), sosRequest, requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -106,8 +107,8 @@ public class SosDescribeSensorOperatorV100 extends
         exceptions.throwIfNotEmpty();
     }
     
-    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
-        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat)) {
+    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws MissingParameterValueException, OwsExceptionReport {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat, requestOperatorContext)) {
             SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
                     sosRequest.getService(), sosRequest.getVersion());
         }

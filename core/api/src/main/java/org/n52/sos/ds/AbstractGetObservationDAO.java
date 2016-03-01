@@ -45,6 +45,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.MinMax;
@@ -64,25 +65,25 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version)
+    protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
 
-        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
-        addOfferingParameter(opsMeta);
-        addQueryableProcedureParameter(opsMeta);
+        final Collection<String> featureIDs = SosHelper.getFeatureIDs(requestOperatorContext.getCache().getFeaturesOfInterest(), version);
+        addOfferingParameter(opsMeta, requestOperatorContext);
+        addQueryableProcedureParameter(opsMeta, requestOperatorContext);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 
-        addObservablePropertyParameter(opsMeta);
+        addObservablePropertyParameter(opsMeta, requestOperatorContext);
         addFeatureOfInterestParameter(opsMeta, featureIDs);
 
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             // SOS 2.0 parameter
-            final OwsParameterValueRange temporalFilter = new OwsParameterValueRange(getPhenomenonTime());
+            final OwsParameterValueRange temporalFilter = new OwsParameterValueRange(getPhenomenonTime(requestOperatorContext));
             opsMeta.addRangeParameterValue(Sos2Constants.GetObservationParams.temporalFilter, temporalFilter);
             SosEnvelope envelope = null;
             if (featureIDs != null && !featureIDs.isEmpty()) {
-                envelope = getCache().getGlobalEnvelope();
+                envelope = requestOperatorContext.getCache().getGlobalEnvelope();
             }
             if (envelope != null && envelope.isSetEnvelope()) {
                 opsMeta.addRangeParameterValue(Sos2Constants.GetObservationParams.spatialFilter,
@@ -90,7 +91,7 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
             }
         } else if (version.equals(Sos1Constants.SERVICEVERSION)) {
             // SOS 1.0.0 parameter
-            opsMeta.addRangeParameterValue(Sos1Constants.GetObservationParams.eventTime, getPhenomenonTime());
+            opsMeta.addRangeParameterValue(Sos1Constants.GetObservationParams.eventTime, getPhenomenonTime(requestOperatorContext));
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.srsName);
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.result);
             opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.resultModel, getResultModels());
@@ -108,9 +109,9 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
      * @throws OwsExceptionReport
      *             * If an error occurs.
      */
-    private MinMax<String> getPhenomenonTime() throws OwsExceptionReport {
-        final DateTime minDate = getCache().getMinPhenomenonTime();
-        final DateTime maxDate = getCache().getMaxPhenomenonTime();
+    private MinMax<String> getPhenomenonTime(final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        final DateTime minDate = requestOperatorContext.getCache().getMinPhenomenonTime();
+        final DateTime maxDate = requestOperatorContext.getCache().getMaxPhenomenonTime();
         return new MinMax<String>().setMinimum(
                 minDate != null ? DateTimeHelper.formatDateTime2ResponseString(minDate) : null).setMaximum(
                 maxDate != null ? DateTimeHelper.formatDateTime2ResponseString(maxDate) : null);
@@ -125,9 +126,9 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
      * @throws OwsExceptionReport
      *             * If an error occurs.
      */
-    protected MinMax<String> getResultTime() throws OwsExceptionReport {
-        final DateTime minDate = getCache().getMinResultTime();
-        final DateTime maxDate = getCache().getMaxResultTime();
+    protected MinMax<String> getResultTime(final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        final DateTime minDate = requestOperatorContext.getCache().getMinResultTime();
+        final DateTime maxDate = requestOperatorContext.getCache().getMaxResultTime();
         return new MinMax<String>().setMinimum(
                 minDate != null ? DateTimeHelper.formatDateTime2ResponseString(minDate) : null).setMaximum(
                 maxDate != null ? DateTimeHelper.formatDateTime2ResponseString(maxDate) : null);

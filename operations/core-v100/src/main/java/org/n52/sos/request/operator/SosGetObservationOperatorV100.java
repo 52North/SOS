@@ -55,8 +55,8 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
@@ -88,7 +88,7 @@ public class SosGetObservationOperatorV100 extends
     }
 
     @Override
-    public GetObservationResponse receive(GetObservationRequest sosRequest) throws OwsExceptionReport {
+    public GetObservationResponse receive(GetObservationRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
         if (sosRequest.isSetResponseFormat()) {
             setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
@@ -97,7 +97,7 @@ public class SosGetObservationOperatorV100 extends
     }
 
     @Override
-    protected void checkParameters(GetObservationRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetObservationRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
@@ -121,20 +121,20 @@ public class SosGetObservationOperatorV100 extends
         }
 
         try {
-            sosRequest.setOfferings(checkOfferingId(sosRequest.getOfferings()));
+            sosRequest.setOfferings(checkOfferingId(sosRequest.getOfferings(), requestOperatorContext));
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(sosRequest.getObservedProperties());
+            checkObservedProperties(sosRequest.getObservedProperties(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkProcedureIDs(sosRequest.getProcedures(), SosConstants.GetObservationParams.procedure.name(), requestOperatorContext);
             // add child procedures to request
             if (sosRequest.isSetProcedure()) {
-                sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));
+                sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures(), requestOperatorContext));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
@@ -142,7 +142,7 @@ public class SosGetObservationOperatorV100 extends
         // TODO check foi param is ID
         try {
             checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(),
-                    SosConstants.GetObservationParams.featureOfInterest.name());
+                    SosConstants.GetObservationParams.featureOfInterest.name(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -164,7 +164,7 @@ public class SosGetObservationOperatorV100 extends
         }
         if (sosRequest.isSetResultModel()) {
             for (String offering : sosRequest.getOfferings()) {
-                Collection<String> observationTypesForResultModel = getCache().getObservationTypesForOffering(offering);
+                Collection<String> observationTypesForResultModel = requestOperatorContext.getCache().getObservationTypesForOffering(offering);
                 if (!observationTypesForResultModel.contains(sosRequest.getResultModel())) {
                     exceptions.add(new InvalidParameterValueException().at(
                             Sos1Constants.GetObservationParams.resultModel).withMessage(
@@ -187,7 +187,7 @@ public class SosGetObservationOperatorV100 extends
      *             if the parameter does not containing any matching
      *             observedProperty for the requested offering
      */
-    private void checkObservedProperties(List<String> observedProperties) throws OwsExceptionReport {
+    private void checkObservedProperties(List<String> observedProperties, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (observedProperties != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
 
@@ -195,7 +195,7 @@ public class SosGetObservationOperatorV100 extends
                 throw new MissingObservedPropertyParameterException();
             }
             Collection<String> validObservedProperties =
-                    Configurator.getInstance().getCache().getObservableProperties();
+                    requestOperatorContext.getCache().getObservableProperties();
             for (String obsProp : observedProperties) {
                 if (obsProp.isEmpty()) {
                     throw new MissingObservedPropertyParameterException();
@@ -219,11 +219,11 @@ public class SosGetObservationOperatorV100 extends
      *             if the passed offeringId is not supported
      */
     // one / mandatory
-    private List<String> checkOfferingId(List<String> offeringIds) throws OwsExceptionReport {
+    private List<String> checkOfferingId(List<String> offeringIds, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         List<String> validOfferings = Lists.newLinkedList();
         if (offeringIds != null) {
 
-            Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
+            Set<String> offerings = requestOperatorContext.getCache().getOfferings();
             Map<String, String> ncOfferings = SosHelper.getNcNameResolvedOfferings(offerings);
             CompositeOwsException exceptions = new CompositeOwsException();
 

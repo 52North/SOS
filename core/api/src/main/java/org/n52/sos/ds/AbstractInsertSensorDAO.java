@@ -34,6 +34,7 @@ import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertSensorResponse;
 
 /**
@@ -47,7 +48,7 @@ public abstract class AbstractInsertSensorDAO extends AbstractOperationDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.SensorDescription);

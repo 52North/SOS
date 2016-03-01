@@ -40,6 +40,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.SosHelper;
 
@@ -53,14 +54,14 @@ public abstract class AbstractGetFeatureOfInterestDAO extends AbstractOperationD
     }
 
     @Override
-    protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version)
+    protected void setOperationsMetadata(final OwsOperation opsMeta, final String service, final String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
 
-        final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
+        final Collection<String> featureIDs = SosHelper.getFeatureIDs(requestOperatorContext.getCache().getFeaturesOfInterest(), version);
 
-        addQueryableProcedureParameter(opsMeta);
-        addFeatureOfInterestParameter(opsMeta, version);
-        addObservablePropertyParameter(opsMeta);
+        addQueryableProcedureParameter(opsMeta, requestOperatorContext);
+        addFeatureOfInterestParameter(opsMeta, version, requestOperatorContext);
+        addObservablePropertyParameter(opsMeta, requestOperatorContext);
 
         // TODO constraint srid
         String parameterName = Sos2Constants.GetFeatureOfInterestParams.spatialFilter.name();
@@ -70,7 +71,7 @@ public abstract class AbstractGetFeatureOfInterestDAO extends AbstractOperationD
 
         SosEnvelope envelope = null;
         if (featureIDs != null && !featureIDs.isEmpty()) {
-            envelope = getCache().getGlobalEnvelope();
+            envelope = requestOperatorContext.getCache().getGlobalEnvelope();
         }
 
         if (envelope != null && envelope.isSetEnvelope()) {
@@ -80,18 +81,18 @@ public abstract class AbstractGetFeatureOfInterestDAO extends AbstractOperationD
         }
     }
 
-    public abstract GetFeatureOfInterestResponse getFeatureOfInterest(GetFeatureOfInterestRequest request)
+    public abstract GetFeatureOfInterestResponse getFeatureOfInterest(GetFeatureOfInterestRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport;
 
-    protected boolean isRelatedFeature(final String featureIdentifier) {
-        return getCache().getRelatedFeatures().contains(featureIdentifier);
+    protected boolean isRelatedFeature(final String featureIdentifier, final RequestOperatorContext requestOperatorContext) {
+        return requestOperatorContext.getCache().getRelatedFeatures().contains(featureIdentifier);
     }
 
-    protected Set<String> getFeatureIdentifiers(final List<String> featureIdentifiers) {
+    protected Set<String> getFeatureIdentifiers(final List<String> featureIdentifiers, final RequestOperatorContext requestOperatorContext) {
         final Set<String> allFeatureIdentifiers = new HashSet<String>();
         for (final String featureIdentifier : featureIdentifiers) {
-            if (isRelatedFeature(featureIdentifier)) {
-                allFeatureIdentifiers.addAll(getCache().getChildFeatures(featureIdentifier, true, true));
+            if (isRelatedFeature(featureIdentifier, requestOperatorContext)) {
+                allFeatureIdentifiers.addAll(requestOperatorContext.getCache().getChildFeatures(featureIdentifier, true, true));
             } else {
                 allFeatureIdentifiers.add(featureIdentifier);
             }

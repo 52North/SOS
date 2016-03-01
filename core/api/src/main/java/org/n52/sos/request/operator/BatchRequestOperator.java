@@ -39,6 +39,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.BatchRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.BatchResponse;
 import org.n52.sos.util.BatchConstants;
 
@@ -55,7 +56,7 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
     }
 
     @Override
-    protected BatchResponse receive(BatchRequest request) throws OwsExceptionReport {
+    protected BatchResponse receive(BatchRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         for (AbstractServiceRequest<?> r : request) {
             r.setRequestContext(request.getRequestContext());
         }
@@ -63,7 +64,7 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
     }
 
     @Override
-    protected void checkParameters(BatchRequest request) throws OwsExceptionReport {
+    protected void checkParameters(BatchRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());

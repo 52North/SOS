@@ -37,6 +37,7 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.DescribeSensorResponse;
 
 /**
@@ -51,10 +52,10 @@ public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
-        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
+        addProcedureParameter(opsMeta, requestOperatorContext);
+        Set<String> pdfs = requestOperatorContext.getCache().getRequestableProcedureDescriptionFormat();
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             pdfs.addAll(CodingRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS,
                     Sos1Constants.SERVICEVERSION));
@@ -79,7 +80,7 @@ public abstract class AbstractDescribeSensorDAO extends AbstractOperationDAO {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public abstract DescribeSensorResponse getSensorDescription(DescribeSensorRequest request)
+    public abstract DescribeSensorResponse getSensorDescription(DescribeSensorRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport;
 
 }

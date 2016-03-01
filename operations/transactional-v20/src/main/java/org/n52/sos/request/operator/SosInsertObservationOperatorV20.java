@@ -55,8 +55,8 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.InsertObservationRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.wsdl.WSDLConstants;
@@ -81,14 +81,14 @@ public class SosInsertObservationOperatorV20 extends
     }
 
     @Override
-    public InsertObservationResponse receive(final InsertObservationRequest request) throws OwsExceptionReport {
-        InsertObservationResponse response = getDao().insertObservation(request);
+    public InsertObservationResponse receive(final InsertObservationRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        InsertObservationResponse response = getDao().insertObservation(request, requestOperatorContext);
         SosEventBus.fire(new ObservationInsertion(request, response));
         return response;
     }
 
     @Override
-    protected void checkParameters(final InsertObservationRequest request) throws OwsExceptionReport {
+    protected void checkParameters(final InsertObservationRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         createCompositePhenomenons(request);
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
@@ -103,7 +103,7 @@ public class SosInsertObservationOperatorV20 extends
         }
         // offering [1..*]
         try {
-            checkAndAddOfferingToObservationConstallation(request);
+            checkAndAddOfferingToObservationConstallation(request, requestOperatorContext);
         } catch (final OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -114,7 +114,7 @@ public class SosInsertObservationOperatorV20 extends
         }
         // observation [1..*]
         try {
-            checkObservations(request);
+            checkObservations(request, requestOperatorContext);
         } catch (final OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -148,7 +148,7 @@ public class SosInsertObservationOperatorV20 extends
         }
     }
 
-    private void checkAndAddOfferingToObservationConstallation(final InsertObservationRequest request)
+    private void checkAndAddOfferingToObservationConstallation(final InsertObservationRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         // TODO: Check requirement for this case in SOS 2.0 specification
         if (request.getOfferings() == null || (request.getOfferings() != null && request.getOfferings().isEmpty())) {
@@ -158,7 +158,7 @@ public class SosInsertObservationOperatorV20 extends
             for (final String offering : request.getOfferings()) {
                 if (offering == null || offering.isEmpty()) {
                     exceptions.add(new MissingOfferingParameterException());
-                } else if (!Configurator.getInstance().getCache().getOfferings().contains(offering)) {
+                } else if (!requestOperatorContext.getCache().getOfferings().contains(offering)) {
                     exceptions.add(new InvalidOfferingParameterException(offering));
                 } else {
                     for (final OmObservation observation : request.getObservations()) {
@@ -170,17 +170,17 @@ public class SosInsertObservationOperatorV20 extends
         }
     }
 
-    private void checkObservations(final InsertObservationRequest request) throws OwsExceptionReport {
+    private void checkObservations(final InsertObservationRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (CollectionHelper.isEmpty(request.getObservations())) {
             throw new MissingObservationParameterException();
         } else {
-            final ContentCache cache = Configurator.getInstance().getCache();
+            final ContentCache cache = requestOperatorContext.getCache();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final OmObservation observation : request.getObservations()) {
                 final OmObservationConstellation obsConstallation = observation.getObservationConstellation();
-                checkObservationConstellationParameter(obsConstallation);
+                checkObservationConstellationParameter(obsConstallation, requestOperatorContext);
                 // Requirement 67
-                checkOrSetObservationType(observation, isSplitObservations(request.getExtensions()));
+                checkOrSetObservationType(observation, isSplitObservations(request.getExtensions()), requestOperatorContext);
                 if (!cache.getObservationTypes().contains(obsConstallation.getObservationType())) {
                     exceptions.add(new InvalidObservationTypeException(obsConstallation.getObservationType()));
                 } else if (obsConstallation.isSetOfferings()) {
@@ -205,28 +205,27 @@ public class SosInsertObservationOperatorV20 extends
                 .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 
-    private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation)
+    private void checkObservationConstellationParameter(final OmObservationConstellation obsConstallation, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         AbstractPhenomenon observableProperty = obsConstallation.getObservableProperty();
         String observablePropertyIdentifier = observableProperty.getIdentifier();
 
         checkForCompositeObservableProperty(observableProperty, obsConstallation.getOfferings(),
-                Sos2Constants.InsertObservationParams.observedProperty);
+                Sos2Constants.InsertObservationParams.observedProperty, requestOperatorContext);
 
-        checkProcedureID(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure);
-        checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true);
+        checkProcedureID(obsConstallation.getProcedure().getIdentifier(), Sos2Constants.InsertObservationParams.procedure, requestOperatorContext);
+        checkObservedProperty(observablePropertyIdentifier, Sos2Constants.InsertObservationParams.observedProperty, true, requestOperatorContext);
         checkReservedCharacter(obsConstallation.getFeatureOfInterest().getIdentifier(),
                 Sos2Constants.InsertObservationParams.featureOfInterest);
     }
 
-
-    private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations)
+    private void checkOrSetObservationType(final OmObservation sosObservation, final boolean isSplitObservations, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         final OmObservationConstellation observationConstellation = sosObservation.getObservationConstellation();
         final String obsTypeFromValue = OMHelper.getObservationTypeFor(sosObservation.getValue().getValue());
         if (observationConstellation.isSetObservationType() && !isSplitObservations) {
             checkObservationType(observationConstellation.getObservationType(),
-                    Sos2Constants.InsertObservationParams.observationType.name());
+                    Sos2Constants.InsertObservationParams.observationType.name(), requestOperatorContext);
             if (obsTypeFromValue != null
                     && !sosObservation.getObservationConstellation().getObservationType().equals(obsTypeFromValue)) {
                 throw new NoApplicableCodeException().withMessage(

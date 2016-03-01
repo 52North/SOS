@@ -37,6 +37,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 
 /**
@@ -57,7 +58,7 @@ public class SosGetFeatureOfInterestOperatorV100
     }
 
     @Override
-    protected void checkParameters(GetFeatureOfInterestRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetFeatureOfInterestRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
@@ -66,7 +67,7 @@ public class SosGetFeatureOfInterestOperatorV100
         }
         try {
             checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(),
-                    Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name());
+                    Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -79,7 +80,7 @@ public class SosGetFeatureOfInterestOperatorV100
     }
 
     @Override
-    protected GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
-        return getDao().getFeatureOfInterest(request);
+    protected GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        return getDao().getFeatureOfInterest(request, requestOperatorContext);
     }
 }

@@ -55,8 +55,8 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertSensorResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.service.MiscSettings;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
@@ -118,14 +118,14 @@ public class SosInsertSensorOperatorV20 extends
     }
 
     @Override
-    public InsertSensorResponse receive(InsertSensorRequest request) throws OwsExceptionReport {
+    public InsertSensorResponse receive(InsertSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         InsertSensorResponse response = getDao().insertSensor(request);
         SosEventBus.fire(new SensorInsertion(request, response));
         return response;
     }
 
     @Override
-    protected void checkParameters(InsertSensorRequest request) throws OwsExceptionReport {
+    protected void checkParameters(InsertSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         // check parameters with variable content
         try {
@@ -161,9 +161,9 @@ public class SosInsertSensorOperatorV20 extends
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
-            checkAndSetAssignedOfferings(request);
+            checkAndSetAssignedOfferings(request, requestOperatorContext);
             try {
-                checkProcedureAndOfferingCombination(request);
+                checkProcedureAndOfferingCombination(request, requestOperatorContext);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
@@ -173,18 +173,18 @@ public class SosInsertSensorOperatorV20 extends
                 exceptions.add(owse);
             }
             try {
-                checkTypeOf(request.getProcedureDescription());
+                checkTypeOf(request.getProcedureDescription(), requestOperatorContext);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
             if (request.getMetadata() != null) {
                 try {
-                    checkObservationTypes(request.getMetadata().getObservationTypes());
+                    checkObservationTypes(request.getMetadata().getObservationTypes(), requestOperatorContext);
                 } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
                 try {
-                    checkFeatureOfInterestTypes(request.getMetadata().getFeatureOfInterestTypes());
+                    checkFeatureOfInterestTypes(request.getMetadata().getFeatureOfInterestTypes(), requestOperatorContext);
                 } catch (OwsExceptionReport owse) {
                     exceptions.add(owse);
                 }
@@ -205,11 +205,11 @@ public class SosInsertSensorOperatorV20 extends
         checkReservedCharacter(observableProperty, Sos2Constants.InsertSensorParams.observableProperty.name());
     }
 
-    private void checkFeatureOfInterestTypes(Set<String> featureOfInterestTypes) throws OwsExceptionReport {
+    private void checkFeatureOfInterestTypes(Set<String> featureOfInterestTypes, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (featureOfInterestTypes != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             Collection<String> validFeatureOfInterestTypes =
-                    Configurator.getInstance().getCache().getFeatureOfInterestTypes();
+                    requestOperatorContext.getCache().getFeatureOfInterestTypes();
             for (String featureOfInterestType : featureOfInterestTypes) {
                 if (featureOfInterestType.isEmpty()) {
                     exceptions.add(new MissingFeatureOfInterestTypeException());
@@ -223,12 +223,12 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkObservationTypes(Set<String> observationTypes) throws OwsExceptionReport {
+    private void checkObservationTypes(Set<String> observationTypes, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (observationTypes != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             for (String observationType : observationTypes) {
                 try {
-                    checkObservationType(observationType, Sos2Constants.InsertSensorParams.observationType.name());
+                    checkObservationType(observationType, Sos2Constants.InsertSensorParams.observationType.name(), requestOperatorContext);
                 } catch (OwsExceptionReport e) {
                     exceptions.add(e);
                 }
@@ -249,9 +249,9 @@ public class SosInsertSensorOperatorV20 extends
                 Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
-        ContentCache cache = Configurator.getInstance().getCache();
+        ContentCache cache = requestOperatorContext.getCache();
 
         // add parent procedure offerings
         if (request.getProcedureDescription().isSetParentProcedures()) {
@@ -292,9 +292,9 @@ public class SosInsertSensorOperatorV20 extends
         return false;
     }
 
-    private void checkProcedureAndOfferingCombination(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkProcedureAndOfferingCombination(InsertSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         for (SosOffering offering : request.getAssignedOfferings()) {
-            if (!offering.isParentOffering() && getCache().getOfferings().contains(offering.getIdentifier())) {
+            if (!offering.isParentOffering() && requestOperatorContext.getCache().getOfferings().contains(offering.getIdentifier())) {
                 throw new InvalidParameterValueException().at(Sos2Constants.InsertSensorParams.offeringIdentifier)
                         .withMessage(
                                 "The offering with the identifier '%s' still exists in this service and it is not allowed to insert more than one procedure to an offering!",
@@ -325,7 +325,7 @@ public class SosInsertSensorOperatorV20 extends
 
     }
 
-    private void checkTypeOf(SosProcedureDescription procedureDescription) throws OwsExceptionReport {
+    private void checkTypeOf(SosProcedureDescription procedureDescription, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         // if href is URL, remove typeOf
         // else href empty/title.xml/PREFIX/title.xml check title if exists
         if (procedureDescription.isSetTypeOf()) {
@@ -340,7 +340,7 @@ public class SosInsertSensorOperatorV20 extends
             if (!referenced) {
                 if (typeOf.isSetTitle()) {
                     String title = typeOf.getTitle();
-                    if (!getCache().hasProcedure(title)) {
+                    if (!requestOperatorContext.getCache().hasProcedure(title)) {
                         throw new InvalidParameterValueException("sml:AbstractProcess.typeOf.title", title);
                     }
                 } else {

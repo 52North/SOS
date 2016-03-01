@@ -46,6 +46,7 @@ import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.AbstractServiceResponse;
 
 /**
@@ -75,18 +76,18 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
     
     protected void checkForCompositeObservableProperty(AbstractPhenomenon observableProperty, Set<String> offerings,
-            Enum<?> parameterName) throws InvalidParameterValueException {
+            Enum<?> parameterName, final RequestOperatorContext requestOperatorContext) throws InvalidParameterValueException {
         String observablePropertyIdentifier = observableProperty.getIdentifier();
-        if (hasObservations(observablePropertyIdentifier, offerings) && observableProperty.isComposite() != getCache()
+        if (hasObservations(observablePropertyIdentifier, offerings, requestOperatorContext) && observableProperty.isComposite() != requestOperatorContext.getCache()
                 .isCompositePhenomenon(observablePropertyIdentifier)) {
             throw new InvalidParameterValueException(parameterName, observablePropertyIdentifier);
         }
     }
     
-    private boolean hasObservations(String observableProperty, Set<String> offerings) {
+    private boolean hasObservations(String observableProperty, Set<String> offerings, final RequestOperatorContext requestOperatorContext) {
         if (offerings != null) {
-            for (String offering : getCache().getOfferingsForObservableProperty(observableProperty)) {
-                if (offerings.contains(offering) && getCache().hasMaxPhenomenonTimeForOffering(offering)) {
+            for (String offering : requestOperatorContext.getCache().getOfferingsForObservableProperty(observableProperty)) {
+                if (offerings.contains(offering) && requestOperatorContext.getCache().hasMaxPhenomenonTimeForOffering(offering)) {
                     return true;
                 }
             }

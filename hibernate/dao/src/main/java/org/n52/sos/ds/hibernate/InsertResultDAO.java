@@ -92,6 +92,7 @@ import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.request.InsertResultRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.service.Configurator;
 import org.slf4j.Logger;
@@ -128,7 +129,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     }
 
     @Override
-    public InsertResultResponse insertResult(final InsertResultRequest request) throws OwsExceptionReport {
+    public InsertResultResponse insertResult(final InsertResultRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         final InsertResultResponse response = new InsertResultResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
@@ -145,7 +146,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             transaction = session.beginTransaction();
             final OmObservation o =
                     getSingleObservationFromResultValues(response.getVersion(), resultTemplate,
-                            request.getResultValues(), session);
+                            request.getResultValues(), session, requestOperatorContext);
             response.setObservation(o);
             final List<OmObservation> observations = getSingleObservationsFromObservation(o);
 
@@ -153,7 +154,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                     Sets.newHashSet(new ObservationConstellationDAO().getObservationConstellation(
                             resultTemplate.getProcedure(),
                             resultTemplate.getObservableProperty(),
-                            Configurator.getInstance().getCache()
+                            requestOperatorContext.getCache()
                                     .getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier()), session));
 
             int insertion = 0;
@@ -204,14 +205,14 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
      *             If an error occurs during the processing
      */
     private OmObservation getSingleObservationFromResultValues(final String version,
-            final ResultTemplate resultTemplate, final String resultValues, final Session session)
+            final ResultTemplate resultTemplate, final String resultValues, final Session session, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         final SosResultEncoding resultEncoding = new SosResultEncoding(resultTemplate.getResultEncoding());
         final SosResultStructure resultStructure = new SosResultStructure(resultTemplate.getResultStructure());
         final String[] blockValues = getBlockValues(resultValues, resultEncoding.getEncoding());
         final OmObservation singleObservation =
                 getObservation(resultTemplate, blockValues, resultStructure.getResultStructure(),
-                        resultEncoding.getEncoding(), session);
+                        resultEncoding.getEncoding(), session, requestOperatorContext);
         final AbstractFeature feature = getSosAbstractFeature(resultTemplate.getFeatureOfInterest(), version, session);
         singleObservation.getObservationConstellation().setFeatureOfInterest(feature);
         return singleObservation;
@@ -271,13 +272,13 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
      * @return Internal ObservationConstellation
      */
     private OmObservationConstellation getSosObservationConstellation(final ResultTemplate resultTemplate,
-            final Session session) {
+            final Session session, final RequestOperatorContext requestOperatorContext) {
         // get all offerings for procedure to match all parent procedure
         // offerings
         Set<Offering> procedureOfferings = new HashSet<Offering>();
         procedureOfferings.add(resultTemplate.getOffering());
         Set<String> procedureOfferingIds =
-                getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier());
+                requestOperatorContext.getCache().getOfferingsForProcedure(resultTemplate.getProcedure().getIdentifier());
         procedureOfferings.addAll(new OfferingDAO().getOfferingsForIdentifiers(procedureOfferingIds, session));
 
         final List<ObservationConstellation> obsConsts =
@@ -331,7 +332,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
      *             If processing fails
      */
     private OmObservation getObservation(final ResultTemplate resultTemplate, final String[] blockValues,
-            final SweAbstractDataComponent resultStructure, final SweAbstractEncoding encoding, final Session session)
+            final SweAbstractDataComponent resultStructure, final SweAbstractEncoding encoding, final Session session, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         final int resultTimeIndex = ResultHandlingHelper.hasResultTime(resultStructure);
         final int phenomenonTimeIndex = ResultHandlingHelper.hasPhenomenonTime(resultStructure);
@@ -348,7 +349,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 createObservationValueFrom(blockValues, record, encoding, resultTimeIndex, phenomenonTimeIndex);
 
         final OmObservation observation = new OmObservation();
-        observation.setObservationConstellation(getSosObservationConstellation(resultTemplate, session));
+        observation.setObservationConstellation(getSosObservationConstellation(resultTemplate, session, requestOperatorContext));
         observation.setResultType(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION);
         observation.setValue(sosValues);
         return observation;
@@ -491,10 +492,10 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     }
 
     @Override
-    public CapabilitiesExtension getExtension() {
+    public CapabilitiesExtension getExtension(final RequestOperatorContext requestOperatorContext) {
         final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
+        insertionCapabilities.addFeatureOfInterestTypes(requestOperatorContext.getCache().getFeatureOfInterestTypes());
+        insertionCapabilities.addObservationTypes(requestOperatorContext.getCache().getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
                 .getSupportedTransactionalProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic

@@ -60,8 +60,8 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.SosHelper;
@@ -88,7 +88,7 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     @Override
-    public GetObservationResponse receive(GetObservationRequest request) throws OwsExceptionReport {
+    public GetObservationResponse receive(GetObservationRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
         checkReportingHeader(flow);
         checkRequestForFlowAndTemporalFilter(request, flow);
@@ -160,7 +160,7 @@ public class AqdGetObservationOperatorV10 extends
     }
 
     @Override
-    protected void checkParameters(final GetObservationRequest request) throws OwsExceptionReport {
+    protected void checkParameters(final GetObservationRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -174,29 +174,29 @@ public class AqdGetObservationOperatorV10 extends
         }
 
         try {
-            checkOfferingId(request.getOfferings());
+            checkOfferingId(request.getOfferings(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkObservedProperties(request.getObservedProperties());
+            checkObservedProperties(request.getObservedProperties(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(request.getProcedures(), SosConstants.GetObservationParams.procedure.name());
+            checkProcedureIDs(request.getProcedures(), SosConstants.GetObservationParams.procedure.name(), requestOperatorContext);
             // add child procedures to request
             if (request.isSetProcedure()) {
-                request.setProcedures(addChildProcedures(request.getProcedures()));
+                request.setProcedures(addChildProcedures(request.getProcedures(), requestOperatorContext));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
             checkFeatureOfInterestIdentifiers(request.getFeatureIdentifiers(),
-                    SosConstants.GetObservationParams.featureOfInterest.name());
+                    SosConstants.GetObservationParams.featureOfInterest.name(), requestOperatorContext);
             if (request.isSetFeatureOfInterest()) {
-                request.setFeatureIdentifiers(addChildFeatures(request.getFeatureIdentifiers()));
+                request.setFeatureIdentifiers(addChildFeatures(request.getFeatureIdentifiers(), requestOperatorContext));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
@@ -263,11 +263,11 @@ public class AqdGetObservationOperatorV10 extends
      *             if the parameter does not containing any matching
      *             observedProperty for the requested offering
      */
-    private void checkObservedProperties(final List<String> observedProperties) throws OwsExceptionReport {
+    private void checkObservedProperties(final List<String> observedProperties, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
             final Collection<String> validObservedProperties =
-                    Configurator.getInstance().getCache().getObservableProperties();
+                    requestOperatorContext.getCache().getObservableProperties();
             for (final String obsProp : observedProperties) {
                 if (obsProp.isEmpty()) {
                     exceptions.add(new MissingObservedPropertyParameterException());
@@ -291,9 +291,9 @@ public class AqdGetObservationOperatorV10 extends
      * @throws OwsExceptionReport
      *             if the passed offeringId is not supported
      */
-    private void checkOfferingId(final List<String> offeringIds) throws OwsExceptionReport {
+    private void checkOfferingId(final List<String> offeringIds, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (offeringIds != null) {
-            final Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
+            final Set<String> offerings = requestOperatorContext.getCache().getOfferings();
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final String offeringId : offeringIds) {
                 if (offeringId == null || offeringId.isEmpty()) {
@@ -301,7 +301,7 @@ public class AqdGetObservationOperatorV10 extends
                 } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
                     final String[] offArray = offeringId.split(SosConstants.SEPARATOR_4_OFFERINGS);
                     if (!offerings.contains(offArray[0])
-                            || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
+                            || !requestOperatorContext.getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
                         exceptions.add(new InvalidOfferingParameterException(offeringId));
                     }
 

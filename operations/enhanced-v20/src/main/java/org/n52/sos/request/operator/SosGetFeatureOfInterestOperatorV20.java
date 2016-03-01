@@ -39,6 +39,7 @@ import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -66,12 +67,12 @@ public class SosGetFeatureOfInterestOperatorV20
     }
 
     @Override
-    public GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
-        return getDao().getFeatureOfInterest(request);
+    public GetFeatureOfInterestResponse receive(GetFeatureOfInterestRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        return getDao().getFeatureOfInterest(request, requestOperatorContext);
     }
 
     @Override
-    protected void checkParameters(GetFeatureOfInterestRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetFeatureOfInterestRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
@@ -85,22 +86,22 @@ public class SosGetFeatureOfInterestOperatorV20
         }
         try {
             checkObservedProperties(sosRequest.getObservedProperties(),
-                    Sos2Constants.GetFeatureOfInterestParams.observedProperty.name(), false);
+                    Sos2Constants.GetFeatureOfInterestParams.observedProperty.name(), false, requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkQueryableProcedureIDs(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkQueryableProcedureIDs(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name(), requestOperatorContext);
             // add instance and child procedures to request
             if (sosRequest.isSetProcedures()) {
-                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
+                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures(), requestOperatorContext), requestOperatorContext));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
             checkFeatureOfInterestAndRelatedFeatureIdentifier(sosRequest.getFeatureIdentifiers(),
-                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name());
+                    Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -115,13 +116,13 @@ public class SosGetFeatureOfInterestOperatorV20
     }
 
     private void checkFeatureOfInterestAndRelatedFeatureIdentifier(List<String> featureIdentifiers,
-            String parameterName) throws OwsExceptionReport {
+            String parameterName, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (featureIdentifiers != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             for (String featureOfInterest : featureIdentifiers) {
                 try {
-                    if (!getCache().hasRelatedFeature(featureOfInterest)) {
-                        checkFeatureOfInterestIdentifier(featureOfInterest, parameterName);
+                    if (!requestOperatorContext.getCache().hasRelatedFeature(featureOfInterest)) {
+                        checkFeatureOfInterestIdentifier(featureOfInterest, parameterName, requestOperatorContext);
                     }
                 } catch (OwsExceptionReport e) {
                     exceptions.add(e);

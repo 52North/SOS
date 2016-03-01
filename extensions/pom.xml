@@ -24,5 +24,11 @@
             <module>dynamic-modeling</module>
           </modules>
         </profile>
+        <profile>
+          <id>wonderware</id>
+          <modules>
+            <module>dynamic-modeling</module>
+          </modules>
+        </profile>
     </profiles>  	
 </project>

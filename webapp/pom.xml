@@ -805,5 +805,46 @@
             </plugins>
           </build>
         </profile>
+        <!-- ############ Profile to include the Wonderware extension ########### -->
+        <profile>
+          <id>wonderware</id>
+          <properties>
+            <!-- Source directory with settings -->
+            <wonderwareSourceSettingsDirectory>${project.parent.basedir}/extensions/dynamic-modeling/wonderware-modeling-sos-plugin/misc</wonderwareSourceSettingsDirectory>
+            <!-- Target directory of webapp -->
+            <wonderwareTargetSettingsDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</wonderwareTargetSettingsDirectory>
+          </properties>
+          <dependencies>
+            <dependency>
+              <groupId>org.n52.sensorweb.sos</groupId>
+              <artifactId>wonderware-modeling-sos-plugin</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>configure-datasource</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                    <configuration>
+                      <tasks>
+                        <copy todir="${wonderwareTargetSettingsDirectory}">
+                          <fileset dir="${wonderwareSourceSettingsDirectory}" includes="**/*" />
+                        </copy>
+                      </tasks>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
     </profiles>
 </project>

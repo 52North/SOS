@@ -20,6 +20,7 @@
         <module>api</module>
         <module>converter</module>
         <module>hydrology-core-library</module>
+        <module>hydrology-modeling-sos-plugin</module>
     </modules>
     <developers>
         <developer>

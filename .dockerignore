@@ -1,0 +1,12 @@
+bindings/
+coding/
+converter/
+core/
+extensions/
+hibernate/
+misc/
+operations/
+spring/
+third-party/
+webapp/
+webapp-bundle/

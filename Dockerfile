@@ -1,16 +1,15 @@
 # Building SOS project
 
-FROM ubuntu:14.04
+FROM java:7
 MAINTAINER gonephishing <riteshoneinamillion@gmail.com>
 
 # Update and install basic requirements
 RUN apt-get update
-RUN apt-get install -y unzip wget maven
+RUN apt-get install -y wget maven git
 
 # Get the development branch from github and extract it
-RUN wget https://github.com/52North/SOS/archive/develop.zip
-RUN unzip develop.zip
+RUN git clone https://github.com/52North/SOS.git
 
 # Chaange working directory to the project and install it using maven
-WORKDIR /SOS-develop
+WORKDIR /SOS
 RUN ["mvn", "clean", "install"]

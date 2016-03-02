@@ -32,6 +32,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelat
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
 import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.om.values.LogValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.swe.DataRecord;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
@@ -63,6 +64,7 @@ public class GeologyLogCoverageGeneratorSplitter {
         }
         if (entity.isSetLogValue()) {
             logValue.setValue(createValue(entity));
+            logValue.setSimpleValue(new QuantityValue(entity.getLogValue()));
         }
         return logValue;
     }

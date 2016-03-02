@@ -36,14 +36,6 @@ import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
 
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.waterml.x20.DefaultTVPMeasurementMetadataDocument;
-import net.opengis.waterml.x20.MeasureTVPType;
-import net.opengis.waterml.x20.MeasurementTimeseriesDocument;
-import net.opengis.waterml.x20.MeasurementTimeseriesType;
-import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
-import net.opengis.waterml.x20.TVPMeasurementMetadataType;
-
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -56,11 +48,10 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -79,6 +70,14 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
+
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.waterml.x20.DefaultTVPMeasurementMetadataDocument;
+import net.opengis.waterml.x20.MeasureTVPType;
+import net.opengis.waterml.x20.MeasurementTimeseriesDocument;
+import net.opengis.waterml.x20.MeasurementTimeseriesType;
+import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
+import net.opengis.waterml.x20.TVPMeasurementMetadataType;
 
 /**
  * Encoder class for WaterML 2.0 TimeseriesValuePair (TVP)
@@ -278,6 +277,20 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                             addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
                                     value);
                         }
+                    } else if (timeValuePair.getValue() instanceof GWGeologyLogCoverage) {
+                        GWGeologyLogCoverage gwglcValue = (GWGeologyLogCoverage)timeValuePair.getValue();
+                        if (gwglcValue.isSetValue()) {
+                            if (gwglcValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
+                                QuantityValue quantityValue = (QuantityValue)gwglcValue.getValue().iterator().next().getSimpleValue();
+                                if (!quantityValue.getValue().equals(Double.NaN)) {
+                                    timeValuePair.getTime();
+                                    String time = getTimeString(timeValuePair.getTime());
+                                    String value = Double.toString(quantityValue.getValue().doubleValue());
+                                    addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+                                            value);
+                                }
+                            }
+                        } 
                     } else if (timeValuePair.getValue() instanceof CountValue) {
                         CountValue countValue = (CountValue) timeValuePair.getValue();
                         if (countValue.getValue() != null) {

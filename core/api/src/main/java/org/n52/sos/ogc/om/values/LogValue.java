@@ -43,6 +43,7 @@ public class LogValue {
     private SweQuantity fromDepth;
     private SweQuantity toDepth;
     private DataRecord value;
+    private Value<?> simpleValue;
     
     /**
      * constructor
@@ -126,6 +127,20 @@ public class LogValue {
     
     public boolean isSetValue() {
         return getValue() != null;
+    }
+
+    /**
+     * @return the simpleValue
+     */
+    public Value<?> getSimpleValue() {
+        return simpleValue;
+    }
+
+    /**
+     * @param simpleValue the simpleValue to set
+     */
+    public void setSimpleValue(Value<?> simpleValue) {
+        this.simpleValue = simpleValue;
     }
 
 }

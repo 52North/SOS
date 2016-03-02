@@ -10,3 +10,9 @@ spring/
 third-party/
 webapp/
 webapp-bundle/
+.git/
+LICENSE
+NOTICE
+README.md
+RELEASE-NOTES
+pom.xml

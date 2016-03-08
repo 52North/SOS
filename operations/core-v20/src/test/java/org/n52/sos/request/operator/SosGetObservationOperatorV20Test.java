@@ -38,6 +38,7 @@ import static org.mockito.Matchers.anyCollectionOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -46,6 +47,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.request.RequestOperatorContext;
 
 import com.google.common.collect.Lists;
 
@@ -60,28 +62,30 @@ public class SosGetObservationOperatorV20Test {
     @Test
     public void should_return_empty_list_for_bad_parameters() {
         final SosGetObservationOperatorV20 operator = mock(SosGetObservationOperatorV20.class);
-        when(operator.addChildFeatures(anyCollectionOf(String.class))).thenCallRealMethod();
+        final RequestOperatorContext requestOperatorContext = mock(RequestOperatorContext.class);
+        when(operator.addChildFeatures(anyCollectionOf(String.class), eq(requestOperatorContext))).thenCallRealMethod();
 
         // null
-        List<String> childFeatures = operator.addChildFeatures(null);
+        List<String> childFeatures = operator.addChildFeatures(null, requestOperatorContext);
         assertThat(childFeatures.isEmpty(), is(TRUE));
 
         // empty list
-        childFeatures = operator.addChildFeatures(new ArrayList<String>(0));
+        childFeatures = operator.addChildFeatures(new ArrayList<String>(0), requestOperatorContext);
         assertThat(childFeatures.isEmpty(), is(TRUE));
     }
 
     @Test
     public void should_add_childs_for_features() {
         final SosGetObservationOperatorV20 operator = mock(SosGetObservationOperatorV20.class);
+        final RequestOperatorContext requestOperatorContext = mock(RequestOperatorContext.class);
         final ContentCache cache = mock(ContentCache.class);
         final Set<String> myChildFeatures = new HashSet<String>(1);
         myChildFeatures.add("child-feature");
         when(cache.getChildFeatures(anyString(), anyBoolean(), anyBoolean())).thenReturn(myChildFeatures);
-        when(operator.getCache()).thenReturn(cache);
-        when(operator.addChildFeatures(anyCollectionOf(String.class))).thenCallRealMethod();
+        when(requestOperatorContext.getCache()).thenReturn(cache);
+        when(operator.addChildFeatures(anyCollectionOf(String.class), eq(requestOperatorContext))).thenCallRealMethod();
 
-        final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList("feature"));
+        final List<String> childFeatures = operator.addChildFeatures(Lists.newArrayList("feature"), requestOperatorContext);
 
         assertThat(childFeatures.isEmpty(), is(FALSE));
         assertThat(childFeatures.size(), is(2));

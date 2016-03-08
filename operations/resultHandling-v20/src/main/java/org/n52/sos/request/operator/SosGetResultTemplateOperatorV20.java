@@ -41,6 +41,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.GetResultTemplateRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -63,12 +64,12 @@ public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<A
     }
 
     @Override
-    public GetResultTemplateResponse receive(GetResultTemplateRequest request) throws OwsExceptionReport {
+    public GetResultTemplateResponse receive(GetResultTemplateRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         return getDao().getResultTemplate(request);
     }
 
     @Override
-    protected void checkParameters(GetResultTemplateRequest request) throws OwsExceptionReport {
+    protected void checkParameters(GetResultTemplateRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -81,30 +82,30 @@ public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<A
             exceptions.add(owse);
         }
         try {
-            checkOffering(request.getOffering());
+            checkOffering(request.getOffering(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkObservedProperty(request.getObservedProperty());
+            checkObservedProperty(request.getObservedProperty(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         exceptions.throwIfNotEmpty();
     }
 
-    private void checkOffering(String offering) throws OwsExceptionReport {
+    private void checkOffering(String offering, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (offering == null || offering.isEmpty()) {
             throw new MissingOfferingParameterException();
-        } else if (!getCache().getOfferings().contains(offering)) {
+        } else if (!requestOperatorContext.getCache().getOfferings().contains(offering)) {
             throw new InvalidOfferingParameterException(offering);
         }
     }
 
-    private void checkObservedProperty(String observedProperty) throws OwsExceptionReport {
+    private void checkObservedProperty(String observedProperty, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (observedProperty == null || observedProperty.isEmpty()) {
             throw new MissingObservedPropertyParameterException();
-        } else if (!getCache().getObservableProperties().contains(observedProperty)) {
+        } else if (!requestOperatorContext.getCache().getObservableProperties().contains(observedProperty)) {
             throw new InvalidObservedPropertyParameterException(observedProperty);
         }
     }

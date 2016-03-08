@@ -34,6 +34,7 @@ import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.InsertObservationRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertObservationResponse;
 
 /**
@@ -47,15 +48,15 @@ public abstract class AbstractInsertObservationDAO extends AbstractOperationDAO 
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        addOfferingParameter(opsMeta);
+        addOfferingParameter(opsMeta, requestOperatorContext);
         opsMeta.addAnyParameterValue(Sos2Constants.InsertObservationParams.observation);
         opsMeta.addDataTypeParameter(Sos2Constants.InsertObservationParams.observation,
                 OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION);
     }
 
-    public abstract InsertObservationResponse insertObservation(InsertObservationRequest request)
+    public abstract InsertObservationResponse insertObservation(InsertObservationRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport;
 
 }

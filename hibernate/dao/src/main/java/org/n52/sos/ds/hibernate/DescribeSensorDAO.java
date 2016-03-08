@@ -46,6 +46,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -60,6 +61,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
 
@@ -96,7 +98,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
     }
 
     @Override
-    public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request) throws OwsExceptionReport {
+    public DescribeSensorResponse getSensorDescription(final DescribeSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         // sensorDocument which should be returned
         Session session = null;
         try {
@@ -107,9 +109,9 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             session = sessionHolder.getSession();
             // check for transactional SOS.
             if (HibernateHelper.isEntitySupported(ValidProcedureTime.class)) {
-                response.setSensorDescriptions(getProcedureDescriptions(request, session));
+                response.setSensorDescriptions(getProcedureDescriptions(request, session, requestOperatorContext));
             } else {
-                response.addSensorDescription(getProcedureDescription(request, session));
+                response.addSensorDescription(getProcedureDescription(request, session, requestOperatorContext));
             }
             return response;
         } catch (final HibernateException he) {
@@ -121,9 +123,9 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        super.setOperationsMetadata(opsMeta, service, version);
+        super.setOperationsMetadata(opsMeta, service, version, requestOperatorContext);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.validTime);
         }
@@ -142,9 +144,17 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
      * @throws ConverterException
      *             If an error occurs
      */
-    private SosProcedureDescription getProcedureDescription(DescribeSensorRequest request, Session session)
+    private SosProcedureDescription getProcedureDescription(DescribeSensorRequest request, Session session, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        final Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(request.getProcedure(), session);
+        Procedure procedure = new ProcedureDAO().getProcedureForIdentifier(request.getProcedure(), session);
+        
+        if (procedure == null && requestOperatorContext.getCache().getProcedures().contains(request.getProcedure())) {
+            procedure = new Procedure();
+            procedure.setIdentifier(request.getProcedure());
+            ProcedureDescriptionFormat procedureDescriptionFormat = new ProcedureDescriptionFormat();
+            procedureDescriptionFormat.setProcedureDescriptionFormat(request.getProcedureDescriptionFormat());
+            procedure.setProcedureDescriptionFormat(procedureDescriptionFormat);
+        }
         if (procedure == null) {
             throw new NoApplicableCodeException().causedBy(
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
@@ -166,7 +176,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
      * @throws ConverterException
      *             If an error occurs
      */
-    private List<SosProcedureDescription> getProcedureDescriptions(DescribeSensorRequest request, Session session)
+    private List<SosProcedureDescription> getProcedureDescriptions(DescribeSensorRequest request, Session session, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         Set<String> possibleProcedureDescriptionFormats =
                 getPossibleProcedureDescriptionFormats(request.getProcedureDescriptionFormat());
@@ -186,7 +196,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {
-            SosProcedureDescription procedureDescription = getProcedureDescription(request, session);
+            SosProcedureDescription procedureDescription = getProcedureDescription(request, session, requestOperatorContext);
             if (procedureDescription != null) {
                 list.add(procedureDescription);
             } else {

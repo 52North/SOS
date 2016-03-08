@@ -40,6 +40,7 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetResultRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetResultResponse;
 
 /**
@@ -52,16 +53,16 @@ public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        Set<String> resultTemplateIdentifier = getCache().getResultTemplates();
+        Set<String> resultTemplateIdentifier = requestOperatorContext.getCache().getResultTemplates();
         Set<String> offerings = new HashSet<String>(0);
         Collection<String> observableProperties = new ArrayList<String>(0);
         Collection<String> featureOfInterest = new ArrayList<String>(0);
         if (resultTemplateIdentifier != null && !resultTemplateIdentifier.isEmpty()) {
-            offerings = getCache().getOfferingsWithResultTemplate();
-            observableProperties = getCache().getObservablePropertiesWithResultTemplate();
-            featureOfInterest = getCache().getFeaturesOfInterestWithResultTemplate();
+            offerings = requestOperatorContext.getCache().getOfferingsWithResultTemplate();
+            observableProperties = requestOperatorContext.getCache().getObservablePropertiesWithResultTemplate();
+            featureOfInterest = requestOperatorContext.getCache().getFeaturesOfInterestWithResultTemplate();
         }
         if (version.equals(Sos1Constants.SERVICEVERSION)) {
             throw new OperationNotSupportedException().at(SosConstants.Operations.GetResult).withMessage(

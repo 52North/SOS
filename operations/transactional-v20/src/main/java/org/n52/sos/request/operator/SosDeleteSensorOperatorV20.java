@@ -41,8 +41,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.DeleteSensorResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 
@@ -65,14 +65,14 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
     }
 
     @Override
-    public DeleteSensorResponse receive(DeleteSensorRequest request) throws OwsExceptionReport {
+    public DeleteSensorResponse receive(DeleteSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         DeleteSensorResponse response = getDao().deleteSensor(request);
         SosEventBus.fire(new SensorDeletion(request, response));
         return response;
     }
 
     @Override
-    protected void checkParameters(DeleteSensorRequest request) throws OwsExceptionReport {
+    protected void checkParameters(DeleteSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -85,16 +85,16 @@ public class SosDeleteSensorOperatorV20 extends AbstractV2TransactionalRequestOp
             exceptions.add(owse);
         }
         try {
-            checkProcedureIdentifier(request.getProcedureIdentifier());
+            checkProcedureIdentifier(request.getProcedureIdentifier(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         exceptions.throwIfNotEmpty();
     }
 
-    private void checkProcedureIdentifier(String procedureIdentifier) throws OwsExceptionReport {
+    private void checkProcedureIdentifier(String procedureIdentifier, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (procedureIdentifier != null && !procedureIdentifier.isEmpty()) {
-            if (!Configurator.getInstance().getCache().getProcedures().contains(procedureIdentifier)) {
+            if (!requestOperatorContext.getCache().getProcedures().contains(procedureIdentifier)) {
                 throw new InvalidProcedureParameterException(procedureIdentifier);
             }
         } else {

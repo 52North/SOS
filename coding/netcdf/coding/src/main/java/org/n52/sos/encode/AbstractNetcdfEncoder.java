@@ -88,6 +88,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.BinaryAttachmentResponse;
 import org.n52.sos.response.DescribeSensorResponse;
@@ -1085,7 +1086,9 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
         }
         DescribeSensorResponse resp;
         try {
-            resp = getDescribeSensorDAO().getSensorDescription(req);
+            RequestOperatorContext requestOperatorContext = new RequestOperatorContext();
+            requestOperatorContext.setServiceRequest(req);
+            resp = getDescribeSensorDAO().getSensorDescription(req, requestOperatorContext);
         } catch (OwsExceptionReport e) {
             throw new NoApplicableCodeException().withMessage("Error getting sensor description for " + procedure)
                     .causedBy(e);

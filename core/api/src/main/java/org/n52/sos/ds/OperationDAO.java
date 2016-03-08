@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
+import org.n52.sos.request.RequestOperatorContext;
 
 /**
  * Interface for all SOS operation DAOs.
@@ -64,12 +65,14 @@ public interface OperationDAO extends DatasourceDaoIdentifier {
      *            OGC service identfier
      * @param version
      *            SOS version
+     * @param requestOperatorContext
+     *            Current RequestOperatorContext managed 
      * @return OperationsMetadata for the operation
      * 
      * @throws OwsExceptionReport
      *             If an error occurs.
      */
-    OwsOperation getOperationsMetadata(String service, String version) throws OwsExceptionReport;
+    OwsOperation getOperationsMetadata(String service, String version, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport;
 
     // /**
     // * @return the operation specific extension information (&larr; should be

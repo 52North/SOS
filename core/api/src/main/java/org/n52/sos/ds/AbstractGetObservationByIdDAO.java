@@ -33,6 +33,7 @@ import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetObservationByIdResponse;
 
 /**
@@ -45,7 +46,7 @@ public abstract class AbstractGetObservationByIdDAO extends AbstractOperationDAO
     }
 
     @Override
-    public void setOperationsMetadata(OwsOperation opsMeta, String service, String version) throws OwsExceptionReport {
+    public void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
             opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
     }
 

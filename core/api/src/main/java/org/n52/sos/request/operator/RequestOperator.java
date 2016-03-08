@@ -31,6 +31,7 @@ package org.n52.sos.request.operator;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.ConformanceClass;
 
@@ -45,7 +46,7 @@ public interface RequestOperator extends ConformanceClass {
 
     RequestOperatorKey getRequestOperatorKeyType();
 
-    OwsOperation getOperationMetadata(String service, String version) throws OwsExceptionReport;
+    OwsOperation getOperationMetadata(String service, String version, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport;
 
     // SosCapabilitiesExtension getExtension() throws OwsExceptionReport;
 }

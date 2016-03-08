@@ -11,11 +11,18 @@
     <description>Dymanic modeling library to manage generic models with observable attributes</description>
 
     <properties>
+        <org.n52.sensorweb.sos.groupId>org.n52.sensorweb.sos</org.n52.sensorweb.sos.groupId>
+        <org.n52.sensorweb.sos.version>4.4.0-SNAPSHOT</org.n52.sensorweb.sos.version>
         <guava-version>15.0</guava-version>
         <gt-version>9.5</gt-version>
     </properties>
  
     <dependencies>
+        <dependency>
+            <groupId>${org.n52.sensorweb.sos.groupId}</groupId>
+            <artifactId>api</artifactId>
+            <version>${org.n52.sensorweb.sos.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

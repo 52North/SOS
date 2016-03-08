@@ -40,6 +40,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.n52.sos.extensions.Measure;
 import org.n52.sos.extensions.MeasureSet;
 import org.n52.sos.extensions.ObservableAttribute;
+import org.n52.sos.extensions.ObservableContextArgs;
 import org.n52.sos.extensions.ObservableModel;
 import org.n52.sos.extensions.ObservableObject;
 import org.n52.sos.extensions.model.AbstractModel;
@@ -52,6 +53,7 @@ import org.n52.sos.extensions.model.AbstractModel;
 class WonderwareObservableMeasureCursor extends WonderwareObservableDataCursor<MeasureSet>
 {
     private ConcurrentLinkedQueue<MeasureSet> measureQueue = new ConcurrentLinkedQueue<MeasureSet>();
+    private int requestFlags = ObservableContextArgs.NONE_FLAGS;
     
     /** 
      * Creates a new WonderwareObservableMeasureCursor object.
@@ -64,10 +66,12 @@ class WonderwareObservableMeasureCursor extends WonderwareObservableDataCursor<M
      * @param featureKey: FieldName to related the FeatureSource with the database.
      * @param envelope: Spatial envelope filter.   
      * @param attributeList: List of attributes to read from the database.
+     * @param requestFlags: Flags of the request.
      */
-    public WonderwareObservableMeasureCursor(ObservableModel observableModel, String objectId, String databaseDriverClass, String databaseConnectionUrl, SimpleFeatureSource featureSource, String featureKey, ReferencedEnvelope envelope, List<SimpleObservableAttribute> attributeList)
+    public WonderwareObservableMeasureCursor(ObservableModel observableModel, String objectId, String databaseDriverClass, String databaseConnectionUrl, SimpleFeatureSource featureSource, String featureKey, ReferencedEnvelope envelope, List<SimpleObservableAttribute> attributeList, int requestFlags)
     {
         super(observableModel, objectId, databaseDriverClass, databaseConnectionUrl, featureSource, featureKey, envelope, attributeList);
+        this.requestFlags = requestFlags;
     }
     
     /** 
@@ -90,6 +94,9 @@ class WonderwareObservableMeasureCursor extends WonderwareObservableDataCursor<M
             List<MeasureSet> measureList = new ArrayList<MeasureSet>();
             ObservableAttribute attribute = null;
             MeasureSet measureSet = null;
+            
+            boolean returnFirst = (requestFlags&ObservableContextArgs.FIRST_TIMEINSTANT_FLAG  )==ObservableContextArgs.FIRST_TIMEINSTANT_FLAG;
+            boolean returnLast  = (requestFlags&ObservableContextArgs.LASTEST_TIMEINSTANT_FLAG)==ObservableContextArgs.LASTEST_TIMEINSTANT_FLAG;
             
             // Read information of attributes.
             for (SimpleObservableAttribute databaseAttribute : databaseAttributeList)
@@ -124,6 +131,11 @@ class WonderwareObservableMeasureCursor extends WonderwareObservableDataCursor<M
                         measureSet.attribute = attribute;
                         measureList.add(measureSet);
                     }
+                    
+                    // ... FIRST/LAST request?
+                    if (returnFirst && measureSet.measures.size()>0) continue; else
+                    if (returnLast  && measureSet.measures.size()>0) measureSet.measures.remove(0);
+                    
                     measureSet.measures.add(measureValue);
                 }
                 while (recordset.next());

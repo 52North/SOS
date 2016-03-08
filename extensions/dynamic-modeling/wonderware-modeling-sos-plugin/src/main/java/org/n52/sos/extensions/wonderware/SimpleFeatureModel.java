@@ -52,6 +52,7 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 
 import org.n52.sos.extensions.MeasureSet;
+import org.n52.sos.extensions.ObservableContextArgs;
 import org.n52.sos.extensions.ObservableObject;
 import org.n52.sos.extensions.model.AbstractModel;
 import org.n52.sos.extensions.util.FileUtils;
@@ -240,14 +241,17 @@ public class SimpleFeatureModel extends AbstractModel
     /**
      * Enumerate the available Observable Object collection from the specified filter criteria.
      * 
+     * @param observableContextArgs: Information context of a request to fetch objects.
+     * <p>With:
      * @param objectId: Object ID or Name from who recover data (Optional).
-     * @param envelope: spatial envelope filter.
+     * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param flags: Flags of the request.
      * 
      * @return ObservableObject collection that matches the specified filter criteria.
      */
-    public Iterable<ObservableObject> enumerateObservableObjects(final String objectId, final ReferencedEnvelope envelope, final Date dateTimeFrom, final Date dateTimeTo) throws RuntimeException
+    public Iterable<ObservableObject> enumerateObservableObjects(final ObservableContextArgs observableContextArgs) throws RuntimeException
     {
         return new Iterable<ObservableObject>() 
         {
@@ -257,6 +261,11 @@ public class SimpleFeatureModel extends AbstractModel
                 {
                     SimpleFeatureSource featureSource = calculateFeatureSource(featureStoreUrl);
                     if (featureSource==null) throw new RuntimeException(String.format("Unsupported FeatureStore from the ConnectionString '%s'", featureStoreUrl));
+                    
+                    final String objectId = observableContextArgs.objectId;
+                    final ReferencedEnvelope envelope = observableContextArgs.envelope;
+                    final Date dateTimeFrom = observableContextArgs.dateFrom;
+                    final Date dateTimeTo = observableContextArgs.dateTo;
                     
                     List<SimpleObservableAttribute> databaseAttributeList = new ArrayList<SimpleObservableAttribute>();
                     Date dateFrom2 = dateTimeFrom;
@@ -293,14 +302,17 @@ public class SimpleFeatureModel extends AbstractModel
     /**
      * Enumerate the available Measures from the specified filter criteria.
      * 
-     * @param objectID: Object ID or Name from who recover data (Optional).
-     * @param envelope: spatial envelope filter.
+     * @param observableContextArgs: Information context of a request to fetch objects.
+     * <p>With:
+     * @param objectId: Object ID or Name from who recover data (Optional).
+     * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param flags: Flags of the request.
      * 
      * @return ObservableResultSet collection that matches the specified filter criteria.
      */
-    public Iterable<MeasureSet> enumerateMeasures(final String objectId, final ReferencedEnvelope envelope, final Date dateTimeFrom, final Date dateTimeTo) throws RuntimeException
+    public Iterable<MeasureSet> enumerateMeasures(final ObservableContextArgs observableContextArgs) throws RuntimeException
     {
         return new Iterable<MeasureSet>() 
         {
@@ -310,6 +322,12 @@ public class SimpleFeatureModel extends AbstractModel
                 {
                     SimpleFeatureSource featureSource = calculateFeatureSource(featureStoreUrl);
                     if (featureSource==null) throw new RuntimeException(String.format("Unsupported FeatureStore from the ConnectionString '%s'", featureStoreUrl));
+                    
+                    final String objectId = observableContextArgs.objectId;
+                    final ReferencedEnvelope envelope = observableContextArgs.envelope;
+                    final Date dateTimeFrom = observableContextArgs.dateFrom;
+                    final Date dateTimeTo = observableContextArgs.dateTo;
+                    final int flags = observableContextArgs.flags;
                     
                     List<SimpleObservableAttribute> databaseAttributeList = new ArrayList<SimpleObservableAttribute>();
                     Date dateFrom2 = dateTimeFrom;
@@ -329,7 +347,7 @@ public class SimpleFeatureModel extends AbstractModel
                         }
                         databaseAttributeList.add(databaseAttribute);
                     }
-                    return new WonderwareObservableMeasureCursor(getObservableModel(), objectId, databaseDriverClass, databaseConnectionUrl, featureSource, featureKey, envelope, databaseAttributeList);
+                    return new WonderwareObservableMeasureCursor(getObservableModel(), objectId, databaseDriverClass, databaseConnectionUrl, featureSource, featureKey, envelope, databaseAttributeList, flags);
                 }
                 catch (IOException e)
                 {

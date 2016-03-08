@@ -40,6 +40,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import org.n52.sos.extensions.MeasureSet;
+import org.n52.sos.extensions.ObservableContextArgs;
 import org.n52.sos.extensions.ObservableObject;
 import org.n52.sos.extensions.model.Model;
 import org.n52.sos.extensions.model.ModelManager;
@@ -92,7 +93,13 @@ public class WonderwareModelingTest
                     int objectCount = 0;
                     int measureCount = 0;
                     
-                    for (ObservableObject observableObject : model.enumerateObservableObjects(objectId, envelope, dateFrom, dateTo))
+                    ObservableContextArgs observableContextArgs = new ObservableContextArgs();
+                    observableContextArgs.objectId = objectId;
+                    observableContextArgs.envelope = envelope;
+                    observableContextArgs.dateFrom = dateFrom;
+                    observableContextArgs.dateTo = dateTo;
+                    
+                    for (ObservableObject observableObject : model.enumerateObservableObjects(observableContextArgs))
                     {
                         warningMsg = String.format("Wonderware Observable object '%s' successly prepared", model.getName());
                         assertTrue(warningMsg, observableObject.attributes.size()>0);
@@ -100,7 +107,7 @@ public class WonderwareModelingTest
                     }
                     assertTrue(warningMsg, objectCount!=0);
                     
-                    for (MeasureSet measureSet : model.enumerateMeasures(objectId, envelope, dateFrom, dateTo))
+                    for (MeasureSet measureSet : model.enumerateMeasures(observableContextArgs))
                     {
                         warningMsg = String.format("Wonderware Measures '%s' successly prepared", model.getName());
                         assertTrue(warningMsg, measureSet.measures.size()>0);

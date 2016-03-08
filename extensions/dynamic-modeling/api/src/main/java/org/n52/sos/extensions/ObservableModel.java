@@ -28,9 +28,6 @@
  */
 package org.n52.sos.extensions;
 
-import java.util.Date;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-
 /**
  * Defines a generic data Model interface with Objects that provide Observable Attributes.
  *  
@@ -51,24 +48,30 @@ public interface ObservableModel
     /**
      * Enumerate the available Observable Object collection from the specified filter criteria.
      * 
+     * @param observableContextArgs: Information context of a request to fetch objects.
+     * <p>With:
      * @param objectId: Object ID or Name from who recover data (Optional).
      * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param flags: Flags of the request.
      * 
      * @return ObservableObject collection that matches the specified filter criteria.
      */
-    public Iterable<ObservableObject> enumerateObservableObjects(String objectId, ReferencedEnvelope envelope, Date dateFrom, Date dateTo) throws RuntimeException;
+    public Iterable<ObservableObject> enumerateObservableObjects(final ObservableContextArgs observableContextArgs) throws RuntimeException;
     
     /**
      * Enumerate the available Measures from the specified filter criteria.
      * 
+     * @param observableContextArgs: Information context of a request to fetch objects.
+     * <p>With:
      * @param objectId: Object ID or Name from who recover data (Optional).
      * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param flags: Flags of the request.
      * 
      * @return ObservableResultSet collection that matches the specified filter criteria.
      */
-    public Iterable<MeasureSet> enumerateMeasures(String objectId, ReferencedEnvelope envelope, Date dateFrom, Date dateTo) throws RuntimeException;
+    public Iterable<MeasureSet> enumerateMeasures(final ObservableContextArgs observableContextArgs) throws RuntimeException;
 }

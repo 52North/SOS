@@ -28,7 +28,6 @@
  */
 package org.n52.sos.extensions;
 
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,9 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.joda.time.DateTime;
 
 import org.n52.sos.cache.AbstractContentCache;
@@ -48,13 +45,9 @@ import org.n52.sos.cache.InMemoryCacheImpl;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -69,8 +62,6 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.AbstractObservationResponse;
@@ -80,7 +71,6 @@ import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -279,220 +269,12 @@ public class DynamicWritableCache extends InMemoryCacheImpl
     }
     
     /**
-     * Appends to identifiersList the no-duplicated identifiers from the source list.
-     */
-    private static boolean extractIdentifiers(List<String> sourceList, Map<String,String> identifiersMap, List<String> identifiersList)
-    {
-        if (sourceList!=null && sourceList.size()>0)
-        {
-            boolean itemAdded = false;
-            
-            for (int i = 0, icount = sourceList.size(); i < icount; i++)
-            {
-                String itemText = sourceList.get(i);
-                
-                int currentPos = itemText.lastIndexOf(':');
-                if (currentPos!=-1) itemText = itemText.substring(currentPos+1);
-                
-                String[] split = itemText.split("/");
-                if (split.length>=3) itemText = split[0]+"/"+split[1];
-                
-                if (!identifiersMap.containsKey(itemText))
-                {
-                    identifiersMap.put(itemText, itemText);
-                    identifiersList.add(itemText);                    
-                    itemAdded = true;
-                }
-            }
-            return itemAdded;
-        }
-        return false;
-    }    
-    /**
-     * Returns the requested identifier collection defined by the specified ServiceRequest.
-     */
-    private java.util.Map.Entry<String,Boolean> extractIdentifiers(ObservableModel dynamicModel, AbstractServiceRequest<?> request)
-    {
-        Map<String,String> identifiersMap = new TreeMap<String,String>(String.CASE_INSENSITIVE_ORDER);
-        List<String> identifiersList = new ArrayList<String>();
-        
-        // Parse when available the source filter identifiers of requested objects.
-        if (request instanceof GetFeatureOfInterestRequest)
-        {
-            GetFeatureOfInterestRequest theRequest = (GetFeatureOfInterestRequest)request;
-            DynamicWritableCache.extractIdentifiers(theRequest.getFeatureIdentifiers(), identifiersMap, identifiersList);
-            DynamicWritableCache.extractIdentifiers(theRequest.getObservedProperties(), identifiersMap, identifiersList);
-            DynamicWritableCache.extractIdentifiers(theRequest.getProcedures(), identifiersMap, identifiersList);
-        }
-        else
-        if (request instanceof GetObservationByIdRequest)
-        {
-            GetObservationByIdRequest theRequest = (GetObservationByIdRequest)request;
-            DynamicWritableCache.extractIdentifiers(theRequest.getObservationIdentifier(), identifiersMap, identifiersList);
-        }
-        else
-        if (request instanceof GetObservationRequest)
-        {
-            GetObservationRequest theRequest = (GetObservationRequest)request;
-            DynamicWritableCache.extractIdentifiers(theRequest.getFeatureIdentifiers(), identifiersMap, identifiersList);
-            DynamicWritableCache.extractIdentifiers(theRequest.getObservedProperties(), identifiersMap, identifiersList);
-            DynamicWritableCache.extractIdentifiers(theRequest.getProcedures(), identifiersMap, identifiersList);
-            DynamicWritableCache.extractIdentifiers(theRequest.getOfferings(), identifiersMap, identifiersList);
-        }
-        else
-        if (request instanceof DescribeSensorRequest)
-        {
-            DescribeSensorRequest theRequest = (DescribeSensorRequest)request;
-            DynamicWritableCache.extractIdentifiers(Collections.singletonList(theRequest.getProcedure()), identifiersMap, identifiersList);
-        }
-        else
-        if (request instanceof GetCapabilitiesRequest)
-        {
-            GetCapabilitiesRequest theRequest = (GetCapabilitiesRequest)request;
-            
-            List<String> sections = theRequest.getSections();
-            boolean contentNeeded = true;
-            
-            if (sections!=null)
-            {
-                contentNeeded = sections.size()==0;
-                
-                for (String sectionName : theRequest.getSections())
-                {
-                    if (sectionName.equalsIgnoreCase("OperationsMetadata") || sectionName.equalsIgnoreCase("Contents"))
-                    {
-                        contentNeeded = true;
-                        break;
-                    }
-                }
-            }
-            if (!contentNeeded)
-            return new AbstractMap.SimpleEntry<String,Boolean>(ObservableObject.UNDEFINED_OBJECT_ID_FLAG, false);
-        }
-        else
-        {
-            return new AbstractMap.SimpleEntry<String,Boolean>(ObservableObject.UNDEFINED_OBJECT_ID_FLAG, true);
-        }
-        
-        // Skip no-current model.
-        String  objectId = ObservableObject.UNDEFINED_OBJECT_ID_FLAG;
-        String modelName = dynamicModel.getName();
-        boolean failFunc = identifiersList.size()>0;
-        
-        for (String key : identifiersList)
-        {
-            String[] split = key.split("/");
-            
-            if (split!=null && split.length==2 && split[0].equalsIgnoreCase(modelName))
-            {
-                objectId += split[1] + ",";
-                failFunc = false;
-            }
-        }
-        identifiersList.clear();
-        identifiersMap.clear();
-        
-        // Return identifiers.
-        if (!failFunc)
-        {
-            int len = objectId.length();
-            if (len>0 && objectId.charAt(len-1)==',') objectId = objectId.substring(0,len-1);
-            return new AbstractMap.SimpleEntry<String,Boolean>(objectId, true);
-        }
-        return new AbstractMap.SimpleEntry<String,Boolean>(ObservableObject.UNDEFINED_OBJECT_ID_FLAG, false);
-    }
-    
-    /**
-     * Returns the requested spatial filter defined by the specified ServiceRequest.
-     */
-    private java.util.Map.Entry<SpatialFilter,ReferencedEnvelope> extractSpatialFilter(ObservableModel dynamicModel, AbstractServiceRequest<?> request)
-    {
-        SpatialFilter spatialFilter = null;
-        
-        // TODO: Extract only first spatial filter available from the request.
-        if (request instanceof GetFeatureOfInterestRequest)
-        {
-            GetFeatureOfInterestRequest theRequest = (GetFeatureOfInterestRequest)request;
-            if (theRequest.isSetSpatialFilters()) spatialFilter = theRequest.getSpatialFilters().get(0);
-        }
-        else
-        if (request instanceof GetObservationRequest)
-        {
-            GetObservationRequest theRequest = (GetObservationRequest)request;
-            if (theRequest.isSetSpatialFilter()) spatialFilter = theRequest.getSpatialFilter();
-        }
-        if (spatialFilter!=null && spatialFilter.getGeometry()!=null && !spatialFilter.getGeometry().isEmpty())
-        {
-            Geometry geometry = spatialFilter.getGeometry();
-            int srid = geometry.getSRID();
-            if (srid==0) srid = getDefaultEPSGCode();
-            
-            CoordinateReferenceSystem coordinateSystem = null;
-            try { coordinateSystem = CRS.decode("EPSG:"+srid); } catch (Exception e) { coordinateSystem = DefaultGeographicCRS.WGS84; }
-            
-            Envelope env = geometry.getEnvelopeInternal();
-            ReferencedEnvelope envelope = new ReferencedEnvelope(env.getMinX(), env.getMaxX(), env.getMinY(), env.getMaxY(), coordinateSystem);
-            
-            return new AbstractMap.SimpleEntry<SpatialFilter,ReferencedEnvelope>(spatialFilter, envelope);
-        }
-        return new AbstractMap.SimpleEntry<SpatialFilter,ReferencedEnvelope>(null, ObservableObject.UNDEFINED_ENVELOPE_FILTER_FLAG);
-    }
-    
-    /**
-     * Returns the requested temporal filter defined by the specified ServiceRequest.
-     */
-    private java.util.Map.Entry<TemporalFilter,TimePeriod> extractTemporalFilter(ObservableModel dynamicModel, AbstractServiceRequest<?> request)
-    {
-        List<TemporalFilter> temporalFilters = null;
-        
-        // TODO: Extract only first temporal filter available from the request.
-        if (request instanceof GetFeatureOfInterestRequest)
-        {
-            GetFeatureOfInterestRequest theRequest = (GetFeatureOfInterestRequest)request;
-            if (theRequest.isSetTemporalFilters()) temporalFilters = theRequest.getTemporalFilters();
-        }
-        else        
-        if (request instanceof GetObservationRequest)
-        {
-            GetObservationRequest theRequest = (GetObservationRequest)request;
-            if (theRequest.isSetTemporalFilter()) temporalFilters = theRequest.getTemporalFilters();
-        }
-        else
-        if (request instanceof DescribeSensorRequest)
-        {
-            DescribeSensorRequest theRequest = (DescribeSensorRequest)request;
-            if (theRequest.isSetValidTime()) temporalFilters = Collections.singletonList(new TemporalFilter(TimeOperator.TM_Equals, theRequest.getValidTime(), null));
-        }
-        if (temporalFilters!=null && temporalFilters.size()>0)
-        {
-            TimePeriod timePeriod = new TimePeriod();
-            
-            for (TemporalFilter filter : temporalFilters)
-            {
-                Time time = filter.getTime();
-                
-                if (time instanceof TimeInstant)
-                {
-                    TimeInstant ti = (TimeInstant)time;
-                    timePeriod.extendToContain(ti);
-                }
-                else
-                if (time instanceof TimePeriod)
-                {
-                    TimePeriod tp = (TimePeriod)time;
-                    timePeriod.extendToContain(tp);
-                }
-            }
-            return new AbstractMap.SimpleEntry<TemporalFilter,TimePeriod>(temporalFilters.get(0), timePeriod);
-        }
-        return new AbstractMap.SimpleEntry<TemporalFilter,TimePeriod>(null, new TimePeriod());
-    }
-    
-    /**
      * Validate an ObservableObject using the specified spatial and temporal filters. 
      */
-    private static boolean validateObject(ObservableModel dynamicModel, ObservableObject theObject, SpatialFilter spatialFilter, TemporalFilter temporalFilter) throws org.n52.sos.exception.CodedException
+    private static boolean validateObject(ObservableModel dynamicModel, ObservableObject theObject, final ObservableContextArgs observableContextArgs) throws org.n52.sos.exception.CodedException
     {
+        SpatialFilter spatialFilter = observableContextArgs.spatialFilter;
+        
         if (spatialFilter!=null && theObject.featureOfInterest!=null)
         {
             SpatialOperator spatialOperator = spatialFilter.getOperator();
@@ -524,41 +306,22 @@ public class DynamicWritableCache extends InMemoryCacheImpl
      */
     public void addContentOfDynamicModel(ObservableModel dynamicModel, AbstractServiceRequest<?> request) throws org.n52.sos.exception.CodedException
     {
-        String objectId = ObservableObject.UNDEFINED_OBJECT_ID_FLAG;
-        ReferencedEnvelope envelope = ObservableObject.UNDEFINED_ENVELOPE_FILTER_FLAG;
-        TimePeriod timePeriod = new TimePeriod(ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG, ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG);
-        
-        TemporalFilter temporalFilter = null;
-        SpatialFilter spatialFilter = null;
+        ObservableContextArgs observableContextArgs = new ObservableContextArgs();
         
         DateTime minObservationTime = null;
         DateTime maxObservationTime = null;
         SosEnvelope globalEnvelope  = null;
         
-        // ----------------------------------------------------------------------------------------------------
         // Extract the source data filters of the requested ServiceRequest.
-        
-        java.util.Map.Entry<String,Boolean> idf = extractIdentifiers(dynamicModel, request);
-        if (idf.getValue()) objectId = idf.getKey();
-        else return;
-        
-        java.util.Map.Entry<SpatialFilter,ReferencedEnvelope> spf = extractSpatialFilter(dynamicModel, request);
-        spatialFilter = spf.getKey();
-        envelope = spf.getValue();
-        
-        java.util.Map.Entry<TemporalFilter,TimePeriod> tmf = extractTemporalFilter(dynamicModel, request);
-        temporalFilter = tmf.getKey();
-        timePeriod = tmf.getValue();
+        if (!observableContextArgs.parseRequest(dynamicModel, request, getDefaultEPSGCode()))
+            return;
         
         // ----------------------------------------------------------------------------------------------------
         // Add dynamic capabilities.
         
-        java.util.Date dateFrom = timePeriod.getStart()!=null ? new java.util.Date(timePeriod.getStart().getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        java.util.Date dateTo   = timePeriod.getEnd()  !=null ? new java.util.Date(timePeriod.getEnd()  .getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        
-        for (ObservableObject theObject : dynamicModel.enumerateObservableObjects(objectId, envelope, dateFrom, dateTo))
+        for (ObservableObject theObject : dynamicModel.enumerateObservableObjects(observableContextArgs))
         {
-            if (!DynamicWritableCache.validateObject(dynamicModel, theObject, spatialFilter, temporalFilter))
+            if (!DynamicWritableCache.validateObject(dynamicModel, theObject, observableContextArgs))
                 continue;
             
             String offering = DynamicUtils.makeOfferingIdentifier(dynamicModel, theObject);
@@ -711,44 +474,25 @@ public class DynamicWritableCache extends InMemoryCacheImpl
      */
     private boolean injectDescribeSensorResponseDataOfDynamicModel(AbstractServiceResponse response, ObservableModel dynamicModel, AbstractServiceRequest<?> request) throws org.n52.sos.exception.CodedException
     {
-        String objectId = ObservableObject.UNDEFINED_OBJECT_ID_FLAG;
-        ReferencedEnvelope envelope = ObservableObject.UNDEFINED_ENVELOPE_FILTER_FLAG;
-        TimePeriod timePeriod = new TimePeriod(ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG, ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG);
-        
-        TemporalFilter temporalFilter = null;
-        SpatialFilter spatialFilter = null;
+        ObservableContextArgs observableContextArgs = new ObservableContextArgs();
         
         DescribeSensorResponse theResponse = (DescribeSensorResponse)response;
         boolean dataInjected = false;
         
-        // ----------------------------------------------------------------------------------------------------
         // Extract the source data filters of the requested ServiceRequest.
-        
-        java.util.Map.Entry<String,Boolean> idf = extractIdentifiers(dynamicModel, request);
-        if (idf.getValue()) objectId = idf.getKey();
-        else return false;
-        
-        java.util.Map.Entry<SpatialFilter,ReferencedEnvelope> spf = extractSpatialFilter(dynamicModel, request);
-        spatialFilter = spf.getKey();
-        envelope = spf.getValue();
-        
-        java.util.Map.Entry<TemporalFilter,TimePeriod> tmf = extractTemporalFilter(dynamicModel, request);
-        temporalFilter = tmf.getKey();
-        timePeriod = tmf.getValue();
+        if (!observableContextArgs.parseRequest(dynamicModel, request, getDefaultEPSGCode()))
+            return false;
         
         // ----------------------------------------------------------------------------------------------------
         // Add dynamic observations.
-        
-        java.util.Date dateFrom = timePeriod.getStart()!=null ? new java.util.Date(timePeriod.getStart().getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        java.util.Date dateTo   = timePeriod.getEnd()  !=null ? new java.util.Date(timePeriod.getEnd()  .getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
         
         List<SosProcedureDescription> procedureCollection = theResponse.getProcedureDescriptions();
         procedureCollection.clear();
         procedureCollection = new ArrayList<SosProcedureDescription>();
         
-        for (ObservableObject theObject : dynamicModel.enumerateObservableObjects(objectId, envelope, dateFrom, dateTo))
+        for (ObservableObject theObject : dynamicModel.enumerateObservableObjects(observableContextArgs))
         {
-            if (!DynamicWritableCache.validateObject(dynamicModel, theObject, spatialFilter, temporalFilter))
+            if (!DynamicWritableCache.validateObject(dynamicModel, theObject, observableContextArgs))
                 continue;
             
             if (theObject.featureOfInterest!=null)
@@ -772,43 +516,24 @@ public class DynamicWritableCache extends InMemoryCacheImpl
      */
     private boolean injectFeatureOfInterestResponseDataOfDynamicModel(AbstractServiceResponse response, ObservableModel dynamicModel, AbstractServiceRequest<?> request) throws org.n52.sos.exception.CodedException
     {
-        String objectId = ObservableObject.UNDEFINED_OBJECT_ID_FLAG;
-        ReferencedEnvelope envelope = ObservableObject.UNDEFINED_ENVELOPE_FILTER_FLAG;
-        TimePeriod timePeriod = new TimePeriod(ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG, ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG);
-        
-        TemporalFilter temporalFilter = null;
-        SpatialFilter spatialFilter = null;
+        ObservableContextArgs observableContextArgs = new ObservableContextArgs();
         
         GetFeatureOfInterestResponse theResponse = (GetFeatureOfInterestResponse)response;
         boolean dataInjected = false;
         
-        // ----------------------------------------------------------------------------------------------------
         // Extract the source data filters of the requested ServiceRequest.
-        
-        java.util.Map.Entry<String,Boolean> idf = extractIdentifiers(dynamicModel, request);
-        if (idf.getValue()) objectId = idf.getKey();
-        else return false;
-        
-        java.util.Map.Entry<SpatialFilter,ReferencedEnvelope> spf = extractSpatialFilter(dynamicModel, request);
-        spatialFilter = spf.getKey();
-        envelope = spf.getValue();
-        
-        java.util.Map.Entry<TemporalFilter,TimePeriod> tmf = extractTemporalFilter(dynamicModel, request);
-        temporalFilter = tmf.getKey();
-        timePeriod = tmf.getValue();
+        if (!observableContextArgs.parseRequest(dynamicModel, request, getDefaultEPSGCode()))
+            return false;
         
         // ----------------------------------------------------------------------------------------------------
         // Add dynamic featureOfInterest objects.
         
-        java.util.Date dateFrom = timePeriod.getStart()!=null ? new java.util.Date(timePeriod.getStart().getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        java.util.Date dateTo   = timePeriod.getEnd()  !=null ? new java.util.Date(timePeriod.getEnd()  .getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        
         FeatureCollection featureCollection = (FeatureCollection)theResponse.getAbstractFeature();
         if (featureCollection==null) featureCollection = new FeatureCollection();
         
-        for (ObservableObject theObject : dynamicModel.enumerateObservableObjects(objectId, envelope, dateFrom, dateTo))
+        for (ObservableObject theObject : dynamicModel.enumerateObservableObjects(observableContextArgs))
         {
-            if (!DynamicWritableCache.validateObject(dynamicModel, theObject, spatialFilter, temporalFilter))
+            if (!DynamicWritableCache.validateObject(dynamicModel, theObject, observableContextArgs))
                 continue;
             
             if (theObject.featureOfInterest!=null)
@@ -831,30 +556,14 @@ public class DynamicWritableCache extends InMemoryCacheImpl
      */
     private boolean injectObservationResponseDataOfDynamicModel(AbstractServiceResponse response, ObservableModel dynamicModel, AbstractServiceRequest<?> request) throws org.n52.sos.exception.CodedException
     {
-        String objectId = ObservableObject.UNDEFINED_OBJECT_ID_FLAG;
-        ReferencedEnvelope envelope = ObservableObject.UNDEFINED_ENVELOPE_FILTER_FLAG;
-        TimePeriod timePeriod = new TimePeriod(ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG, ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG);
-        
-        TemporalFilter temporalFilter = null;
-        SpatialFilter spatialFilter = null;
+        ObservableContextArgs observableContextArgs = new ObservableContextArgs();
         
         AbstractObservationResponse theResponse = (AbstractObservationResponse)response;
         boolean dataInjected = false;
         
-        // ----------------------------------------------------------------------------------------------------
         // Extract the source data filters of the requested ServiceRequest.
-        
-        java.util.Map.Entry<String,Boolean> idf = extractIdentifiers(dynamicModel, request);
-        if (idf.getValue()) objectId = idf.getKey();
-        else return false;
-        
-        java.util.Map.Entry<SpatialFilter,ReferencedEnvelope> spf = extractSpatialFilter(dynamicModel, request);
-        spatialFilter = spf.getKey();
-        envelope = spf.getValue();
-        
-        java.util.Map.Entry<TemporalFilter,TimePeriod> tmf = extractTemporalFilter(dynamicModel, request);
-        temporalFilter = tmf.getKey();
-        timePeriod = tmf.getValue();
+        if (!observableContextArgs.parseRequest(dynamicModel, request, getDefaultEPSGCode()))
+            return false;
         
         // ----------------------------------------------------------------------------------------------------
         // Extract the requested full-name properties.
@@ -890,17 +599,14 @@ public class DynamicWritableCache extends InMemoryCacheImpl
         // ----------------------------------------------------------------------------------------------------
         // Add dynamic observations.
         
-        java.util.Date dateFrom = timePeriod.getStart()!=null ? new java.util.Date(timePeriod.getStart().getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        java.util.Date dateTo   = timePeriod.getEnd()  !=null ? new java.util.Date(timePeriod.getEnd()  .getMillis()) : ObservableObject.UNDEFINED_DATETIME_FILTER_FLAG;
-        
         List<OmObservation> observations = new ArrayList<OmObservation>();
         observations.addAll(theResponse.getObservationCollection());
         
-        for (MeasureSet measureSet : dynamicModel.enumerateMeasures(objectId, envelope, dateFrom, dateTo))
+        for (MeasureSet measureSet : dynamicModel.enumerateMeasures(observableContextArgs))
         {
             ObservableObject theObject = measureSet.ownerObject;
             
-            if (measureSet.measures.size()==0 || !DynamicWritableCache.validateObject(dynamicModel, theObject, spatialFilter, temporalFilter))
+            if (measureSet.measures.size()==0 || !DynamicWritableCache.validateObject(dynamicModel, theObject, observableContextArgs))
                 continue;
             
             String offering = DynamicUtils.makeOfferingIdentifier(dynamicModel, theObject);

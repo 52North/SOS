@@ -41,6 +41,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.n52.sos.extensions.Measure;
 import org.n52.sos.extensions.MeasureSet;
 import org.n52.sos.extensions.ObservableAttribute;
+import org.n52.sos.extensions.ObservableContextArgs;
 import org.n52.sos.extensions.ObservableModel;
 import org.n52.sos.extensions.ObservableObject;
 import org.n52.sos.extensions.hydrology.epanet.io.output.EpanetDatabaseComposer;
@@ -53,6 +54,7 @@ import org.n52.sos.extensions.hydrology.epanet.io.output.EpanetDatabaseComposer;
 class EpanetObservableMeasureCursor extends EpanetObservableDataCursor<MeasureSet>
 {
     private ConcurrentLinkedQueue<MeasureSet> measureQueue = new ConcurrentLinkedQueue<MeasureSet>();
+    private int requestFlags = ObservableContextArgs.NONE_FLAGS;
     
     /** 
      * Creates a new EpanetObservableMeasureCursor object.
@@ -62,10 +64,12 @@ class EpanetObservableMeasureCursor extends EpanetObservableDataCursor<MeasureSe
      * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param requestFlags: Flags of the request.
      */
-    public EpanetObservableMeasureCursor(ObservableModel observableModel, String sqliteFileName, CoordinateReferenceSystem coordinateSystem, String objectFilterPattern, ReferencedEnvelope envelope, java.util.Date dateFrom, java.util.Date dateTo, String whereClause) throws RuntimeException
+    public EpanetObservableMeasureCursor(ObservableModel observableModel, String sqliteFileName, CoordinateReferenceSystem coordinateSystem, String objectFilterPattern, ReferencedEnvelope envelope, java.util.Date dateFrom, java.util.Date dateTo, String whereClause, int requestFlags) throws RuntimeException
     {
         super(observableModel, sqliteFileName, coordinateSystem, objectFilterPattern, envelope, dateFrom, dateTo, whereClause);
+        this.requestFlags = requestFlags;
     }
     
     /** 
@@ -95,6 +99,9 @@ class EpanetObservableMeasureCursor extends EpanetObservableDataCursor<MeasureSe
             java.util.Date finalTime = null;
             long numSteps = 0;
             
+            boolean returnFirst = (requestFlags&ObservableContextArgs.FIRST_TIMEINSTANT_FLAG  )==ObservableContextArgs.FIRST_TIMEINSTANT_FLAG;
+            boolean returnLast  = (requestFlags&ObservableContextArgs.LASTEST_TIMEINSTANT_FLAG)==ObservableContextArgs.LASTEST_TIMEINSTANT_FLAG;
+            
             // Read information of attributes.
             do
             {
@@ -120,6 +127,11 @@ class EpanetObservableMeasureCursor extends EpanetObservableDataCursor<MeasureSe
                         measureList.add(measureSet);
                     }
                     measureSet = measureList.get(itemIndex);
+                    
+                    // ... FIRST/LAST request?
+                    if (returnFirst && measureSet.measures.size()>0) continue; else
+                    if (returnLast  && measureSet.measures.size()>0) measureSet.measures.remove(0);
+                    
                     measureSet.measures.add(measureValue);
                 }
             }
@@ -128,7 +140,11 @@ class EpanetObservableMeasureCursor extends EpanetObservableDataCursor<MeasureSe
             // Save information of attributes.
             if (numSteps>0)
             {
-                long stepTime = (finalTime.getTime()-startTime.getTime()) / (numSteps-1);
+                // ... FIRST/LAST request?
+                if (returnFirst) { finalTime = startTime; numSteps = 1; } else
+                if (returnLast ) { startTime = finalTime; numSteps = 1; }
+                
+                long stepTime = numSteps>1 ? (finalTime.getTime()-startTime.getTime()) / (numSteps-1) : 0;
                 int itemIndex = 0;
                 
                 for (Map.Entry<String,Class<?>> entry : tableDef)

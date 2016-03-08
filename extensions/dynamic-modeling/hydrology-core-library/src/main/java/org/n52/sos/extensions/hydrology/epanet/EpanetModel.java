@@ -45,6 +45,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 
 import org.n52.sos.extensions.MeasureSet;
+import org.n52.sos.extensions.ObservableContextArgs;
 import org.n52.sos.extensions.ObservableObject;
 import org.n52.sos.extensions.hydrology.epanet.io.output.EpanetDatabaseComposer;
 import org.n52.sos.extensions.model.AbstractModel;
@@ -274,14 +275,17 @@ public class EpanetModel extends AbstractModel
     /**
      * Enumerate the available Observable Object collection from the specified filter criteria.
      * 
+     * @param observableContextArgs: Information context of a request to fetch objects.
+     * <p>With:
      * @param objectId: Object ID or Name from who recover data (Optional).
-     * @param envelope: spatial envelope filter.
+     * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param flags: Flags of the request.
      * 
      * @return ObservableObject collection that matches the specified filter criteria.
      */
-    public Iterable<ObservableObject> enumerateObservableObjects(final String objectId, final ReferencedEnvelope envelope, final Date dateFrom, final Date dateTo) throws RuntimeException
+    public Iterable<ObservableObject> enumerateObservableObjects(final ObservableContextArgs observableContextArgs) throws RuntimeException
     {
         final Model currentModel = this;
         
@@ -290,6 +294,11 @@ public class EpanetModel extends AbstractModel
             public final Iterator<ObservableObject> iterator() 
             {
                 String whereClause = "";
+                
+                final String objectId = observableContextArgs.objectId;
+                final ReferencedEnvelope envelope = observableContextArgs.envelope;
+                final Date dateFrom = observableContextArgs.dateFrom;
+                final Date dateTo = observableContextArgs.dateTo;
                 
                 if (!com.google.common.base.Strings.isNullOrEmpty(objectId))
                 {
@@ -302,14 +311,17 @@ public class EpanetModel extends AbstractModel
     /**
      * Enumerate the available Measures from the specified filter criteria.
      * 
+     * @param observableContextArgs: Information context of a request to fetch objects.
+     * <p>With:
      * @param objectId: Object ID or Name from who recover data (Optional).
-     * @param envelope: spatial envelope filter.
+     * @param envelope: Spatial envelope filter.
      * @param dateFrom: Minimum valid phenomenon DateTime.
      * @param dateTo: Maximum valid phenomenon DateTime.
+     * @param flags: Flags of the request.
      * 
      * @return ObservableResultSet collection that matches the specified filter criteria.
      */
-    public Iterable<MeasureSet> enumerateMeasures(final String objectId, final ReferencedEnvelope envelope, final Date dateFrom, final Date dateTo) throws RuntimeException
+    public Iterable<MeasureSet> enumerateMeasures(final ObservableContextArgs observableContextArgs) throws RuntimeException
     {
         final Model currentModel = this;
         
@@ -319,11 +331,17 @@ public class EpanetModel extends AbstractModel
             {
                 String whereClause = "";
                 
+                final String objectId = observableContextArgs.objectId;
+                final ReferencedEnvelope envelope = observableContextArgs.envelope;
+                final Date dateFrom = observableContextArgs.dateFrom;
+                final Date dateTo = observableContextArgs.dateTo;
+                final int flags = observableContextArgs.flags;
+                
                 if (!com.google.common.base.Strings.isNullOrEmpty(objectId))
                 {
                     whereClause = "a.object_id='"+objectId+"'";
                 }
-                return new EpanetObservableMeasureCursor(currentModel,sqliteFileName, coordinateSystem, objectFilter, envelope, dateFrom, dateTo, whereClause);
+                return new EpanetObservableMeasureCursor(currentModel,sqliteFileName, coordinateSystem, objectFilter, envelope, dateFrom, dateTo, whereClause, flags);
             }
         };
     }

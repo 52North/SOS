@@ -66,6 +66,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
@@ -1186,6 +1187,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     for (final AbstractObservationTime observationTime : observationTimes) {
                         if (observationTime.hasSamplingGeometry()) {
                             final Geometry geom = observationTime.getSamplingGeometry();
+                            if (geom != null && geom.getEnvelopeInternal() != null) {
+                                envelope.expandToInclude(geom.getEnvelopeInternal());
+                            }
+                        } else if (observationTime.isSetLongLat()) {
+                            final Geometry geom = new HibernateGeometryCreator().createGeometry(observationTime);
                             if (geom != null && geom.getEnvelopeInternal() != null) {
                                 envelope.expandToInclude(geom.getEnvelopeInternal());
                             }

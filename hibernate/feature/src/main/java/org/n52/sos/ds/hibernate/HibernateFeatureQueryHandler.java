@@ -59,6 +59,7 @@ import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -532,20 +533,21 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         if (feature.isSetGeometry()) {
             return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
-            int epsg = getStorageEPSG();
-            if (feature.isSetSrid()) {
-                epsg = feature.getSrid();
-            }
-            final String wktString =
-                    GeometryHandler.getInstance().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
-            final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
-            if (feature.isSetAltitude()) {
-                geom.getCoordinate().z = GeometryHandler.getInstance().getValueAsDouble(feature.getAltitude());
-                if (geom.getSRID() == getStorage3DEPSG()) {
-                    geom.setSRID(getStorage3DEPSG());
-                }
-            }
-            return geom;
+            return new HibernateGeometryCreator(getStorageEPSG(), getStorage3DEPSG()).createGeometry(feature);
+//            int epsg = getStorageEPSG();
+//            if (feature.isSetSrid()) {
+//                epsg = feature.getSrid();
+//            }
+//            final String wktString =
+//                    GeometryHandler.getInstance().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
+//            final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
+//            if (feature.isSetAltitude()) {
+//                geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
+//                if (geom.getSRID() == getStorage3DEPSG()) {
+//                    geom.setSRID(getStorage3DEPSG());
+//                }
+//            }
+//            return geom;
             // return
             // GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
         } else {

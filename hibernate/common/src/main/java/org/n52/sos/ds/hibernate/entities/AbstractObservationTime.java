@@ -83,6 +83,7 @@ public abstract class AbstractObservationTime
     private Object longitude;
     private Object latitude;
     private Object altitude;
+    private int srid;
 
     private Geometry samplingGeometry;
 
@@ -259,6 +260,21 @@ public abstract class AbstractObservationTime
 
     public boolean isSpatial() {
         return hasSamplingGeometry() || isSetLongLat();
+    }
+    
+    @Override
+    public int getSrid() {
+        return srid;
+    }
+
+    @Override
+    public AbstractObservationTime setSrid(final int srid) {
+        this.srid = srid;
+        return this;
+    }
+    
+    public boolean isSetSrid() {
+        return getSrid() > 0;
     }
 
 }

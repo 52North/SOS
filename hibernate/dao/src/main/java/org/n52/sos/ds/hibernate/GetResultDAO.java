@@ -320,11 +320,17 @@ public class GetResultDAO extends AbstractGetResultDAO {
     private void addSpatialFilteringProfileRestrictions(Criteria criteria, GetResultRequest request, Session session)
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
+            if (GeometryHandler.getInstance().isSpatialDatasource()) {
                 criteria.add(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
                         GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
                                 request.getSpatialFilter().getGeometry())));
+            } else {
+                // TODO add filter with lat/lon
+                LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+            }
+            
         }
     }
 }

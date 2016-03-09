@@ -60,15 +60,18 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.TextObservation;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -378,13 +381,23 @@ public class ObservationDAO extends AbstractObservationDAO {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Geometry> getSamplingGeometries(String feature, Session session) {
+    public List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
         criteria.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
-        criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
         criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
-        criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
-        return criteria.list();
+        if (GeometryHandler.getInstance().isSpatialDatasource()) {
+            criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
+            criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
+            return criteria.list();
+        } else {
+            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
+                                            Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
+            List<Geometry> samplingGeometries = Lists.newArrayList();
+            for (ObservationInfo element : (List<ObservationInfo>)criteria.list()) {
+                samplingGeometries.add(new HibernateGeometryCreator().createGeometry(element));
+            }
+            return samplingGeometries;
+        }
     }
     
     private void addAliasAndNotRestrictionFor(Criteria c, Set<Long> procedureIds, Set<Long> observablePropertyIds, Set<Long> featureIds) {

@@ -388,12 +388,14 @@ public class ObservationDAO extends AbstractObservationDAO {
         if (GeometryHandler.getInstance().isSpatialDatasource()) {
             criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
             criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY getSamplingGeometries(offeringID): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         } else {
             criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
                                             Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
             List<Geometry> samplingGeometries = Lists.newArrayList();
-            for (ObservationInfo element : (List<ObservationInfo>)criteria.list()) {
+            LOGGER.debug("QUERY getSamplingGeometries(offeringID): {}", HibernateHelper.getSqlString(criteria));
+            for (AbstractObservationTime element : (List<AbstractObservationTime>)criteria.list()) {
                 samplingGeometries.add(new HibernateGeometryCreator().createGeometry(element));
             }
             return samplingGeometries;

@@ -42,14 +42,14 @@ public interface InspireOMSOConstants {
     SchemaLocation OMSO_SCHEMA_LOCATION = new SchemaLocation(NS_OMSO_30, SCHEMA_LOCATION_URL_OMSO);
     
     // observation types
-    String OBS_TYPE_POINT_OBSERVATION = "PointObservation";
+    String OBS_TYPE_POINT_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/PointObservation";
     
-    String OBS_TYPE_POINT_TIME_SERIES_OBSERVATION = "PointTimeSeriesObservation";
+    String OBS_TYPE_POINT_TIME_SERIES_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation";
     
-    String OBS_TYPE_MULTI_POINT_OBSERVATION = "MultiPointObservation";
+    String OBS_TYPE_MULTI_POINT_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/MultiPointObservation";
     
-    String OBS_TYPE_PROFILE_OBSERVATION = "ProfileObservation";
+    String OBS_TYPE_PROFILE_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/ProfileObservation";
     
-    String OBS_TYPE_TRAJECTORY_OBSERVATION = "TrajectoryObservation";
+    String OBS_TYPE_TRAJECTORY_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/TrajectoryObservation";
 
 }

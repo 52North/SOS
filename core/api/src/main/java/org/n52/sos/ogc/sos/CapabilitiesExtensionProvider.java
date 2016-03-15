@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.sos;
 
+import org.n52.sos.request.RequestOperatorContext;
+
 /**
  * Interface for CapabilitiesExtensionProvider. Implementations of this
  * interface are loaded by the {@link CapabilitiesExtensionRepository}.
@@ -49,7 +51,7 @@ public interface CapabilitiesExtensionProvider {
      * 
      * @return provided CapabilitiesExtension
      */
-    CapabilitiesExtension getExtension();
+    CapabilitiesExtension getExtension(final RequestOperatorContext requestOperatorContext);
 
     /**
      * Does this {@link CapabilitiesExtension} related to a specific service

@@ -66,6 +66,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
@@ -116,7 +117,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     }
     
     @Override
-    public GetFeatureOfInterestResponse getFeatureOfInterest(final GetFeatureOfInterestRequest request)
+    public GetFeatureOfInterestResponse getFeatureOfInterest(final GetFeatureOfInterestRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         Session session = null;
         try {
@@ -129,7 +130,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
                     throw new NoApplicableCodeException()
                             .withMessage("Only one out of featureofinterestid or location possible.");
                 } else if (isFeatureIdentifierRequest(request) || isSpatialFilterRequest(request)) {
-                    featureCollection = getFeatures(request, session);
+                    featureCollection = getFeatures(request, session, requestOperatorContext);
                 } else {
                     throw new CompositeOwsException(new MissingParameterValueException(
                             Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID),
@@ -137,7 +138,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
                 }
             } else // SOS 2.0
             {
-                featureCollection = getFeatures(request, session);
+                featureCollection = getFeatures(request, session, requestOperatorContext);
                 /*
                  * Now, we return the list of returned features and not a
                  * complex encoded relatedFeature See
@@ -219,11 +220,11 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * @throws OwsExceptionReport
      *             If an error occurs during processing
      */
-    private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session)
+    private FeatureCollection getFeatures(final GetFeatureOfInterestRequest request, final Session session, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        final Set<String> foiIDs = new HashSet<String>(queryFeatureIdentifiersForParameter(request, session));
+        final Set<String> foiIDs = new HashSet<String>(queryFeatureIdentifiersForParameter(request, session, requestOperatorContext));
         if (request.isSetFeatureOfInterestIdentifiers()) {
-            addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
+            addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers(), requestOperatorContext);
         }
         // feature of interest
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
@@ -245,10 +246,10 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * @param featureIdentifiers
      *            Feature identifiers to add
      */
-    private void addRequestedRelatedFeatures(final Set<String> foiIDs, final List<String> featureIdentifiers) {
+    private void addRequestedRelatedFeatures(final Set<String> foiIDs, final List<String> featureIdentifiers, final RequestOperatorContext requestOperatorContext) {
         requestedFeatures: for (final String requestedFeature : featureIdentifiers) {
-            if (isRelatedFeature(requestedFeature)) {
-                final Set<String> childFeatures = getCache().getChildFeatures(requestedFeature, true, false);
+            if (isRelatedFeature(requestedFeature, requestOperatorContext)) {
+                final Set<String> childFeatures = requestOperatorContext.getCache().getChildFeatures(requestedFeature, true, false);
                 for (final String featureWithObservation : foiIDs) {
                     if (childFeatures.contains(featureWithObservation)) {
                         foiIDs.add(requestedFeature);
@@ -272,7 +273,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      */
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
-            final Session session) throws OwsExceptionReport {
+            final Session session, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         if (req.hasNoParameter()) {
             return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
         }
@@ -280,7 +281,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
             final Criteria c =
                     session.createCriteria(FeatureOfInterest.class).setProjection(
                             Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-            final Collection<String> features = getFeatureIdentifiers(req.getFeatureIdentifiers());
+            final Collection<String> features = getFeatureIdentifiers(req.getFeatureIdentifiers(), requestOperatorContext);
             if (features != null && !features.isEmpty()) {
                 c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
             }
@@ -291,12 +292,12 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
             return executeNamedQuery(req, session);
         }
         if (isSos100(req)) {
-            return queryFeatureIdentifiersForParameterForSos100(req, session);
+            return queryFeatureIdentifiersForParameterForSos100(req, session, requestOperatorContext);
         }
         if (EntitiyHelper.getInstance().isSeriesSupported()) {
             return queryFeatureIdentifiersForParameterForSeries(req, session);
         }
-        return queryFeatureIdentifiersOfParameterFromOldObservations(req, session);
+        return queryFeatureIdentifiersOfParameterFromOldObservations(req, session, requestOperatorContext);
     }
 
     /**
@@ -310,8 +311,8 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      */
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersOfParameterFromOldObservations(GetFeatureOfInterestRequest req,
-            Session session) {
-        Criteria c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session);
+            Session session, final RequestOperatorContext requestOperatorContext) {
+        Criteria c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session, requestOperatorContext);
         LOGGER.debug("QUERY queryFeatureIdentifiersOfParameterFromOldObservations(request): {}",
                 HibernateHelper.getSqlString(c));
         return c.list();
@@ -328,14 +329,14 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      * @return Hibernate Criteria
      */
     private Criteria getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(GetFeatureOfInterestRequest req,
-            Session session) {
+            Session session, final RequestOperatorContext requestOperatorContext) {
         final Criteria c = session.createCriteria(ContextualReferencedLegacyObservation.class);
         final Criteria fc = c.createCriteria(ContextualReferencedLegacyObservation.FEATURE_OF_INTEREST);
         fc.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
 
         // relates to observations.
         if (req.isSetFeatureOfInterestIdentifiers()) {
-            final Collection<String> features = getFeatureIdentifiers(req.getFeatureIdentifiers());
+            final Collection<String> features = getFeatureIdentifiers(req.getFeatureIdentifiers(), requestOperatorContext);
             if (features != null && !features.isEmpty()) {
                 fc.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, features));
             }
@@ -389,13 +390,13 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      *             If an error occurs during processing
      */
     @SuppressWarnings("unchecked")
-    private List<String> queryFeatureIdentifiersForParameterForSos100(GetFeatureOfInterestRequest req, Session session)
+    private List<String> queryFeatureIdentifiersForParameterForSos100(GetFeatureOfInterestRequest req, Session session, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         Criteria c = null;
         if (EntitiyHelper.getInstance().isSeriesSupported()) {
             c = getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(req, session);
         } else {
-            c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session);
+            c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session, requestOperatorContext);
             if (req.isSetTemporalFilters()) {
                 c.add(TemporalRestrictions.filter(req.getTemporalFilters()));
             }

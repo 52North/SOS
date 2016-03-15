@@ -32,6 +32,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
@@ -44,11 +45,11 @@ public abstract class AbstractInsertResultTemplateDAO extends AbstractResultHand
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         opsMeta.addAnyParameterValue(Sos2Constants.InsertResultTemplateParams.proposedTemplate);
     }
 
-    public abstract InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
+    public abstract InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport;
 }

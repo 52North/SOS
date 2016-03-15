@@ -39,6 +39,7 @@ import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
@@ -67,13 +68,13 @@ public class SosDescribeSensorOperatorV20 extends
     }
 
     @Override
-    public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
-        return getDao().getSensorDescription(request);
+    public DescribeSensorResponse receive(DescribeSensorRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        return getDao().getSensorDescription(request, requestOperatorContext);
         // TODO check if sensor description position/location/observedArea should be transformed (CRS support)
     }
 
     @Override
-    protected void checkParameters(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(DescribeSensorRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
@@ -86,12 +87,12 @@ public class SosDescribeSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkProcedureID(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name());
+            checkProcedureID(sosRequest.getProcedure(), SosConstants.DescribeSensorParams.procedure.name(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureDescriptionFromat(sosRequest.getProcedureDescriptionFormat(), sosRequest);
+            checkProcedureDescriptionFromat(sosRequest.getProcedureDescriptionFormat(), sosRequest, requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -109,8 +110,8 @@ public class SosDescribeSensorOperatorV20 extends
         return WSDLConstants.Operations.DESCRIBE_SENSOR;
     }
     
-    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
-        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos2Constants.DescribeSensorParams.procedureDescriptionFormat)) {
+    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws MissingParameterValueException, OwsExceptionReport {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, requestOperatorContext)) {
             SosHelper.checkProcedureDescriptionFormat(sosRequest.getProcedureDescriptionFormat(),
                     sosRequest.getService(), sosRequest.getVersion());
         }

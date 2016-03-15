@@ -37,6 +37,7 @@ import org.n52.sos.event.SosEventBus;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.request.operator.AbstractTransactionalRequestOperator;
 import org.n52.sos.request.operator.RequestOperator;
 import org.n52.sos.service.Configurator;
@@ -58,7 +59,7 @@ public class DeleteObservationRequestOperator
     }
 
     @Override
-    public DeleteObservationResponse receive(DeleteObservationRequest request) throws OwsExceptionReport {
+    public DeleteObservationResponse receive(DeleteObservationRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         DeleteObservationResponse response = getDao().deleteObservation(request);
         SosEventBus.fire(new DeleteObservationEvent(request, response));
         return response;
@@ -69,7 +70,7 @@ public class DeleteObservationRequestOperator
     }
 
     @Override
-    protected void checkParameters(DeleteObservationRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(DeleteObservationRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());

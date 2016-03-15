@@ -36,15 +36,11 @@ import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetCapabilitiesResponse;
-import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * @since 4.0.0
@@ -67,8 +63,8 @@ public class SosGetCapabilitiesOperatorV20 extends
     }
 
     @Override
-    public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
-        return getDao().getCapabilities(request);
+    public GetCapabilitiesResponse receive(GetCapabilitiesRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        return getDao().getCapabilities(request, requestOperatorContext);
     }
 
     @Override
@@ -77,7 +73,7 @@ public class SosGetCapabilitiesOperatorV20 extends
     }
 
     @Override
-    protected void checkParameters(GetCapabilitiesRequest request) throws OwsExceptionReport {
+    protected void checkParameters(GetCapabilitiesRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         final CompositeOwsException exceptions = new CompositeOwsException();
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();

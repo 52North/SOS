@@ -41,6 +41,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.BatchRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.BatchResponse;
 import org.n52.sos.service.operator.ServiceOperator;
 import org.n52.sos.service.operator.ServiceOperatorKey;
@@ -110,7 +111,7 @@ public class BatchOperationDAO extends AbstractOperationDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation operation, String service, String version)
+    protected void setOperationsMetadata(OwsOperation operation, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         /* nothing to do here */
     }

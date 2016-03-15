@@ -38,6 +38,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,7 @@ public class SosGetObservationByIdOperatorV100
     }
 
     @Override
-    protected void checkParameters(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetObservationByIdRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
 
         checkServiceParameter(sosRequest.getService());
         // check valid obs ids
@@ -99,7 +100,7 @@ public class SosGetObservationByIdOperatorV100
     }
 
     @Override
-    protected GetObservationByIdResponse receive(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
+    protected GetObservationByIdResponse receive(GetObservationByIdRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         GetObservationByIdResponse sosResponse = getDao().getObservationById(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         return sosResponse;

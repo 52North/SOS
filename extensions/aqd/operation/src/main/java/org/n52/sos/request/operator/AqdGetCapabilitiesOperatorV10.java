@@ -47,6 +47,7 @@ import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetCapabilitiesResponse;
 
 import com.google.common.collect.Lists;
@@ -67,9 +68,9 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     @Override
-    public GetCapabilitiesResponse receive(GetCapabilitiesRequest request) throws OwsExceptionReport {
+    public GetCapabilitiesResponse receive(GetCapabilitiesRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         return modifyCapabilities((GetCapabilitiesResponse) changeResponseServiceVersion(getDao().getCapabilities(
-                (GetCapabilitiesRequest) changeRequestServiceVersion(request))));
+                (GetCapabilitiesRequest) changeRequestServiceVersion(request), requestOperatorContext)));
     }
 
     private GetCapabilitiesResponse modifyCapabilities(GetCapabilitiesResponse response) {
@@ -142,7 +143,7 @@ public class AqdGetCapabilitiesOperatorV10 extends
     }
 
     @Override
-    protected void checkParameters(GetCapabilitiesRequest request) throws OwsExceptionReport {
+    protected void checkParameters(GetCapabilitiesRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         final CompositeOwsException exceptions = new CompositeOwsException();
         if (request.isSetAcceptVersions()) {
             boolean contains = false;

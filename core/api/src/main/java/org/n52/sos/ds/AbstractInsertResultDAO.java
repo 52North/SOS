@@ -32,6 +32,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertResultResponse;
 
 /**
@@ -44,12 +45,12 @@ public abstract class AbstractInsertResultDAO extends AbstractResultHandlingDAO 
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.InsertResultParams.template, getCache().getResultTemplates());
+        opsMeta.addPossibleValuesParameter(Sos2Constants.InsertResultParams.template, requestOperatorContext.getCache().getResultTemplates());
         opsMeta.addAnyParameterValue(Sos2Constants.InsertResultParams.resultValues);
     }
 
-    public abstract InsertResultResponse insertResult(InsertResultRequest request) throws OwsExceptionReport;
+    public abstract InsertResultResponse insertResult(InsertResultRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport;
     
 }

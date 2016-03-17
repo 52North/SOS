@@ -19,6 +19,7 @@
     <modules>
         <module>api</module>
         <module>converter</module>
+        <module>hydrology-core-library</module>
     </modules>
     <developers>
         <developer>

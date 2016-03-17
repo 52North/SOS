@@ -759,5 +759,51 @@
                 </plugins>
             </build>
         </profile>
+        <!-- ############ Profile to include the Hydrology Modeling extension ########### -->
+        <profile>
+          <id>hydrology</id>
+          <properties>
+            <!-- Source directory with settings and hydraulic models -->
+            <hydrologySourceSettingsDirectory>${project.parent.basedir}/extensions/dynamic-modeling/hydrology-core-library/misc</hydrologySourceSettingsDirectory>
+            <!-- Target directory of webapp -->
+            <hydrologyTargetSettingsDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF</hydrologyTargetSettingsDirectory>
+          </properties>
+          <dependencies>
+            <dependency>
+              <groupId>org.n52.sensorweb.sos</groupId>
+              <artifactId>hydrology-core-library</artifactId>
+              <version>1.0</version>
+            </dependency>
+            <dependency>
+              <groupId>org.n52.sensorweb.sos</groupId>
+              <artifactId>hydrology-modeling-sos-plugin</artifactId>
+              <version>${project.version}</version>
+            </dependency>
+          </dependencies>
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                  <execution>
+                    <id>configure-datasource</id>
+                    <phase>process-resources</phase>
+                    <goals>
+                      <goal>run</goal>
+                    </goals>
+                    <configuration>
+                      <tasks>
+                        <copy todir="${hydrologyTargetSettingsDirectory}">
+                          <fileset dir="${hydrologySourceSettingsDirectory}" includes="**/*" />
+                        </copy>
+                      </tasks>
+                    </configuration>
+                  </execution>
+                </executions>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
     </profiles>
 </project>

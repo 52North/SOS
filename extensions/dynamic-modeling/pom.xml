@@ -21,6 +21,7 @@
         <module>converter</module>
         <module>hydrology-core-library</module>
         <module>hydrology-modeling-sos-plugin</module>
+        <module>wonderware-modeling-sos-plugin</module>
     </modules>
     <developers>
         <developer>

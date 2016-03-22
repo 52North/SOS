@@ -206,6 +206,7 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
                     abstractFeature =
                             XmlObject.Factory.parse(XmlHelper.getNodeFromNodeList(featurePropertyType.getDomNode()
                                     .getChildNodes()));
+                    abstractFeature = XmlObject.Factory.parse(abstractFeature.xmlText());
                 } catch (XmlException xmle) {
                     throw new NoApplicableCodeException().causedBy(xmle).withMessage(
                             "Error while parsing feature request!");

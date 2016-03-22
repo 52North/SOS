@@ -178,7 +178,7 @@
             <key>
                 <column name="observationId" not-null="true" />
             </key>
-            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
         </set>
 		<property name="validation" type="int">
             <column name="validation" not-null="true" default="-1">

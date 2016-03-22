@@ -26,31 +26,34 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.entities.Unit;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
+public class FeatureQuantityValuedParameter extends FeatureParameter<Double> implements org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter, HasUnit {
 
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
+    private static final long serialVersionUID = 5179448871942580897L;
+    private Double value;
+    private Unit unit;
     
     @Override
-    public Boolean getValue() {
+    public Double getValue() {
         return value;
     }
 
     @Override
-    public void setValue(Boolean value) {
-       this.value = value;
+    public void setValue(Double value) {
+        this.value = value;
     }
 
     @Override
     public boolean isSetValue() {
-        return value != null;
+        return getValue() != null;
     }
 
     @Override
@@ -58,6 +61,21 @@ public class BooleanValuedParameter extends Parameter<Boolean> implements org.n5
         return getValue().toString();
     }
 
+    @Override
+    public Unit getUnit() {
+        return unit;
+    }
+
+    @Override
+    public void setUnit(final Unit unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnit() != null && getUnit().isSetUnit();
+    }
+    
     @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);

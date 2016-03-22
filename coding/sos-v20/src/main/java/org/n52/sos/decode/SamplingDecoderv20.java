@@ -73,7 +73,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @since 4.0.0
  * 
  */
-public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, XmlObject> {
+public class SamplingDecoderv20 extends AbstractOmDecoderv20 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingDecoderv20.class);
 
@@ -115,9 +115,11 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
     }
 
     @Override
-    public AbstractFeature decode(final XmlObject element) throws OwsExceptionReport {
+    public AbstractFeature decode(final Object element) throws OwsExceptionReport {
         // validate XmlObject
-        XmlHelper.validateDocument(element);
+        if (element instanceof XmlObject) {
+            XmlHelper.validateDocument((XmlObject)element);
+        }
         if (element instanceof SFSpatialSamplingFeatureDocument) {
             return parseSpatialSamplingFeature(((SFSpatialSamplingFeatureDocument) element)
                     .getSFSpatialSamplingFeature());
@@ -137,6 +139,9 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
         sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));
         sosFeat.setGeometry(getGeometry(spatialSamplingFeature.getShape()));
         checkTypeAndGeometry(sosFeat);
+        if (spatialSamplingFeature.getParameterArray() != null) {
+            sosFeat.setParameters(parseNamedValueTypeArray(spatialSamplingFeature.getParameterArray()));
+        }
         sosFeat.setGmlId(spatialSamplingFeature.getId());
         return sosFeat;
     }

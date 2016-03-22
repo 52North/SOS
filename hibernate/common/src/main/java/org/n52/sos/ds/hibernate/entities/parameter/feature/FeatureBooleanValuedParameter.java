@@ -26,14 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
+public class FeatureBooleanValuedParameter extends FeatureParameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
 
     private static final long serialVersionUID = 940615372876462865L;
     private Boolean value;

@@ -97,7 +97,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         seriesCriteria.createCriteria(Series.PROCEDURE).add(eq(Procedure.IDENTIFIER, procedure));
 
         if (!isIncludeChildObservableProperties()) {
-            seriesCriteria.createCriteria(AbstractObservation.VALUE).createCriteria(AbstractObservation.ID);
+            seriesCriteria.createCriteria(AbstractObservation.VALUE).createCriteria(AbstractObservation.OBS_ID);
         }
 
         return criteria;

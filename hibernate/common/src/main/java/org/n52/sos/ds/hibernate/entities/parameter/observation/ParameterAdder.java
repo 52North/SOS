@@ -26,11 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -46,7 +46,7 @@ public class ParameterAdder {
 
     public void add() throws OwsExceptionReport {
         if (hObservation.hasParameters()) {
-            for (Parameter<?> parameter : hObservation.getParameters()) {
+            for (Parameter parameter : hObservation.getParameters()) {
                 observation.addParameter(parameter.accept(new ValuedParameterVisitor()));
             }
         }

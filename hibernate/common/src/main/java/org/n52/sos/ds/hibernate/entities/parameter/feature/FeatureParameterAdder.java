@@ -26,46 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
-import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
-import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
-
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
+public class FeatureParameterAdder {
     
-    @Override
-    public Boolean getValue() {
-        return value;
+    private SamplingFeature samplingFeature;
+    private FeatureOfInterest featureOfInterest;
+
+    public FeatureParameterAdder(SamplingFeature samplingFeature, FeatureOfInterest featureOfInterest) {
+        this.samplingFeature = samplingFeature;
+        this.featureOfInterest = featureOfInterest;
     }
 
-    @Override
-    public void setValue(Boolean value) {
-       this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
+    public void add() throws OwsExceptionReport {
+        if (featureOfInterest.hasParameters()) {
+            for (org.n52.sos.ds.hibernate.entities.parameter.Parameter parameter : featureOfInterest.getParameters()) {
+                samplingFeature.addParameter(parameter.accept(new ValuedParameterVisitor()));
+            }
+        }
     }
 
 }

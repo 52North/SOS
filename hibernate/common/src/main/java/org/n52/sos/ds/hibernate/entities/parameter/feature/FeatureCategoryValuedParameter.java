@@ -26,38 +26,61 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
+import com.google.common.base.Strings;
 
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
+import org.n52.sos.ds.hibernate.entities.Unit;
+
+public class FeatureCategoryValuedParameter extends FeatureParameter<String> implements org.n52.sos.ds.hibernate.entities.parameter.CategoryValuedParameter, HasUnit {
+
+    private static final long serialVersionUID = 7634152902672770163L;
     
+    private String value;
+    
+    private Unit unit;
+
     @Override
-    public Boolean getValue() {
+    public String getValue() {
         return value;
     }
 
     @Override
-    public void setValue(Boolean value) {
-       this.value = value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
     @Override
     public boolean isSetValue() {
-        return value != null;
+        return !Strings.isNullOrEmpty(getValue());
     }
 
     @Override
     public String getValueAsString() {
-        return getValue().toString();
+        return getValue();
     }
 
+    @Override
+    public Unit getUnit() {
+        return unit;
+    }
+
+    @Override
+    public void setUnit(final Unit unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnit() != null && getUnit().isSetUnit();
+    }
+    
     @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);

@@ -199,7 +199,7 @@
             <key>
                 <column name="observationId" not-null="true" />
             </key>
-            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
         </set>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.BlobValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"

@@ -40,8 +40,8 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
-import org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.TextValuedParameter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.BinaryLogicFilter;
@@ -120,7 +120,7 @@ public class ExtensionFesFilterCriteriaAdder {
             Map<NameValue, Set<String>> map =
                     mergeNamesValues((BinaryLogicFilter) filter, Maps.<NameValue, Set<String>> newHashMap(), 0);
             checkMap(map);
-            return Subqueries.propertyIn(AbstractBaseObservation.ID,
+            return Subqueries.propertyIn(AbstractBaseObservation.OBS_ID,
                     getDetachedCriteria(getClassFor(null, null), map));
             // current implementation, maybe change in the future
             // return getBinaryLogicFilterCriterion((BinaryLogicFilter) filter);
@@ -133,7 +133,7 @@ public class ExtensionFesFilterCriteriaAdder {
                     addValue(NameValue.VALUE, (ComparisonFilter) filter, map);
                 }
                 checkMap(map);
-                return Subqueries.propertyIn(AbstractBaseObservation.ID,
+                return Subqueries.propertyIn(AbstractBaseObservation.OBS_ID,
                         getDetachedCriteria(getClassFor(null, null), map));
             }
             throw new NoApplicableCodeException().withMessage(
@@ -170,7 +170,7 @@ public class ExtensionFesFilterCriteriaAdder {
         if (map.containsKey(NameValue.VALUE)) {
             detachedCriteria.add(getRestrictionIn(Parameter.VALUE, map.get(NameValue.VALUE)));
         }
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.OBS_ID)));
         return detachedCriteria;
     }
 

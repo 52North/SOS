@@ -26,9 +26,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter;
+package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
+import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -36,7 +38,7 @@ import com.google.common.base.Strings;
 
 import org.n52.sos.ds.hibernate.entities.Unit;
 
-public class CategoryValuedParameter extends Parameter<String> implements HasUnit {
+public class CategoryValuedParameter extends Parameter<String> implements org.n52.sos.ds.hibernate.entities.parameter.CategoryValuedParameter, HasUnit {
 
     private static final long serialVersionUID = 7634152902672770163L;
     

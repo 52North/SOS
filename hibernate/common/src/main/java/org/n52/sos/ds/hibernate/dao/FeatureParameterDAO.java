@@ -34,9 +34,8 @@ import java.util.Map;
 import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
-import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
+import org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameterFactory;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -60,29 +59,26 @@ import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.Sos2Constants;
 
 
 /**
- * Hibernate DAO class to om:pramameter
+ * Hibernate DAO class to sf:pramameter
  * 
  * @since 4.0.0
  * 
  */
-public class ParameterDAO {
+public class FeatureParameterDAO {
 
-    public void insertParameter(Collection<NamedValue<?>> parameter, long observationId, Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+    public void insertParameter(Collection<NamedValue<?>> parameter, long featureOfInterestId, Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
         for (NamedValue<?> namedValue : parameter) {
-            if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
-                ParameterPersister persister = new ParameterPersister(
-                        this,
-                        namedValue,
-                        observationId,
-                        unitCache,
-                        session
-                );
-                namedValue.getValue().accept(persister);
-            }
+            ParameterPersister persister = new ParameterPersister(
+                    this,
+                    namedValue,
+                    featureOfInterestId,
+                    unitCache,
+                    session
+            );
+            namedValue.getValue().accept(persister);
         }
     }
     
@@ -109,28 +105,28 @@ public class ParameterDAO {
         }
     }
 
-    public ParameterFactory getParameterFactory() {
-        return ParameterFactory.getInstance();
+    public FeatureParameterFactory getParameterFactory() {
+        return FeatureParameterFactory.getInstance();
     }
 
     public static class ParameterPersister implements ValueVisitor<ValuedParameter<?>> {
         private final Caches caches;
         private final Session session;
-        private final long observationId;
+        private final long featureOfInterestId;
         private final NamedValue<?> namedValue;
         private final DAOs daos;
-        private final ParameterFactory parameterFactory;
+        private final FeatureParameterFactory parameterFactory;
 
-        public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, long observationId, Map<String, Unit> unitCache, Session session) {
+        public ParameterPersister(FeatureParameterDAO parameterDAO, NamedValue<?> namedValue, long featureOfInterestId, Map<String, Unit> unitCache, Session session) {
             this(new DAOs(parameterDAO),
                     new Caches(unitCache),
                     namedValue,
-                    observationId,
+                    featureOfInterestId,
                     session);
         }
         
-        public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, long observationId, Session session) {
-            this.observationId = observationId;
+        public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, long featureOfInterestId, Session session) {
+            this.featureOfInterestId = featureOfInterestId;
             this.caches = caches;
             this.session = session;
             this.daos = daos;
@@ -151,13 +147,13 @@ public class ParameterDAO {
         }
     
         private static class DAOs {
-            private final ParameterDAO parameter;
+            private final FeatureParameterDAO parameter;
 
-            DAOs(ParameterDAO parameter) {
+            DAOs(FeatureParameterDAO parameter) {
                 this.parameter = parameter;
             }
 
-            public ParameterDAO parameter() {
+            public FeatureParameterDAO parameter() {
                 return this.parameter;
             }
         }
@@ -178,12 +174,12 @@ public class ParameterDAO {
         }
         
         private <V, T extends ValuedParameter<V>> T persist(T parameter, V value) throws OwsExceptionReport {
-            if (parameter instanceof org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter) {
+            if (parameter instanceof org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter) {
                 if (parameter instanceof HasUnit && !((HasUnit)parameter).isSetUnit()) {
                     ((HasUnit)parameter).setUnit(getUnit(namedValue.getValue()));
                 }
                 
-                ((org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter)parameter).setObservationId(observationId);
+                ((org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter)parameter).setFeatureOfInterestId(featureOfInterestId);
                 parameter.setName(namedValue.getName().getHref());
                 parameter.setValue(value);
                 session.saveOrUpdate(parameter);
@@ -285,7 +281,7 @@ public class ParameterDAO {
         private OwsExceptionReport notSupported(Value<?> value)
                 throws OwsExceptionReport {
             throw new NoApplicableCodeException()
-                    .withMessage("Unsupported om:parameter value %s", value
+                    .withMessage("Unsupported sf:parameter value %s", value
                                  .getClass().getCanonicalName());
         }
     }

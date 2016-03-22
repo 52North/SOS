@@ -38,6 +38,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -49,7 +51,7 @@ import com.google.common.collect.Sets;
  *
  */
 public class FeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
-        HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<FeatureOfInterest> {
+        HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<FeatureOfInterest>, HasParameters {
 
     private static final long serialVersionUID = 4142090100433622512L;
     public static final String ID = "featureOfInterestId";
@@ -58,6 +60,7 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     private String url;
     private Set<FeatureOfInterest> childs = Sets.newHashSet();
     private Set<FeatureOfInterest> parents = Sets.newHashSet();
+    private Set<Parameter> parameters = new HashSet<>(0);
 
     public long getFeatureOfInterestId() {
         return this.featureOfInterestId;
@@ -157,6 +160,26 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     @Override
     public boolean hasChilds() {
         return CollectionHelper.isNotEmpty(getChilds());
+    }
+
+    @Override
+    public Set<Parameter> getParameters() {
+        return parameters;
+    }
+
+    @SuppressWarnings(value = "unchecked")
+    @Override
+    public void setParameters(Object parameters) {
+        if (parameters instanceof Set<?>) {
+            this.parameters = (Set<Parameter>) parameters;
+        } else {
+            getParameters().add((Parameter) parameters);
+        }
+    }
+    
+    @Override
+    public boolean hasParameters() {
+        return CollectionHelper.isNotEmpty(getParameters());
     }
 
 }

@@ -106,6 +106,7 @@ public class H2Configuration {
 //            resources.add("/mapping/ereporting/ContextualReferencedObservation.hbm.xml");
 //            resources.add("/mapping/ereporting/EReportingAssessmentType.hbm.xml");
             resources.add("/mapping/core/Codespace.hbm.xml");
+            resources.add("/mapping/core/FeatureParameter.hbm.xml");
             resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
             resources.add("/mapping/core/ProcedureDescriptionFormat.hbm.xml");
             resources.add("/mapping/core/ObservationConstellation.hbm.xml");

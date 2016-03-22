@@ -26,46 +26,65 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
-import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
-import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestId;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
+import com.google.common.base.Strings;
 
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
+public abstract class FeatureParameter<T> implements org.n52.sos.ds.hibernate.entities.parameter.Parameter<T>, HasFeatureOfInterestId {
+
+    private static final long serialVersionUID = -1927879842082507108L;
+    private long parameterId;
+    private long featureOfInterestId;
+    private String name;
     
-    @Override
-    public Boolean getValue() {
-        return value;
+    public FeatureParameter() {
+        super();
+    }
+    
+    /**
+     * @return the parameterId
+     */
+    public long getParameterId() {
+        return parameterId;
+    }
+
+    /**
+     * @param parameterId the parameterId to set
+     */
+    public void setParameterId(long parameterId) {
+        this.parameterId = parameterId;
     }
 
     @Override
-    public void setValue(Boolean value) {
-       this.value = value;
+    public long getFeatureOfInterestId() {
+        return featureOfInterestId;
     }
 
     @Override
-    public boolean isSetValue() {
-        return value != null;
+    public void setFeatureOfInterestId(long featureOfInterestId) {
+        this.featureOfInterestId = featureOfInterestId;
+    }
+
+    /**
+     * @return the name
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+    /**
+     * @param name the name to set
+     */
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
+    public boolean isSetName() {
+        return !Strings.isNullOrEmpty(getName());
     }
 
 }

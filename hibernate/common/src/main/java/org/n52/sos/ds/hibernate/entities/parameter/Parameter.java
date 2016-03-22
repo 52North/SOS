@@ -26,46 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
-import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
+import java.io.Serializable;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParamerterId;
 
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
-    
-    @Override
-    public Boolean getValue() {
-        return value;
-    }
-
-    @Override
-    public void setValue(Boolean value) {
-       this.value = value;
-    }
-
-    @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public String getValueAsString() {
-        return getValue().toString();
-    }
-
-    @Override
-    public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
-        visitor.visit(this);
-    }
-
-    @Override
-    public <T> NamedValue<T> accept(ParameterVisitor<T> visitor) throws OwsExceptionReport {
-        return visitor.visit(this);
-    }
+public interface Parameter<T> extends  Serializable, HasParamerterId, HasName, ValuedParameter<T> {
 
 }

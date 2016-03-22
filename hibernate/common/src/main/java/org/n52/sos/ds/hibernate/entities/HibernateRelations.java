@@ -648,7 +648,7 @@ public interface HibernateRelations {
     }
 
     interface HasObservationId {
-        String ID = "observationId";
+        String OBS_ID = "observationId";
 
         /**
          * Get the observation id
@@ -665,7 +665,45 @@ public interface HibernateRelations {
          */
         void setObservationId(final long observationId);
     }
+    
+    interface HasFeatureOfInterestId {
+        String FEAT_ID = "featureOfInterestId";
 
+        /**
+         * Get the featureOfInterest id
+         *
+         * @return FeatureOfInterest id
+         */
+        long getFeatureOfInterestId();
+
+        /**
+         * Set the featureOfInterest id
+         *
+         * @param featureOfInterestId
+         *                      FeatureOfInterest id to set
+         */
+        void setFeatureOfInterestId(final long featureOfInterestId);
+    }
+    
+    interface HasParamerterId {
+        String ID = "parameterId";
+
+        /**
+         * Get the parameter id
+         *
+         * @return parameter id
+         */
+        long getParameterId();
+
+        /**
+         * Set the parameter id
+         *
+         * @param parameterId
+         *                      ParameterId id to set
+         */
+        void setParameterId(final long parameterId);
+    }
+    
     interface HasLocale {
         String LOCALE = "locale";
 

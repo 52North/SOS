@@ -26,38 +26,38 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class BooleanValuedParameter extends Parameter<Boolean> implements org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter {
+public class FeatureCountValuedParameter extends FeatureParameter<Integer> implements org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter {
 
-    private static final long serialVersionUID = 940615372876462865L;
-    private Boolean value;
-    
+    private static final long serialVersionUID = 6578219247280678959L;
+    private Integer value;
+
     @Override
-    public Boolean getValue() {
+    public Integer getValue() {
         return value;
     }
 
     @Override
-    public void setValue(Boolean value) {
+    public void setValue(Integer value) {
        this.value = value;
     }
 
     @Override
     public boolean isSetValue() {
-        return value != null;
+        return getValue() != null;
     }
 
     @Override
     public String getValueAsString() {
         return getValue().toString();
     }
-
+    
     @Override
     public void accept(VoidParameterVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);

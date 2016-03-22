@@ -254,7 +254,7 @@ public class SamplingFeature extends AbstractFeature implements FeatureWithGeome
      * @param parameters
      *            Parameters to add
      */
-    public void setParameters(final List<NamedValue<?>> parameters) {
+    public void setParameters(final Collection<NamedValue<?>> parameters) {
         this.parameters.addAll(parameters);
     }
 

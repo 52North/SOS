@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter.observation;
+package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -52,48 +52,48 @@ import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class ParameterFactory implements ValueVisitor<ValuedParameter<?>> {
+public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>> {
 
-    protected ParameterFactory() {
+    protected FeatureParameterFactory() {
     }
 
-    public Class<? extends BooleanValuedParameter> truthClass() {
-        return BooleanValuedParameter.class;
+    public Class<? extends FeatureBooleanValuedParameter> truthClass() {
+        return FeatureBooleanValuedParameter.class;
     }
 
-    public BooleanValuedParameter truth() throws OwsExceptionReport {
+    public FeatureBooleanValuedParameter truth() throws OwsExceptionReport {
         return instantiate(truthClass());
     }
 
-    public Class<? extends CategoryValuedParameter> categoryClass() {
-        return CategoryValuedParameter.class;
+    public Class<? extends FeatureCategoryValuedParameter> categoryClass() {
+        return FeatureCategoryValuedParameter.class;
     }
 
-    public CategoryValuedParameter category() throws OwsExceptionReport {
+    public FeatureCategoryValuedParameter category() throws OwsExceptionReport {
         return instantiate(categoryClass());
     }
 
-    public Class<? extends CountValuedParameter> countClass() {
-        return CountValuedParameter.class;
+    public Class<? extends FeatureCountValuedParameter> countClass() {
+        return FeatureCountValuedParameter.class;
     }
 
-    public CountValuedParameter count() throws OwsExceptionReport {
+    public FeatureCountValuedParameter count() throws OwsExceptionReport {
         return instantiate(countClass());
     }
 
-    public Class<? extends QuantityValuedParameter> quantityClass() {
-        return QuantityValuedParameter.class;
+    public Class<? extends FeatureQuantityValuedParameter> quantityClass() {
+        return FeatureQuantityValuedParameter.class;
     }
 
-    public QuantityValuedParameter quantity() throws OwsExceptionReport {
+    public FeatureQuantityValuedParameter quantity() throws OwsExceptionReport {
         return instantiate(quantityClass());
     }
 
-    public Class<? extends TextValuedParameter> textClass() {
-        return TextValuedParameter.class;
+    public Class<? extends FeatureTextValuedParameter> textClass() {
+        return FeatureTextValuedParameter.class;
     }
 
-    public TextValuedParameter text() throws OwsExceptionReport {
+    public FeatureTextValuedParameter text() throws OwsExceptionReport {
         return instantiate(textClass());
     }
 
@@ -204,12 +204,12 @@ public class ParameterFactory implements ValueVisitor<ValuedParameter<?>> {
                              .getClass().getCanonicalName());
     }
 
-    public static ParameterFactory getInstance() {
+    public static FeatureParameterFactory getInstance() {
         return Holder.INSTANCE;
     }
 
     private static class Holder {
-        private static final ParameterFactory INSTANCE = new ParameterFactory();
+        private static final FeatureParameterFactory INSTANCE = new FeatureParameterFactory();
 
         private Holder() {
         }

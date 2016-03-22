@@ -49,6 +49,7 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
+import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
@@ -140,6 +141,11 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             session.flush();
             session.refresh(feature);
             insertNameAndDescription(feature, abstractFeature, session);
+        }
+        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetParameter()) {
+            Map<String, Unit> unitCache = Maps.newHashMap();
+            new FeatureParameterDAO().insertParameter(((SamplingFeature) abstractFeature).getParameters(),
+                    feature.getFeatureOfInterestId(), unitCache, session);
         }
         return feature;
     

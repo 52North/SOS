@@ -71,8 +71,8 @@ import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObserva
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
-import org.n52.sos.ds.hibernate.entities.parameter.ParameterFactory;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -1199,14 +1199,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     private void addParameterRestriction(Criteria c, NamedValue<?> hdp) throws OwsExceptionReport {
-        c.add(Subqueries.propertyIn(AbstractBaseObservation.ID, getParameterRestriction(c, hdp.getName().getHref(), hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
+        c.add(Subqueries.propertyIn(AbstractBaseObservation.OBS_ID, getParameterRestriction(c, hdp.getName().getHref(), hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
     }
     
     protected DetachedCriteria getParameterRestriction(Criteria c, String name, Object value, Class<?> clazz) {
         DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
         addParameterNameRestriction(detachedCriteria, name);
         addParameterValueRestriction(detachedCriteria, value);
-        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.OBS_ID)));
         return detachedCriteria;
     }
     

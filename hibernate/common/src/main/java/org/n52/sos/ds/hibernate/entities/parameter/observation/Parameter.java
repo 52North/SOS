@@ -26,16 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter;
+package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
-import java.io.Serializable;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 
 import com.google.common.base.Strings;
 
-public abstract class Parameter<T> implements Serializable, HasObservationId, HasName, ValuedParameter<T> {
+public abstract class Parameter<T> implements org.n52.sos.ds.hibernate.entities.parameter.Parameter<T>, HasObservationId {
 
     private static final long serialVersionUID = -1927879842082507108L;
     private long parameterId;

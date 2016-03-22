@@ -26,14 +26,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter;
+package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
+import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
-public class QuantityValuedParameter extends Parameter<Double> implements HasUnit {
+public class QuantityValuedParameter extends Parameter<Double> implements org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter, HasUnit {
 
     private static final long serialVersionUID = 5179448871942580897L;
     private Double value;

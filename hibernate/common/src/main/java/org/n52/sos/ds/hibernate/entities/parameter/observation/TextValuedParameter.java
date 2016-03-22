@@ -26,14 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter;
+package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
+import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.google.common.base.Strings;
 
-public class TextValuedParameter extends Parameter<String> {
+public class TextValuedParameter extends Parameter<String> implements org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter {
 
     private static final long serialVersionUID = -6009881349223418155L;
     private String value;

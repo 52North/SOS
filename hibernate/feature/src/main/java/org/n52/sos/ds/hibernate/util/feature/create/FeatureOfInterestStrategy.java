@@ -37,6 +37,7 @@ import org.hibernate.Session;
 import org.hibernate.proxy.HibernateProxyHelper;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameterAdder;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
@@ -69,6 +70,7 @@ public class FeatureOfInterestStrategy extends AbstractFeatureCreationStrategy {
         if (f.isSetDescriptionXml()) {
             sampFeat.setXmlDescription(f.getDescriptionXml());
         }
+        addParameter(sampFeat, f);
         final Set<FeatureOfInterest> parentFeatures = f.getParents();
         if (parentFeatures != null && !parentFeatures.isEmpty()) {
             final List<AbstractFeature> sampledFeatures = new ArrayList<AbstractFeature>(parentFeatures.size());
@@ -78,6 +80,10 @@ public class FeatureOfInterestStrategy extends AbstractFeatureCreationStrategy {
             sampFeat.setSampledFeatures(sampledFeatures);
         }
         return sampFeat;
+    }
+    
+    private void addParameter(SamplingFeature sampFeat,FeatureOfInterest f) throws OwsExceptionReport {
+        new FeatureParameterAdder(sampFeat, f).add();
     }
 
 }

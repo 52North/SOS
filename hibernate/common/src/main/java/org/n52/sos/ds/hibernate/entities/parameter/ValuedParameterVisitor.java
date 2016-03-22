@@ -29,6 +29,11 @@
 package org.n52.sos.ds.hibernate.entities.parameter;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.CategoryValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.values.BooleanValue;

@@ -178,7 +178,7 @@
             <key>
                 <column name="observationId" not-null="true" />
             </key>
-            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
         </set>
         <set name="relatedObservations" table="relatedobservations" lazy="true" access="field" fetch="select" cascade="all">
 	        <key>

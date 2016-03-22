@@ -26,12 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.parameter;
+package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
+import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
+import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class CountValuedParameter extends Parameter<Integer> {
+public class CountValuedParameter extends Parameter<Integer> implements org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter {
 
     private static final long serialVersionUID = 6578219247280678959L;
     private Integer value;

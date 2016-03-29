@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.gwml.v21.encode;
+package org.n52.svalbard.gwml.v22.encode;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -38,40 +38,39 @@ import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gwml.GWMLConstants;
-import org.n52.sos.ogc.om.values.LogValue;
+import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
 import com.google.common.collect.Sets;
 
-import net.opengis.gwmlWell.x21.LogValuePropertyType;
+import net.opengis.gwmlWell.x21.GWGeologyLogCoveragePropertyType;
 
-public class LogValuePropertyTypeEncoder extends AbstractLogValueTypeEncoder<LogValuePropertyType> {
+
+public class GWGeologyLogCoveragePropertyTypeEncoder extends AbstractGWGeologyLogCoverageType<GWGeologyLogCoveragePropertyType> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-            new ClassToClassEncoderKey(LogValue.class, LogValuePropertyType.class),
-            new XmlPropertyTypeEncoderKey(GWMLConstants.NS_GWML_21, LogValue.class));
+            new ClassToClassEncoderKey(GWGeologyLogCoverage.class, GWGeologyLogCoveragePropertyType.class),
+            new XmlPropertyTypeEncoderKey(GWMLConstants.NS_GWML_22, GWGeologyLogCoverage.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
+
     @Override
-    public LogValuePropertyType encode(LogValue logValue)
+    public GWGeologyLogCoveragePropertyType encode(GWGeologyLogCoverage gwGeologyLogCoverage)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
-        return encode(logValue,  new EnumMap<HelperValues, String>(HelperValues.class));
+        return encode(gwGeologyLogCoverage, new EnumMap<HelperValues, String>(HelperValues.class));
     }
 
     @Override
-    public LogValuePropertyType encode(LogValue logValue, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport, UnsupportedEncoderInputException {
-        LogValuePropertyType lvpt = LogValuePropertyType.Factory.newInstance();
-        if (logValue.isSetValue()) {
-            lvpt.setLogValue(encodeLogValue(logValue));
-        } else {
-            lvpt.setNil();
-        }
-        return lvpt;
+    public GWGeologyLogCoveragePropertyType encode(GWGeologyLogCoverage gwGeologyLogCoverage,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport, UnsupportedEncoderInputException {
+        GWGeologyLogCoveragePropertyType gwglcpt = GWGeologyLogCoveragePropertyType.Factory.newInstance();
+        gwglcpt.setGWGeologyLogCoverage(encodeGWGeologyLogCoverage(gwGeologyLogCoverage));
+        return gwglcpt;
     }
+
 }

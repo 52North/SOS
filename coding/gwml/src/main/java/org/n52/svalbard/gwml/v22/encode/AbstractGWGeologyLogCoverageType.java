@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.gwml.v21.encode;
+package org.n52.svalbard.gwml.v22.encode;
 
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;

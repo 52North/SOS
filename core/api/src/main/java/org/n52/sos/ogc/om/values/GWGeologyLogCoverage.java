@@ -89,7 +89,7 @@ public class GWGeologyLogCoverage extends AbstractFeature implements Value<List<
     
     @Override
     public String getDefaultElementEncoding() {
-        return GWMLConstants.NS_GWML_21;
+        return GWMLConstants.NS_GWML_22;
     }
 
     @Override

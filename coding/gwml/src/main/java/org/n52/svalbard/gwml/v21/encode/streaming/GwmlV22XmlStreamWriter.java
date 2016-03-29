@@ -30,6 +30,6 @@ package org.n52.svalbard.gwml.v21.encode.streaming;
 
 import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 
-public class GwmlV21XmlStreamWriter extends OmV20XmlStreamWriter {
+public class GwmlV22XmlStreamWriter extends OmV20XmlStreamWriter {
 
 }

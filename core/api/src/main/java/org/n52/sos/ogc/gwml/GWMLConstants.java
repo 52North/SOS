@@ -33,15 +33,15 @@ import org.n52.sos.w3c.SchemaLocation;
 
 public interface GWMLConstants {
 
-    String NS_GWML_21  = "http://www.opengis.net/gwml/2.1";
+    String NS_GWML_22  = "http://www.opengis.net/gwml/2.2";
     
-    String NS_GWML_21_PREFIX = "gwml2";
+    String NS_GWML_2_PREFIX = "gwml2";
     
-    String SCHEMA_LOCATION_URL_GWML_21 = "http://ngwd-bdnes.cits.nrcan.gc.ca/service/gwml/schemas/2.1/gwml2.xsd";
+    String SCHEMA_LOCATION_URL_GWML_22 = "http://ngwd-bdnes.cits.nrcan.gc.ca/service/gwml/schemas/2.2/gwml2.xsd";
 
-    SchemaLocation GWML_21_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_21, SCHEMA_LOCATION_URL_GWML_21);
+    SchemaLocation GWML_22_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_22, SCHEMA_LOCATION_URL_GWML_22);
 
-    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.1/GW_GeologyLogCoverage";
+    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLogCoverage";
     
-    MediaType CONTENT_TYPE_GWML_21 = new MediaType("text", "xml", "subtype", "gwml/2.1");
+    MediaType CONTENT_TYPE_GWML_22 = new MediaType("text", "xml", "subtype", "gwml/2.2");
 }

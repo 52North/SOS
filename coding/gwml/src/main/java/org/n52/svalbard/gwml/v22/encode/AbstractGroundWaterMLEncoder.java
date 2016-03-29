@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.gwml.v21.encode;
+package org.n52.svalbard.gwml.v22.encode;
 
 import java.util.Map;
 import java.util.Set;
@@ -47,12 +47,12 @@ public abstract class AbstractGroundWaterMLEncoder<T, S> extends AbstractSpecifi
     
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        nameSpacePrefixMap.put(GWMLConstants.NS_GWML_21, GWMLConstants.NS_GWML_21_PREFIX);
+        nameSpacePrefixMap.put(GWMLConstants.NS_GWML_22, GWMLConstants.NS_GWML_2_PREFIX);
     }
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
-        return Sets.newHashSet(GWMLConstants.GWML_21_SCHEMA_LOCATION);
+        return Sets.newHashSet(GWMLConstants.GWML_22_SCHEMA_LOCATION);
     }
     
     protected static XmlObject encodeGML(Object o) throws OwsExceptionReport {
@@ -72,18 +72,18 @@ public abstract class AbstractGroundWaterMLEncoder<T, S> extends AbstractSpecifi
     }
 
     protected static XmlObject encodeGWML(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(GWMLConstants.NS_GWML_21, o);
+        return CodingHelper.encodeObjectToXml(GWMLConstants.NS_GWML_22, o);
     }
 
     protected static XmlObject encodeGWML(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(GWMLConstants.NS_GWML_21, o, helperValues);
+        return CodingHelper.encodeObjectToXml(GWMLConstants.NS_GWML_22, o, helperValues);
     }
     
     protected static XmlObject encodeGWMLProperty(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_21, o);
+        return CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_22, o);
     }
 
     protected static XmlObject encodeGWMLProperty(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_21, o, helperValues);
+        return CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_22, o, helperValues);
     }
 }

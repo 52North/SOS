@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.svalbard.gwml.v21.encode;
+package org.n52.svalbard.gwml.v22.encode;
 
 import java.io.OutputStream;
 import java.util.Collections;
@@ -39,7 +39,7 @@ import javax.xml.stream.XMLStreamException;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.OmEncoderv20;
-import org.n52.svalbard.gwml.v21.encode.streaming.GwmlV21XmlStreamWriter;
+import org.n52.svalbard.gwml.v21.encode.streaming.GwmlV22XmlStreamWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,14 +61,14 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 
-public class GwmlEncoder21 extends OmEncoderv20 {
+public class GwmlEncoderv22 extends OmEncoderv20 {
     /**
      * logger, used for logging while initializing the constants from config
      * file
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(GwmlEncoder21.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GwmlEncoderv22.class);
     
-    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_21,
+    private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(GWMLConstants.NS_GWML_22,
             OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
@@ -76,9 +76,9 @@ public class GwmlEncoder21 extends OmEncoderv20 {
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
-            Collections.singletonMap(Sos2Constants.SERVICEVERSION, Collections.singleton(GWMLConstants.NS_GWML_21)));
+            Collections.singletonMap(Sos2Constants.SERVICEVERSION, Collections.singleton(GWMLConstants.NS_GWML_22)));
 
-    public GwmlEncoder21() {
+    public GwmlEncoderv22() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
     }
@@ -96,7 +96,7 @@ public class GwmlEncoder21 extends OmEncoderv20 {
     
     @Override
     public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
-        return Collections.singletonMap(GWMLConstants.NS_GWML_21, getSupportedTypes().get(SupportedTypeKey.ObservationType));
+        return Collections.singletonMap(GWMLConstants.NS_GWML_22, getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }
 
     @Override
@@ -140,7 +140,7 @@ public class GwmlEncoder21 extends OmEncoderv20 {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
-                new GwmlV21XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
+                new GwmlV22XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
             } catch (XMLStreamException xmlse) {
                 throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
             }

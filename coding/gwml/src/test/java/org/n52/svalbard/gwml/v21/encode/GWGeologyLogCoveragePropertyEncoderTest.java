@@ -69,7 +69,7 @@ public class GWGeologyLogCoveragePropertyEncoderTest {
     @Test
     public void should_encode_GWGeologyLogCoverage_only_value() throws UnsupportedEncoderInputException, OwsExceptionReport {
         GWGeologyLogCoverage coverage = createGWGeologyLogCoverage(false, false);
-        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_21, coverage);
+        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_22, coverage);
         assertThat(XmlHelper.validateDocument(encodedObject), is(TRUE));
         assertThat(encodedObject, instanceOf(GWGeologyLogCoveragePropertyType.class));
     }
@@ -77,7 +77,7 @@ public class GWGeologyLogCoveragePropertyEncoderTest {
     @Test
     public void should_encode_GWGeologyLogCoverage_full() throws UnsupportedEncoderInputException, OwsExceptionReport {
         GWGeologyLogCoverage coverage = createGWGeologyLogCoverage(true, true);
-        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_21, coverage);
+        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_22, coverage);
         assertThat(XmlHelper.validateDocument(encodedObject), is(TRUE));
         assertThat(encodedObject, instanceOf(GWGeologyLogCoveragePropertyType.class));
     }
@@ -85,7 +85,7 @@ public class GWGeologyLogCoveragePropertyEncoderTest {
     @Test
     public void should_encode_GWGeologyLogCoverage_fromDepth() throws UnsupportedEncoderInputException, OwsExceptionReport {
         GWGeologyLogCoverage coverage = createGWGeologyLogCoverage(true, false);
-        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_21, coverage);
+        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_22, coverage);
         assertThat(XmlHelper.validateDocument(encodedObject), is(TRUE));
         assertThat(encodedObject, instanceOf(GWGeologyLogCoveragePropertyType.class));
     }
@@ -93,7 +93,7 @@ public class GWGeologyLogCoveragePropertyEncoderTest {
     @Test
     public void should_encode_GWGeologyLogCoverage_toDepth() throws UnsupportedEncoderInputException, OwsExceptionReport {
         GWGeologyLogCoverage coverage = createGWGeologyLogCoverage(false, true);
-        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_21, coverage);
+        XmlObject encodedObject = CodingHelper.encodeObjectToXmlPropertyType(GWMLConstants.NS_GWML_22, coverage);
         assertThat(XmlHelper.validateDocument(encodedObject), is(TRUE));
         assertThat(encodedObject, instanceOf(GWGeologyLogCoveragePropertyType.class));
     }

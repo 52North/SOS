@@ -643,7 +643,7 @@
             </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
-                <artifactId>52n-xml-gwml-v21</artifactId>
+                <artifactId>52n-xml-gwml-v22</artifactId>
                 <version>2.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>

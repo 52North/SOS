@@ -131,7 +131,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     }
 
     @Override
-    public InsertResultResponse insertResult(final InsertResultRequest request) throws OwsExceptionReport {
+    public synchronized InsertResultResponse insertResult(final InsertResultRequest request) throws OwsExceptionReport {
         final InsertResultResponse response = new InsertResultResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());

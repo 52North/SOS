@@ -31,7 +31,7 @@ Here you can find some information that relates to the distributions of the 52°
 
 The latest release of 52°North SOS can be downloaded from this website:
 
-    http://52north.org/downloads/sensor-web/sos
+    http://52north.org/downloads/category/3-sos
 
 ### Contents
   * `/src` :                 The source files of 52°North SOS modules

@@ -81,7 +81,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
 
     @Override
-    public InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
+    public synchronized InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
             throws OwsExceptionReport {
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setService(request.getService());

@@ -12,5 +12,6 @@
     <description>52°North SOS - Coding Module for INSPIRE</description>
     <modules>
 		<module>omso</module>
+		<module>ompr</module>
     </modules>
 </project>

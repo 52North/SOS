@@ -35,6 +35,7 @@ import org.n52.sos.ds.AbstractGetCapabilitiesDAO;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetCapabilitiesResponse;
 
 /**
@@ -59,11 +60,11 @@ public class SosGetCapabilitiesOperatorV100 extends
     }
 
     @Override
-    public GetCapabilitiesResponse receive(GetCapabilitiesRequest sosRequest) throws OwsExceptionReport {
-        return getDao().getCapabilities(sosRequest);
+    public GetCapabilitiesResponse receive(GetCapabilitiesRequest sosRequest, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        return getDao().getCapabilities(sosRequest, requestOperatorContext);
     }
 
     @Override
-    protected void checkParameters(GetCapabilitiesRequest request) throws OwsExceptionReport {
+    protected void checkParameters(GetCapabilitiesRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
     }
 }

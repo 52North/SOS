@@ -17,7 +17,7 @@
 	<!-- Spring configuration -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>/WEB-INF/applicationContext.xml</param-value>
+		<param-value>/WEB-INF/applicationContext.xml classpath*:/META-INF/spring/applicationContext.xml</param-value>
 	</context-param>
 
 	<!-- location of the database configuration file -->

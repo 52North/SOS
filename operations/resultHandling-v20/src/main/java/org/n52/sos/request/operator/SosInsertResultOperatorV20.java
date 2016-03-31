@@ -40,6 +40,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertResultRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertResultResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -64,14 +65,14 @@ public class SosInsertResultOperatorV20 extends
     }
 
     @Override
-    public InsertResultResponse receive(InsertResultRequest request) throws OwsExceptionReport {
-        InsertResultResponse response = getDao().insertResult(request);
+    public InsertResultResponse receive(InsertResultRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
+        InsertResultResponse response = getDao().insertResult(request, requestOperatorContext);
         SosEventBus.fire(new ResultInsertion(request, response));
         return response;
     }
 
     @Override
-    protected void checkParameters(InsertResultRequest request) throws OwsExceptionReport {
+    protected void checkParameters(InsertResultRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(request.getService());
@@ -84,7 +85,7 @@ public class SosInsertResultOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkResultTemplate(request.getTemplateIdentifier(), Sos2Constants.InsertResultParams.template.name());
+            checkResultTemplate(request.getTemplateIdentifier(), Sos2Constants.InsertResultParams.template.name(), requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

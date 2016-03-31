@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+  <defaultValidTime></defaultValidTime>
+  <models>
+    <model class="org.n52.sos.extensions.hydrology.epanet.EpanetModel">
+      <name>Net1</name>
+      <description>EPANET Example Network 1 - inptools. A simple example of modeling chlorine decay. Both bulk and wall reactions are included.</description>
+      <objectFilter>*:*.*</objectFilter>
+      <relatedFeatureExpression></relatedFeatureExpression>
+      
+      <fileName>hydrology/Net1.inp</fileName>
+      <srid>0</srid>
+      
+      <networkSolver class="org.n52.sos.extensions.hydrology.epanet.BaseformEpanetSolver">
+      </networkSolver>
+    
+    </model>
+  </models>
+</config>

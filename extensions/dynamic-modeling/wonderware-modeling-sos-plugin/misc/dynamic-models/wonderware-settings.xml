@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>  
+  <models>
+    <model class="org.n52.sos.extensions.wonderware.SimpleFeatureModel">
+      <name>MCP_SCADA_QA</name>
+      <description>Caudalímetros registrados en el Wonderware de MCP.</description>
+
+      <databaseDriverClass>com.microsoft.sqlserver.jdbc.SQLServerDriver</databaseDriverClass>
+      <databaseConnectionUrl>jdbc:sqlserver://172.30.183.141:1433;DatabaseName=Runtime;user=sa;Password=123456789</databaseConnectionUrl>
+      <featureStoreUrl>wonderware/Caudalimetros_SCADA.shp</featureStoreUrl>
+      <featureKey>SCADA</featureKey>
+      
+      <attributes>
+        <attribute>
+          <attributeName>flow</attributeName>
+          <fieldId>SCADA</fieldId>
+          <dateFrom>2011-06-01 00:00:00</dateFrom>
+          <dateTo>now</dateTo>
+          <stepTime>300000</stepTime>
+          <RetrievalMode>Cyclic</RetrievalMode>
+          <RetrievalAlignment>EndDateAligned</RetrievalAlignment>
+        </attribute>
+      </attributes>      
+    </model>
+    
+    <model class="org.n52.sos.extensions.wonderware.SimpleFeatureModel">
+      <name>MCP_SCADA_CL</name>
+      <description>Clorímetros registrados en el Wonderware de MCP.</description>
+
+      <databaseDriverClass>com.microsoft.sqlserver.jdbc.SQLServerDriver</databaseDriverClass>
+      <databaseConnectionUrl>jdbc:sqlserver://172.30.183.141:1433;DatabaseName=Runtime;user=sa;Password=123456789</databaseConnectionUrl>
+      <featureStoreUrl>wonderware/Clorimetros_SCADA.shp</featureStoreUrl>
+      <featureKey>SCADA</featureKey>
+      
+      <attributes>
+        <attribute>
+          <attributeName>chlorine</attributeName>
+          <fieldId>SCADA</fieldId>
+          <dateFrom>2011-06-01 00:00:00</dateFrom>
+          <dateTo>now</dateTo>
+          <stepTime>300000</stepTime>
+          <RetrievalMode>Cyclic</RetrievalMode>
+          <RetrievalAlignment>EndDateAligned</RetrievalAlignment>
+        </attribute>
+      </attributes>
+    </model>
+  </models>
+</config>

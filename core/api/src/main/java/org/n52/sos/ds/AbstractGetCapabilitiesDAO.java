@@ -38,6 +38,7 @@ import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 
@@ -60,7 +61,7 @@ public abstract class AbstractGetCapabilitiesDAO extends AbstractOperationDAO {
     }
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
+    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         // set param Sections
         List<String> sectionsValues = new LinkedList<String>();
@@ -76,7 +77,7 @@ public abstract class AbstractGetCapabilitiesDAO extends AbstractOperationDAO {
         } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
             sectionsValues.add(Sos2Constants.CapabilitiesSections.FilterCapabilities.name());
             /* sections of extension points */
-            for (String section : getExtensionSections(service, version)) {
+            for (String section : getExtensionSections(service, version, requestOperatorContext)) {
                 sectionsValues.add(section);
             }
         }
@@ -89,7 +90,7 @@ public abstract class AbstractGetCapabilitiesDAO extends AbstractOperationDAO {
         opsMeta.addAnyParameterValue(SosConstants.GetCapabilitiesParams.updateSequence);
     }
 
-    protected abstract Set<String> getExtensionSections(final String service, final String version)
+    protected abstract Set<String> getExtensionSections(final String service, final String version, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport;
 
     /**
@@ -102,6 +103,6 @@ public abstract class AbstractGetCapabilitiesDAO extends AbstractOperationDAO {
      * @throws OwsExceptionReport
      *             If an error occurs.
      */
-    public abstract GetCapabilitiesResponse getCapabilities(GetCapabilitiesRequest request) throws OwsExceptionReport;
+    public abstract GetCapabilitiesResponse getCapabilities(GetCapabilitiesRequest request, final RequestOperatorContext requestOperatorContext) throws OwsExceptionReport;
 
 }

@@ -57,6 +57,7 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
@@ -81,7 +82,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
 
     @Override
-    public InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
+    public InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setService(request.getService());
@@ -133,10 +134,10 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
 
     @Override
-    public CapabilitiesExtension getExtension() {
+    public CapabilitiesExtension getExtension(final RequestOperatorContext requestOperatorContext) {
         final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
-        insertionCapabilities.addFeatureOfInterestTypes(getCache().getFeatureOfInterestTypes());
-        insertionCapabilities.addObservationTypes(getCache().getObservationTypes());
+        insertionCapabilities.addFeatureOfInterestTypes(requestOperatorContext.getCache().getFeatureOfInterestTypes());
+        insertionCapabilities.addObservationTypes(requestOperatorContext.getCache().getObservationTypes());
         insertionCapabilities.addProcedureDescriptionFormats(CodingRepository.getInstance()
                 .getSupportedTransactionalProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         // TODO dynamic

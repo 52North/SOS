@@ -37,6 +37,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 
@@ -56,15 +57,15 @@ public class AqdDescribeSensorOperatorV10
 	}
 
 	@Override
-	public DescribeSensorResponse receive(DescribeSensorRequest request)
+	public DescribeSensorResponse receive(DescribeSensorRequest request, final RequestOperatorContext requestOperatorContext)
 			throws OwsExceptionReport {
 		return (DescribeSensorResponse) changeResponseServiceVersion(getDao()
 				.getSensorDescription(
-						(DescribeSensorRequest) changeRequestServiceVersion(request)));
+						(DescribeSensorRequest) changeRequestServiceVersion(request), requestOperatorContext));
 	}
 
 	@Override
-	protected void checkParameters(DescribeSensorRequest request)
+	protected void checkParameters(DescribeSensorRequest request, final RequestOperatorContext requestOperatorContext)
 			throws OwsExceptionReport {
 		CompositeOwsException exceptions = new CompositeOwsException();
 		try {
@@ -79,7 +80,7 @@ public class AqdDescribeSensorOperatorV10
 		}
 		try {
 			checkProcedureID(request.getProcedure(),
-					SosConstants.DescribeSensorParams.procedure.name());
+					SosConstants.DescribeSensorParams.procedure.name(), requestOperatorContext);
 		} catch (OwsExceptionReport owse) {
 			exceptions.add(owse);
 		}

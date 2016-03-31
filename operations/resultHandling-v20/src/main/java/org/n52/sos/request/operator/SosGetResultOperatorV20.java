@@ -38,6 +38,7 @@ import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetResultRequest;
+import org.n52.sos.request.RequestOperatorContext;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -60,13 +61,13 @@ public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractG
     }
 
     @Override
-    public GetResultResponse receive(GetResultRequest request)
+    public GetResultResponse receive(GetResultRequest request, final RequestOperatorContext requestOperatorContext)
             throws OwsExceptionReport {
         return getDao().getResult(request);
     }
 
     @Override
-    protected void checkParameters(GetResultRequest request) throws
+    protected void checkParameters(GetResultRequest request, final RequestOperatorContext requestOperatorContext) throws
             OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         try {
@@ -81,13 +82,13 @@ public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractG
         }
         try {
             checkOffering(request.getOffering(),
-                          Sos2Constants.GetResultTemplateParams.offering);
+                          Sos2Constants.GetResultTemplateParams.offering, requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
             checkObservedProperty(request.getObservedProperty(),
-                                  Sos2Constants.GetResultTemplateParams.observedProperty, false);
+                                  Sos2Constants.GetResultTemplateParams.observedProperty, false, requestOperatorContext);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

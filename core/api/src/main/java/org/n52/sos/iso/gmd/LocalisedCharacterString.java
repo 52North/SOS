@@ -28,42 +28,50 @@
  */
 package org.n52.sos.iso.gmd;
 
-import java.util.Set;
+import com.google.common.base.Strings;
 
-import org.n52.sos.util.CollectionHelper;
-
-import com.google.common.collect.Sets;
-
-public class PT_FreeText {
+public class LocalisedCharacterString {
     
-    private Set<LocalisedCharacterString> textGroup = Sets.newHashSet();
-
-    /**
-     * @return the textGroup
-     */
-    public Set<LocalisedCharacterString> getTextGroup() {
-        return textGroup;
+    private String value;
+    
+    private String locale;
+    
+    public LocalisedCharacterString(String value) {
+        setValue(value);
     }
 
     /**
-     * @param textGroup the textGroup to set
+     * @return the value
      */
-    public PT_FreeText setTextGroup(Set<LocalisedCharacterString> textGroup) {
-        this.textGroup.clear();
-        this.textGroup.addAll(textGroup);
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public LocalisedCharacterString setValue(String value) {
+        this.value = value;
         return this;
     }
-    
+
     /**
-     * @param textGroup the textGroup to add
+     * @return the locale
      */
-    public PT_FreeText addTextGroup(LocalisedCharacterString textGroup) {
-        this.textGroup.add(textGroup);
+    public String getLocale() {
+        return locale;
+    }
+
+    /**
+     * @param locale the locale to set
+     */
+    public LocalisedCharacterString setLocale(String locale) {
+        this.locale = locale;
         return this;
     }
-    
-    public boolean isSetTextGroup() {
-        return CollectionHelper.isNotEmpty(getTextGroup());
+
+    public boolean isSetLocale() {
+        return !Strings.isNullOrEmpty(getLocale());
     }
 
 }

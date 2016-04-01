@@ -61,6 +61,8 @@ import org.isotc211.x2005.gmd.DQDomainConsistencyPropertyType;
 import org.isotc211.x2005.gmd.DQDomainConsistencyType;
 import org.isotc211.x2005.gmd.DQQuantitativeResultType;
 import org.isotc211.x2005.gmd.DQResultPropertyType;
+import org.isotc211.x2005.gmd.LocalisedCharacterStringPropertyType;
+import org.isotc211.x2005.gmd.LocalisedCharacterStringType;
 import org.isotc211.x2005.gmd.MDDataIdentificationDocument;
 import org.isotc211.x2005.gmd.MDDataIdentificationPropertyType;
 import org.isotc211.x2005.gmd.MDDataIdentificationType;
@@ -68,6 +70,7 @@ import org.isotc211.x2005.gmd.MDIdentificationPropertyType;
 import org.isotc211.x2005.gmd.MDMetadataDocument;
 import org.isotc211.x2005.gmd.MDMetadataPropertyType;
 import org.isotc211.x2005.gmd.MDMetadataType;
+import org.isotc211.x2005.gmd.PTFreeTextType;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gco.AbstractRole;
@@ -82,8 +85,10 @@ import org.n52.sos.iso.gmd.GmdDateType;
 import org.n52.sos.iso.gmd.GmdDomainConsistency;
 import org.n52.sos.iso.gmd.GmdQuantitativeResult;
 import org.n52.sos.iso.gmd.GmlBaseUnit;
+import org.n52.sos.iso.gmd.LocalisedCharacterString;
 import org.n52.sos.iso.gmd.MDDataIdentification;
 import org.n52.sos.iso.gmd.MDMetadata;
+import org.n52.sos.iso.gmd.PT_FreeText;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
@@ -130,7 +135,7 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(GmdConstants.NS_GMD, SmlResponsibleParty.class, GmdQuantitativeResult.class,
-                    GmdConformanceResult.class, CiResponsibleParty.class, MDMetadata.class), 
+                    GmdConformanceResult.class, CiResponsibleParty.class, MDMetadata.class, PT_FreeText.class), 
             encoderKeysForElements(null, GmdQuantitativeResult.class, GmdConformanceResult.class));
 
     public Iso19139GmdEncoder() {
@@ -171,6 +176,8 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
             encodedObject = encodeMDMetadata((MDMetadata) element, additionalValues);
         } else if (element instanceof MDDataIdentification) {
             encodedObject = encodeMDDataIdentification((MDDataIdentification) element, additionalValues);
+        } else if (element instanceof PT_FreeText) {
+            encodedObject = encodePTFreeText((PT_FreeText) element, additionalValues);
         } else {
             if (element instanceof GmdDomainConsistency) {
                 encodedObject = encodeGmdDomainConsistency((GmdDomainConsistency)element, additionalValues);
@@ -597,6 +604,29 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
             cursor.insertChars(gmdQuantitativeResult.getValue());
             cursor.dispose();
         }
+    }
+
+    private PTFreeTextType encodePTFreeText(PT_FreeText element, Map<HelperValues, String> additionalValues) {
+        PTFreeTextType ptftt = PTFreeTextType.Factory.newInstance();
+        for (LocalisedCharacterString localisedCharacterString : element.getTextGroup()) {
+            ptftt.addNewTextGroup().set(encodeLocalisedCharacterStringPropertyType(localisedCharacterString));
+        }
+        return ptftt;
+    }
+
+    private LocalisedCharacterStringPropertyType encodeLocalisedCharacterStringPropertyType(LocalisedCharacterString localisedCharacterString) {
+        LocalisedCharacterStringPropertyType lcspt = LocalisedCharacterStringPropertyType.Factory.newInstance();
+        lcspt.setLocalisedCharacterString(encodeLocalisedCharacterStringType(localisedCharacterString));
+        return lcspt;
+    }
+    
+    private LocalisedCharacterStringType encodeLocalisedCharacterStringType(LocalisedCharacterString localisedCharacterString) {
+        LocalisedCharacterStringType lcst = LocalisedCharacterStringType.Factory.newInstance();
+        lcst.setStringValue(localisedCharacterString.getValue());
+        if (localisedCharacterString.isSetLocale()) {
+            lcst.setLocale(localisedCharacterString.getLocale());
+        }
+        return lcst;
     }
 
     private CharacterStringPropertyType[] listToCharacterStringPropertyTypeArray(List<String> list) {

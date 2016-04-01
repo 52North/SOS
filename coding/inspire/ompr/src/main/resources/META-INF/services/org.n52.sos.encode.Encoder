@@ -1,1 +1,3 @@
-org.n52.svalbard.inspire.ompr.v30.encode.ProcessEncoder
+org.n52.svalbard.inspire.ompr.v30.encode.ProcessTypeEncoder
+org.n52.svalbard.inspire.ompr.v30.encode.ProcessDocumentEncoder
+org.n52.svalbard.inspire.ompr.v30.encode.ProcessParameterTypeEncoder

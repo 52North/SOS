@@ -21,12 +21,16 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>inspire-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>coding-wml-v20</artifactId>
         </dependency>
         <!-- XML Beans Generated Classes -->
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
-            <artifactId>52n-xml-inspire-omso-v30</artifactId>
+            <artifactId>52n-xml-inspire-omso-v301</artifactId>
         </dependency>
         <dependency>
             <groupId>org.n52.sensorweb</groupId>
@@ -52,7 +56,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v20</artifactId>
         </dependency>
-        <dependency>
+               <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>test</artifactId>
             <scope>test</scope>

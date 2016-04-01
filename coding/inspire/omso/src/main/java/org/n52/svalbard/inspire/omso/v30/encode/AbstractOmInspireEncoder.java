@@ -33,18 +33,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.sos.encode.AbstractOmEncoderv20;
-import org.n52.sos.inspire.base.InspireBaseConstants;
-import org.n52.sos.inspire.omor.InspireOMORConstants;
-import org.n52.sos.inspire.omso.InspireOMSOConstants;
+import org.n52.sos.encode.AbstractWmlEncoderv20;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.svalbard.inspire.base.InspireBaseConstants;
+import org.n52.svalbard.inspire.omor.InspireOMORConstants;
+import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 
 import net.opengis.om.x20.OMObservationType;
 
-public abstract class AbstractOmInspireEncoder extends AbstractOmEncoderv20 {
+public abstract class AbstractOmInspireEncoder extends AbstractWmlEncoderv20 {
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -97,7 +97,7 @@ public abstract class AbstractOmInspireEncoder extends AbstractOmEncoderv20 {
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         super.addNamespacePrefixToMap(nameSpacePrefixMap);
-        nameSpacePrefixMap.put(InspireBaseConstants.NS_BASE_30, InspireBaseConstants.NS_BASE_PREFIX);
+        nameSpacePrefixMap.put(InspireBaseConstants.NS_BASE, InspireBaseConstants.NS_BASE_PREFIX);
         nameSpacePrefixMap.put(InspireOMORConstants.NS_OMOR_30, InspireOMORConstants.NS_OMOR_PREFIX);
         nameSpacePrefixMap.put(InspireOMSOConstants.NS_OMSO_30, InspireOMSOConstants.NS_OMSO_PREFIX);
     }

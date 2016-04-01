@@ -39,8 +39,6 @@ import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.inspire.omso.InspireOMSOConstants;
-import org.n52.sos.inspire.omso.PointObservation;
 import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
@@ -48,6 +46,8 @@ import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
+import org.n52.svalbard.inspire.omso.PointObservation;
 
 import com.google.common.collect.Sets;
 

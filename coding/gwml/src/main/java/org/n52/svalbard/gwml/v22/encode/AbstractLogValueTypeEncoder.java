@@ -31,7 +31,7 @@ package org.n52.svalbard.gwml.v22.encode;
 import org.n52.sos.ogc.om.values.LogValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-import net.opengis.gwmlWell.x21.LogValueType;
+import net.opengis.gwmlWell.x22.LogValueType;
 
 public abstract class AbstractLogValueTypeEncoder<T> extends AbstractGroundWaterMLEncoder<T, LogValue> {
 

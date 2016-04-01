@@ -34,7 +34,7 @@ import org.n52.sos.ogc.om.values.LogValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.JavaHelper;
 
-import net.opengis.gwmlWell.x21.GWGeologyLogCoverageType;
+import net.opengis.gwmlWell.x22.GWGeologyLogCoverageType;
 
 public abstract class AbstractGWGeologyLogCoverageType<T>
         extends AbstractGroundWaterMLEncoder<T, GWGeologyLogCoverage> {

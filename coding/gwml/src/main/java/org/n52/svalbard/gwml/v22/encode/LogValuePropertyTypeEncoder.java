@@ -44,7 +44,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
 import com.google.common.collect.Sets;
 
-import net.opengis.gwmlWell.x21.LogValuePropertyType;
+import net.opengis.gwmlWell.x22.LogValuePropertyType;
 
 public class LogValuePropertyTypeEncoder extends AbstractLogValueTypeEncoder<LogValuePropertyType> {
 

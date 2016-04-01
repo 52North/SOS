@@ -44,7 +44,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
 import com.google.common.collect.Sets;
 
-import net.opengis.gwmlWell.x21.GWGeologyLogCoveragePropertyType;
+import net.opengis.gwmlWell.x22.GWGeologyLogCoveragePropertyType;
 
 
 public class GWGeologyLogCoveragePropertyTypeEncoder extends AbstractGWGeologyLogCoverageType<GWGeologyLogCoveragePropertyType> {

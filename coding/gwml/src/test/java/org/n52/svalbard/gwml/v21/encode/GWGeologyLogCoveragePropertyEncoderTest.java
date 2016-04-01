@@ -52,7 +52,7 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 
-import net.opengis.gwmlWell.x21.GWGeologyLogCoveragePropertyType;
+import net.opengis.gwmlWell.x22.GWGeologyLogCoveragePropertyType;
 
 public class GWGeologyLogCoveragePropertyEncoderTest {
     

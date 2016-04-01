@@ -35,15 +35,15 @@ import java.util.Set;
 
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.inspire.omso.InspireOMSOConstants;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 
-import eu.europa.ec.inspire.schemas.omso.x30.TimeLocationValueTripleType;
+import net.opengis.waterml.x20.TimeValuePairType;
 
-public class TimeLocationValueTripleTypeEncoder extends AbstractTimeLocationValueTripleTypeEncoder<TimeLocationValueTripleType> {
+public class TimeLocationValueTripleTypeEncoder extends AbstractTimeLocationValueTripleTypeEncoder<TimeValuePairType> {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
             CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, TimeLocationValueTriple.class);
@@ -54,13 +54,13 @@ public class TimeLocationValueTripleTypeEncoder extends AbstractTimeLocationValu
     }
 
     @Override
-    public TimeLocationValueTripleType encode(TimeLocationValueTriple timeLocationValueTriple)
+    public TimeValuePairType encode(TimeLocationValueTriple timeLocationValueTriple)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         return encode(timeLocationValueTriple, new EnumMap<HelperValues, String>(HelperValues.class));
     }
 
     @Override
-    public TimeLocationValueTripleType encode(TimeLocationValueTriple timeLocationValueTriple,
+    public TimeValuePairType encode(TimeLocationValueTriple timeLocationValueTriple,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport, UnsupportedEncoderInputException {
         return encodeTimeLocationValueTriple(timeLocationValueTriple);
     }

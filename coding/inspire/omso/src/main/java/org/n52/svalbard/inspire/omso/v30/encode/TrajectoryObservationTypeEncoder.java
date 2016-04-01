@@ -30,29 +30,44 @@ package org.n52.svalbard.inspire.omso.v30.encode;
 
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
-import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.inspire.omso.InspireOMSOConstants;
-import org.n52.sos.inspire.omso.TrajectoryObservation;
+import org.n52.sos.ogc.om.AbstractObservationValue;
+import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.CountValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
+import org.n52.svalbard.inspire.omso.TrajectoryObservation;
 
 import com.google.common.collect.Sets;
 
 import eu.europa.ec.inspire.schemas.omso.x30.TrajectoryObservationType;
 import net.opengis.om.x20.OMObservationType;
+import net.opengis.waterml.x20.CategoricalTimeseriesDocument;
+import net.opengis.waterml.x20.CategoricalTimeseriesType;
+import net.opengis.waterml.x20.DefaultCategoricalTVPMetadataType;
+import net.opengis.waterml.x20.DefaultTVPCategoricalMetadataDocument;
+import net.opengis.waterml.x20.DefaultTVPMeasurementMetadataDocument;
+import net.opengis.waterml.x20.MeasurementTimeseriesDocument;
+import net.opengis.waterml.x20.MeasurementTimeseriesType;
+import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
+import net.opengis.waterml.x20.TVPMeasurementMetadataType;
 
 public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
 
@@ -68,31 +83,6 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
     public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
         return Collections.singletonMap(InspireOMSOConstants.NS_OMSO_30,
                 (Set<String>) Sets.newHashSet(InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION));
-    }
-
-    @Override
-    protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
-        return encodeResult(sosObservation.getValue());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        // TODO fixme: HOW TO ENCODE TLVT
-        if (observationValue.getValue() instanceof TLVTValue) {
-            TimeLocationValueTriple value = (TimeLocationValueTriple)((TLVTValue)observationValue.getValue()).getValue().iterator().next();
-            Encoder<?, TimeLocationValueTriple> encoder = (Encoder<?, TimeLocationValueTriple>) getEncoder(
-                    new XmlPropertyTypeEncoderKey(InspireOMSOConstants.NS_OMSO_30, TimeLocationValueTriple.class));
-            if (encoder != null) {
-                return (XmlObject) encoder.encode(value);
-            }
-        }
-        return null;
-    }
-
-    @Override
-    protected String getObservationType() {
-        return InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION;
     }
 
     @Override
@@ -119,8 +109,174 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
         // }
     }
 
+    @Override
+    protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
+        return encodeResult(sosObservation.getValue());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
+        // TODO fixme: HOW TO ENCODE TLVT
+        if (observationValue instanceof SingleObservationValue && observationValue.getValue() instanceof TimeLocationValueTriple) {
+                if (observationValue.getValue().getValue() instanceof QuantityValue || observationValue.getValue().getValue() instanceof CountValue) {
+                return createMeasurementTimeseries((AbstractObservationValue<?>) observationValue);
+            } else if (observationValue.getValue().getValue() instanceof CategoryValue) {
+                return createCategoricalTimeseries((AbstractObservationValue<?>) observationValue);
+            } else {
+                // TODO throw exception
+            }
+        } else if (observationValue instanceof MultiObservationValues) {
+            if (observationValue.getValue() instanceof TLVTValue) {
+                TimeLocationValueTriple value = (TimeLocationValueTriple) ((TLVTValue) observationValue.getValue())
+                        .getValue().iterator().next();
+                if (value.getValue() instanceof QuantityValue || value.getValue() instanceof CountValue) {
+                    return createMeasurementTimeseries((AbstractObservationValue<?>) observationValue);
+                } else if (value.getValue() instanceof CategoryValue) {
+                    return createCategoricalTimeseries((AbstractObservationValue<?>) observationValue);
+                } else {
+                    // TODO throw exception
+                }
+            }
+//            Encoder<?, TimeLocationValueTriple> encoder = (Encoder<?, TimeLocationValueTriple>) getEncoder(
+//                    new XmlPropertyTypeEncoderKey(InspireOMSOConstants.NS_OMSO_30, TimeLocationValueTriple.class));
+//            if (encoder != null) {
+//                return (XmlObject) encoder.encode(value);
+//            }
+        }
+        return null;
+    }
+
+    @Override
+    protected String getObservationType() {
+        return InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION;
+    }
+
     protected OMObservationType createOmObservationType() {
         return TrajectoryObservationType.Factory.newInstance(getXmlOptions());
+    }
+
+    private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
+        MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
+        MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
+        measurementTimeseries.setId("timeseries." + observationValue.getObservationID());
+        measurementTimeseries.addNewMetadata().addNewTimeseriesMetadata().addNewTemporalExtent()
+                .setHref("#" + observationValue.getPhenomenonTime().getGmlId());
+    
+        TVPDefaultMetadataPropertyType xbMetaComponent = measurementTimeseries.addNewDefaultPointMetadata();
+    
+        DefaultTVPMeasurementMetadataDocument xbDefMeasureMetaComponent =
+                DefaultTVPMeasurementMetadataDocument.Factory.newInstance();
+        TVPMeasurementMetadataType defaultTVPMeasurementMetadata =
+                xbDefMeasureMetaComponent.addNewDefaultTVPMeasurementMetadata();
+        defaultTVPMeasurementMetadata.addNewInterpolationType().setHref(
+                "http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
+    
+        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
+        String unit = null;
+        if (observationValue instanceof SingleObservationValue) {
+            SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) observationValue;
+            unit = singleObservationValue.getValue().getUnit();
+            if (observationValue.getValue() instanceof TimeLocationValueTriple) {
+                measurementTimeseries.addNewPoint().addNewMeasurementTVP().set(encodeTLVT((TimeLocationValueTriple)observationValue.getValue()));
+            }
+        } else if (observationValue instanceof MultiObservationValues) {
+            MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue;
+            if (multiObservationValue.getValue() instanceof TLVTValue) {
+                TLVTValue tlvtValue = (TLVTValue) multiObservationValue.getValue();
+                List<TimeLocationValueTriple> timeLocationValueTriples = tlvtValue.getValue();
+                unit = tlvtValue.getUnit();
+                for (TimeLocationValueTriple timeLocationValueTriple : timeLocationValueTriples) {
+                    measurementTimeseries.addNewPoint().addNewMeasurementTVP().set(encodeTLVT(timeLocationValueTriple));
+                    
+//                    if (timeValuePair.getValue() instanceof QuantityValue) {
+//                        QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
+//                        if (!quantityValue.getValue().equals(Double.NaN)) {
+//                            timeValuePair.getTime();
+//                            String time = getTimeString(timeValuePair.getTime());
+//                            String value = Double.toString(quantityValue.getValue().doubleValue());
+//                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+//                                    value);
+//                        }
+//                    } else if (timeValuePair.getValue() instanceof CountValue) {
+//                        CountValue countValue = (CountValue) timeValuePair.getValue();
+//                        if (countValue.getValue() != null) {
+//                            String time = getTimeString(timeValuePair.getTime());
+//                            String value = Integer.toString(countValue.getValue().intValue());
+//                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
+//                                    value);
+//                        }
+//                    }
+                }
+            } else {
+                // TODO throw exception
+            }
+        }
+        if (unit != null && !unit.isEmpty()) {
+            defaultTVPMeasurementMetadata.addNewUom().setCode(unit);
+        }
+    
+        xbMetaComponent.set(xbDefMeasureMetaComponent);
+        return measurementTimeseriesDoc;
+    }
+
+    private XmlObject encodeTLVT(TimeLocationValueTriple value) throws OwsExceptionReport {
+        return encodeInspireOMSO(value);
+    }
+    
+    private XmlObject createCategoricalTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
+        CategoricalTimeseriesDocument categoricalTimeseriesDoc = CategoricalTimeseriesDocument.Factory.newInstance();
+        CategoricalTimeseriesType categoricalTimeseries= categoricalTimeseriesDoc.addNewCategoricalTimeseries();
+        categoricalTimeseries.setId("timeseries." + observationValue.getObservationID());
+        categoricalTimeseries.addNewMetadata().addNewTimeseriesMetadata().addNewTemporalExtent()
+                .setHref("#" + observationValue.getPhenomenonTime().getGmlId());
+    
+        TVPDefaultMetadataPropertyType xbMetaComponent = categoricalTimeseries.addNewDefaultPointMetadata();
+    
+        DefaultTVPCategoricalMetadataDocument xbDefCateMetaComponent =
+                DefaultTVPCategoricalMetadataDocument.Factory.newInstance();
+        DefaultCategoricalTVPMetadataType defaultTVPCateMetadata =
+                xbDefCateMetaComponent.addNewDefaultTVPCategoricalMetadata();
+//                defaultTVPCateMetadata.ad
+//                
+//                addNewInterpolationType().setHref(
+//                "http://www.opengis.net/def/timeseriesType/WaterML/2.0/continuous");
+//    
+//        xbDefMeasureMetaComponent.getDefaultTVPMeasurementMetadata().getInterpolationType().setTitle("Instantaneous");
+        String unit = null;
+        if (observationValue instanceof SingleObservationValue) {
+            SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) observationValue;
+            unit = singleObservationValue.getValue().getUnit();
+            if (observationValue.getValue() instanceof TimeLocationValueTriple) {
+                categoricalTimeseries.addNewPoint().addNewCategoricalTVP().set(encodeTLVT((TimeLocationValueTriple)observationValue.getValue()));
+            }
+        } else if (observationValue instanceof MultiObservationValues) {
+            MultiObservationValues<?> multiObservationValue = (MultiObservationValues<?>) observationValue;
+            if (multiObservationValue.getValue() instanceof TLVTValue) {
+                TLVTValue tlvtValue = (TLVTValue) multiObservationValue.getValue();
+                List<TimeLocationValueTriple> timeLocationValueTriples = tlvtValue.getValue();
+                unit = tlvtValue.getUnit();
+                for (TimeLocationValueTriple timeLocationValueTriple : timeLocationValueTriples) {
+                    categoricalTimeseries.addNewPoint().addNewCategoricalTVP().set(encodeTLVT(timeLocationValueTriple));
+                }
+            } else {
+                // TODO throw exception
+            }
+        }
+        if (unit != null && !unit.isEmpty()) {
+            defaultTVPCateMetadata.setCodeSpace(unit);
+        }
+    
+        xbMetaComponent.set(xbDefCateMetaComponent);
+        return categoricalTimeseriesDoc;
+    }
+
+    protected static XmlObject encodeInspireOMSO(Object o) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(InspireOMSOConstants.NS_OMSO_30, o);
+    }
+
+    protected static XmlObject encodeInspireOMSO(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+        return CodingHelper.encodeObjectToXml(InspireOMSOConstants.NS_OMSO_30, o, helperValues);
     }
 
 }

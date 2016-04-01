@@ -195,6 +195,9 @@ public final class XmlHelper {
                     errors.add(error);
                 }
             }
+            if (errors.isEmpty()) {
+               return true;
+            }
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final XmlError error : errors) {
 
@@ -570,6 +573,14 @@ public final class XmlHelper {
             public boolean shouldPass(final XmlValidationError xve) {
                 return checkExpectedQNamesContainsQNames(xve.getExpectedQNames(),
                         Lists.newArrayList(GmlConstants.QN_ABSTRACT_TIME_32));
+            }
+        },
+        ABSTRACT_GEOMETRY_GML_3_2_1 {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean shouldPass(final XmlValidationError xve) {
+                return checkExpectedQNamesContainsQNames(xve.getExpectedQNames(),
+                        Lists.newArrayList(GmlConstants.QN_ABSTRACT_GEOMETRY_32));
             }
         },
         SOS_INSERTION_META_DATA {

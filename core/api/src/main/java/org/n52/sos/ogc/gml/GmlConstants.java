@@ -100,6 +100,8 @@ public interface GmlConstants extends Constants {
     String EN_ABSTRACT_TIME_OBJECT = "_TimeObject";
 
     String EN_ABSTRACT_TIME_OBJECT_32 = "AbstractTimeObject";
+    
+    String EN_ABSTRACT_GEOMETRY_32 = "AbstractGeometry";
 
     String EN_ABSTRACT_ENCODING = "_Encoding";
 
@@ -214,6 +216,8 @@ public interface GmlConstants extends Constants {
     QName QN_ABSTRACT_FEATURE_GML_32 = new QName(NS_GML_32, EN_ABSTRACT_FEATURE_32, NS_GML_PREFIX);
 
     QName QN_ABSTRACT_TIME_32 = new QName(NS_GML_32, EN_ABSTRACT_TIME_OBJECT_32, NS_GML_PREFIX);
+    
+    QName QN_ABSTRACT_GEOMETRY_32 = new QName(NS_GML_32, EN_ABSTRACT_GEOMETRY_32, NS_GML_PREFIX);
 
     QName QN_REMOTE_SCHEMA = new QName(GmlConstants.NS_GML_32, AN_REMOTE_SCHEMA, NS_GML_PREFIX);
 

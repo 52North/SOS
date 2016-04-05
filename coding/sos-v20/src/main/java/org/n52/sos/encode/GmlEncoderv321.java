@@ -587,14 +587,18 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         }
     }
 
+    @SuppressWarnings("rawtypes")
     private String getGmlID(Geometry geom, String gmlId) {
         String id = null;
         if (!Strings.isNullOrEmpty(gmlId)) {
             id = gmlId;
+        } else if (geom.getUserData() != null && geom.getUserData() instanceof Map
+                && ((Map) geom.getUserData()).containsKey(HelperValues.GMLID.name())) {
+            id = (String) ((Map) geom.getUserData()).get(HelperValues.GMLID.name());
         } else {
             id = JavaHelper.generateID(geom.toText());
         }
-        return  geom.getGeometryType() + "_" + id;
+        return geom.getGeometryType() + "_" + id;
     }
 
     /**

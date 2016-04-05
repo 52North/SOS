@@ -113,6 +113,7 @@ public class TrajectoryObservationTypeEncoderTest {
         DateTime now = new DateTime(DateTimeZone.UTC);
         TimeInstant resultTime = new TimeInstant(now);
         TrajectoryObservation observation = new TrajectoryObservation();
+        observation.setObservationID("123");
         OmObservationConstellation observationConstellation = new OmObservationConstellation();
         observationConstellation
                 .setFeatureOfInterest(new SamplingFeature(new CodeWithAuthority("feature", CODE_SPACE)));

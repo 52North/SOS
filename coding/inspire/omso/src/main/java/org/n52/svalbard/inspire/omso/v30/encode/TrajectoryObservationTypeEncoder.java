@@ -51,10 +51,10 @@ import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import org.n52.svalbard.inspire.omso.TrajectoryObservation;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import eu.europa.ec.inspire.schemas.omso.x30.TrajectoryObservationType;
@@ -95,18 +95,7 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
-        // if (objectToEncode instanceof OmObservation) {
-        // try {
-        // new OmV20XmlStreamWriter().write((OmObservation)objectToEncode,
-        // outputStream, encodingValues);
-        // } catch (XMLStreamException xmlse) {
-        // throw new
-        // NoApplicableCodeException().causedBy(xmlse).withMessage("Error while
-        // writing element to stream!");
-        // }
-        // } else {
         super.encode(objectToEncode, outputStream, encodingValues);
-        // }
     }
 
     @Override
@@ -114,10 +103,8 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
         return encodeResult(sosObservation.getValue());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
-        // TODO fixme: HOW TO ENCODE TLVT
         if (observationValue instanceof SingleObservationValue && observationValue.getValue() instanceof TimeLocationValueTriple) {
                 if (observationValue.getValue().getValue() instanceof QuantityValue || observationValue.getValue().getValue() instanceof CountValue) {
                 return createMeasurementTimeseries((AbstractObservationValue<?>) observationValue);
@@ -138,11 +125,6 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
                     // TODO throw exception
                 }
             }
-//            Encoder<?, TimeLocationValueTriple> encoder = (Encoder<?, TimeLocationValueTriple>) getEncoder(
-//                    new XmlPropertyTypeEncoderKey(InspireOMSOConstants.NS_OMSO_30, TimeLocationValueTriple.class));
-//            if (encoder != null) {
-//                return (XmlObject) encoder.encode(value);
-//            }
         }
         return null;
     }
@@ -178,6 +160,7 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
             SingleObservationValue<?> singleObservationValue = (SingleObservationValue<?>) observationValue;
             unit = singleObservationValue.getValue().getUnit();
             if (observationValue.getValue() instanceof TimeLocationValueTriple) {
+                
                 measurementTimeseries.addNewPoint().addNewMeasurementTVP().set(encodeTLVT((TimeLocationValueTriple)observationValue.getValue()));
             }
         } else if (observationValue instanceof MultiObservationValues) {
@@ -186,27 +169,11 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
                 TLVTValue tlvtValue = (TLVTValue) multiObservationValue.getValue();
                 List<TimeLocationValueTriple> timeLocationValueTriples = tlvtValue.getValue();
                 unit = tlvtValue.getUnit();
+                int counter = 0;
                 for (TimeLocationValueTriple timeLocationValueTriple : timeLocationValueTriples) {
+                    timeLocationValueTriple.getLocation().setUserData(getUserObject(observationValue.getObservationID(), counter));
                     measurementTimeseries.addNewPoint().addNewMeasurementTVP().set(encodeTLVT(timeLocationValueTriple));
-                    
-//                    if (timeValuePair.getValue() instanceof QuantityValue) {
-//                        QuantityValue quantityValue = (QuantityValue) timeValuePair.getValue();
-//                        if (!quantityValue.getValue().equals(Double.NaN)) {
-//                            timeValuePair.getTime();
-//                            String time = getTimeString(timeValuePair.getTime());
-//                            String value = Double.toString(quantityValue.getValue().doubleValue());
-//                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-//                                    value);
-//                        }
-//                    } else if (timeValuePair.getValue() instanceof CountValue) {
-//                        CountValue countValue = (CountValue) timeValuePair.getValue();
-//                        if (countValue.getValue() != null) {
-//                            String time = getTimeString(timeValuePair.getTime());
-//                            String value = Integer.toString(countValue.getValue().intValue());
-//                            addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
-//                                    value);
-//                        }
-//                    }
+                    counter++;
                 }
             } else {
                 // TODO throw exception
@@ -256,8 +223,11 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
                 TLVTValue tlvtValue = (TLVTValue) multiObservationValue.getValue();
                 List<TimeLocationValueTriple> timeLocationValueTriples = tlvtValue.getValue();
                 unit = tlvtValue.getUnit();
+                int counter = 0;
                 for (TimeLocationValueTriple timeLocationValueTriple : timeLocationValueTriples) {
+                    timeLocationValueTriple.getLocation().setUserData(getUserObject(observationValue.getObservationID(), counter));
                     categoricalTimeseries.addNewPoint().addNewCategoricalTVP().set(encodeTLVT(timeLocationValueTriple));
+                    counter++;
                 }
             } else {
                 // TODO throw exception
@@ -269,6 +239,12 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
     
         xbMetaComponent.set(xbDefCateMetaComponent);
         return categoricalTimeseriesDoc;
+    }
+
+    private Object getUserObject(String observationID, int counter) {
+        Map<String, String> map = Maps.newHashMapWithExpectedSize(1);
+        map.put(HelperValues.GMLID.name(), observationID + "_" + counter);
+        return map;
     }
 
     protected static XmlObject encodeInspireOMSO(Object o) throws OwsExceptionReport {

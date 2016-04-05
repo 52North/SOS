@@ -1,0 +1,3 @@
+org.n52.svalbard.inspire.ompr.v30.decode.ProcessTypeDecoder
+org.n52.svalbard.inspire.ompr.v30.decode.ProcessPropertyTypeDecoder
+org.n52.svalbard.inspire.ompr.v30.decode.ProcessDocumentDecoder

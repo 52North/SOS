@@ -36,10 +36,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractGmlEncoderv321;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ProcedureEncoder;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -67,13 +69,16 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import eu.europa.ec.inspire.schemas.ompr.x30.ProcessDocument;
+import eu.europa.ec.inspire.schemas.ompr.x30.ProcessPropertyType;
 import eu.europa.ec.inspire.schemas.ompr.x30.ProcessType;
 import net.opengis.gml.x32.FeaturePropertyType;
 
-public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  implements ProcedureEncoder<XmlObject, Process> {
-    
+public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
+        implements ProcedureEncoder<XmlObject, Process> {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessTypeEncoder.class);
-    
+
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES =
             singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
                     (Set<String>) ImmutableSet.of(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_URL,
@@ -90,10 +95,9 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
 
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
-            encoderKeysForElements(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class,
-                    Process.class),
-            encoderKeysForElements(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE,
-                    SosProcedureDescription.class, Process.class));
+            encoderKeysForElements(InspireOMPRConstants.NS_OMPR_30, SosProcedureDescription.class, Process.class),
+            encoderKeysForElements(InspireOMPRConstants.OMPR_30_OUTPUT_FORMAT_MIME_TYPE, SosProcedureDescription.class,
+                    Process.class));
 
     public ProcessTypeEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -133,7 +137,7 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
         }
         return Collections.emptySet();
     }
-    
+
     @Override
     public Set<String> getConformanceClasses() {
         return Collections.emptySet();
@@ -141,7 +145,7 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
 
     @Override
     public XmlObject encode(Process process) throws OwsExceptionReport, UnsupportedEncoderInputException {
-        return encode(process, Collections.<HelperValues, String>emptyMap());
+        return encode(process, Collections.<HelperValues, String> emptyMap());
     }
 
     @Override
@@ -151,16 +155,34 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
     }
 
     protected ProcessType createProcess(Process process) throws OwsExceptionReport {
-        ProcessType pt = ProcessType.Factory.newInstance();
-        pt.setId(process.getGmlId());
-        
-        addInspireId(pt, process);
-        addName(pt, process);
-        addType(pt, process);
-        addDocumentation(pt, process);
-        addProcessParameter(pt, process);
-        addResponsibleParty(pt, process);
-        return pt;
+        if (process.isSetSensorDescriptionXmlString()) {
+            XmlObject encodedObject = null;
+            try {
+                encodedObject = XmlObject.Factory.parse(process.getSensorDescriptionXmlString());
+                if (encodedObject instanceof ProcessType) {
+                    return (ProcessType) encodedObject;
+                } else if (encodedObject instanceof ProcessDocument) {
+                    return ((ProcessDocument) encodedObject).getProcess();
+                } else if (encodedObject instanceof ProcessPropertyType) {
+                    return ((ProcessPropertyType) encodedObject).getProcess();
+                } else {
+                    throw new UnsupportedEncoderInputException(this, process);
+                }
+            } catch (final XmlException xmle) {
+                throw new NoApplicableCodeException().causedBy(xmle);
+            }
+        } else {
+            ProcessType pt = ProcessType.Factory.newInstance();
+            pt.setId(process.getGmlId());
+
+            addInspireId(pt, process);
+            addName(pt, process);
+            addType(pt, process);
+            addDocumentation(pt, process);
+            addProcessParameter(pt, process);
+            addResponsibleParty(pt, process);
+            return pt;
+        }
     }
 
     private void addInspireId(ProcessType pt, Process process) throws OwsExceptionReport {
@@ -192,7 +214,7 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
     private void addProcessParameter(ProcessType pt, Process process) throws OwsExceptionReport {
         if (process.isSetProcessParameter()) {
             for (ProcessParameter processParameter : process.getProcessParameter()) {
-             pt.addNewProcessParameter().addNewProcessParameter().set(encodeOMPR(processParameter));
+                pt.addNewProcessParameter().addNewProcessParameter().set(encodeOMPR(processParameter));
             }
         }
     }
@@ -204,7 +226,7 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
             }
         }
     }
-    
+
     @Override
     protected XmlObject createFeature(FeaturePropertyType featurePropertyType, AbstractFeature abstractFeature,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
@@ -222,7 +244,7 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
     protected static XmlObject encodeOMPR(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(InspireOMPRConstants.NS_OMPR_30, o);
     }
-    
+
     protected static XmlObject encodeOMPRDocument(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXmlDocument(InspireBaseConstants.NS_BASE, o);
     }
@@ -230,11 +252,11 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
     protected static XmlObject encodeBASE(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(InspireBaseConstants.NS_BASE, o);
     }
-    
+
     protected static XmlObject encodeBASEPropertyType(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXmlPropertyType(InspireBaseConstants.NS_BASE, o);
     }
-    
+
     protected static XmlObject encodeBASEDocument(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXmlDocument(InspireBaseConstants.NS_BASE, o);
     }
@@ -242,20 +264,21 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>  impleme
     protected static XmlObject encodeBASE(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(InspireBaseConstants.NS_BASE, o, helperValues);
     }
-    
+
     protected static XmlObject encodeBASE2(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(InspireBase2Constants.NS_BASE2, o);
     }
-    
+
     protected static XmlObject encodeBASE2PropertyType(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXmlPropertyType(InspireBase2Constants.NS_BASE2, o);
     }
-    
+
     protected static XmlObject encodeBASE2Document(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXmlDocument(InspireBase2Constants.NS_BASE2, o);
     }
 
-    protected static XmlObject encodeBASE2(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+    protected static XmlObject encodeBASE2(Object o, Map<HelperValues, String> helperValues)
+            throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(InspireBase2Constants.NS_BASE2, o, helperValues);
     }
 

@@ -69,6 +69,7 @@ public class Process extends SosProcedureDescription {
 
     public Process() {
         setDescriptionFormat(InspireOMPRConstants.NS_OMPR_30);
+        setDefaultElementEncoding(InspireOMPRConstants.NS_OMPR_30);
     }
     
     public Identifier getInspireId() {

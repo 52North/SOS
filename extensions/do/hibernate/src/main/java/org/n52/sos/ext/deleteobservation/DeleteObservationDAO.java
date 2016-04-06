@@ -38,6 +38,7 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
@@ -81,21 +82,17 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                 throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
                         request.getObservationIdentifier());
             }
-            OmObservation so = null;
-            if (observation != null) {
-                so =
-                        HibernateObservationUtilities
-                                .createSosObservationsFromObservations(
-                                        Collections.<Observation<?>> singleton(observation), getRequest(request),
-                                        null, session).iterator().next();
-                observation.setDeleted(true);
-                session.saveOrUpdate(observation);
-                checkSeriesForFirstLatest(observation, session);
-                session.flush();
-            } else {
-                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
-                        request.getObservationIdentifier());
-            }
+			OmObservation so = null;
+			if (observation != null) {
+				deleteObservation(observation, session);
+				so = HibernateObservationUtilities
+						.createSosObservationsFromObservations(Collections.<Observation<?>> singleton(observation),
+								getRequest(request), null, session)
+						.iterator().next();
+			} else {
+				throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
+						request.getObservationIdentifier());
+			}
             transaction.commit();
             response.setObservationId(request.getObservationIdentifier());
             response.setDeletedObservation(so);
@@ -114,7 +111,19 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
         return response;
     }
 
-    private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
+    private void deleteObservation(Observation<?> observation, Session session) throws OwsExceptionReport, ConverterException {
+    		if (observation instanceof ComplexObservation) {
+    			for (Observation<?> child : ((ComplexObservation)observation).getValue()) {
+					deleteObservation(child, session);
+				}
+    		}
+            observation.setDeleted(true);
+            session.saveOrUpdate(observation);
+            checkSeriesForFirstLatest(observation, session);
+            session.flush();
+	}
+
+	private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
         // TODO Auto-generated method stub
         return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(
                 request.getVersion());
@@ -137,8 +146,8 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
     private void checkSeriesForFirstLatest(Observation<?> observation, Session session) throws CodedException {
         if (observation instanceof SeriesObservation) {
             Series series = ((SeriesObservation<?>) observation).getSeries();
-            if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())
-                    || series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+            if ((series.isSetFirstLastTime() && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
+                    || (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
                 DaoFactory.getInstance().getSeriesDAO()
                         .updateSeriesAfterObservationDeletion(series, (SeriesObservation<?>) observation, session);
             }

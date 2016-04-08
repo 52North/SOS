@@ -81,7 +81,7 @@
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -900,10 +900,20 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-xml</artifactId>
                 <version>${project.version}</version>
+            </dependency> -->
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v10</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v20</artifactId>
+                <version>2.1.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>

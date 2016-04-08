@@ -37,7 +37,9 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
@@ -49,22 +51,22 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
@@ -73,6 +75,7 @@ import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -232,6 +235,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
 
+    public abstract ScrollableResults getObservations(Set<String> procedure, Set<String> observableProperty,
+            Set<String> featureOfInterest, Set<String> offering, Criterion filterCriterion, Session session);
+
     /**
      * Query observation by identifier
      *
@@ -245,6 +251,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = getDefaultObservationCriteria(session);
         addObservationIdentifierToCriteria(criteria, identifier, session);
         return (AbstractObservation) criteria.uniqueResult();
+    }
+    
+    /**
+     * Query observation by identifiers
+     *
+     * @param identifiers
+     *            Observation identifiers (gml:identifier)
+     * @param session
+     *            Hiberante session
+     * @return Observation
+     */
+    @SuppressWarnings("unchecked")
+    public List<AbstractObservation> getObservationByIdentifiers(Set<String> identifiers, Session session) {
+        Criteria criteria = getDefaultObservationCriteria(session);
+        addObservationIdentifierToCriteria(criteria, identifiers, session);
+        return criteria.list();
     }
 
     /**
@@ -509,9 +531,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
      *
-     * @param observationConstellations
+     * @param hObservationConstellations
      *            Observation constellation objects
-     * @param feature
+     * @param hFeature
      *            FeatureOfInterest object
      * @param sosObservation
      *            SOS observation to insert
@@ -528,9 +550,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * Insert a single observation for observation constellations and
      * featureOfInterest with local caching for codespaces and units
      *
-     * @param observationConstellations
+     * @param hObservationConstellations
      *            Observation constellation objects
-     * @param feature
+     * @param hFeature
      *            FeatureOfInterest object
      * @param sosObservation
      *            SOS observation to insert
@@ -675,6 +697,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     protected void addObservationIdentifierToCriteria(Criteria criteria, String identifier, Session session) {
         criteria.add(Restrictions.eq(AbstractObservation.IDENTIFIER, identifier));
+    }
+    
+    /**
+     * Add observation identifiers (gml:identifier) to Hibernate Criteria
+     *
+     * @param criteria
+     *            Hibernate Criteria
+     * @param identifiers
+     *            Observation identifiers (gml:identifier)
+     * @param session
+     *            Hibernate session
+     */
+    protected void addObservationIdentifierToCriteria(Criteria criteria, Set<String> identifiers, Session session) {
+        criteria.add(Restrictions.in(AbstractObservation.IDENTIFIER, identifiers));
     }
 
 //    /**

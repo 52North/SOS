@@ -26,16 +26,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation.v10;
+package org.n52.sos.ext.deleteobservation.v20;
 
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
-import net.opengis.sosdo.x10.DeleteObservationResponseType;
+import net.opengis.sosdo.x20.DeleteObservationResponseDocument;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractResponseEncoder;
-import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -55,12 +53,12 @@ import com.google.common.collect.Sets;
  * @since 1.0.0
  */
 public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObservationResponse> {
-    public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(DeleteObservationConstants.NS_SOSDO_1_0,
-            DeleteObservationConstants.NS_SOSDO_1_0_SCHEMA_LOCATION);
+    public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(DeleteObservationConstants.NS_SOSDO_2_0,
+            DeleteObservationConstants.NS_SOSDO_2_0_SCHEMA_LOCATION);
 
     public DeleteObservationEncoder() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation
-                .name(), DeleteObservationConstants.NS_SOSDO_1_0, DeleteObservationConstants.NS_SOSDO_PREFIX,
+                .name(), DeleteObservationConstants.NS_SOSDO_2_0, DeleteObservationConstants.NS_SOSDO_PREFIX,
                 DeleteObservationResponse.class);
     }
 
@@ -81,16 +79,11 @@ public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObse
         if (dor.getVersion() == null) {
             exceptions.add(new MissingVersionParameterException());
         }
-        if (dor.getObservationId() == null || dor.getObservationId().isEmpty()) {
-            exceptions.add(new MissingParameterValueException(DeleteObservationConstants.PARAM_OBSERVATION));
-        }
         exceptions.throwIfNotEmpty();
-
-        String observationId = dor.getObservationId();
+        
         DeleteObservationResponseDocument xbDeleteObsDoc =
                 DeleteObservationResponseDocument.Factory.newInstance(getXmlOptions());
-        DeleteObservationResponseType xbDeleteObservationResponse = xbDeleteObsDoc.addNewDeleteObservationResponse();
-        xbDeleteObservationResponse.setDeletedObservation(observationId);
+        xbDeleteObsDoc.addNewDeleteObservationResponse();
         return xbDeleteObsDoc;
     }
 

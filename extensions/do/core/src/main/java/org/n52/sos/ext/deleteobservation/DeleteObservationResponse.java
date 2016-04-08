@@ -29,7 +29,10 @@
 package org.n52.sos.ext.deleteobservation;
 
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.AbstractServiceResponse;
+
+import com.google.common.base.Strings;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -37,10 +40,14 @@ import org.n52.sos.response.AbstractServiceResponse;
  * 
  * @since 1.0.0
  */
-public class DeleteObservationResponse extends AbstractServiceResponse {
+public class DeleteObservationResponse extends AbstractServiceResponse implements ResponseFormat {
     private OmObservation deletedObservation;
-
     private String observationIdentifier;
+    private String responseFormat;
+
+    public DeleteObservationResponse(String sosDoVersion) {
+        // TODO Auto-generated constructor stub
+    }
 
     public void setObservationId(String observationIdentifier) {
         this.observationIdentifier = observationIdentifier;
@@ -61,5 +68,20 @@ public class DeleteObservationResponse extends AbstractServiceResponse {
     @Override
     public String getOperationName() {
         return DeleteObservationConstants.Operations.DeleteObservation.name();
+    }
+
+    @Override
+    public String getResponseFormat() {
+        return responseFormat;
+    }
+
+    @Override
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+
+    @Override
+    public boolean isSetResponseFormat() {
+        return !Strings.isNullOrEmpty(getResponseFormat());
     }
 }

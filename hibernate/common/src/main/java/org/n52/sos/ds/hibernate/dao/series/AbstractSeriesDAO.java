@@ -124,12 +124,8 @@ public abstract class AbstractSeriesDAO {
      * Insert or update and get series for procedure, observable property and
      * featureOfInterest
      * 
-     * @param feature
-     *            FeatureOfInterest object
-     * @param observableProperty
-     *            ObservableProperty object
-     * @param procedure
-     *            Procedure object
+     * @param identifiers
+     *            Series identifiers
      * @param session
      *            Hibernate session
      * @return Series object
@@ -419,23 +415,41 @@ public abstract class AbstractSeriesDAO {
 	 * @param session
 	 *            Hibernate session
 	 */
-	public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
-		SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
-		if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
-			SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
-			series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
-			if (firstObservation instanceof NumericObservation) {
-				series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
-			}
-		} else if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
-			SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
-			series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
-			if (latestObservation instanceof NumericObservation) {
-				series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
-			}
-		}
-		session.saveOrUpdate(series);
-	}
+    public void updateSeriesAfterObservationDeletion(Series series, SeriesObservation observation, Session session) {
+        SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
+        if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
+            SeriesObservation firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
+            if (firstObservation != null) {
+                series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
+                if (firstObservation instanceof NumericObservation) {
+                    series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+                }
+            } else {
+                series.setFirstTimeStamp(null);
+                if (observation instanceof NumericObservation) {
+                    series.setFirstNumericValue(null);
+                }
+            }
+        }
+        if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+            SeriesObservation latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
+            if (latestObservation != null) {
+                series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
+                if (latestObservation instanceof NumericObservation) {
+                    series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+                }
+            } else {
+                series.setLastTimeStamp(null);
+                if (observation instanceof NumericObservation) {
+                    series.setLastNumericValue(null);
+                }
+            }
+        }
+        if (!series.isSetFirstLastTime()) {
+            series.setUnit(null);
+        }
+        session.saveOrUpdate(series);
+    }
 	
 	public TimeExtrema getProcedureTimeExtrema(Session session, String procedure) {
         Criteria c = getDefaultSeriesCriteria(session);

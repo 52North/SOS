@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation.v10;
+package org.n52.sos.ext.deleteobservation.v20;
 
 import static java.lang.Boolean.TRUE;
 import static org.hamcrest.core.Is.is;
@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
+import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_2_0;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_PREFIX;
 import static org.n52.sos.ogc.sos.SosConstants.SOS;
 
@@ -43,7 +43,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,12 +53,13 @@ import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationResponse;
-import org.n52.sos.ext.deleteobservation.v10.DeleteObservationEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
+
+import net.opengis.sosdo.x20.DeleteObservationResponseDocument;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -77,7 +77,7 @@ public class DeleteObservationEncoderTest {
     /*
      * <?xml version="1.0" encoding="UTF-8"?> <sosdo:DeleteObservationResponse
      * version="2.0" service="SOS"
-     * xmlns:sosdo="http://www.opengis.net/sosdo/1.0">
+     * xmlns:sosdo="http://www.opengis.net/sosdo/2.0">
      * <sosdo:deletedObservation>
      * test-observation-identifier</sosdo:deletedObservation>
      * </sosdo:DeleteObservationResponse>
@@ -87,8 +87,8 @@ public class DeleteObservationEncoderTest {
     @BeforeClass
     public static void initInstance() {
         instance = new DeleteObservationEncoder();
-        incorrectCoreResponseMissingAttributes = new DeleteObservationResponse(NS_SOSDO_1_0);
-        correctCoreResponse = new DeleteObservationResponse(NS_SOSDO_1_0);
+        incorrectCoreResponseMissingAttributes = new DeleteObservationResponse(NS_SOSDO_2_0);
+        correctCoreResponse = new DeleteObservationResponse(NS_SOSDO_2_0);
         correctCoreResponse.setObservationId(observationId);
         correctCoreResponse.setService(SOS);
         correctCoreResponse.setVersion(Sos2Constants.SERVICEVERSION);
@@ -105,7 +105,7 @@ public class DeleteObservationEncoderTest {
     @Test
     public void testGetEncoderKey() {
         assertNotNull("DecoderKeyTypes is null", instance.getEncoderKeyType());
-        EncoderKey key = new XmlEncoderKey(NS_SOSDO_1_0, DeleteObservationResponse.class);
+        EncoderKey key = new XmlEncoderKey(NS_SOSDO_2_0, DeleteObservationResponse.class);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
         key =
                 new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
@@ -119,13 +119,13 @@ public class DeleteObservationEncoderTest {
 
     @Test
     public void testGetConformanceClasses() {
-        final Set<String> conformanceClasses = new HashSet<String>(2);
+        final Set<String> conformanceClasses = new HashSet<String>(1);
         conformanceClasses.add(DeleteObservationConstants.CONFORMANCE_CLASS_10);
         conformanceClasses.add(DeleteObservationConstants.CONFORMANCE_CLASS_20);
         assertNotNull("ConformanceClasses is null", instance.getConformanceClasses());
         assertEquals("ConformanceClasses size", conformanceClasses.size(), instance.getConformanceClasses().size());
-        assertTrue("ConformanceClasses contains " + DeleteObservationConstants.CONFORMANCE_CLASS_10, instance
-                .getConformanceClasses().contains(DeleteObservationConstants.CONFORMANCE_CLASS_10));
+        assertTrue("ConformanceClasses contains " + DeleteObservationConstants.CONFORMANCE_CLASS_20, instance
+                .getConformanceClasses().contains(DeleteObservationConstants.CONFORMANCE_CLASS_20));
     }
 
     @Test
@@ -145,24 +145,10 @@ public class DeleteObservationEncoderTest {
     }
 
     @Test
-    public void encodeCorrectCoreResponse() throws OwsExceptionReport {
-        final DeleteObservationResponse correctCoreResponse = new DeleteObservationResponse(NS_SOSDO_1_0);
-        correctCoreResponse.setService("SOS");
-        correctCoreResponse.setVersion("2.0.0");
-        correctCoreResponse.setObservationId(observationId);
-        assertNotNull("Encoding correct core response returns null", instance.encode(correctCoreResponse));
-        assertTrue("Observation ID NOT contained in response",
-                instance.encode(correctCoreResponse).xmlText().indexOf(observationId) != -1);
-    }
-
-    @Test
     public void encodingCorrectXmlObjectReturnsCorrectServiceRequest() throws OwsExceptionReport {
         assertNotNull("Decoding of correct XmlObject returned null", instance.encode(correctCoreResponse));
         assertTrue("Class of Result ",
                 instance.encode(correctCoreResponse) instanceof DeleteObservationResponseDocument);
-        assertEquals("Id of observation to delete", observationId,
-                ((DeleteObservationResponseDocument) instance.encode(correctCoreResponse))
-                        .getDeleteObservationResponse().getDeletedObservation());
     }
 
     @Test
@@ -176,9 +162,9 @@ public class DeleteObservationEncoderTest {
 
         instance.addNamespacePrefixToMap(givenMap);
 
-        assertThat(givenMap.containsKey(NS_SOSDO_1_0), is(TRUE));
+        assertThat(givenMap.containsKey(NS_SOSDO_2_0), is(TRUE));
         assertThat(givenMap.containsValue(NS_SOSDO_PREFIX), is(TRUE));
-        assertThat(givenMap.get(NS_SOSDO_1_0), is(NS_SOSDO_PREFIX));
+        assertThat(givenMap.get(NS_SOSDO_2_0), is(NS_SOSDO_PREFIX));
     }
 
     @Test
@@ -190,10 +176,10 @@ public class DeleteObservationEncoderTest {
     public void should_return_correct_schema_location() {
         assertThat(instance.getSchemaLocations().size(), is(1));
         final SchemaLocation schemLoc = instance.getSchemaLocations().iterator().next();
-        assertThat(schemLoc.getNamespace(), is("http://www.opengis.net/sosdo/1.0"));
+        assertThat(schemLoc.getNamespace(), is("http://www.opengis.net/sosdo/2.0"));
         assertThat(
                 schemLoc.getSchemaFileUrl(),
-                is("http://52north.org/schema/sosdo/1.0/sosdo.xsd"));
+                is("http://52north.org/schema/sosdo/2.0/sosdo.xsd"));
     }
 
 }

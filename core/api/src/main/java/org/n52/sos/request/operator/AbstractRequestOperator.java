@@ -52,11 +52,8 @@ import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -265,7 +262,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
-    protected List<String> checkAcceptedVersionsParameter(final String service, final List<String> versions)
+    protected List<String> checkAcceptedVersionsParameter(final String service, final Collection<String> versions)
             throws OwsExceptionReport {
 
         final List<String> validVersions = new LinkedList<String>();
@@ -419,7 +416,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         }
     }
 
-    protected void checkFeatureOfInterestIdentifiers(final List<String> featuresOfInterest, final String parameterName)
+    protected void checkFeatureOfInterestIdentifiers(final Collection<String> featuresOfInterest, final String parameterName)
             throws OwsExceptionReport {
         if (featuresOfInterest != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
@@ -448,7 +445,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         throw new InvalidParameterValueException(parameterName, featureOfInterest);
     }
 
-    protected void checkObservedProperties(final List<String> observedProperties, final String parameterName)
+    protected void checkObservedProperties(final Collection<String> observedProperties, final String parameterName)
             throws OwsExceptionReport {
         if (observedProperties != null) {
             final CompositeOwsException exceptions = new CompositeOwsException();
@@ -510,7 +507,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         checkOffering(offering, parameterName.name());
     }
 
-    protected void checkSpatialFilters(final List<SpatialFilter> spatialFilters, final String name)
+    protected void checkSpatialFilters(final Collection<SpatialFilter> spatialFilters, final String name)
             throws OwsExceptionReport {
         // TODO make supported ValueReferences dynamic
         if (spatialFilters != null) {
@@ -537,7 +534,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         checkSpatialFilter(spatialFilter, name.name());
     }
 
-    protected void checkTemporalFilter(List<TemporalFilter> temporalFilters, String name) throws OwsExceptionReport {
+    protected void checkTemporalFilter(Collection<TemporalFilter> temporalFilters, String name) throws OwsExceptionReport {
         if (temporalFilters != null) {
             for (final TemporalFilter temporalFilter : temporalFilters) {
                 if (temporalFilter.getValueReference() == null
@@ -572,7 +569,7 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
 
     }
 
-    protected void checkTemporalFilter(final List<TemporalFilter> temporalFilters, final Enum<?> name)
+    protected void checkTemporalFilter(final Collection<TemporalFilter> temporalFilters, final Enum<?> name)
             throws OwsExceptionReport {
         checkTemporalFilter(temporalFilters, name.name());
     }

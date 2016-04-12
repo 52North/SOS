@@ -82,17 +82,17 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                 throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
                         request.getObservationIdentifier());
             }
-			OmObservation so = null;
-			if (observation != null) {
-				deleteObservation(observation, session);
-				so = HibernateObservationUtilities
-						.createSosObservationsFromObservations(Collections.<Observation<?>> singleton(observation),
-								getRequest(request), null, session)
-						.iterator().next();
-			} else {
-				throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
-						request.getObservationIdentifier());
-			}
+            OmObservation so = null;
+            if (observation != null) {
+                deleteObservation(observation, session);
+                so = HibernateObservationUtilities
+                        .createSosObservationsFromObservations(Collections.<Observation<?>> singleton(observation),
+                                getRequest(request), null, session)
+                        .iterator().next();
+            } else {
+                throw new InvalidParameterValueException(DeleteObservationConstants.PARAMETER_NAME,
+                        request.getObservationIdentifier());
+            }
             transaction.commit();
             response.setObservationId(request.getObservationIdentifier());
             response.setDeletedObservation(so);
@@ -100,33 +100,34 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new NoApplicableCodeException().causedBy(he).withMessage(
-                    "Error while updating deleted observation flag data!");
+            throw new NoApplicableCodeException().causedBy(he)
+                    .withMessage("Error while updating deleted observation flag data!");
         } catch (ConverterException ce) {
-            throw new NoApplicableCodeException().causedBy(ce).withMessage(
-                    "Error while updating deleted observation flag data!");
+            throw new NoApplicableCodeException().causedBy(ce)
+                    .withMessage("Error while updating deleted observation flag data!");
         } finally {
             hibernateSessionHolder.returnSession(session);
         }
         return response;
     }
 
-    private void deleteObservation(Observation<?> observation, Session session) throws OwsExceptionReport, ConverterException {
-    		if (observation instanceof ComplexObservation) {
-    			for (Observation<?> child : ((ComplexObservation)observation).getValue()) {
-					deleteObservation(child, session);
-				}
-    		}
-            observation.setDeleted(true);
-            session.saveOrUpdate(observation);
-            checkSeriesForFirstLatest(observation, session);
-            session.flush();
-	}
+    private void deleteObservation(Observation<?> observation, Session session)
+            throws OwsExceptionReport, ConverterException {
+        if (observation instanceof ComplexObservation) {
+            for (Observation<?> child : ((ComplexObservation) observation).getValue()) {
+                deleteObservation(child, session);
+            }
+        }
+        observation.setDeleted(true);
+        session.saveOrUpdate(observation);
+        checkSeriesForFirstLatest(observation, session);
+        session.flush();
+    }
 
-	private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
+    private AbstractObservationRequest getRequest(DeleteObservationRequest request) {
         // TODO Auto-generated method stub
-        return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService()).setVersion(
-                request.getVersion());
+        return (AbstractObservationRequest) new GetObservationRequest().setService(request.getService())
+                .setVersion(request.getVersion());
     }
 
     @Override
@@ -146,10 +147,12 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
     private void checkSeriesForFirstLatest(Observation<?> observation, Session session) throws CodedException {
         if (observation instanceof SeriesObservation) {
             Series series = ((SeriesObservation<?>) observation).getSeries();
-            if ((series.isSetFirstLastTime() && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
-                    || (series.isSetLastTimeStamp() && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
-                DaoFactory.getInstance().getSeriesDAO()
-                        .updateSeriesAfterObservationDeletion(series, (SeriesObservation<?>) observation, session);
+            if ((series.isSetFirstLastTime()
+                    && series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart()))
+                    || (series.isSetLastTimeStamp()
+                            && series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd()))) {
+                DaoFactory.getInstance().getSeriesDAO().updateSeriesAfterObservationDeletion(series,
+                        (SeriesObservation<?>) observation, session);
             }
         }
     }

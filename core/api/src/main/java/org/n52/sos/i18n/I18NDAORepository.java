@@ -76,15 +76,14 @@ public class I18NDAORepository extends AbstractConfiguringServiceLoaderRepositor
     }
     
     public boolean isSupported() {
-    	boolean supported = false;
-    	if (!daos.isEmpty()) {
-    		for (I18NDAO<?> dao : daos.values()) {
-				if (dao.isSupported()) {
-					supported = dao.isSupported();
-				}
-			}
-    	}
-    	return supported;
+        if (!daos.isEmpty()) {
+            for (I18NDAO<?> dao : daos.values()) {
+                if (dao.isSupported()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

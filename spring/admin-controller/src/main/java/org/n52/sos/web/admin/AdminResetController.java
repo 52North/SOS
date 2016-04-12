@@ -76,6 +76,6 @@ public class AdminResetController extends AbstractAdminController {
             persistenceStrategy.cleanup();
         }
 
-        return new RedirectView(ControllerConstants.Paths.LOGOUT, true);
+        return new RedirectView(ControllerConstants.Paths.ROOT, true);
     }
 }

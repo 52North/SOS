@@ -98,6 +98,7 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1221,6 +1222,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
+    
+    public abstract Integer getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport;
+    
+    public abstract Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     protected abstract Class<?> getObservationClass();
 
@@ -1325,5 +1330,67 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         criteria.setProjection(Projections.rowCount());
         LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
         return (Long) criteria.uniqueResult() > 0;
+    }
+    
+    public class MinMaxLatLon {
+        private Double minLat;
+        private Double maxLat;
+        private Double minLon;
+        private Double maxLon;
+        
+        public MinMaxLatLon(Object[] result) {
+            setMinLat(JavaHelper.asDouble(result[0]));
+            setMinLon(JavaHelper.asDouble(result[1]));
+            setMaxLat(JavaHelper.asDouble(result[2]));
+            setMaxLon(JavaHelper.asDouble(result[3]));
+        }
+        /**
+         * @return the minLat
+         */
+        public Double getMinLat() {
+            return minLat;
+        }
+        /**
+         * @param minLat the minLat to set
+         */
+        public void setMinLat(Double minLat) {
+            this.minLat = minLat;
+        }
+        /**
+         * @return the maxLat
+         */
+        public Double getMaxLat() {
+            return maxLat;
+        }
+        /**
+         * @param maxLat the maxLat to set
+         */
+        public void setMaxLat(Double maxLat) {
+            this.maxLat = maxLat;
+        }
+        /**
+         * @return the minLon
+         */
+        public Double getMinLon() {
+            return minLon;
+        }
+        /**
+         * @param minLon the minLon to set
+         */
+        public void setMinLon(Double minLon) {
+            this.minLon = minLon;
+        }
+        /**
+         * @return the maxLon
+         */
+        public Double getMaxLon() {
+            return maxLon;
+        }
+        /**
+         * @param maxLon the maxLon to set
+         */
+        public void setMaxLon(Double maxLon) {
+            this.maxLon = maxLon;
+        }
     }
 }

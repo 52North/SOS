@@ -552,35 +552,47 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             // getGeometryHandler().switchCoordinateAxisOrderIfNeeded(geom);
         } else {
             if (session != null) {
-                List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
                 int srid = getGeometryHandler().getStorageEPSG();
-                if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
-                    List<Coordinate> coordinates = Lists.newLinkedList();
-                    Geometry lastGeoemtry = null;
-                    for (Geometry geometry : geometries) {
-                        if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-                        	coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                            lastGeoemtry = geometry;
-                            if (geometry.getSRID() != srid) {
-                                srid = geometry.getSRID();
-                             }
-                        }
+                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).intValue() > 100) {
+                    Envelope envelope = DaoFactory.getInstance().getObservationDAO().getBboxFromSamplingGeometries(feature.getIdentifier(), session);
+                    if (envelope != null) {
+                        Geometry geometry = new GeometryFactory().toGeometry(envelope);
+                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
                         if (geometry.getSRID() != srid) {
-                           srid = geometry.getSRID();
+                            srid = geometry.getSRID();
                         }
-                        if (!geometry.equalsTopo(lastGeoemtry)) {
-                            coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                            lastGeoemtry = geometry;
+                        geometry.setSRID(srid);
+                    }
+                } else {
+                    List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+                    if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
+                        List<Coordinate> coordinates = Lists.newLinkedList();
+                        Geometry lastGeoemtry = null;
+                        for (Geometry geometry : geometries) {
+                            if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
+                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                lastGeoemtry = geometry;
+                                if (geometry.getSRID() != srid) {
+                                    srid = geometry.getSRID();
+                                 }
+                            }
+                            if (geometry.getSRID() != srid) {
+                               srid = geometry.getSRID();
+                            }
+                            if (!geometry.equalsTopo(lastGeoemtry)) {
+                                coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                lastGeoemtry = geometry;
+                            }
                         }
+                        Geometry geom = null;
+                        if (coordinates.size() == 1) {
+                            geom = new GeometryFactory().createPoint(coordinates.iterator().next());
+                        } else {
+                            geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
+                        }
+                        geom.setSRID(srid);
+                        return geom;
                     }
-                    Geometry geom = null;
-                    if (coordinates.size() == 1) {
-                        geom = new GeometryFactory().createPoint(coordinates.iterator().next());
-                    } else {
-                        geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
-                    }
-                    geom.setSRID(srid);
-                    return geom;
                 }
             }
         }

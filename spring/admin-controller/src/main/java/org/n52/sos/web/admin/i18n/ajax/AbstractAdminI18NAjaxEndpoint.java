@@ -57,8 +57,6 @@ import org.n52.sos.util.JSONUtils;
 import org.n52.sos.web.AbstractController;
 import org.n52.sos.web.ControllerConstants;
 
-import com.google.common.base.Optional;
-
 public abstract class AbstractAdminI18NAjaxEndpoint<T extends AbstractI18NMetadata> extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory

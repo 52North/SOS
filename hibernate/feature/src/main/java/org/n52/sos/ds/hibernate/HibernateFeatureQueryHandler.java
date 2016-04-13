@@ -553,15 +553,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         } else {
             if (session != null) {
                 int srid = getGeometryHandler().getStorageEPSG();
-                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).intValue() > 100) {
+                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() > 100) {
                     Envelope envelope = DaoFactory.getInstance().getObservationDAO().getBboxFromSamplingGeometries(feature.getIdentifier(), session);
                     if (envelope != null) {
                         Geometry geometry = new GeometryFactory().toGeometry(envelope);
-                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-                        if (geometry.getSRID() != srid) {
-                            srid = geometry.getSRID();
-                        }
                         geometry.setSRID(srid);
+                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
                     }
                 } else {
                     List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);

@@ -207,22 +207,23 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     }
     
     @Override
-    public Integer getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport {
+    public Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(SeriesObservation.SERIES, "s");
         criteria.createCriteria("s." + Series.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
         criteria.setProjection(Projections.count(AbstractObservationTime.ID));
         if (GeometryHandler.getInstance().isSpatialDatasource()) {
             criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
             LOGGER.debug("QUERY getSamplingGeometriesCount(feature): {}", HibernateHelper.getSqlString(criteria));
-            return (Integer)criteria.uniqueResult();
+            return (Long)criteria.uniqueResult();
         } else {
             criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
                     Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
             LOGGER.debug("QUERY getSamplingGeometriesCount(feature): {}", HibernateHelper.getSqlString(criteria));
-            return (Integer)criteria.uniqueResult();
+            return (Long)criteria.uniqueResult();
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultObservationTimeCriteria(session).createAlias(SeriesObservation.SERIES, "s");
@@ -235,32 +236,33 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
                 LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
                         HibernateHelper.getSqlString(criteria));
                 return (Envelope) criteria.uniqueResult();
-            } else {
-                criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
-                criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
-                LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
-                        HibernateHelper.getSqlString(criteria));
-                Envelope envelope = new Envelope();
-                for (Geometry geom : (List<Geometry>) criteria.list()) {
-                    envelope.expandToInclude(geom.getEnvelopeInternal());
-                }
-                return envelope;
             }
-        } else {
+        } else if (HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.SAMPLING_GEOMETRY)) {
+            criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
+            criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
+                    HibernateHelper.getSqlString(criteria));
+            Envelope envelope = new Envelope();
+            for (Geometry geom : (List<Geometry>) criteria.list()) {
+                envelope.expandToInclude(geom.getEnvelopeInternal());
+            }
+            return envelope;
+        } else if (HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.LATITUDE)
+                && HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.LONGITUDE)) {
             criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
                     Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
-            criteria.setProjection(Projections.projectionList()
-                    .add(Projections.min(AbstractObservationTime.LATITUDE))
+            criteria.setProjection(Projections.projectionList().add(Projections.min(AbstractObservationTime.LATITUDE))
                     .add(Projections.min(AbstractObservation.LONGITUDE))
                     .add(Projections.max(AbstractObservationTime.LATITUDE))
                     .add(Projections.max(AbstractObservation.LONGITUDE)));
-            
+
             LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
             MinMaxLatLon minMaxLatLon = new MinMaxLatLon((Object[]) criteria.uniqueResult());
             Envelope envelope = new Envelope(minMaxLatLon.getMinLon(), minMaxLatLon.getMaxLon(),
                     minMaxLatLon.getMinLat(), minMaxLatLon.getMaxLat());
             return envelope;
         }
+        return null;
     }
     
     /**

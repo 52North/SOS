@@ -49,24 +49,23 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.AbstractObservationTime;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
@@ -1166,6 +1165,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return criteria.list();
     }
 
+    @SuppressWarnings("unchecked")
     public SosEnvelope getSpatialFilteringProfileEnvelopeForOfferingId(String offeringID, Session session)
             throws OwsExceptionReport {
         try {
@@ -1187,32 +1187,38 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     return new SosEnvelope(geom.getEnvelopeInternal(), GeometryHandler.getInstance().getStorageEPSG());
                 }
             } else {
-                final Envelope envelope = new Envelope();
+                Envelope envelope = null;
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.createCriteria(AbstractObservation.OFFERINGS)
                         .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
-                        HibernateHelper.getSqlString(criteria));
-                @SuppressWarnings("unchecked")
-                final List<AbstractObservationTime> observationTimes = criteria.list();
-                if (CollectionHelper.isNotEmpty(observationTimes)) {
-                    for (final AbstractObservationTime observationTime : observationTimes) {
-                        if (observationTime.hasSamplingGeometry()) {
-                            final Geometry geom = observationTime.getSamplingGeometry();
-                            if (geom != null && geom.getEnvelopeInternal() != null) {
-                                envelope.expandToInclude(geom.getEnvelopeInternal());
-                            }
-                        } else if (observationTime.isSetLongLat()) {
-                            final Geometry geom = new HibernateGeometryCreator().createGeometry(observationTime);
-                            if (geom != null && geom.getEnvelopeInternal() != null) {
-                                envelope.expandToInclude(geom.getEnvelopeInternal());
-                            }
-                        }
+                
+                if (HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.SAMPLING_GEOMETRY)) {
+                    criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
+                    criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
+                    LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
+                            HibernateHelper.getSqlString(criteria));
+                    envelope = new Envelope();
+                    for (Geometry geom : (List<Geometry>) criteria.list()) {
+                        envelope.expandToInclude(geom.getEnvelopeInternal());
                     }
-                    if (!envelope.isNull()) {
-                        return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
-                    }
+                } else if (HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.LATITUDE)
+                        && HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.LONGITUDE)) {
+                    criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
+                            Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
+                    criteria.setProjection(Projections.projectionList().add(Projections.min(AbstractObservationTime.LATITUDE))
+                            .add(Projections.min(AbstractObservation.LONGITUDE))
+                            .add(Projections.max(AbstractObservationTime.LATITUDE))
+                            .add(Projections.max(AbstractObservation.LONGITUDE)));
+
+                    LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
+                    MinMaxLatLon minMaxLatLon = new MinMaxLatLon((Object[]) criteria.uniqueResult());
+                    envelope = new Envelope(minMaxLatLon.getMinLon(), minMaxLatLon.getMaxLon(),
+                            minMaxLatLon.getMinLat(), minMaxLatLon.getMaxLat());
                 }
+                if (!envelope.isNull()) {
+                    return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
+                }
+                
             }
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
@@ -1223,7 +1229,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
     
-    public abstract Integer getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport;
+    public abstract Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport;
     
     public abstract Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 

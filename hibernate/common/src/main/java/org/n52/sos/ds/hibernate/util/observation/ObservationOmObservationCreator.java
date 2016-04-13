@@ -53,6 +53,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -196,6 +197,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // add SpatialFilteringProfile
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+            } else if (hObservation.isSetLongLat()) {
+                sosObservation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(hObservation)));
             }
             checkForAdditionalObservationCreator(hObservation, sosObservation);
             // TODO check for ScrollableResult vs

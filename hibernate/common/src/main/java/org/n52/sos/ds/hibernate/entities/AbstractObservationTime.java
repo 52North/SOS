@@ -35,7 +35,9 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPhenomenonTime;
@@ -65,7 +67,8 @@ public abstract class AbstractObservationTime
                    HasResultTime,
                    HasValidTime,
                    HasObservationId,
-                   HasSamplingGeometry {
+                   HasSamplingGeometry,
+                   HasCoordinate {
 
     private static final long serialVersionUID = 8704397558609682891L;
 
@@ -77,6 +80,10 @@ public abstract class AbstractObservationTime
     private Date validTimeEnd;
     private Set<Offering> offerings = new HashSet<Offering>(0);
     private boolean deleted;
+    private Object longitude;
+    private Object latitude;
+    private Object altitude;
+    private int srid;
 
     private Geometry samplingGeometry;
 
@@ -208,6 +215,66 @@ public abstract class AbstractObservationTime
     @Override
     public boolean hasSamplingGeometry() {
         return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
+    }
+    
+    @Override
+    public Object getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public AbstractObservationTime setLongitude(final Object longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
+    @Override
+    public Object getLatitude() {
+        return latitude;
+    }
+
+    @Override
+    public AbstractObservationTime setLatitude(final Object latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    @Override
+    public Object getAltitude() {
+        return altitude;
+    }
+
+    @Override
+    public AbstractObservationTime setAltitude(final Object altitude) {
+        this.altitude = altitude;
+        return this;
+    }
+
+    public boolean isSetLongLat() {
+        return getLongitude() != null && getLatitude() != null;
+    }
+
+    public boolean isSetAltitude() {
+        return getAltitude() != null;
+    }
+
+    public boolean isSpatial() {
+        return hasSamplingGeometry() || isSetLongLat();
+    }
+    
+    @Override
+    public int getSrid() {
+        return srid;
+    }
+
+    @Override
+    public AbstractObservationTime setSrid(final int srid) {
+        this.srid = srid;
+        return this;
+    }
+    
+    public boolean isSetSrid() {
+        return getSrid() > 0;
     }
 
 }

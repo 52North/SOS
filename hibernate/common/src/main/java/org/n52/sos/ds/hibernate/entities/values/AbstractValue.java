@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.GeometryValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayValue;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextValue;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -151,7 +152,9 @@ public abstract class AbstractValue extends AbstractObservationTime implements H
         observation.setResultTime(createResutlTime(getResultTime()));
         observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
         if (hasSamplingGeometry()) {
-        	observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+            observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+        } else if (isSetLongLat()) {
+            observation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(this)));
         }
         addValueSpecificDataToObservation(observation, responseFormat);
         addObservationValueToObservation(observation, value, responseFormat);

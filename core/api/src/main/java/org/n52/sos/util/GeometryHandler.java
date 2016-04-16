@@ -516,9 +516,6 @@ public class GeometryHandler implements Cleanupable, EpsgConstants {
      * @return WKT string
      */
     public String getWktString(Object longitude, Object latitude, int epsg) {
-        if (isNorthingFirstEpsgCode(epsg)) {
-            return getWktString(latitude, longitude);
-        }
         return getWktString(longitude, latitude);
     }
 

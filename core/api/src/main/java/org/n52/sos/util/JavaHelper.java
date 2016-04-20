@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -63,6 +64,8 @@ public final class JavaHelper {
     private static MessageDigest messageDigest;
 
     private static Reflections reflections;
+    
+    private static Random random;
 
     /**
      * Instantiation of the message digest
@@ -71,6 +74,7 @@ public final class JavaHelper {
         try {
             messageDigest = MessageDigest.getInstance("SHA1");
             reflections = new Reflections("org.n52.sos");
+            random = new Random();
         } catch (final NoSuchAlgorithmException nsae) {
             LOGGER.error("Error while getting SHA-1 messagedigest!", nsae);
         }
@@ -85,7 +89,7 @@ public final class JavaHelper {
      */
     public static String generateID(final String message) {
         final long autoGeneratredID = new DateTime().getMillis();
-        final String concate = message + Long.toString(autoGeneratredID);
+        final String concate = random.nextDouble() +  message + Long.toString(autoGeneratredID);
         return bytesToHex(messageDigest.digest(concate.getBytes()));
     }
 

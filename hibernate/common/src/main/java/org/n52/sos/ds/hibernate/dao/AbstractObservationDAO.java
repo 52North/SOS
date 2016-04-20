@@ -1327,15 +1327,19 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public boolean containsSamplingGeometries(Session session) {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
-        if (GeometryHandler.getInstance().isSpatialDatasource()) {
-            criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
-        } else {
-            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservation.LONGITUDE),
-                                            Restrictions.isNotNull(AbstractObservation.LATITUDE)));
-        }
         criteria.setProjection(Projections.rowCount());
-        LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
-        return (Long) criteria.uniqueResult() > 0;
+        if (HibernateHelper.isColumnSupported(getObservationInfoClass(), AbstractObservation.SAMPLING_GEOMETRY)) {
+            criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+            return (Long) criteria.uniqueResult() > 0;
+        } else if (HibernateHelper.isColumnSupported(getObservationInfoClass(), AbstractObservation.LONGITUDE)
+                && HibernateHelper.isColumnSupported(getObservationInfoClass(), AbstractObservation.LATITUDE)) {
+            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservation.LONGITUDE),
+                    Restrictions.isNotNull(AbstractObservation.LATITUDE)));
+            LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+            return (Long) criteria.uniqueResult() > 0;
+        }
+        return false;
     }
     
     public class MinMaxLatLon {

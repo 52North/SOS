@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.dao;
 import static org.hibernate.criterion.Restrictions.eq;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +72,6 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -390,21 +390,23 @@ public class ObservationDAO extends AbstractObservationDAO {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
         criteria.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
         criteria.addOrder(Order.asc(AbstractObservationTime.PHENOMENON_TIME_START));
-        if (GeometryHandler.getInstance().isSpatialDatasource()) {
+        if (HibernateHelper.isColumnSupported(getObservationInfoClass(), AbstractObservationTime.SAMPLING_GEOMETRY)) {
             criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
             criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
-            LOGGER.debug("QUERY getSamplingGeometries(offeringID): {}", HibernateHelper.getSqlString(criteria));
+            LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
-        } else {
+        } else if (HibernateHelper.isColumnSupported(getObservationInfoClass(), AbstractObservationTime.LONGITUDE)
+                && HibernateHelper.isColumnSupported(getObservationInfoClass(), AbstractObservationTime.LATITUDE)) {
             criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
                                             Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
             List<Geometry> samplingGeometries = Lists.newArrayList();
-            LOGGER.debug("QUERY getSamplingGeometries(offeringID): {}", HibernateHelper.getSqlString(criteria));
+            LOGGER.debug("QUERY getSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
             for (AbstractObservationTime element : (List<AbstractObservationTime>)criteria.list()) {
                 samplingGeometries.add(new HibernateGeometryCreator().createGeometry(element));
             }
             return samplingGeometries;
         }
+        return Collections.emptyList();
     }
     
     @Override

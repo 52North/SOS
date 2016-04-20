@@ -49,6 +49,8 @@ import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.GeometryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract DAO class for querying {@link AbstractValuedLegacyObservation}
@@ -58,6 +60,8 @@ import org.n52.sos.util.GeometryHandler;
  *
  */
 public abstract class AbstractValueDAO extends TimeCreator {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractValueDAO.class);
 
     /**
      * Check if a Spatial Filtering Profile filter is requested and add to
@@ -76,11 +80,16 @@ public abstract class AbstractValueDAO extends TimeCreator {
     protected void checkAndAddSpatialFilteringProfileCriterion(Criteria c, GetObservationRequest request,
             Session session) throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            c.add(SpatialRestrictions.filter(
-                    AbstractObservation.SAMPLING_GEOMETRY,
-                    request.getSpatialFilter().getOperator(),
-                    GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                            request.getSpatialFilter().getGeometry())));
+            if (GeometryHandler.getInstance().isSpatialDatasource()) {
+                c.add(SpatialRestrictions.filter(
+                        AbstractObservation.SAMPLING_GEOMETRY,
+                        request.getSpatialFilter().getOperator(),
+                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                request.getSpatialFilter().getGeometry())));
+            } else {
+                // TODO add filter with lat/lon
+                LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
+            }
         }
     }
 

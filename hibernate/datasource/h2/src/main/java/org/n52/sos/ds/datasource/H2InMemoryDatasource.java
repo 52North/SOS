@@ -105,6 +105,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(JDBC_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(JDBC_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

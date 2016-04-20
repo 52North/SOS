@@ -72,6 +72,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         try {
             String jdbc = toURL(settings);
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

@@ -37,6 +37,7 @@ import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.metadata.I18NFeatureMetadata;
@@ -46,8 +47,6 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.JavaHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
@@ -123,32 +122,18 @@ public abstract class AbstractFeatureCreationStrategy implements FeatureCreation
         if (feature.isSetGeometry()) {
             return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
-            int epsg = storageEPSG;
-            if (feature.isSetSrid()) {
-                epsg = feature.getSrid();
-            }
-            final String wktString =
-                    GeometryHandler.getInstance().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
-            final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
-            if (feature.isSetAltitude()) {
-                geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
-                if (geom.getSRID() == storage3DEPSG) {
-                    geom.setSRID(storage3DEPSG);
-                }
-            }
-            return geom;
-            // return
-            // GeometryHandler.getInstance().switchCoordinateAxisOrderIfNeeded(geom);
+            return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
+                    new HibernateGeometryCreator(storageEPSG, storage3DEPSG).createGeometry(feature));
         } else {
             if (session != null) {
                 List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
-                int srid = GeometryHandler.getInstance().getStorageEPSG();
+                int srid = getGeometryHandler().getStorageEPSG();
                 if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                     List<Coordinate> coordinates = Lists.newLinkedList();
                     Geometry lastGeoemtry = null;
                     for (Geometry geometry : geometries) {
                         if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-                                coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                             if (geometry.getSRID() != srid) {
                                 srid = geometry.getSRID();
@@ -158,7 +143,7 @@ public abstract class AbstractFeatureCreationStrategy implements FeatureCreation
                            srid = geometry.getSRID();
                         }
                         if (!geometry.equalsTopo(lastGeoemtry)) {
-                            coordinates.add(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                            coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
                             lastGeoemtry = geometry;
                         }
                     }
@@ -172,6 +157,10 @@ public abstract class AbstractFeatureCreationStrategy implements FeatureCreation
             }
         }
         return null;
+    }
+    
+    protected GeometryHandler getGeometryHandler() {
+        return GeometryHandler.getInstance();
     }
     
     protected ContentCache getCache() {

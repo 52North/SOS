@@ -44,6 +44,7 @@ import org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -168,6 +169,8 @@ public abstract class AbstractValuedLegacyObservation<T>
         observation.setValidTime(createValidTime(getValidTimeStart(), getValidTimeEnd()));
         if (hasSamplingGeometry()) {
             observation.addParameter(createSpatialFilteringProfileParameter(getSamplingGeometry()));
+        } else if (isSetLongLat()) {
+            observation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(this)));
         }
         addRelatedObservation(observation);
         addParameter(observation);

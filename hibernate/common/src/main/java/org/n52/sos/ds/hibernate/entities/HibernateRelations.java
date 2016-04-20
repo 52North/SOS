@@ -589,11 +589,11 @@ public interface HibernateRelations {
 
         Object getLongitude();
 
-        void setLongitude(Object longitude);
+        HasCoordinate setLongitude(Object longitude);
 
         Object getLatitude();
 
-        void setLatitude(Object latitude);
+        HasCoordinate setLatitude(Object latitude);
 
         /**
          * Are longitude and latitude set
@@ -604,7 +604,7 @@ public interface HibernateRelations {
 
         Object getAltitude();
 
-        void setAltitude(Object altitude);
+        HasCoordinate setAltitude(Object altitude);
 
         /**
          * Is altitude set

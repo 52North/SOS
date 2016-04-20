@@ -477,16 +477,34 @@ public abstract class AbstractSeriesDAO {
         SeriesObservationDAO seriesObservationDAO = new SeriesObservationDAO();
         if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())) {
             SeriesObservation<?> firstObservation = seriesObservationDAO.getFirstObservationFor(series, session);
-            series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
-            if (firstObservation instanceof NumericObservation) {
-                series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+            if (firstObservation != null) {
+	            series.setFirstTimeStamp(firstObservation.getPhenomenonTimeStart());
+	            if (firstObservation instanceof NumericObservation) {
+	                series.setFirstNumericValue(((NumericObservation) firstObservation).getValue());
+	            }
+            } else {
+            	series.setFirstTimeStamp(null);
+	            if (observation instanceof NumericObservation) {
+	                series.setFirstNumericValue(null);
+	            }
             }
-        } else if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
+        } 
+        if (series.getLastTimeStamp().equals(observation.getPhenomenonTimeEnd())) {
             SeriesObservation<?> latestObservation = seriesObservationDAO.getLastObservationFor(series, session);
-            series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
-            if (latestObservation instanceof NumericObservation) {
-                series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+            if (latestObservation != null) {
+            	series.setLastTimeStamp(latestObservation.getPhenomenonTimeEnd());
+                if (latestObservation instanceof NumericObservation) {
+                    series.setLastNumericValue(((NumericObservation) latestObservation).getValue());
+                }
+            } else {
+            	series.setLastTimeStamp(null);
+                if (observation instanceof NumericObservation) {
+                    series.setLastNumericValue(null);
+                }
             }
+        }
+        if (!series.isSetFirstLastTime()) {
+        	series.setUnit(null);
         }
         session.saveOrUpdate(series);
     }

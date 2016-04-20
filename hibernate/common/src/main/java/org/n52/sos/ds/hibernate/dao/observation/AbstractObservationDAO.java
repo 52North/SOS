@@ -1154,7 +1154,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return null;
     }
 
-    public abstract List<Geometry> getSamplingGeometries(String feature, Session session);
+    public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     public abstract ObservationFactory getObservationFactory();
 

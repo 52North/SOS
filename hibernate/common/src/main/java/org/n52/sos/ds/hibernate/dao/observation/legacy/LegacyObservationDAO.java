@@ -433,7 +433,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     public Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
         criteria.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).add(eq(FeatureOfInterest.IDENTIFIER, feature));
-        criteria.setProjection(Projections.count(AbstractTemporalReferencedObservation.ID));
+        criteria.setProjection(Projections.count(AbstractTemporalReferencedObservation.OBS_ID));
         if (GeometryHandler.getInstance().isSpatialDatasource()) {
             criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
             LOGGER.debug("QUERY getSamplingGeometriesCount(feature): {}", HibernateHelper.getSqlString(criteria));

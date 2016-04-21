@@ -566,6 +566,23 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
         }
         return false;
     }
+    
+    /**
+     * Remove spatial filtering profile parameter
+     */
+    public void removeSpatialFilteringProfileParameter() {
+        removeParameter(getSpatialFilteringProfileParameter());
+    }
+
+    /**
+     * Remove parameter from list
+     * 
+     * @param parameter
+     *            Parameter to remove
+     */
+    public void removeParameter(NamedValue<?> parameter) {
+        getParameter().remove(parameter);
+    }
 
     /**
      * Get spatial filtering profile parameter

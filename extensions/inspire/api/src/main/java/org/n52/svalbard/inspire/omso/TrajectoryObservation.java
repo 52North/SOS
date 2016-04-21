@@ -30,17 +30,28 @@ package org.n52.svalbard.inspire.omso;
 
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.n52.sos.exception.ows.concrete.InvalidSridException;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeLocationValueTriple;
+import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.omg.CORBA.portable.StreamableValue;
 
+import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 public class TrajectoryObservation extends OmObservation {
 
@@ -51,19 +62,32 @@ public class TrajectoryObservation extends OmObservation {
     
     public TrajectoryObservation(OmObservation observation) {
         observation.copyTo(this);
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
+            SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
+            sf.setEncode(true);
+            sf.setFeatureType(SfConstants.FT_SAMPLINGCURVE);
+        }
+        if (isSetSpatialFilteringProfileParameter()) {
+            removeSpatialFilteringProfileParameter();
+        }
     }
 
     @Override
     public OmObservation cloneTemplate() {
         if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+            SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
+            sf.setEncode(true);
+            sf.setFeatureType(SfConstants.FT_SAMPLINGCURVE);
+        }
+        if (isSetSpatialFilteringProfileParameter()) {
+            removeSpatialFilteringProfileParameter();
         }
         return cloneTemplate(new TrajectoryObservation());
     }
     
     @Override
     public void setValue(ObservationValue<?> value) {
-        if (value.getValue() instanceof TLVTValue) {
+        if (value instanceof StreamingValue || value.getValue() instanceof TLVTValue) {
             super.setValue(value);
         } else {
             Geometry geometry = null;
@@ -83,21 +107,68 @@ public class TrajectoryObservation extends OmObservation {
     }
     
     @Override
-    public void mergeWithObservation(OmObservation sosObservation) {
-        super.mergeWithObservation(sosObservation);
+    public void mergeWithObservation(OmObservation observation) {
+        if (observation instanceof TrajectoryObservation) {
+            mergeValues(observation.getValue());
+        } else {
+            super.mergeWithObservation(observation);
+        }
     }
     
     @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof TLVTValue) {
-            List<TimeLocationValueTriple> valuesToMerge = ((TLVTValue)observationValue.getValue()).getValue();
+            TLVTValue tlvtValue = (TLVTValue)observationValue.getValue();
+            List<TimeLocationValueTriple> valuesToMerge = tlvtValue.getValue();
+//            List<TimeLocationValueTriple> valuesToMerge = (List<TimeLocationValueTriple>)((TLVTValue)observationValue.getValue()).getValue();
             ((TLVTValue)getValue().getValue()).addValues(valuesToMerge);
-            
+            checkForFeature(valuesToMerge);
         } else {
             super.mergeValues(observationValue);
         }
     }
     
+    private void checkForFeature(List<TimeLocationValueTriple> valuesToMerge) {
+        AbstractFeature featureOfInterest = getObservationConstellation().getFeatureOfInterest();
+        if (featureOfInterest instanceof SamplingFeature) {
+            SamplingFeature sf = (SamplingFeature)featureOfInterest;
+            Coordinate[] coords = getCoordinates(valuesToMerge);
+            int srid = 0;
+            if (sf.isSetGeometry()) {
+                srid = sf.getGeometry().getSRID();
+                coords = (Coordinate[])ArrayUtils.addAll(sf.getGeometry().getCoordinates(), coords);
+            } else {
+                TimeLocationValueTriple next = valuesToMerge.iterator().next();
+                if (next.isSetLocation()) {
+                    srid = next.getLocation().getSRID();
+                }
+            }
+            try {
+                if (coords.length == 1) {
+                    Point point = new GeometryFactory().createPoint(coords[0]);
+                    point.setSRID(srid);
+                    sf.setGeometry(point);
+                } else if (coords.length > 1){
+                    LineString lineString = new GeometryFactory().createLineString(coords);
+                    lineString.setSRID(srid);
+                    sf.setGeometry(lineString);
+                }
+            } catch (InvalidSridException e) {
+                // TODO
+            }
+        }
+    }
+
+    private Coordinate[] getCoordinates(List<TimeLocationValueTriple> valuesToMerge) {
+        List<Coordinate> coords = Lists.newArrayList();
+        for (TimeLocationValueTriple timeLocationValueTriple : valuesToMerge) {
+            if (timeLocationValueTriple.isSetLocation()){
+                coords.add(timeLocationValueTriple.getLocation().getCoordinate());
+            }
+        }
+        return coords.toArray(new Coordinate[0]);
+    }
+
     /**
      * Convert {@link SingleObservationValue} to {@link TVPValue}
      * 

@@ -127,14 +127,7 @@ public abstract class AbstractFeatureCreationStrategy implements FeatureCreation
         } else {
             if (session != null) {
                 int srid = getGeometryHandler().getStorageEPSG();
-                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() > 100) {
-                    Envelope envelope = DaoFactory.getInstance().getObservationDAO().getBboxFromSamplingGeometries(feature.getIdentifier(), session);
-                    if (envelope != null) {
-                        Geometry geometry = new GeometryFactory().toGeometry(envelope);
-                        geometry.setSRID(srid);
-                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-                    }
-                } else {
+                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() < 100) {
                     List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
                     if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
                         List<Coordinate> coordinates = Lists.newLinkedList();

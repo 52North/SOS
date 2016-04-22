@@ -217,7 +217,7 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     }
 
     private Collection<? extends OmObservation> mergePointTimeSeriesObservation(List<OmObservation> observations) {
-        return new ObservationMerger().mergeObservations(observations);
+        return new ObservationMerger().mergeObservations(observations, ObservationMergeIndicator.defaultObservationMergerIndicator());
     }
 
     private Collection<? extends OmObservation> mergeMultiPointObservation(List<OmObservation> observations) {

@@ -804,6 +804,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      *            Hibernate session
      * @return First not deleted observation
      */
+    @SuppressWarnings("rawtypes")
     public SeriesObservation getFirstObservationFor(Series series, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(SeriesObservation.SERIES, series));
@@ -822,6 +823,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
      *            Hibernate session
      * @return Last not deleted observation
      */
+    @SuppressWarnings("rawtypes")
     public SeriesObservation getLastObservationFor(Series series, Session session) {
         Criteria c = getDefaultObservationCriteria(session);
         c.add(Restrictions.eq(SeriesObservation.SERIES, series));
@@ -836,6 +838,15 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         criteria.createAlias(SeriesObservation.SERIES, Series.ALIAS);
         criteria.createAlias(Series.ALIAS_DOT + Series.PROCEDURE, Procedure.ALIAS);
         return Procedure.ALIAS_DOT;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<String> getOfferingsForSeries(Series series, Session session) {
+        Criteria criteria = createCriteriaFor(getObservationFactory().temporalReferencedClass(), series, session);
+        criteria.createAlias(AbstractObservation.OFFERINGS, "off");
+        criteria.setProjection(Projections.distinct(Projections.property("off." + Offering.IDENTIFIER)));
+        LOGGER.debug("QUERY getOfferingsForSeries(series): {}", HibernateHelper.getSqlString(criteria));
+        return criteria.list();
     }
 
 }

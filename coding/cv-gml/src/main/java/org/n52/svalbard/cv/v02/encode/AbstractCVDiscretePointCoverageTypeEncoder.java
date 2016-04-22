@@ -85,7 +85,7 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
     protected CVDiscretePointCoverageType encodeCVDiscretePointCoverage(
             CvDiscretePointCoverage cvDiscretePointCoverage)
                     throws UnsupportedEncoderInputException, OwsExceptionReport {
-        CVDiscretePointCoverageType cvdpct = CVDiscretePointCoverageType.Factory.newInstance();
+        CVDiscretePointCoverageType cvdpct = CVDiscretePointCoverageType.Factory.newInstance(getXmlOptions());
         cvdpct.setId(cvDiscretePointCoverage.getGmlId());
         cvdpct.addNewDomainExtent().setHref(cvDiscretePointCoverage.getDomainExtent());
         cvdpct.addNewRangeType().setHref(cvDiscretePointCoverage.getRangeType().getHref());
@@ -96,7 +96,7 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
 
     private CVPointValuePairType encodePointValuePair(PointValuePair value)
             throws UnsupportedEncoderInputException, OwsExceptionReport {
-        CVPointValuePairType cvpvpt = CVPointValuePairType.Factory.newInstance();
+        CVPointValuePairType cvpvpt = CVPointValuePairType.Factory.newInstance(getXmlOptions());
         cvpvpt.setGeometry(encodeGeometry(value.getPoint(), JavaHelper.generateID(value.toString())));
         cvpvpt.setValue(encodeValue(value.getValue()));
         return cvpvpt;
@@ -111,7 +111,7 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         // }
         Map<HelperValues, String> additionalValues = Maps.newHashMap();
         additionalValues.put(HelperValues.GMLID, gmlId);
-        PointPropertyType ppt = PointPropertyType.Factory.newInstance();
+        PointPropertyType ppt = PointPropertyType.Factory.newInstance(getXmlOptions());
         ppt.setPoint((PointType)encodeGML(point, additionalValues));
         return ppt;
     }
@@ -147,10 +147,6 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
     protected static XmlObject encodeSWE(Object o, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, additionalValues);
-    }
-
-    protected static XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 
     protected static XmlString createXmlString() {

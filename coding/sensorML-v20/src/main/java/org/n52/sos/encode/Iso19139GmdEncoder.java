@@ -639,8 +639,4 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
         return values.toArray(new CharacterStringPropertyType[0]);
     }
 
-    private static XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
-    }
-
 }

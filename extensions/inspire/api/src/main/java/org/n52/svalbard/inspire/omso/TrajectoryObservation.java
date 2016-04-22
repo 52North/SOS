@@ -45,6 +45,7 @@ import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.util.JavaHelper;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -70,6 +71,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
         if (isSetSpatialFilteringProfileParameter()) {
             removeSpatialFilteringProfileParameter();
         }
+        if (!isSetObservationID()) {
+            setObservationID(JavaHelper.generateID(toString()));
+        }
     }
 
     @Override
@@ -83,6 +87,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
         return cloneTemplate(new TrajectoryObservation());
     }
     
+    @SuppressWarnings("rawtypes")
     @Override
     public void setValue(ObservationValue<?> value) {
         if (value instanceof StreamingValue || value.getValue() instanceof TLVTValue) {
@@ -100,6 +105,13 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             tlvpValue.setUnit(((AbstractObservationValue<?>) value).getUnit());
             final MultiObservationValues<List<TimeLocationValueTriple>> multiValue = new MultiObservationValues<List<TimeLocationValueTriple>>();
             multiValue.setValue(tlvpValue);
+            if (!multiValue.isSetObservationID()) {
+                if (value instanceof AbstractObservationValue && ((AbstractObservationValue) value).isSetObservationID()) {
+                    multiValue.setObservationID(((AbstractObservationValue) value).getObservationID());
+                } else if (isSetObservationID()) {
+                    multiValue.setObservationID(getObservationID());
+                }
+            }
             super.setValue(multiValue);
         }
     }

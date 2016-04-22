@@ -250,24 +250,17 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     }
 
     private List<OmObservation> convertToPointTimeSeriesObservations(OmObservation observation) {
-        List<OmObservation> convertedObservations = Lists.newArrayList();
-            PointTimeSeriesObservation pointTimeSeriesObservation = new PointTimeSeriesObservation(observation);
+        return Lists.<OmObservation>newArrayList(new PointTimeSeriesObservation(observation));
 //            if (response.hasStreamingData()) {
 //                if (pointTimeSeriesObservation.getValue() instanceof StreamingValue<?>) {
 //                    StreamingValue<?> sv = (StreamingValue<?>)pointTimeSeriesObservation.getValue();
 //                    sv.setObservationTemplate(new PointTimeSeriesObservation(sv.getObservationTemplate()));
 //                }
 //            }
-            convertedObservations.add(pointTimeSeriesObservation);
-        ObservationMerger observationMerger = new ObservationMerger();
-        return observationMerger.mergeObservations(convertedObservations);
     }
 
     private List<OmObservation> convertToMultiPointObservations(OmObservation observation) throws CodedException {
-        List<OmObservation> convertedObservations = Lists.newArrayList();
-            MultiPointObservation multiPointObservation = new MultiPointObservation(observation);
-            convertedObservations.add(multiPointObservation);
-        return convertedObservations;
+        return Lists.<OmObservation>newArrayList(new MultiPointObservation(observation));
 //        List<OmObservation> observations = Lists.newArrayList();
 //        Map<String, MultiPointObservation> mergedObservations = Maps.newHashMap();
 //        for (OmObservation omObservation : response.getObservationCollection()) {

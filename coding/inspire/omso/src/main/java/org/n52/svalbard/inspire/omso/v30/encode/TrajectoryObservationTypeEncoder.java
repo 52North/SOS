@@ -51,6 +51,7 @@ import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import org.n52.svalbard.inspire.omso.TrajectoryObservation;
 
@@ -141,6 +142,9 @@ public class TrajectoryObservationTypeEncoder extends AbstractOmInspireEncoder {
     private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
+        if (!observationValue.isSetObservationID()) {
+            observationValue.setObservationID(JavaHelper.generateID(observationValue.toString()));
+        }
         measurementTimeseries.setId("timeseries." + observationValue.getObservationID());
         measurementTimeseries.addNewMetadata().addNewTimeseriesMetadata().addNewTemporalExtent()
                 .setHref("#" + observationValue.getPhenomenonTime().getGmlId());

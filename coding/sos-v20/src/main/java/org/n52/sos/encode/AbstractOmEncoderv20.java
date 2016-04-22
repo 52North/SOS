@@ -54,6 +54,7 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservationContext;
@@ -234,6 +235,7 @@ public abstract class AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
+    @SuppressWarnings("rawtypes")
     protected XmlObject encodeOmObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         OMObservationType xbObservation = createOmObservationType();
@@ -250,6 +252,9 @@ public abstract class AbstractOmEncoderv20
         xbObservation.setId(generateObservationGMLId());
         if (!sosObservation.isSetObservationID()) {
             sosObservation.setObservationID(xbObservation.getId().replace("o_", ""));
+            if (sosObservation.getValue() instanceof AbstractObservationValue){
+                ((AbstractObservationValue)sosObservation.getValue()).setObservationID(sosObservation.getObservationID());
+            }
         }
 
         setObservationIdentifier(sosObservation, xbObservation);

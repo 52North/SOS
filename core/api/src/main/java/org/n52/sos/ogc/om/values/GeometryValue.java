@@ -32,6 +32,7 @@ import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -54,6 +55,7 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
         setGeometry(abstractGeometry.getGeometry());
         setIdentifier(abstractGeometry.getIdentifierCodeWithAuthority());
         setName(abstractGeometry.getName());
+        setGmlId("sp_" + JavaHelper.generateID(toString()));
     }
 
     /**
@@ -63,6 +65,7 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
      */
     public GeometryValue(Geometry value) {
         setValue(value);
+        setGmlId("sp_" + JavaHelper.generateID(toString()));
     }
 
     @Override

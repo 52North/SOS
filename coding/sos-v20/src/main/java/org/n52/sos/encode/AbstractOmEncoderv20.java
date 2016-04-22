@@ -49,6 +49,7 @@ import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGML;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -770,7 +771,17 @@ public abstract class AbstractOmEncoderv20
         private Map<HelperValues, String> createHelperValues(Value<?> value) {
             Map<SosConstants.HelperValues, String> helperValues = Maps.newHashMap();
             helperValues.put(HelperValues.PROPERTY_TYPE, null);
-            helperValues.put(HelperValues.GMLID, JavaHelper.generateID(value.toString()));
+            if (value instanceof AbstractGML) {
+                if (((AbstractGML) value).isSetGmlID()) {
+                    helperValues.put(HelperValues.GMLID, ((AbstractGML) value).getGmlId());
+                } else {
+                    String gmlId = JavaHelper.generateID(value.toString());
+                    ((AbstractGML) value).setGmlId(gmlId);
+                    helperValues.put(HelperValues.GMLID, gmlId);
+                }
+            } else {
+                helperValues.put(HelperValues.GMLID, JavaHelper.generateID(value.toString()));
+            }
             return helperValues;
         }
 

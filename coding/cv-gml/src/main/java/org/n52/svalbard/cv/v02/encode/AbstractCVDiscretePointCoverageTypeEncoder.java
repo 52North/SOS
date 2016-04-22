@@ -38,8 +38,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.gml.GmlConstants;

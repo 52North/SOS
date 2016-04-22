@@ -28,11 +28,14 @@
  */
 package org.n52.svalbard.inspire.omso;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.ObservationValue;
@@ -44,7 +47,6 @@ import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.TLVTValue;
 import org.n52.sos.ogc.om.values.TVPValue;
-import org.omg.CORBA.portable.StreamableValue;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -53,19 +55,20 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 
-public class TrajectoryObservation extends OmObservation {
+public class TrajectoryObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = 5660393848737321598L;
 
     public TrajectoryObservation() {
+        super();
     }
     
     public TrajectoryObservation(OmObservation observation) {
-        observation.copyTo(this);
+        super(observation);
+        getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
         if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
-            sf.setEncode(true);
-            sf.setFeatureType(SfConstants.FT_SAMPLINGCURVE);
+            SamplingFeature sf = new SamplingFeature(new CodeWithAuthority(""));
+            sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
         }
         if (isSetSpatialFilteringProfileParameter()) {
             removeSpatialFilteringProfileParameter();
@@ -77,7 +80,7 @@ public class TrajectoryObservation extends OmObservation {
         if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
             SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
             sf.setEncode(true);
-            sf.setFeatureType(SfConstants.FT_SAMPLINGCURVE);
+            sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
         }
         if (isSetSpatialFilteringProfileParameter()) {
             removeSpatialFilteringProfileParameter();

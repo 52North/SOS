@@ -34,16 +34,18 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 import com.google.common.collect.Sets;
 
-public class PointTimeSeriesObservation extends OmObservation {
+public class PointTimeSeriesObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = -6453048922030316456L;
     
     public PointTimeSeriesObservation() {
+        super();
     }
     
     public PointTimeSeriesObservation(OmObservation observation) {
+        super(observation);
         observation.setParameter(Sets.<NamedValue<?>>newHashSet());
-        observation.copyTo(this);
+        getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION);
     }
     
     @Override

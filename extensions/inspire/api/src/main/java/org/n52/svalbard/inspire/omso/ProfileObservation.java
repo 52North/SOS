@@ -36,15 +36,17 @@ import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
 
-public class ProfileObservation extends OmObservation {
+public class ProfileObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = -4114937024428256032L;
 
     public ProfileObservation() {
+        super();
     }
     
     public ProfileObservation(OmObservation observation) {
-        observation.copyTo(this);
+        super(observation);
+        getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION);
     }
     
     @Override

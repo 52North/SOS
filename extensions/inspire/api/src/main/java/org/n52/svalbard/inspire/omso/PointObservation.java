@@ -37,20 +37,23 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.util.JavaHelper;
+import org.n52.sos.ogc.om.values.GeometryValue;
 
+import com.google.common.base.Strings;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 
-public class PointObservation extends OmObservation {
+public class PointObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = 2388069533262527383L;
 
     public PointObservation() {
+        super();
     }
     
     public PointObservation(OmObservation observation) {
-        observation.copyTo(this);
+        super(observation);
+        getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION);
     }
     
     @Override
@@ -73,10 +76,11 @@ public class PointObservation extends OmObservation {
             cvDiscretePointCoverage.setUnit(((AbstractObservationValue<?>) value).getUnit());
             Geometry geometry = null;
             String domainExtent = "";
-            if (isSetSpatialFilteringProfileParameter()) {
+            if (isSetSpatialFilteringProfileParameter() && getSpatialFilteringProfileParameter().getValue() instanceof GeometryValue) {
+                GeometryValue geometryValue = (GeometryValue)getSpatialFilteringProfileParameter().getValue();
                 geometry = getSpatialFilteringProfileParameter().getValue().getValue();
-                domainExtent = "sp_" + JavaHelper.generateID(getSpatialFilteringProfileParameter().getValue().toString());
-            } else if (checkForFeatureGeometry(this)) {
+                domainExtent = geometryValue.getGmlId();
+            } else if (Strings.isNullOrEmpty(domainExtent) && checkForFeatureGeometry(this)) {
                 geometry = getGeometryFromFeature(this);
                 domainExtent = getObservationConstellation().getFeatureOfInterest().getGmlId();
             }

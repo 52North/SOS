@@ -28,6 +28,7 @@
  */
 package org.n52.svalbard.inspire.omso;
 
+import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
@@ -44,6 +45,13 @@ public class PointTimeSeriesObservation extends AbstractInspireObservation {
     
     public PointTimeSeriesObservation(OmObservation observation) {
         super(observation);
+        if (!checkForFeatureGeometry(observation) && observation.isSetSpatialFilteringProfileParameter()) {
+            try {
+                ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getGeometryFromSamplingGeometry(observation));
+            } catch (InvalidSridException e) {
+                // TODO
+            }
+        }
         observation.setParameter(Sets.<NamedValue<?>>newHashSet());
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION);
     }

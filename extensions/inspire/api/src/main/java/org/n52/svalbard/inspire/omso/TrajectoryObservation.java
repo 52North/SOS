@@ -28,13 +28,11 @@
  */
 package org.n52.svalbard.inspire.omso;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.n52.sos.exception.ows.concrete.InvalidSridException;
 import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
@@ -66,10 +64,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
     public TrajectoryObservation(OmObservation observation) {
         super(observation);
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            SamplingFeature sf = new SamplingFeature(new CodeWithAuthority(""));
-            sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
-        }
+        SamplingFeature sf = new SamplingFeature(new CodeWithAuthority(""));
+        sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
+        getObservationConstellation().setFeatureOfInterest(sf);
         if (isSetSpatialFilteringProfileParameter()) {
             removeSpatialFilteringProfileParameter();
         }
@@ -77,11 +74,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
 
     @Override
     public OmObservation cloneTemplate() {
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
-            sf.setEncode(true);
-            sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
-        }
+        SamplingFeature sf = new SamplingFeature(new CodeWithAuthority(""));
+        sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
+        getObservationConstellation().setFeatureOfInterest(sf);
         if (isSetSpatialFilteringProfileParameter()) {
             removeSpatialFilteringProfileParameter();
         }

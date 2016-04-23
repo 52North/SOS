@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
+import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
@@ -176,6 +177,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             // add SpatialFilteringProfile
             if (hObservation.hasSamplingGeometry()) {
                 sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+            } else if (hObservation.isSetLongLat()) {
+                sosObservation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(hObservation)));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);

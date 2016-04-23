@@ -49,10 +49,12 @@ import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGML;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservationContext;
@@ -233,6 +235,7 @@ public abstract class AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs
      */
+    @SuppressWarnings("rawtypes")
     protected XmlObject encodeOmObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
         OMObservationType xbObservation = createOmObservationType();
@@ -249,6 +252,9 @@ public abstract class AbstractOmEncoderv20
         xbObservation.setId(generateObservationGMLId());
         if (!sosObservation.isSetObservationID()) {
             sosObservation.setObservationID(xbObservation.getId().replace("o_", ""));
+            if (sosObservation.getValue() instanceof AbstractObservationValue){
+                ((AbstractObservationValue)sosObservation.getValue()).setObservationID(sosObservation.getObservationID());
+            }
         }
 
         setObservationIdentifier(sosObservation, xbObservation);
@@ -368,7 +374,10 @@ public abstract class AbstractOmEncoderv20
         AbstractPhenomenon observableProperty = observation
                 .getObservationConstellation().getObservableProperty();
         xb.addNewObservedProperty().setHref(observableProperty.getIdentifier());
-
+        if (observableProperty.isSetName()) {
+            xb.getObservedProperty().setTitle(observableProperty.getFirstName().getValue());
+        }
+        
         if (observableProperty instanceof OmObservableProperty) {
         } else if (observableProperty instanceof OmCompositePhenomenon) {
         }
@@ -770,7 +779,17 @@ public abstract class AbstractOmEncoderv20
         private Map<HelperValues, String> createHelperValues(Value<?> value) {
             Map<SosConstants.HelperValues, String> helperValues = Maps.newHashMap();
             helperValues.put(HelperValues.PROPERTY_TYPE, null);
-            helperValues.put(HelperValues.GMLID, JavaHelper.generateID(value.toString()));
+            if (value instanceof AbstractGML) {
+                if (((AbstractGML) value).isSetGmlID()) {
+                    helperValues.put(HelperValues.GMLID, ((AbstractGML) value).getGmlId());
+                } else {
+                    String gmlId = JavaHelper.generateID(value.toString());
+                    ((AbstractGML) value).setGmlId(gmlId);
+                    helperValues.put(HelperValues.GMLID, gmlId);
+                }
+            } else {
+                helperValues.put(HelperValues.GMLID, JavaHelper.generateID(value.toString()));
+            }
             return helperValues;
         }
 

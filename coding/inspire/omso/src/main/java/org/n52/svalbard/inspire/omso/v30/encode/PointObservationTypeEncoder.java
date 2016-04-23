@@ -90,7 +90,7 @@ public class PointObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     @Override
     protected String getObservationType() {
-        return InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION;
+        return InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION;
     }
 
     @Override

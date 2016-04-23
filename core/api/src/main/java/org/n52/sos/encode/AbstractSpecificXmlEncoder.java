@@ -33,9 +33,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
@@ -79,8 +81,8 @@ public abstract class AbstractSpecificXmlEncoder<T, S> implements Encoder<T, S> 
         return CodingRepository.getInstance().getEncoder(key);
     }
     
-    
+    protected static XmlOptions getXmlOptions() {
+        return XmlOptionsHelper.getInstance().getXmlOptions();
+    }
 
-    
-    
 }

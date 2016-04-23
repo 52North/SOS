@@ -232,10 +232,6 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
         N52XmlHelper.setSchemaLocationsToDocument(document, schemaLocations.values());
     }
 
-    protected XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
-    }
-
     /**
      * Get the concrete schema locations for this
      * {@link AbstractServiceResponse} encoder

@@ -46,7 +46,6 @@ import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 
 /**
@@ -187,6 +186,7 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
             Class.forName(getDriverClass());
             String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);

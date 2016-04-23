@@ -39,6 +39,7 @@ import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.SingleObservationValue;
+import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.util.CollectionHelper;
@@ -50,17 +51,20 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
-public class MultiPointObservation extends OmObservation {
+public class MultiPointObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = -2792198498699052095L;
 
     public MultiPointObservation() {
+        super();
     }
     
     public MultiPointObservation(OmObservation observation) throws CodedException {
-        observation.copyTo(this);
+        super(observation);
+        getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION);
         if (getValue().getValue() instanceof MultiPointCoverage) {
             SamplingFeature samplingFeature = new SamplingFeature(new CodeWithAuthority(""));
+            samplingFeature.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE);
             samplingFeature.setEncode(true);
             try {
                 samplingFeature.setGeometry(getEnvelope(((MultiPointCoverage)getValue().getValue()).getValue()));

@@ -34,6 +34,10 @@ import java.util.Locale;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.sos.convert.ConverterException;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -99,7 +103,6 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             AbstractFeature feature = createFeatureOfInterest(series.getFeatureOfInterest().getIdentifier());
 
             final OmObservationConstellation obsConst = getObservationConstellation(procedure, obsProp, feature);
-
             final OmObservation sosObservation = new OmObservation();
             sosObservation.setNoDataValue(getNoDataValue());
             sosObservation.setTokenSeparator(getTokenSeparator());
@@ -163,14 +166,22 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
      * @param feature
      *            FeatureOfInterest object
      * @return Observation constellation
+     * @throws OwsExceptionReport 
      */
     protected OmObservationConstellation getObservationConstellation(SosProcedureDescription procedure,
-            OmObservableProperty obsProp, AbstractFeature feature) {
+            OmObservableProperty obsProp, AbstractFeature feature) throws OwsExceptionReport {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */
         if (obsConst.getOfferings() == null) {
-            obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
-                    obsConst.getProcedure().getIdentifier())));
+            if (getSeries().hasOffering()) {
+                obsConst.setOfferings(Sets.newHashSet(getSeries().getOffering().getIdentifier()));
+            } else {
+                AbstractSeriesObservationDAO observationDAO = (AbstractSeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();
+                obsConst.setOfferings(observationDAO.getOfferingsForSeries(series, getSession()));
+//            } else {
+//                obsConst.setOfferings(Sets.newHashSet(getCache().getOfferingsForProcedure(
+//                        obsConst.getProcedure().getIdentifier())));
+            }
         }
         return obsConst;
     }

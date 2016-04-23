@@ -46,6 +46,10 @@ public abstract class AbstractBaseObservation
     private long observationId;
     private Set<Offering> offerings = new HashSet<>(0);
     private Geometry samplingGeometry;
+    private Object latitude;
+    private Object longitude;
+    private Object altitude;
+    private int srid;
     private boolean deleted;
     private boolean child;
     private boolean parent;
@@ -95,6 +99,66 @@ public abstract class AbstractBaseObservation
     @Override
     public boolean hasSamplingGeometry() {
         return getSamplingGeometry() != null && !getSamplingGeometry().isEmpty();
+    }
+    
+    @Override
+    public Object getLongitude() {
+        return longitude;
+    }
+
+    @Override
+    public AbstractBaseObservation setLongitude(final Object longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
+    @Override
+    public Object getLatitude() {
+        return latitude;
+    }
+
+    @Override
+    public AbstractBaseObservation setLatitude(final Object latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    @Override
+    public Object getAltitude() {
+        return altitude;
+    }
+
+    @Override
+    public AbstractBaseObservation setAltitude(final Object altitude) {
+        this.altitude = altitude;
+        return this;
+    }
+
+    public boolean isSetLongLat() {
+        return getLongitude() != null && getLatitude() != null;
+    }
+
+    public boolean isSetAltitude() {
+        return getAltitude() != null;
+    }
+
+    public boolean isSpatial() {
+        return hasSamplingGeometry() || isSetLongLat();
+    }
+    
+    @Override
+    public int getSrid() {
+        return srid;
+    }
+
+    @Override
+    public AbstractBaseObservation setSrid(final int srid) {
+        this.srid = srid;
+        return this;
+    }
+    
+    public boolean isSetSrid() {
+        return getSrid() > 0;
     }
 
     @Override

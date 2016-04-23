@@ -41,6 +41,7 @@ import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
@@ -67,7 +68,7 @@ public class CVDiscretePointCoveragePropertyTypeEncoder extends AbstractCVDiscre
     public CVDiscretePointCoveragePropertyType encode(CvDiscretePointCoverage cvDiscretePointCoverage, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         // spatialObservation + measured value 
-        CVDiscretePointCoveragePropertyType cvdpcpt = CVDiscretePointCoveragePropertyType.Factory.newInstance();
+        CVDiscretePointCoveragePropertyType cvdpcpt = CVDiscretePointCoveragePropertyType.Factory.newInstance(getXmlOptions());
         cvdpcpt.setCVDiscretePointCoverage(encodeCVDiscretePointCoverage(cvDiscretePointCoverage));
         return cvdpcpt;
     }

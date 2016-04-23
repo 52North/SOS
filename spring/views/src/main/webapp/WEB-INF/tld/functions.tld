@@ -23,10 +23,15 @@
         <function-class>org.n52.sos.web.JstlFunctions</function-class>
         <function-signature>boolean hasAdministrator()</function-signature>
     </function>
-     <function>
+    <function>
         <name>hasClass</name>
         <function-class>org.n52.sos.web.JstlFunctions</function-class>
         <function-signature>boolean hasClass(java.lang.String)</function-signature>
+    </function>
+    <function>
+        <name>supportsI18N</name>
+        <function-class>org.n52.sos.web.JstlFunctions</function-class>
+        <function-signature>boolean supportsI18N()</function-signature>
     </function>
     <function>
         <name>viewExists</name>

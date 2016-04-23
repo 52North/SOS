@@ -164,7 +164,7 @@
             	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select">
+        <set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select" cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>

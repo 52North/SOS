@@ -28,39 +28,40 @@
  */
 package org.n52.svalbard.inspire.omso;
 
-import org.n52.sos.exception.ows.concrete.InvalidSridException;
-import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.GeometryValue;
 
-import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Geometry;
 
-public class PointTimeSeriesObservation extends AbstractInspireObservation {
-
-    private static final long serialVersionUID = -6453048922030316456L;
+public abstract class AbstractInspireObservation extends OmObservation {
     
-    public PointTimeSeriesObservation() {
-        super();
+    private static final long serialVersionUID = 3681367197554559966L;
+
+    public AbstractInspireObservation() {
     }
-    
-    public PointTimeSeriesObservation(OmObservation observation) {
-        super(observation);
-        if (!checkForFeatureGeometry(observation) && observation.isSetSpatialFilteringProfileParameter()) {
-            try {
-                ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getGeometryFromSamplingGeometry(observation));
-            } catch (InvalidSridException e) {
-                // TODO
-            }
-        }
-        observation.setParameter(Sets.<NamedValue<?>>newHashSet());
-        getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION);
-    }
-    
-    @Override
-    public OmObservation cloneTemplate() {
+
+    public AbstractInspireObservation(OmObservation observation) {
+        this();
+        observation.copyTo(this);
         if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+            SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
+            sf.setEncode(true);
         }
-        return cloneTemplate(new PointTimeSeriesObservation());
+    }
+    
+    protected boolean checkForFeatureGeometry(OmObservation observation) {
+        if (observation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+            return ((SamplingFeature)observation.getObservationConstellation().getFeatureOfInterest()).isSetGeometry();
+        }
+        return false;
+    }
+
+    protected Geometry getGeometryFromFeature(OmObservation observation) {
+        return ((SamplingFeature)observation.getObservationConstellation().getFeatureOfInterest()).getGeometry();
+    }
+    
+    protected Geometry getGeometryFromSamplingGeometry(OmObservation observation) {
+        return ((GeometryValue)getSpatialFilteringProfileParameter().getValue()).getValue();
     }
 }

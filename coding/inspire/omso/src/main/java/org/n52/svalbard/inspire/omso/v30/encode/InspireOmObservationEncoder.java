@@ -38,15 +38,18 @@ import org.n52.sos.encode.AbstractXmlEncoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.w3c.SchemaLocation;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
         implements ObservationEncoder<XmlObject, Object> {
@@ -105,5 +108,14 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
     public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
         return Maps.newHashMap();
     }
+    
+    @Override
+    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
+        nameSpacePrefixMap.put(InspireOMSOConstants.NS_OMSO_30, InspireOMSOConstants.NS_OMSO_PREFIX);
+    }
 
+    @Override
+    public Set<SchemaLocation> getSchemaLocations() {
+        return Sets.newHashSet(InspireOMSOConstants.OMSO_SCHEMA_LOCATION);
+    }
 }

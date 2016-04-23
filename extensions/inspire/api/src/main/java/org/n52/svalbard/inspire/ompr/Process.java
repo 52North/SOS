@@ -38,6 +38,7 @@ import org.n52.svalbard.inspire.base2.DocumentCitation;
 import org.n52.svalbard.inspire.base2.RelatedParty;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 
 public class Process extends SosProcedureDescription {
 
@@ -55,17 +56,17 @@ public class Process extends SosProcedureDescription {
     /**
      * 0..*
      */
-    private List<DocumentCitation> documentation;
+    private List<DocumentCitation> documentation = Lists.newArrayList();
 
     /**
      * 0..*
      */
-    private List<ProcessParameter> processParameter;
+    private List<ProcessParameter> processParameter = Lists.newArrayList();
 
     /**
      * 1..*
      */
-    private List<RelatedParty> responsibleParty;
+    private List<RelatedParty> responsibleParty = Lists.newArrayList();
 
     public Process() {
         setDescriptionFormat(InspireOMPRConstants.NS_OMPR_30);
@@ -79,8 +80,9 @@ public class Process extends SosProcedureDescription {
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public Process setName(String name) {
         super.setName(new CodeType(name));
+        return this;
     }
 
     /**
@@ -93,8 +95,9 @@ public class Process extends SosProcedureDescription {
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public Process setType(String type) {
         this.type = type;
+        return this;
     }
     
     public boolean isSetType() {
@@ -111,8 +114,22 @@ public class Process extends SosProcedureDescription {
     /**
      * @param documentation the documentation to set
      */
-    public void setDocumentation(List<DocumentCitation> documentation) {
-        this.documentation = documentation;
+    public Process setDocumentation(List<DocumentCitation> documentation) {
+        this.documentation.clear();
+        if (documentation != null) {
+            this.documentation.addAll(documentation);
+        }
+        return this;
+    }
+    
+    /**
+     * @param documentation the documentation to add
+     */
+    public Process addDocumentation(DocumentCitation documentation) {
+        if (documentation != null) {
+            this.documentation.add(documentation);
+        }
+        return this;
     }
 
     public boolean isSetDocumentation() {
@@ -129,8 +146,22 @@ public class Process extends SosProcedureDescription {
     /**
      * @param processParameter the processParameter to set
      */
-    public void setProcessParameter(List<ProcessParameter> processParameter) {
-        this.processParameter = processParameter;
+    public Process setProcessParameter(List<ProcessParameter> processParameter) {
+        this.processParameter.clear();
+        if (processParameter != null) {
+            this.processParameter.addAll(processParameter);
+        }
+        return this;
+    }
+    
+    /**
+     * @param processParameter the processParameter to add
+     */
+    public Process addProcessParameter(ProcessParameter processParameter) {
+        if (processParameter != null) {
+            this.processParameter.add(processParameter);
+        }
+        return this;
     }
     
     public boolean isSetProcessParameter() {
@@ -147,9 +178,24 @@ public class Process extends SosProcedureDescription {
     /**
      * @param responsibleParty the responsibleParty to set
      */
-    public void setResponsibleParty(List<RelatedParty> responsibleParty) {
-        this.responsibleParty = responsibleParty;
+    public Process setResponsibleParty(List<RelatedParty> responsibleParty) {
+        this.responsibleParty.clear();
+        if (responsibleParty != null) {
+            this.responsibleParty.addAll(responsibleParty);
+        }
+        return this;
     }
+    
+    /**
+     * @param responsibleParty the responsibleParty to add
+     */
+    public Process addResponsibleParty(RelatedParty responsibleParty) {
+        if (responsibleParty != null) {
+            this.responsibleParty.add(responsibleParty);
+        }
+        return this;
+    }
+    
 
     public boolean isSetResponsiblePartyn() {
         return CollectionHelper.isNotEmpty(getResponsibleParty());

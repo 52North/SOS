@@ -36,13 +36,14 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractXmlEncoder;
 import org.n52.sos.encode.ClassToClassEncoderKey;
 import org.n52.sos.encode.EncoderKey;
-import org.n52.sos.encode.XmlDocumentEncoderKey;
+import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.inspire.base2.Contact;
 import org.n52.svalbard.inspire.base2.RelatedParty;
 import org.n52.svalbard.inspire.ompr.InspireOMPRConstants;
 import org.slf4j.Logger;
@@ -50,6 +51,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
 
+import eu.europa.ec.inspire.schemas.base2.x20.ContactType;
+import eu.europa.ec.inspire.schemas.base2.x20.ContactType.TelephoneFacsimile;
+import eu.europa.ec.inspire.schemas.base2.x20.ContactType.TelephoneVoice;
+import eu.europa.ec.inspire.schemas.base2.x20.ContactType.Website;
 import eu.europa.ec.inspire.schemas.base2.x20.RelatedPartyType;
 
 public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
@@ -58,7 +63,7 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
             Sets.newHashSet(new ClassToClassEncoderKey(RelatedPartyType.class, RelatedParty.class),
-                    new XmlDocumentEncoderKey(InspireOMPRConstants.NS_OMPR_30, RelatedParty.class));
+                    new XmlEncoderKey(InspireOMPRConstants.NS_OMPR_30, RelatedParty.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -83,13 +88,64 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
 
     private void addContact(RelatedPartyType rpt, RelatedParty relatedParty) {
         if (relatedParty.isSetContact()) {
-            // TODO
+            rpt.addNewContact().setContact(createContact(relatedParty.getContact()));
+        } else {
+            rpt.setNilContact();
         }
+    }
+
+    private ContactType createContact(Contact contact) {
+        ContactType ct = ContactType.Factory.newInstance();
+        ct.addNewAddress().setNil();
+        if (contact.getAddress().getNilReason().isPresent()) {
+            ct.getAddress().setNilReason(contact.getAddress().getNilReason());
+        }
+        ct.addNewContactInstructions();
+        if (contact.getElectronicMailAddress().isPresent()) {
+            ct.addNewElectronicMailAddress().setStringValue(contact.getElectronicMailAddress().get());
+        } else if (contact.getElectronicMailAddress().isNil()) {
+            ct.addNewElectronicMailAddress().setNil();
+            if (contact.getElectronicMailAddress().getNilReason().isPresent()) {
+                ct.getElectronicMailAddress().setNilReason(contact.getElectronicMailAddress().getNilReason());
+            }
+        }
+        if (contact.getTelephoneFacsimile().isPresent()) {
+            for (String telephoneFacsimile : contact.getTelephoneFacsimile().get()) {
+                ct.addNewTelephoneFacsimile().setStringValue(telephoneFacsimile);
+            }
+        } else if (contact.getTelephoneFacsimile().isNil()) {
+            TelephoneFacsimile tf = ct.addNewTelephoneFacsimile();
+            tf.setNil();
+            if (contact.getTelephoneFacsimile().getNilReason().isPresent()) {
+                tf.setNilReason(contact.getTelephoneFacsimile().getNilReason());
+            }
+        }
+        if (contact.getTelephoneVoice().isPresent()) {
+            for (String telephoneVoice : contact.getTelephoneVoice().get()) {
+                ct.addNewTelephoneVoice().setStringValue(telephoneVoice);
+            }
+        } else if (contact.getTelephoneVoice().isNil()) {
+            TelephoneVoice tv = ct.addNewTelephoneVoice();
+            tv.setNil();
+            if (contact.getTelephoneVoice().getNilReason().isPresent()) {
+                tv.setNilReason(contact.getTelephoneVoice().getNilReason());
+            }
+        }
+        if (contact.getWebsite().isPresent()) {
+            ct.addNewWebsite().setStringValue(contact.getWebsite().get());
+        } else if (contact.getWebsite().isNil()) {
+            Website w = ct.addNewWebsite();
+            w.setNil();
+            if (contact.getWebsite().getNilReason().isPresent()) {
+                w.setNilReason(contact.getWebsite().getNilReason());
+            }
+        }
+        return ct;
     }
 
     private void addIndividualName(RelatedPartyType rpt, RelatedParty relatedParty) throws OwsExceptionReport {
         if (relatedParty.isSetIndividualName()) {
-           rpt.addNewIndividualName().addNewPTFreeText().set(encodeGMD(relatedParty.getIndividualName()));
+            rpt.addNewIndividualName().addNewPTFreeText().set(encodeGMD(relatedParty.getIndividualName()));
         }
     }
 
@@ -120,5 +176,5 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
     protected static XmlObject encodeGMD(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, o, helperValues);
     }
-    
+
 }

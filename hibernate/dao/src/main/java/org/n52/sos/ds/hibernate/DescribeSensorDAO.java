@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -192,7 +192,7 @@ public class DescribeSensorDAO extends AbstractDescribeSensorDAO {
             } else {
                 if (!request.isSetValidTime()) {
                     throw new NoApplicableCodeException().causedBy(
-                            new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
+                            new IllegalArgumentException("Parameter 'procedure' was null or invalid!")).setStatus(
                             INTERNAL_SERVER_ERROR);
                 }
             }

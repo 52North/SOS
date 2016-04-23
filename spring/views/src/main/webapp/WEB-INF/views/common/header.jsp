@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -149,7 +149,7 @@
                                                                     <span class="menu-title">Datasource</span>
                                                                 </a>
                                                             </li>
-															<li>
+                                                            <li>
                                                                 <a href="<c:url value="/admin/sensors" />">
                                                                     <span class="menu-title">Procedure Descriptions</span>
                                                                 </a>
@@ -164,11 +164,13 @@
                                                                     <span class="menu-title">Observable Properties</span>
                                                                 </a>
                                                             </li>
-                                                            <li>
-                                                                <a href="<c:url value="/admin/i18n" />">
-                                                                    <span class="menu-title">I18N Settings</span>
-                                                                </a>
-                                                            </li>
+                                                            <c:if test="${sos:supportsI18N()}">
+	                                                            <li>
+	                                                                <a href="<c:url value="/admin/i18n" />">
+	                                                                    <span class="menu-title">I18N Settings</span>
+	                                                                </a>
+	                                                            </li>
+                                                            </c:if>
                                                             <c:if test="${sos:hasClass('org.n52.sos.web.admin.AdminEReportingHeaderController')}">
                                                                 <li>
                                                                     <a href="<c:url value="/admin/ereporting" />">

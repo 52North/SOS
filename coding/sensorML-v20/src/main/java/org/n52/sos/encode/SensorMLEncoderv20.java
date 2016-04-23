@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -253,8 +253,10 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // check if all gml:id are unique
         XmlHelper.makeGmlIdsUnique(encodedObject.getDomNode());
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        if (LOGGER.isDebugEnabled()) {
+        	LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                    XmlHelper.validateDocument(encodedObject));
+        }
         return encodedObject;
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -1149,7 +1149,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return null;
     }
 
-    public abstract List<Geometry> getSamplingGeometries(String feature, Session session);
+    public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     public abstract ObservationFactory getObservationFactory();
 
@@ -1572,10 +1572,19 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public boolean containsSamplingGeometries(Session session) {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
-        criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
         criteria.setProjection(Projections.rowCount());
-        LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
-        return (Long) criteria.uniqueResult() > 0;
+        if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractObservation.SAMPLING_GEOMETRY)) {
+            criteria.add(Restrictions.isNotNull(AbstractObservation.SAMPLING_GEOMETRY));
+            LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+            return (Long) criteria.uniqueResult() > 0;
+        } else if (HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractObservation.LONGITUDE)
+                && HibernateHelper.isColumnSupported(getObservationFactory().contextualReferencedClass(), AbstractObservation.LATITUDE)) {
+            criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservation.LONGITUDE),
+                    Restrictions.isNotNull(AbstractObservation.LATITUDE)));
+            LOGGER.debug("QUERY containsSamplingGeometries(): {}", HibernateHelper.getSqlString(criteria));
+            return (Long) criteria.uniqueResult() > 0;
+        }
+        return false;
     }
 
     public TimeExtrema getObservationTimeExtrema(Session session) throws CodedException {

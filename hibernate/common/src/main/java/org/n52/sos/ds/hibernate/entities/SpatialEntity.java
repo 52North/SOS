@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,8 +65,9 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setLongitude(final Object longitude) {
+    public SpatialEntity setLongitude(final Object longitude) {
         this.longitude = longitude;
+        return this;
     }
 
     @Override
@@ -75,8 +76,9 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setLatitude(final Object latitude) {
+    public SpatialEntity setLatitude(final Object latitude) {
         this.latitude = latitude;
+        return this;
     }
 
     @Override
@@ -85,8 +87,9 @@ public abstract class SpatialEntity extends DescriptionXmlEntity implements HasG
     }
 
     @Override
-    public void setAltitude(final Object altitude) {
+    public SpatialEntity setAltitude(final Object altitude) {
         this.altitude = altitude;
+        return this;
     }
 
     @Override

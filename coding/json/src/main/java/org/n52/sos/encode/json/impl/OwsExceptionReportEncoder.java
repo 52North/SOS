@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -108,7 +108,7 @@ public class OwsExceptionReportEncoder extends JSONEncoder<OwsExceptionReport> {
             if (exceptionText.length() > 0) {
                 exceptionText.append(LF);
             }
-            exceptionText.append("[EXEPTION]: ").append(LF);
+            exceptionText.append("[EXCEPTION]: ").append(LF);
             String localizedMessage = ce.getCause().getLocalizedMessage();
             String message = ce.getCause().getMessage();
             if (localizedMessage != null && message != null) {

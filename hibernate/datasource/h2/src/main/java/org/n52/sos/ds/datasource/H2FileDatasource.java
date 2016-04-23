@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -72,6 +72,7 @@ public class H2FileDatasource extends AbstractH2Datasource {
         try {
             String jdbc = toURL(settings);
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(jdbc, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

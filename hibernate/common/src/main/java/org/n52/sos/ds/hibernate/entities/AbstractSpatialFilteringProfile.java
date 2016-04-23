@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -187,8 +187,9 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
     }
 
     @Override
-    public void setLongitude(Object longitude) {
+    public AbstractSpatialFilteringProfile setLongitude(Object longitude) {
         this.longitude = longitude;
+        return this;
     }
 
     @Override
@@ -197,8 +198,9 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
     }
 
     @Override
-    public void setLatitude(Object latitude) {
+    public AbstractSpatialFilteringProfile setLatitude(Object latitude) {
         this.latitude = latitude;
+        return this;
     }
 
     @Override
@@ -207,8 +209,9 @@ public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifier
     }
 
     @Override
-    public void setAltitude(Object altitude) {
+    public AbstractSpatialFilteringProfile setAltitude(Object altitude) {
         this.altitude = altitude;
+        return this;
     }
 
     @Override

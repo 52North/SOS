@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,8 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -853,6 +855,34 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
+    
+	/**
+	 * Workaround for Java {@link DriverManager} issue with more than one registered
+	 * drivers. Only the first {@link SQLException} is catched and thrown
+	 * instead of the {@link SQLException} related to the driver which is valid for
+	 * the URL.
+	 * 
+	 * @param url
+	 *            DB connection URL
+	 * @param user
+	 *            User name
+	 * @param password
+	 *            Password
+	 * @throws SQLException
+	 */
+	protected void precheckDriver(String url, String user, String password) throws SQLException {
+		Driver driver = DriverManager.getDriver(url);
+		if (driver != null) {
+			java.util.Properties info = new java.util.Properties();
+			if (user != null) {
+				info.put("user", user);
+			}
+			if (password != null) {
+				info.put("password", password);
+			}
+			driver.connect(url, info).close();
+		}
+	}
 
     /**
      * Gets the qualified name of the driver class.

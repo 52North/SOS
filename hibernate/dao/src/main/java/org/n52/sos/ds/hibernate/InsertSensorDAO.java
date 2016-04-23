@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -58,6 +58,9 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
+import org.n52.sos.ds.hibernate.entities.TProcedure;
+import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -101,6 +104,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
 
     @Override
     public synchronized InsertSensorResponse insertSensor(final InsertSensorRequest request) throws OwsExceptionReport {
+        checkForTransactionalEntity();
         final InsertSensorResponse response = new InsertSensorResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
@@ -172,59 +176,6 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             } else {
                 throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat, request.getProcedureDescriptionFormat());
             }
-            
-//            final List<ObservationType> observationTypes =
-//                    new ObservationTypeDAO().getOrInsertObservationTypes(request.getMetadata().getObservationTypes(),
-//                            session);
-//            final List<FeatureOfInterestType> featureOfInterestTypes =
-//                    new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestTypes(request.getMetadata()
-//                            .getFeatureOfInterestTypes(), session);
-//            if (procedureDescriptionFormat != null && observationTypes != null && featureOfInterestTypes != null) {
-//                final Procedure hProcedure =
-//                        new ProcedureDAO().getOrInsertProcedure(assignedProcedureID, procedureDescriptionFormat,
-//                                request.getProcedureDescription(), session);
-//                // TODO: set correct validTime,
-//                new ValidProcedureTimeDAO().insertValidProcedureTime(
-//                        hProcedure,
-//                        procedureDescriptionFormat,
-//                        getSensorDescriptionFromProcedureDescription(request.getProcedureDescription(),
-//                                assignedProcedureID), new DateTime(DateTimeZone.UTC), session);
-//                final List<ObservableProperty> hObservableProperties =
-//                        getOrInsertNewObservableProperties(request.getObservableProperty(), session);
-//                final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
-//                final OfferingDAO offeringDAO = new OfferingDAO();
-//                for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
-//                    final List<RelatedFeature> hRelatedFeatures = new LinkedList<RelatedFeature>();
-//                    if (request.getRelatedFeatures() != null && !request.getRelatedFeatures().isEmpty()) {
-//                        final RelatedFeatureDAO relatedFeatureDAO = new RelatedFeatureDAO();
-//                        final RelatedFeatureRoleDAO relatedFeatureRoleDAO = new RelatedFeatureRoleDAO();
-//                        for (final SwesFeatureRelationship relatedFeature : request.getRelatedFeatures()) {
-//                            final List<RelatedFeatureRole> relatedFeatureRoles =
-//                                    relatedFeatureRoleDAO.getOrInsertRelatedFeatureRole(relatedFeature.getRole(),
-//                                            session);
-//                            hRelatedFeatures.addAll(relatedFeatureDAO.getOrInsertRelatedFeature(
-//                                    relatedFeature.getFeature(), relatedFeatureRoles, session));
-//                        }
-//                    }
-//                    final Offering hOffering =
-//                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
-//                                    assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
-//                                    featureOfInterestTypes, session);
-//                    for (final ObservableProperty hObservableProperty : hObservableProperties) {
-//                        observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,
-//                                hObservableProperty, hOffering, assignedOffering.isParentOffering(), session);
-//                    }
-//                }
-//                // TODO: parent and child procedures
-//                response.setAssignedProcedure(assignedProcedureID);
-//                response.setAssignedOffering(firstAssignedOffering.getIdentifier());
-//            } else if (procedureDescriptionFormat == null && observationTypes != null
-//                    && featureOfInterestTypes != null) {
-//                throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-//                        "");
-//            } else {
-//                throw new NoApplicableCodeException().withMessage("Error while inserting InsertSensor into database!");
-//            }
             session.flush();
             transaction.commit();
         } catch (final HibernateException he) {
@@ -296,6 +247,12 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
         // if procedureDescription not SensorML
         else {
             return procedureDescription.getSensorDescriptionXmlString();
+        }
+    }
+
+    private void checkForTransactionalEntity() throws CodedException {
+        if (!HibernateHelper.isEntitySupported(TProcedure.class)) {
+            throw new NoApplicableCodeException().withMessage("The transactional database profile is not activated!");
         }
     }
 

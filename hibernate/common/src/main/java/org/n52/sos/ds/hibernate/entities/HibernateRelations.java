@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -575,11 +575,11 @@ public interface HibernateRelations {
 
         Object getLongitude();
 
-        void setLongitude(Object longitude);
+        HasCoordinate setLongitude(Object longitude);
 
         Object getLatitude();
 
-        void setLatitude(Object latitude);
+        HasCoordinate setLatitude(Object latitude);
 
         /**
          * Are longitude and latitude set
@@ -590,7 +590,7 @@ public interface HibernateRelations {
 
         Object getAltitude();
 
-        void setAltitude(Object altitude);
+        HasCoordinate setAltitude(Object altitude);
 
         /**
          * Is altitude set

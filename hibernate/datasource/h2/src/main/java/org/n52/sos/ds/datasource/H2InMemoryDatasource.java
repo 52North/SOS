@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -105,6 +105,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             Class.forName(H2_DRIVER_CLASS);
+            precheckDriver(JDBC_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
             return DriverManager.getConnection(JDBC_URL, DEFAULT_USERNAME, DEFAULT_PASSWORD);
         } catch (ClassNotFoundException ex) {
             throw new RuntimeException(ex);

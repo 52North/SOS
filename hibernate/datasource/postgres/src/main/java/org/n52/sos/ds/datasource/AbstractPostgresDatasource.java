@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.ds.datasource;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -230,17 +231,19 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     @Override
     protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
+        	Class.forName(getDriverClass());
             String jdbc = toURL(settings);
-            Class.forName(getDriverClass());
             String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
             String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
             throw new SQLException(ex);
         }
     }
 
-    @Override
+
+	@Override
     protected String[] checkDropSchema(String[] dropSchema) {
         List<String> checkedSchema = Lists.newLinkedList();
         for (String string : dropSchema) {

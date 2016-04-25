@@ -99,11 +99,11 @@ public class MultiPointObservation extends AbstractInspireObservation {
     protected void mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof MultiPointCoverage) {
             List<PointValuePair> valuesToMerge = ((MultiPointCoverage)observationValue.getValue()).getValue();
-            ((MultiPointCoverage)getValue()).addValues(valuesToMerge);
+            ((MultiPointCoverage)getValue().getValue()).addValues(valuesToMerge);
             if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
                 if (((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
                     try {
-                        ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getEnvelope(valuesToMerge));
+                        ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getEnvelope(((MultiPointCoverage)getValue().getValue()).getValue()));
                     } catch (InvalidSridException e) {
                         // TODO
                     }
@@ -168,7 +168,7 @@ public class MultiPointObservation extends AbstractInspireObservation {
             }
         }
         if (factory == null) {
-            JTSHelper.getGeometryFactoryForSRID(GeometryHandler.getInstance().getStorageEPSG());
+            factory = JTSHelper.getGeometryFactoryForSRID(GeometryHandler.getInstance().getStorageEPSG());
         }
         Geometry geometry = factory.toGeometry(envelope);
         geometry.setSRID(srid);

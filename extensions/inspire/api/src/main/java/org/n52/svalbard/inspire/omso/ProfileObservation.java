@@ -72,6 +72,7 @@ public class ProfileObservation extends AbstractInspireObservation {
             rectifiedGridCoverage.setUnit(value.getValue().getUnit());
             rectifiedGridCoverage.addValue(heightDepth, value.getValue());
             super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), rectifiedGridCoverage));
+            removeParameter(getHeightDepthParameter());
         }
     }
     

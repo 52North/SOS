@@ -230,7 +230,7 @@ public class InspireObservationResponseConverter implements RequestResponseModif
 
     private Collection<? extends OmObservation> mergeMultiPointObservation(List<OmObservation> observations) {
         ObservationMergeIndicator observationMergeIndicator = new ObservationMergeIndicator();
-        observationMergeIndicator.setObservableProperty(true).setPhenomenonTime(true);
+        observationMergeIndicator.setObservableProperty(true).setProcedure(true).setPhenomenonTime(true);
         //.setOfferings(true); // TODO check!!!
         return new ObservationMerger().mergeObservations(observations, observationMergeIndicator);
     }

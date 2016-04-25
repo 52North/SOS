@@ -39,6 +39,7 @@ import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.ogc.om.ObservationMergeIndicator;
 import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.OmObservation;
@@ -105,7 +106,14 @@ public class InspireObservationResponseConverter implements RequestResponseModif
     
     @Override
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
-        // nothing to do
+        if (request instanceof GetObservationRequest) {
+            GetObservationRequest req = (GetObservationRequest) request;
+            if (req.isSetResponseFormat() && InspireOMSOConstants.NS_OMSO_30.equals(req.getResponseFormat())) {
+                if (req.isSetResultModel()) {
+                    checkRequestedResultType(req.getResultModel());
+                }
+            }
+        }
         return request;
     }
 
@@ -391,6 +399,22 @@ public class InspireObservationResponseConverter implements RequestResponseModif
             return checkForObservationType(observation, observationType);
         }
         return true;
+    }
+
+    private void checkRequestedResultType(String resultType) throws CodedException {
+        if (!getValidResultTypes().contains(resultType)) {
+            throw new InvalidParameterValueException().at("resultType").withMessage(
+                    "The requested resultType '%s' is not valid for the responseFormat '%s'", resultType,
+                    InspireOMSOConstants.NS_OMSO_30);
+        }
+    }
+
+    private Set<String> getValidResultTypes() {
+        return Sets.newHashSet(InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
+                InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
+                InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
+                InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
+                InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
     }
 
     private void putOrAdd(Map<String, List<OmObservation>> map, String type,

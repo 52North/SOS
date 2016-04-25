@@ -91,20 +91,22 @@ public class ObservationMerger {
         }
         merge = merge && checkObservationTypeForMerging(observationToAdd.getObservationConstellation());
         if (observationMergeIndicator.sameObservationConstellation()) {
-            return observation.getObservationConstellation().equals(observationToAdd.getObservationConstellation()) && merge;
+            merge = merge && observation.getObservationConstellation().equals(observationToAdd.getObservationConstellation());
+        } else {
+            if (observationMergeIndicator.isProcedure()) {
+                merge = merge && checkForProcedure(observation, observationToAdd);
+            }
+            if (observationMergeIndicator.isObservableProperty()) {
+                merge = merge && checkForObservableProperty(observation, observationToAdd);
+            }
+            if (observationMergeIndicator.isFeatureOfInterest()) {
+                merge = merge && checkForFeatureOfInterest(observation, observationToAdd);
+            }
+            if (observationMergeIndicator.isOfferings()) {
+                merge = merge && checkForOfferings(observation, observationToAdd);
+            }
         }
-        if (observationMergeIndicator.isProcedure()) {
-            merge = merge && checkForProcedure(observation, observationToAdd);
-        }
-        if (observationMergeIndicator.isObservableProperty()) {
-            merge = merge && checkForObservableProperty(observation, observationToAdd);
-        }
-        if (observationMergeIndicator.isFeatureOfInterest()) {
-            merge = merge && checkForFeatureOfInterest(observation, observationToAdd);
-        }
-        if (observationMergeIndicator.isOfferings()) {
-            merge = merge && checkForOfferings(observation, observationToAdd);
-        }
+        
         if (observationMergeIndicator.isPhenomenonTime()) {
             merge = merge && checkForPhenomenonTime(observation, observationToAdd);
         }

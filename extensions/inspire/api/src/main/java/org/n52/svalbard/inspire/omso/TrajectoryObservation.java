@@ -102,7 +102,9 @@ public class TrajectoryObservation extends AbstractInspireObservation {
                 }
             }
             TLVTValue tlvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>)value, geometry);
-            tlvpValue.setUnit(((AbstractObservationValue<?>) value).getUnit());
+            if (!tlvpValue.isSetUnit() && ((AbstractObservationValue<?>) value).isSetUnit()) {
+                tlvpValue.setUnit(((AbstractObservationValue<?>) value).getUnit());
+            }
             final MultiObservationValues<List<TimeLocationValueTriple>> multiValue = new MultiObservationValues<List<TimeLocationValueTriple>>();
             multiValue.setValue(tlvpValue);
             if (!multiValue.isSetObservationID()) {

@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -54,9 +55,19 @@ import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 
 import eu.europa.ec.inspire.schemas.omso.x30.CategoricalTimeLocationValueTripleType;
 import eu.europa.ec.inspire.schemas.omso.x30.MeasurementTimeLocationValueTripleType;
+import eu.europa.ec.inspire.schemas.omso.x30.TimeLocationValueTripleType;
 import net.opengis.waterml.x20.TimeValuePairType;
 
-public abstract class AbstractTimeLocationValueTripleTypeEncoder<T> extends AbstractSpecificXmlEncoder<T, TimeLocationValueTriple> {
+/**
+ * Abstract {@link Encoder} for {@link TimeLocationValueTriple}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ */
+public abstract class AbstractTimeLocationValueTripleTypeEncoder<T>
+        extends AbstractSpecificXmlEncoder<T, TimeLocationValueTriple> {
 
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
@@ -65,34 +76,57 @@ public abstract class AbstractTimeLocationValueTripleTypeEncoder<T> extends Abst
         nameSpacePrefixMap.put(InspireOMORConstants.NS_OMOR_30, InspireOMORConstants.NS_OMOR_PREFIX);
         nameSpacePrefixMap.put(InspireOMSOConstants.NS_OMSO_30, InspireOMSOConstants.NS_OMSO_PREFIX);
     }
-    
-    protected TimeValuePairType encodeTimeLocationValueTriple(TimeLocationValueTriple timeLocationValueTriple) throws OwsExceptionReport {
-        if (timeLocationValueTriple.getValue() instanceof QuantityValue || timeLocationValueTriple.getValue() instanceof CountValue) {
+
+    /**
+     * Encode {@link TimeLocationValueTriple} to
+     * {@link TimeLocationValueTripleType}
+     * 
+     * @param timeLocationValueTriple
+     *            The {@link TimeLocationValueTriple} to encode
+     * @return The encoded {@link TimeLocationValueTriple}
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected TimeValuePairType encodeTimeLocationValueTriple(TimeLocationValueTriple timeLocationValueTriple)
+            throws OwsExceptionReport {
+        if (timeLocationValueTriple.getValue() instanceof QuantityValue
+                || timeLocationValueTriple.getValue() instanceof CountValue) {
             return createMeasurementTimeLocationValueTripleType(timeLocationValueTriple);
         } else if (timeLocationValueTriple.getValue() instanceof CategoryValue) {
             return createCategoricalTimeLocationValueTripleType(timeLocationValueTriple);
         } else {
-         // TODO throw exception
+            // TODO throw exception
         }
         return null;
     }
 
-    private TimeValuePairType createMeasurementTimeLocationValueTripleType(TimeLocationValueTriple timeLocationValueTriple) throws OwsExceptionReport {
+    /**
+     * Create a {@link MeasurementTimeLocationValueTripleType} from
+     * {@link TimeLocationValueTriple}
+     * 
+     * @param timeLocationValueTriple
+     *            The {@link TimeLocationValueTriple} to encode
+     * @return The encoded {@link TimeLocationValueTriple}
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    private TimeValuePairType createMeasurementTimeLocationValueTripleType(
+            TimeLocationValueTriple timeLocationValueTriple) throws OwsExceptionReport {
         MeasurementTimeLocationValueTripleType mtlvtt = MeasurementTimeLocationValueTripleType.Factory.newInstance();
         mtlvtt.addNewTime().setStringValue(getTimeString(timeLocationValueTriple.getTime()));
         mtlvtt.addNewLocation().addNewPoint().set(encodeGML(timeLocationValueTriple.getLocation()));
         String value = null;
         if (timeLocationValueTriple.getValue() instanceof QuantityValue) {
-          QuantityValue quantityValue = (QuantityValue) timeLocationValueTriple.getValue();
-          if (!quantityValue.getValue().equals(Double.NaN)) {
-              value = Double.toString(quantityValue.getValue().doubleValue());
-          }
-      } else if (timeLocationValueTriple.getValue() instanceof CountValue) {
-          CountValue countValue = (CountValue) timeLocationValueTriple.getValue();
-          if (countValue.getValue() != null) {
-              value = Integer.toString(countValue.getValue().intValue());
-          }
-      }
+            QuantityValue quantityValue = (QuantityValue) timeLocationValueTriple.getValue();
+            if (!quantityValue.getValue().equals(Double.NaN)) {
+                value = Double.toString(quantityValue.getValue().doubleValue());
+            }
+        } else if (timeLocationValueTriple.getValue() instanceof CountValue) {
+            CountValue countValue = (CountValue) timeLocationValueTriple.getValue();
+            if (countValue.getValue() != null) {
+                value = Integer.toString(countValue.getValue().intValue());
+            }
+        }
         if (value != null && !value.isEmpty()) {
             mtlvtt.addNewValue().setStringValue(value);
         } else {
@@ -102,24 +136,42 @@ public abstract class AbstractTimeLocationValueTripleTypeEncoder<T> extends Abst
         return mtlvtt;
     }
 
-    private TimeValuePairType createCategoricalTimeLocationValueTripleType(TimeLocationValueTriple timeLocationValueTriple) throws OwsExceptionReport {
+    /**
+     * Create a {@link CategoricalTimeLocationValueTripleType} from
+     * {@link TimeLocationValueTriple}
+     * 
+     * @param timeLocationValueTriple
+     *            The {@link TimeLocationValueTriple} to encode
+     * @return The encoded {@link TimeLocationValueTriple}
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    private TimeValuePairType createCategoricalTimeLocationValueTripleType(
+            TimeLocationValueTriple timeLocationValueTriple) throws OwsExceptionReport {
         CategoricalTimeLocationValueTripleType ctlvtt = CategoricalTimeLocationValueTripleType.Factory.newInstance();
         ctlvtt.addNewTime().setStringValue(getTimeString(timeLocationValueTriple.getTime()));
         ctlvtt.addNewLocation().addNewPoint().set(encodeGML(timeLocationValueTriple.getLocation()));
         if (timeLocationValueTriple.getValue() instanceof CategoryValue) {
             CategoryValue categoryValue = (CategoryValue) timeLocationValueTriple.getValue();
             if (categoryValue.isSetValue()) {
-                    ctlvtt.addNewValue().addNewCategory().set(encodeSweCommon(convertToSweCategory(categoryValue)));
-                } else {
-                    ctlvtt.addNewValue().setNil();
-                    ctlvtt.addNewMetadata().addNewTVPMetadata().addNewNilReason().setNilReason("missing");
-                }
+                ctlvtt.addNewValue().addNewCategory().set(encodeSweCommon(convertToSweCategory(categoryValue)));
+            } else {
+                ctlvtt.addNewValue().setNil();
+                ctlvtt.addNewMetadata().addNewTVPMetadata().addNewNilReason().setNilReason("missing");
+            }
         }
-        
+
         return ctlvtt;
     }
-    
-    private Object convertToSweCategory(CategoryValue categoryValue) {
+
+    /**
+     * Convert {@link CategoryValue} to {@link SweCategory}
+     * 
+     * @param categoryValue
+     *            The {@link CategoryValue} to convert
+     * @return Converted {@link CategoryValue}
+     */
+    private SweCategory convertToSweCategory(CategoryValue categoryValue) {
         SweCategory sweCategory = new SweCategory();
         sweCategory.setValue(categoryValue.getValue());
         sweCategory.setCodeSpace(categoryValue.getUnit());
@@ -168,12 +220,13 @@ public abstract class AbstractTimeLocationValueTripleTypeEncoder<T> extends Abst
     protected static XmlObject encodeGML(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
-    
+
     protected static XmlObject encodeSweCommon(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected static XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
+    protected static XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues)
+            throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
 }

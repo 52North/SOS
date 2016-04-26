@@ -58,10 +58,19 @@ public class TrajectoryObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = 5660393848737321598L;
 
+    /**
+     * constructor
+     */
     public TrajectoryObservation() {
         super();
     }
-    
+
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to convert
+     */
     public TrajectoryObservation(OmObservation observation) {
         super(observation);
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION);
@@ -86,7 +95,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
         }
         return cloneTemplate(new TrajectoryObservation());
     }
-    
+
     @SuppressWarnings("rawtypes")
     @Override
     public void setValue(ObservationValue<?> value) {
@@ -97,18 +106,21 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             if (isSetSpatialFilteringProfileParameter()) {
                 geometry = getSpatialFilteringProfileParameter().getValue().getValue();
             } else {
-                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                    geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature
+                        && ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    geometry = ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
                 }
             }
-            TLVTValue tlvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>)value, geometry);
+            TLVTValue tlvpValue = convertSingleValueToMultiValue((SingleObservationValue<?>) value, geometry);
             if (!tlvpValue.isSetUnit() && ((AbstractObservationValue<?>) value).isSetUnit()) {
                 tlvpValue.setUnit(((AbstractObservationValue<?>) value).getUnit());
             }
-            final MultiObservationValues<List<TimeLocationValueTriple>> multiValue = new MultiObservationValues<List<TimeLocationValueTriple>>();
+            final MultiObservationValues<List<TimeLocationValueTriple>> multiValue =
+                    new MultiObservationValues<List<TimeLocationValueTriple>>();
             multiValue.setValue(tlvpValue);
             if (!multiValue.isSetObservationID()) {
-                if (value instanceof AbstractObservationValue && ((AbstractObservationValue) value).isSetObservationID()) {
+                if (value instanceof AbstractObservationValue
+                        && ((AbstractObservationValue) value).isSetObservationID()) {
                     multiValue.setObservationID(((AbstractObservationValue) value).getObservationID());
                 } else if (isSetObservationID()) {
                     multiValue.setObservationID(getObservationID());
@@ -117,7 +129,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             super.setValue(multiValue);
         }
     }
-    
+
     @Override
     public void mergeWithObservation(OmObservation observation) {
         if (observation instanceof TrajectoryObservation) {
@@ -126,31 +138,40 @@ public class TrajectoryObservation extends AbstractInspireObservation {
             super.mergeWithObservation(observation);
         }
     }
-    
+
     @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof TLVTValue) {
-            TLVTValue tlvtValue = (TLVTValue)observationValue.getValue();
+            TLVTValue tlvtValue = (TLVTValue) observationValue.getValue();
             List<TimeLocationValueTriple> valuesToMerge = tlvtValue.getValue();
-//            List<TimeLocationValueTriple> valuesToMerge = (List<TimeLocationValueTriple>)((TLVTValue)observationValue.getValue()).getValue();
-            ((TLVTValue)getValue().getValue()).addValues(valuesToMerge);
+            // List<TimeLocationValueTriple> valuesToMerge =
+            // (List<TimeLocationValueTriple>)((TLVTValue)observationValue.getValue()).getValue();
+            ((TLVTValue) getValue().getValue()).addValues(valuesToMerge);
             checkForFeature(valuesToMerge);
         } else {
             super.mergeValues(observationValue);
         }
     }
-    
-    private void checkForFeature(List<TimeLocationValueTriple> valuesToMerge) {
+
+    /**
+     * Create geometry for featureOfInterest from
+     * {@link TimeLocationValueTriple}s
+     * 
+     * @param values
+     *            The {@link TimeLocationValueTriple}s to check for
+     *            featureOfInterest
+     */
+    private void checkForFeature(List<TimeLocationValueTriple> values) {
         AbstractFeature featureOfInterest = getObservationConstellation().getFeatureOfInterest();
         if (featureOfInterest instanceof SamplingFeature) {
-            SamplingFeature sf = (SamplingFeature)featureOfInterest;
-            Coordinate[] coords = getCoordinates(valuesToMerge);
+            SamplingFeature sf = (SamplingFeature) featureOfInterest;
+            Coordinate[] coords = getCoordinates(values);
             int srid = 0;
             if (sf.isSetGeometry()) {
                 srid = sf.getGeometry().getSRID();
-                coords = (Coordinate[])ArrayUtils.addAll(sf.getGeometry().getCoordinates(), coords);
+                coords = (Coordinate[]) ArrayUtils.addAll(sf.getGeometry().getCoordinates(), coords);
             } else {
-                TimeLocationValueTriple next = valuesToMerge.iterator().next();
+                TimeLocationValueTriple next = values.iterator().next();
                 if (next.isSetLocation()) {
                     srid = next.getLocation().getSRID();
                 }
@@ -160,7 +181,7 @@ public class TrajectoryObservation extends AbstractInspireObservation {
                     Point point = new GeometryFactory().createPoint(coords[0]);
                     point.setSRID(srid);
                     sf.setGeometry(point);
-                } else if (coords.length > 1){
+                } else if (coords.length > 1) {
                     LineString lineString = new GeometryFactory().createLineString(coords);
                     lineString.setSRID(srid);
                     sf.setGeometry(lineString);
@@ -171,10 +192,18 @@ public class TrajectoryObservation extends AbstractInspireObservation {
         }
     }
 
-    private Coordinate[] getCoordinates(List<TimeLocationValueTriple> valuesToMerge) {
+    /**
+     * Get {@link Coordinate}s from the {@link TimeLocationValueTriple}s
+     * 
+     * @param values
+     *            The {@link TimeLocationValueTriple}s to get {@link Coordinate}
+     *            s from
+     * @return The coordinates
+     */
+    private Coordinate[] getCoordinates(List<TimeLocationValueTriple> values) {
         List<Coordinate> coords = Lists.newArrayList();
-        for (TimeLocationValueTriple timeLocationValueTriple : valuesToMerge) {
-            if (timeLocationValueTriple.isSetLocation()){
+        for (TimeLocationValueTriple timeLocationValueTriple : values) {
+            if (timeLocationValueTriple.isSetLocation()) {
                 coords.add(timeLocationValueTriple.getLocation().getCoordinate());
             }
         }
@@ -191,7 +220,8 @@ public class TrajectoryObservation extends AbstractInspireObservation {
     private TLVTValue convertSingleValueToMultiValue(final SingleObservationValue<?> singleValue, Geometry geom) {
         final TLVTValue tlvpValue = new TLVTValue();
         tlvpValue.setUnit(singleValue.getValue().getUnit());
-        final TimeLocationValueTriple timeLocationValueTriple = new TimeLocationValueTriple(singleValue.getPhenomenonTime(), singleValue.getValue(), geom);
+        final TimeLocationValueTriple timeLocationValueTriple =
+                new TimeLocationValueTriple(singleValue.getPhenomenonTime(), singleValue.getValue(), geom);
         tlvpValue.addValue(timeLocationValueTriple);
         return tlvpValue;
     }

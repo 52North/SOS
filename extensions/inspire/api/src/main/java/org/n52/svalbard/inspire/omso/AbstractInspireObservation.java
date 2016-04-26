@@ -34,34 +34,76 @@ import org.n52.sos.ogc.om.values.GeometryValue;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+/**
+ * Abstract class for INSPIRE OM Specialised Observations
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractInspireObservation extends OmObservation {
-    
+
     private static final long serialVersionUID = 3681367197554559966L;
 
+    /**
+     * constructor
+     */
     public AbstractInspireObservation() {
     }
 
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to convert
+     */
     public AbstractInspireObservation(OmObservation observation) {
         this();
         observation.copyTo(this);
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            SamplingFeature sf = (SamplingFeature)getObservationConstellation().getFeatureOfInterest();
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+            SamplingFeature sf = (SamplingFeature) getObservationConstellation().getFeatureOfInterest();
             sf.setEncode(true);
         }
     }
-    
+
+    /**
+     * Check if the {@link OmObservation} has a featureOfInterest with geometry
+     * value
+     * 
+     * @param observation
+     *            {@link OmObservation} to check
+     * @return <code>true</code>, if the {@link OmObservation} has a
+     *         featureOfInterest with geometry value
+     */
     protected boolean checkForFeatureGeometry(OmObservation observation) {
         if (observation.getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-            return ((SamplingFeature)observation.getObservationConstellation().getFeatureOfInterest()).isSetGeometry();
+            return ((SamplingFeature) observation.getObservationConstellation().getFeatureOfInterest())
+                    .isSetGeometry();
         }
         return false;
     }
 
+    /**
+     * Get the geometry value from the featureOfInterest of the
+     * {@link OmObservation}
+     * 
+     * @param observation
+     *            The {@link OmObservation} to get the geometry from
+     * @return The geometry
+     */
     protected Geometry getGeometryFromFeature(OmObservation observation) {
-        return ((SamplingFeature)observation.getObservationConstellation().getFeatureOfInterest()).getGeometry();
+        return ((SamplingFeature) observation.getObservationConstellation().getFeatureOfInterest()).getGeometry();
     }
-    
+
+    /**
+     * Get the geometry value from the samplingGeometry (om:parameter) of the
+     * {@link OmObservation}
+     * 
+     * @param observation
+     *            The {@link OmObservation} to get the geometry from
+     * @return The geometry
+     */
     protected Geometry getGeometryFromSamplingGeometry(OmObservation observation) {
-        return ((GeometryValue)getSpatialFilteringProfileParameter().getValue()).getValue();
+        return ((GeometryValue) getSpatialFilteringProfileParameter().getValue()).getValue();
     }
 }

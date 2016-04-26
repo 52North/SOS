@@ -51,14 +51,29 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since
+ *
+ */
 public class MultiPointObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = -2792198498699052095L;
 
+    /**
+     * consturctor
+     */
     public MultiPointObservation() {
         super();
     }
-    
+
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to convert
+     * @throws CodedException
+     */
     public MultiPointObservation(OmObservation observation) throws CodedException {
         super(observation);
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION);
@@ -67,22 +82,22 @@ public class MultiPointObservation extends AbstractInspireObservation {
             samplingFeature.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_SURFACE);
             samplingFeature.setEncode(true);
             try {
-                samplingFeature.setGeometry(getEnvelope(((MultiPointCoverage)getValue().getValue()).getValue()));
+                samplingFeature.setGeometry(getEnvelope(((MultiPointCoverage) getValue().getValue()).getValue()));
             } catch (InvalidSridException e) {
                 throw new NoApplicableCodeException().causedBy(e);
             }
             getObservationConstellation().setFeatureOfInterest(samplingFeature);
         }
     }
-    
+
     @Override
     public OmObservation cloneTemplate() {
-        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature){
-            ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setEncode(true);
+        if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+            ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).setEncode(true);
         }
         return cloneTemplate(new MultiPointObservation());
     }
-    
+
     @Override
     public void setValue(ObservationValue<?> value) {
         if (value.getValue() instanceof MultiPointCoverage) {
@@ -94,16 +109,17 @@ public class MultiPointObservation extends AbstractInspireObservation {
             super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), multiPointCoverage));
         }
     }
-    
+
     @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
         if (observationValue.getValue() instanceof MultiPointCoverage) {
-            List<PointValuePair> valuesToMerge = ((MultiPointCoverage)observationValue.getValue()).getValue();
-            ((MultiPointCoverage)getValue().getValue()).addValues(valuesToMerge);
+            List<PointValuePair> valuesToMerge = ((MultiPointCoverage) observationValue.getValue()).getValue();
+            ((MultiPointCoverage) getValue().getValue()).addValues(valuesToMerge);
             if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
-                if (((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                if (((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
                     try {
-                        ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).setGeometry(getEnvelope(((MultiPointCoverage)getValue().getValue()).getValue()));
+                        ((SamplingFeature) getObservationConstellation().getFeatureOfInterest())
+                                .setGeometry(getEnvelope(((MultiPointCoverage) getValue().getValue()).getValue()));
                     } catch (InvalidSridException e) {
                         // TODO
                     }
@@ -114,6 +130,11 @@ public class MultiPointObservation extends AbstractInspireObservation {
         }
     }
 
+    /**
+     * Get the point from samplingGeometry or featureOfInterest
+     * 
+     * @return The {@link Point}
+     */
     private Point getPoint() {
         Point point = null;
         if (isSetSpatialFilteringProfileParameter()) {
@@ -121,8 +142,10 @@ public class MultiPointObservation extends AbstractInspireObservation {
             point = geometry.getInteriorPoint();
             point.setSRID(geometry.getSRID());
         } else {
-            if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+            if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature
+                    && ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                Geometry geometry =
+                        ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
                 point = geometry.getInteriorPoint();
                 point.setSRID(geometry.getSRID());
             }
@@ -130,6 +153,13 @@ public class MultiPointObservation extends AbstractInspireObservation {
         return point;
     }
 
+    /**
+     * Get the envelope from {@link PointValuePair}s {@link List}
+     * 
+     * @param pointValuePairs
+     *            The {@link PointValuePair}s to get the envelope from
+     * @return The envelope of the {@link PointValuePair}s
+     */
     private Geometry getEnvelope(List<PointValuePair> pointValuePairs) {
         Envelope envelope = new Envelope();
         GeometryFactory factory = null;
@@ -155,8 +185,10 @@ public class MultiPointObservation extends AbstractInspireObservation {
                 }
                 envelope.expandToInclude(geometry.getEnvelopeInternal());
             } else {
-                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature && ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
-                    Geometry geometry = ((SamplingFeature)getObservationConstellation().getFeatureOfInterest()).getGeometry();
+                if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature
+                        && ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                    Geometry geometry =
+                            ((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).getGeometry();
                     if (factory == null && geometry != null) {
                         factory = geometry.getFactory();
                     }

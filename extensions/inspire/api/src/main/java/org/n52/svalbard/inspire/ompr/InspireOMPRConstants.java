@@ -31,19 +31,26 @@ package org.n52.svalbard.inspire.ompr;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 
+/**
+ * INSPIRE OM Process constants
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public interface InspireOMPRConstants {
-    
+
     String NS_OMPR_30 = "http://inspire.ec.europa.eu/schemas/ompr/3.0";
-    
+
     String NS_OMPR_PREFIX = "ompr";
-    
+
     String SCHEMA_LOCATION_URL_OMPR = "http://inspire.ec.europa.eu/schemas/ompr/3.0/Process.xsd";
-    
+
     SchemaLocation OMPR_SCHEMA_LOCATION = new SchemaLocation(NS_OMPR_30, SCHEMA_LOCATION_URL_OMPR);
-    
+
     String OMPR_30_OUTPUT_FORMAT_URL = NS_OMPR_30;
 
     MediaType OMPR_30_CONTENT_TYPE = new MediaType("text", "xml", "subtype", "ompr/3.0");
-    
+
     String OMPR_30_OUTPUT_FORMAT_MIME_TYPE = OMPR_30_CONTENT_TYPE.toString();
 }

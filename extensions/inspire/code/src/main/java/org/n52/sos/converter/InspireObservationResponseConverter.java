@@ -62,7 +62,6 @@ import org.n52.svalbard.inspire.omso.PointObservation;
 import org.n52.svalbard.inspire.omso.PointTimeSeriesObservation;
 import org.n52.svalbard.inspire.omso.ProfileObservation;
 import org.n52.svalbard.inspire.omso.TrajectoryObservation;
-import org.oasisOpen.docs.wsrf.rp2.ResourcePropertyChangeFailureType.RequestedValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +69,14 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import net.opengis.sos.x20.GetObservationByIdResponseType.Observation;
-
+/**
+ * Implementation if {@link RequestResponseModifier} to convert default
+ * observations into INSPIRE OM Specialised Observations.
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class InspireObservationResponseConverter
         implements RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 

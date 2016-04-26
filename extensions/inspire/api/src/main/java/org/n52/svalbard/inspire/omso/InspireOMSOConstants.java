@@ -28,28 +28,35 @@
  */
 package org.n52.svalbard.inspire.omso;
 
-
 import org.n52.sos.w3c.SchemaLocation;
 
+/**
+ * INSPIRES OM Specialised Observation constants
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public interface InspireOMSOConstants {
-    
+
     String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";
-    
+
     String NS_OMSO_PREFIX = "omso";
-    
+
     String SCHEMA_LOCATION_URL_OMSO = "http://inspire.ec.europa.eu/schemas/omso/3.0/SpecialisedObservations.xsd";
-    
+
     SchemaLocation OMSO_SCHEMA_LOCATION = new SchemaLocation(NS_OMSO_30, SCHEMA_LOCATION_URL_OMSO);
-    
+
     // observation types
     String OBS_TYPE_POINT_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/PointObservation";
-    
-    String OBS_TYPE_POINT_TIME_SERIES_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation";
-    
+
+    String OBS_TYPE_POINT_TIME_SERIES_OBSERVATION =
+            "http://inspire.ec.europa.eu/featureconcept/PointTimeSeriesObservation";
+
     String OBS_TYPE_MULTI_POINT_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/MultiPointObservation";
-    
+
     String OBS_TYPE_PROFILE_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/ProfileObservation";
-    
+
     String OBS_TYPE_TRAJECTORY_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/TrajectoryObservation";
 
 }

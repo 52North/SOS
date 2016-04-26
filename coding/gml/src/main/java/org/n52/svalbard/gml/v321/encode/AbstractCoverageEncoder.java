@@ -31,6 +31,7 @@ package org.n52.svalbard.gml.v321.encode;
 import java.util.List;
 
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
@@ -50,14 +51,45 @@ import net.opengis.gml.x32.MeasureOrNilReasonListType;
 import net.opengis.gml.x32.QuantityListDocument;
 import net.opengis.gml.x32.RangeSetType;
 
+/**
+ * Abstract {@link Encoder} implementation for {@link DiscreteCoverage}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ * @param <S>
+ */
 public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlEncoder<T, S> {
-    
-    protected RangeSetType encodeRangeSet(DiscreteCoverageType dct, DiscreteCoverage<?> discreteCoverage) throws OwsExceptionReport {
+
+    /**
+     * Encode range set of {@link DiscreteCoverageType} from
+     * {@link DiscreteCoverage}
+     * 
+     * @param dct
+     *            {@link DiscreteCoverageType} to encode range se for
+     * @param discreteCoverage
+     *            The {@link DiscreteCoverage} with the range set
+     * @return {@link DiscreteCoverageType} with range set
+     * @throws OwsExceptionReport
+     */
+    protected RangeSetType encodeRangeSet(DiscreteCoverageType dct, DiscreteCoverage<?> discreteCoverage)
+            throws OwsExceptionReport {
         RangeSetType rst = dct.addNewRangeSet();
         encodeValueList(rst, discreteCoverage);
         return dct.getRangeSet();
     }
 
+    /**
+     * Encode value list of {@link RangeSetType} from {@link DiscreteCoverage}
+     * 
+     * @param rst
+     *            The {@link RangeSetType} to encode value list for
+     * @param discreteCoverage
+     *            The {@link DiscreteCoverage} with the value list
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
     protected void encodeValueList(RangeSetType rst, DiscreteCoverage<?> discreteCoverage) throws OwsExceptionReport {
         List<?> list = getList(discreteCoverage);
         Value<?> value = discreteCoverage.getRangeSet().iterator().next();
@@ -66,7 +98,7 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
             bld.setBooleanList(list);
             rst.set(bld);
         } else if (value instanceof CategoryValue) {
-            CategoryListDocument cld  = CategoryListDocument.Factory.newInstance();
+            CategoryListDocument cld = CategoryListDocument.Factory.newInstance();
             CodeOrNilReasonListType conrlt = cld.addNewCategoryList();
             if (discreteCoverage.isSetUnit()) {
                 conrlt.setCodeSpace(discreteCoverage.getUnit());
@@ -94,7 +126,6 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
         }
     }
 
-
     private List<?> getList(DiscreteCoverage<?> discreteCoverage) {
         List list = Lists.newArrayList();
         for (Object value : discreteCoverage.getRangeSet()) {
@@ -104,5 +135,5 @@ public abstract class AbstractCoverageEncoder<T, S> extends AbstractSpecificXmlE
         }
         return list;
     }
-    
+
 }

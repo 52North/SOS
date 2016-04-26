@@ -34,16 +34,25 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
+import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 
 public class ProfileObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = -4114937024428256032L;
 
+    /**
+     * constructor
+     */
     public ProfileObservation() {
         super();
     }
     
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to convert
+     */
     public ProfileObservation(OmObservation observation) {
         super(observation);
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION);
@@ -61,7 +70,7 @@ public class ProfileObservation extends AbstractInspireObservation {
     public void setValue(ObservationValue<?> value) {
         if (value instanceof StreamingValue<?>) {
             super.setValue(value);
-        } else if (value.getValue() instanceof RectifiedGridCoverage || value.getValue() instanceof ReverencableGridCoverage) {
+        } else if (value.getValue() instanceof RectifiedGridCoverage || value.getValue() instanceof ReferencableGridCoverage) {
             super.setValue(value);
         } else {
             double heightDepth = 0;

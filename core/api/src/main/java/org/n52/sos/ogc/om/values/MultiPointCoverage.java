@@ -48,10 +48,19 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>>  {
+/**
+ * Class that represents a multi point coverage
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
+public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>> {
 
     private static final long serialVersionUID = -2848924351209857414L;
+
     private String gmlId;
+
     /**
      * Mesurement values
      */
@@ -71,19 +80,18 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
         this.gmlId = gmlId;
     }
 
-
     public String getGmlId() {
         return gmlId;
     }
-    
+
     @Override
     public List<PointValuePair> getValue() {
         Collections.sort(value);
         return value;
     }
-    
+
     public PointValueLists getPointValue() {
-       return new PointValueLists(getValue());
+        return new PointValueLists(getValue());
     }
 
     @Override
@@ -132,6 +140,11 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
         return StringHelper.isNotEmpty(getUnit());
     }
 
+    /**
+     * Get the extent of all {@link Point}s
+     * 
+     * @return The extent as {@link Polygon}
+     */
     public Polygon getExtent() {
         if (isSetValue()) {
             int srid = -1;
@@ -141,7 +154,7 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
                 coordinates.add(point.getCoordinate());
                 if (point.getSRID() != srid) {
                     srid = point.getSRID();
-                 }
+                }
             }
             GeometryFactory geometryFactory;
             if (srid > 0) {
@@ -159,7 +172,6 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
         return getPointValue().getValues();
     }
 
-
     @Override
     public <X> X accept(ValueVisitor<X> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
@@ -170,12 +182,19 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
         visitor.visit(this);
     }
 
+    /**
+     * Element that holds {@link Point}s and {@link Value}s
+     * 
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
     public class PointValueLists {
-        
+
         private List<Point> points;
-        
+
         private List<Value<?>> values;
-        
+
         public PointValueLists(List<PointValuePair> pointValuePairs) {
             points = Lists.newArrayListWithCapacity(pointValuePairs.size());
             values = Lists.newArrayListWithCapacity(pointValuePairs.size());
@@ -183,10 +202,10 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
         }
 
         private void fillListsWithValues(List<PointValuePair> pointValuePairs) {
-           for (PointValuePair pointValuePair : pointValuePairs) {
-               points.add(pointValuePair.getPoint());
-               values.add(pointValuePair.getValue());
-           }
+            for (PointValuePair pointValuePair : pointValuePairs) {
+                points.add(pointValuePair.getPoint());
+                values.add(pointValuePair.getValue());
+            }
         }
 
         /**
@@ -202,7 +221,7 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
         public List<Value<?>> getValues() {
             return values;
         }
-    
+
     }
 
 }

@@ -38,15 +38,27 @@ import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
 
+/**
+ * Class that represents a CV_DiscretePointCoverage
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class CvDiscretePointCoverage implements Value<PointValuePair> {
 
     private static final long serialVersionUID = 7475586076168740072L;
+
     private String gmlId;
+
     private String domainExtent;
+
     private ReferenceType rangeType;
+
     private PointValuePair value;
+
     private String unit;
-    
+
     public CvDiscretePointCoverage(String gmlId) {
         if (Strings.isNullOrEmpty(gmlId)) {
             gmlId = JavaHelper.generateID(toString());
@@ -55,7 +67,6 @@ public class CvDiscretePointCoverage implements Value<PointValuePair> {
         }
         this.gmlId = gmlId;
     }
-
 
     public String getGmlId() {
         return gmlId;
@@ -69,12 +80,13 @@ public class CvDiscretePointCoverage implements Value<PointValuePair> {
     }
 
     /**
-     * @param domainExtent the domainExtent to set
+     * @param domainExtent
+     *            the domainExtent to set
      */
     public void setDomainExtent(String domainExtent) {
         this.domainExtent = domainExtent;
     }
-    
+
     public boolean isSetDomainExtent() {
         return !Strings.isNullOrEmpty(domainExtent);
     }
@@ -87,7 +99,8 @@ public class CvDiscretePointCoverage implements Value<PointValuePair> {
     }
 
     /**
-     * @param rangeType the rangeType to set
+     * @param rangeType
+     *            the rangeType to set
      */
     public void setRangeType(ReferenceType rangeType) {
         this.rangeType = rangeType;

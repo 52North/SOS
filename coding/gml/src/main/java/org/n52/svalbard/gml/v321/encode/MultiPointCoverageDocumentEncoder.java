@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.encode.ClassToClassEncoderKey;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -46,17 +47,26 @@ import com.google.common.collect.Sets;
 
 import net.opengis.gml.x32.MultiPointCoverageDocument;
 
-public class MultiPointCoverageDocumentEncoder extends AbstractMultiPointCoverageTypeEncoder<MultiPointCoverageDocument> {
+/**
+ * {@link Encoder} implementation for {@link MultiPointCoverage} to
+ * {@link MultiPointCoverageDocument}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
+public class MultiPointCoverageDocumentEncoder
+        extends AbstractMultiPointCoverageTypeEncoder<MultiPointCoverageDocument> {
 
-    protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-            new ClassToClassEncoderKey(MultiPointCoverageDocument.class, MultiPointCoverage.class),
-            new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, MultiPointCoverage.class));
+    protected static final Set<EncoderKey> ENCODER_KEYS =
+            Sets.newHashSet(new ClassToClassEncoderKey(MultiPointCoverageDocument.class, MultiPointCoverage.class),
+                    new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, MultiPointCoverage.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
-    
+
     @Override
     public MultiPointCoverageDocument encode(MultiPointCoverage multiPointCoverage)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
@@ -66,8 +76,8 @@ public class MultiPointCoverageDocumentEncoder extends AbstractMultiPointCoverag
     @Override
     public MultiPointCoverageDocument encode(MultiPointCoverage multiPointCoverage,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport, UnsupportedEncoderInputException {
-         MultiPointCoverageDocument mpcd = MultiPointCoverageDocument.Factory.newInstance();
-         mpcd.setMultiPointCoverage(encodeMultiPointCoverageType(mpcd.addNewMultiPointCoverage(), multiPointCoverage));
+        MultiPointCoverageDocument mpcd = MultiPointCoverageDocument.Factory.newInstance();
+        mpcd.setMultiPointCoverage(encodeMultiPointCoverageType(mpcd.addNewMultiPointCoverage(), multiPointCoverage));
         return mpcd;
     }
 

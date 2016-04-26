@@ -44,7 +44,7 @@ import org.n52.sos.ogc.gmlcov.GmlCoverageConstants;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
-import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
+import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
@@ -56,6 +56,14 @@ import com.google.common.collect.Sets;
 import eu.europa.ec.inspire.schemas.omso.x30.ProfileObservationType;
 import net.opengis.om.x20.OMObservationType;
 
+/**
+ * {@link Encoder} implementation for {@link ProfileObservation} to
+ * {@link ProfileObservationType}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
@@ -65,7 +73,7 @@ public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
     public Set<EncoderKey> getEncoderKeyType() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
     }
-    
+
     @Override
     public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
         return Collections.singletonMap(InspireOMSOConstants.NS_OMSO_30,
@@ -86,11 +94,11 @@ public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
             if (encoder != null) {
                 return (XmlObject) encoder.encode((RectifiedGridCoverage) observationValue.getValue());
             }
-        } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
-            Encoder<?, ReverencableGridCoverage> encoder = (Encoder<?, ReverencableGridCoverage>) getEncoder(
-                    new XmlPropertyTypeEncoderKey(GmlCoverageConstants.NS_GML_COV, ReverencableGridCoverage.class));
+        } else if (observationValue.getValue() instanceof ReferencableGridCoverage) {
+            Encoder<?, ReferencableGridCoverage> encoder = (Encoder<?, ReferencableGridCoverage>) getEncoder(
+                    new XmlPropertyTypeEncoderKey(GmlCoverageConstants.NS_GML_COV, ReferencableGridCoverage.class));
             if (encoder != null) {
-                return (XmlObject) encoder.encode((ReverencableGridCoverage) observationValue.getValue());
+                return (XmlObject) encoder.encode((ReferencableGridCoverage) observationValue.getValue());
             }
         }
         return null;
@@ -111,18 +119,7 @@ public class ProfileObservationTypeEncoder extends AbstractOmInspireEncoder {
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
-        // if (objectToEncode instanceof OmObservation) {
-        // try {
-        // new OmV20XmlStreamWriter().write((OmObservation)objectToEncode,
-        // outputStream, encodingValues);
-        // } catch (XMLStreamException xmlse) {
-        // throw new
-        // NoApplicableCodeException().causedBy(xmlse).withMessage("Error while
-        // writing element to stream!");
-        // }
-        // } else {
         super.encode(objectToEncode, outputStream, encodingValues);
-        // }
     }
 
     protected OMObservationType createOmObservationType() {

@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -51,6 +52,14 @@ import com.google.common.collect.Sets;
 import eu.europa.ec.inspire.schemas.omso.x30.PointTimeSeriesObservationType;
 import net.opengis.om.x20.OMObservationType;
 
+/**
+ * {@link Encoder} implementation for {@link PointTimeSeriesObservation} to
+ * {@link PointTimeSeriesObservationType}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEncoder {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
@@ -92,18 +101,7 @@ public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEnco
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
-        // if (objectToEncode instanceof OmObservation) {
-        // try {
-        // new OmV20XmlStreamWriter().write((OmObservation)objectToEncode,
-        // outputStream, encodingValues);
-        // } catch (XMLStreamException xmlse) {
-        // throw new
-        // NoApplicableCodeException().causedBy(xmlse).withMessage("Error while
-        // writing element to stream!");
-        // }
-        // } else {
         super.encode(objectToEncode, outputStream, encodingValues);
-        // }
     }
 
     protected OMObservationType createOmObservationType() {

@@ -28,6 +28,13 @@
  */
 package org.n52.sos.ogc.om.values;
 
-public class ReverencableGridCoverage {
+/**
+ * Class that represents a referencable grid coverage
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
+public class ReferencableGridCoverage {
 
 }

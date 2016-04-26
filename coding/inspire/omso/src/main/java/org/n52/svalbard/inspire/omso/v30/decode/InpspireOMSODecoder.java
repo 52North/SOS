@@ -44,15 +44,22 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+/**
+ * Encoder for INSPIRE OM Specialised Observations
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class InpspireOMSODecoder extends AbstractOmDecoderv20 {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(InpspireOMSODecoder.class);
-    
+
     private static final Set<DecoderKey> DECODER_KEYS = Sets.newHashSet();
 
-    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES
-            = ImmutableMap.of(SupportedTypeKey.ObservationType, (Set<String>) ImmutableSet
-                    .of(InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
+    private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES =
+            ImmutableMap.of(SupportedTypeKey.ObservationType,
+                    (Set<String>) ImmutableSet.of(InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
                             InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
                             InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
                             InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
@@ -61,8 +68,8 @@ public class InpspireOMSODecoder extends AbstractOmDecoderv20 {
     private static final Set<String> CONFORMANCE_CLASSES = Sets.newHashSet();
 
     public InpspireOMSODecoder() {
-        LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(DECODER_KEYS));
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(DECODER_KEYS));
     }
 
     @Override

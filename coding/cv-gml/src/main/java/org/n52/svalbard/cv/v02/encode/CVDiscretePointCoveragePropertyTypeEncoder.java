@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.encode.ClassToClassEncoderKey;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -41,12 +42,17 @@ import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
 import net.opengis.cv.x02.gml32.CVDiscretePointCoveragePropertyType;
 
+/**
+ * {@link Encoder} for {@link CvDiscretePointCoverage} to encode to {@link CVDiscretePointCoveragePropertyType}
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class CVDiscretePointCoveragePropertyTypeEncoder extends AbstractCVDiscretePointCoverageTypeEncoder<CVDiscretePointCoveragePropertyType> {
     
     protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(

@@ -33,33 +33,42 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
+import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.CollectionHelper;
 
 import net.opengis.gmlcov.x10.AbstractDiscreteCoverageType;
 import net.opengis.gmlcov.x10.ReferenceableGridCoverageDocument;
 
-public class ReverencableGridCoverageDocumentEncoder extends AbstractReverencableGridCoverageType<ReferenceableGridCoverageDocument> {
-    
+/**
+ * {@link Encoder} implementation to encode {@link ReferencableGridCoverage} to
+ * {@link ReferenceableGridCoverageDocument}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
+public class ReverencableGridCoverageDocumentEncoder
+        extends AbstractReverencableGridCoverageType<ReferenceableGridCoverageDocument> {
+
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
         // TODO Auto-generated method stub
         return Collections.emptySet();
     }
-    
+
     @Override
-    public ReferenceableGridCoverageDocument encode(ReverencableGridCoverage objectToEncode)
+    public ReferenceableGridCoverageDocument encode(ReferencableGridCoverage objectToEncode)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public ReferenceableGridCoverageDocument encode(ReverencableGridCoverage objectToEncode,
+    public ReferenceableGridCoverageDocument encode(ReferencableGridCoverage objectToEncode,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport, UnsupportedEncoderInputException {
         // TODO Auto-generated method stub
         return null;

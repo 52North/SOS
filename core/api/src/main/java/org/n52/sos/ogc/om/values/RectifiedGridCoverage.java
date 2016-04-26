@@ -42,11 +42,21 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+/**
+ * Class that represents a rectified grid coverage
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double, Value<?>>> {
-    
+
     private static final long serialVersionUID = 5209844268871191549L;
+
     private String gmlId;
+
     private SortedMap<Double, Value<?>> value = Maps.newTreeMap();
+
     private String unit;
 
     public RectifiedGridCoverage(String gmlId) {
@@ -57,21 +67,21 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
         }
         this.gmlId = gmlId;
     }
-    
+
     public String getGmlId() {
         return gmlId;
     }
-    
+
     @Override
     public void setValue(SortedMap<Double, Value<?>> value) {
-      this.value.clear();
-      addValue(value);
+        this.value.clear();
+        addValue(value);
     }
-    
+
     public void addValue(Double key, Value<?> value) {
         this.value.put(key, value);
     }
-    
+
     public void addValue(SortedMap<Double, Value<?>> value) {
         this.value.putAll(value);
     }
@@ -111,6 +121,11 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
         visitor.visit(this);
     }
 
+    /**
+     * Get the domainSet
+     * 
+     * @return The domainSet as {@link Double} {@link List}
+     */
     public List<Double> getDomainSet() {
         return Lists.newArrayList(getValue().keySet());
     }

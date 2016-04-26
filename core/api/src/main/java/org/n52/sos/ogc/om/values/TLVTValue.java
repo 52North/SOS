@@ -42,9 +42,9 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
 /**
- * Multi value representing a time location value tiple for observations
+ * {@link MultiValue} representing a time location value triple for observations
  *
- * @since 4.0.0
+ * @since 4.4.0
  *
  */
 public class TLVTValue implements MultiValue<List<TimeLocationValueTriple>> {

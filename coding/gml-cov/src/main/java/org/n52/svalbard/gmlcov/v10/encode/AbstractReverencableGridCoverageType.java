@@ -31,12 +31,21 @@ package org.n52.svalbard.gmlcov.v10.encode;
 import java.util.Map;
 
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.ogc.gmlcov.GmlCoverageConstants;
-import org.n52.sos.ogc.om.values.ReverencableGridCoverage;
+import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
 
-public abstract class AbstractReverencableGridCoverageType<T> extends AbstractSpecificXmlEncoder<T, ReverencableGridCoverage> {
+/**
+ * Abstract {@link Encoder} for {@link ReferencableGridCoverage}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ */
+public abstract class AbstractReverencableGridCoverageType<T>
+        extends AbstractSpecificXmlEncoder<T, ReferencableGridCoverage> {
 
-    
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         super.addNamespacePrefixToMap(nameSpacePrefixMap);

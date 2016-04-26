@@ -48,10 +48,19 @@ public class PointObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = 2388069533262527383L;
 
+    /**
+     * constructor
+     */
     public PointObservation() {
         super();
     }
     
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to convert
+     */
     public PointObservation(OmObservation observation) {
         super(observation);
         getObservationConstellation().setObservationType(InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION);

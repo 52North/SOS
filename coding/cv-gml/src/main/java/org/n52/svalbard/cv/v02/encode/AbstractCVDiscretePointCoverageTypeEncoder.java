@@ -35,9 +35,9 @@ import java.util.Map;
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.cv.CvConstants;
 import org.n52.sos.ogc.gml.GmlConstants;
@@ -68,7 +68,6 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Point;
@@ -79,9 +78,29 @@ import net.opengis.cv.x02.gml32.CVPointValuePairType;
 import net.opengis.gml.x32.PointPropertyType;
 import net.opengis.gml.x32.PointType;
 
+/**
+ * Abstract {@link Encoder} class for CV_DiscretePointCoverage
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ */
 public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         extends AbstractSpecificXmlEncoder<T, CvDiscretePointCoverage> {
 
+    /**
+     * Encode {@link CvDiscretePointCoverage} to
+     * {@link CVDiscretePointCoverageType}
+     * 
+     * @param cvDiscretePointCoverage
+     *            The {@link CvDiscretePointCoverage} to encode
+     * @return The encoded {@link CvDiscretePointCoverage}
+     * @throws UnsupportedEncoderInputException
+     *             If an element can not be encoded
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
     protected CVDiscretePointCoverageType encodeCVDiscretePointCoverage(
             CvDiscretePointCoverage cvDiscretePointCoverage)
                     throws UnsupportedEncoderInputException, OwsExceptionReport {
@@ -94,6 +113,17 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         return cvdpct;
     }
 
+    /**
+     * Encode {@link PointValuePair} to {@link CVPointValuePairType}
+     * 
+     * @param value
+     *            The {@link PointValuePair} to encode
+     * @return The encoded {@link PointValuePair}
+     * @throws UnsupportedEncoderInputException
+     *             If an element can not be encoded
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
     private CVPointValuePairType encodePointValuePair(PointValuePair value)
             throws UnsupportedEncoderInputException, OwsExceptionReport {
         CVPointValuePairType cvpvpt = CVPointValuePairType.Factory.newInstance(getXmlOptions());
@@ -102,27 +132,47 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         return cvpvpt;
     }
 
-    private PointPropertyType encodeGeometry(Point point, String gmlId) throws UnsupportedEncoderInputException, OwsExceptionReport {
-        // Encoder<PointPropertyType, Point> encoder =
-        // (Encoder<PointPropertyType, Point>) getEncoder(
-        // new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, Point.class));
-        // if (encoder != null) {
-        // return (PointPropertyType) encoder.encode(point);
-        // }
+    /**
+     * Encode {@link Point} to {@link PointPropertyType}
+     * 
+     * @param point
+     *            The {@link Point} to encode
+     * @param gmlId
+     *            The gml id for the point
+     * @return The encoded {@link Point}
+     * @throws UnsupportedEncoderInputException
+     *             If an element can not be encoded
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    private PointPropertyType encodeGeometry(Point point, String gmlId)
+            throws UnsupportedEncoderInputException, OwsExceptionReport {
         Map<HelperValues, String> additionalValues = Maps.newHashMap();
         additionalValues.put(HelperValues.GMLID, gmlId);
         PointPropertyType ppt = PointPropertyType.Factory.newInstance(getXmlOptions());
-        ppt.setPoint((PointType)encodeGML(point, additionalValues));
+        ppt.setPoint((PointType) encodeGML(point, additionalValues));
         return ppt;
     }
 
+    /**
+     * Encode {@link Value} to an {@link XmlObject}
+     * 
+     * @param value
+     *            The {@link Value} to encode
+     * @return The encoded {@link Value}
+     * @throws UnsupportedEncoderInputException
+     *             If an element can not be encoded
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
     private XmlObject encodeValue(Value<?> value) throws UnsupportedEncoderInputException, OwsExceptionReport {
-//        Encoder<?, Value<?>> encoder =
-//                (Encoder<?, Value<?>>) getEncoder(new XmlPropertyTypeEncoderKey(CvConstants.NS_CV, Value.class));
-//        if (encoder != null) {
-//            return (XmlObject) encoder.encode(value);
-//        }
         return value.accept(new ResultValueVisitor());
+    }
+
+    @Override
+    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
+        super.addNamespacePrefixToMap(nameSpacePrefixMap);
+        nameSpacePrefixMap.put(CvConstants.NS_CV, CvConstants.NS_CV_PREFIX);
     }
 
     protected static XmlObject encodeGML(Object o, Map<HelperValues, String> additionalValues)
@@ -132,12 +182,6 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
 
     protected static XmlObject encodeGML(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o);
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        super.addNamespacePrefixToMap(nameSpacePrefixMap);
-        nameSpacePrefixMap.put(CvConstants.NS_CV, CvConstants.NS_CV_PREFIX);
     }
 
     protected static XmlObject encodeSWE(Object o) throws OwsExceptionReport {
@@ -161,6 +205,13 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         return XmlBoolean.Factory.newInstance(getXmlOptions());
     }
 
+    /**
+     * {@link ValueVisitor} implementation for the result
+     * 
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
     private static class ResultValueVisitor implements ValueVisitor<XmlObject> {
 
         ResultValueVisitor() {
@@ -212,7 +263,8 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         public XmlObject visit(GeometryValue value) throws OwsExceptionReport {
             if (value.isSetValue()) {
                 Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
-                additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + JavaHelper.generateID(value.toString()));
+                additionalValue.put(HelperValues.GMLID,
+                        SosConstants.OBS_ID_PREFIX + JavaHelper.generateID(value.toString()));
                 additionalValue.put(HelperValues.PROPERTY_TYPE, null);
                 return encodeGML(value.getValue(), additionalValue);
             } else {
@@ -290,7 +342,7 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
 
         @Override
         public XmlObject visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
-            return  CodingHelper.encodeObjectToXml(value.getDefaultElementEncoding(), value);
+            return CodingHelper.encodeObjectToXml(value.getDefaultElementEncoding(), value);
         }
     }
 }

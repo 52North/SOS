@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.encode.AbstractWmlEncoderv20;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -44,11 +45,18 @@ import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 
 import net.opengis.om.x20.OMObservationType;
 
+/**
+ * Abstract {@link Encoder} implementation for INSPIRES OM
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public abstract class AbstractOmInspireEncoder extends AbstractWmlEncoderv20 {
 
-    private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
-            SosConstants.SOS,
-            Collections.singletonMap(Sos2Constants.SERVICEVERSION, Collections.singleton(InspireOMSOConstants.NS_OMSO_30)));
+    private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS =
+            Collections.singletonMap(SosConstants.SOS, Collections.singletonMap(Sos2Constants.SERVICEVERSION,
+                    Collections.singleton(InspireOMSOConstants.NS_OMSO_30)));
 
     @Override
     public boolean isObservationAndMeasurmentV20Type() {

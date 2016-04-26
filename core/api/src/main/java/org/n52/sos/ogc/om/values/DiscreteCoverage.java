@@ -30,10 +30,18 @@ package org.n52.sos.ogc.om.values;
 
 import java.util.Collection;
 
+/**
+ * Interface for discrete coverages
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ */
 public interface DiscreteCoverage<T> extends Value<T> {
 
     String getGmlId();
-    
+
     Collection<Value<?>> getRangeSet();
 
 }

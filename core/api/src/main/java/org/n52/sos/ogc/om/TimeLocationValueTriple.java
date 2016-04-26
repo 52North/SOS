@@ -34,8 +34,15 @@ import org.n52.sos.ogc.om.values.Value;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+/**
+ * Class that hold the time, the location and the value.
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class TimeLocationValueTriple extends TimeValuePair {
-    
+
     /**
      * Time location value triple value
      */
@@ -54,12 +61,13 @@ public class TimeLocationValueTriple extends TimeValuePair {
     }
 
     /**
-     * @param location the location to set
+     * @param location
+     *            the location to set
      */
     public void setLocation(Geometry location) {
         this.location = location;
     }
-    
+
     public boolean isSetLocation() {
         return getLocation() != null && !getLocation().isEmpty();
     }

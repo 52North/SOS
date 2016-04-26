@@ -36,6 +36,7 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.AbstractSpecificXmlEncoder;
 import org.n52.sos.encode.ClassToClassEncoderKey;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -50,11 +51,18 @@ import com.vividsolutions.jts.geom.Point;
 import net.opengis.gml.x32.PointPropertyType;
 import net.opengis.gml.x32.PointType;
 
+/**
+ * {@link Encoder} implementation for {@link Point} to {@link PointPropertyType}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class PointPropertyTypeEncoder extends AbstractSpecificXmlEncoder<PointPropertyType, Point> {
 
-    protected static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-            new ClassToClassEncoderKey(PointPropertyType.class, Point.class),
-            new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, Point.class));
+    protected static final Set<EncoderKey> ENCODER_KEYS =
+            Sets.newHashSet(new ClassToClassEncoderKey(PointPropertyType.class, Point.class),
+                    new XmlPropertyTypeEncoderKey(GmlConstants.NS_GML_32, Point.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -74,11 +82,13 @@ public class PointPropertyTypeEncoder extends AbstractSpecificXmlEncoder<PointPr
         return ppt;
     }
 
-    private PointType encodePointType(Point point, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        return (PointType)encodeGML(point, additionalValues);
+    private PointType encodePointType(Point point, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        return (PointType) encodeGML(point, additionalValues);
     }
-    
-    protected static XmlObject encodeGML(Object o, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+
+    protected static XmlObject encodeGML(Object o, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, additionalValues);
     }
 

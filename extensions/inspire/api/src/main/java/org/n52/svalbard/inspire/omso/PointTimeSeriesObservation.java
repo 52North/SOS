@@ -39,10 +39,19 @@ public class PointTimeSeriesObservation extends AbstractInspireObservation {
 
     private static final long serialVersionUID = -6453048922030316456L;
     
+    /**
+     * constructor
+     */
     public PointTimeSeriesObservation() {
         super();
     }
     
+    /**
+     * constructor
+     * 
+     * @param observation
+     *            {@link OmObservation} to convert
+     */
     public PointTimeSeriesObservation(OmObservation observation) {
         super(observation);
         if (!checkForFeatureGeometry(observation) && observation.isSetSpatialFilteringProfileParameter()) {

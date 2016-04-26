@@ -38,7 +38,6 @@ import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import net.opengis.cv.x02.gml32.CVDiscreteTimeInstantCoveragePropertyType;
 import net.opengis.cv.x02.gml32.CVDiscreteTimeInstantCoverageType;
@@ -46,11 +45,16 @@ import net.opengis.cv.x02.gml32.CVTimeInstantValuePairPropertyType;
 import net.opengis.cv.x02.gml32.CVTimeInstantValuePairType;
 import net.opengis.gml.x32.TimeInstantPropertyType;
 
+/**
+ * Encoder for {@link CVDiscreteTimeInstantCoveragePropertyType}
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class CVDiscreteTimeInstantCoverageEncoder extends AbstractXmlEncoder<Object> {
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
-        // TODO Auto-generated method stub
         return Collections.emptySet();
     }
 

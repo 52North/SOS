@@ -38,7 +38,6 @@ import org.n52.sos.encode.AbstractXmlEncoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -51,6 +50,13 @@ import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * {@link ObservationEncoder} implementation for INSPIRE OM
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
         implements ObservationEncoder<XmlObject, Object> {
 
@@ -58,9 +64,8 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
             CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, OmObservation.class);
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS =
-            Collections.singletonMap(SosConstants.SOS, 
-            Collections.singletonMap(Sos2Constants.SERVICEVERSION,
-            Collections.singleton(InspireOMSOConstants.NS_OMSO_30)));
+            Collections.singletonMap(SosConstants.SOS, Collections.singletonMap(Sos2Constants.SERVICEVERSION,
+                    Collections.singleton(InspireOMSOConstants.NS_OMSO_30)));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -71,7 +76,7 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         if (element instanceof OmObservation) {
-            return encodeInspireOmsoType((OmObservation)element);
+            return encodeInspireOmsoType((OmObservation) element);
         }
         throw new UnsupportedEncoderInputException(this, element);
     }
@@ -108,7 +113,7 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
     public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
         return Maps.newHashMap();
     }
-    
+
     @Override
     public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         nameSpacePrefixMap.put(InspireOMSOConstants.NS_OMSO_30, InspireOMSOConstants.NS_OMSO_PREFIX);

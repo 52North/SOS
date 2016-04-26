@@ -31,6 +31,7 @@ package org.n52.svalbard.gml.v321.encode;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.MultiPointCoverage.PointValueLists;
@@ -50,17 +51,37 @@ import net.opengis.gml.x32.DiscreteCoverageType;
 import net.opengis.gml.x32.DomainSetType;
 import net.opengis.gml.x32.MultiPointDomainDocument;
 
+/**
+ * Abstract {@link Encoder} implementation to encode {@link MultiPointCoverage}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ */
 public abstract class AbstractMultiPointCoverageTypeEncoder<T> extends AbstractCoverageEncoder<T, MultiPointCoverage> {
 
-    protected DiscreteCoverageType encodeMultiPointCoverageType(DiscreteCoverageType dct, MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
+    /**
+     * Encode {@link MultiPointCoverage} to {@link DiscreteCoverageType}
+     * 
+     * @param dct
+     *            {@link DiscreteCoverageType} to add values to
+     * @param multiPointCoverage
+     *            {@link MultiPointCoverage} to encode
+     * @return
+     * @throws OwsExceptionReport
+     */
+    protected DiscreteCoverageType encodeMultiPointCoverageType(DiscreteCoverageType dct,
+            MultiPointCoverage multiPointCoverage) throws OwsExceptionReport {
         dct.setId(multiPointCoverage.getGmlId());
         PointValueLists pointValues = multiPointCoverage.getPointValue();
         encodeMultiPointDomain(dct, pointValues);
         encodeRangeSet(dct, multiPointCoverage);
         return dct;
     }
-    
-    private void encodeMultiPointDomain(DiscreteCoverageType dct, PointValueLists pointValues) throws OwsExceptionReport {
+
+    private void encodeMultiPointDomain(DiscreteCoverageType dct, PointValueLists pointValues)
+            throws OwsExceptionReport {
         MultiPointDomainDocument mpdd = MultiPointDomainDocument.Factory.newInstance();
         DomainSetType mpdst = mpdd.addNewMultiPointDomain();
         GeometryFactory factory = pointValues.getPoints().get(0).getFactory();
@@ -79,7 +100,7 @@ public abstract class AbstractMultiPointCoverageTypeEncoder<T> extends AbstractC
         super.addNamespacePrefixToMap(nameSpacePrefixMap);
         nameSpacePrefixMap.put(GmlConstants.NS_GML_32, GmlConstants.NS_GML_PREFIX);
     }
-    
+
     protected static XmlObject encodeGML(Object o) throws OwsExceptionReport {
         return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }

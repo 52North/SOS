@@ -31,6 +31,7 @@ package org.n52.svalbard.gml.v321.encode;
 import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.Encoder;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -40,10 +41,30 @@ import net.opengis.gml.x32.DiscreteCoverageType;
 import net.opengis.gml.x33.ce.SimpleMultiPointDocument;
 import net.opengis.gml.x33.ce.SimpleMultiPointType;
 
+/**
+ * Abstract {@link Encoder} implementation for {@link RectifiedGridCoverage}
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ * @param <T>
+ */
+public abstract class AbstractRectifiedGridCoverageTypeEncoder<T>
+        extends AbstractCoverageEncoder<T, RectifiedGridCoverage> {
 
-public abstract class AbstractRectifiedGridCoverageTypeEncoder<T> extends AbstractCoverageEncoder<T, RectifiedGridCoverage> {
-
-    protected DiscreteCoverageType encodeRectifiedGridCoverage(RectifiedGridCoverage rectifiedGridCoverage, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    /**
+     * Encodes the {@link RectifiedGridCoverage} to {@link DiscreteCoverageType}
+     * 
+     * @param rectifiedGridCoverage
+     *            The {@link RectifiedGridCoverage}
+     * @param additionalValues
+     *            Helper values
+     * @return Encoded {@link RectifiedGridCoverage}
+     * @throws OwsExceptionReport
+     *             If an error occurs
+     */
+    protected DiscreteCoverageType encodeRectifiedGridCoverage(RectifiedGridCoverage rectifiedGridCoverage,
+            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         DiscreteCoverageType dct = DiscreteCoverageType.Factory.newInstance();
         dct.setId(rectifiedGridCoverage.getGmlId());
         XmlObject encodedGeometry = encodeDomainSet(rectifiedGridCoverage);
@@ -51,7 +72,7 @@ public abstract class AbstractRectifiedGridCoverageTypeEncoder<T> extends Abstra
         dct.setRangeSet(encodeRangeSet(dct, rectifiedGridCoverage));
         return dct;
     }
-    
+
     private XmlObject encodeDomainSet(RectifiedGridCoverage rectifiedGridCoverage) {
         SimpleMultiPointDocument smpd = SimpleMultiPointDocument.Factory.newInstance();
         SimpleMultiPointType smpt = smpd.addNewSimpleMultiPoint();

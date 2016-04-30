@@ -76,6 +76,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.RequestContext;
 import org.n52.sos.response.ServiceResponse;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -227,6 +228,9 @@ public class RestBinding extends Binding {
             LOGGER.debug(exceptionText);
             throw new NoApplicableCodeException().withMessage(exceptionText).setStatus(INTERNAL_SERVER_ERROR);
         }
+        if (restRequest.hasAbstractServiceRequest()) {
+            restRequest.getAbstractServiceRequest().setRequestContext(getRequestContext(request));
+        }
         return restRequest;
     }
 
@@ -362,6 +366,7 @@ public class RestBinding extends Binding {
                      request.getRequestURI());
         // Decode the request
         final RestRequest restRequest = decodeHttpRequest(request);
+        
         LOGGER.debug("Rest request decoded to {}",
                      restRequest != null ? restRequest.getClass().getName() : null);
         // Handle the request
@@ -375,5 +380,9 @@ public class RestBinding extends Binding {
         
         LOGGER.debug("Handling of REST request finished. Returning response to web tier");
         return serviceResponse;
+    }
+    
+    protected RequestContext getRequestContext(HttpServletRequest req) {
+        return RequestContext.fromRequest(req);
     }
 }

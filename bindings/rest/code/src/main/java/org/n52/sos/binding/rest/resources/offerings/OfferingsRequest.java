@@ -29,6 +29,7 @@
 package org.n52.sos.binding.rest.resources.offerings;
 
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
 
 /**
@@ -47,6 +48,16 @@ public class OfferingsRequest implements RestRequest {
     public GetCapabilitiesRequest getGetCapabilitiesRequest()
     {
         return getCapabilitiesRequest;
+    }
+
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetCapabilitiesRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetCapabilitiesRequest();
     }
 
 }

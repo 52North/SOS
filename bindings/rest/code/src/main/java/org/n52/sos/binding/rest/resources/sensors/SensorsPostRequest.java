@@ -30,6 +30,7 @@ package org.n52.sos.binding.rest.resources.sensors;
 
 import net.opengis.sensorML.x101.SystemType;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.InsertSensorRequest;
 
 /**
@@ -51,6 +52,16 @@ public class SensorsPostRequest extends TransactionalSensorRequest
     public InsertSensorRequest getInsertSensorRequest()
     {
         return insertSensorRequest;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getInsertSensorRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getInsertSensorRequest();
     }
 
 }

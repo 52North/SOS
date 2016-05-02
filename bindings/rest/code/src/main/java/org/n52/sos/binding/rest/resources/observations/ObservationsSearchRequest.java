@@ -28,6 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.observations;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
@@ -52,6 +53,16 @@ public class ObservationsSearchRequest implements IObservationsRequest {
     public GetObservationRequest getGetObservationRequest()
     {
         return getObservationRequest;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetObservationRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetObservationRequest();
     }
 
 }

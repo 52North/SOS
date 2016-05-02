@@ -343,6 +343,9 @@ public abstract class AbstractOmEncoderv20
         AbstractPhenomenon observableProperty = observation
                 .getObservationConstellation().getObservableProperty();
         xb.addNewObservedProperty().setHref(observableProperty.getIdentifier());
+        if (observableProperty.isSetName()) {
+            xb.getObservedProperty().setTitle(observableProperty.getFirstName().getValue());
+        }
 
         if (observableProperty instanceof OmObservableProperty) {
         } else if (observableProperty instanceof OmCompositePhenomenon) {

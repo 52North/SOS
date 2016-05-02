@@ -35,11 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.swe.RangeValue;
@@ -68,6 +70,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -236,6 +239,11 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
             }
             if (abstractDataComponent.isSetDescription()) {
                 sosAbstractDataComponent.setDescription(abstractDataComponent.getDescription().getStringValue());
+            }
+            if (CollectionHelper.isNotNullOrEmpty(abstractDataComponent.getNameArray())) {
+                for (XmlObject name : abstractDataComponent.getNameArray()) {
+                    sosAbstractDataComponent.addName((CodeType)CodingHelper.decodeXmlElement(name));
+                }
             }
         }
         return sosAbstractDataComponent;

@@ -78,6 +78,8 @@ import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 
+import com.google.common.base.Strings;
+
 /**
  * Implementation of the abstract class AbstractInsertSensorDAO
  *
@@ -137,7 +139,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                     .getFeatureOfInterestTypes(), session);
                     if (observationTypes != null && featureOfInterestTypes != null) {
                         final List<ObservableProperty> hObservableProperties =
-                                getOrInsertNewObservableProperties(request.getObservableProperty(), session);
+                                getOrInsertNewObservableProperties(request.getObservableProperty(), request.getProcedureDescription(), session);
                         final ObservationConstellationDAO observationConstellationDAO = new ObservationConstellationDAO();
                         final OfferingDAO offeringDAO = new OfferingDAO();
                         for (final SosOffering assignedOffering : request.getAssignedOfferings()) {
@@ -194,15 +196,25 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
      *
      * @param obsProps
      *            observableProperty identifiers
+     * @param sosProcedureDescription 
      * @param session
      *            Hibernate Session
      * @return ObservableProperty entities
      */
     private List<ObservableProperty> getOrInsertNewObservableProperties(final List<String> obsProps,
-            final Session session) {
+            SosProcedureDescription sosProcedureDescription, final Session session) {
         final List<OmObservableProperty> observableProperties = new ArrayList<>(obsProps.size());
         for (final String observableProperty : obsProps) {
-            observableProperties.add(new OmObservableProperty(observableProperty));
+            OmObservableProperty omObservableProperty = new OmObservableProperty(observableProperty);
+            if (sosProcedureDescription.supportsObservablePropertyName()) {
+                if (sosProcedureDescription.isSetObservablePropertyNameFor(observableProperty)) {
+                    String name = sosProcedureDescription.getObservablePropertyNameFor(observableProperty);
+                    if (!Strings.isNullOrEmpty(name)) {
+                        omObservableProperty.addName(name);
+                    }
+                }
+            }
+            observableProperties.add(omObservableProperty);
         }
         return new ObservablePropertyDAO().getOrInsertObservableProperty(observableProperties, false, session);
     }

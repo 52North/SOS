@@ -30,6 +30,7 @@ package org.n52.sos.binding.rest.resources.sensors;
 
 import net.opengis.sensorML.x101.SystemType;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.UpdateSensorRequest;
 
@@ -58,5 +59,19 @@ public class SensorsPutRequest extends TransactionalSensorRequest {
     {
         return describeSensorRequest;
     }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getUpdateSensorRequest() != null || getDescribeSensorRequest() != null;
+    }
 
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        if (getUpdateSensorRequest() != null) {
+            return getUpdateSensorRequest();
+        } else if (getDescribeSensorRequest() != null) {
+            return getDescribeSensorRequest();
+        }
+        return null;
+    }
 }

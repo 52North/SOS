@@ -148,13 +148,13 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
     private void writeMeasurementTimeseriesMetadata(String id) throws XMLStreamException {
         start(WaterMLConstants.QN_METADATA);
         writeNewLine();
-        start(WaterMLConstants.QN_TIMESERIES_METADATA);
+        start(WaterMLConstants.QN_MEASUREMENT_TIMESERIES_METADATA);
         writeNewLine();
         empty(WaterMLConstants.QN_TEMPORAL_EXTENT);
         addXlinkHrefAttr("#" + id);
         writeNewLine();
         indent--;
-        end(WaterMLConstants.QN_TIMESERIES_METADATA);
+        end(WaterMLConstants.QN_MEASUREMENT_TIMESERIES_METADATA);
         writeNewLine();
         end(WaterMLConstants.QN_METADATA);
         indent++;

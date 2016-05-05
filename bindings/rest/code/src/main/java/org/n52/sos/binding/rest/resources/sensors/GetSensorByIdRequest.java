@@ -28,6 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.DescribeSensorRequest;
 
 /**
@@ -52,4 +53,13 @@ public class GetSensorByIdRequest implements ISensorsRequest{
         return describeSensorRequest;
     }
 
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getDescribeSensorRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getDescribeSensorRequest();
+    }
 }

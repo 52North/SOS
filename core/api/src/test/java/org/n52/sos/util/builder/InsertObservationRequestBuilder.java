@@ -31,6 +31,7 @@ package org.n52.sos.util.builder;
 import java.util.ArrayList;
 
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.InsertObservationRequest;
 
 /**
@@ -71,7 +72,7 @@ public class InsertObservationRequestBuilder {
         return this;
     }
 
-    public InsertObservationRequest build() {
+    public InsertObservationRequest build() throws OwsExceptionReport {
         InsertObservationRequest request = new InsertObservationRequest();
         request.setObservation(observations);
         request.setOfferings(offerings);

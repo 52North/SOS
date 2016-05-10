@@ -30,6 +30,7 @@ package org.n52.sos.ogc.sensorML.v20;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
+import org.n52.sos.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 
 /**
@@ -138,6 +139,16 @@ public class AbstractProcessV20 extends AbstractProcess {
      */
     public void setDefinition(String definition) {
         this.definition = definition;
+    }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorML20Constants.NS_SML_20;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorML20Constants.NS_SML_20;
     }
 
 }

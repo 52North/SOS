@@ -54,6 +54,7 @@ import org.n52.sos.exception.swes.InvalidRequestException;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.util.http.HTTPUtils;
@@ -97,15 +98,15 @@ public final class XmlHelper {
     public static XmlObject parseXmlSosRequest(final HttpServletRequest request) throws OwsExceptionReport {
         XmlObject doc;
         try {
-            if (request.getParameterMap().isEmpty()) {
+            if (!request.getParameterMap().isEmpty() && request.getParameterMap().containsKey(RequestParams.request.name())) {
+                doc =
+                        XmlObject.Factory.parse(SosHelper.parseHttpPostBodyWithParameter(request.getParameterNames(),
+                                request.getParameterMap()));
+            } else {
                 final String requestContent =
                         StringHelper.convertStreamToString(HTTPUtils.getInputStream(request),
                                 request.getCharacterEncoding());
                 doc = parseXmlString(requestContent);
-            } else {
-                doc =
-                        XmlObject.Factory.parse(SosHelper.parseHttpPostBodyWithParameter(request.getParameterNames(),
-                                request.getParameterMap()));
             }
         } catch (final XmlException xmle) {
             throw new NoApplicableCodeException().causedBy(xmle).withMessage(

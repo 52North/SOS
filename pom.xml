@@ -261,6 +261,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>binding-register</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>enhanced-v20</artifactId>
                 <version>${project.version}</version>
             </dependency>

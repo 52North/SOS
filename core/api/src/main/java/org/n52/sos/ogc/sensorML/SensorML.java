@@ -194,4 +194,14 @@ public class SensorML extends AbstractSensorML {
         }
         return super.getObservablePropertyNameFor(observableProperty);
     }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
+    }
 }

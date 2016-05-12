@@ -17,5 +17,6 @@
         <module>rest</module>
         <module>json</module>
         <module>exi</module>
+        <module>register</module>
     </modules>
 </project>

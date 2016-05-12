@@ -107,7 +107,7 @@ public class RegisterBinding extends SimpleBinding {
 
     @Override
     public Set<MediaType> getSupportedEncodings() {
-        return Collections.singleton(MediaTypes.APPLICATION_KVP);
+        return Collections.emptySet();
     }
 
     @Override

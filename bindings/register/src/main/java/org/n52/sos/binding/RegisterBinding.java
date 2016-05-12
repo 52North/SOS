@@ -47,6 +47,8 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
+import org.n52.sos.ogc.sensorML.AbstractSensorML;
+import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
@@ -160,36 +162,8 @@ public class RegisterBinding extends SimpleBinding {
             List<String> observableProperties = checkForObservablePropertyParameter(procDesc, parameterValueMap);
             if (!observableProperties.isEmpty()) {
                 request.setObservableProperty(observableProperties);
-            } else if (procDesc instanceof AbstractProcess && ((AbstractProcess) procDesc).isSetOutputs()) {
-                Set<String> obsProps = Sets.newHashSet();
-                for (SmlIo<?> smlIo : ((AbstractProcess) procDesc).getOutputs()) {
-                    if (smlIo.isSetValue()) {
-                        SweAbstractDataComponent abstractDataComponent = smlIo.getIoValue();
-                        if (abstractDataComponent instanceof SweAbstractDataRecord) {
-                            for (SweField field : ((SweAbstractDataRecord) abstractDataComponent).getFields()) {
-                                String identifier = getObservablePropertyIdentifierFrom(field.getElement());
-                                if (!Strings.isNullOrEmpty(identifier)) {
-                                    obsProps.add(identifier);
-                                } else {
-                                    String identifierFromField =
-                                            getObservablePropertyIdentifierFrom(field.getElement());
-                                    if (!Strings.isNullOrEmpty(identifierFromField)) {
-                                        obsProps.add(identifierFromField);
-                                    } else {
-                                        obsProps.add(field.getName().getValue());
-                                    }
-                                }
-                            }
-                        }
-                        String identifier = getObservablePropertyIdentifierFrom(abstractDataComponent);
-                        if (!Strings.isNullOrEmpty(identifier)) {
-                            obsProps.add(identifier);
-                        }
-                    } else if (smlIo.isSetName()) {
-                        obsProps.add(smlIo.getIoName());
-                    }
-                }
-                request.setObservableProperty(Lists.newArrayList(obsProps));
+            } else if (procDesc instanceof AbstractSensorML) {
+                request.setObservableProperty(getObservablePropertyFromAbstractSensorML((AbstractSensorML)procDesc));
             } else if (isTypeRequest) {
                 request.setObservableProperty(Lists.newArrayList("not_defined"));
             } else {
@@ -213,6 +187,14 @@ public class RegisterBinding extends SimpleBinding {
                     metadata.setObservationTypes(observationTypes);
                 } else if (procDesc instanceof AbstractProcess && ((AbstractProcess) procDesc).isSetOutputs()) {
                     metadata.setObservationTypes(getObservationTypeFrom(((AbstractProcess) procDesc).getOutputs()));
+                } else if (procDesc instanceof SensorML && ((SensorML)procDesc).isWrapper()) {
+                    Set<String> obsTyp = Sets.newHashSet();
+                    for (AbstractProcess abstractProcess : ((SensorML)procDesc).getMembers()) {
+                        if (abstractProcess.isSetOutputs()) {
+                            obsTyp.addAll(getObservationTypeFrom(abstractProcess.getOutputs()));
+                        }
+                    }
+                    metadata.setObservationTypes(obsTyp);
                 } else {
                     metadata.setObservationTypes(Configurator.getInstance().getCache().getObservationTypes());
                 }
@@ -295,6 +277,44 @@ public class RegisterBinding extends SimpleBinding {
             return abstractDataComponent.getDefinition();
         }
         return null;
+    }
+
+    private List<String> getObservablePropertyFromAbstractSensorML(AbstractSensorML absSensorML) {
+        Set<String> obsProps = Sets.newHashSet();
+        if (absSensorML instanceof AbstractProcess && ((AbstractProcess) absSensorML).isSetOutputs()) {
+            for (SmlIo<?> smlIo : ((AbstractProcess) absSensorML).getOutputs()) {
+                if (smlIo.isSetValue()) {
+                    SweAbstractDataComponent abstractDataComponent = smlIo.getIoValue();
+                    if (abstractDataComponent instanceof SweAbstractDataRecord) {
+                        for (SweField field : ((SweAbstractDataRecord) abstractDataComponent).getFields()) {
+                            String identifier = getObservablePropertyIdentifierFrom(field.getElement());
+                            if (!Strings.isNullOrEmpty(identifier)) {
+                                obsProps.add(identifier);
+                            } else {
+                                String identifierFromField =
+                                        getObservablePropertyIdentifierFrom(field.getElement());
+                                if (!Strings.isNullOrEmpty(identifierFromField)) {
+                                    obsProps.add(identifierFromField);
+                                } else {
+                                    obsProps.add(field.getName().getValue());
+                                }
+                            }
+                        }
+                    }
+                    String identifier = getObservablePropertyIdentifierFrom(abstractDataComponent);
+                    if (!Strings.isNullOrEmpty(identifier)) {
+                        obsProps.add(identifier);
+                    }
+                } else if (smlIo.isSetName()) {
+                    obsProps.add(smlIo.getIoName());
+                }
+            }
+        } else if (absSensorML instanceof SensorML && ((SensorML)absSensorML).isWrapper()) {
+            for (AbstractProcess abstractProcess : ((SensorML)absSensorML).getMembers()) {
+                obsProps.addAll(getObservablePropertyFromAbstractSensorML(abstractProcess));
+            }
+        }
+        return Lists.newArrayList(obsProps);
     }
 
     private Set<String> getObservationTypeFrom(List<SmlIo<?>> outputs) {

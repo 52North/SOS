@@ -127,6 +127,7 @@ public class SosInsertSensorOperatorV20 extends
     @Override
     protected void checkParameters(InsertSensorRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
+        String generatedId = JavaHelper.generateID(request.getProcedureDescription().toString());
         // check parameters with variable content
         try {
             checkServiceParameter(request.getService());
@@ -145,7 +146,7 @@ public class SosInsertSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            checkAndSetAssignedProcedureID(request);
+            checkAndSetAssignedProcedureID(request, generatedId);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -161,7 +162,7 @@ public class SosInsertSensorOperatorV20 extends
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
-            checkAndSetAssignedOfferings(request);
+            checkAndSetAssignedOfferings(request, generatedId);
             try {
                 checkProcedureAndOfferingCombination(request);
             } catch (OwsExceptionReport owse) {
@@ -237,19 +238,18 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkAndSetAssignedProcedureID(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedProcedureID(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         if (request.getProcedureDescription().isSetIdentifier()) {
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
-            request.setAssignedProcedureIdentifier(
-                    getDefaultProcedurePrefix() + JavaHelper.generateID(request.getProcedureDescription().toString()));
+            request.setAssignedProcedureIdentifier(getDefaultProcedurePrefix() + generatedId);
         }
         // check for reserved character
         checkReservedCharacter(request.getAssignedProcedureIdentifier(),
                 Sos2Constants.InsertSensorParams.procedureIdentifier);
     }
 
-    private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
+    private void checkAndSetAssignedOfferings(InsertSensorRequest request, String generatedId) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
         ContentCache cache = Configurator.getInstance().getCache();
 
@@ -273,7 +273,7 @@ public class SosInsertSensorOperatorV20 extends
         // if no offerings are assigned, generate one
         if (CollectionHelper.isEmpty(sosOfferings)) {
             sosOfferings = new HashSet<SosOffering>(0);
-            sosOfferings.add(new SosOffering(getDefaultOfferingPrefix() + request.getAssignedProcedureIdentifier()));
+            sosOfferings.add(new SosOffering(getDefaultOfferingPrefix() + generatedId));
         }
         // check for reserved character
         for (SosOffering offering : sosOfferings) {

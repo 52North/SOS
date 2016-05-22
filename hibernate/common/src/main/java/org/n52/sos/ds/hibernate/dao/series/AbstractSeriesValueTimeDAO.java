@@ -160,8 +160,6 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @param temporalFilterCriterion
-     *            Temporal filter {@link Criterion}
      * @param session
      *            Hibernate Session
      * @return Resulting minimum {@link SeriesValueTime}
@@ -181,8 +179,6 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
-     * @param temporalFilterCriterion
-     *            Temporal filter {@link Criterion}
      * @param session
      *            Hibernate Session
      * @return Resulting maximum {@link SeriesValueTime}
@@ -198,8 +194,6 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
     /**
      * Get default {@link Criteria} for {@link Class}
      * 
-     * @param clazz
-     *            {@link Class} to get default {@link Criteria} for
      * @param session
      *            Hibernate Session
      * @return Default {@link Criteria}

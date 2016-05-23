@@ -36,7 +36,6 @@ public interface ParameterVisitor<T> {
     NamedValue<T> visit(QuantityValuedParameter o)
             throws OwsExceptionReport;
 
-
     NamedValue<T> visit(BooleanValuedParameter o)
             throws OwsExceptionReport;
 
@@ -49,5 +48,7 @@ public interface ParameterVisitor<T> {
     NamedValue<T> visit(TextValuedParameter o)
             throws OwsExceptionReport;
 
-    
+    NamedValue<T> visit(XmlValuedParameter o)
+            throws OwsExceptionReport;
+
 }

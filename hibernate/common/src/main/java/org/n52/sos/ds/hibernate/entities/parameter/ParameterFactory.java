@@ -43,6 +43,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -91,8 +92,16 @@ public class ParameterFactory implements ValueVisitor<ValuedParameter<?>> {
         return instantiate(textClass());
     }
 
+    public Class<? extends XmlValuedParameter> xmlClass() {
+        return XmlValuedParameter.class;
+    }
+
+    public XmlValuedParameter xml() throws OwsExceptionReport {
+        return instantiate(xmlClass());
+    }
+
     private <T extends ValuedParameter<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
-    
+
         try {
             return c.newInstance();
         } catch (InstantiationException | IllegalAccessException ex) {
@@ -165,7 +174,13 @@ public class ParameterFactory implements ValueVisitor<ValuedParameter<?>> {
     public ValuedParameter<?> visit(UnknownValue value) throws OwsExceptionReport {
         throw notSupported(value);
     }
-    
+
+    @Override
+    public ValuedParameter<?> visit(XmlValue value)
+            throws OwsExceptionReport {
+        return xml();
+    }
+
     private OwsExceptionReport notSupported(Value<?> value)
             throws OwsExceptionReport {
         throw new NoApplicableCodeException()

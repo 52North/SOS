@@ -41,6 +41,7 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
@@ -86,5 +87,8 @@ public interface ValueVisitor<T> {
             throws OwsExceptionReport;
 
     T visit(UnknownValue value)
+            throws OwsExceptionReport;
+
+    T visit(XmlValue value)
             throws OwsExceptionReport;
 }

@@ -51,6 +51,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
@@ -242,6 +243,12 @@ public final class OMHelper {
 
         @Override
         public String visit(UnknownValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(XmlValue value)
+                throws OwsExceptionReport {
             return defaultValue();
         }
 

@@ -52,6 +52,9 @@ import org.hibernate.spatial.criterion.SpatialProjections;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -107,6 +110,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -120,9 +124,6 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.StringHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -256,7 +257,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @return Collection of observation identifiers
      */
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
-    
+
     /**
      * Get Hibernate Criteria for {@link TemporalReferencedObservation}  with restrictions observation identifiers
      *
@@ -893,7 +894,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     * 
+     *
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
@@ -1153,7 +1154,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 if (!envelope.isNull()) {
                     return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
                 }
-                
+
             }
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
@@ -1163,22 +1164,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
-    
+
     public abstract Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport;
-    
+
     public abstract Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     public abstract ObservationFactory getObservationFactory();
 
     public abstract String addProcedureAlias(Criteria criteria);
 
-    
+
     protected abstract Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation);
 
     /**
      * @param sosObservation {@link OmObservation} to check
      * @param session Hibernate {@link Session}
-     * @throws OwsExceptionReport 
+     * @throws OwsExceptionReport
      */
     public void checkForDuplicatedObservations(OmObservation sosObservation, Session session) throws OwsExceptionReport {
         Criteria c = getTemoralReferencedObservationCriteriaFor(sosObservation, session);
@@ -1213,7 +1214,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private void addParameterRestriction(Criteria c, NamedValue<?> hdp) throws OwsExceptionReport {
         c.add(Subqueries.propertyIn(AbstractBaseObservation.ID, getParameterRestriction(c, hdp.getName().getHref(), hdp.getValue().getValue(), hdp.getValue().accept(getParameterFactory()).getClass())));
     }
-    
+
     protected DetachedCriteria getParameterRestriction(Criteria c, String name, Object value, Class<?> clazz) {
         DetachedCriteria detachedCriteria = DetachedCriteria.forClass(clazz);
         addParameterNameRestriction(detachedCriteria, name);
@@ -1221,17 +1222,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Parameter.ID)));
         return detachedCriteria;
     }
-    
+
     protected DetachedCriteria addParameterNameRestriction(DetachedCriteria detachedCriteria, String name) {
         detachedCriteria.add(Restrictions.eq(Parameter.NAME, name));
         return detachedCriteria;
     }
-    
+
     protected DetachedCriteria addParameterValueRestriction(DetachedCriteria detachedCriteria, Object value) {
         detachedCriteria.add(Restrictions.eq(Parameter.VALUE, value));
         return detachedCriteria;
     }
-    
+
     private TemporalFilter getPhenomeonTimeFilter(Criteria c, Time phenomenonTime) {
         return new TemporalFilter(TimeOperator.TM_Equals, phenomenonTime, Sos2Constants.EN_PHENOMENON_TIME);
     }
@@ -1322,7 +1323,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
              *  - series, phenTimeStart, phenTimeEnd, resultTime, depth/height parameter (same observation different depth/height)
              */
              daos.observation.checkForDuplicatedObservations(sosObservation, session);
-            
+
         }
 
         @Override
@@ -1401,6 +1402,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
         @Override
         public Observation<?> visit(TVPValue value)
+                throws OwsExceptionReport {
+            throw notSupported(value);
+        }
+
+        @Override
+        public Observation<?> visit(XmlValue value)
                 throws OwsExceptionReport {
             throw notSupported(value);
         }
@@ -1500,22 +1507,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 observationContext.setObservableProperty(first.getObservableProperty());
                 observationContext.setProcedure(first.getProcedure());
             }
-            // set value before ObservationContext is added otherwise the first/last value is not updated in series table. 
+            // set value before ObservationContext is added otherwise the first/last value is not updated in series table.
             observation.setValue(value);
-            
+
             observationContext.setFeatureOfInterest(featureOfInterest);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
 
             session.saveOrUpdate(observation);
-            
+
             if (sosObservation.isSetParameter()) {
                 daos.parameter.insertParameter(sosObservation.getParameter(), observation.getObservationId(), caches.units, session);
             }
             return observation;
         }
 
-         private static Geometry getSamplingGeometry(OmObservation sosObservation) throws OwsExceptionReport {
+        private static Geometry getSamplingGeometry(OmObservation sosObservation) throws OwsExceptionReport {
             if (!sosObservation.isSetSpatialFilteringProfileParameter()) {
                 return null;
             }
@@ -1572,7 +1579,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             public ObservationTypeDAO observationType() {
                 return this.observationType;
             }
-            
+
             public ParameterDAO parameter() {
                 return this.parameter;
             }
@@ -1581,7 +1588,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Check if the observation table contains samplingGeometries with values
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return <code>true</code>, if the observation table contains
@@ -1623,7 +1630,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     /**
      * Observation time extrema {@link ResultTransformer}
-     * 
+     *
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0
      *
@@ -1651,13 +1658,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
-    
+
     public class MinMaxLatLon {
         private Double minLat;
         private Double maxLat;
         private Double minLon;
         private Double maxLon;
-        
+
         public MinMaxLatLon(Object[] result) {
             setMinLat(JavaHelper.asDouble(result[0]));
             setMinLon(JavaHelper.asDouble(result[1]));

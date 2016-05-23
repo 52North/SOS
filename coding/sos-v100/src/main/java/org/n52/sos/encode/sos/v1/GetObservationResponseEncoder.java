@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,6 +53,9 @@ public class GetObservationResponseEncoder extends AbstractSosResponseEncoder<Ge
         String responseFormat = response.getResponseFormat();
         Encoder<XmlObject, GetObservationResponse> encoder = CodingHelper.getEncoder(responseFormat, response);
         if (encoder != null) {
+            if (response.hasStreamingData()) {
+                response.mergeStreamingData();
+            }
             return encoder.encode(response);
         } else {
             throw new InvalidResponseFormatParameterException(responseFormat);

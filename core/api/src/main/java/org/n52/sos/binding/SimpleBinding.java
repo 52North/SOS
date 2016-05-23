@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -197,7 +197,7 @@ public abstract class SimpleBinding extends Binding {
         return getServiceOperatorRepository().getServiceOperator(sokt);
     }
 
-    protected ServiceOperator getServiceOperator(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         checkServiceOperatorKeyTypes(request);
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
             ServiceOperator so = getServiceOperator(sokt);
@@ -213,7 +213,7 @@ public abstract class SimpleBinding extends Binding {
         }
     }
 
-    protected void checkServiceOperatorKeyTypes(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected void checkServiceOperatorKeyTypes(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
             if (sokt.hasService()) {
@@ -253,7 +253,7 @@ public abstract class SimpleBinding extends Binding {
             AbstractServiceResponse serviceResponse) throws HTTPException, IOException {
         MediaType contentType =
                 chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request), getDefaultContentType());
-        writeResponse(request, response, serviceResponse, contentType);
+        HTTPUtils.writeObject(request, response, contentType, serviceResponse);
     }
 
     protected Object encodeResponse(AbstractServiceResponse response, MediaType contentType) throws OwsExceptionReport {
@@ -295,6 +295,7 @@ public abstract class SimpleBinding extends Binding {
         return encoder.encode(oer);
     }
 
+    @Deprecated
     protected void writeResponse(HttpServletRequest request, HttpServletResponse response,
             AbstractServiceResponse serviceResponse, MediaType contentType) throws IOException, HTTPException {
         Object encodedResponse = null;
@@ -312,4 +313,5 @@ public abstract class SimpleBinding extends Binding {
             }
         }
     }
+    
 }

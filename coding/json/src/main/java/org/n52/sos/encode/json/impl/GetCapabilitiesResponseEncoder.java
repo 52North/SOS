@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -126,6 +126,8 @@ import javax.xml.namespace.QName;
 
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.ogc.filter.FilterCapabilities;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
@@ -144,6 +146,7 @@ import org.n52.sos.ogc.ows.SosServiceProvider;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,9 +158,9 @@ import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<GetCapabilitiesResponse> {
@@ -186,13 +189,22 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             ObjectNode jsi = json.putObject(SERVICE_IDENTIFICATION);
 
             if (si.hasTitle()) {
-                jsi.put(TITLE, si.getTitle());
+                ObjectNode title = jsi.putObject(TITLE);
+                for (LocalizedString ls : si.getTitle()) {
+                    title.put(LocaleHelper.toString(ls.getLang()), ls.getText());
+                }
             }
             if (si.hasAbstract()) {
-                jsi.put(ABSTRACT, si.getAbstract());
+                ObjectNode abstrakt = jsi.putObject(ABSTRACT);
+                for (LocalizedString ls : si.getAbstract()) {
+                    abstrakt.put(LocaleHelper.toString(ls.getLang()), ls.getText());
+                }
             }
             if (si.hasAccessConstraints()) {
-                jsi.put(ACCESS_CONSTRAINTS, si.getAccessConstraints());
+                ArrayNode constraints = jsi.putArray(ACCESS_CONSTRAINTS);
+                for (String constraint : si.getAccessConstraints()) {
+                    constraints.add(constraint);
+                }
             }
             if (si.hasFees()) {
                 jsi.put(FEES, si.getFees());
@@ -469,9 +481,10 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     private JsonNode encodeOffering(SosObservationOffering soo) throws OwsExceptionReport {
         ObjectNode jsoo = nodeFactory().objectNode();
-        jsoo.put(IDENTIFIER, soo.getOffering());
-        if (soo.hasOfferingName()) {
-            jsoo.put(NAME, soo.getOfferingName());
+        SosOffering offering = soo.getOffering();
+        jsoo.put(IDENTIFIER, offering.getIdentifier());
+        if (offering.isSetName()) {
+                jsoo.put(NAME, offering.getFirstName().getValue());
         }
         encodeProcedures(soo, jsoo);
         encodeObservableProperties(soo, jsoo);

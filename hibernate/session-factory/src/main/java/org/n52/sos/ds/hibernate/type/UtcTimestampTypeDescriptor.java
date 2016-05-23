@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,7 +74,20 @@ public class UtcTimestampTypeDescriptor extends TimestampTypeDescriptor {
         return new BasicExtractor<X>(javaTypeDescriptor, this) {
             @Override
             protected X doExtract(ResultSet rs, String name, WrapperOptions options) throws SQLException {
-                return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
+            	if (rs.getObject(name) != null) {
+            		return javaTypeDescriptor.wrap(rs.getTimestamp(name, Calendar.getInstance(UTC)), options);
+            	}
+            	return null;
+            }
+
+            @Override
+            protected X doExtract(CallableStatement statement, int index, WrapperOptions options) throws SQLException {
+                    return javaTypeDescriptor.wrap( statement.getTimestamp( index , Calendar.getInstance(UTC)), options );
+            }
+
+            @Override
+            protected X doExtract(CallableStatement statement, String name, WrapperOptions options) throws SQLException {
+                    return javaTypeDescriptor.wrap( statement.getTimestamp( name, Calendar.getInstance(UTC) ), options );
             }
         };
     }

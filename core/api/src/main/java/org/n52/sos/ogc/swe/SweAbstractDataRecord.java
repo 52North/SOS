@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,14 @@
  */
 package org.n52.sos.ogc.swe;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -88,8 +94,8 @@ public abstract class SweAbstractDataRecord extends SweAbstractDataComponent imp
     }
 
     boolean isFieldName(final String fieldNameOrElementDefinition, final SweField sweField) {
-        return sweField.getName() != null && !sweField.getName().isEmpty()
-                && sweField.getName().equalsIgnoreCase(fieldNameOrElementDefinition);
+        return sweField.isSetName()
+                && sweField.getName().getValue().equalsIgnoreCase(fieldNameOrElementDefinition);
     }
 
     boolean isElementDefinition(final String fieldNameOrElementDefinition, final SweField sweField) {
@@ -119,5 +125,24 @@ public abstract class SweAbstractDataRecord extends SweAbstractDataComponent imp
         hash = prime * hash + super.hashCode();
         hash = prime * hash + (getFields() != null ? getFields().hashCode() : 0);
         return hash;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz) {
+        if (isSetFields()) {
+            Set<SweAbstractSimpleType<?>> set = Sets.newHashSet();
+            for (SweField field : getFields()) {
+                SweAbstractDataComponent element = field.getElement();
+                if (!element.isSetName() && field.isSetName()) {
+                    element.setName(field.getName());
+                }
+                if (element.getClass() == clazz) {
+                    set.add((SweAbstractSimpleType<?>)element);
+                }
+            }
+            return set;
+        }
+        return Collections.emptySet();
     }
 }

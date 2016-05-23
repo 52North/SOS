@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -159,6 +159,12 @@ public class OwsOperation implements Comparable<OwsOperation> {
 
     public <E extends Enum<E>> void addParameterValue(E parameterName, OwsParameterValue value) {
         addParameterValue(parameterName.name(), value);
+    }
+
+    public <E extends Enum<E>> void overrideParameter(E parameterName, OwsParameterValue value) {
+        List<OwsParameterValue> values = new LinkedList<OwsParameterValue>();
+        values.add(value);
+        parameterValues.put(parameterName.name(), values);
     }
 
     public <E extends Enum<E>> void addPossibleValuesParameter(E parameterName, Collection<String> values) {

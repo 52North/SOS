@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,7 @@ import org.n52.sos.cache.ctrl.ContentCacheControllerImpl;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
@@ -50,14 +50,14 @@ public class PersistingCacheControllerTest extends AbstractCacheControllerTest {
     public void testSerialization() {
         assertThat(getTempFile(), is(not(existing())));
         ContentCacheControllerImpl cc = new TestableInMemoryCacheController();
-        assertThat(cc.getCache().getObservationIdentifiers(), is(empty()));
-        cc.getCache().addObservationIdentifier(IDENTIFIER);
-        assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
+        assertThat(cc.getCache().getFeaturesOfInterest(), is(empty()));
+        cc.getCache().addFeatureOfInterest(IDENTIFIER);
+        assertThat(cc.getCache().getFeaturesOfInterest(), contains(IDENTIFIER));
         cc.cleanup();
         assertThat(getTempFile(), is(existing()));
         cc = new TestableInMemoryCacheController();
-        assertThat(getTempFile(), is(not(existing())));
-        assertThat(cc.getCache().getObservationIdentifiers(), contains(IDENTIFIER));
+        assertThat(getTempFile(), is(existing()));
+        assertThat(cc.getCache().getFeaturesOfInterest(), contains(IDENTIFIER));
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -91,7 +91,7 @@ public class KvpBinding extends SimpleBinding {
     @Override
     public void doGetOperation(HttpServletRequest req, HttpServletResponse res) throws HTTPException, IOException {
         LOGGER.debug("KVP-REQUEST: {}", req.getQueryString());
-        AbstractServiceRequest serviceRequest = null;
+        AbstractServiceRequest<?> serviceRequest = null;
         try {
             serviceRequest = parseRequest(req);
             // add request context information
@@ -141,7 +141,7 @@ public class KvpBinding extends SimpleBinding {
         return value;
     }
 
-    protected AbstractServiceRequest parseRequest(HttpServletRequest req) throws OwsExceptionReport {
+    protected AbstractServiceRequest<?> parseRequest(HttpServletRequest req) throws OwsExceptionReport {
         if (req.getParameterMap() == null || (req.getParameterMap() != null && req.getParameterMap().isEmpty())) {
             throw new MissingRequestParameterException();
         }
@@ -157,7 +157,7 @@ public class KvpBinding extends SimpleBinding {
             throw new VersionNotSupportedException();
         }
         DecoderKey k = new OperationDecoderKey(service, version, operation, MediaTypes.APPLICATION_KVP);
-        Decoder<AbstractServiceRequest, Map<String, String>> decoder = getDecoder(k);
+        Decoder<AbstractServiceRequest<?>, Map<String, String>> decoder = getDecoder(k);
         if (decoder != null) {
             return decoder.decode(parameterValueMap);
         } else {

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,8 +42,10 @@ import org.joda.time.DateTime;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertResultDAO;
 import org.n52.sos.ds.FeatureQueryHandler;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.OfferingDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
@@ -122,6 +124,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     public InsertResultDAO() {
         super(SosConstants.SOS);
     }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
 
     @Override
     public InsertResultResponse insertResult(final InsertResultRequest request) throws OwsExceptionReport {
@@ -154,7 +161,7 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
 
             int insertion = 0;
             final int size = observations.size();
-            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+            final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             LOGGER.debug("Start saving {} observations.", size);
             for (final OmObservation observation : observations) {
                 observationDAO.insertObservationSingleValue(obsConsts, resultTemplate.getFeatureOfInterest(),
@@ -223,7 +230,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     protected AbstractFeature getSosAbstractFeature(final FeatureOfInterest featureOfInterest, final String version,
             final Session session) throws OwsExceptionReport {
         final FeatureQueryHandler featureQueryHandler = Configurator.getInstance().getFeatureQueryHandler();
-        return featureQueryHandler.getFeatureByID(featureOfInterest.getIdentifier(), session, version, -1);
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+            .addFeatureIdentifier(featureOfInterest.getIdentifier())
+            .setConnection(session)
+            .setVersion(version);
+        return featureQueryHandler.getFeatureByID(queryObject);
     }
 
     /**

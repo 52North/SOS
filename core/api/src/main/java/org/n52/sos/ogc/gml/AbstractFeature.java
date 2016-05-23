@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,15 +29,8 @@
 package org.n52.sos.ogc.gml;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.Constants;
 import org.n52.sos.util.StringHelper;
-
-import com.google.common.base.Objects;
 
 /**
  * Abstract class for encoding the feature of interest. Necessary because
@@ -47,35 +40,32 @@ import com.google.common.base.Objects;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractFeature implements Serializable {
+/**
+ * @author Carsten Hollmann <c.hollmann@52north.org>
+ * @since
+ * 
+ */
+public abstract class AbstractFeature extends AbstractGML implements Serializable {
 
     /**
      * serial number
      */
     private static final long serialVersionUID = -6117378246552782214L;
-
-    /** Feature identifier */
-    private CodeWithAuthority identifier;
-
-    /**
-     * List of feature names
-     */
-    private List<CodeType> names = new LinkedList<CodeType>();
-
-    /**
-     * Feature description
-     */
-    private String description;
-
-    /**
-     * GML id
-     */
-    private String gmlId;
-
+    
+    private String defaultEncoding;
+    
     /**
      * constructor
      */
     public AbstractFeature() {
+        super();
+    }
+
+    /**
+     * constructor
+     */
+    public AbstractFeature(String identifier) {
+        super(identifier);
     }
 
     /**
@@ -85,7 +75,7 @@ public abstract class AbstractFeature implements Serializable {
      *            Feature identifier
      */
     public AbstractFeature(CodeWithAuthority featureIdentifier) {
-        this.identifier = featureIdentifier;
+        super(featureIdentifier);
     }
 
     /**
@@ -97,188 +87,24 @@ public abstract class AbstractFeature implements Serializable {
      *            GML id
      */
     public AbstractFeature(CodeWithAuthority featureIdentifier, String gmlId) {
-        this.identifier = featureIdentifier;
-        this.gmlId = gmlId;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof AbstractFeature) {
-            AbstractFeature feature = (AbstractFeature) o;
-            if (feature.isSetIdentifier() && this.isSetIdentifier() && feature.isSetGmlID() && this.isSetGmlID()) {
-                return feature.getIdentifier().equals(this.getIdentifier())
-                        && feature.getGmlId().equals(this.getGmlId());
-            } else if (feature.isSetIdentifier() && this.isSetIdentifier()) {
-                return feature.getIdentifier().equals(this.getIdentifier());
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getIdentifier(), getGmlId());
-    }
-
-    /**
-     * Get identifier
-     * 
-     * @return Returns the identifier.
-     */
-    public CodeWithAuthority getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * Set observation identifier
-     * 
-     * @param identifier
-     *            the identifier to set
-     */
-    public void setIdentifier(CodeWithAuthority identifier) {
-        this.identifier = identifier;
-    }
-
-    /**
-     * Set observation identifier
-     * 
-     * @param identifier
-     *            the identifier to set
-     */
-    public void setIdentifier(String identifier) {
-        setIdentifier(new CodeWithAuthority(identifier));
-    }
-
-    /**
-     * @return <tt>true</tt>, if identifier is set and value is not an empty
-     *         string,<br>
-     *         else <tt>false</tt>
-     */
-    public boolean isSetIdentifier() {
-        return identifier != null && identifier.isSetValue();
-    }
-
-    /**
-     * Get feature names
-     * 
-     * @return Feature names
-     */
-    public List<CodeType> getName() {
-        return Collections.unmodifiableList(names);
-    }
-
-    /**
-     * Add feature names
-     * 
-     * @param name
-     *            Feature names to ad
-     */
-    public void setName(final List<CodeType> name) {
-        this.names.addAll(name);
-    }
-
-    /**
-     * @param name
-     */
-    public void addName(final CodeType name) {
-        this.names.add(name);
-    }
-
-    /**
-     * Add a feature name
-     * 
-     * @param name
-     *            Feature name to add
-     */
-    public void addName(final String name) {
-        addName(new CodeType(name));
-    }
-
-    /**
-     * Check whether feature has names
-     * 
-     * @return <code>true</code> if feature has names
-     */
-    public boolean isSetNames() {
-        return CollectionHelper.isNotEmpty(names);
-    }
-
-    /**
-     * Get first feature name or null if feature has no names
-     * 
-     * @return First feature name or null if feature has no names
-     */
-    public CodeType getFirstName() {
-        if (isSetNames()) {
-            return names.get(0);
-        }
-        return null;
-    }
-
-    /**
-     * Get feature description
-     * 
-     * @return Feature description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set feature description
-     * 
-     * @param description
-     *            Feature description to set
-     */
-    public void setDescription(final String description) {
-        this.description = description;
+        super(featureIdentifier, gmlId);
     }
     
-    /**
-     * Check whether feature has a description
-     * 
-     * @return <code>true</code> if feature a description
-     */
-    public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
+    public void copyTo(AbstractFeature copyOf) {
+        super.copyTo(copyOf);
+    }
+    
+    public AbstractFeature setDefaultElementEncoding(String defaultEncoding) {
+    	this.defaultEncoding = defaultEncoding;
+    	return this;
     }
 
-    /**
-     * Get GML id
-     * 
-     * @return GML id
-     */
-    public String getGmlId() {
-        return gmlId == null ? null : gmlId.replaceFirst(Constants.NUMBER_SIGN_STRING, Constants.EMPTY_STRING);
+    public String getDefaultElementEncoding() {
+    	return defaultEncoding;
     }
-
-    /**
-     * Set GML id
-     * 
-     * @param gmlId
-     *            GML id to set
-     */
-    public void setGmlId(String gmlId) {
-        this.gmlId = gmlId;
-    }
-
-    /**
-     * Check whether GML id is set
-     * 
-     * @return <code>true</code> if GML id is set
-     */
-    public boolean isSetGmlID() {
-        return StringHelper.isNotEmpty(getGmlId());
-    }
-
-    /**
-     * Check whether feature is still contained in XML document by sign
-     * {@link Constants#NUMBER_SIGN_STRING}.
-     * 
-     * @return <code>true</code> if feature is still contained in XML document
-     */
-    public boolean isReferenced() {
-        return isSetGmlID() && gmlId.startsWith(Constants.NUMBER_SIGN_STRING);
+    
+    public boolean isSetDefaultElementEncoding() {
+    	return StringHelper.isNotEmpty(getDefaultElementEncoding());
     }
 
 }

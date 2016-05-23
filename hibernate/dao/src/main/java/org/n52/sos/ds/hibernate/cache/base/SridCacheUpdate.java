@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,12 +37,10 @@ import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 /**
  * 
  * @author Christian Autermann <c.autermann@52north.org>
@@ -50,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @since 4.0.0
  */
 public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
-
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(SridCacheUpdate.class);
     
     private static final String SQL_QUERY_GET_DEFAULT_FEATURE_SRID_POSTGIS = "getDefaultFeatureGeomSridPostgis";
@@ -58,43 +56,28 @@ public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
     private static final String SQL_QUERY_GET_DEFAULT_FEATURE_SRID_ORACLE = "getDefaultFeatureGeomSridOracle";
 
     private static final String SQL_QUERY_GET_DEFAULT_FEATURE_SRID_H2 = "getDefaultFeatureGeomSridGeoDB";
-
-    private static final String SQL_QUERY_GET_EPSG_POSTGIS = "getEpsgPostgis";
-
-    private static final String SQL_QUERY_GET_EPSG_ORACLE = "getEpsgOracle";
-
-    private static final String SQL_QUERY_GET_EPSG_H2 = "getEpsgGeoDB";
-
+    
     @Override
     public void execute() {
         LOGGER.debug("Executing SridCacheUpdate");
         startStopwatch();
-        // TODO change if transformation is supported
-        // List<SpatialRefSys> spatialRefSyss =
-        // getSpatialRefSysObjects(getSession());
-        // List<Integer> srids = new ArrayList<Integer>(spatialRefSyss.size());
-        // for (SpatialRefSys spatialRefSys : spatialRefSyss) {
-        // srids.add(spatialRefSys.getSrid());
-        // }
-        // getCache().setSrids(srids);
         checkEpsgCode(getSession());
-        if (!checkAndGetEpsgCodes(getSession())) {
-            getCache().addEpsgCode(
-                    Integer.valueOf(Configurator.getInstance().getFeatureQueryHandler().getDefaultEPSG()));
+        for (String epsg : GeometryHandler.getInstance().getSupportedCRS()) {
+            getCache().addEpsgCode(Integer.valueOf(epsg));
         }
         LOGGER.debug("Finished executing SridCacheUpdate ({})", getStopwatchResult());
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "unused" })
     private boolean checkAndGetEpsgCodes(Session session) {
         Dialect dialect = HibernateHelper.getDialect(session);
         String namedQueryName = null;
         if (dialect instanceof PostgisDialect || dialect instanceof PostgreSQL81Dialect) {
-            namedQueryName = SQL_QUERY_GET_EPSG_POSTGIS;
+            namedQueryName = SQL_QUERY_GET_DEFAULT_FEATURE_SRID_POSTGIS;
         } else if (dialect instanceof Oracle8iDialect) {
-            namedQueryName = SQL_QUERY_GET_EPSG_ORACLE;
+            namedQueryName = SQL_QUERY_GET_DEFAULT_FEATURE_SRID_ORACLE;
         } else if (dialect instanceof GeoDBDialect) {
-            namedQueryName = SQL_QUERY_GET_EPSG_H2;
+            namedQueryName = SQL_QUERY_GET_DEFAULT_FEATURE_SRID_H2;
         }
         if (StringHelper.isNotEmpty(namedQueryName) && HibernateHelper.isNamedQuerySupported(namedQueryName, session)) {
             Query namedQuery = session.getNamedQuery(namedQueryName);
@@ -119,8 +102,8 @@ public class SridCacheUpdate extends AbstractThreadableDatasourceCacheUpdate {
             Query namedQuery = session.getNamedQuery(namedQueryName);
             LOGGER.debug("QUERY checkEpsgCode() with NamedQuery: {}", namedQuery);
             Integer uniqueResult = (Integer) namedQuery.uniqueResult();
-            if (GeometryHandler.getInstance().getDefaultEPSG() != uniqueResult) {
-                GeometryHandler.getInstance().setDefaultEpsg(uniqueResult);
+            if (GeometryHandler.getInstance().getStorageEPSG() != uniqueResult) {
+                GeometryHandler.getInstance().setStorageEpsg(uniqueResult);
             }
         }
     }

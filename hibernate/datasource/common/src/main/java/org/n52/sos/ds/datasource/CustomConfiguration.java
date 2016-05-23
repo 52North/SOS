@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -132,11 +132,12 @@ public class CustomConfiguration extends Configuration {
         final Iterator<Table> itr = getTableMappings();
         while (itr.hasNext()) {
             final Table table = itr.next();
-            final String tableName = table.getQualifiedName(d, c, s);
-            if (table.isPhysicalTable() && m.isTable(tableName)) {
+            // TODO remove because fails if table definition is quoted
+//            final String tableName = table.getQualifiedName(d, c, s);
+            if (checkTable(table, m)) {
                 @SuppressWarnings("unchecked")
                 final Iterator<ForeignKey> subItr = table.getForeignKeyIterator();
-                final TableMetadata tableMeta = m.getTableMetadata(table.getName(), s, c, true);
+                final TableMetadata tableMeta = m.getTableMetadata(table.getName(), s, c, table.isQuoted());
                 while (subItr.hasNext()) {
                     final ForeignKey fk = subItr.next();
                     if (fk.isPhysicalConstraint() && tableMeta.getForeignKeyMetadata(fk) != null) {
@@ -154,12 +155,17 @@ public class CustomConfiguration extends Configuration {
         final Iterator<Table> itr = getTableMappings();
         while (itr.hasNext()) {
             final Table table = itr.next();
-            final String tableName = table.getQualifiedName(d, c, s);
-            if (table.isPhysicalTable() && m.isTable(tableName)) {
+            // TODO remove because fails if table definition is quoted
+//            final String tableName = table.getQualifiedName(d, c, s);
+            if (checkTable(table, m)) {
                 script.add(table.sqlDropString(d, c, s));
             }
         }
         return script;
+    }
+    
+    protected boolean checkTable(Table table, DatabaseMetadata m) {
+        return table.isPhysicalTable() && m.isTable(table.getQuotedName());
     }
 
     protected List<String> generateAuxiliaryDatabaseObjectDropScript(final Dialect d, final String c, final String s) {

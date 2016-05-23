@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.n52.sos.util.CollectionHelper;
+
 /**
  * @since 4.0.0
  * 
@@ -59,12 +61,34 @@ public class OwsParameterValuePossibleValues implements OwsParameterValue {
     public SortedSet<String> getValues() {
         return Collections.unmodifiableSortedSet(values);
     }
+    
+    public void addValue(String value) {
+    	addValues(Collections.singleton(value));
+    }
+    
+    public void addValue(Enum<?> value) {
+    	addValues(Collections.singleton(value.name()));
+    }
+    
+    public void addValues(Collection<String> values) {
+    	if (isSetValues()) {
+    		if (values != null) {
+                this.values.addAll(values);
+            }
+    	} else { 
+    		this.values = values == null ? new TreeSet<String>() : new TreeSet<String>(values);
+    	}
+    }
 
     public void setValues(Collection<String> values) {
         this.values.clear();
         if (values != null) {
             this.values.addAll(values);
         }
+    }
+    
+    public boolean isSetValues() {
+    	return CollectionHelper.isNotEmpty(getValues());
     }
 
 }

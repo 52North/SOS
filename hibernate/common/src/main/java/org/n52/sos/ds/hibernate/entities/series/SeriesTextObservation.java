@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -59,4 +59,9 @@ public class SeriesTextObservation extends SeriesObservation implements Serializ
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

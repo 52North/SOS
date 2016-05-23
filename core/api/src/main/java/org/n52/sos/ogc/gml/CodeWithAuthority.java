@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,16 +28,22 @@
  */
 package org.n52.sos.ogc.gml;
 
-import org.n52.sos.util.Constants;
-import org.n52.sos.util.StringHelper;
-
 /**
  * Class represents a GML conform CodeWithAuthority element
  * 
  * @since 4.0.0
  * 
  */
-public class CodeWithAuthority {
+import java.io.Serializable;
+
+import org.n52.sos.util.Constants;
+import org.n52.sos.util.StringHelper;
+
+import com.google.common.base.Objects;
+
+public class CodeWithAuthority implements Comparable<CodeWithAuthority>, Serializable {
+
+    private static final long serialVersionUID = 9001214766142377426L;
 
     /**
      * value/identifier
@@ -134,11 +140,7 @@ public class CodeWithAuthority {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((getCodeSpace() != null) ? getCodeSpace().hashCode() : 0);
-        result = prime * result + ((getValue() != null) ? getValue().hashCode() : 0);
-        return result;
+        return Objects.hashCode(getCodeSpace(), getValue());
     }
 
     @Override
@@ -175,4 +177,18 @@ public class CodeWithAuthority {
         return String.format("CodeWithAuthority [value=%s, codeSpace=%s]", getValue(), getCodeSpace());
     }
 
+    @Override
+    public int compareTo(CodeWithAuthority o) {
+        if (isSetValue() && o.isSetValue()) {
+            if (isSetCodeSpace() && o.isSetCodeSpace()) {
+                if (getValue().equals(o.getValue()) && getCodeSpace().equals(o.getCodeSpace())) {
+                    return 0;
+                }
+            }
+            if (getValue().equals(o.getValue())) {
+                return 0;
+            }
+        }
+        return 1;
+    }
 }

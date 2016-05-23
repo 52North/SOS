@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,17 +29,9 @@
 package org.n52.sos.web.admin;
 
 
-import java.util.Iterator;
-import java.util.ServiceLoader;
+import java.util.Collections;
+import java.util.List;
 
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.RenameDAO;
-import org.n52.sos.exception.AlreadyUsedIdentifierException;
-import org.n52.sos.exception.NoSuchObservablePropertyException;
-import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -51,6 +43,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+
+import org.n52.sos.cache.ContentCache;
+import org.n52.sos.ds.RenameDAO;
+import org.n52.sos.exception.AlreadyUsedIdentifierException;
+import org.n52.sos.exception.NoSuchObservablePropertyException;
+import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.util.ServiceLoaderHelper;
+import org.n52.sos.web.ControllerConstants;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -65,8 +69,10 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() {
+        List<String> observableProperties = Lists.newArrayList(getCache().getObservableProperties());
+        Collections.sort(observableProperties);
         return new ModelAndView(ControllerConstants.Views.ADMIN_RENAME_OBSERVABLE_PROPERTIES,
-                                "observableProperties", getCache().getObservableProperties());
+                                "observableProperties", observableProperties);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -88,12 +94,7 @@ public class AdminRenameObservablePropertyController extends AbstractAdminContro
 
     private RenameDAO getRenameDao() throws NoImplementationFoundException {
         if (this.dao == null) {
-            ServiceLoader<RenameDAO> sl = ServiceLoader.load(RenameDAO.class);
-            Iterator<RenameDAO> i = sl.iterator();
-            this.dao = i.hasNext() ? i.next() : null;
-            if (this.dao == null) {
-                throw new NoImplementationFoundException(RenameDAO.class);
-            }
+            this.dao = ServiceLoaderHelper.loadImplementation(RenameDAO.class);
         }
         return this.dao;
     }

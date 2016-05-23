@@ -1,0 +1,26 @@
+# the datasource class (only needed for the admin)
+org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.MySQLDatasource
+
+# path to mapping files
+HIBERNATE_DIRECTORY=/mapping/core;/mapping/series/observation;/mapping/transactional;
+
+# hibernate/postgres configuration
+
+hibernate.connection.username=mysql
+hibernate.connection.password=mysql
+hibernate.connection.url=jdbc\:mysql\://localhost\:3306/sos
+
+hibernate.c3p0.acquire_increment=1
+hibernate.c3p0.idle_test_period=1
+hibernate.c3p0.max_size=30
+hibernate.c3p0.max_statements=0
+hibernate.c3p0.min_size=10
+hibernate.c3p0.timeout=0
+
+hibernate.connection.autoReconnect=true
+hibernate.connection.autoReconnectForPools=true
+hibernate.connection.driver_class=com.mysql.jdbc.Driver
+hibernate.connection.provider_class=org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
+hibernate.connection.testOnBorrow=true
+hibernate.dialect=org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBDialect 
+hibernate.default_schema=public

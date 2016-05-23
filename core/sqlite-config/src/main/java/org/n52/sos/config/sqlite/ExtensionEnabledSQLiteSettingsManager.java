@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,11 +39,16 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.config.CapabilitiesExtensionManager;
+import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
+import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteManager.ThrowingVoidHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteManager.VoidHibernateAction;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.CapabilitiesExtensionImpl;
 import org.n52.sos.config.sqlite.entities.OfferingExtensionIdentifier;
@@ -58,8 +63,6 @@ import org.n52.sos.ogc.ows.StringBasedCapabilitiesExtension;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.LinkedListMultiMap;
 import org.n52.sos.util.ListMultiMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager implements CapabilitiesExtensionManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtensionEnabledSQLiteSettingsManager.class);
@@ -81,37 +84,25 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
     protected <T> T execute(final HibernateAction<T> action) {
         try {
             return super.execute(action);
-        } catch (final ConnectionProviderException ex) {
+        } catch (ConnectionProviderException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    protected <T> T throwingExecute(final ThrowingHibernateAction<T> action) throws NoSuchExtensionException {
-        synchronized (this) {
-            Session session = null;
-            Transaction transaction = null;
-            try {
-                session = (Session) getConnectionProvider().getConnection();
-                transaction = session.beginTransaction();
-                final T result = action.call(session);
-                session.flush();
-                transaction.commit();
-                return result;
-            } catch (final HibernateException e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                throw e;
-            } catch (final ConnectionProviderException cpe) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                throw new RuntimeException(cpe);
-            } finally {
-                getConnectionProvider().returnConnection(session);
+    @Override
+    protected <T> T throwingExecute(ThrowingHibernateAction<T> action)
+            throws NoSuchExtensionException {
+        try {
+            return super.throwingExecute(action);
+        } catch (Exception ex) {
+            if (ex instanceof NoSuchExtensionException) {
+                throw (NoSuchExtensionException) ex;
+            } else {
+                throw new RuntimeException(ex);
             }
         }
     }
+
 
     @Override
     public void setActiveStaticCapabilities(final String identifier) throws NoSuchExtensionException {
@@ -192,10 +183,10 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
             try {
                 if (cachedOe == null) {
                     final ListMultiMap<String, OfferingExtension> execute = execute(new GetActiveOfferingExtensionsAction());
-                    cachedOe = new HashMap<String, Map<String, String>>(execute.size());
+                    cachedOe = new HashMap<>(execute.size());
                     for (final String offering : execute.keySet()) {
                         final List<OfferingExtension> oes = execute.get(offering);
-                        final Map<String, String> map = new HashMap<String, String>(oes.size());
+                        final Map<String, String> map = new HashMap<>(oes.size());
                         for (final OfferingExtension oe : oes) {
                             map.put(oe.getIdentifier(), oe.getExtension());
                         }
@@ -206,7 +197,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
                 oeLock.writeLock().unlock();
             }
         }
-        final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<String, OfferingExtension>();
+        final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>();
         for (final String offering : cachedOe.keySet()) {
             final Map<String, String> oes = cachedOe.get(offering);
             if (oes != null) {
@@ -232,7 +223,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
             if (cachedOe != null) {
                 Map<String, String> forOffering = cachedOe.get(offering);
                 if (forOffering == null) {
-                    cachedOe.put(offering, forOffering = new HashMap<String, String>());
+                    cachedOe.put(offering, forOffering = new HashMap<>());
                 }
                 forOffering.put(identifier, value);
             }
@@ -251,7 +242,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
             if (cachedOe != null) {
                 Map<String, String> forOffering = cachedOe.get(offering);
                 if (forOffering == null) {
-                    cachedOe.put(offering, forOffering = new HashMap<String, String>());
+                    cachedOe.put(offering, forOffering = new HashMap<>());
                 }
                 if (disabled) {
                     forOffering.remove(identifier);
@@ -263,7 +254,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         } finally {
             oeLock.writeLock().unlock();
         }
-}
+    }
 
     @Override
     public void deleteOfferingExtension(final String offering, final String identifier) throws
@@ -301,7 +292,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
                 if (cachedCe == null) {
                     final Map<String, StringBasedCapabilitiesExtension> ext =
                                                                   execute(new GetActiveCapabilitiesExtensionAction());
-                    cachedCe = new HashMap<String, StringBasedCapabilitiesExtension>(ext.size());
+                    cachedCe = new HashMap<>(ext.size());
                     for (final Entry<String, StringBasedCapabilitiesExtension> e : ext.entrySet()) {
                         cachedCe.put(e.getKey(), new CapabilitiesExtensionImpl(
                                 e.getValue().getSectionName(), e.getValue().getExtension()));
@@ -412,20 +403,6 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         return execute(new GetStaticCapabilitiesWithIdAction(id));
     }
 
-    protected interface ThrowingHibernateAction<T> {
-        T call(Session session) throws NoSuchExtensionException;
-    }
-
-    protected abstract class ThrowingVoidHibernateAction implements ThrowingHibernateAction<Void> {
-        @Override
-        public Void call(final Session session) throws NoSuchExtensionException {
-            run(session);
-            return null;
-        }
-
-        protected abstract void run(Session session) throws NoSuchExtensionException;
-    }
-
     private class SetActiveStaticCapabilitiesAction extends ThrowingVoidHibernateAction {
         private final String identifier;
 
@@ -453,9 +430,9 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetActiveStaticCapabilitiesAction extends HibernateAction<String> {
+    private class GetActiveStaticCapabilitiesAction implements HibernateAction<String> {
         @Override
-        protected String call(final Session session) {
+        public String call(final Session session) {
             final StaticCapabilitiesImpl cur = (StaticCapabilitiesImpl) session
                     .createCriteria(StaticCapabilitiesImpl.class)
                     .add(eq(StaticCapabilitiesImpl.ACTIVE, true))
@@ -464,9 +441,9 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetActiveStaticCapabilitiesDocumentAction extends HibernateAction<String> {
+    private class GetActiveStaticCapabilitiesDocumentAction implements HibernateAction<String> {
         @Override
-        protected String call(final Session session) {
+        public String call(final Session session) {
             final StaticCapabilitiesImpl cur = (StaticCapabilitiesImpl) session
                     .createCriteria(StaticCapabilitiesImpl.class)
                     .add(eq(StaticCapabilitiesImpl.ACTIVE, true))
@@ -475,13 +452,13 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetOfferingExtensionsAction extends HibernateAction<ListMultiMap<String, OfferingExtension>> {
+    private class GetOfferingExtensionsAction implements HibernateAction<ListMultiMap<String, OfferingExtension>> {
         @Override
-        protected ListMultiMap<String, OfferingExtension> call(final Session session) {
+        public ListMultiMap<String, OfferingExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
 			final
             List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class).list();
-            final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<String, OfferingExtension>(
+            final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>(
                     getCache().getOfferings().size());
 
             for (final OfferingExtensionImpl extension : extensions) {
@@ -492,7 +469,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetOfferingExtensionAction extends HibernateAction<OfferingExtension> {
+    private class GetOfferingExtensionAction implements HibernateAction<OfferingExtension> {
         private final String offering;
         private final String identifier;
 
@@ -502,7 +479,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
 
         @Override
-        protected OfferingExtension call(final Session session) {
+        public OfferingExtension call(final Session session) {
             return (OfferingExtension) session.createCriteria(OfferingExtensionImpl.class)
                     .add(and(eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.IDENTIFIER, identifier),
                              eq(Activatable.COMPOSITE_KEY + "." + OfferingExtensionIdentifier.OFFERING, offering)))
@@ -510,14 +487,14 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetActiveOfferingExtensionsAction extends HibernateAction<ListMultiMap<String, OfferingExtension>> {
+    private class GetActiveOfferingExtensionsAction implements HibernateAction<ListMultiMap<String, OfferingExtension>> {
         @Override
-        protected ListMultiMap<String, OfferingExtension> call(final Session session) {
+        public ListMultiMap<String, OfferingExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
 			final
             List<OfferingExtensionImpl> extensions = session.createCriteria(OfferingExtensionImpl.class)
                     .add(eq(OfferingExtensionImpl.ACTIVE, true)).list();
-            final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<String, OfferingExtension>(
+            final ListMultiMap<String, OfferingExtension> map = new LinkedListMultiMap<>(
                     getCache().getOfferings().size());
 
             for (final OfferingExtensionImpl extension : extensions) {
@@ -587,9 +564,9 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetActiveCapabilitiesExtensionAction extends HibernateAction<Map<String, StringBasedCapabilitiesExtension>> {
+    private class GetActiveCapabilitiesExtensionAction implements HibernateAction<Map<String, StringBasedCapabilitiesExtension>> {
         @Override
-        protected Map<String, StringBasedCapabilitiesExtension> call(final Session session) {
+        public Map<String, StringBasedCapabilitiesExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
 			final
             List<CapabilitiesExtensionImpl> extensions = session
@@ -597,7 +574,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
                     .add(eq(CapabilitiesExtensionImpl.ACTIVE, true))
                     .list();
             final HashMap<String, StringBasedCapabilitiesExtension> map =
-                                                              new HashMap<String, StringBasedCapabilitiesExtension>(extensions
+                                                              new HashMap<>(extensions
                     .size());
             for (final CapabilitiesExtensionImpl extension : extensions) {
                 LOGGER.debug("Loaded CapabiltiesExtension: {}", extension);
@@ -607,15 +584,15 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetAllCapabilitiesExtensionAction extends HibernateAction<Map<String, StringBasedCapabilitiesExtension>> {
+    private class GetAllCapabilitiesExtensionAction implements HibernateAction<Map<String, StringBasedCapabilitiesExtension>> {
         @Override
-        protected Map<String, StringBasedCapabilitiesExtension> call(final Session session) {
+        public Map<String, StringBasedCapabilitiesExtension> call(final Session session) {
             @SuppressWarnings("unchecked")
 			final
             List<CapabilitiesExtensionImpl> extensions = session
                     .createCriteria(CapabilitiesExtensionImpl.class).list();
             final HashMap<String, StringBasedCapabilitiesExtension> map =
-                                                              new HashMap<String, StringBasedCapabilitiesExtension>(extensions
+                                                              new HashMap<>(extensions
                     .size());
             for (final CapabilitiesExtensionImpl extension : extensions) {
                 LOGGER.debug("Loaded CapabiltiesExtension: {}", extension);
@@ -625,14 +602,14 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetCapabilitiesExtensionAction extends HibernateAction<CapabilitiesExtensionImpl> {
+    private class GetCapabilitiesExtensionAction implements HibernateAction<CapabilitiesExtensionImpl> {
         private final String identifier;
 
         GetCapabilitiesExtensionAction(final String identifier) {
             this.identifier = identifier;
         }
         @Override
-        protected CapabilitiesExtensionImpl call(final Session session) {
+        public CapabilitiesExtensionImpl call(final Session session) {
             return (CapabilitiesExtensionImpl) session.get(CapabilitiesExtensionImpl.class, identifier);
         }
     }
@@ -691,13 +668,13 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetStaticCapabilitiesAction extends HibernateAction<Map<String, StaticCapabilities>> {
+    private class GetStaticCapabilitiesAction implements HibernateAction<Map<String, StaticCapabilities>> {
         @Override
         public Map<String, StaticCapabilities> call(final Session session) {
             @SuppressWarnings("unchecked")
 			final
             List<StaticCapabilitiesImpl> scs = session.createCriteria(StaticCapabilitiesImpl.class).list();
-            final HashMap<String, StaticCapabilities> map = new HashMap<String, StaticCapabilities>(scs.size());
+            final HashMap<String, StaticCapabilities> map = new HashMap<>(scs.size());
             for (final StaticCapabilitiesImpl sc : scs) {
                 LOGGER.debug("Loaded StaticCapabilities: {}", sc);
                 map.put(sc.getIdentifier(), sc);
@@ -752,7 +729,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
     }
 
-    private class GetStaticCapabilitiesWithIdAction extends HibernateAction<StaticCapabilities> {
+    private class GetStaticCapabilitiesWithIdAction implements HibernateAction<StaticCapabilities> {
         private final String id;
 
         GetStaticCapabilitiesWithIdAction(final String id) {
@@ -760,7 +737,7 @@ public class ExtensionEnabledSQLiteSettingsManager extends SQLiteSettingsManager
         }
 
         @Override
-        protected StaticCapabilities call(final Session session) {
+        public StaticCapabilities call(final Session session) {
             return (StaticCapabilitiesImpl) session.get(StaticCapabilitiesImpl.class, id);
         }
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,16 +31,21 @@ package org.n52.sos.util;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 /**
  * Helper class for Java objects.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class JavaHelper {
 
@@ -57,12 +62,15 @@ public final class JavaHelper {
      */
     private static MessageDigest messageDigest;
 
+    private static Reflections reflections;
+
     /**
      * Instantiation of the message digest
      */
     static {
         try {
             messageDigest = MessageDigest.getInstance("SHA1");
+            reflections = new Reflections("org.n52.sos");
         } catch (final NoSuchAlgorithmException nsae) {
             LOGGER.error("Error while getting SHA-1 messagedigest!", nsae);
         }
@@ -70,7 +78,7 @@ public final class JavaHelper {
 
     /**
      * Generates a sensor id from description and current time as long.
-     * 
+     *
      * @param message
      *            sensor description
      * @return generated sensor id as hex SHA-1.
@@ -83,7 +91,7 @@ public final class JavaHelper {
 
     /**
      * Transforms byte to hex representation
-     * 
+     *
      * @param b
      *            bytes
      * @return hex
@@ -106,7 +114,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as String
-     * 
+     *
      * @param object
      *            to get as String
      * @return String value
@@ -119,6 +127,8 @@ public final class JavaHelper {
             return Double.toString(bdValue.doubleValue());
         } else if (object instanceof Double) {
             return ((Double) object).toString();
+        } else if (object instanceof Integer) {
+            return ((Integer) object).toString();
         }
         // TODO why not object.toString()?
         return Constants.EMPTY_STRING;
@@ -126,7 +136,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as Double
-     * 
+     *
      * @param object
      *            to get as Double
      * @return Double value
@@ -145,7 +155,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as Integer
-     * 
+     *
      * @param object
      *            to get as Integer
      * @return Integer value
@@ -163,7 +173,7 @@ public final class JavaHelper {
 
     /**
      * return Object value as Boolean
-     * 
+     *
      * @param object
      *            to get as Boolean
      * @return Boolean value
@@ -177,6 +187,23 @@ public final class JavaHelper {
             return Boolean.valueOf((String) object);
         }
         return null;
+    }
+
+    public static <T> Set<Class<? extends T>> getSubclasses(Class<T> clazz) {
+        return reflections.getSubTypesOf(clazz);
+    }
+    
+    public static Set<Integer> getIntegerSetFromString(String s) {
+        HashSet<Integer> set = Sets.newHashSet();
+        if (StringHelper.isNotEmpty(s)) {
+            Set<String> splitToSet = StringHelper.splitToSet(s, Constants.COMMA_STRING);
+            if (CollectionHelper.isNotEmpty(splitToSet)) {
+                for (String string : splitToSet) {
+                    set.add(Integer.parseInt(string));
+                }
+            }
+        }
+        return set;
     }
 
     private JavaHelper() {

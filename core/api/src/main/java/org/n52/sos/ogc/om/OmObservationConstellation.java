@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -304,9 +304,9 @@ public class OmObservationConstellation implements Serializable, Cloneable {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder("OmObservationConstellation [");
-        builder.append("procedure=").append(getProcedure().getIdentifier());
-        builder.append(", observableProperty=").append(getObservableProperty().getIdentifier());
-        builder.append(", featureOfInterest=").append(getFeatureOfInterest().getIdentifier());
+        builder.append("procedure=").append(getProcedure().getIdentifierCodeWithAuthority());
+        builder.append(", observableProperty=").append(getObservableProperty().getIdentifierCodeWithAuthority());
+        builder.append(", featureOfInterest=").append(getFeatureOfInterest().getIdentifierCodeWithAuthority());
         if (isSetOfferings()) {
             builder.append(", offerings=[");
             boolean first = true;

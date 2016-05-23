@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -45,7 +45,8 @@ TRUNCATE TABLE offering REUSE STORAGE;
 TRUNCATE TABLE offeringAllowedFeatureType REUSE STORAGE;
 TRUNCATE TABLE offeringAllowedObservationType REUSE STORAGE;
 TRUNCATE TABLE offeringHasRelatedFeature REUSE STORAGE;
-TRUNCATE TABLE procedure REUSE STORAGE;
+TRUNCATE TABLE parameter REUSE STORAGE;
+TRUNCATE TABLE "procedure" REUSE STORAGE;
 TRUNCATE TABLE procedureDescriptionFormat REUSE STORAGE;
 TRUNCATE TABLE relatedFeature REUSE STORAGE;
 TRUNCATE TABLE relatedFeatureHasRole REUSE STORAGE;
@@ -53,10 +54,13 @@ TRUNCATE TABLE relatedFeatureRole REUSE STORAGE;
 TRUNCATE TABLE resultTemplate REUSE STORAGE;
 TRUNCATE TABLE sensorSystem REUSE STORAGE;
 TRUNCATE TABLE series REUSE STORAGE;
-TRUNCATE TABLE spatialfilteringprofile REUSE STORAGE;
 TRUNCATE TABLE swedataarrayvalue REUSE STORAGE;
-TRUNCATE TABLE textValuev
+TRUNCATE TABLE textValue REUSE STORAGE;
 TRUNCATE TABLE unit REUSE STORAGE;
 TRUNCATE TABLE validProcedureTime REUSE STORAGE;
 TRUNCATE TABLE featureOfInterest REUSE STORAGE;
 TRUNCATE TABLE featureOfInterestType REUSE STORAGE;
+TRUNCATE TABLE i18nfeatureOfInterest REUSE STORAGE;
+TRUNCATE TABLE i18nobservableProperty REUSE STORAGE;
+TRUNCATE TABLE i18noffering REUSE STORAGE;
+TRUNCATE TABLE i18nprocedure REUSE STORAGE;

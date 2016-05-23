@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,7 @@ package org.n52.sos.ogc.swes;
 
 import javax.xml.namespace.QName;
 
-//import org.n52.sos.ogc.swe.SWEConstants;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
 /**
@@ -44,6 +44,8 @@ public interface SwesConstants {
     String NS_SWES_20 = "http://www.opengis.net/swes/2.0";
 
     String NS_SWES_PREFIX = "swes";
+    
+    String XPATH_PREFIXES_SWES = XmlHelper.getXPathPrefix(NS_SWES_PREFIX, NS_SWES_20);
 
     String SCHEMA_LOCATION_URL_SWES_20 = "http://schemas.opengis.net/swes/2.0/swes.xsd";
 
@@ -71,6 +73,8 @@ public interface SwesConstants {
             SCHEMA_LOCATION_URL_SWES_20_DELETE_SENSOR);
 
     // element names
+    String EN_EXTENSION = "extension";
+    
     String EN_ABSTRACT_OFFERING = "AbstractOffering";
 
     String EN_DELETE_SENSOR_RESPONSE = "DeleteSensorResponse";
@@ -126,5 +130,59 @@ public interface SwesConstants {
 
     String SOAP_REASON_REQUEST_EXTENSION_NOT_SUPPORTED = ""; // FIXME emtpy
                                                              // constant
+
+    /**
+     * Interface to identify if the implemented class supportes
+     * {@link SwesExtensions}
+     * 
+     * @author Carsten Hollmann <c.hollmann@52north.org>
+     * @since 4.1.0
+     * 
+     * @param <T>
+     */
+    interface HasSwesExtension<T> {
+        /**
+         * Get the {@link SwesExtension}s
+         * 
+         * @return {@link SwesExtensions} with {@link SwesExtension}s
+         */
+        public SwesExtensions getExtensions();
+
+        /**
+         * Set the {@link SwesExtensions} object
+         * 
+         * @param extensions
+         *            the {@link SwesExtensions} object to set
+         * @return this
+         */
+        public T setExtensions(final SwesExtensions extensions);
+        
+        /**
+         * Add a {@link SwesExtensions} to this object
+         * 
+         * @param extension
+         *            the {@link SwesExtensions} to add
+         * @return this
+         */
+        public T addExtensions(final SwesExtensions extension);
+
+        /**
+         * Add a {@link SwesExtension} to this object
+         * 
+         * @param extension
+         *            the {@link SwesExtension} to add
+         * @return this
+         */
+        @SuppressWarnings("rawtypes")
+        public T addExtension(final SwesExtension extension);
+
+        /**
+         * Check if {@link SwesExtension}s are set
+         * 
+         * @return <code>true</code>, if {@link SwesExtensions} is not null or
+         *         empty
+         */
+        public boolean isSetExtensions();
+    }
 
 }

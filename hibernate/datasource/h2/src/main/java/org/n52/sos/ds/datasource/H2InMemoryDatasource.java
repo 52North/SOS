@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,6 +37,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
@@ -44,16 +45,16 @@ import com.google.common.collect.ImmutableSet;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class H2InMemoryDatasource extends AbstractH2Datasource {
     private static final String DIALECT = "H2/GeoDB (in memory)";
 
     private static final String JDBC_URL =
-            "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;INIT=create domain if not exists geometry as blob";
+            "jdbc:h2:mem:sos;DB_CLOSE_DELAY=-1;";
 
     @Override
     public String getDialectName() {
@@ -62,8 +63,8 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return ImmutableSet.<SettingDefinition<?, ?>> of(getSpatialFilteringProfileDefiniton(),
-                getTransactionalDefiniton());
+        return ImmutableSet.<SettingDefinition<?, ?>> of(getDatabaseConceptDefinition(), getTransactionalDefiniton(),
+                getMulitLanguageDefiniton());
     }
 
     @Override
@@ -91,7 +92,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
 
     @Override
     protected Map<String, Object> parseDatasourceProperties(Properties current) {
-        Map<String, Object> settings = new HashMap<String, Object>(2);
+        Map<String, Object> settings = new HashMap<>(2);
         settings.put(getTransactionalDefiniton().getKey(), isTransactional(current));
         return settings;
     }
@@ -111,7 +112,13 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected String[] checkDropSchema(String[] dropSchema) {
-        return dropSchema;
+    protected String toURL(Map<String, Object> settings) {
+        return JDBC_URL;
     }
+
+    @Override
+    protected String[] parseURL(String url) {
+        return new String[0];
+    }
+
 }

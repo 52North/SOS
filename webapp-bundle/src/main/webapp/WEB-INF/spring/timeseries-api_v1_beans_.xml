@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+    <mvc:annotation-driven />
+
+    <!-- inject implementation of the Timeseries API's SPI version 1 -->
+
+    <bean id="searchService" class="org.n52.series.api. ... .v1.spi.SearchAdapter" />
+    <bean id="offeringParameterService" class="org.n52.series.api. ... .v1.spi.impl.OfferingOutputAdapter" />
+    <bean id="categoryParameterService" class="org.n52.series.api. ... .v1.spi.impl.CategoryOutputAdapter" />
+    <bean id="serviceParameterService" class="org.n52.series.api. ... .v1.spi.impl.ServiceOutputAdapter" />
+    <bean id="featureParameterService" class="org.n52.series.api. ... .v1.spi.impl.FeatureOutputAdapter" />
+    <bean id="procedureParameterService" class="org.n52.series.api. ... .v1.spi.impl.ProcedureOutputAdapter" />
+    <bean id="stationParameterService" class="org.n52.series.api. ... .v1.spi.impl.StationOutputAdapter" />
+    <bean id="phenomenonParameterService" class="org.n52.series.api. ... .v1.spi.impl.PhenomenonOutputAdapter" />
+    <bean id="metadataService" class="org.n52.series.api. ... .v1.spi.impl.MetadataAdapter" />
+    <bean id="getDataService" class="org.n52.series.api. ... .v1.spi.impl.GetDataService" />
+    <bean id="timeseriesService" class="org.n52.series.api. ... .v1.spi.impl.TimeseriesOutputAdapter">
+        <property name="dataService" ref="getDataService" />
+    </bean>
+
+</beans>

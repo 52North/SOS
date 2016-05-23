@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,9 +37,12 @@ import org.n52.sos.ogc.filter.Filter;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -57,11 +60,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Request as String
      */
     private String requestString;
-
-    /**
-     * SRID
-     */
-    private int srid = -1;
 
     /**
      * Offerings list
@@ -103,6 +101,9 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     private Filter resultFilter;
 
     private Map<String, String> namespaces = Maps.newHashMap();
+    
+    private boolean mergeObservationValues = false;
+    
 
     /*
      * (non-Javadoc)
@@ -211,6 +212,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         this.procedures = procedures;
     }
 
+
     /**
      * Get result filters
      * 
@@ -263,25 +265,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     /**
-     * Get SRID
-     * 
-     * @return SRID
-     */
-    public int getSrid() {
-        return srid;
-    }
 
-    /**
-     * Set SRID
-     * 
-     * @param srid
-     *            SRID
-     */
-    public void setSrid(int srid) {
-        this.srid = srid;
-    }
-
-    /**
      * Get request as String
      * 
      * @return request as String
@@ -330,6 +314,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      */
     public GetObservationRequest copyOf(List<String> obsProps) {
         GetObservationRequest res = new GetObservationRequest();
+        super.copyOf(res);
         res.setTemporalFilters(this.temporalFilters);
         res.setObservedProperties(obsProps);
         res.setOfferings(this.offerings);
@@ -341,7 +326,6 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         res.setResultModel(getResultModel());
         res.setFeatureIdentifiers(this.featureIdentifiers);
         res.setService(this.getService());
-        res.setSrid(this.srid);
         res.setRequestString(this.requestString);
         return res;
 
@@ -459,23 +443,24 @@ public class GetObservationRequest extends AbstractObservationRequest implements
         return StringHelper.isNotEmpty(getRequestString());
     }
 
-    public boolean isSetSrid() {
-        return getSrid() <= 0;
-    }
-
     public boolean isSetResult() {
         return getResult() != null;
-    }
-
-    public boolean isSetResponseFormat() {
-        return StringHelper.isNotEmpty(getResponseFormat());
     }
 
     public boolean isSetNamespaces() {
         return CollectionHelper.isNotEmpty(getNamespaces());
     }
-
-    public boolean isSetResponseMode() {
-        return StringHelper.isNotEmpty(getResponseMode());
+    
+    @Override
+    public AbstractObservationResponse getResponse() throws OwsExceptionReport {
+        return (GetObservationResponse) new GetObservationResponse().set(this);
     }
+
+    public void setMergeObservationValues(boolean mergeObservationValues) {
+        this.mergeObservationValues = mergeObservationValues;
+     }
+     
+     public boolean isSetMergeObservationValues(){
+         return mergeObservationValues;
+     }
 }

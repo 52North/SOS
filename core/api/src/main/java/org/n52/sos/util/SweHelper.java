@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -52,6 +54,7 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -59,6 +62,7 @@ import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.service.ServiceConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,7 +126,7 @@ public final class SweHelper {
             if (singleValue.getValue() instanceof SweDataArrayValue) {
                 return (SweDataArray) singleValue.getValue().getValue();
             } else {
-                dataArray.setElementType(createElementType(singleValue.getValue(), observablePropertyIdentifier));
+                dataArray.setElementType(createElementType(singleValue, observablePropertyIdentifier));
                 dataArrayValue.addBlock(createBlock(dataArray.getElementType(), sosObservation.getPhenomenonTime(),
                         observablePropertyIdentifier, singleValue.getValue()));
             }
@@ -134,7 +138,7 @@ public final class SweHelper {
                 TVPValue tvpValues = (TVPValue) multiValue.getValue();
                 for (TimeValuePair timeValuePair : tvpValues.getValue()) {
                     if (!dataArray.isSetElementTyp()) {
-                        dataArray.setElementType(createElementType(timeValuePair.getValue(),
+                        dataArray.setElementType(createElementType(timeValuePair,
                                 observablePropertyIdentifier));
                     }
                     List<String> newBlock =
@@ -147,15 +151,63 @@ public final class SweHelper {
         return dataArray;
     }
 
-    private static SweAbstractDataComponent createElementType(Value<?> iValue, String name) {
+    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) {
+        String observablePropertyIdentifier = observationValue.getObservableProperty();
+        SweDataArrayValue dataArrayValue = new SweDataArrayValue();
+        SweDataArray dataArray = new SweDataArray();
+        dataArray.setEncoding(createTextEncoding(observationValue));
+        dataArrayValue.setValue(dataArray);
+        if (observationValue instanceof SingleObservationValue) {
+            SingleObservationValue<?> singleValue = (SingleObservationValue<?>) observationValue;
+            if (singleValue.getValue() instanceof SweDataArrayValue) {
+                return (SweDataArray) singleValue.getValue().getValue();
+            } else {
+                dataArray.setElementType(createElementType(singleValue, observablePropertyIdentifier));
+                dataArrayValue.addBlock(createBlock(dataArray.getElementType(), observationValue.getPhenomenonTime(),
+                        observablePropertyIdentifier, singleValue.getValue()));
+            }
+        } else if (observationValue instanceof MultiObservationValues) {
+            MultiObservationValues<?> multiValue = (MultiObservationValues<?>) observationValue;
+            if (multiValue.getValue() instanceof SweDataArrayValue) {
+                return ((SweDataArrayValue) multiValue.getValue()).getValue();
+            } else if (multiValue.getValue() instanceof TVPValue) {
+                TVPValue tvpValues = (TVPValue) multiValue.getValue();
+                for (TimeValuePair timeValuePair : tvpValues.getValue()) {
+                    if (!dataArray.isSetElementTyp()) {
+                        dataArray.setElementType(createElementType(timeValuePair,
+                                observablePropertyIdentifier));
+                    }
+                    List<String> newBlock =
+                            createBlock(dataArray.getElementType(), timeValuePair.getTime(),
+                                    observablePropertyIdentifier, timeValuePair.getValue());
+                    dataArrayValue.addBlock(newBlock);
+                }
+            }
+        }
+        return dataArray;
+    }
+
+    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) {
         SweDataRecord dataRecord = new SweDataRecord();
-        dataRecord.addField(getPhenomenonTimeField());
-        dataRecord.addField(getFieldForValue(iValue, name));
+        dataRecord.addField(getPhenomenonTimeField(tvp.getTime()));
+        dataRecord.addField(getFieldForValue(tvp.getValue(), name));
         return dataRecord;
     }
 
-    private static SweField getPhenomenonTimeField() {
-        SweTime time = new SweTime();
+    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) {
+        SweDataRecord dataRecord = new SweDataRecord();
+        dataRecord.addField(getPhenomenonTimeField(sov.getPhenomenonTime()));
+        dataRecord.addField(getFieldForValue(sov.getValue(), name));
+        return dataRecord;
+    }
+
+    private static SweField getPhenomenonTimeField(Time sosTime) {
+        SweAbstractUomType<?> time = null;
+        if (sosTime instanceof TimePeriod) {
+            time = new SweTimeRange();
+        } else {
+            time = new SweTime();
+        }
         time.setDefinition(OmConstants.PHENOMENON_TIME);
         time.setUom(OmConstants.PHEN_UOM_ISO8601);
         return new SweField(OmConstants.PHENOMENON_TIME_NAME, time);
@@ -197,17 +249,64 @@ public final class SweHelper {
      *            SosObservation with token and tuple separator
      * @return TextEncoding
      */
-    private static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
-        SweTextEncoding sosTextEncoding = new SweTextEncoding();
+    public static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
+        String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
+        String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
+        String decimalSeparator = null;
         if (sosObservation.isSetTupleSeparator()) {
-            sosTextEncoding.setBlockSeparator(sosObservation.getTupleSeparator());
-        } else {
-            sosTextEncoding.setBlockSeparator(ServiceConfiguration.getInstance().getTupleSeparator());
+            tupleSeparator = sosObservation.getTupleSeparator();
         }
         if (sosObservation.isSetTokenSeparator()) {
-            sosTextEncoding.setTokenSeparator(sosObservation.getTokenSeparator());
-        } else {
-            sosTextEncoding.setTokenSeparator(ServiceConfiguration.getInstance().getTokenSeparator());
+            tokenSeparator = sosObservation.getTokenSeparator();
+        }
+        if (sosObservation.isSetDecimalSeparator()) {
+            decimalSeparator = sosObservation.getDecimalSeparator();
+        }
+        return createTextEncoding(tupleSeparator, tokenSeparator, decimalSeparator);
+    }
+
+    /**
+     * Create a TextEncoding object for token and tuple separators from
+     * SosObservation. If separators not set, definitions from Configurator are
+     * used.
+     * 
+     * @param observationValue
+     *            AbstractObservationValue with token and tuple separator
+     * @return TextEncoding
+     */
+    private static SweAbstractEncoding createTextEncoding(AbstractObservationValue<?> observationValue) {
+        String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
+        String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
+        String decimalSeparator = null;
+        if (observationValue.isSetTupleSeparator()) {
+            tupleSeparator = observationValue.getTupleSeparator();
+        }
+        if (observationValue.isSetTokenSeparator()) {
+            tokenSeparator = observationValue.getTokenSeparator();
+        }
+        if (observationValue.isSetDecimalSeparator()) {
+            decimalSeparator = observationValue.getDecimalSeparator();
+        }
+        return createTextEncoding(tupleSeparator, tokenSeparator, decimalSeparator);
+    }
+
+    /**
+     * Create a TextEncoding object for token and tuple separators.
+     * 
+     * @param tupleSeparator
+     *            Token separator
+     * @param tokenSeparator
+     *            Tuple separator
+     * @param decimalSeparator
+     *            Decimal separator
+     * @return TextEncoding
+     */
+    private static SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
+        SweTextEncoding sosTextEncoding = new SweTextEncoding();
+        sosTextEncoding.setBlockSeparator(tupleSeparator);
+        sosTextEncoding.setTokenSeparator(tokenSeparator);
+        if (StringHelper.isNotEmpty(decimalSeparator)) {
+            sosTextEncoding.setDecimalSeparator(decimalSeparator);
         }
         return sosTextEncoding;
     }
@@ -219,7 +318,7 @@ public final class SweHelper {
             List<String> block = new ArrayList<String>(elementTypeRecord.getFields().size());
             for (SweField sweField : elementTypeRecord.getFields()) {
                 if (!(value instanceof NilTemplateValue)) {
-                    if (sweField.getElement() instanceof SweTime) {
+                    if (sweField.getElement() instanceof SweTime || sweField.getElement() instanceof SweTimeRange) {
                         block.add(DateTimeHelper.format(phenomenonTime));
                     } else if (sweField.getElement() instanceof SweAbstractDataComponent
                             && sweField.getElement().getDefinition().equals(phenID)) {
@@ -236,6 +335,21 @@ public final class SweHelper {
                         .getName() : "null");
         LOGGER.debug(exceptionMsg);
         throw new IllegalArgumentException(exceptionMsg);
+    }
+
+    /**
+     * Create a {@link SweQuantity} from parameter
+     * 
+     * @param value
+     *            the {@link SweQuantity} value
+     * @param axis
+     *            the {@link SweQuantity} axis id
+     * @param uom
+     *            the {@link SweQuantity} unit of measure
+     * @return the {@link SweQuantity} from parameter
+     */
+    public static SweQuantity createSweQuantity(Object value, String axis, String uom) {
+        return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
     }
 
     private SweHelper() {

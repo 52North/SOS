@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 
 /**
@@ -36,7 +38,7 @@ import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
  * @author Carsten Hollmann
  * @since 4.0.0
  */
-public class SweText extends SweAbstractSimpleType<String> implements SweQuality{
+public class SweText extends SweAbstractSimpleType<String> implements Comparable<SweText>, SweQuality {
 
     /**
      * value
@@ -73,5 +75,14 @@ public class SweText extends SweAbstractSimpleType<String> implements SweQuality
     @Override
     public SweDataComponentType getDataComponentType() {
         return SweDataComponentType.Text;
+    }
+
+    @Override
+    public int compareTo(SweText o) {
+        return checkNotNull(o) == this ? 0
+                : getValue() == o.getValue() ? 0
+                    : getValue() == null ? -1
+                       : o.getValue() == null ? 1
+                          : getValue().compareTo(o.getValue());
     }
 }

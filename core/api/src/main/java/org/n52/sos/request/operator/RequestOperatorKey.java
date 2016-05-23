@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,14 +42,25 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
     private final ServiceOperatorKey sok;
 
     private final String operationName;
+    
+    private final boolean defaultActive;
 
     public RequestOperatorKey(ServiceOperatorKey sok, String operationName) {
+        this(sok, operationName, true);
+    }
+    
+    public RequestOperatorKey(ServiceOperatorKey sok, String operationName, boolean defaultActive) {
         this.sok = sok;
         this.operationName = operationName;
+        this.defaultActive = defaultActive;
     }
 
     public RequestOperatorKey(String service, String version, String operationName) {
-        this(new ServiceOperatorKey(service, version), operationName);
+        this(new ServiceOperatorKey(service, version), operationName, true);
+    }
+    
+    public RequestOperatorKey(String service, String version, String operationName, boolean defaultActive) {
+        this(new ServiceOperatorKey(service, version), operationName, defaultActive);
     }
 
     public ServiceOperatorKey getServiceOperatorKey() {
@@ -66,6 +77,13 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
 
     public String getOperationName() {
         return operationName;
+    }
+    
+    /**
+     * @return the defaultActive
+     */
+    public boolean isDefaultActive() {
+        return defaultActive;
     }
 
     @Override
@@ -92,7 +110,7 @@ public class RequestOperatorKey implements Comparable<RequestOperatorKey> {
 
     @Override
     public String toString() {
-        return String.format("%s[serviceOperatorKeyType=%s, operationName=%s]", getClass().getSimpleName(),
-                getServiceOperatorKey(), getOperationName());
+        return String.format("%s[serviceOperatorKeyType=%s, operationName=%s, defaultActive=%b]", getClass().getSimpleName(),
+                getServiceOperatorKey(), getOperationName(), isDefaultActive());
     }
 }

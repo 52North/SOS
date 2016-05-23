@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,27 +28,22 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import java.io.Serializable;
+
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
 import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class Codespace implements java.io.Serializable {
+public class Codespace implements Serializable {
 
     private static final long serialVersionUID = 8795086004488469603L;
-
     public static final String ID = "codespaceId";
-
     public static final String CODESPACE = HasCodespace.CODESPACE;
-
     private long codespaceId;
-
     private String codespace;
-
-    public Codespace() {
-    }
 
     public long getCodespaceId() {
         return this.codespaceId;

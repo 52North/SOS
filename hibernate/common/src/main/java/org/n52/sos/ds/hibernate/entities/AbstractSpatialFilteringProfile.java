@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,8 +36,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSrid;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
-
-public abstract class AbstractSpatialFilteringProfile implements Serializable, HasGeometry, HasCoordinate, HasSrid {
+@Deprecated
+public abstract class AbstractSpatialFilteringProfile extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasGeometry, HasCoordinate, HasSrid {
 
     public static final String OBSERVATION = "observation";
 
@@ -143,6 +143,24 @@ public abstract class AbstractSpatialFilteringProfile implements Serializable, H
         return this;
     }
 
+    /**
+     * Is definition set
+     * 
+     * @return <code>true</code>, if definition is set
+     */
+    public boolean isSetDefinition() {
+        return StringHelper.isNotEmpty(getDefinition());
+    }
+
+    /**
+     * Is title set
+     * 
+     * @return <code>true</code>, if title is set
+     */
+    public boolean isSetTitle() {
+        return StringHelper.isNotEmpty(getTitle());
+    }
+
     @Override
     public Geometry getGeom() {
         return geom;
@@ -198,58 +216,29 @@ public abstract class AbstractSpatialFilteringProfile implements Serializable, H
         return this;
     }
 
-    /**
-     * Is definition set
-     * 
-     * @return <code>true</code>, if definition is set
-     */
-    public boolean isSetDefinition() {
-        return StringHelper.isNotEmpty(getDefinition());
-    }
-
-    /**
-     * Is title set
-     * 
-     * @return <code>true</code>, if title is set
-     */
-    public boolean isSetTitle() {
-        return StringHelper.isNotEmpty(getTitle());
-    }
-
-    /**
-     * Is geometry set
-     * 
-     * @return <code>true</code>, if geometry is set
-     */
+    @Override
     public boolean isSetGeometry() {
         return getGeom() != null;
     }
-
-    /**
-     * Are longitude and latitude set
-     * 
-     * @return <code>true</code>, if longitude and latitude are set
-     */
+    
+    @Override
     public boolean isSetLongLat() {
         return getLongitude() != null && getLatitude() != null;
     }
 
-    /**
-     * Is altitude set
-     * 
-     * @return <code>true</code>, if altitude is set
-     */
+    @Override
     public boolean isSetAltitude() {
         return getAltitude() != null;
     }
 
-    /**
-     * Is srid set
-     * 
-     * @return <code>true</code>, if srid is set
-     */
+    @Override
     public boolean isSetSrid() {
         return getSrid() > 0;
+    }
+    
+    @Override
+    public boolean isSpatial() {
+        return isSetGeometry() || isSetLongLat();
     }
 
 }

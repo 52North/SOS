@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,40 +29,40 @@
 package org.n52.sos.ogc.sos;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public abstract class SosProcedureDescription {
-    private String identifier;
+public abstract class SosProcedureDescription extends AbstractFeature {
+    private static final long serialVersionUID = 1144253800787127139L;
     private String sensorDescriptionXmlString;
     private String descriptionFormat;
-    private final Set<SosOffering> offerings = Sets.newHashSet();
-    private final Set<String> featuresOfInterest = Sets.newHashSet();
-    private final Set<String> parentProcedures = Sets.newHashSet();
-    private final Set<SosProcedureDescription> childProcedures = Sets.newHashSet();
+    private final Map<String, AbstractFeature> featuresOfInterestMap = Maps.newHashMap();
+    private final Map<String, AbstractPhenomenon> phenomenonMap = Maps.newHashMap();
+    private final Set<SosOffering> offerings = Sets.newLinkedHashSet();
+    private final Set<String> featuresOfInterest = Sets.newLinkedHashSet();
+    private final Set<String> parentProcedures = Sets.newLinkedHashSet();
+    private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
     private Time validTime;
 
+    @Override
     public SosProcedureDescription setIdentifier(String identifier) {
-        this.identifier = identifier;
+        super.setIdentifier(identifier);
         return this;
     }
-
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public boolean isSetIdentifier() {
-        return identifier != null && !identifier.isEmpty();
-    }
-
+    
     public Set<SosOffering> getOfferings() {
         return offerings;
     }
@@ -73,7 +73,9 @@ public abstract class SosProcedureDescription {
     }
 
     public SosProcedureDescription addOffering(SosOffering offering) {
-        this.offerings.add(offering);
+        if (offering != null) {
+            this.offerings.add(offering);
+        }
         return this;
     }
 
@@ -103,26 +105,69 @@ public abstract class SosProcedureDescription {
         this.descriptionFormat = descriptionFormat;
         return this;
     }
+    
+    public SosProcedureDescription setFeaturesOfInterest(Collection<String> features) {
+    	getFeaturesOfInterest().clear();
+        getFeaturesOfInterest().addAll(features);
+        return this;
+    }
 
     public SosProcedureDescription addFeaturesOfInterest(Collection<String> features) {
-        featuresOfInterest.addAll(features);
+        getFeaturesOfInterest().addAll(features);
         return this;
     }
-
+    
     public SosProcedureDescription addFeatureOfInterest(String featureIdentifier) {
-        featuresOfInterest.add(featureIdentifier);
+        getFeaturesOfInterest().add(featureIdentifier);
         return this;
     }
-
+    
     public Set<String> getFeaturesOfInterest() {
         return featuresOfInterest;
     }
 
     public boolean isSetFeaturesOfInterest() {
-        return getFeaturesOfInterest() != null &&
-               !getFeaturesOfInterest().isEmpty();
+        return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
+    }
+    
+    public SosProcedureDescription setFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
+    	this.featuresOfInterestMap.clear();
+    	this.featuresOfInterestMap.putAll(featuresOfInterestMap);
+        return this;
+    }
+    
+    public SosProcedureDescription addFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
+        getFeaturesOfInterestMap().putAll(featuresOfInterestMap);
+        return this;
+    }
+    
+    public SosProcedureDescription addFeatureOfInterest(AbstractFeature feature) {
+        getFeaturesOfInterestMap().put(feature.getIdentifier(), feature);
+        return this;
+    }
+    
+    public Map<String, AbstractFeature> getFeaturesOfInterestMap() {
+        return featuresOfInterestMap;
     }
 
+    public boolean isSetFeaturesOfInterestMap() {
+        return CollectionHelper.isNotEmpty(getFeaturesOfInterestMap());
+    }
+    
+    public boolean hasAbstractFeatureFor(String identifier) {
+        return isSetFeaturesOfInterestMap() && getFeaturesOfInterestMap().containsKey(identifier);
+    }
+    
+    public AbstractFeature getAbstractFeatureFor(String identifier) {
+        return getFeaturesOfInterestMap().get(identifier);
+    }
+
+    public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
+    	this.parentProcedures.clear();
+        this.parentProcedures.addAll(parentProcedures);
+        return this;
+    }
+    
     public SosProcedureDescription addParentProcedures(Collection<String> parentProcedures) {
         this.parentProcedures.addAll(parentProcedures);
         return this;
@@ -163,14 +208,14 @@ public abstract class SosProcedureDescription {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getIdentifier());
+        return Objects.hashCode(getIdentifierCodeWithAuthority());
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (obj != null && getClass().equals(obj.getClass())) {
             final SosProcedureDescription other = (SosProcedureDescription) obj;
-            return Objects.equal(getIdentifier(), other.getIdentifier());
+            return Objects.equal(getIdentifierCodeWithAuthority(), other.getIdentifierCodeWithAuthority());
 
         }
         return false;
@@ -178,9 +223,7 @@ public abstract class SosProcedureDescription {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                .add("identifier", getIdentifier())
-                .toString();
+        return "SosProcedureDescription [identifier=" + getIdentifier() + "]";
     }
 
     public SosProcedureDescription setValidTime(Time validTime) {
@@ -194,5 +237,76 @@ public abstract class SosProcedureDescription {
 
     public Time getValidTime() {
         return this.validTime;
+    }
+
+    public SosProcedureDescription addPhenomenon(AbstractPhenomenon phenomenon) {
+        getPhenomenon().put(phenomenon.getIdentifier(), phenomenon);
+        return this;
+    }
+    
+    public SosProcedureDescription setPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
+    	getPhenomenon().clear();
+        getPhenomenon().putAll(phenomenons);
+        return this;
+    }
+    
+    public SosProcedureDescription addPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
+        getPhenomenon().putAll(phenomenons);
+        return this;
+    }
+    
+    public Map<String, AbstractPhenomenon> getPhenomenon() {
+        return phenomenonMap;
+    }
+    
+    public boolean isSetPhenomenon() {
+        return CollectionHelper.isNotEmpty(getPhenomenon());
+    }
+    
+    public boolean hasPhenomenonFor(String identifier) {
+        return isSetPhenomenon() && getPhenomenon().containsKey(identifier);
+    }
+    
+    public AbstractPhenomenon getPhenomenonFor(String identifer) {
+        return getPhenomenon().get(identifer);
+    }
+    
+    
+    /**
+     * Copies all values from this object to the copyOf object except XML description and description format
+     * @param copyOf {@link SosProcedureDescription} to copy values to
+     */
+    public void copyTo(SosProcedureDescription copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setValidTime(getValidTime());
+        copyOf.setFeatureOfInterest(getFeaturesOfInterest());
+        copyOf.setFeatureOfInterestMap(getFeaturesOfInterestMap());
+        copyOf.setOffetrings(getOfferings());
+        copyOf.setParentProcedures(getParentProcedures());
+        copyOf.setChildProcedures(getChildProcedures());
+    }
+    
+    public boolean isSetFeatures() {
+        return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
+    }
+
+    private void setFeatureOfInterest(Set<String> featuresOfInterest) {
+        this.featuresOfInterest.addAll(featuresOfInterest);
+    }
+
+    private void setFeatureOfInterestMap(Map<String, AbstractFeature> featuresOfInterestMap) {
+        this.featuresOfInterestMap.putAll(featuresOfInterestMap);
+    }
+
+    private void setOffetrings(Set<SosOffering> offerings) {
+        this.offerings.addAll(offerings);
+    }
+
+    private void setParentProcedures(Set<String> parentProcedures) {
+        this.parentProcedures.addAll(parentProcedures);
+    }
+
+    private void setChildProcedures(Set<SosProcedureDescription> childProcedures) {
+        this.childProcedures.addAll(childProcedures);
     }
 }

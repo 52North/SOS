@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.request.operator;
 
-import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -43,7 +42,6 @@ import org.n52.sos.util.net.ProxyChain;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
@@ -51,19 +49,16 @@ import com.google.common.collect.Lists;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class TransactionalRequestChecker {
-    private final List<Predicate<RequestContext>> predicates;
     private Predicate<RequestContext> predicate;
 
     @SuppressWarnings("unchecked")
     public TransactionalRequestChecker(TransactionalSecurityConfiguration config) {
-        this.predicates = Lists.newArrayList(createIpAdressPredicate(config),
-                                             createTokenPredicate(config));
-        this.predicate = Predicates.and(this.predicates);
+        this.predicate = Predicates.and(createIpAdressPredicate(config),
+                                        createTokenPredicate(config));
     }
 
     public void add(Predicate<RequestContext> p) {
-        this.predicates.add(p);
-        this.predicate = Predicates.and(predicates);
+        this.predicate = Predicates.and(this.predicate, p);
     }
 
     public void check(RequestContext rc) throws OwsExceptionReport {
@@ -71,7 +66,7 @@ public class TransactionalRequestChecker {
             throw new NoApplicableCodeException()
                     .withMessage("Not authorized for transactional operations!")
                     .setStatus(HTTPStatus.UNAUTHORIZED);
-                    
+
         }
     }
 

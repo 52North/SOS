@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ package org.n52.sos.request;
 
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -37,7 +38,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public class DescribeSensorRequest extends AbstractServiceRequest {
+public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensorResponse> {
 
     /**
      * Procedure identifier
@@ -131,5 +132,10 @@ public class DescribeSensorRequest extends AbstractServiceRequest {
 
     public boolean isSetValidTime() {
         return getValidTime() != null;
+    }
+
+    @Override
+    public DescribeSensorResponse getResponse() {
+        return (DescribeSensorResponse ) new DescribeSensorResponse().set(this);
     }
 }

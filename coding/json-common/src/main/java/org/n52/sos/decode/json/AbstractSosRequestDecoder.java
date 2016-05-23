@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -64,7 +64,7 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest> extends JSONDecoder<T> {
+public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest<?>> extends JSONDecoder<T> {
 
     public AbstractSosRequestDecoder(Class<T> type, String service, String version, Enum<?> operation) {
         this(type, service, version, operation.name());

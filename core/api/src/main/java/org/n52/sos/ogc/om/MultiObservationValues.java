@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,7 +39,7 @@ import org.n52.sos.ogc.om.values.MultiValue;
  * @param <T>
  *            value type
  */
-public class MultiObservationValues<T> implements ObservationValue<MultiValue<T>> {
+public class MultiObservationValues<T> extends AbstractObservationValue<MultiValue<T>> {
     /**
      * serial number
      */
@@ -77,5 +77,10 @@ public class MultiObservationValues<T> implements ObservationValue<MultiValue<T>
     public void setPhenomenonTime(Time phenomenonTime) {
         this.phenomenonTime = phenomenonTime;
     }
+
+	@Override
+	public boolean isSetValue() {
+		return getValue() != null && getValue().isSetValue();
+	}
 
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,14 +32,17 @@ import java.util.Collection;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
+import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.DummyResponse;
 
 /**
  * SOS RegisterSensor request
  * 
  * @since 4.0.0
  */
-public class SosRegisterSensorRequest extends AbstractServiceRequest {
+public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractServiceResponse> {
 
     /**
      * RegisterSensor operation name
@@ -172,14 +175,14 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest {
         this.featuresOfInterest = featuresOfInterest;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
     @Override
     public String getOperationName() {
         return operationName;
+    }
+    
+    @Override
+    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
+        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
     }
 
 }

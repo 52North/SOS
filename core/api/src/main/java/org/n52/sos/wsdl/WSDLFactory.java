@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,7 @@
 package org.n52.sos.wsdl;
 
 import java.net.URI;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,9 +48,9 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.Producer;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class WSDLFactory implements Producer<String> {
@@ -60,6 +61,17 @@ public class WSDLFactory implements Producer<String> {
         } catch (final Exception ex) {
             throw new ConfigurationException(ex);
         }
+    }
+
+    @Override
+    public String get(Locale language) {
+        // No language support
+        return get();
+    }
+
+    @Override
+    public String get(String identification) {
+        return get();
     }
 
     private String getWSDL() throws Exception {

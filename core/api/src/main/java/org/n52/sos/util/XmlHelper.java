@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -487,7 +487,13 @@ public final class XmlHelper {
     }
 
     private static String getSchemaTypeNamespace(final XmlObject doc) {
-        final QName name = doc.schemaType().getName();
+        QName name = null;
+        if (doc.schemaType().isAttributeType()) {
+            name = doc.schemaType().getAttributeTypeAttributeName();
+        } else {
+            // TODO check else/if for ...schemaType().isDocumentType ?
+            name = doc.schemaType().getName();
+        }
         if (name != null) {
             return name.getNamespaceURI();
         }
@@ -777,6 +783,15 @@ public final class XmlHelper {
       cursor.getAllNamespaces(nsMap);
       cursor.dispose();
       return nsMap;
+    }
+
+    /**
+     * @param prefix
+     * @param namespace
+     * @return
+     */
+    public static String getXPathPrefix(String prefix, String namespace) {
+        return String.format("declare namespace %s='%s';", prefix, namespace);
     }
 
 }

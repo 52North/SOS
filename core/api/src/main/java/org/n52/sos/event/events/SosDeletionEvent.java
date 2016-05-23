@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,7 +36,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * 
  * @since 4.0.0
  */
-public abstract class SosDeletionEvent<I extends AbstractServiceRequest, O extends AbstractServiceResponse> extends
+public abstract class SosDeletionEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse> extends
         SosContentChangeEvent<I, O> {
 
     public SosDeletionEvent(I request, O response) {

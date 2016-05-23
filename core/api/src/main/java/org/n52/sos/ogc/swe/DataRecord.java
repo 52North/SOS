@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,9 @@
 package org.n52.sos.ogc.swe;
 
 import java.util.List;
+import java.util.Set;
+
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
 
 /**
  * @since 4.0.0
@@ -75,5 +78,8 @@ public interface DataRecord {
      *         if not found.
      */
     int getFieldIndexByIdentifier(String fieldNameOrElementDefinition);
+
+    @SuppressWarnings("rawtypes")
+    Set<SweAbstractSimpleType<?>> getSweAbstractSimpleTypeFromFields(Class clazz);
 
 }

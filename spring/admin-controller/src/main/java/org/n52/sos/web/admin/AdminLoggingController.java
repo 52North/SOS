@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,9 +37,6 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.sos.service.AbstractLoggingConfigurator;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -49,9 +46,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.sos.service.AbstractLoggingConfigurator;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(value = ControllerConstants.Paths.ADMIN_LOGGING)

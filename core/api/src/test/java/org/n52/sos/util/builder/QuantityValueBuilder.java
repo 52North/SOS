@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,8 +28,6 @@
  */
 package org.n52.sos.util.builder;
 
-import java.math.BigDecimal;
-
 import org.n52.sos.ogc.om.values.QuantityValue;
 
 /**
@@ -43,11 +41,11 @@ public class QuantityValueBuilder {
         return new QuantityValueBuilder();
     }
 
-    private BigDecimal value;
+    private Double value;
 
     private String unit;
 
-    public QuantityValueBuilder setValue(BigDecimal value) {
+    public QuantityValueBuilder setValue(Double value) {
         this.value = value;
         return this;
     }

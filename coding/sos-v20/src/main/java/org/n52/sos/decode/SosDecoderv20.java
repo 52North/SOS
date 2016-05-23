@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -87,9 +87,6 @@ import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swes.SwesExtension;
-import org.n52.sos.ogc.swes.SwesExtensionImpl;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
@@ -120,7 +117,7 @@ import com.google.common.base.Joiner;
  * @since 4.0.0
  * 
  */
-public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosDecoderv20.class);
 
@@ -201,7 +198,7 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetCapabilities(final GetCapabilitiesDocument getCapsDoc)
+    private AbstractServiceRequest<?> parseGetCapabilities(final GetCapabilitiesDocument getCapsDoc)
             throws OwsExceptionReport {
         final GetCapabilitiesRequest request = new GetCapabilitiesRequest();
 
@@ -220,9 +217,9 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
         if (getCapsType.getSections() != null && getCapsType.getSections().getSectionArray().length != 0) {
             request.setSections(Arrays.asList(getCapsType.getSections().getSectionArray()));
         }
-
+        
         if (getCapsType.getExtensionArray() != null && getCapsType.getExtensionArray().length > 0) {
-            request.setExtensions(parseSwesExtensions(getCapsType.getExtensionArray()));
+        	request.setExtensions(parseExtensibleRequestExtension(getCapsType.getExtensionArray()));
         }
 
         return request;
@@ -240,7 +237,7 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
      * @throws OwsExceptionReport
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetObservation(final GetObservationDocument getObsDoc)
+    private AbstractServiceRequest<?> parseGetObservation(final GetObservationDocument getObsDoc)
             throws OwsExceptionReport {
         final GetObservationRequest getObsRequest = new GetObservationRequest();
         final GetObservationType getObsType = getObsDoc.getGetObservation();
@@ -263,23 +260,22 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
                 throw new NoApplicableCodeException().causedBy(e).withMessage("Error while encoding response format!");
             }
         }
-        if (getObsType.getExtensionArray() != null && getObsType.getExtensionArray().length > 0) {
-            getObsRequest.setExtensions(parseSwesExtensions(getObsType.getExtensionArray()));
-        }
+        getObsRequest.setExtensions(parseExtensibleRequest(getObsType));
         return getObsRequest;
     }
 
-    private SwesExtensions parseSwesExtensions(final XmlObject[] extensionArray) throws OwsExceptionReport {
-        final SwesExtensions extensions = new SwesExtensions();
-        for (final XmlObject xbSwesExtension : extensionArray) {
-
-            final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
-            if (obj instanceof SwesExtension<?>) {
-                extensions.addSwesExtension((SwesExtension<?>) obj);
-            }
-        }
-        return extensions;
-    }
+//	private SwesExtensions parseSwesExtensions(final XmlObject[] extensionArray) throws OwsExceptionReport
+//	{
+//		final SwesExtensions extensions = new SwesExtensions();
+//    	for (final XmlObject xbSwesExtension : extensionArray) {
+//    		
+//    		final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
+//			if (obj instanceof SwesExtension<?>) {
+//				extensions.addSwesExtension((SwesExtension<?>) obj);
+//    		}
+//		}
+//		return extensions;
+//	}
 
     /**
      * parses the passes XmlBeans document and creates a SOS
@@ -294,7 +290,7 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
      * @throws OwsExceptionReport
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest parseGetFeatureOfInterest(final GetFeatureOfInterestDocument getFoiDoc)
+    private AbstractServiceRequest<?> parseGetFeatureOfInterest(final GetFeatureOfInterestDocument getFoiDoc)
             throws OwsExceptionReport {
 
         final GetFeatureOfInterestRequest getFoiRequest = new GetFeatureOfInterestRequest();
@@ -305,28 +301,22 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
         getFoiRequest.setObservedProperties(Arrays.asList(getFoiType.getObservedPropertyArray()));
         getFoiRequest.setProcedures(Arrays.asList(getFoiType.getProcedureArray()));
         getFoiRequest.setSpatialFilters(parseSpatialFilters4GetFeatureOfInterest(getFoiType.getSpatialFilterArray()));
-
-        if (getFoiType.getExtensionArray() != null && getFoiType.getExtensionArray().length > 0) {
-            getFoiRequest.setExtensions(parseSwesExtensions(getFoiType.getExtensionArray()));
-        }
-
+        getFoiRequest.setExtensions(parseExtensibleRequest(getFoiType));
         return getFoiRequest;
     }
 
-    private AbstractServiceRequest parseGetObservationById(final GetObservationByIdDocument getObsByIdDoc)
+    private AbstractServiceRequest<?> parseGetObservationById(final GetObservationByIdDocument getObsByIdDoc)
             throws OwsExceptionReport {
         final GetObservationByIdRequest getObsByIdRequest = new GetObservationByIdRequest();
         final GetObservationByIdType getObsByIdType = getObsByIdDoc.getGetObservationById();
         getObsByIdRequest.setService(getObsByIdType.getService());
         getObsByIdRequest.setVersion(getObsByIdType.getVersion());
         getObsByIdRequest.setObservationIdentifier(Arrays.asList(getObsByIdType.getObservationArray()));
-        if (getObsByIdType.getExtensionArray() != null && getObsByIdType.getExtensionArray().length > 0) {
-            getObsByIdRequest.setExtensions(parseSwesExtensions(getObsByIdType.getExtensionArray()));
-        }
+        getObsByIdRequest.setExtensions(parseExtensibleRequest(getObsByIdType));
         return getObsByIdRequest;
     }
 
-    private AbstractServiceRequest parseInsertObservation(final InsertObservationDocument insertObservationDoc)
+    private AbstractServiceRequest<?> parseInsertObservation(final InsertObservationDocument insertObservationDoc)
             throws OwsExceptionReport {
         // set namespace for default XML type (e.g. xs:string, xs:integer,
         // xs:boolean, ...)
@@ -344,10 +334,7 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
         if (insertObservationDoc.getInsertObservation().getOfferingArray() != null) {
             insertObservationRequest.setOfferings(Arrays.asList(insertObservationType.getOfferingArray()));
         }
-
-        if (insertObservationType.getExtensionArray() != null && insertObservationType.getExtensionArray().length > 0) {
-            insertObservationRequest.setExtensions(parseSwesExtensions(insertObservationType.getExtensionArray()));
-        }
+        insertObservationRequest.setExtensions(parseExtensibleRequest(insertObservationType));
 
         if (insertObservationType.getObservationArray() != null) {
             final int length = insertObservationType.getObservationArray().length;
@@ -380,7 +367,7 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
 
     }
 
-    private AbstractServiceRequest parseInsertResultTemplate(final InsertResultTemplateDocument insertResultTemplateDoc)
+    private AbstractServiceRequest<?> parseInsertResultTemplate(final InsertResultTemplateDocument insertResultTemplateDoc)
             throws OwsExceptionReport {
         final InsertResultTemplateRequest sosInsertResultTemplate = new InsertResultTemplateRequest();
         final InsertResultTemplateType insertResultTemplate = insertResultTemplateDoc.getInsertResultTemplate();
@@ -396,10 +383,11 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
                 .getAbstractDataComponent()));
         sosInsertResultTemplate.setResultEncoding(parseResultEncoding(resultTemplate.getResultEncoding()
                 .getAbstractEncoding()));
+        sosInsertResultTemplate.setExtensions(parseExtensibleRequest(insertResultTemplate));
         return sosInsertResultTemplate;
     }
 
-    private AbstractServiceRequest parseInsertResult(final InsertResultDocument insertResultDoc)
+    private AbstractServiceRequest<?> parseInsertResult(final InsertResultDocument insertResultDoc)
             throws OwsExceptionReport {
         final InsertResultType insertResult = insertResultDoc.getInsertResult();
         final InsertResultRequest sosInsertResultRequest = new InsertResultRequest();
@@ -407,10 +395,11 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
         sosInsertResultRequest.setVersion(insertResult.getVersion());
         sosInsertResultRequest.setTemplateIdentifier(insertResult.getTemplate());
         sosInsertResultRequest.setResultValues(parseResultValues(insertResult.getResultValues()));
+        sosInsertResultRequest.setExtensions(parseExtensibleRequest(insertResult));
         return sosInsertResultRequest;
     }
 
-    private AbstractServiceRequest parseGetResult(final GetResultDocument getResultDoc) throws OwsExceptionReport {
+    private AbstractServiceRequest<?> parseGetResult(final GetResultDocument getResultDoc) throws OwsExceptionReport {
         final GetResultType getResult = getResultDoc.getGetResult();
         final GetResultRequest sosGetResultRequest = new GetResultRequest();
         sosGetResultRequest.setService(getResult.getService());
@@ -422,14 +411,12 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
         if (getResult.isSetSpatialFilter()) {
             sosGetResultRequest.setSpatialFilter(parseSpatialFilter4GetResult(getResult.getSpatialFilter()));
         }
-        if (getResult.getExtensionArray() != null && getResult.getExtensionArray().length > 0) {
-            sosGetResultRequest.setExtensions(parseSwesExtensions(getResult.getExtensionArray()));
-        }
+        sosGetResultRequest.setExtensions(parseExtensibleRequest(getResult));
         sosGetResultRequest.setTemporalFilter(parseTemporalFilters4GetResult(getResult.getTemporalFilterArray()));
         return sosGetResultRequest;
     }
 
-    private AbstractServiceRequest parseGetResultTemplate(final GetResultTemplateDocument getResultTemplateDoc)
+    private AbstractServiceRequest<?> parseGetResultTemplate(final GetResultTemplateDocument getResultTemplateDoc)
             throws OwsExceptionReport {
         final GetResultTemplateType getResultTemplate = getResultTemplateDoc.getGetResultTemplate();
         final GetResultTemplateRequest sosGetResultTemplateRequest = new GetResultTemplateRequest();
@@ -437,9 +424,7 @@ public class SosDecoderv20 implements Decoder<AbstractServiceCommunicationObject
         sosGetResultTemplateRequest.setVersion(getResultTemplate.getVersion());
         sosGetResultTemplateRequest.setOffering(getResultTemplate.getOffering());
         sosGetResultTemplateRequest.setObservedProperty(getResultTemplate.getObservedProperty());
-        if (getResultTemplate.getExtensionArray() != null && getResultTemplate.getExtensionArray().length > 0) {
-            sosGetResultTemplateRequest.setExtensions(parseSwesExtensions(getResultTemplate.getExtensionArray()));
-        }
+        sosGetResultTemplateRequest.setExtensions(parseExtensibleRequest(getResultTemplate));
         return sosGetResultTemplateRequest;
     }
 

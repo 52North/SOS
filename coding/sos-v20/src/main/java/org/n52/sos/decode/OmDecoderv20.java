@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -50,6 +49,7 @@ import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -70,8 +70,10 @@ import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -83,6 +85,7 @@ import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
+import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -247,16 +250,24 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             namedValue.setValue((GeometryValue) value);
             return namedValue;
         } else if (value instanceof QuantityValue) {
-            NamedValue<BigDecimal> namedValue = new NamedValue<BigDecimal>();
+            NamedValue<Double> namedValue = new NamedValue<Double>();
             namedValue.setValue((QuantityValue) value);
             return namedValue;
         } else if (value instanceof TextValue) {
             NamedValue<String> namedValue = new NamedValue<String>();
             namedValue.setValue((TextValue) value);
             return namedValue;
-        } else if (value instanceof Geometry) {
+        } else if (value instanceof AbstractGeometry) {
             NamedValue<Geometry> namedValue = new NamedValue<Geometry>();
-            namedValue.setValue(new GeometryValue((Geometry) value));
+            namedValue.setValue(new GeometryValue((AbstractGeometry)value));
+            return namedValue;
+        } else if (value instanceof ReferenceType) {
+            NamedValue<ReferenceType> namedValue = new NamedValue<ReferenceType>();
+            namedValue.setValue(new ReferenceValue((ReferenceType)value));
+            return namedValue;
+        } else if (value instanceof W3CHrefAttribute) {
+            NamedValue<W3CHrefAttribute> namedValue = new NamedValue<W3CHrefAttribute>();
+            namedValue.setValue(new HrefAttributeValue((W3CHrefAttribute)value));
             return namedValue;
         } else {
             throw new UnsupportedDecoderInputException(this, xmlObject);
@@ -428,7 +439,7 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
             if (decodedObject instanceof ObservationValue) {
                 return (ObservationValue) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
-                SingleObservationValue<BigDecimal> result = new SingleObservationValue<BigDecimal>();
+                SingleObservationValue<Double> result = new SingleObservationValue<Double>();
                 GmlMeasureType measureType = (GmlMeasureType) decodedObject;
                 QuantityValue quantitiyValue = new QuantityValue(measureType.getValue(), measureType.getUnit());
                 result.setValue(quantitiyValue);

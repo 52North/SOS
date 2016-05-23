@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,7 +56,6 @@ import static org.n52.sos.util.builder.SweDataArrayBuilder.aSweDataArray;
 import static org.n52.sos.util.builder.SweDataArrayValueBuilder.aSweDataArrayValue;
 import static org.n52.sos.util.builder.SweTimeBuilder.aSweTime;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.Set;
 
@@ -297,22 +296,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_contain_observation_id_after_InsertObservation() throws OwsExceptionReport {
-        updateCacheWithSingleObservation(PROCEDURE);
-
-        assertTrue("observation id NOT in cache", getCache().getObservationIdentifiers().contains(OBSERVATION_ID));
-    }
-
-    @Test
-    public void should_contain_observation_id_to_offering_relation_after_InsertObservation() throws OwsExceptionReport {
-        insertObservationPreparation();
-
-        assertTrue("procedure -> observation-identifier relation NOT in cache", !getCache()
-                .getObservationIdentifiersForProcedure(PROCEDURE).isEmpty()
-                && getCache().getObservationIdentifiersForProcedure(PROCEDURE).contains(OBSERVATION_ID));
-    }
-
-    @Test
     public void should_contain_procedure_after_InsertSensor() throws OwsExceptionReport {
 
         updateCacheWithInsertSensor(PROCEDURE);
@@ -390,10 +373,10 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
             assertTrue(
                     "single \"offering -> related features relation\" NOT in cache",
                     getCache().getRelatedFeaturesForOffering(getAssignedOfferingId()).contains(
-                            relatedFeature.getFeature().getIdentifier().getValue()));
+                            relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue()));
 
             assertTrue("single \"related feature -> role relation\" NOT in cache",
-                    getCache().getRolesForRelatedFeature(relatedFeature.getFeature().getIdentifier().getValue())
+                    getCache().getRolesForRelatedFeature(relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue())
                             .contains(relatedFeature.getRole()));
         }
     }
@@ -562,22 +545,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
         assertFalse("feature -> procedure relation STILL in cache",
                 getCache().getProceduresForFeatureOfInterest(FEATURE).contains(PROCEDURE));
-    }
-
-    @Test
-    public void should_not_contain_procedure_to_observation_ids_relations_after_DeleteSensor()
-            throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("procedure -> observation ids relations STILL in cache", getCache()
-                .getObservationIdentifiersForProcedure(PROCEDURE).isEmpty());
-    }
-
-    @Test
-    public void should_not_contain_removed_observation_ids_after_DeleteSensor() throws OwsExceptionReport {
-        deleteSensorPreparation();
-
-        assertTrue("observation identifiers STILL in cache", getCache().getObservationIdentifiers().isEmpty());
     }
 
     @Test
@@ -787,22 +754,6 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
     }
 
     @Test
-    public void should_contain_observation_id_after_InsertResult() throws OwsExceptionReport {
-        insertResultPreparation();
-
-        assertTrue("observation id NOT in cache", getCache().getObservationIdentifiers().contains(OBSERVATION_ID));
-    }
-
-    @Test
-    public void should_contain_observation_id_to_offering_relation_after_InsertResult() throws OwsExceptionReport {
-        updateCacheWithInsertSensor(PROCEDURE);
-        insertResultPreparation();
-
-        assertTrue("procedure -> observation-identifier relation NOT in cache", getCache()
-                .getObservationIdentifiersForProcedure(PROCEDURE).contains(OBSERVATION_ID));
-    }
-
-    @Test
     public void should_contain_result_template_to_observed_property_relation_after_InsertResult()
             throws OwsExceptionReport {
         updateCacheWithInsertSensor(PROCEDURE);
@@ -978,7 +929,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private String getFoiIdFromInsertObservationRequest() {
         return ((InsertObservationRequest) request).getObservations().get(0).getObservationConstellation()
-                .getFeatureOfInterest().getIdentifier().getValue();
+                .getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
     }
 
     private void insertObservationRequestExample(String procedure) {
@@ -1013,7 +964,7 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
                                         .setValue(
                                                 aQuantityValue()
                                                         .setValue(
-                                                                aQuantitiy().setValue(new BigDecimal(2.0))
+                                                                aQuantitiy().setValue(2.0)
                                                                         .setUnit("m").build())
                                                         .setPhenomenonTime(phenomenonTime).build())
                                         .setIdentifier(CODESPACE, OBSERVATION_ID).build()).build();

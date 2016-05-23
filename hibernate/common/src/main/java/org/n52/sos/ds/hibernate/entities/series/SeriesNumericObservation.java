@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,7 +29,8 @@
 package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
+
+import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 
 /**
  * Hibernate series numeric observation entity
@@ -38,19 +39,19 @@ import java.math.BigDecimal;
  * 
  */
 public class SeriesNumericObservation extends SeriesObservation implements Serializable,
-        org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation {
+        NumericObservation {
 
-    private static final long serialVersionUID = -835034606459038906L;
+    private static final long serialVersionUID = -835034606459038907L;
 
-    private BigDecimal value;
+    private Double value;
 
     @Override
-    public BigDecimal getValue() {
+    public Double getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(BigDecimal value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
@@ -58,5 +59,10 @@ public class SeriesNumericObservation extends SeriesObservation implements Seria
     public boolean isSetValue() {
         return value != null;
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue().toString();
+	}
 
 }

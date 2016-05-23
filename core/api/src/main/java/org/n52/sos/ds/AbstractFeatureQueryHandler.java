@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,34 +56,145 @@ public abstract class AbstractFeatureQueryHandler implements FeatureQueryHandler
 
     private List<Range> epsgsWithReversedAxisOrder;
 
-    private int defaultEPSG;
+    private int storageEPSG;
 
-    private int default3DEPSG;
+    private int storage3DEPSG;
+    
+    private int defaultResponseEPSG;
 
+    private int defaultResponse3DEPSG;
+    
     private boolean spatialDatasource;
 
-    @Override
+    @Deprecated
     public int getDefaultEPSG() {
-        return defaultEPSG;
+        return getStorageEPSG();
     }
 
-    @Override
+    @Deprecated
     public int getDefault3DEPSG() {
-        return default3DEPSG;
+        return getStorage3DEPSG();
+    }
+    
+    /**
+     * Get configured storage EPSG code
+     * 
+     * @return Storage EPSG code
+     */
+    public int getStorageEPSG() {
+        return storageEPSG;
     }
 
+    /**
+     * Get configured storage 3D EPSG code
+     * 
+     * @return Storage 3D EPSG code
+     */
+    public int getStorage3DEPSG() {
+        return storage3DEPSG;
+    }
+    
+    /**
+     * Get configured default response EPSG code
+     * 
+     * @return Default response EPSG code
+     */
+    public int getDefaultResponseEPSG() {
+        return defaultResponseEPSG;
+    }
+
+    /**
+     * Get configured default response 3D EPSG code
+     * 
+     * @return Default response 3D EPSG code
+     */
+    public int getDefaultResponse3DEPSG() {
+        return defaultResponse3DEPSG;
+    }
+
+    /**
+     * Set default EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Deprecated
     @Setting(FeatureQuerySettingsProvider.DEFAULT_EPSG)
     public void setDefaultEpsg(final int epsgCode) throws ConfigurationException {
-        Validation.greaterZero("Default EPSG Code", epsgCode);
-        defaultEPSG = epsgCode;
+        setStorageEpsg(epsgCode);
     }
 
+    /**
+     * Set default 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Deprecated
     @Setting(FeatureQuerySettingsProvider.DEFAULT_3D_EPSG)
     public void setDefault3DEpsg(final int epsgCode3D) throws ConfigurationException {
-        Validation.greaterZero("Default 3D EPSG Code", epsgCode3D);
-        default3DEPSG = epsgCode3D;
+        setStorage3DEpsg(epsgCode3D);
+    }
+    
+    /**
+     * Set storage EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.STORAGE_EPSG)
+    public void setStorageEpsg(final int epsgCode) throws ConfigurationException {
+        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        storageEPSG = epsgCode;
     }
 
+    /**
+     * Set storage 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.STORAGE_3D_EPSG)
+    public void setStorage3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        storage3DEPSG = epsgCode3D;
+    }
+    
+    /**
+     * Set default response EPSG code from settings
+     * 
+     * @param epsgCode
+     *            EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_EPSG)
+    public void setDefaultResponseEpsg(final int epsgCode) throws ConfigurationException {
+        Validation.greaterZero("Storage EPSG Code", epsgCode);
+        defaultResponseEPSG = epsgCode;
+    }
+
+    /**
+     * Set default response 3D EPSG code from settings
+     * 
+     * @param epsgCode3D
+     *            3D EPSG code from settings
+     * @throws ConfigurationException
+     *             If an error occurs
+     */
+    @Setting(FeatureQuerySettingsProvider.DEFAULT_RESPONSE_3D_EPSG)
+    public void setDefaultResponse3DEpsg(final int epsgCode3D) throws ConfigurationException {
+        Validation.greaterZero("Storage 3D EPSG Code", epsgCode3D);
+        defaultResponse3DEPSG = epsgCode3D;
+    }
     /**
      * @param epsgCode
      *            <p/>
@@ -98,7 +209,7 @@ public abstract class AbstractFeatureQueryHandler implements FeatureQueryHandler
         return false;
     }
 
-    @Setting(FeatureQuerySettingsProvider.EPSG_CODES_WITH_REVERSED_AXIS_ORDER)
+    @Setting(FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST)
     public void setEpsgCodesWithReversedAxisOrder(final String codes) throws ConfigurationException {
         Validation.notNullOrEmpty("EPSG Codes to switch coordinates for", codes);
         final String[] splitted = codes.split(";");
@@ -112,7 +223,7 @@ public abstract class AbstractFeatureQueryHandler implements FeatureQueryHandler
                 r = new Range(Integer.parseInt(splittedEntry[0]), Integer.parseInt(splittedEntry[1]));
             } else {
                 throw new ConfigurationException(String.format("Invalid format of entry in '%s': %s",
-                        FeatureQuerySettingsProvider.EPSG_CODES_WITH_REVERSED_AXIS_ORDER, entry));
+                        FeatureQuerySettingsProvider.EPSG_CODES_WITH_NORTHING_FIRST, entry));
             }
             epsgsWithReversedAxisOrder.add(r);
         }
@@ -135,6 +246,7 @@ public abstract class AbstractFeatureQueryHandler implements FeatureQueryHandler
         }
     }
 
+    //TODO replace with JavaHelper.asDouble?
     protected double getValueAsDouble(final Object value) {
         if (value instanceof String) {
             return Double.valueOf((String) value).doubleValue();

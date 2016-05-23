@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,32 +42,30 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.AbstractGetResultDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
-import org.n52.sos.ds.hibernate.entities.SpatialFilteringProfile;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
+import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
@@ -75,6 +73,7 @@ import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,6 +97,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
     public GetResultDAO() {
         super(SosConstants.SOS);
     }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
 
     @Override
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
@@ -115,7 +119,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<AbstractObservation> observations;
-                if (HibernateHelper.isEntitySupported(SeriesObservation.class, session)) {
+                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 } else {
                     observations = queryObservation(request, featureIdentifier, session);
@@ -137,8 +141,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
     public Set<String> getConformanceClasses() {
         try {
             Session session = sessionHolder.getSession();
-            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()
-                    && HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
+            if (ServiceConfiguration.getInstance().isStrictSpatialFilteringProfile()) {
                 return Sets.newHashSet(ConformanceClasses.SOS_V2_SPATIAL_FILTERING_PROFILE);
             }
             sessionHolder.returnSession(session);
@@ -216,7 +219,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
         final Criteria c = createCriteriaFor(SeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = new SeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
+        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {
@@ -317,18 +320,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
     private void addSpatialFilteringProfileRestrictions(Criteria criteria, GetResultRequest request, Session session)
             throws OwsExceptionReport {
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
-            if (!HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
-                throw new OptionNotSupportedException().at(Sos2Constants.GetObservationParams.spatialFilter)
-                        .withMessage("The SOS 2.0 Spatial Filtering Profile is not supported by this service!");
-            }
-            Set<Long> observationIds =
-                    DaoFactory.getInstance().getSpatialFilteringProfileDAO(session)
-                            .getObservationIdsForSpatialFilter(request.getSpatialFilter(), session);
-            if (observationIds != null && CollectionHelper.isEmpty(observationIds)) {
-                criteria.add(Restrictions.eq(Observation.ID, Long.MIN_VALUE));
-            } else if (CollectionHelper.isNotEmpty(observationIds)) {
-                criteria.add(Restrictions.in(Observation.ID, observationIds));
-            }
+                criteria.add(SpatialRestrictions.filter(
+                        AbstractObservation.SAMPLING_GEOMETRY,
+                        request.getSpatialFilter().getOperator(),
+                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                request.getSpatialFilter().getGeometry())));
         }
     }
 }

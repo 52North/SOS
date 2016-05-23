@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.util.http.MediaType;
 
 /**
  * TODO JavaDoc
@@ -41,16 +42,33 @@ import org.n52.sos.util.XmlOptionsHelper;
  * 
  * @since 4.0.0
  */
-public class XmlResponseWriter implements ResponseWriter<XmlObject> {
+public class XmlResponseWriter extends AbstractResponseWriter<XmlObject> {
+    
+    private MediaType contentType;
+
+//    @Override
+//    public Class<XmlObject> getType() {
+//        return XmlObject.class;
+//    }
 
     @Override
-    public Class<XmlObject> getType() {
-        return XmlObject.class;
+    public void write(XmlObject xml, OutputStream out, ResponseProxy responseProxy) throws IOException {
+        xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
     }
 
     @Override
-    public void write(XmlObject xml, OutputStream out) throws IOException {
-        xml.save(out, XmlOptionsHelper.getInstance().getXmlOptions());
+    public MediaType getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public void setContentType(MediaType contentType) {
+        this.contentType = contentType;
+    }
+
+    @Override
+    public boolean supportsGZip(XmlObject t) {
+        return true;
     }
 
 }

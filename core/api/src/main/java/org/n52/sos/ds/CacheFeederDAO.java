@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds;
 
+import java.util.Collection;
+
 import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -37,6 +39,16 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
  * 
  * @since 4.0.0
  */
-public interface CacheFeederDAO {
+public interface CacheFeederDAO extends DatasourceDaoIdentifier {
     void updateCache(WritableContentCache capabilitiesCache) throws OwsExceptionReport;
+
+    /**
+     * Reload all cache data for a list of offerings, for instance after a DeleteSensor event
+     * 
+     * @param capabilitiesCache The cache to update
+     * @param offerings A list of offerings to update
+     * @throws OwsExceptionReport
+     */
+    void updateCacheOfferings(WritableContentCache capabilitiesCache, Collection<String> offerings)
+            throws OwsExceptionReport;
 }

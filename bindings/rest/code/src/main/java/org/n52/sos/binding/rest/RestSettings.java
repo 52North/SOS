@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -638,7 +638,7 @@ public class RestSettings implements SettingDefinitionProvider {
 			new UriSettingDefinition().
 			setGroup(SETTINGS_GROUP).
 			setKey(REST_ENCODING_SCHEMA_URL).
-			setDefaultValue(URI.create("https://svn.52north.org/svn/swe/main/SOS/Extensions/Binding/RESTful/trunk/xml/src/main/xsd/sosREST.xsd")).
+			setDefaultValue(URI.create("https://raw.githubusercontent.com/52North/SOS/master/bindings/rest/xml/src/main/xsd/sosREST.xsd")).
 			setTitle("Encoding Schema URL").
 			setDescription("The URL to the encoding schema. Should be a web accessible URL returning a XSD file").
 			setOptional(false).

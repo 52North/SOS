@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -94,7 +94,7 @@ public class FieldEncoder extends JSONEncoder<SweField> {
 
     private ObjectNode createField(SweField field) {
         ObjectNode jfield = nodeFactory().objectNode();
-        jfield.put(JSONConstants.NAME, field.getName());
+        jfield.put(JSONConstants.NAME, field.getName().getValue());
         SweAbstractDataComponent element = field.getElement();
         if (element.isSetDefinition()) {
             jfield.put(JSONConstants.DEFINITION, element.getDefinition());

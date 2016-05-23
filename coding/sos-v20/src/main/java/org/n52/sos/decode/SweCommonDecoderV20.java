@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,6 +40,7 @@ import net.opengis.swe.x20.AbstractDataComponentDocument;
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingType;
 import net.opengis.swe.x20.AnyScalarPropertyType;
+import net.opengis.swe.x20.BooleanPropertyType;
 import net.opengis.swe.x20.BooleanType;
 import net.opengis.swe.x20.CategoryType;
 import net.opengis.swe.x20.CountPropertyType;
@@ -56,6 +57,7 @@ import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.TextEncodingDocument;
 import net.opengis.swe.x20.TextEncodingType;
+import net.opengis.swe.x20.TextPropertyType;
 import net.opengis.swe.x20.TextType;
 import net.opengis.swe.x20.TimeRangeType;
 import net.opengis.swe.x20.TimeType;
@@ -66,7 +68,9 @@ import net.opengis.swe.x20.VectorType.Coordinate;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -112,7 +116,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             DataArrayPropertyType.class, DataArrayDocument.class, DataArrayType.class, DataRecordDocument.class,
             DataRecordType.class, CountType.class, QuantityType.class, TextType.class, Coordinate[].class,
             AnyScalarPropertyType[].class, TextEncodingDocument.class, TextEncodingType.class,
-            AbstractDataComponentDocument.class, AbstractDataComponentType.class);
+            AbstractDataComponentDocument.class, AbstractDataComponentType.class, TextPropertyType.class, CountPropertyType.class, BooleanPropertyType.class);
 
     public SweCommonDecoderV20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -160,6 +164,12 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             final SweTextEncoding sosTextEncoding = parseTextEncoding(textEncoding);
             sosTextEncoding.setXml(textEncodingDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
             return sosTextEncoding;
+        } else if (element instanceof TextPropertyType) {
+            return parseAbstractDataComponent(((TextPropertyType)element).getText());
+        } else if (element instanceof CountPropertyType) {
+            return parseAbstractDataComponent(((CountPropertyType)element).getCount());
+        } else if (element instanceof BooleanPropertyType) {
+            return parseAbstractDataComponent(((BooleanPropertyType)element).getBoolean());
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
@@ -359,7 +369,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         return sosCount;
     }
-
+    
     private SweCountRange parseCountRange(final CountRangeType countRange) throws OwsExceptionReport {
         throw new NotYetSupportedException(SweConstants.EN_COUNT_RANGE);
     }
@@ -389,10 +399,32 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     }
 
     private SweQuantityRange parseQuantityRange(final QuantityRangeType quantityRange) throws OwsExceptionReport {
-        throw new NotYetSupportedException(SweConstants.EN_QUANTITY_RANGE);
+    	SweQuantityRange sweQuantityRange = new SweQuantityRange();
+    	if (quantityRange.isSetDefinition()) {
+    		sweQuantityRange.setDefinition(quantityRange.getDefinition());
+    	}
+    	if (quantityRange.isSetLabel()) {
+    		sweQuantityRange.setLabel(quantityRange.getLabel());
+    	}
+    	if (!quantityRange.getUom().isNil() && quantityRange.getUom().isSetCode()) {
+    		sweQuantityRange.setUom(quantityRange.getUom().getCode());
+    	}
+    	if (quantityRange.getValue() != null) {
+    		sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
+    	}
+        return sweQuantityRange;
     }
 
-    private SweText parseText(final TextType xbText) {
+    private RangeValue<Double> parseRangeValue(List<?> value) throws CodedException {
+    	if (value == null || value.isEmpty() || value.size() != 2) {
+    		throw new NoApplicableCodeException()
+    			.at("?:QuantityRange/?:value")
+    			.withMessage("The 'swe:value' element of an 'swe:QuantityRange' is not set correctly", "");
+    	}
+		return new RangeValue<Double>(Double.parseDouble(value.get(0).toString()), Double.parseDouble(value.get(1).toString()));
+	}
+
+	private SweText parseText(final TextType xbText) {
         final SweText sosText = new SweText();
         if (xbText.isSetValue()) {
             sosText.setValue(xbText.getValue());
@@ -414,17 +446,16 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     private SweTimeRange parseTimeRange(final TimeRangeType xbTime) throws OwsExceptionReport {
         final SweTimeRange sosTimeRange = new SweTimeRange();
         if (xbTime.isSetValue()) {
-            // FIXME check if this parses correct
             final List<?> value = xbTime.getValue();
             if (value != null && !value.isEmpty()) {
                 final RangeValue<DateTime> range = new RangeValue<DateTime>();
                 boolean first = true;
                 for (final Object object : value) {
                     if (first) {
-                        range.setRangeStart(DateTimeHelper.parseIsoString2DateTime(xbTime.getValue().toString()));
+                        range.setRangeStart(DateTimeHelper.parseIsoString2DateTime(object.toString()));
                         first = false;
                     }
-                    range.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(xbTime.getValue().toString()));
+                    range.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(object.toString()));
                 }
                 sosTimeRange.setValue(range);
             }
@@ -465,9 +496,8 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
                 throw new InvalidParameterValueException().at(SweConstants.EN_POSITION).withMessage(
                         "Error when parsing the Coordinates of Position: It must be of type Quantity!");
             }
-            return sosCoordinates;
         }
-        return null;
+        return sosCoordinates;
     }
 
     private List<SweField> parseAnyScalarPropertyTypeArray(final AnyScalarPropertyType[] fieldArray)

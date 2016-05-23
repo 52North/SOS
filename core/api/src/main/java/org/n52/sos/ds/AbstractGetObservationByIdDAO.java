@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,8 +46,7 @@ public abstract class AbstractGetObservationByIdDAO extends AbstractOperationDAO
 
     @Override
     public void setOperationsMetadata(OwsOperation opsMeta, String service, String version) throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(Sos2Constants.GetObservationByIdParams.observation, getCache()
-                .getObservationIdentifiers());
+            opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
     }
 
     public abstract GetObservationByIdResponse getObservationById(GetObservationByIdRequest request)

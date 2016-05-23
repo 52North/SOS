@@ -1,0 +1,13 @@
+org.n52.sos.encode.json.base.BigDecimalJSONEncoder
+org.n52.sos.encode.json.base.ShortJSONEncoder
+org.n52.sos.encode.json.base.StringJSONEncoder
+org.n52.sos.encode.json.base.BigIntegerJSONEncoder
+org.n52.sos.encode.json.base.ByteJSONEncoder
+org.n52.sos.encode.json.base.URIJSONEncoder
+org.n52.sos.encode.json.base.IntegerJSONEncoder
+org.n52.sos.encode.json.base.LongJSONEncoder
+org.n52.sos.encode.json.base.BooleanJSONEncoder
+org.n52.sos.encode.json.base.URLJSONEncoder
+org.n52.sos.encode.json.base.FloatJSONEncoder
+org.n52.sos.encode.json.base.DoubleJSONEncoder
+org.n52.sos.encode.json.base.TimeJSONEncoder

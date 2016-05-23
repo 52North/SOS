@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -91,7 +91,7 @@ public class HibernateDeleteDeletedObservationsDAO implements DeleteDeletedObser
      */
     private Criteria getCriteria(Session session) {
         Criteria criteria = null;
-        if (HibernateHelper.isEntitySupported(SeriesObservation.class, session)) {
+        if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
             criteria = session.createCriteria(SeriesObservation.class).add(Restrictions.eq(AbstractObservation.DELETED, true));
         } else {
             criteria = session.createCriteria(Observation.class).add(Restrictions.eq(AbstractObservation.DELETED, true));

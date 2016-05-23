@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -59,7 +59,7 @@ public class ObservationsPostRequestHandler extends RequestHandler {
                 // the restful response requires the link to the newly created observation
             	// FIXME we are always using only the first observation in the list without checking
                 return new ObservationsPostResponse(
-                        ioReq.getObservations().get(0).getIdentifier().getValue(),
+                        ioReq.getObservations().get(0).getIdentifierCodeWithAuthority().getValue(),
                         ((ObservationsPostRequest) req).getXb_OMObservation());
             } 
         }

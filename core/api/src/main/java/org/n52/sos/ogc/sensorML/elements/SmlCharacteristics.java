@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,18 +28,22 @@
  */
 package org.n52.sos.ogc.sensorML.elements;
 
+import java.util.List;
+
 import org.n52.sos.ogc.swe.DataRecord;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * SOS internal representation of SensorML characteristics
  * 
  * @since 4.0.0
  */
-public class SmlCharacteristics {
-
-    private String typeDefinition;
-
-    private DataRecord dataRecord;
+public class SmlCharacteristics extends AbstractSmlDataComponentContainer<SmlCharacteristics> {
+    
+    private List<SmlCharacteristic> characteristics = Lists.newArrayList();
 
     /**
      * default constructor
@@ -55,46 +59,62 @@ public class SmlCharacteristics {
      *            dataRecord
      */
     public SmlCharacteristics(DataRecord dataRecord) {
-        super();
-        this.dataRecord = dataRecord;
+        super(dataRecord);
+    }
+
+    
+    /**
+     * @return the characteristics
+     */
+    public List<SmlCharacteristic> getCharacteristic() {
+        if (!hasCharacteristics() && isSetAbstractDataComponents()) {
+            List<SmlCharacteristic> characteristics = Lists.newArrayList();
+            for (SweAbstractDataComponent component : getAbstractDataComponents()) {
+                SmlCharacteristic smlCharacteristic = new SmlCharacteristic(component.getName().getValue());
+                smlCharacteristic.setAbstractDataComponent(component);
+                characteristics.add(smlCharacteristic);
+            }
+            return characteristics;
+        }
+        return characteristics;
     }
 
     /**
-     * @return the typeDefinition
+     * @param characteristics the characteristics to set
      */
-    public String getTypeDefinition() {
-        return typeDefinition;
+    public void setCharacteristic(List<SmlCharacteristic> characteristics) {
+        if (CollectionHelper.isNotEmpty(characteristics)) {
+            this.characteristics = characteristics;
+            for (SmlCharacteristic smlCharacteristic : characteristics) {
+                addAbstractDataComponents(smlCharacteristic.getAbstractDataComponent());
+            }
+        }
     }
-
+    
     /**
-     * @param typeDefinition
-     *            the typeDefinition to set
+     * @param characteristics the characteristics to add
      */
-    public void setTypeDefinition(String typeDefinition) {
-        this.typeDefinition = typeDefinition;
+    public void addCharacteristic(List<SmlCharacteristic> characteristics) {
+        this.characteristics.addAll(characteristics);
+        for (SmlCharacteristic smlCharacteristic : characteristics) {
+            addAbstractDataComponents(smlCharacteristic.getAbstractDataComponent());
+        }
     }
-
+    
     /**
-     * @return the dataRecord
+     * @param characteristic the characteristic to add
      */
-    public DataRecord getDataRecord() {
-        return dataRecord;
+    public void addCharacteristic(SmlCharacteristic characteristic) {
+        this.characteristics.add(characteristic);
+        addAbstractDataComponents(characteristic.getAbstractDataComponent());
     }
-
-    /**
-     * @param dataRecord
-     *            the dataRecord to set
-     */
-    public void setDataRecord(DataRecord dataRecord) {
-        this.dataRecord = dataRecord;
+    
+    public boolean isSetCharacteristics() {
+        return hasCharacteristics() || isSetAbstractDataComponents();
     }
-
-    public boolean isSetAbstractDataRecord() {
-        return dataRecord != null;
-    }
-
-    public boolean isSetTypeDefinition() {
-        return typeDefinition != null && !typeDefinition.isEmpty();
+    
+    private boolean hasCharacteristics() {
+        return CollectionHelper.isNotEmpty(characteristics); 
     }
 
 }

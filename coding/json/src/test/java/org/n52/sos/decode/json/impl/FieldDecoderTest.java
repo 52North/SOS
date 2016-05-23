@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -62,7 +62,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.util.DateTimeHelper;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.github.fge.jsonschema.report.ProcessingReport;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 /**
  * TODO JavaDoc
@@ -380,7 +380,7 @@ public class FieldDecoderTest {
     protected SweField checkCommon(ObjectNode json, boolean withValue) throws OwsExceptionReport {
         SweField field = validateWithValueAndDecode(json, withValue);
         assertThat(field, is(notNullValue()));
-        errors.checkThat(field.getName(), is(NAME));
+        errors.checkThat(field.getName().getValue(), is(NAME));
         assertThat(field.getElement(), is(notNullValue()));
         errors.checkThat(field.getElement().getDefinition(), is(DEFINITION));
         errors.checkThat(field.getElement().getDescription(), is(DESCRIPTION));

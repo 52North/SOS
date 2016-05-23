@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,8 +30,8 @@ package org.n52.sos.cache.ctrl.action;
 
 import org.n52.sos.cache.ContentCacheUpdate;
 import org.n52.sos.ds.CacheFeederDAO;
+import org.n52.sos.ds.CacheFeederDAORepository;
 import org.n52.sos.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.sos.service.Configurator;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -43,7 +43,7 @@ public abstract class CacheFeederDAOCacheUpdate extends ContentCacheUpdate {
 
     protected CacheFeederDAO getDao() throws NoImplementationFoundException {
         if (this.cacheFeederDAO == null) {
-            this.cacheFeederDAO = Configurator.getInstance().getCacheFeederDAO();
+            this.cacheFeederDAO = CacheFeederDAORepository.getInstance().getCacheFeederDAO();
             if (this.cacheFeederDAO == null) {
                 throw new NoImplementationFoundException(CacheFeederDAO.class);
             }

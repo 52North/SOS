@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -62,7 +62,8 @@ public abstract class AbstractSettingValue<T> implements SettingValue<T>, Serial
 
     @Override
     public String toString() {
-        return String.format("%s[key=%s, value=%s]", getClass().getSimpleName(), getKey(), getValue());
+        return String.format("%s[type=%s, key=%s, value=%s]", getClass().getSimpleName(), getType(),
+        		getKey(), getValue());
     }
 
     @Override

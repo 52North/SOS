@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -174,14 +174,15 @@ abstract class AbstractSettingDefinition<S extends AbstractSettingDefinition<S, 
     public boolean equals(Object obj) {
         if (obj instanceof AbstractSettingDefinition) {
             AbstractSettingDefinition<?, ?> o = (AbstractSettingDefinition<?, ?>) obj;
-            return getKey() == null ? o.getKey() == null : getKey().equals(o.getKey()) && getTitle() == null ? o
-                    .getTitle() == null : getTitle().equals(o.getTitle()) && getDescription() == null ? o
-                    .getDescription() == null : getDescription().equals(o.getDescription()) && getGroup() == null ? o
-                    .getGroup() == null : getGroup().equals(o.getGroup()) && getDefaultValue() == null ? o
-                    .getDefaultValue() == null : getDefaultValue().equals(o.getDefaultValue())
-                    && getType() == o.getType() && isOptional() == o.isOptional();
+            return (getKey() == null ? o.getKey() == null : getKey().equals(o.getKey()))
+            		&& (getTitle() == null ? o.getTitle() == null : getTitle().equals(o.getTitle()))
+            		&& (getDescription() == null ? o.getDescription() == null : getDescription().equals(o.getDescription())) 
+            		&& (getGroup() == null ? o.getGroup() == null : getGroup().equals(o.getGroup()))
+            		&& (getDefaultValue() == null ? o.getDefaultValue() == null : getDefaultValue().equals(o.getDefaultValue()))
+                    && (getType() == o.getType())
+                    && (isOptional() == o.isOptional());
         }
-        return true;
+        return false;
     }
 
     @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,6 +47,7 @@ import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.encode.XmlEncoderKey;
@@ -190,7 +191,7 @@ public class DeleteObservationEncoderTest {
         assertThat(schemLoc.getNamespace(), is("http://www.opengis.net/sosdo/1.0"));
         assertThat(
                 schemLoc.getSchemaFileUrl(),
-                is("https://svn.52north.org/svn/swe/main/SOS/Extensions/Operation/DeleteObservation/trunk/xml/src/main/xsd/sosdo.xsd"));
+                is("https://raw.githubusercontent.com/52North/SOS/master/extensions/do/xml/src/main/xsd/sosdo.xsd"));
     }
 
 }

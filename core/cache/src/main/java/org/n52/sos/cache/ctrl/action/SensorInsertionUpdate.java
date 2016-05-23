@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -92,24 +92,25 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         // offerings
         for (SosOffering sosOffering : request.getAssignedOfferings()) {
             if (sosOffering.isParentOffering()) {
-                cache.addHiddenChildProcedureForOffering(sosOffering.getOfferingIdentifier(), procedure);
+                cache.addHiddenChildProcedureForOffering(sosOffering.getIdentifier(), procedure);
             } else {
-                cache.addOffering(sosOffering.getOfferingIdentifier());
-                cache.addProcedureForOffering(sosOffering.getOfferingIdentifier(), procedure);
-                if (sosOffering.isSetOfferingName()) {
-                    cache.setNameForOffering(sosOffering.getOfferingIdentifier(), sosOffering.getOfferingName());
+                cache.addOffering(sosOffering.getIdentifier());
+                cache.addProcedureForOffering(sosOffering.getIdentifier(), procedure);
+                if (sosOffering.isSetName()) {
+                    cache.setNameForOffering(sosOffering.getIdentifier(), sosOffering.getOfferingName());
+                    cache.addOfferingIdentifierHumanReadableName(sosOffering.getIdentifier(), sosOffering.getOfferingName());
                 }
             }
 
             // add offering for procedure whether it's a normal offering or
             // hidden child
-            cache.addOfferingForProcedure(procedure, sosOffering.getOfferingIdentifier());
+            cache.addOfferingForProcedure(procedure, sosOffering.getIdentifier());
 
             // allowed observation types
-            cache.addAllowedObservationTypesForOffering(sosOffering.getOfferingIdentifier(), request.getMetadata()
+            cache.addAllowedObservationTypesForOffering(sosOffering.getIdentifier(), request.getMetadata()
                     .getObservationTypes());
             // allowed featureOfInterest types
-            cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getOfferingIdentifier(), request
+            cache.addAllowedFeatureOfInterestTypesForOffering(sosOffering.getIdentifier(), request
                     .getMetadata().getFeatureOfInterestTypes());
         }
 
@@ -117,10 +118,10 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         final Collection<SwesFeatureRelationship> relatedFeatures = request.getRelatedFeatures();
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (SwesFeatureRelationship relatedFeature : relatedFeatures) {
-                final String identifier = relatedFeature.getFeature().getIdentifier().getValue();
+                final String identifier = relatedFeature.getFeature().getIdentifierCodeWithAuthority().getValue();
                 for (SosOffering sosOffering : request.getAssignedOfferings()) {
                     // TODO check if check for parent offering is necessary;
-                    cache.addRelatedFeatureForOffering(sosOffering.getOfferingIdentifier(), identifier);
+                    cache.addRelatedFeatureForOffering(sosOffering.getIdentifier(), identifier);
                 }
                 cache.addRoleForRelatedFeature(identifier, relatedFeature.getRole());
             }
@@ -131,8 +132,8 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
             cache.addProcedureForObservableProperty(observableProperty, procedure);
             cache.addObservablePropertyForProcedure(procedure, observableProperty);
             for (SosOffering sosOffering : request.getAssignedOfferings()) {
-                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getOfferingIdentifier());
-                cache.addObservablePropertyForOffering(sosOffering.getOfferingIdentifier(), observableProperty);
+                cache.addOfferingForObservableProperty(observableProperty, sosOffering.getIdentifier());
+                cache.addObservablePropertyForOffering(sosOffering.getIdentifier(), observableProperty);
             }
         }
     }

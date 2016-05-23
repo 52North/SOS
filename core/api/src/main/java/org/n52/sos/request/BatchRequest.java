@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.sos.response.BatchResponse;
 import org.n52.sos.util.BatchConstants;
 
 /**
@@ -42,7 +43,8 @@ import org.n52.sos.util.BatchConstants;
  * 
  * @since 4.0.0
  */
-public class BatchRequest extends AbstractServiceRequest implements Iterable<AbstractServiceRequest> {
+@SuppressWarnings("rawtypes")
+public class BatchRequest extends AbstractServiceRequest<BatchResponse> implements Iterable<AbstractServiceRequest> {
     private final List<AbstractServiceRequest> requests;
 
     private boolean stopAtFailure = false;
@@ -90,5 +92,10 @@ public class BatchRequest extends AbstractServiceRequest implements Iterable<Abs
 
     public void setStopAtFailure(boolean stopAtFailure) {
         this.stopAtFailure = stopAtFailure;
+    }
+
+    @Override
+    public BatchResponse getResponse() {
+        return (BatchResponse) new BatchResponse().set(this);
     }
 }

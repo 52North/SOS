@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
 
 <jsp:include page="../common/header.jsp">
 	<jsp:param name="activeMenu" value="admin" />
@@ -94,7 +95,7 @@
 	jQuery(document).ready(function($) {
 		$(window).scroll(function () {
 			var pos = $(this).scrollTop();
-			if (pos > "fast" && pos < $(document).height() 
+			if (pos > "fast" && pos < $(document).height()
 									- ($(this).height() + 400)) {
 				$('#back-top').fadeIn();
 			} else {
@@ -110,8 +111,8 @@
 	});
 
 	function xml2string(xml) {
-		return typeof(xml) === "string" ? xml : xml.xml ? xml.xml 
-				: new XMLSerializer().serializeToString(xml); 
+		return typeof(xml) === "string" ? xml : xml.xml ? xml.xml
+				: new XMLSerializer().serializeToString(xml);
 	}
 </script>
 <div id="procedure-container">
@@ -158,7 +159,7 @@ $.extend(Descriptons.prototype, {
 	},
 	_sendKvpRequest: function(req, success, error) {
 		$.ajax({
-			type: "GET", url: baseUrl + "sos/kvp?", 
+			type: "GET", url: baseUrl + "sos/kvp?",
 			context: this, data: req, dataType: "xml"
 		}).done(success).fail(error);
 	},
@@ -166,6 +167,12 @@ $.extend(Descriptons.prototype, {
 		if (this.sensors.indexOf(id) < 0) {
 			throw new Error("invalid procedure id");
 		}
+	},
+	_getProcedureFormat: function(id) {
+        if (!this.procedureFormats.hasOwnProperty(id)) {
+            throw new Error("invalid procedure id");
+        }
+		return this.procedureFormats[id];
 	},
 	_isException: function(e) {
 		var faults = e.getElementsByTagNameNS(this.NS.soap, "Fault"),
@@ -192,7 +199,7 @@ $.extend(Descriptons.prototype, {
 		x.setAttribute("service", "SOS");
 		x.setAttribute("version", "2.0.0");
 	},
-	_createGetSensorRequest: function(id) {
+	_createDescribeSensorRequest: function(id) {
 		var doc = jsxml.fromString('<?xml version="1.0" encoding="UTF-8"?>' +
 				'<swes:DescribeSensor xmlns:swes="' + this.NS.swes + '"/>'),
 			describeSensor = doc.documentElement,
@@ -201,7 +208,7 @@ $.extend(Descriptons.prototype, {
 		describeSensor.appendChild(procedure);
 		procedure.appendChild(doc.createTextNode(id));
 		describeSensor.appendChild(procedureDescriptionFormat);
-		procedureDescriptionFormat.appendChild(doc.createTextNode("http://www.opengis.net/sensorML/1.0.1"));
+		procedureDescriptionFormat.appendChild(doc.createTextNode(this._getProcedureFormat(id)));
 		this._setServiceAndVersion(describeSensor);
 		return doc;
 	},
@@ -224,12 +231,12 @@ $.extend(Descriptons.prototype, {
 			procedureDescriptionFormat = doc.createElement("swes:procedureDescriptionFormat"),
 			description = doc.createElement("swes:description"),
 			sensorDescription = doc.createElement("swes:SensorDescription"),
-			data = doc.createElement("swes:data")
+			data = doc.createElement("swes:data"),
 			xml = (typeof xml === "string") ? $.parseXML(xml).documentElement : xml.documentElement;
 		updateSensorDescription.appendChild(procedure);
-		procedure.appendChild(doc.createTextNode(id))
+		procedure.appendChild(doc.createTextNode(id));
 		updateSensorDescription.appendChild(procedureDescriptionFormat);
-		procedureDescriptionFormat.appendChild(doc.createTextNode("http://www.opengis.net/sensorML/1.0.1"));
+		procedureDescriptionFormat.appendChild(doc.createTextNode(this._getProcedureFormat(id)));
 		updateSensorDescription.appendChild(description);
 		description.appendChild(sensorDescription);
 		sensorDescription.appendChild(data);
@@ -255,10 +262,10 @@ $.extend(Descriptons.prototype, {
 	},
 	_createGetSensorKvpRequest: function(id) {
 		return {
-			service: "SOS", 
-			version: "2.0.0", 
+			service: "SOS",
+			version: "2.0.0",
 			request: "DescribeSensor",
-			procedureDescriptionFormat: "http://www.opengis.net/sensorML/1.0.1",
+			procedureDescriptionFormat: this._getProcedureFormat(id),
 			procedure: id
 		};
 	},
@@ -295,7 +302,7 @@ $.extend(Descriptons.prototype, {
 			}
 		}, function() {
 			if ($.isFunction(error)) {
-				error.apply(context || this, arguments);    
+				error.apply(context || this, arguments);
 			}
 		});
 	},
@@ -309,11 +316,11 @@ $.extend(Descriptons.prototype, {
 				this.sensors.splice(this.sensors.indexOf(id), 1);
 			}
 			if ($.isFunction(callback)) {
-				callback.apply(context || this, arguments);    
+				callback.apply(context || this, arguments);
 			}
 		}, function() {
 			if ($.isFunction(error)) {
-				error.apply(context || this, arguments);    
+				error.apply(context || this, arguments);
 			}
 		});
 	},
@@ -324,11 +331,11 @@ $.extend(Descriptons.prototype, {
 			var fail = this._isException(response),
 				callback = fail ? error : success;
 			if ($.isFunction(callback)) {
-				callback.apply(context || this, arguments);    
+				callback.apply(context || this, arguments);
 			}
 		}, function() {
 			if ($.isFunction(error)) {
-				error.apply(context || this, arguments);    
+				error.apply(context || this, arguments);
 			}
 		});
 	}
@@ -344,21 +351,21 @@ function Controller(options) {
 		$procedure: $("#id"),
 		$container: $("#procedure-container")
 	});
-	this.init()
+	this.init();
 }
 
 $.extend(Controller.prototype, {
 	init: function() {
-		var i, self = this, 
+		var i, self = this,
 			procedures = this.descriptions.get();
 
-		this.$editor.codeMirror({ 
-			mode: "xml", 
-			lineNumbers: true, 
+		this.$editor.codeMirror({
+			mode: "xml",
+			lineNumbers: true,
 			lineWrapping: true,
 			onChange: function() {
-				self.onEditorChange.apply(self, arguments); 
-			} 
+				self.onEditorChange.apply(self, arguments);
+			}
 		});
 		this.$save.on("click", function() {
 			self.onSave.apply(self, arguments);
@@ -392,25 +399,26 @@ $.extend(Controller.prototype, {
 		this.$save.disabled(false);
 	},
 	onIdChange: function() {
-		var id = this.getSelectedProcedure()
+		var id = this.getSelectedProcedure(),
 			onSuccess = function(response) {
 				this.setEditorContent(vkbeautify.xml(xml2string(response)));
 				this.$save.disabled(true);
 				this.$delete.disabled(false);
 				this.$validate.disabled(false);
 			},
-			onError = function() {
-				showError("Error requesting description for procedure <code>" + id 
-					+ "</code>: <code>" + e.status + " " + e.statusText 
+			onError = function(e) {
+				showError("Error requesting description for procedure <code>" + id
+					+ "</code>: <code>" + e.status + " " + e.statusText
 					+ "</code> " + e.responseText);
 			};
 		if (!id) {
 			this.$save.disabled(true);
+
 			this.$delete.disabled(true);
 			this.$validate.disabled(true);
 			this.setEditorContent("");
 		} else {
-			this.descriptions.get(id, onSuccess, onError, this);	
+			this.descriptions.get(id, onSuccess, onError, this);
 		}
 	},
 	onSave: function() {
@@ -420,8 +428,8 @@ $.extend(Controller.prototype, {
 				showSuccess("Saved procedure <code>" + id + "</code>");
 			},
 			onError = function(e) {
-				showError("Error updating procedure <code>" + id 
-					+ "</code>: <code>" + e.status + " " + e.statusText 
+				showError("Error updating procedure <code>" + id
+					+ "</code>: <code>" + e.status + " " + e.statusText
 					+ "</code> " + e.responseText);
 				this.$save.disabled(false);
 			};
@@ -437,8 +445,8 @@ $.extend(Controller.prototype, {
 						.addBack().trigger("change");
 			},
 			onError = function(e) {
-				showError("Error deleting procedure <code>" + id 
-					+ "</code>: <code>" + e.status + " " + e.statusText 
+				showError("Error deleting procedure <code>" + id
+					+ "</code>: <code>" + e.status + " " + e.statusText
 					+ "</code> " + e.responseText);
 				this.$save.disabled(false);
 
@@ -460,7 +468,7 @@ $.extend(Controller.prototype, {
 			this.$validate.disabled(false);
 			this.displayValidationResults(json);
 		}).fail(function() {
-			showError("Error validating document: <code>" + e.status + " " 
+			showError("Error validating document: <code>" + e.status + " "
 				+ e.statusText + "</code> " + e.responseText);
 			this.$validate.disabled(false);
 		});
@@ -473,8 +481,8 @@ $.extend(Controller.prototype, {
 		$results.slideUp(function() {
 			$results.children().remove();
 			$("<button>").attr({
-				"type": "button", 
-				"class": "close", 
+				"type": "button",
+				"class": "close",
 				"data-dismiss": "alert"
 			}).html("&times;").appendTo($results);
 
@@ -495,8 +503,8 @@ $.extend(Controller.prototype, {
 			}
 			$results.slideDown();
 		});
-	},
-})
+	}
+});
 
 
 </script>
@@ -506,6 +514,9 @@ $.extend(Controller.prototype, {
 	var sensors = [];
 	<c:forEach items="${sensors}" var="s">
 	sensors.push("${s}");</c:forEach>
+
+    var procedureFormats = ${sos:mapToJson(procedureFormatMap)};
+
 	var isUpdateSensorSupported = ${isUpdateSensorSupported};
 	var isDescribeSensorSupported = ${isDescribeSensorSupported};
 	var isDeleteSensorSupported = ${isDeleteSensorSupported};
@@ -513,7 +524,8 @@ $.extend(Controller.prototype, {
 	var descriptions = new Descriptons({
 		describeSensorRequestMethod: "${describeSensorRequestMethod}",
 		baseUrl: baseUrl,
-		sensors: sensors
+		sensors: sensors,
+		procedureFormats: procedureFormats
 	});
 	new Controller({
 		baseUrl: baseUrl,

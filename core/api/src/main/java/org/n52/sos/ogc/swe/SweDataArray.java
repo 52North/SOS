@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -147,6 +147,13 @@ public class SweDataArray extends SweAbstractDataComponent {
             values = new LinkedList<List<String>>();
         }
         return values.add(blockOfTokensToAddAtTheEnd);
+    }
+    
+    public boolean addAll(List<List<String>> newValues) {
+        if (values == null) {
+            values = newValues;
+        }
+        return values.addAll(newValues);
     }
 
     @Override

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,21 +28,8 @@
  */
 package org.n52.sos.web.admin;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.jdbc.Work;
-import org.n52.sos.ds.ConnectionProvider;
-import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.SQLHelper;
 import org.n52.sos.web.AbstractController;
 
 /**
@@ -50,47 +37,6 @@ import org.n52.sos.web.AbstractController;
  * 
  */
 public abstract class AbstractAdminController extends AbstractController {
-
-    private void executeSqlFile(String path) throws SQLException, FileNotFoundException, ConnectionProviderException {
-        final File f = new File(getContext().getRealPath(path));
-        if (!f.exists()) {
-            throw new FileNotFoundException(f.getAbsolutePath() + " not found.");
-        }
-        ConnectionProvider p = Configurator.getInstance().getDataConnectionProvider();
-        Object con = null;
-        try {
-            con = p.getConnection();
-            if (con instanceof Connection) {
-                try {
-                    SQLHelper.executeSQLFile((Connection) con, f);
-                } catch (IOException ex) {
-                    throw new SQLException(ex);
-                }
-            } else if (con instanceof Session) {
-                Session s = (Session) con;
-                Transaction t = s.beginTransaction();
-                try {
-                    s.doWork(new Work() {
-                        @Override
-                        public void execute(Connection connection) throws SQLException {
-                            try {
-                                SQLHelper.executeSQLFile(connection, f);
-                            } catch (IOException ex) {
-                                throw new SQLException(ex);
-                            }
-                        }
-                    });
-                    t.commit();
-                } catch (HibernateException e) {
-                    t.rollback();
-                }
-            } else {
-                throw new SQLException("Unknown conncetion type: " + con.getClass());
-            }
-        } finally {
-            p.returnConnection(con);
-        }
-    }
 
     protected boolean cacheIsLoading() {
         return Configurator.getInstance().getCacheController().isUpdateInProgress();

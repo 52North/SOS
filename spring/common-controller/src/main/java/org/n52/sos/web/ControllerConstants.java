@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,6 +41,8 @@ public interface ControllerConstants {
      */
     interface Views {
         String INDEX = "index";
+        
+        String DOCUMENTATION = "documentation";
 
         String CLIENT = "client";
 
@@ -90,7 +92,13 @@ public interface ControllerConstants {
 
         String ADMIN_CAPABILITIES_SETTINGS = "admin/capabilities";
 
+        String ADMIN_I18N = "admin/i18n";
+
+        String ADMIN_I18N_SETTINGS = ADMIN_I18N + "/settings";
+
         String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "admin/observableProperties";
+
+        String ADMIN_EXTENSIONS = "/admin/extensions";
     }
 
     /**
@@ -103,6 +111,8 @@ public interface ControllerConstants {
         String WSDL = "/wsdl";
 
         String INDEX = "/index";
+        
+        String DOCUMENTATION = "/documentation";
 
         String LICENSE = "/license";
 
@@ -154,19 +164,25 @@ public interface ControllerConstants {
 
         String ADMIN_CACHE_LOADING = "/admin/cache/loading";
 
+        String ADMIN_CACHE_DUMP = "/admin/cache/dump";
+
         String ADMIN_RELOAD_CAPABILITIES_CACHE = "/admin/cache/reload";
 
         String ADMIN_DATABASE_UPDATE_SCRIPT = "/admin/datasource/updatescript";
 
-        String ADMIN_DATABASE_REMOVE_TEST_DATA = "/admin/datasource/testdata/remove";
+        String ADMIN_DATABASE_REMOVE_TEST_DATA
+                = "/admin/datasource/testdata/remove";
 
-        String ADMIN_DATABASE_CREATE_TEST_DATA = "/admin/datasource/testdata/create";
+        String ADMIN_DATABASE_CREATE_TEST_DATA
+                = "/admin/datasource/testdata/create";
 
         String ADMIN_DATABASE_CLEAR = "/admin/datasource/clear";
 
-        String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS = "/admin/datasource/deleteDeletedObservations";
+        String ADMIN_DATABASE_DELETE_DELETED_OBSERVATIONS
+                = "/admin/datasource/deleteDeletedObservations";
 
-        String ADMIN_RENAME_OBSERVABLE_PROPERTIES = "/admin/observableProperties";
+        String ADMIN_RENAME_OBSERVABLE_PROPERTIES
+                = "/admin/observableProperties";
 
         String ADMIN_RESET = "/admin/reset";
 
@@ -175,6 +191,10 @@ public interface ControllerConstants {
         String ADMIN_LOGGING_FILE_DOWNLOAD = "/admin/logging/file";
 
         String ADMIN_CAPABILITIES_SETTINGS = "/admin/capabilities";
+
+        String ADMIN_I18N = "/admin/i18n";
+
+        String ADMIN_I18N_SETTINGS = ADMIN_I18N + "/settings";
 
         String INSTALL_ROOT = "/install";
 
@@ -194,13 +214,27 @@ public interface ControllerConstants {
 
         String LOGOUT = "/j_spring_security_logout";
 
-		String OFFERING_EXTENSIONS_AJAX_ENDPOINT = "/admin/capabilities/ajax/offeringExtensions";
+        String OFFERING_EXTENSIONS_AJAX_ENDPOINT
+                = "/admin/capabilities/ajax/offeringExtensions";
 
-        String CAPABILITIES_EXTENSION_AJAX_ENDPOINT = "/admin/capabilities/ajax/capabilitiesExtensions";
+        String CAPABILITIES_EXTENSION_AJAX_ENDPOINT
+                = "/admin/capabilities/ajax/capabilitiesExtensions";
 
-        String STATIC_CAPABILITIES_AJAX_ENDPOINT = "/admin/capabilities/ajax/staticCapabilities";
+        String STATIC_CAPABILITIES_AJAX_ENDPOINT
+                = "/admin/capabilities/ajax/staticCapabilities";
 
         String VALIDATION_AJAX_ENDPOINT = "/admin/capabilities/ajax/validation";
+
+        String OFFERING_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/offerings";
+        String PROCEDURE_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/procedures";
+        String FEATURE_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/features";
+        String OBSERVABLE_PROPERTY_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/observableProperties";
+
+        String SETTINGS_I18N_AJAX_ENDPOINT = "/admin/i18n/ajax/settings";
+
+        String ADMIN_EXTENSIONS = "/admin/extensions";
+
+        String ADMIN_EXTENSIONS_JSON_ENDPOINT = "/admin/extensions/json";
     }
 
     String SETTINGS_MODEL_ATTRIBUTE = "settings";

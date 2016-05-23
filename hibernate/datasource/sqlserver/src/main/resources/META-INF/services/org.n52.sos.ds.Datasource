@@ -1,0 +1,3 @@
+org.n52.sos.ds.datasource.SqlServerDatasource
+org.n52.sos.ds.datasource.SqlServerCoreDatasource
+org.n52.sos.ds.datasource.SqlServerCustomDatasource

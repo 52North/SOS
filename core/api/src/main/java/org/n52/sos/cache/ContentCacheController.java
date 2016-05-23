@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,7 +33,7 @@ import org.n52.sos.util.Cleanupable;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public interface ContentCacheController extends Cleanupable {
@@ -44,10 +44,10 @@ public interface ContentCacheController extends Cleanupable {
 
     /**
      * Update the content cache with the specified update.
-     * 
+     *
      * @param update
      *            the update
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs while updating the cache
      */
@@ -55,14 +55,21 @@ public interface ContentCacheController extends Cleanupable {
 
     /**
      * Renew the content cache completly.
-     * 
+     *
      * @throws OwsExceptionReport
      *             if an error occurs while updating the cache
      */
     void update() throws OwsExceptionReport;
-    
+
     /**
-     * Is a cache update currently in progress?
+     * @return Is a cache update currently in progress?
      */
-    boolean isUpdateInProgress();    
+    boolean isUpdateInProgress();
+
+
+    /**
+     * @return the ContentCachePersistenceStrategy
+     * @since 4.2.0
+     */
+    ContentCachePersistenceStrategy getContentCachePersistenceStrategy();
 }

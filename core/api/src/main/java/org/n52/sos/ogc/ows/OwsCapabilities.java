@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -59,6 +59,13 @@ public abstract class OwsCapabilities {
 
     public OwsCapabilities(String service, String version) {
         this.version = version;
+    }
+    
+    /**
+     * @param service the service
+     */
+    public void setService(String service) {
+    	this.service = service;
     }
 
     /**

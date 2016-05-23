@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -78,8 +78,7 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
         final WritableContentCache cache = getCache();
         final String observationType = observation.getObservationConstellation().getObservationType();
         final String procedure = observation.getObservationConstellation().getProcedure().getIdentifier();
-        final String observableProperty =
-                observation.getObservationConstellation().getObservableProperty().getIdentifier();
+        final String observableProperty = observation.getObservationConstellation().getObservableProperty().getIdentifier();
         final Time phenomenonTime = observation.getPhenomenonTime();
         final Time resultTime = observation.getResultTime();
 
@@ -93,12 +92,6 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
         cache.addObservablePropertyForResultTemplate(templateIdentifier, observableProperty);
         cache.addObservablePropertyForProcedure(procedure, observableProperty);
 
-        if (observation.getIdentifier() != null) {
-            final String identifier = observation.getIdentifier().getValue();
-            cache.addObservationIdentifier(identifier);
-            cache.addObservationIdentifierForProcedure(procedure, identifier);
-        }
-
         List<SamplingFeature> observedFeatures =
                 sosFeaturesToList(observation.getObservationConstellation().getFeatureOfInterest());
 
@@ -107,7 +100,7 @@ public class ResultInsertionUpdate extends InMemoryCacheUpdate {
         cache.updateGlobalEnvelope(envelope);
 
         for (SamplingFeature sosSamplingFeature : observedFeatures) {
-            final String featureOfInterest = sosSamplingFeature.getIdentifier().getValue();
+            final String featureOfInterest = sosSamplingFeature.getIdentifierCodeWithAuthority().getValue();
             cache.addFeatureOfInterest(featureOfInterest);
             cache.addFeatureOfInterestForResultTemplate(templateIdentifier, featureOfInterest);
             cache.addProcedureForFeatureOfInterest(featureOfInterest, procedure);

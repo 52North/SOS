@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,7 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -123,13 +122,13 @@ public class RelatedFeatureDAO {
     public List<RelatedFeature> getOrInsertRelatedFeature(final AbstractFeature feature, final List<RelatedFeatureRole> roles,
             final Session session) throws OwsExceptionReport {
         // TODO: create featureOfInterest and link to relatedFeature
-        List<RelatedFeature> relFeats = getRelatedFeatures(feature.getIdentifier().getValue(), session);
+        List<RelatedFeature> relFeats = getRelatedFeatures(feature.getIdentifierCodeWithAuthority().getValue(), session);
         if (relFeats == null) {
             relFeats = new LinkedList<RelatedFeature>();
         }
         if (relFeats.isEmpty()) {
             final RelatedFeature relFeat = new RelatedFeature();
-            String identifier = feature.getIdentifier().getValue();
+            String identifier = feature.getIdentifierCodeWithAuthority().getValue();
             String url = null;
             if (feature instanceof SamplingFeature) {
                 identifier =

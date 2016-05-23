@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,17 +30,15 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 
 /**
  * @since 4.0.0
  * 
  */
 public class Procedure extends SpatialEntity implements Serializable, HasDeletedFlag, HasProcedureDescriptionFormat,
-        HasGeometry, HasCoordinate {
+        HasGeometry, HasCoordinate, HasDisabledFlag {
 
     private static final long serialVersionUID = -3115365895730874831L;
 
@@ -55,6 +53,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean deleted;
 
     private String descriptionFile;
+    
+    private boolean disabled;
+    
+    private boolean reference;
 
     public long getProcedureId() {
         return this.procedureId;
@@ -92,6 +94,41 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
 
     public void setDescriptionFile(String descriptionFile) {
         this.descriptionFile = descriptionFile;
+    }
+
+    @Override
+    public HasDisabledFlag setDisabled(boolean disabled) {
+        this.disabled = disabled;
+        return this;
+    }
+
+    @Override
+    public boolean getDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return getDisabled();
+    }
+
+    @Override
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @return the reference
+     */
+    public boolean isReference() {
+        return reference;
+    }
+
+    /**
+     * @param reference the reference to set
+     */
+    public void setReference(boolean reference) {
+        this.reference = reference;
     }
 
 }

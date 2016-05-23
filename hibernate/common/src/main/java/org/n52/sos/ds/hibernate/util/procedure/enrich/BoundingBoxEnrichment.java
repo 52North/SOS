@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -92,11 +92,10 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
      */
     protected SosEnvelope createEnvelopeForOfferings() {
         final SosEnvelope mergedEnvelope = new SosEnvelope();
-        mergedEnvelope.setSrid(GeometryHandler.getInstance().getDefaultEPSG());
         for (final SosOffering offering : getSosOfferings()) {
             mergedEnvelope.expandToInclude(getEnvelope(offering));
         }
-        return mergedEnvelope.switchCoordinatesIfNeeded();
+        return mergedEnvelope.setSrid(GeometryHandler.getInstance().getStorageEPSG());
     }
 
     /**
@@ -107,7 +106,7 @@ public class BoundingBoxEnrichment extends SensorMLEnrichment {
      * @return the sosEnvelope (may be <code>null</code>)
      */
     private SosEnvelope getEnvelope(final SosOffering offering) {
-        return getCache().getEnvelopeForOffering(offering.getOfferingIdentifier());
+        return getCache().getEnvelopeForOffering(offering.getIdentifier());
     }
 
     private Optional<SmlCapabilities> createCapabilities(final SosEnvelope bbox) {

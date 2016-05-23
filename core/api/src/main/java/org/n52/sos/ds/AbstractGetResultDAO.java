@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -67,9 +67,9 @@ public abstract class AbstractGetResultDAO extends AbstractOperationDAO {
             throw new OperationNotSupportedException().at(SosConstants.Operations.GetResult).withMessage(
                     "This operation is not supported for SOS {}!", Sos1Constants.SERVICEVERSION);
         } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultParams.offering, offerings);
-            opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultParams.observedProperty, observableProperties);
-            opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultParams.featureOfInterest, featureOfInterest);
+            addOfferingParameter(opsMeta, offerings);
+            addObservablePropertyParameter(opsMeta, observableProperties);
+            addFeatureOfInterestParameter(opsMeta, featureOfInterest);
             // TODO get the values for temporal and spatial filtering
             // set param temporalFilter
             // opsMeta.addParameterValue(Sos2Constants.GetResultParams.temporalFilter.name(),

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,7 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.gml.FeaturePropertyType;
 import net.opengis.sampling.x10.SamplingCurveDocument;
 import net.opengis.sampling.x10.SamplingCurveType;
 import net.opengis.sampling.x10.SamplingFeatureCollectionDocument;
@@ -197,13 +198,13 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
             throws OwsExceptionReport {
         xbSamplingFeature.setId(sampFeat.getGmlId());
         if (sampFeat.isSetIdentifier()
-                && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifier().getValue(),
+                && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                         Sos1Constants.SERVICEVERSION)) {
             xbSamplingFeature.addNewName().set(
-                    CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifier()));
+                    CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sampFeat.getIdentifierCodeWithAuthority()));
         }
 
-        if (sampFeat.isSetNames()) {
+        if (sampFeat.isSetName()) {
             for (CodeType sosName : sampFeat.getName()) {
                 xbSamplingFeature.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, sosName));
             }
@@ -213,7 +214,12 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         // TODO: CHECK
         if (sampFeat.getSampledFeatures() != null && !sampFeat.getSampledFeatures().isEmpty()) {
             for (AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
-                xbSamplingFeature.addNewSampledFeature().set(createFeature(sampledFeature));
+                FeaturePropertyType sp = xbSamplingFeature.addNewSampledFeature();
+                sp.setHref(sampledFeature.getIdentifier());
+                if (sampFeat.isSetName() && sampFeat.getFirstName().isSetValue()) {
+                    sp.setTitle(sampFeat.getFirstName().getValue());
+                }
+//                xbSamplingFeature.addNewSampledFeature().set(createFeature(sampledFeature));
             }
         } else {
             xbSamplingFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);

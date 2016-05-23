@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,7 +34,9 @@ import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.SweHelper;
 
 import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -164,11 +166,18 @@ public class SweEnvelope extends SweAbstractDataComponent {
         return new SosEnvelope(toEnvelope(), srid);
     }
 
-    public Envelope toEnvelope() {
+    public Envelope toEnvelope() throws OwsExceptionReport {
         Coordinate min = getLowerCornerAsCoordinate();
         Coordinate max = getUpperCornerAsCoordinate();
-        return min != null && max != null ?
-               new Envelope(min.x, max.x, min.y, max.y) : null;
+        if (min != null && max != null) {
+            int srid = SosHelper.parseSrsName(getReferenceFrame());
+            if (GeometryHandler.getInstance().isNorthingFirstEpsgCode(srid)) {
+                return new Envelope(min.y, max.y, min.x, max.x);
+            } else {
+                return new Envelope(min.x, max.x, min.y, max.y);
+            }
+        }
+        return null;
     }
 
     public Coordinate getLowerCornerAsCoordinate() {
@@ -208,16 +217,24 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private static SweVector createLowerCorner(SosEnvelope env, String uom) {
-        return createSweVector(env.getEnvelope().getMinX(), env.getEnvelope().getMinY(), uom);
+        if (env.isSetSrid() && GeometryHandler.getInstance().isNorthingFirstEpsgCode(env.getSrid())) {
+            return createSweVector(env.getEnvelope().getMinY(), env.getEnvelope().getMinX(), uom);
+        } else {
+            return createSweVector(env.getEnvelope().getMinX(), env.getEnvelope().getMinY(), uom);
+        }
     }
 
     private static SweVector createUpperCorner(SosEnvelope env, String uom) {
-        return createSweVector(env.getEnvelope().getMaxX(), env.getEnvelope().getMaxY(), uom);
+        if (env.isSetSrid() && GeometryHandler.getInstance().isNorthingFirstEpsgCode(env.getSrid())) {
+            return createSweVector(env.getEnvelope().getMaxY(), env.getEnvelope().getMaxX(), uom);
+        } else {
+            return createSweVector(env.getEnvelope().getMaxX(), env.getEnvelope().getMaxY(), uom);
+        }
     }
 
     private static SweVector createSweVector(double x, double y, String uom) {
-        SweQuantity xCoord = new SweQuantity().setValue(x).setAxisID("x").setUom(uom);
-        SweQuantity yCoord = new SweQuantity().setValue(y).setAxisID("y").setUom(uom);
+        SweQuantity xCoord = SweHelper.createSweQuantity(x, SweConstants.X_AXIS, uom);
+        SweQuantity yCoord = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
         return new SweVector(new SweCoordinate<Double>(SweCoordinateName.easting.name(), xCoord),
                 new SweCoordinate<Double>(SweCoordinateName.northing.name(), yCoord));
     }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -89,17 +89,7 @@ public class SosGetObservationOperatorV20 extends
     public GetObservationResponse receive(final GetObservationRequest sosRequest) throws OwsExceptionReport {
         final GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
-        // TODO check for correct merging, add merge if swes:extension is set
-        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
-            sosResponse.mergeObservationsWithSameConstellation();
-        }        
         return sosResponse;
-    }
-
-    private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {
-        return sosRequest.isSetExtensions()
-                && sosRequest.getExtensions().isBooleanExtensionSet(
-                        Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
     }
 
     @Override
@@ -172,6 +162,7 @@ public class SosGetObservationOperatorV20 extends
             exceptions.add(owse);
         }
 
+        checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
 
         // check if parameters are set, if not throw ResponseExceedsSizeLimit
@@ -182,7 +173,7 @@ public class SosGetObservationOperatorV20 extends
                     .withMessage("The response exceeds the size limit! Please define some filtering parameters.");
         }
     }
-
+    
     private boolean isBlockRequestsWithoutRestriction() {
         return blockRequestsWithoutRestriction;
     }
@@ -251,24 +242,6 @@ public class SosGetObservationOperatorV20 extends
             exceptions.throwIfNotEmpty();
         }
     }
-
-    // private void checkResponseFormat(final GetObservationRequest request)
-    // throws OwsExceptionReport {
-    // if (request.getResponseFormat() == null) {
-    // request.setResponseFormat(getActiveProfile().getObservationResponseFormat());
-    // } else if (request.getResponseFormat() != null &&
-    // request.getResponseFormat().isEmpty()) {
-    // throw new MissingResponseFormatParameterException();
-    // } else {
-    // final Collection<String> supportedResponseFormats =
-    // CodingRepository.getInstance().getSupportedResponseFormats(request.getService(),
-    // request.getVersion());
-    // if (!supportedResponseFormats.contains(request.getResponseFormat())) {
-    // throw new
-    // InvalidResponseFormatParameterException(request.getResponseFormat());
-    // }
-    // }
-    // }
 
     @Override
     public WSDLOperation getSosOperationDefinition() {

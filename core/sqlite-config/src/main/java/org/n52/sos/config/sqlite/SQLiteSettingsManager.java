@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,21 +37,32 @@ import java.util.regex.Pattern;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.binding.BindingKey;
 import org.n52.sos.config.AbstractSettingValueFactory;
 import org.n52.sos.config.AbstractSettingsManager;
 import org.n52.sos.config.AdministratorUser;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.config.SettingValueFactory;
+import org.n52.sos.config.sqlite.SQLiteManager.HibernateAction;
+import org.n52.sos.config.sqlite.SQLiteManager.ThrowingHibernateAction;
+import org.n52.sos.config.sqlite.SQLiteManager.VoidHibernateAction;
 import org.n52.sos.config.sqlite.entities.AbstractSettingValue;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.AdminUser;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.BooleanSettingValue;
+import org.n52.sos.config.sqlite.entities.ChoiceSettingValue;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
+import org.n52.sos.config.sqlite.entities.DynamicOfferingExtensionKey;
+import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilities;
+import org.n52.sos.config.sqlite.entities.DynamicOwsExtendedCapabilitiesKey;
 import org.n52.sos.config.sqlite.entities.FileSettingValue;
 import org.n52.sos.config.sqlite.entities.IntegerSettingValue;
+import org.n52.sos.config.sqlite.entities.MultilingualStringSettingValue;
 import org.n52.sos.config.sqlite.entities.NumericSettingValue;
 import org.n52.sos.config.sqlite.entities.ObservationEncoding;
 import org.n52.sos.config.sqlite.entities.ObservationEncodingKey;
@@ -60,15 +71,18 @@ import org.n52.sos.config.sqlite.entities.OperationKey;
 import org.n52.sos.config.sqlite.entities.ProcedureEncoding;
 import org.n52.sos.config.sqlite.entities.ProcedureEncodingKey;
 import org.n52.sos.config.sqlite.entities.StringSettingValue;
+import org.n52.sos.config.sqlite.entities.TimeInstantSettingValue;
 import org.n52.sos.config.sqlite.entities.UriSettingValue;
 import org.n52.sos.ds.ConnectionProvider;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.encode.ResponseFormatKey;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.i18n.MultilingualString;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.ows.OwsExtendedCapabilitiesKey;
+import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.request.operator.RequestOperatorKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     private static final Logger LOG = LoggerFactory.getLogger(SQLiteSettingsManager.class);
@@ -80,55 +94,42 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
 
     private ConnectionProvider connectionProvider;
 
+    private final SQLiteManager manager = new SQLiteManager() {
+
+        @Override
+        protected ConnectionProvider createDefaultConnectionProvider() {
+            return SQLiteSettingsManager.this.createDefaultConnectionProvider();
+        }
+    };
+
     public SQLiteSettingsManager() throws ConfigurationException {
         super();
-    }
-
-    protected ConnectionProvider getConnectionProvider() {
-        synchronized (this) {
-            if (!isSetConnectionProvider()) {
-                this.connectionProvider = createDefaultConnectionProvider();
-            }
-        }
-        return connectionProvider;
-    }
-
-    public void setConnectionProvider(ConnectionProvider connectionProvider) {
-        synchronized (this) {
-            this.connectionProvider = connectionProvider;
-        }
-    }
-    
-    protected boolean isSetConnectionProvider() {
-        return this.connectionProvider != null;
     }
 
     protected ConnectionProvider createDefaultConnectionProvider() {
         return new SQLiteSessionFactory();
     }
-    
-    protected <T> T execute(HibernateAction<T> action) throws ConnectionProviderException {
-        synchronized (this) {
-            Session session = null;
-            Transaction transaction = null;
-            try {
-                session = (Session) getConnectionProvider().getConnection();
-                transaction = session.beginTransaction();
-                T result = action.call(session);
-                session.flush();
-                transaction.commit();
-                return result;
-            } catch (HibernateException e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                throw e;
-            } catch (ConnectionProviderException cpe) {
-                throw cpe;
-            } finally {
-                getConnectionProvider().returnConnection(session);
-            }
-        }
+
+    protected ConnectionProvider getConnectionProvider() {
+        return this.manager.getConnectionProvider();
+    }
+
+    public void setConnectionProvider(ConnectionProvider connectionProvider) {
+        this.manager.setConnectionProvider(connectionProvider);
+    }
+
+    protected boolean isSetConnectionProvider() {
+        return this.connectionProvider != null;
+    }
+
+    protected <T> T execute(HibernateAction<T> action)
+            throws ConnectionProviderException {
+        return this.manager.execute(action);
+    }
+
+    protected <T> T throwingExecute(ThrowingHibernateAction<T> action)
+            throws ConnectionProviderException, Exception {
+        return this.manager.execute(action);
     }
 
     @Override
@@ -208,7 +209,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
 
     @Override
     public boolean isActive(RequestOperatorKey requestOperatorKeyType) throws ConnectionProviderException {
-        return isActive(Operation.class, new OperationKey(requestOperatorKeyType));
+        return isActive(Operation.class, new OperationKey(requestOperatorKeyType), requestOperatorKeyType.isDefaultActive());
     }
 
     @Override
@@ -229,12 +230,17 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
 
     protected <K extends Serializable, T extends Activatable<K, T>> void setActive(Class<T> type, T activatable,
             boolean active) throws ConnectionProviderException {
-        execute(new SetActiveAction<K, T>(type, activatable, active));
+        execute(new SetActiveAction<>(type, activatable, active));
     }
 
     protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key)
             throws ConnectionProviderException {
-        return execute(new IsActiveAction<K, T>(c, key)).booleanValue();
+        return execute(new IsActiveAction<>(c, key));
+    }
+    
+    protected <K extends Serializable, T extends Activatable<K, T>> boolean isActive(Class<T> c, K key, boolean defaultActive)
+            throws ConnectionProviderException {
+        return execute(new IsActiveAction<K, T>(c, key, defaultActive)).booleanValue();
     }
 
     @Override
@@ -263,6 +269,26 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
     public boolean isActive(BindingKey bk) throws ConnectionProviderException {
         return isActive(Binding.class, bk.getServletPath());
     }
+
+    @Override
+    public boolean isActive(OfferingExtensionKey oek) throws ConnectionProviderException {
+        return isActive(DynamicOfferingExtension.class, new DynamicOfferingExtensionKey(oek));
+    }
+
+    @Override
+    public boolean isActive(OwsExtendedCapabilitiesKey oeck) throws ConnectionProviderException {
+        return isActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilitiesKey(oeck));
+    }
+
+    @Override
+    protected void setOfferingExtensionStatus(OfferingExtensionKey oek, boolean active) throws ConnectionProviderException {
+        setActive(DynamicOfferingExtension.class, new DynamicOfferingExtension(oek), active);
+    }
+    @Override
+    protected void setOwsExtendedCapabilitiesStatus(OwsExtendedCapabilitiesKey oeck, boolean active) throws ConnectionProviderException {
+        setActive(DynamicOwsExtendedCapabilities.class, new DynamicOwsExtendedCapabilities(oeck), active);
+    }
+
 
     private static class SqliteSettingFactory extends AbstractSettingValueFactory {
         @Override
@@ -294,20 +320,21 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         protected SettingValue<Double> newNumericSettingValue() {
             return new NumericSettingValue();
         }
-    }
 
-    protected abstract class HibernateAction<T> {
-        protected abstract T call(Session session);
-    }
-
-    protected abstract class VoidHibernateAction extends HibernateAction<Void> {
         @Override
-        protected Void call(Session session) {
-            run(session);
-            return null;
+        protected SettingValue<TimeInstant> newTimeInstantSettingValue() {
+            return new TimeInstantSettingValue();
         }
 
-        protected abstract void run(Session session);
+        @Override
+        protected SettingValue<MultilingualString> newMultiLingualStringSettingValue() {
+            return new MultilingualStringSettingValue();
+        }
+
+        @Override
+        protected SettingValue<String> newChoiceSettingValue() {
+            return new ChoiceSettingValue();
+        }
     }
 
     protected class SetActiveAction<K extends Serializable, T extends Activatable<K, T>> extends VoidHibernateAction {
@@ -337,29 +364,36 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
     }
 
-    protected class IsActiveAction<K extends Serializable, T extends Activatable<K, T>> extends HibernateAction<Boolean> {
+    protected class IsActiveAction<K extends Serializable, T extends Activatable<K, T>> implements HibernateAction<Boolean> {
         private final K key;
 
-        private Class<T> type;
+        private final Class<T> type;
+        
+        private boolean defaultActive;
 
         IsActiveAction(Class<T> type, K key) {
+            this(type, key, true);
+        }
+        
+        IsActiveAction(Class<T> type, K key, boolean defaultActive) {
             this.type = type;
             this.key = key;
+            this.defaultActive = defaultActive;
         }
 
         @Override
-        protected Boolean call(Session session) {
+        public Boolean call(Session session) {
             @SuppressWarnings("unchecked")
             T o = (T) session.get(type, key);
-            return (o == null) ? true : o.isActive();
+            return (o == null) ? defaultActive : o.isActive();
         }
     }
 
-    private class GetAdminUsersAction extends HibernateAction<Set<AdministratorUser>> {
+    private class GetAdminUsersAction implements HibernateAction<Set<AdministratorUser>> {
         @Override
         @SuppressWarnings("unchecked")
-        protected Set<AdministratorUser> call(Session session) {
-            return new HashSet<AdministratorUser>(session.createCriteria(AdministratorUser.class)
+        public Set<AdministratorUser> call(Session session) {
+            return new HashSet<>(session.createCriteria(AdministratorUser.class)
                     .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
         }
     }
@@ -415,7 +449,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
     }
 
-    private class CreateAdminUserAction extends HibernateAction<AdminUser> {
+    private class CreateAdminUserAction implements HibernateAction<AdminUser> {
         private final String username;
 
         private final String password;
@@ -426,7 +460,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
 
         @Override
-        protected AdminUser call(Session session) {
+        public AdminUser call(Session session) {
             AdminUser user = new AdminUser().setUsername(username).setPassword(password);
             LOG.debug("Creating AdministratorUser {}", user);
             session.save(user);
@@ -452,7 +486,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
     }
 
-    private class GetAdminUserAction extends HibernateAction<AdminUser> {
+    private class GetAdminUserAction implements HibernateAction<AdminUser> {
         private final String username;
 
         GetAdminUserAction(String username) {
@@ -460,13 +494,13 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
 
         @Override
-        protected AdminUser call(Session session) {
+        public AdminUser call(Session session) {
             return (AdminUser) session.createCriteria(AdminUser.class)
                     .add(Restrictions.eq(AdminUser.USERNAME_PROPERTY, username)).uniqueResult();
         }
     }
 
-    private class GetSettingValueAction extends HibernateAction<SettingValue<?>> {
+    private class GetSettingValueAction implements HibernateAction<SettingValue<?>> {
         private final String key;
 
         GetSettingValueAction(String key) {
@@ -474,7 +508,7 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
 
         @Override
-        protected SettingValue<?> call(Session session) {
+        public SettingValue<?> call(Session session) {
             return (SettingValue<?>) session.get(AbstractSettingValue.class, key);
         }
     }
@@ -512,11 +546,11 @@ public abstract class SQLiteSettingsManager extends AbstractSettingsManager {
         }
     }
 
-    private class GetSettingValuesAction extends HibernateAction<Set<SettingValue<?>>> {
+    private class GetSettingValuesAction implements HibernateAction<Set<SettingValue<?>>> {
         @Override
         @SuppressWarnings("unchecked")
-        protected Set<SettingValue<?>> call(Session session) {
-            return new HashSet<SettingValue<?>>(session.createCriteria(AbstractSettingValue.class)
+        public Set<SettingValue<?>> call(Session session) {
+            return new HashSet<>(session.createCriteria(AbstractSettingValue.class)
                     .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list());
         }
     }

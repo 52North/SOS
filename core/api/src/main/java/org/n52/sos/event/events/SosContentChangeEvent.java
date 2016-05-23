@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -44,7 +44,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class SosContentChangeEvent<I extends AbstractServiceRequest, O extends AbstractServiceResponse>
+public abstract class SosContentChangeEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse>
         implements SosEvent {
     private I request;
 

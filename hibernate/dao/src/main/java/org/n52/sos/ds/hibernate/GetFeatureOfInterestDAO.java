@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -44,8 +43,11 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.n52.sos.ds.AbstractGetFeatureOfInterestDAO;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationInfo;
@@ -54,11 +56,10 @@ import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
-import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
-import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
+import org.n52.sos.i18n.LocaleHelper;
 import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -75,9 +76,9 @@ import com.google.common.collect.Maps;
 
 /**
  * Implementation of the abstract class AbstractGetFeatureOfInterestDAO
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
@@ -90,7 +91,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE = "getFeatureForIdentifierProcedure";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_OBSERVED_PROPERTY =
-            "getFeatureForIdentifieObservableProperty";
+            "getFeatureForIdentifierObservableProperty";
 
     private static final String SQL_QUERY_GET_FEATURE_FOR_IDENTIFIER_PROCEDURE_OBSERVED_PROPERTY =
             "getFeatureForIdentifierProcedureObservableProperty";
@@ -109,6 +110,11 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
         super(SosConstants.SOS);
     }
 
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
+    
     @Override
     public GetFeatureOfInterestResponse getFeatureOfInterest(final GetFeatureOfInterestRequest request)
             throws OwsExceptionReport {
@@ -159,7 +165,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the request contains spatial filters
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the request contains spatial filters
@@ -170,7 +176,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the request contains feature identifiers
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the request contains feature identifiers
@@ -181,7 +187,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the request contains spatial filters and feature identifiers
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the request contains spatial filters and
@@ -193,7 +199,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if the requested version is SOS 1.0.0
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request to check
      * @return <code>true</code>, if the requested version is SOS 1.0.0
@@ -204,7 +210,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Get featureOfInterest as a feature collection
-     * 
+     *
      * @param request
      *            GetFeatureOfInterest request
      * @param session
@@ -220,15 +226,20 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
             addRequestedRelatedFeatures(foiIDs, request.getFeatureIdentifiers());
         }
         // feature of interest
-        return new FeatureCollection(getConfigurator().getFeatureQueryHandler().getFeatures(
-                new ArrayList<String>(foiIDs), request.getSpatialFilters(), session, request.getVersion(), -1));
+        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject()
+            .setFeatureIdentifiers(foiIDs)
+            .setSpatialFilters(request.getSpatialFilters())
+            .setConnection(session)
+            .setVersion(request.getVersion())
+            .setI18N(LocaleHelper.fromRequest(request));
+        return new FeatureCollection(getConfigurator().getFeatureQueryHandler().getFeatures(queryObject));
     }
 
     /**
      * Adds the identifiers from <tt>featureIdentifiers</tt> to the
      * <tt>foiIDs</tt> if the feature is an relatedFeature and a child is
      * already contained in <tt>foiIDs</tt>
-     * 
+     *
      * @param foiIDs
      *            Feature identifiers
      * @param featureIdentifiers
@@ -250,7 +261,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Get featureOfInterest identifiers for requested parameters
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -262,7 +273,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     @SuppressWarnings("unchecked")
     private List<String> queryFeatureIdentifiersForParameter(final GetFeatureOfInterestRequest req,
             final Session session) throws OwsExceptionReport {
-        if (req.hasParameter()) {
+        if (req.hasNoParameter()) {
             return new FeatureOfInterestDAO().getFeatureOfInterestIdentifiers(session);
         }
         if (req.containsOnlyFeatureParameter() && req.isSetFeatureOfInterestIdentifiers()) {
@@ -282,7 +293,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
         if (isSos100(req)) {
             return queryFeatureIdentifiersForParameterForSos100(req, session);
         }
-        if (HibernateHelper.isEntitySupported(Series.class, session)) {
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
             return queryFeatureIdentifiersForParameterForSeries(req, session);
         }
         return queryFeatureIdentifiersOfParameterFromOldObservations(req, session);
@@ -290,7 +301,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Query FeatureOfInterest identifiers for old observation concept
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -309,7 +320,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Hibernate Criteria for query FeatureOfInterest identifiers for old
      * observation concept
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -344,16 +355,20 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Query FeatureOfInterest identifiers for series concept
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
      *            Hibernate Sesstion
      * @return Resulting FeatureOfInterest identifiers list
+     * @throws CodedException If an error occurs during processing
      */
     @SuppressWarnings("unchecked")
-    private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) {
+    private List<String> queryFeatureIdentifiersForParameterForSeries(GetFeatureOfInterestRequest req, Session session) throws CodedException {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForSeriesWithProcedureObservableProperty(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -364,7 +379,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Query FeatureOfInterest identifiers for SOS 1.0.0 request
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -377,7 +392,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private List<String> queryFeatureIdentifiersForParameterForSos100(GetFeatureOfInterestRequest req, Session session)
             throws OwsExceptionReport {
         Criteria c = null;
-        if (HibernateHelper.isEntitySupported(Series.class, session)) {
+        if (EntitiyHelper.getInstance().isSeriesSupported()) {
             c = getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(req, session);
         } else {
             c = getCriteriaForFeatureIdentifiersOfParameterFromOldObservations(req, session);
@@ -394,7 +409,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Hibernate Criteria for query FeatureOfInterest identifiers for series
      * observation concept (SOS 1.0.0)
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -406,6 +421,9 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     private Criteria getCriteriaForFeatureIdentifiersOfParameterFromSeriesObservations(
             GetFeatureOfInterestRequest req, Session session) throws OwsExceptionReport {
         final Criteria c = session.createCriteria(FeatureOfInterest.class);
+        if (req.isSetFeatureOfInterestIdentifiers()) {
+            c.add(Restrictions.in(FeatureOfInterest.IDENTIFIER, req.getFeatureIdentifiers()));
+        }
         c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                 getDetachedCriteriaForFeautreOfInterestForSeries(req, session)));
         c.setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -415,16 +433,17 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Detached Criteria for series concept. Criteria results are
      * FeatureOfInterest entities.
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
      *            Hibernate Sesstion
      * @return Detached Criteria
+     * @throws CodedException If an error occurs during processing
      */
     private DetachedCriteria getDetachedCriteriaForSeriesWithProcedureObservableProperty(
-            GetFeatureOfInterestRequest req, Session session) {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(Series.class);
+            GetFeatureOfInterestRequest req, Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EntitiyHelper.getInstance().getSeriesEntityClass());
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
         // observableProperties
         if (req.isSetObservableProperties()) {
@@ -443,7 +462,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Detached Criteria for SOS 1.0.0 and series concept. Criteria results
      * are FeatureOfInterest entities.
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
@@ -454,7 +473,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
      */
     private DetachedCriteria getDetachedCriteriaForFeautreOfInterestForSeries(GetFeatureOfInterestRequest req,
             Session session) throws OwsExceptionReport {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(Series.class);
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EntitiyHelper.getInstance().getSeriesEntityClass());
         detachedCriteria.add(Subqueries.propertyIn(Series.ID,
                 getDetachedCriteriaForSeriesWithProcedureObservablePropertyTemporalFilter(req, session)));
         detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
@@ -464,23 +483,17 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
     /**
      * Get Detached Criteria for SOS 1.0.0 and series concept. Criteria results
      * are Series entities.
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session
      *            Hibernate Sesstion
      * @return Detached Criteria
-     * @throws UnsupportedTimeException
-     *             If time is not supported
-     * @throws UnsupportedValueReferenceException
-     *             If valueReference is not supported
-     * @throws UnsupportedOperatorException
-     *             If temporal operator is not supported
+     * @throws CodedException If an error occurs during processing
      */
     private DetachedCriteria getDetachedCriteriaForSeriesWithProcedureObservablePropertyTemporalFilter(
-            GetFeatureOfInterestRequest req, Session session) throws UnsupportedTimeException,
-            UnsupportedValueReferenceException, UnsupportedOperatorException {
-        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(SeriesObservationInfo.class);
+            GetFeatureOfInterestRequest req, Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(EntitiyHelper.getInstance().getObservationInfoEntityClass());
         DetachedCriteria seriesCriteria = detachedCriteria.createCriteria(SeriesObservationInfo.SERIES);
         detachedCriteria.add(Restrictions.eq(Series.DELETED, false));
         // observableProperties
@@ -504,7 +517,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Check if named queries for GetFeatureOfInterest requests are available
-     * 
+     *
      * @param req
      *            GetFeatureOFInterest request
      * @param session
@@ -551,7 +564,7 @@ public class GetFeatureOfInterestDAO extends AbstractGetFeatureOfInterestDAO imp
 
     /**
      * Execute named query for GetFeatureOfInterest request
-     * 
+     *
      * @param req
      *            GetFeatureOfInterest request
      * @param session

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,6 +53,11 @@ public abstract class AbstractSosResponseEncoder<T extends AbstractServiceRespon
 
     @Override
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
-        return Sets.newHashSet();
+        return Sets.newHashSet(Sos1Constants.SOS1_SCHEMA_LOCATION);
+    }
+    
+    @Override
+    public Set<SchemaLocation> getSchemaLocations() {
+        return Sets.newHashSet(Sos1Constants.SOS1_SCHEMA_LOCATION);
     }
 }

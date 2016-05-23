@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,15 +28,25 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import java.util.Date;
+import java.io.OutputStream;
 import java.util.Set;
+
+import javax.xml.stream.XMLStreamException;
 
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.streaming.StreamingDataEncoder;
+import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.StreamingObservation;
+import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -53,7 +63,7 @@ import com.google.common.collect.Sets;
  * 
  * @since 4.0.0
  */
-public class GetObservationResponseEncoder extends AbstractObservationResponseEncoder<GetObservationResponse> {
+public class GetObservationResponseEncoder extends AbstractObservationResponseEncoder<GetObservationResponse> implements StreamingDataEncoder {
     public GetObservationResponseEncoder() {
         super(SosConstants.Operations.GetObservation.name(), GetObservationResponse.class);
     }
@@ -68,17 +78,93 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
             GetObservationResponse response) throws OwsExceptionReport {
         GetObservationResponseDocument doc = GetObservationResponseDocument.Factory.newInstance(getXmlOptions());
         GetObservationResponseType xbResponse = doc.addNewGetObservationResponse();
-        if (encoder.shouldObservationsWithSameXBeMerged()) {
-            response.mergeObservationsWithSameConstellation();
+        if (!response.isSetMergeObservation()) {
+            response.setMergeObservations(encoder.shouldObservationsWithSameXBeMerged());
         }
+        // TODO iterate over observation collection and remove processed
+        // observation
         for (OmObservation o : response.getObservationCollection()) {
-            xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+             if (encoder instanceof StreamingDataEncoder) {
+                 xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+             } else {
+                 if (o.getValue() instanceof AbstractStreaming) {
+                     processAbstractStreaming(xbResponse, (AbstractStreaming) o.getValue(), encoder,
+                             response.isSetMergeObservation());
+                 } else {
+                     xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(o));
+                 }
+             }
         }
         // in a single observation the gml:ids must be unique
         if (response.getObservationCollection().size() > 1) {
             XmlHelper.makeGmlIdsUnique(doc.getDomNode());
         }
         return doc;
+    }
+
+    private void processAbstractStreaming(GetObservationResponseType xbResponse, AbstractStreaming value,
+            ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge) throws UnsupportedEncoderInputException, OwsExceptionReport {
+        if (value instanceof StreamingObservation) {
+            processStreamingObservation(xbResponse, (StreamingObservation) value, encoder,
+                    merge);
+        } else if (value instanceof StreamingValue) {
+            processStreamingValue(xbResponse, (StreamingValue<?>) value, encoder,
+                    merge);
+        } else {
+            throw new UnsupportedEncoderInputException(this, value);
+        }
+    }
+
+    private void processStreamingValue(GetObservationResponseType xbResponse, StreamingValue<?> streamingValue,
+            ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge)
+            throws UnsupportedEncoderInputException, OwsExceptionReport {
+        if (streamingValue.hasNextValue()) {
+            if (merge) {
+                for (OmObservation obs : streamingValue.mergeObservation()) {
+                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                }
+            } else {
+                do {
+                    xbResponse.addNewObservationData().addNewOMObservation()
+                            .set(encoder.encode(streamingValue.nextSingleObservation()));
+                } while (streamingValue.hasNextValue());
+            }
+        } else if (streamingValue.getValue() != null) {
+            xbResponse.addNewObservationData().addNewOMObservation()
+                    .set(encoder.encode(streamingValue.getValue().getValue()));
+        }
+    }
+
+    private void processStreamingObservation(GetObservationResponseType xbResponse,
+            StreamingObservation streamingObservation, ObservationEncoder<XmlObject, OmObservation> encoder,
+            boolean merge) throws UnsupportedEncoderInputException, OwsExceptionReport {
+        if (streamingObservation.hasNextValue()) {
+            if (merge) {
+                for (OmObservation obs : streamingObservation.mergeObservation()) {
+                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                }
+            } else {
+                do {
+                    xbResponse.addNewObservationData().addNewOMObservation()
+                            .set(encoder.encode(streamingObservation.nextSingleObservation()));
+                } while (streamingObservation.hasNextValue());
+            }
+        } else if (streamingObservation.getValue() != null) {
+            xbResponse.addNewObservationData().addNewOMObservation()
+                    .set(encoder.encode(streamingObservation.getValue().getValue()));
+        }
+    }
+
+    @Override
+    protected void createResponse(ObservationEncoder<XmlObject, OmObservation> encoder,
+            GetObservationResponse response, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        try {
+            encodingValues.setEncoder(this);
+            new GetObservationResponseXmlStreamWriter().write(response, outputStream, encodingValues);
+        } catch (XMLStreamException xmlse) {
+            throw new NoApplicableCodeException().causedBy(xmlse);
+        }
     }
 
 }

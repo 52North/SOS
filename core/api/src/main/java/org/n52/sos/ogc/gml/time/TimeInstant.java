@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -121,8 +121,8 @@ public class TimeInstant extends Time {
      * @param date Value date
      */
     public TimeInstant(Date date) {
-        if (value != null) {
-            this.value = new DateTime(value, DateTimeZone.UTC);
+        if (date != null) {
+            this.value = new DateTime(date, DateTimeZone.UTC);
         } else {
             this.indeterminateValue = TimeIndeterminateValue.unknown;
         }

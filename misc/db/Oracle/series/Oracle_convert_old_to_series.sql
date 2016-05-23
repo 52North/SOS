@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+-- Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
 -- Software GmbH
 --
 -- This program is free software; you can redistribute it and/or modify it
@@ -33,10 +33,12 @@
 
 -- create series table and sequence add constraints to series
 CREATE sequence seriesId_seq;
-create table series (seriesId number(19,0) not null, featureOfInterestId number(19,0) not null, observablePropertyId number(19,0) not null, procedureId number(19,0) not null, deleted char(1 char) default 'F' not null check (deleted in ('T','F')), primary key (seriesId), unique (featureOfInterestId, observablePropertyId, procedureId));
+create table series (seriesId number(19,0) not null, featureOfInterestId number(19,0) not null, observablePropertyId number(19,0) not null, procedureId number(19,0) not null, deleted char(1 char) default 'F' not null check (deleted in ('T','F')), firstTimeStamp timestamp, lastTimeStamp timestamp, firstNumericValue DOUBLE PRECISION, lastNumericValue DOUBLE PRECISION, unitId number(19,0), primary key (seriesId))
 ALTER TABLE series add constraint seriesFeatureFk foreign key (featureOfInterestId) references featureOfInterest;
 ALTER TABLE series add constraint seriesObPropFk foreign key (observablePropertyId) references observableProperty;
 ALTER TABLE series add constraint seriesProcedureFk foreign key (procedureId) references procedure;
+alter table series add constraint seriesUnitFk foreign key (unitId) references unit;
+alter table series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId);
 
 -- add series column to observation table
 ALTER TABLE observation ADD seriesId number(19,0);

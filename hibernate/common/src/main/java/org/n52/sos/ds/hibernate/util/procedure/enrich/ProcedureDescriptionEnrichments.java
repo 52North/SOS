@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,14 +28,17 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.util.Locale;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.service.ServiceConfiguration;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -54,6 +57,7 @@ public class ProcedureDescriptionEnrichments {
     private Session session;
     private HibernateProcedureConverter converter;
     private TimePeriod validTime;
+    private Locale language = ServiceConfiguration.getInstance().getDefaultLanguage();
 
     private ProcedureDescriptionEnrichments() {
     }
@@ -103,6 +107,13 @@ public class ProcedureDescriptionEnrichments {
         return this;
     }
 
+    public ProcedureDescriptionEnrichments setLanguage(Locale language) {
+        if (language != null) {
+            this.language = language;
+        }
+        return this;
+    }
+
     public Iterable<ProcedureDescriptionEnrichment> createAll() {
         return Iterables.filter(
                 Lists.newArrayList(
@@ -115,7 +126,8 @@ public class ProcedureDescriptionEnrichments {
                         createIdentificationEnrichment(),
                         createContactsEnrichment(),
                         createKeywordEnrichment(),
-                        createValidTimeEnrichment()),
+                        createValidTimeEnrichment(),
+                        createObservablePropertyEnrichment()),
                 ProcedureDescriptionEnrichment.predicate());
     }
 
@@ -150,7 +162,7 @@ public class ProcedureDescriptionEnrichments {
     }
 
     public RelatedProceduresEnrichment createRelatedProceduresEnrichment() {
-        return setValues(new RelatedProceduresEnrichment()).setSession(session)
+        return setValues(new RelatedProceduresEnrichment())
                 .setConverter(converter).setProcedureCache(procedureCache)
                 .setProcedureDescriptionFormat(procedureDescriptionFormat)
                 .setValidTime(validTime);
@@ -164,10 +176,16 @@ public class ProcedureDescriptionEnrichments {
         return setValues(new ValidTimeEnrichment()).setValidTime(validTime);
     }
 
+    private ObservablePropertyEnrichment createObservablePropertyEnrichment() {
+        return setValues(new ObservablePropertyEnrichment());
+    }
+
     private <T extends ProcedureDescriptionEnrichment> T setValues(T enrichment) {
         enrichment.setDescription(description)
                 .setIdentifier(identifier)
-                .setVersion(version);
+                .setVersion(version)
+                .setLocale(language)
+                .setSession(session);
         return enrichment;
     }
 

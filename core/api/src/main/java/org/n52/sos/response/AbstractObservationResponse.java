@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.request.ResponseFormat;
+import org.n52.sos.util.StringHelper;
 
 /**
  * TODO JavaDoc
@@ -40,27 +42,45 @@ import org.n52.sos.ogc.om.OmObservation;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse {
+public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
     private List<OmObservation> observationCollection;
 
     private String responseFormat;
 
     private String resultModel;
 
+    private boolean mergeObservation = false;
+
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
     }
+    
+    protected OmObservation getFirstObservation() {
+        if (observationCollection != null && observationCollection.iterator().hasNext()) {
+            return observationCollection.iterator().next();
+        }
+        return null;
+    }
+
+   
 
     public void setObservationCollection(final List<OmObservation> observationCollection) {
         this.observationCollection = observationCollection;
     }
 
+    @Override
     public String getResponseFormat() {
         return responseFormat;
     }
 
+    @Override
     public void setResponseFormat(final String responseFormat) {
         this.responseFormat = responseFormat;
+    }
+
+    @Override
+    public boolean isSetResponseFormat() {
+        return StringHelper.isNotEmpty(getResponseFormat());
     }
 
     public void setResultModel(final String resultModel) {
@@ -74,4 +94,23 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public boolean isSetResultModel() {
         return resultModel != null;
     }
+
+    @Deprecated
+    public void setMergeObservationValues(boolean mergeObservationValues) {
+        setMergeObservations(mergeObservationValues);
+    }
+
+    @Deprecated
+    public boolean isMergeObservationValues() {
+        return isSetMergeObservation();
+    }
+
+    public void setMergeObservations(boolean mergeObservation) {
+        this.mergeObservation = mergeObservation;
+    }
+
+    public boolean isSetMergeObservation() {
+        return mergeObservation;
+    }
+
 }

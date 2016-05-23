@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,6 +56,8 @@ public interface MediaTypes {
     MediaType APPLICATION_ZIP = new MediaType(APPLICATION, "zip");
 
     MediaType APPLICATION_JSON = new MediaType(APPLICATION, "json");
+    
+    MediaType APPLICATION_EXI = new MediaType(APPLICATION, "exi");
 
     MediaType APPLICATION_KVP = new MediaType(APPLICATION, "x-kvp");
 

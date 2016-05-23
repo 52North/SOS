@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,6 +42,9 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -64,18 +67,16 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
 /**
  * Hibernate data access class for featureOfInterest
- * 
+ *
  * @author CarstenHollmann
  * @since 4.0.0
  */
-public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
+public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO implements HibernateSqlQueryConstants {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FeatureOfInterestDAO.class);
 
@@ -87,7 +88,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Get featureOfInterest object for identifier
-     * 
+     *
      * @param identifier
      *            FeatureOfInterest identifier
      * @param session
@@ -104,7 +105,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Get featureOfInterest identifiers for observation constellation
-     * 
+     *
      * @param observationConstellation
      *            Observation constellation
      * @param session
@@ -114,7 +115,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
      */
     @SuppressWarnings("unchecked")
     public List<String> getFeatureOfInterestIdentifiersForObservationConstellation(
-            final ObservationConstellation observationConstellation, final Session session) throws CodedException {
+            final ObservationConstellation observationConstellation, final Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(
                 SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION, session)) {
             Query namedQuery =
@@ -128,7 +129,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OBSERVATION_CONSTELLATION);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = criteria.createCriteria(SeriesObservationInfo.SERIES);
@@ -137,8 +138,8 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
                 seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
             } else {
-                criteria.add(Restrictions.eq(AbstractObservation.PROCEDURE, observationConstellation.getProcedure()))
-                        .add(Restrictions.eq(AbstractObservation.OBSERVABLE_PROPERTY,
+                criteria.add(Restrictions.eq(ObservationConstellation.PROCEDURE, observationConstellation.getProcedure()))
+                        .add(Restrictions.eq(ObservationConstellation.OBSERVABLE_PROPERTY,
                                 observationConstellation.getObservableProperty()));
                 criteria.createCriteria(ObservationInfo.FEATURE_OF_INTEREST).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
@@ -154,7 +155,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Get featureOfInterest identifiers for an offering identifier
-     * 
+     *
      * @param offeringIdentifiers
      *            Offering identifier
      * @param session
@@ -164,7 +165,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
      */
     @SuppressWarnings({ "unchecked" })
     public List<String> getFeatureOfInterestIdentifiersForOffering(final String offeringIdentifiers,
-            final Session session) throws CodedException {
+            final Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             namedQuery.setParameter(OFFERING, offeringIdentifiers);
@@ -172,7 +173,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(session);
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             Criteria c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
                 Criteria seriesCriteria = c.createCriteria(SeriesObservationInfo.SERIES);
@@ -192,7 +193,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Get featureOfInterest objects for featureOfInterest identifiers
-     * 
+     *
      * @param identifiers
      *            FeatureOfInterest identifiers
      * @param session
@@ -214,7 +215,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Get all featureOfInterest objects
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return FeatureOfInterest objects
@@ -229,7 +230,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
     /**
      * Load FOI identifiers and parent ids for use in the cache. Just loading the ids allows us to not load
      * the geometry columns, XML, etc.
-     * 
+     *
      * @param session
      * @return Map keyed by FOI identifiers, with value collections of parent FOI identifiers if supported
      */
@@ -239,7 +240,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
         projectionList.add(Projections.property(FeatureOfInterest.IDENTIFIER));
 
         //get parents if transactional profile is active
-        boolean tFoiSupported = HibernateHelper.isEntitySupported(TFeatureOfInterest.class, session);
+        boolean tFoiSupported = HibernateHelper.isEntitySupported(TFeatureOfInterest.class);
         if (tFoiSupported) {
             criteria.createAlias(TFeatureOfInterest.PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN);
             projectionList.add(Projections.property("pfoi." + FeatureOfInterest.IDENTIFIER));
@@ -247,8 +248,8 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
         criteria.setProjection(projectionList);
         //return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
-        
-        LOGGER.debug("QUERY getFeatureOfInterestIdentifiersWithParents(): {}", HibernateHelper.getSqlString(criteria));        
+
+        LOGGER.debug("QUERY getFeatureOfInterestIdentifiersWithParents(): {}", HibernateHelper.getSqlString(criteria));
         @SuppressWarnings("unchecked")
         List<Object[]> results = criteria.list();
         Map<String,Collection<String>> foiMap = Maps.newHashMap();
@@ -269,7 +270,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Get all featureOfInterest identifiers
-     * 
+     *
      * @param session
      *            Hibernate session
      * @return FeatureOfInterest identifiers
@@ -285,7 +286,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Insert and/or get featureOfInterest object for identifier
-     * 
+     *
      * @param identifier
      *            FeatureOfInterest identifier
      * @param url
@@ -317,7 +318,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
 
     /**
      * Insert featureOfInterest relationship
-     * 
+     *
      * @param parentFeature
      *            Parent featureOfInterest
      * @param childFeature
@@ -335,7 +336,7 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
     /**
      * Insert featureOfInterest/related feature relations if relatedFeatures
      * exists for offering.
-     * 
+     *
      * @param featureOfInterest
      *            FeatureOfInerest
      * @param offering
@@ -349,15 +350,17 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
                 new RelatedFeatureDAO().getRelatedFeatureForOffering(offering.getIdentifier(), session);
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (final RelatedFeature relatedFeature : relatedFeatures) {
-                insertFeatureOfInterestRelationShip((TFeatureOfInterest) relatedFeature.getFeatureOfInterest(),
-                        featureOfInterest, session);
+            	if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
+	                insertFeatureOfInterestRelationShip((TFeatureOfInterest) relatedFeature.getFeatureOfInterest(),
+	                        featureOfInterest, session);
+            	}
             }
         }
     }
 
     /**
      * Insert featureOfInterest if it is supported
-     * 
+     *
      * @param featureOfInterest
      *            SOS featureOfInterest to insert
      * @param session
@@ -381,5 +384,4 @@ public class FeatureOfInterestDAO implements HibernateSqlQueryConstants {
                     BAD_REQUEST);
         }
     }
-
 }

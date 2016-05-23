@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,7 +46,7 @@ import org.n52.sos.response.AbstractServiceResponse;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractV1RequestOperator<T extends OperationDAO, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractV1RequestOperator<T extends OperationDAO, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<T, Q, A> {
     public AbstractV1RequestOperator(String operationName, Class<Q> requestType) {
         super(SosConstants.SOS, Sos1Constants.SERVICEVERSION, operationName, requestType);

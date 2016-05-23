@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -105,6 +105,14 @@ public interface SosSoapConstants {
 
     String RESP_ACTION_INSERT_RESULT =
             "http://www.opengis.net/def/serviceOperation/sos/resultInsertion/2.0/InsertResultTemplateResponse";
+    
+    // GetDataAVailability
+    
+    String REQ_ACTION_GET_DATA_AVAILABILITY =
+            "http://www.opengis.net/def/serviceOperation/sos/daRetrieval/2.0/GetDataAvailability";
+
+    String RESP_ACTION_GET_DATA_AVAILABILITY  =
+            "http://www.opengis.net/def/serviceOperation/sos/daRetrieval/2.0/GetDataAvailabilityResponse";
 
     // Exceptions
 

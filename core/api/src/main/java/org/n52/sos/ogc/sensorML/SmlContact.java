@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.sensorML;
 
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
@@ -35,13 +36,24 @@ package org.n52.sos.ogc.sensorML;
  * @since 4.0.0
  */
 public abstract class SmlContact {
-    private String role;
-
+    private Role role;
+    
     public String getRole() {
+        if (role != null) {
+            return role.getValue();
+        }
+        return null;
+    }
+    
+    public Role getRoleObject() {
         return role;
     }
 
     public void setRole(String role) {
+        this.role = new Role(role);
+    }
+    
+    public void setRole(Role role) {
         this.role = role;
     }
 }

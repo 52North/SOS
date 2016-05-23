@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -65,6 +65,6 @@ public interface DeleteObservationConstants {
     Set<String> CONFORMANCE_CLASSES = unmodifiableSet(singleton(CONFORMANCE_CLASS));
 
     String NS_SOSDO_1_0_SCHEMA_LOCATION =
-            "https://svn.52north.org/svn/swe/main/SOS/Extensions/Operation/DeleteObservation/trunk/xml/src/main/xsd/sosdo.xsd";
+            "https://raw.githubusercontent.com/52North/SOS/master/extensions/do/xml/src/main/xsd/sosdo.xsd";
 
 }

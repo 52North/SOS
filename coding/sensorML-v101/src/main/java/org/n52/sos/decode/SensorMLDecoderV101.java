@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -79,11 +79,11 @@ import net.opengis.sensorML.x101.ValidTimeDocument.ValidTime;
 
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.AbstractSensorMLDecoder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -132,7 +132,7 @@ import com.vividsolutions.jts.geom.Point;
  * @since 4.0.0
  * 
  */
-public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject> {
+public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SensorMLDecoderV101.class);
 
@@ -164,6 +164,12 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
     }
 
     @Override
+    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
+        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
+                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
+    }
+
+    @Override
     public AbstractSensorML decode(final XmlObject element) throws OwsExceptionReport {
         if (element instanceof SensorMLDocument) {
             return parseSensorML((SensorMLDocument) element);
@@ -176,12 +182,6 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
-    }
-
-    @Override
-    public Map<SupportedTypeKey, Set<String>> getSupportedTypes() {
-        return Collections.singletonMap(SupportedTypeKey.ProcedureDescriptionFormat,
-                SUPPORTED_PROCEDURE_DESCRIPTION_FORMATS);
     }
 
     private SensorML parseSensorML(final SensorMLDocument xbSensorML) throws OwsExceptionReport {
@@ -220,6 +220,9 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
 
     private void parseAbstractProcess(final AbstractProcessType xbAbstractProcess,
             final AbstractProcess abstractProcess) throws OwsExceptionReport {
+        if (xbAbstractProcess.getId() != null) {
+            abstractProcess.setGmlId(xbAbstractProcess.getId());
+        }
         if (xbAbstractProcess.getIdentificationArray() != null) {
             parseIdentifications(abstractProcess, xbAbstractProcess.getIdentificationArray());
         }
@@ -405,36 +408,6 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
     }
 
     /**
-     * Determine if an SosSMLIdentifier is the unique identifier for a procedure
-     * 
-     * @param identifier
-     *            SosSMLIdentifier to example for unique identifier
-     * @return whether the SosSMLIdentifier contains the unique identifier
-     */
-    protected boolean isIdentificationProcedureIdentifier(final SmlIdentifier identifier) {
-        return (checkIdentificationNameForProcedureIdentifier(identifier.getName()) || checkIdentificationDefinitionForProcedureIdentifier(identifier
-                .getDefinition()));
-    }
-
-    private boolean checkIdentificationNameForProcedureIdentifier(final String name) {
-        return !Strings.isNullOrEmpty(name) && name.equals(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
-    }
-
-    private boolean checkIdentificationDefinitionForProcedureIdentifier(final String definition) {
-        if (Strings.isNullOrEmpty(definition)) {
-            return false;
-        }
-        final Set<String> definitionValues =
-                Sets.newHashSet(OGCConstants.URN_UNIQUE_IDENTIFIER, OGCConstants.URN_IDENTIFIER_IDENTIFICATION);
-        return definitionValues.contains(definition) || checkDefinitionStartsWithAndContains(definition);
-    }
-
-    private boolean checkDefinitionStartsWithAndContains(final String definition) {
-        return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
-                && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
-    }
-
-    /**
      * Parses the classification
      * 
      * @param classificationArray
@@ -506,11 +479,12 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
             final Object o = CodingHelper.decodeXmlElement(xbcaps.getAbstractDataRecord());
             if (o instanceof DataRecord) {
                 final DataRecord record = (DataRecord) o;
-                final SmlCapabilities caps = new SmlCapabilities().setDataRecord(record).setName(xbcaps.getName());
+                final SmlCapabilities caps = new SmlCapabilities();
+                caps.setDataRecord(record).setName(xbcaps.getName());
                 abstractProcess.addCapabilities(caps);
                 // check if this capabilities is insertion metadata
                 if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {
-                    abstractProcess.addOfferings(SosOffering.fromMap(parseCapabilitiesMetadata(caps, xbcaps)));
+                    abstractProcess.addOfferings(SosOffering.fromSet(caps.getDataRecord().getSweAbstractSimpleTypeFromFields(SweText.class)));
                 } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(caps.getName())) {
                     abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps, xbcaps).keySet());
                 } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(caps.getName())) {
@@ -544,7 +518,7 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
             if (sosSweField.getElement() instanceof SweText) {
                 final SweText sosSweText = (SweText) sosSweField.getElement();
                 if (sosSweText.isSetValue()) {
-                    map.put(sosSweText.getValue(), sosSweField.getName());
+                    map.put(sosSweText.getValue(), sosSweField.getName().getValue());
                 } else {
                     throw new UnsupportedDecoderInputException(this, xbCapabilities).withMessage(
                             "Removable capabilities element %s contains a field with no value",
@@ -558,7 +532,7 @@ public class SensorMLDecoderV101 implements Decoder<AbstractSensorML, XmlObject>
         }
         return map;
     }
-
+    
     /**
      * Parses the position
      * 

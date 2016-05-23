@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,8 +31,10 @@ package org.n52.sos.request;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.response.UpdateSensorResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -41,7 +43,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public class UpdateSensorRequest extends AbstractServiceRequest {
+public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResponse> {
 
     private String procedureIdentifier;
 
@@ -110,5 +112,10 @@ public class UpdateSensorRequest extends AbstractServiceRequest {
 
     public boolean isSetProcedureDescriptions() {
         return CollectionHelper.isNotEmpty(getProcedureDescriptions());
+    }
+
+    @Override
+    public UpdateSensorResponse getResponse() throws OwsExceptionReport {
+        return (UpdateSensorResponse) new UpdateSensorResponse().set(this);
     }
 }

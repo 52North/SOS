@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,9 +30,11 @@ package org.n52.sos.ds.hibernate.cache.base;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.hibernate.internal.util.collections.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -58,14 +60,20 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
         // FIXME shouldn't the identifiers be translated using
         // CacheHelper.addPrefixAndGetFeatureIdentifier()?        
         try {
+        	FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
             Map<String,Collection<String>> foisWithParents = new FeatureOfInterestDAO()
                 .getFeatureOfInterestIdentifiersWithParents(getSession());
+            List<FeatureOfInterest> featureOfInterestObjects = featureOfInterestDAO.getFeatureOfInterestObjects(getSession());
             
             Map<String, Collection<String>> procsForAllFois = new ProcedureDAO()
                     .getProceduresForAllFeaturesOfInterest(getSession());
 
-            for (final String featureOfInterestIdentifier : foisWithParents.keySet()) {
+            for (final FeatureOfInterest featureOfInterest : featureOfInterestObjects) {
+            	String featureOfInterestIdentifier = featureOfInterest.getIdentifier();
                 getCache().addFeatureOfInterest(featureOfInterestIdentifier);
+                if (featureOfInterest.isSetName()) {
+                	getCache().addFeatureOfInterestIdentifierHumanReadableName(featureOfInterestIdentifier, featureOfInterest.getName());
+                }
                 getCache().setProceduresForFeatureOfInterest(featureOfInterestIdentifier,
                         procsForAllFois.get(featureOfInterestIdentifier));
                 Collection<String> parentFois = foisWithParents.get(featureOfInterestIdentifier);
@@ -73,9 +81,11 @@ public class FeatureOfInterestCacheUpdate extends AbstractThreadableDatasourceCa
                     getCache().addParentFeatures(featureOfInterestIdentifier, parentFois);
                 }
             }
-            getCache().setGlobalEnvelope(
-                    getFeatureQueryHandler()
-                            .getEnvelopeForFeatureIDs(getCache().getFeaturesOfInterest(), getSession()));
+            
+            FeatureQueryHandlerQueryObject queryHandler =
+                    new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(getCache().getFeaturesOfInterest())
+                            .setConnection(getSession());
+            getCache().setGlobalEnvelope(getFeatureQueryHandler().getEnvelopeForFeatureIDs(queryHandler));
         } catch (final OwsExceptionReport ex) {
             getErrors().add(ex);
         }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,6 +43,7 @@ import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeFormat;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.gml.time.TimePosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +158,12 @@ public final class DateTimeHelper {
     public static String format(final Time time) {
         if (time != null) {
             if (time instanceof TimeInstant) {
-                return formatDateTime2IsoString(((TimeInstant) time).getValue());
+                try {
+                    return formatDateTime2String(((TimeInstant) time).getTimePosition());
+                } catch (DateTimeFormatException e) {
+                    throw new IllegalArgumentException(e);
+                }
+//                return formatDateTime2IsoString(((TimeInstant) time).getValue());
             } else if (time instanceof TimePeriod) {
                 return String.format("%s/%s", formatDateTime2IsoString(((TimePeriod) time).getStart()),
                         formatDateTime2IsoString(((TimePeriod) time).getEnd()));
@@ -196,6 +202,12 @@ public final class DateTimeHelper {
         return formatDateTime2FormattedString(dateTime, responseFormat);
     }
 
+    /**
+     * @param dateTime
+     * @param timeFormat
+     * @return
+     * @throws DateTimeFormatException
+     */
     public static String formatDateTime2String(final DateTime dateTime, final TimeFormat timeFormat)
             throws DateTimeFormatException {
         switch (timeFormat) {
@@ -207,6 +219,25 @@ public final class DateTimeHelper {
             return formatDateTime2YearMonthDayDateStringYMD(dateTime);
         default:
             return formatDateTime2ResponseString(dateTime);
+        }
+    }
+    
+    /**
+     * @param timePosition
+     * @return
+     * @throws DateTimeFormatException
+     */
+    public static String formatDateTime2String(final TimePosition timePosition)
+            throws DateTimeFormatException {
+        switch (timePosition.getTimeFormat()) {
+        case Y:
+            return formatDateTime2YearDateString(timePosition.getTime());
+        case YM:
+            return formatDateTime2YearMonthDateString(timePosition.getTime());
+        case YMD:
+            return formatDateTime2YearMonthDayDateStringYMD(timePosition.getTime());
+        default:
+            return formatDateTime2ResponseString(timePosition.getTime());
         }
     }
 

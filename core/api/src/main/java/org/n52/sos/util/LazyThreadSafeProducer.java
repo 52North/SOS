@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,68 +28,75 @@
  */
 package org.n52.sos.util;
 
+import java.util.Locale;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.n52.sos.exception.ConfigurationException;
 
-/**
- * Thread safe producer that creates a object only if it is null or if it should
- * be recreated explicitly.
- * 
- * @param <T>
- *            the type to produce
- * 
- * @since 4.0.0
- * @author Christian Autermann <c.autermann@52north.org>
- */
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
+
 public abstract class LazyThreadSafeProducer<T> implements Producer<T> {
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
-
-    private T object;
-
-    private boolean recreate = false;
-
-    private void recreate() throws ConfigurationException {
-        this.object = create();
-        this.recreate = false;
-    }
-
-    private boolean shouldRecreate() {
-        return this.object == null || this.recreate;
-    }
+    private final LoadingCache<Locale, T> cache = CacheBuilder.newBuilder()
+            .build(new CacheLoader<Locale, T>() {
+                @Override
+                public T load(Locale key) {
+                    return create(key);
+                }
+            });
+    private T nullLocale = null;
 
     protected void setRecreate() {
         lock.writeLock().lock();
         try {
-            this.recreate = true;
+            this.nullLocale = create(null);
         } finally {
             lock.writeLock().unlock();
         }
+        this.cache.invalidateAll();
     }
 
     @Override
-    public T get() throws ConfigurationException {
-        lock.readLock().lock();
-        try {
-            if (!shouldRecreate()) {
-                return this.object;
-            }
-        } finally {
-            lock.readLock().unlock();
-        }
-
-        lock.writeLock().lock();
-        try {
-            if (shouldRecreate()) {
-                recreate();
-            }
-            return this.object;
-        } finally {
-            lock.writeLock().unlock();
-        }
+    public T get()
+            throws ConfigurationException {
+        Locale l = null;
+        return get(l);
     }
 
-    protected abstract T create() throws ConfigurationException;
+    @Override
+    public T get(Locale language)
+            throws ConfigurationException {
+        if (language == null) {
+            this.lock.readLock().lock();
+            try {
+                return this.nullLocale;
+            } finally {
+                this.lock.readLock().unlock();
+            }
+        } else {
+            try {
+                return this.cache.getUnchecked(language);
+            } catch (UncheckedExecutionException ex) {
+                if (ex.getCause() instanceof ConfigurationException) {
+                    throw (ConfigurationException) ex.getCause();
+                } else {
+                    throw ex;
+                }
+            }
+        }
+    }
+    
+    @Override
+    public T get(String identification) {
+        return get();
+    }
+
+    protected abstract T create(Locale language)
+            throws ConfigurationException;
+
 }

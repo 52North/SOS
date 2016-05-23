@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,6 +53,6 @@ public abstract class DeleteObservationAbstractDAO extends AbstractOperationDAO 
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
-        opsMeta.addPossibleValuesParameter(PARAMETER_NAME, getCache().getObservationIdentifiers());
+        opsMeta.addAnyParameterValue(PARAMETER_NAME);
     }
 }

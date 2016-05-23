@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,20 +28,10 @@
  */
 package org.n52.sos.web.admin;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jettison.json.JSONArray;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.ds.ConnectionProviderException;
-import org.n52.sos.encode.ProcedureDescriptionFormatKey;
-import org.n52.sos.encode.ResponseFormatKey;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.coding.CodingRepository;
-import org.n52.sos.service.operator.ServiceOperatorKey;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.JSONConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -51,19 +41,27 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.ds.ConnectionProviderException;
+import org.n52.sos.encode.ProcedureDescriptionFormatKey;
+import org.n52.sos.encode.ResponseFormatKey;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.service.operator.ServiceOperatorKey;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.JSONConstants;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
 @Controller
 public class AdminEncodingController extends AbstractAdminController {
-    @ResponseBody
-    @ExceptionHandler(JSONException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String onJSONException(JSONException e) {
-        return e.getMessage();
-    }
-
     @ResponseBody
     @ExceptionHandler(ConnectionProviderException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -78,65 +76,68 @@ public class AdminEncodingController extends AbstractAdminController {
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.GET, produces = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public String getAll() throws JSONException, ConnectionProviderException {
-        return new JSONObject().put(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings())
-                .put(JSONConstants.PROCEDURE_ENCODINGS_KEY, getProcedureEncodings()).toString();
+    public String getAll() throws ConnectionProviderException {
+        ObjectNode node = JSONUtils.nodeFactory().objectNode();
+        node.put(JSONConstants.OBSERVATION_ENCODINGS_KEY, getObservationEncodings());
+        node.put(JSONConstants.PROCEDURE_ENCODINGS_KEY, getProcedureEncodings());
+        return JSONUtils.print(node);
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_ENCODINGS_JSON_ENDPOINT, method = RequestMethod.POST, consumes = ControllerConstants.MEDIA_TYPE_APPLICATION_JSON)
-    public void change(@RequestBody String request) throws JSONException, ConnectionProviderException {
-        JSONObject json = new JSONObject(request);
+    public void change(@RequestBody String request) throws ConnectionProviderException, IOException {
+        JsonNode json = JSONUtils.loadString(request);
 
         if (json.has(JSONConstants.RESPONSE_FORMAT_KEY)) {
             ServiceOperatorKey sokt =
-                    new ServiceOperatorKey(json.getString(JSONConstants.SERVICE_KEY),
-                            json.getString(JSONConstants.VERSION_KEY));
-            ResponseFormatKey rfkt = new ResponseFormatKey(sokt, json.getString(JSONConstants.RESPONSE_FORMAT_KEY));
-            getSettingsManager().setActive(rfkt, json.getBoolean(JSONConstants.ACTIVE_KEY));
+                    new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+                            json.path(JSONConstants.VERSION_KEY).asText());
+            ResponseFormatKey rfkt = new ResponseFormatKey(sokt, json.path(JSONConstants.RESPONSE_FORMAT_KEY).asText());
+            getSettingsManager().setActive(rfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else if (json.has(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY)) {
             ServiceOperatorKey sokt =
-                    new ServiceOperatorKey(json.getString(JSONConstants.SERVICE_KEY),
-                            json.getString(JSONConstants.VERSION_KEY));
+                    new ServiceOperatorKey(json.path(JSONConstants.SERVICE_KEY).asText(),
+                            json.path(JSONConstants.VERSION_KEY).asText());
             ProcedureDescriptionFormatKey pdfkt =
                     new ProcedureDescriptionFormatKey(sokt,
-                            json.getString(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY));
-            getSettingsManager().setActive(pdfkt, json.getBoolean(JSONConstants.ACTIVE_KEY));
+                            json.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY).asText());
+            getSettingsManager().setActive(pdfkt, json.path(JSONConstants.ACTIVE_KEY).asBoolean());
         } else {
             throw new JSONException("Invalid JSON");
         }
     }
 
-    protected JSONArray getObservationEncodings() throws ConnectionProviderException, ConfigurationException,
-            JSONException {
-        JSONArray joes = new JSONArray();
+    protected ArrayNode getObservationEncodings() throws ConnectionProviderException, ConfigurationException {
+        ArrayNode joes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Set<String>> oes =
                 CodingRepository.getInstance().getAllSupportedResponseFormats();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String responseFormat : oes.get(sokt)) {
                 ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
-                joes.put(new JSONObject().put(JSONConstants.SERVICE_KEY, rfkt.getService())
+                joes.addObject()
+                        .put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.RESPONSE_FORMAT_KEY, rfkt.getResponseFormat())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(rfkt)));
+                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(rfkt));
             }
         }
         return joes;
     }
 
-    protected JSONArray getProcedureEncodings() throws JSONException, ConnectionProviderException,
+    protected ArrayNode getProcedureEncodings() throws ConnectionProviderException,
             ConfigurationException {
-        JSONArray jpes = new JSONArray();
+        ArrayNode jpes = JSONUtils.nodeFactory().arrayNode();
         final Map<ServiceOperatorKey, Set<String>> oes =
                 CodingRepository.getInstance().getAllProcedureDescriptionFormats();
         for (ServiceOperatorKey sokt : oes.keySet()) {
             for (String procedureDescriptionFormat : oes.get(sokt)) {
                 ProcedureDescriptionFormatKey rfkt =
                         new ProcedureDescriptionFormatKey(sokt, procedureDescriptionFormat);
-                jpes.put(new JSONObject().put(JSONConstants.SERVICE_KEY, rfkt.getService())
+                jpes.addObject()
+                        .put(JSONConstants.SERVICE_KEY, rfkt.getService())
                         .put(JSONConstants.VERSION_KEY, rfkt.getVersion())
                         .put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT_KEY, rfkt.getProcedureDescriptionFormat())
-                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(rfkt)));
+                        .put(JSONConstants.ACTIVE_KEY, getSettingsManager().isActive(rfkt));
             }
         }
         return jpes;

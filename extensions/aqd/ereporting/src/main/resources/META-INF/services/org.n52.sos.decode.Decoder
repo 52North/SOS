@@ -1,0 +1,10 @@
+org.n52.sos.decode.json.inspire.AddressJSONDecoder
+org.n52.sos.decode.json.inspire.ContactJSONDecoder
+org.n52.sos.decode.json.inspire.EReportingChangeJSONDecoder
+org.n52.sos.decode.json.inspire.EReportingHeaderJSONDecoder
+org.n52.sos.decode.json.inspire.GeographicalNameJSONDecoder
+org.n52.sos.decode.json.inspire.InspireIDJSONDecode
+org.n52.sos.decode.json.inspire.RelatedPartyJSONDecoder
+org.n52.sos.decode.json.inspire.ReportObligationJSONDecoder
+org.n52.sos.decode.json.inspire.SpellingJSONDecoder
+org.n52.sos.decode.json.inspire.PronunciationJSONDecoder

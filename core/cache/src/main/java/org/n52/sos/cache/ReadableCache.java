@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,24 +30,32 @@ package org.n52.sos.cache;
 
 import static org.n52.sos.util.SosHelper.getHierarchy;
 
+import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.n52.sos.i18n.LocalizedString;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
 
 /**
  * {@code ContentCache} implementation that offers a readable interface to the
  * cache. All methods return unmodifiable views of the cache.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public class ReadableCache extends AbstractContentCache {
     private static final long serialVersionUID = -2197601373007656256L;
+    
+    @Override
+    public DateTime getLastUpdateTime() {
+        return getUpdateTime();
+    }
 
     @Override
     public DateTime getMaxPhenomenonTime() {
@@ -67,11 +75,6 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public Set<String> getFeaturesOfInterest() {
         return copyOf(getFeaturesOfInterestSet());
-    }
-
-    @Override
-    public Set<String> getObservationIdentifiers() {
-        return copyOf(getObservationIdentifiersSet());
     }
 
     @Override
@@ -147,6 +150,46 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public String getNameForOffering(final String offering) {
         return getNameForOfferingsMap().get(offering);
+    }
+
+
+    @Override
+    public LocalizedString getI18nNameForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nNameForOfferingsMap().get(offering);
+        if (map != null) {
+            return map.getLocalization(i18n).orNull();
+        }
+        return null;
+    }
+
+    @Override
+    public MultilingualString getI18nNamesForOffering(String offering) {
+        return getI18nNameForOfferingsMap().get(offering);
+    }
+
+
+    @Override
+    public boolean hasI18NNamesForOffering(String offering, Locale i18n) {
+        return getI18nNameForOfferingsMap().containsKey(offering) && getI18nNamesForOffering(offering).hasLocale(i18n);
+    }
+
+    @Override
+    public LocalizedString getI18nDescriptionForOffering(String offering, Locale i18n) {
+        MultilingualString map = getI18nDescriptionForOfferingsMap().get(offering);
+        if (map != null) {
+            return map.getLocalization(i18n).orNull();
+        }
+        return null;
+    }
+
+    @Override
+    public MultilingualString getI18nDescriptionsForOffering(String offering) {
+        return getI18nDescriptionForOfferingsMap().get(offering);
+    }
+
+    @Override
+    public boolean hasI18NDescriptionForOffering(String offering, Locale i18n) {
+        return getI18nDescriptionForOfferingsMap().containsKey(offering) && getI18nDescriptionForOfferingsMap().get(offering).hasLocale(i18n);
     }
 
     @Override
@@ -227,11 +270,6 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public Set<String> getObservablePropertiesForProcedure(final String procedure) {
         return copyOf(getObservablePropertiesForProceduresMap().get(procedure));
-    }
-
-    @Override
-    public Set<String> getObservationIdentifiersForProcedure(final String procedure) {
-        return copyOf(getObservationIdentifiersForProceduresMap().get(procedure));
     }
 
     @Override
@@ -320,11 +358,6 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public boolean hasObservableProperty(final String observableProperty) {
         return getObservableProperties().contains(observableProperty);
-    }
-
-    @Override
-    public boolean hasObservationIdentifier(final String observationIdentifier) {
-        return getObservationIdentifiers().contains(observationIdentifier);
     }
 
     @Override
@@ -480,5 +513,94 @@ public class ReadableCache extends AbstractContentCache {
     @Override
     public Set<String> getAllowedFeatureOfInterestTypesForOffering(String offering) {
         return copyOf(getAllowedFeatureOfInterestTypesForOfferingsMap().get(offering));
+    }
+
+    @Override
+    public Set<Locale> getSupportedLanguages() {
+        return copyOf(getSupportedLanguageSet());
+    }
+
+    @Override
+    public boolean hasSupportedLanguage() {
+        return CollectionHelper.isNotEmpty(getSupportedLanguageSet());
+    }
+
+    @Override
+    public boolean isLanguageSupported(final Locale language) {
+        return getSupportedLanguageSet().contains(language);
+    }
+    
+    @Override
+    public Set<String> getRequstableProcedureDescriptionFormat() {
+        return getRequestableProcedureDescriptionFormats();
+    }
+    
+    @Override
+    public boolean hasRequstableProcedureDescriptionFormat(String format) {
+        return getRequestableProcedureDescriptionFormats().contains(format);
+    }
+    
+    @Override
+    public String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getFeatureOfInterestIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getFeatureOfInterestIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier) {
+    	if (getFeatureOfInterestHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getFeatureOfInterestHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
+    }
+    
+    @Override
+    public String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getObservablePropertyIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getObservablePropertyIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getObservablePropertyHumanReadableNameForIdentifier(String identifier) {
+    	if (getObservablePropertyHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getObservablePropertyHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
+    }
+    
+    @Override
+    public String getProcedureIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getProcedureIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getProcedureIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getProcedureHumanReadableNameForIdentifier(String identifier) {
+    	if (getProcedureHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getProcedureHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
+    }
+    
+    @Override
+    public String getOfferingIdentifierForHumanReadableName(String humanReadableName) {
+    	if (getOfferingIdentifierForHumanReadableName().containsKey(humanReadableName)) {
+    		return getOfferingIdentifierForHumanReadableName().get(humanReadableName);
+    	}
+    	return humanReadableName;
+    }
+    
+    @Override
+    public String getOfferingHumanReadableNameForIdentifier(String identifier) {
+    	if (getOfferingHumanReadableNameForIdentifier().containsKey(identifier)) {
+    		return getOfferingHumanReadableNameForIdentifier().get(identifier);
+    	}
+    	return identifier;
     }
 }

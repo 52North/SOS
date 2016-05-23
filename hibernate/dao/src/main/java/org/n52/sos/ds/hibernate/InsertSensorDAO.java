@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,6 +39,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertSensorDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -89,6 +90,11 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
      */
     public InsertSensorDAO() {
         super(SosConstants.SOS);
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
@@ -142,7 +148,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                         }
                     }
                     final Offering hOffering =
-                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getOfferingIdentifier(),
+                            offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
                                     assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
                                     featureOfInterestTypes, session);
                     for (final ObservableProperty hObservableProperty : hObservableProperties) {
@@ -152,7 +158,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                 }
                 // TODO: parent and child procedures
                 response.setAssignedProcedure(assignedProcedureID);
-                response.setAssignedOffering(firstAssignedOffering.getOfferingIdentifier());
+                response.setAssignedOffering(firstAssignedOffering.getIdentifier());
             } else if (procedureDescriptionFormat == null && observationTypes != null
                     && featureOfInterestTypes != null) {
                 throw new InvalidParameterValueException(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,

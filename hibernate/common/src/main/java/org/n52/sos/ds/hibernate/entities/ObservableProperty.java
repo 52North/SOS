@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,25 +30,21 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 
 /**
  * @since 4.0.0
  * 
  */
-public class ObservableProperty implements Serializable, HasIdentifier, HasDescription {
+public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDisabledFlag {
 
     private static final long serialVersionUID = -4804791207463850138L;
 
     public static final String ID = "observablePropertyId";
 
     private long observablePropertyId;
-
-    private String identifier;
-
-    private String description;
+    
+    private Boolean disabled = false;
 
     public long getObservablePropertyId() {
         return this.observablePropertyId;
@@ -59,32 +55,19 @@ public class ObservableProperty implements Serializable, HasIdentifier, HasDescr
     }
 
     @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public ObservableProperty setIdentifier(final String identifier) {
-        this.identifier = identifier;
+    public ObservableProperty setDisabled(final boolean disabled) {
+        this.disabled = disabled;
         return this;
     }
 
     @Override
-    public String getDescription() {
-        return this.description;
+    public boolean getDisabled() {
+        return disabled;
     }
 
     @Override
-    public void setDescription(String description) {
-        this.description = description;
+    public boolean isDisabled() {
+        return getDisabled();
     }
 
-    public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
-    }
-
-    @Override
-    public String toString() {
-        return "ObservableProperty [identifier=" + identifier + "]";
-    }
 }

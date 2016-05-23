@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -56,7 +55,6 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
 
 /**
@@ -90,7 +88,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     @Test
     public void returnEmptyCollectionIfCalledWithoutAnyParameters() throws OwsExceptionReport, ConverterException {
         List<OmObservation> resultList =
-                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null, null);
+                HibernateObservationUtilities.createSosObservationsFromObservations(null, null, null, null);
         assertThat("result is null", resultList, is(not(nullValue())));
         assertThat("elements in list", resultList.size(), is(0));
     }
@@ -104,7 +102,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
         // PREPARE
         Session session = getSession();
         try {
-            AbstractServiceRequest request = new GetObservationByIdRequest();
+            GetObservationByIdRequest request = new GetObservationByIdRequest();
             request.setVersion(Sos2Constants.SERVICEVERSION);
 
             ProcedureDescriptionFormat hProcedureDescriptionFormat = new ProcedureDescriptionFormat();
@@ -148,7 +146,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
 
             session.flush();
 
-            hObservation.setValue(BigDecimal.valueOf(1.0));
+            hObservation.setValue(Double.valueOf(1.0));
             hObservation.setProcedure(hProcedure);
             hObservation.setOfferings(Collections.singleton(hOffering));
             hObservation.setObservableProperty(hObservableProperty);
@@ -160,7 +158,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             // CALL
             List<OmObservation> resultList =
                     HibernateObservationUtilities.createSosObservationsFromObservations(observationsFromDataBase,
-                            null, request.getVersion(), null, session);
+                            request, null, session);
             // TEST RESULTS
             assertThat(resultList, is(notNullValue()));
             assertThat(resultList.size(), is(1));

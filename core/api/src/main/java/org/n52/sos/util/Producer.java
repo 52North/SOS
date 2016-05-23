@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,17 +28,37 @@
  */
 package org.n52.sos.util;
 
+import java.util.Locale;
+
 /**
  * Generic Factory interface.
- * 
+ *
  * @param <T>
  *            the type to produce
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public interface Producer<T> {
 
+    /**
+     * Get default Producer result
+     *
+     * @return Default producer result
+     */
     T get();
+    
+    
+    T get(String identification);
+
+    /**
+     * Get language specific Producer result
+     *
+     * @param language
+     *                 The resulting language
+     *
+     * @return Result in the specified language
+     */
+    T get(Locale language);
 }

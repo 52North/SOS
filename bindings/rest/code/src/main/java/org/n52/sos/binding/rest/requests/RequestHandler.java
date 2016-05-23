@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -130,7 +130,7 @@ public abstract class RequestHandler {
         return ObservationOfferingDocument.Factory.parse(xb_offering.newInputStream()).getObservationOffering();
     }
     
-    private ServiceOperator getServiceOperator(AbstractServiceRequest req) throws OwsExceptionReport
+    private ServiceOperator getServiceOperator(AbstractServiceRequest<?> req) throws OwsExceptionReport
     {
         for (ServiceOperatorKey sok : req.getServiceOperatorKeyType()) {
             ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sok);
@@ -141,7 +141,7 @@ public abstract class RequestHandler {
         throw new ServiceOperatorNotFoundException(req);
     }
 
-    protected XmlObject executeSosRequest(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected XmlObject executeSosRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         return encodeResponse(getServiceOperator(request).receiveRequest(request));
     }
 

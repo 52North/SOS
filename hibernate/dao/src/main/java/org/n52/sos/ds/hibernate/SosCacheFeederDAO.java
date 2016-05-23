@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate;
 
 import static org.n52.sos.ds.hibernate.CacheFeederSettingDefinitionProvider.CACHE_THREAD_COUNT;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.HibernateException;
@@ -40,8 +41,11 @@ import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.ds.CacheFeederDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
+import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
 import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
@@ -77,9 +81,7 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
 
     @Override
     public void updateCache(WritableContentCache cache) throws OwsExceptionReport {
-        if (cache == null) {
-            throw new NullPointerException("cache is null");
-        }
+        checkCacheNotNull(cache);
         List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
         Session session = null;
         try {
@@ -94,18 +96,67 @@ public class SosCacheFeederDAO extends HibernateSessionHolder implements CacheFe
 
             update.execute();
 
-            Period cacheLoadPeriod = new Period(cacheUpdateStartTime, System.currentTimeMillis());
-            LOGGER.info("Cache load finished in {} ({} seconds)",
-                    PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
-                    cacheLoadPeriod.toStandardSeconds());
-
-        } catch (HibernateException he) {
-            LOGGER.error("Error while updating ContentCache!", he);
+            logCacheLoadTime(cacheUpdateStartTime);
+        } catch (Exception e) {
+            LOGGER.error("Error while updating ContentCache!", e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
         } finally {
             returnSession(session);
         }
         if (!errors.isEmpty()) {
             throw new CompositeOwsException(errors);
         }
+        
+    }
+
+    @Override
+    public void updateCacheOfferings(WritableContentCache cache, Collection<String> offeringsNeedingUpdate)
+            throws OwsExceptionReport {
+        checkCacheNotNull(cache);
+        if (CollectionHelper.isEmpty(offeringsNeedingUpdate)) {
+            return;
+        }
+        List<OwsExceptionReport> errors = CollectionHelper.synchronizedList();
+        Session session = getSession();
+        OfferingCacheUpdate update = new OfferingCacheUpdate(getCacheThreadCount(), offeringsNeedingUpdate);
+        update.setCache(cache);
+        update.setErrors(errors);
+        update.setSession(session);
+        
+        LOGGER.info("Starting offering cache update for {} offering(s)", offeringsNeedingUpdate.size());
+        long cacheUpdateStartTime = System.currentTimeMillis();
+
+        try {
+            update.execute();
+        } catch (Exception e) {
+            LOGGER.error("Error while updating ContentCache!", e);
+            errors.add(new NoApplicableCodeException().causedBy(e).withMessage("Error while updating ContentCache!"));
+        } finally {
+            returnSession(session);
+        }
+
+        logCacheLoadTime(cacheUpdateStartTime);
+
+        if (!errors.isEmpty()) {
+            throw new CompositeOwsException(errors);
+        }
+    }
+
+    private void checkCacheNotNull(WritableContentCache cache) {
+        if (cache == null) {
+            throw new NullPointerException("cache is null");
+        }        
+    }
+
+    private void logCacheLoadTime(long startTime) {
+        Period cacheLoadPeriod = new Period(startTime, System.currentTimeMillis());
+        LOGGER.info("Cache load finished in {} ({} seconds)",
+                PeriodFormat.getDefault().print(cacheLoadPeriod.normalizedStandard()),
+                cacheLoadPeriod.toStandardSeconds());         
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 }

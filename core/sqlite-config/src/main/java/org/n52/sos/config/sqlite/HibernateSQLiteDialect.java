@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,9 +34,12 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunctionTemplate;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.dialect.function.VarArgsSQLFunction;
+import org.hibernate.dialect.unique.UniqueDelegate;
 import org.hibernate.type.StandardBasicTypes;
 
 public class HibernateSQLiteDialect extends Dialect {
+    
+    private final UniqueDelegate sqliteUniqueDelegate;
 
     public HibernateSQLiteDialect() {
         registerColumnType(Types.BIT, "integer");
@@ -65,6 +68,8 @@ public class HibernateSQLiteDialect extends Dialect {
         registerFunction("mod", new SQLFunctionTemplate(StandardBasicTypes.INTEGER, "?1 % ?2"));
         registerFunction("substr", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
         registerFunction("substring", new StandardSQLFunction("substr", StandardBasicTypes.STRING));
+        
+        sqliteUniqueDelegate = new SQLiteUniqueDelegate( this );
     }
 
     @Override
@@ -183,5 +188,10 @@ public class HibernateSQLiteDialect extends Dialect {
     @Override
     public boolean supportsCascadeDelete() {
         return false;
+    }
+    
+    @Override
+    public UniqueDelegate getUniqueDelegate() {
+            return sqliteUniqueDelegate;
     }
 }

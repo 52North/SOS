@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,13 +33,16 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractInsertResultTemplateDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
@@ -71,6 +74,11 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     public InsertResultTemplateDAO() {
         super(SosConstants.SOS);
     }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
 
     @Override
     public InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
@@ -98,7 +106,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                     featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,
                             obsConst.getOffering(), session);
                     // check if result structure elements are supported
-                    checkResultStructure(request.getResultStructure());
+                    checkResultStructure(request.getResultStructure(), obsConst.getObservableProperty().getIdentifier());
                     new ResultTemplateDAO().checkOrInsertResultTemplate(request, obsConst, feature, session);
                 } else {
                     // TODO make better exception.
@@ -152,15 +160,35 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
     }
     
 
-    private void checkResultStructure(SosResultStructure resultStructure) throws OwsExceptionReport {
-        // TODO modify or remove if complex field elements are supported
-        final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
-        
-        for (final SweField swefield : record.getFields()) {
-                if (!(swefield.getElement() instanceof SweAbstractSimpleType<?>)) {
-                    throw new NoApplicableCodeException().withMessage("The swe:Field element of type %s is not yet supported!", swefield.getElement().getClass().getName());
-                }
-        }
-    }
+	private void checkResultStructure(SosResultStructure resultStructure,
+			String observedProperty) throws OwsExceptionReport {
+		// TODO modify or remove if complex field elements are supported
+		final SweDataRecord record = setRecordFrom(resultStructure
+				.getResultStructure());
+
+		for (final SweField swefield : record.getFields()) {
+			if (!(swefield.getElement() instanceof SweAbstractSimpleType<?>)) {
+				throw new NoApplicableCodeException()
+						.withMessage(
+								"The swe:Field element of type %s is not yet supported!",
+								swefield.getElement().getClass().getName());
+			}
+		}
+		if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
+			throw new NoApplicableCodeException()
+					.at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+					.withMessage(
+							"Missing swe:Time or swe:TimeRange with definition %s",
+							OmConstants.PHENOMENON_TIME);
+		}
+		if (ResultHandlingHelper.checkFields(record.getFields(),
+				observedProperty) == -1) {
+			throw new NoApplicableCodeException()
+					.at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+					.withMessage(
+							"Missing swe:field content with element definition %s",
+							observedProperty);
+		}
+	}
 
 }

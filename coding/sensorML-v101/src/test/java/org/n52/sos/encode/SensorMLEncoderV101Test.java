@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,9 +28,13 @@
  */
 package org.n52.sos.encode;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -52,7 +56,7 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.sos.AbstractBeforeAfterClassTest;
+import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
@@ -75,7 +79,8 @@ import com.google.common.collect.Lists;
  * 
  * @since 4.0.0
  */
-public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
+public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
+	
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -83,6 +88,8 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
     private static final String TEST_ID_2 = "test-id-2";
 
     private static final String TEST_NAME_2 = "test-name-2";
+    
+    private static final String TEST_CHILD_1 = "test-id-child-1";
 
     @Test
     public void should_set_identifier() throws OwsExceptionReport {
@@ -183,6 +190,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
         final System system = new System();
         sensorMl.addMember(system);
         final System childProcedure = new System();
+        childProcedure.setIdentifier(TEST_CHILD_1);
         system.addChildProcedure(childProcedure);
         childProcedure.addFeatureOfInterest(TEST_ID_1);
         final SystemType xbSystemType = encodeSystem(sensorMl);
@@ -492,4 +500,14 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassTest {
 		assertThat(xbAddress.getDeliveryPointArray(0), is(responsibleParty.getDeliveryPoint().get(0)));
 		assertThat(xbAddress.getPostalCode(), is(responsibleParty.getPostalCode()));
 	}
+
+    @Test
+    public void should_set_gml_id() throws OwsExceptionReport {
+        final SensorML sensorMl = new SensorML();
+        final System system = new System();
+        sensorMl.addMember(system);
+        system.setGmlId(TEST_ID_1);
+        final SystemType xbSystem = encodeSystem(sensorMl);
+        assertThat(xbSystem.getId(), is(TEST_ID_1));
+    }
 }

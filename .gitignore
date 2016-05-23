@@ -1,4 +1,14 @@
 target
 .classpath
+.externalToolBuilders
 .project
 .settings
+nb*.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
+.externalToolBuilders
+extensions/do/core/configuration.db
+**.*~
+*.tern-project

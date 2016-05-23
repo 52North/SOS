@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,14 +28,9 @@
  */
 package org.n52.sos.web.admin;
 
+
 import javax.servlet.UnavailableException;
 
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
-import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.web.ControllerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,9 +41,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.ogc.ows.CompositeOwsException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.ControllerConstants;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 public class AdminReloadCacheController extends AbstractAdminController {
@@ -59,21 +61,22 @@ public class AdminReloadCacheController extends AbstractAdminController {
     public void reload() throws OwsExceptionReport, UnavailableException {
         checkConfiguratorAvailability();
         if (!cacheIsLoading()) {
-            LOG.debug("Reloading Capabilitities Cache");            
+            LOG.debug("Reloading Capabilitities Cache");
             updateCache();
         }
+        // TODO display other message here because the WebUI is displaying information about successful cache update start but nothing is happening
     }
 
     @ResponseBody
     @RequestMapping(value = ControllerConstants.Paths.ADMIN_CACHE_LOADING, method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
     public String getCacheLoadingStatus() throws JSONException, UnavailableException {
         checkConfiguratorAvailability();
-        return new JSONObject().put("loading", cacheIsLoading()).toString();
-    }    
+        return JSONUtils.print(JSONUtils.nodeFactory().objectNode().put("loading", cacheIsLoading()));
+    }
 
     private void checkConfiguratorAvailability() throws UnavailableException {
         if (Configurator.getInstance() == null) {
-            throw new UnavailableException("configurator is not available");            
+            throw new UnavailableException("configurator is not available");
         }
     }
 

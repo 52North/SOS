@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,7 +35,7 @@ import java.util.Set;
 
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.JSONUtils;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -56,11 +56,11 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @param <T>
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
@@ -68,7 +68,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
 
     private final Set<EncoderKey> encoderKeys;
 
-    public JSONEncoder(Class<T> type, EncoderKey... additionalKeys) {
+    public JSONEncoder(Class<? super T> type, EncoderKey... additionalKeys) {
         Builder<EncoderKey> set = ImmutableSet.builder();
         set.add(new JSONEncoderKey(type));
         set.addAll(Arrays.asList(additionalKeys));
@@ -113,6 +113,9 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     @Override
     public JsonNode encode(T objectToEncode) throws OwsExceptionReport {
         try {
+            if (objectToEncode == null) {
+                return nodeFactory().nullNode();
+            }
             return encodeJSON(objectToEncode);
         } catch (JSONEncodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);

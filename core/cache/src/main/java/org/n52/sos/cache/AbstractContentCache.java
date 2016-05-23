@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,11 +34,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+import org.n52.sos.i18n.MultilingualString;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.util.CollectionHelper;
@@ -46,12 +48,15 @@ import org.n52.sos.util.Constants;
 import org.n52.sos.util.SetMultiMap;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Abstract {@code ContentCache} implementation that encapsulates the needed
  * {@code Map}s.
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
@@ -60,14 +65,14 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     /**
      * Creates a new synchronized map from the specified map.
-     * 
+     *
      * @param <K>
      *            the key type
      * @param <V>
      *            the value type
      * @param map
      *            the map
-     * 
+     *
      * @return the synchronized map
      */
     protected static <K, V> Map<K, V> newSynchronizedMap(Map<K, V> map) {
@@ -80,12 +85,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     /**
      * Creates a new synchronized set from the specified elements.
-     * 
+     *
      * @param <T>
      *            the element type
      * @param elements
      *            the elements
-     * 
+     *
      * @return the synchronized set
      */
     protected static <T> Set<T> newSynchronizedSet(Iterable<T> elements) {
@@ -106,24 +111,60 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     /**
      * Creates a new empty synchronized map.
-     * 
+     *
      * @param <K>
      *            the key type
      * @param <V>
      *            the value type
-     * 
+     *
      * @return the synchronized map
      */
     protected static <K, V> Map<K, V> newSynchronizedMap() {
         return newSynchronizedMap(null);
     }
+    
+    
+    /**
+     * Creates a new empty synchronized {@link BiMap}.
+     *
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> BiMap<K, V> newSynchronizedBiMap() {
+        return newSynchronizedBiMap(null);
+    }
+    
+    /**
+     * Creates a new synchronized map from the specified map.
+     *
+     * @param <K>
+     *            the key type
+     * @param <V>
+     *            the value type
+     * @param map
+     *            the map
+     *
+     * @return the synchronized map
+     */
+    protected static <K, V> BiMap<K, V> newSynchronizedBiMap(BiMap<K, V> map) {
+        if (map == null) {
+            return Maps.synchronizedBiMap(HashBiMap.<K, V>create());
+        } else {
+            return Maps.synchronizedBiMap(map);
+        }
+    }
+    
 
     /**
      * Creates a new empty synchronized set.
-     * 
+     *
      * @param <T>
      *            the element type
-     * 
+     *
      * @return a synchronized set
      */
     protected static <T> Set<T> newSynchronizedSet() {
@@ -132,12 +173,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     /**
      * Creates a unmodifiable copy of the specified set.
-     * 
+     *
      * @param <T>
      *            the element type
      * @param set
      *            the set
-     * 
+     *
      * @return a unmodifiable copy
      */
     protected static <T> Set<T> copyOf(Set<T> set) {
@@ -150,11 +191,11 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     /**
      * Creates a copy of the specified envelope.
-     * 
+     *
      * @param e
      *            the envelope
-     * 
-     * @return a coyp
+     *
+     * @return a copy
      */
     protected static SosEnvelope copyOf(SosEnvelope e) {
         if (e == null) {
@@ -168,12 +209,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * Throws a {@code NullPointerExceptions} if value is null or a
      * {@code IllegalArgumentException} if value is <= 0.
-     * 
+     *
      * @param name
      *            the name of the value
      * @param value
      *            the value to check
-     * 
+     *
      * @throws NullPointerException
      *             if value is null
      * @throws IllegalArgumentException
@@ -182,7 +223,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected static void greaterZero(String name, Integer value) throws NullPointerException,
             IllegalArgumentException {
         notNull(name, value);
-        if (value.intValue() <= 0) {
+        if (value <= 0) {
             throw new IllegalArgumentException(name + " may not less or equal 0!");
         }
     }
@@ -190,12 +231,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * Throws a {@code NullPointerExceptions} if value is null or a
      * {@code IllegalArgumentException} if value is empty.
-     * 
+     *
      * @param name
      *            the name of the value
      * @param value
      *            the value to check
-     * 
+     *
      * @throws NullPointerException
      *             if value is null
      * @throws IllegalArgumentException
@@ -212,12 +253,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * Throws a {@code NullPointerExceptions} if value is null or any value
      * within is null.
-     * 
+     *
      * @param name
      *            the name of the value
      * @param value
      *            the value to check
-     * 
+     *
      * @throws NullPointerException
      *             if value == null or value contains null
      */
@@ -233,12 +274,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * Throws a {@code NullPointerExceptions} if value is null or any value
      * within is null or empty.
-     * 
+     *
      * @param name
      *            the name of the value
      * @param value
      *            the value to check
-     * 
+     *
      * @throws NullPointerException
      *             if value == null or value contains null
      * @throws IllegalArgumentException
@@ -260,12 +301,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     /**
      * Throws a {@code NullPointerExceptions} if value is null or any key or
      * value within is null.
-     * 
+     *
      * @param name
      *            the name of the value
      * @param value
      *            the value to check
-     * 
+     *
      * @throws NullPointerException
      *             if value == null or value contains null values
      */
@@ -280,12 +321,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     /**
      * Throws a {@code NullPointerExceptions} if value is null.
-     * 
+     *
      * @param name
      *            the name of the value
      * @param value
      *            the value to check
-     * 
+     *
      * @throws NullPointerException
      *             if value == null
      */
@@ -295,6 +336,22 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         }
     }
 
+    /**
+     * @return the updateTime
+     */
+    public DateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * @param updateTime the updateTime to set
+     */
+    public void setUpdateTime(DateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    private DateTime updateTime;
+    
     private int defaultEpsgCode = Constants.EPSG_WGS84;
 
     private Map<String, DateTime> maxPhenomenonTimeForOfferings = newSynchronizedMap();
@@ -310,7 +367,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     private Map<String, DateTime> minPhenomenonTimeForProcedures = newSynchronizedMap();
 
     private SetMultiMap<String, String> allowedObservationTypeForOfferings = newSynchronizedSetMultiMap();
-    
+
     private SetMultiMap<String, String> allowedFeatureOfInterestTypeForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> childFeaturesForFeatureOfInterest = newSynchronizedSetMultiMap();
@@ -329,10 +386,8 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private SetMultiMap<String, String> observablePropertiesForProcedures = newSynchronizedSetMultiMap();
 
-    private SetMultiMap<String, String> observationIdentifiersForProcedures = newSynchronizedSetMultiMap();
-
     private SetMultiMap<String, String> observationTypesForOfferings = newSynchronizedSetMultiMap();
-    
+
     private SetMultiMap<String, String> featureOfInterestTypesForOfferings = newSynchronizedSetMultiMap();
 
     private SetMultiMap<String, String> observedPropertiesForResultTemplates = newSynchronizedSetMultiMap();
@@ -363,11 +418,13 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Map<String, String> nameForOfferings = newSynchronizedMap();
 
+    private Map<String, MultilingualString> i18nNameForOfferings = newSynchronizedMap();
+
+    private Map<String, MultilingualString> i18nDescriptionForOfferings = newSynchronizedMap();
+
     private Set<Integer> epsgCodes = newSynchronizedSet();
 
     private Set<String> featuresOfInterest = newSynchronizedSet();
-
-    private Set<String> observationIdentifiers = newSynchronizedSet();
 
     private Set<String> procedures = newSynchronizedSet();
 
@@ -383,6 +440,27 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
 
     private Map<String, SosEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
 
+    private Set<Locale> supportedLanguages = newSynchronizedSet();
+    
+    private Set<String> requestableProcedureDescriptionFormats  = newSynchronizedSet();
+
+    
+    private BiMap<String, String> featureOfInterestIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private BiMap<String, String> observablePropertyIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> observablePropertyHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private BiMap<String, String> procedureIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> procedureHumanReadableNameForIdentifier = newSynchronizedMap();
+    
+    private BiMap<String, String> offeringIdentifierHumanReadableName = newSynchronizedBiMap();
+    
+//    private Map<String, String> offeringHumanReadableNameForIdentifier = newSynchronizedMap();
+    
     /**
      * @return the relating offering -> max phenomenon time
      */
@@ -431,7 +509,7 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     protected SetMultiMap<String, String> getAllowedObservationTypesForOfferingsMap() {
         return this.allowedObservationTypeForOfferings;
     }
-    
+
     /**
      * @return the relating offering -> allowed featureOfInterest type
      */
@@ -482,19 +560,12 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     }
 
     /**
-     * @return the relating procedure -> observation identifier
-     */
-    protected SetMultiMap<String, String> getObservationIdentifiersForProceduresMap() {
-        return this.observationIdentifiersForProcedures;
-    }
-
-    /**
      * @return the relating offering -> observation types
      */
     protected SetMultiMap<String, String> getObservationTypesForOfferingsMap() {
         return this.observationTypesForOfferings;
     }
-    
+
     /**
      * @return the relating offering -> featureOfInterest types
      */
@@ -601,6 +672,20 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
     }
 
     /**
+     * @return the relating offering -> language / offering name
+     */
+    protected Map<String,  MultilingualString> getI18nNameForOfferingsMap() {
+        return this.i18nNameForOfferings;
+    }
+
+    /**
+     * @return the relating offering -> language / offering description
+     */
+    protected Map<String,  MultilingualString> getI18nDescriptionForOfferingsMap() {
+        return this.i18nDescriptionForOfferings;
+    }
+
+    /**
      * @return the relating procedure -> observable properties
      */
     protected SetMultiMap<String, String> getObservablePropertiesForProceduresMap() {
@@ -633,13 +718,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
      */
     protected Set<String> getFeaturesOfInterestSet() {
         return this.featuresOfInterest;
-    }
-
-    /**
-     * @return the observation identifiers
-     */
-    protected Set<String> getObservationIdentifiersSet() {
-        return this.observationIdentifiers;
     }
 
     /**
@@ -695,6 +773,46 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         this.globalEnvelope = envelope;
     }
 
+    protected Set<Locale> getSupportedLanguageSet() {
+        return this.supportedLanguages;
+    }
+    
+    protected Set<String> getRequestableProcedureDescriptionFormats() {
+        return this.requestableProcedureDescriptionFormats;
+    }
+    
+    protected Map<String, String> getFeatureOfInterestIdentifierForHumanReadableName() {
+    	return featureOfInterestIdentifierHumanReadableName.inverse();
+    }
+    
+    protected Map<String, String> getFeatureOfInterestHumanReadableNameForIdentifier() {
+    	return featureOfInterestIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getObservablePropertyIdentifierForHumanReadableName() {
+    	return observablePropertyIdentifierHumanReadableName.inverse();
+    }
+    
+    protected Map<String, String> getObservablePropertyHumanReadableNameForIdentifier() {
+    	return observablePropertyIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getProcedureIdentifierForHumanReadableName() {
+    	return procedureIdentifierHumanReadableName.inverse();
+    }
+    
+    protected Map<String, String> getProcedureHumanReadableNameForIdentifier() {
+    	return procedureIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getOfferingIdentifierForHumanReadableName() {
+    	return offeringIdentifierHumanReadableName;
+    }
+    
+    protected Map<String, String> getOfferingHumanReadableNameForIdentifier() {
+    	return offeringIdentifierHumanReadableName.inverse();
+    }
+
     /**
      * @param defaultEpsgCode
      *            the new default EPSG code
@@ -708,29 +826,32 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
         return this.defaultEpsgCode;
     }
 
+
     @Override
     public int hashCode() {
-        return Objects.hashCode(defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
+        return Objects.hashCode(updateTime,defaultEpsgCode, maxPhenomenonTimeForOfferings, minPhenomenonTimeForOfferings,
                 maxResultTimeForOfferings, minResultTimeForOfferings, maxPhenomenonTimeForProcedures,
                 minPhenomenonTimeForProcedures, allowedObservationTypeForOfferings, childFeaturesForFeatureOfInterest,
                 childProceduresForProcedures, compositePhenomenonForOfferings, featuresOfInterestForOfferings,
                 featuresOfInterestForResultTemplates, observablePropertiesForCompositePhenomenons,
                 observablePropertiesForOfferings, observablePropertiesForProcedures,
-                observationIdentifiersForProcedures, observationTypesForOfferings,
-                observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
+                observationTypesForOfferings, observedPropertiesForResultTemplates, offeringsForObservableProperties, offeringsForProcedures,
                 parentFeaturesForFeaturesOfInterest, parentProceduresForProcedures, proceduresForFeaturesOfInterest,
                 proceduresForObservableProperties, proceduresForOfferings, hiddenChildProceduresForOfferings,
                 relatedFeaturesForOfferings, resultTemplatesForOfferings, rolesForRelatedFeatures,
-                envelopeForOfferings, nameForOfferings, epsgCodes, featuresOfInterest, observationIdentifiers,
+                envelopeForOfferings, nameForOfferings, i18nNameForOfferings, i18nDescriptionForOfferings, epsgCodes, featuresOfInterest,
                 procedures, resultTemplates, offerings, globalEnvelope, globalResultTimeEnvelope,
-                globalPhenomenonTimeEnvelope);
+                globalPhenomenonTimeEnvelope, supportedLanguages, requestableProcedureDescriptionFormats,
+                featureOfInterestIdentifierHumanReadableName, observablePropertyIdentifierHumanReadableName,
+				procedureIdentifierHumanReadableName, offeringIdentifierHumanReadableName);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof AbstractContentCache) {
             final AbstractContentCache other = (AbstractContentCache) obj;
-            return Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
+            return Objects.equal(this.updateTime, other.getUpdateTime())
+                    && Objects.equal(this.defaultEpsgCode, other.getDefaultEPSGCode())
                     && Objects.equal(this.maxPhenomenonTimeForOfferings, other.getMaxPhenomenonTimeForOfferingsMap())
                     && Objects.equal(this.minPhenomenonTimeForOfferings, other.getMinPhenomenonTimeForOfferingsMap())
                     && Objects.equal(this.maxResultTimeForOfferings, other.getMaxResultTimeForOfferingsMap())
@@ -755,9 +876,6 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                             other.getObservablePropertiesForOfferingsMap())
                     && Objects.equal(this.observablePropertiesForProcedures,
                             other.getObservablePropertiesForProceduresMap())
-                    && Objects.equal(this.observationIdentifiersForProcedures,
-                            other.getObservationIdentifiersForProceduresMap())
-                    && Objects.equal(this.observationTypesForOfferings, other.getObservationTypesForOfferingsMap())
                     && Objects.equal(this.observedPropertiesForResultTemplates,
                             other.getObservablePropertiesForResultTemplatesMap())
                     && Objects.equal(this.offeringsForObservableProperties,
@@ -778,15 +896,22 @@ public abstract class AbstractContentCache extends AbstractStaticContentCache {
                     && Objects.equal(this.rolesForRelatedFeatures, other.getRolesForRelatedFeaturesMap())
                     && Objects.equal(this.envelopeForOfferings, other.getEnvelopeForOfferingsMap())
                     && Objects.equal(this.nameForOfferings, other.getNameForOfferingsMap())
+                    && Objects.equal(this.i18nNameForOfferings, other.getI18nNameForOfferingsMap())
+                    && Objects.equal(this.i18nDescriptionForOfferings, other.getI18nDescriptionForOfferingsMap())
                     && Objects.equal(this.epsgCodes, other.getEpsgCodesSet())
                     && Objects.equal(this.featuresOfInterest, other.getFeaturesOfInterestSet())
-                    && Objects.equal(this.observationIdentifiers, other.getObservationIdentifiersSet())
                     && Objects.equal(this.procedures, other.getProceduresSet())
                     && Objects.equal(this.resultTemplates, other.getResultTemplatesSet())
                     && Objects.equal(this.globalEnvelope, other.getGlobalEnvelope())
                     && Objects.equal(this.globalPhenomenonTimeEnvelope, other.getGlobalPhenomenonTimeEnvelope())
                     && Objects.equal(this.globalResultTimeEnvelope, other.getGlobalResultTimeEnvelope())
-                    && Objects.equal(this.offerings, other.getOfferingsSet());
+                    && Objects.equal(this.offerings, other.getOfferingsSet())
+                    && Objects.equal(this.supportedLanguages, other.getSupportedLanguages())
+                    && Objects.equal(this.requestableProcedureDescriptionFormats, other.getRequestableProcedureDescriptionFormats())
+                    && Objects.equal(this.getFeatureOfInterestIdentifierForHumanReadableName(), other.getFeatureOfInterestIdentifierForHumanReadableName())
+                    && Objects.equal(this.getObservablePropertyIdentifierForHumanReadableName(), other.getObservablePropertyIdentifierForHumanReadableName())
+                    && Objects.equal(this.getProcedureIdentifierForHumanReadableName(), other.getProcedureIdentifierForHumanReadableName())
+                    && Objects.equal(this.getOfferingIdentifierForHumanReadableName(), other.getOfferingIdentifierForHumanReadableName());
         }
         return false;
     }

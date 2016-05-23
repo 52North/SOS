@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,8 @@ package org.n52.sos.ogc.gml.time;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -62,6 +64,11 @@ public class TimeInstantTest {
         assertFalse("new TimeInstant(null) is empty", new TimeInstant((TimeIndeterminateValue) null)
                 .setSosIndeterminateTime(SosIndeterminateTime.latest).isEmpty());
     }
+    
+    @Test
+    public void isNotEmptyForConstructorWithDate() {
+        assertFalse("new TimeInstant(new DateTime()) is empty", new TimeInstant(new Date()).isEmpty());
+    }
 
     @Test
     public void shouldEqualTime() {
@@ -70,7 +77,7 @@ public class TimeInstantTest {
         TimeInstant equalTimeInstant = new TimeInstant(dateTime);
         assertTrue("TimeInstants are NOT equal", timeInstant.equals(equalTimeInstant));
     }
-    
+        
     @Test
     public void shouldEqualIndeterminateValue() {
         TimeIndeterminateValue tiv = TimeIndeterminateValue.after;

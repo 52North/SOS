@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,6 +46,7 @@ import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
@@ -68,9 +69,9 @@ import com.vividsolutions.jts.io.WKTWriter;
  */
 public class ResultHandlingHelper {
 
-    private static final String RESULT_TIME = "http://www.opengis.net/def/property/OGC/0/ResultTime";
+    private static final String RESULT_TIME = OmConstants.RESULT_TIME;
 
-    private static final String PHENOMENON_TIME = "http://www.opengis.net/def/property/OGC/0/PhenomenonTime";
+    private static final String PHENOMENON_TIME = OmConstants.PHENOMENON_TIME;
 
     /**
      * Create internal ResultEncoding from String representation

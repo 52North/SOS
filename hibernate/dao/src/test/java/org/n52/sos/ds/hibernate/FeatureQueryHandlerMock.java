@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,13 +35,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.n52.sos.ds.AbstractFeatureQueryHandler;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
+import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.util.Constants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -51,26 +52,14 @@ import org.n52.sos.util.Constants;
 public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
-    public AbstractFeature getFeatureByID(String featureID, Object connection, String version, int responseSrid)
-            throws OwsExceptionReport {
-        return new SamplingFeature(new CodeWithAuthority("feature"));
-    }
-
-    @Override
     public Collection<String> getFeatureIDs(SpatialFilter filter, Object connection) throws OwsExceptionReport {
         return Collections.emptyList();
     }
 
     @Override
-    public Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list,
-            Object connection, String version, int responseSrid) throws OwsExceptionReport {
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection)
-            throws OwsExceptionReport {
-        return new SosEnvelope(null, getDefaultEPSG());
+    public SosEnvelope getEnvelopeForFeatureIDs(Collection<String> featureIDs, Object connection) throws
+            OwsExceptionReport {
+        return new SosEnvelope(null, getStorageEPSG());
     }
 
     @Override
@@ -79,7 +68,41 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
     }
 
     @Override
-    public int getDefaultEPSG() {
-        return Constants.EPSG_WGS84;
+    public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
+            throws OwsExceptionReport {
+        return new SamplingFeature(new CodeWithAuthority("feature"));
+    }
+
+    @Override
+    public Map<String, AbstractFeature> getFeatures(Collection<String> foiIDs, List<SpatialFilter> list,
+            Object connection, String version) throws OwsExceptionReport {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public AbstractFeature getFeatureByID(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        return new SamplingFeature(new CodeWithAuthority("feature"));
+    }
+
+    @Override
+    public Collection<String> getFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Map<String, AbstractFeature> getFeatures(FeatureQueryHandlerQueryObject queryObject)
+            throws OwsExceptionReport {
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        return new SosEnvelope(null, getStorageEPSG());
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 }

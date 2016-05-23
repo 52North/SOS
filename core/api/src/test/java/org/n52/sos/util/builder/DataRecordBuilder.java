@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -41,6 +41,8 @@ import org.n52.sos.ogc.swe.simpleType.SweTime;
 public class DataRecordBuilder {
 
     private SweTime field;
+    
+    private String name = "name";
 
     public static DataRecordBuilder aDataRecord() {
         return new DataRecordBuilder();
@@ -53,7 +55,7 @@ public class DataRecordBuilder {
 
     public SweDataRecord build() {
         SweDataRecord record = new SweDataRecord();
-        record.addField(new SweField(null, field));
+        record.addField(new SweField(name, field));
         return record;
     }
 

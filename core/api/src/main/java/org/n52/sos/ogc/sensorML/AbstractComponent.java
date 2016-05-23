@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,6 +37,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlPosition;
  */
 public class AbstractComponent extends AbstractProcess {
 
+    private static final long serialVersionUID = -7668360974212650356L;
     private SmlPosition position;
 
     private SmlLocation location;

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,26 +28,39 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.hibernate.Session;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationDAO;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationTimeDAO;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingValueDAO;
+import org.n52.sos.ds.hibernate.dao.ereporting.EReportingValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesSpatialFilteringProfileDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.series.SeriesValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Observation;
-import org.n52.sos.ds.hibernate.entities.SpatialFilteringProfile;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
+import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationTime;
+import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesSpatialFilteringProfile;
+import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
+import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
+import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+
 
 /**
- * Hibernate data access factory
- * 
+ * Hibernate data access factory.
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public class DaoFactory {
-
     /**
      * instance
      */
@@ -55,7 +68,7 @@ public class DaoFactory {
 
     /**
      * Get the DaoFactory instance
-     * 
+     *
      * @return Returns the instance of the DaoFactory.
      */
     public static synchronized DaoFactory getInstance() {
@@ -65,42 +78,76 @@ public class DaoFactory {
         return instance;
     }
 
-    /**
-     * Get the currently supported Hibernate Observation data access
-     * implementation
-     * 
-     * @param session
-     *            Hibernate session
-     * @return Currently supported Hibernate Observation data access
-     *         implementation
-     * @throws CodedException
-     *             If no Hibernate Observation data access is supported
-     */
-    public AbstractObservationDAO getObservationDAO(Session session) throws CodedException {
-        if (HibernateHelper.isEntitySupported(SeriesObservation.class, session)) {
-            return new SeriesObservationDAO();
-        } else if (HibernateHelper.isEntitySupported(Observation.class, session)) {
-            return new ObservationDAO();
+    public AbstractSeriesDAO getSeriesDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
+            return new EReportingSeriesDAO();
+        } else if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
+            return new SeriesDAO();
         } else {
-            throw new NoApplicableCodeException().withMessage("Implemented observation DAO is missing!");
+            throw new NoApplicableCodeException()
+                    .withMessage("Implemented series DAO is missing!");
         }
     }
 
     /**
-     * Get the currently supported Hibernate SpatialFilteringProfile data access
-     * implementation or null
-     * 
-     * @param session
-     *            Hibernate session
-     * @return Currently supported Hibernate SpatialFilteringProfile data access
+     * Get the currently supported Hibernate Observation data access
+     * implementation
+     *
+     * @return Currently supported Hibernate Observation data access
      *         implementation
+     *
+     * @throws OwsExceptionReport
+     *                        If no Hibernate Observation data access is supported
      */
-    public AbstractSpatialFilteringProfileDAO<?> getSpatialFilteringProfileDAO(Session session) throws CodedException {
-        if (HibernateHelper.isEntitySupported(SeriesSpatialFilteringProfile.class, session)) {
-            return new SeriesSpatialFilteringProfileDAO();
-        } else if (HibernateHelper.isEntitySupported(SpatialFilteringProfile.class, session)) {
-            return new SpatialFilteringProfileDAO();
+    public AbstractObservationDAO getObservationDAO()
+            throws OwsExceptionReport {
+        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
+            return new EReportingObservationDAO();
+        } else if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
+            return new SeriesObservationDAO();
+        } else if (HibernateHelper.isEntitySupported(Observation.class)) {
+            return new ObservationDAO();
+        } else {
+            throw new NoApplicableCodeException()
+                    .withMessage("Implemented observation DAO is missing!");
         }
-        return null;
     }
+    
+    public AbstractObservationTimeDAO getObservationTimeDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(EReportingObservationTime.class)) {
+            return new EReportingObservationTimeDAO();
+        } else if (HibernateHelper.isEntitySupported(SeriesObservationTime.class)) {
+            return new SeriesObservationTimeDAO();
+        } else {
+            throw new NoApplicableCodeException()
+                    .withMessage("Implemented observation time DAO is missing!");
+        }
+    }
+    
+    public AbstractValueDAO getValueDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(EReportingValue.class)) {
+            return new EReportingValueDAO();
+        } else if (HibernateHelper.isEntitySupported(SeriesValue.class)) {
+            return new SeriesValueDAO();
+//        } else if (HibernateHelper.isEntitySupported(ObservationValue.class)) {
+//            return new ObserervationValueDAO();
+        } else {
+            throw new NoApplicableCodeException()
+                    .withMessage("Implemented value DAO is missing!");
+        }
+    }
+    
+    public AbstractValueTimeDAO getValueTimeDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
+            return new EReportingValueTimeDAO();
+        } else if (HibernateHelper.isEntitySupported(SeriesValueTime.class)) {
+            return new SeriesValueTimeDAO();
+//        } else if (HibernateHelper.isEntitySupported(ObservationValueTime.class)) {
+//            return new ObservationValueTimeDAO();
+        } else {
+            throw new NoApplicableCodeException()
+                    .withMessage("Implemented value time DAO is missing!");
+        }
+    }
+
 }

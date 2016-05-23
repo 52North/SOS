@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,7 +35,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.exception.ows.VersionNegotiationFailedException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.service.operator.ServiceOperatorKey;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.util.CollectionHelper;
@@ -46,7 +49,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public class GetCapabilitiesRequest extends AbstractServiceRequest {
+public class GetCapabilitiesRequest extends AbstractServiceRequest<GetCapabilitiesResponse> {
     private String updateSequence;
 
     private final List<String> acceptVersions = new LinkedList<String>();
@@ -60,11 +63,13 @@ public class GetCapabilitiesRequest extends AbstractServiceRequest {
     /**
      * Extensions list
      * 
-     * FIXME change to a model object to remove dependency to XmlBeans in API package
+     * FIXME change to a model object to remove dependency to XmlBeans in API
+     * package
      */
     private List<XmlObject> extensionArray = new LinkedList<XmlObject>();
 
     private String capabilitiesId;
+
     public GetCapabilitiesRequest() {
         setService(SosConstants.SOS);
     }
@@ -182,7 +187,7 @@ public class GetCapabilitiesRequest extends AbstractServiceRequest {
 
     /**
      * Set extensions
-     *
+     * 
      * @param extensionArray
      *            extensions
      */
@@ -193,24 +198,24 @@ public class GetCapabilitiesRequest extends AbstractServiceRequest {
     public String getCapabilitiesId() {
         return this.capabilitiesId;
     }
-    
+
     public void setCapabilitiesId(String id) {
         this.capabilitiesId = id;
     }
-    
+
     public boolean isCapabilitiesIdSet() {
-        return getCapabilitiesId() != null 
-                && !getCapabilitiesId().isEmpty();
+        return getCapabilitiesId() != null && !getCapabilitiesId().isEmpty();
     }
 
     /**
      * Get extensions
-     *
+     * 
      * @return extensions
      */
     public List<XmlObject> getExtensionArray() {
         return extensionArray;
     }
+
     public boolean isSetAcceptFormats() {
         return CollectionHelper.isNotEmpty(getAcceptFormats());
     }
@@ -225,5 +230,43 @@ public class GetCapabilitiesRequest extends AbstractServiceRequest {
 
     public boolean isSetUpdateSequence() {
         return StringHelper.isNotEmpty(getUpdateSequence());
+    }
+
+    @Override
+    public GetCapabilitiesResponse getResponse() throws OwsExceptionReport {
+        return (GetCapabilitiesResponse) new GetCapabilitiesResponse().set(this).setVersion(getVersionParameter());
+    }
+
+    /**
+     * Get the response version from request, from set version, from
+     * acceptVersions or from supported versions
+     * 
+     * @return the response version
+     * @throws OwsExceptionReport
+     *             If the requested version is not supported
+     */
+    private String getVersionParameter() throws OwsExceptionReport {
+        if (!isSetVersion()) {
+            if (isSetAcceptVersions()) {
+                for (final String acceptedVersion : getAcceptVersions()) {
+                    if (ServiceOperatorRepository.getInstance().isVersionSupported(getService(), acceptedVersion)) {
+                        setVersion(acceptedVersion);
+                        return acceptedVersion;
+                    }
+                }
+            } else {
+                for (final String supportedVersion : ServiceOperatorRepository.getInstance().getSupportedVersions(
+                        getService())) {
+                    setVersion(supportedVersion);
+                    return supportedVersion;
+                }
+            }
+        } else {
+            return getVersion();
+        }
+
+        throw new VersionNegotiationFailedException().withMessage(
+                "The requested '%s' values are not supported by this service!",
+                SosConstants.GetCapabilitiesParams.AcceptVersions);
     }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -91,4 +91,9 @@ public class GmlAbstractGeometry extends AbstractFeature {
     public boolean isSetGeometry() {
         return this.geometry != null;
     }
+
+	@Override
+	public String getDefaultElementEncoding() {
+		return GmlConstants.NS_GML_32;
+	}
 }

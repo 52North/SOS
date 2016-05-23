@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,10 +61,12 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.sos.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
@@ -75,6 +77,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 
@@ -86,6 +89,11 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
     public GetCapabilitiesResponseEncoder() {
         super(SosConstants.Operations.GetCapabilities.name(), GetCapabilitiesResponse.class);
+    }
+    
+    @Override
+    protected Set<SchemaLocation> getConcreteSchemaLocations() {
+        return Sets.newHashSet(Sos1Constants.GET_CAPABILITIES_SOS1_SCHEMA_LOCATION);
     }
 
     @Override
@@ -166,7 +174,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
             ObservationOfferingType xbObservationOffering = xbObservationOfferings.addNewObservationOffering();
             // TODO check NAme or ID
-            xbObservationOffering.setId(NcNameResolver.fixNcName(offering.getOffering()));
+            xbObservationOffering.setId(NcNameResolver.fixNcName(offering.getOffering().getIdentifier()));
 
             // only if fois are contained for the offering set the values of the
             // envelope
@@ -178,7 +186,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
             // xbObservationOffering.addIntendedApplication("");
 
             // set gml:name to offering's id (not ncname resolved)
-            xbObservationOffering.addNewName().setStringValue(offering.getOffering());
+            for (CodeType name : offering.getOffering().getName()) {
+                xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, name)); 
+            }
 
             /*
              * // set up phenomena Collection<String> phenomenons =

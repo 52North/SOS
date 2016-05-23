@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,13 +32,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
 import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
-import org.n52.sos.service.MiscSettings;
-import org.n52.sos.service.ServiceSettings;
-import org.n52.sos.util.Constants;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -51,19 +49,101 @@ import com.google.common.collect.ImmutableSet;
  */
 public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
 
-    public static final String EPSG_CODES_WITH_REVERSED_AXIS_ORDER = "misc.switchCoordinatesForEpsgCodes";
+    public static final String DATASOURCE_NORTHING_FIRST = "misc.datasourceNorthingFirst";
 
-    public static final String DEFAULT_EPSG = "service.defaultEpsg";
+    public static final String EPSG_CODES_WITH_NORTHING_FIRST = "misc.switchCoordinatesForEpsgCodes";
+    
+    public static final String STORAGE_EPSG = "service.defaultEpsg";
 
-    public static final String DEFAULT_3D_EPSG = "service.default3DEpsg";
+    public static final String STORAGE_3D_EPSG = "service.default3DEpsg";
+
+    @Deprecated
+    public static final String DEFAULT_EPSG = STORAGE_EPSG;
+
+    @Deprecated
+    public static final String DEFAULT_3D_EPSG = STORAGE_3D_EPSG;
+    
+    public static final String DEFAULT_RESPONSE_EPSG = "service.defaultResponseEpsg";
+
+    public static final String DEFAULT_RESPONSE_3D_EPSG = "service.defaultRespopnse3DEpsg";
 
     public static final String SPATIAL_DATASOURCE = "service.SpatialDatasource";
+    
+    public static final String SUPPORTED_CRS_KEY = "service.supportedCrs";
+    
+    public static final String AUTHORITY = "service.crsAuthority";
+    
+    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("CRS")
+            .setOrder(ORDER_4);
+
+    public static final BooleanSettingDefinition DATASOURCE_NORTHING_FIRST_DEFINITION = new BooleanSettingDefinition()
+            .setGroup(GROUP).setOrder(ORDER_1).setKey(DATASOURCE_NORTHING_FIRST).setDefaultValue(false)
+            .setTitle("Are the geometries stored in datasource with northing first")
+            .setDescription("Indicates if the geometries stored in the datasource with northing first axis order");
+
+    public static final BooleanSettingDefinition SPATIAL_DATASOURCE_DEFINITION =
+    new BooleanSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_2)
+            .setKey(SPATIAL_DATASOURCE)
+            .setDefaultValue(true)
+            .setTitle("Is datasource spatial enabled")
+            .setDescription(
+                    "The underlying datasource supports spatial queries and geometry data types. If not, the SOS only supports Get... operations and only BBOX spatial filtering.");
+
+    public static final StringSettingDefinition AUTHORITY_DEFINITION = new StringSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_3)
+            .setKey(AUTHORITY)
+            .setDefaultValue("EPSG")
+            .setTitle("CRS authority")
+            .setDescription("Set the CRS authority for this service, e.g. EPSG!");
+    
+    public static final IntegerSettingDefinition STORAGE_EPSG_DEFINITION = new IntegerSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_4)
+            .setKey(STORAGE_EPSG)
+            .setDefaultValue(4326)
+            .setTitle("Storage EPSG Code")
+            .setDescription("The EPSG code in which the geometries are stored.");
+
+    public static final IntegerSettingDefinition STORAGE_3D_EPSG_DEFINITION = new IntegerSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_5)
+            .setKey(STORAGE_3D_EPSG)
+            .setDefaultValue(4979)
+            .setTitle("Storage 3D EPSG Code")
+            .setDescription("The 3D EPSG code in which the geometries are stored.");
+
+    public static final IntegerSettingDefinition DEFAULT_RESPONSE_EPSG_DEFINITION = new IntegerSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_6)
+            .setKey(DEFAULT_RESPONSE_EPSG)
+            .setDefaultValue(4326)
+            .setTitle("Default response EPSG Code")
+            .setDescription("The default EPSG code in which the geometries are returned.");
+
+    public static final IntegerSettingDefinition DEFAULT_RESPONSE_3D_EPSG_DEFINITION = new IntegerSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_7)
+            .setKey(DEFAULT_RESPONSE_3D_EPSG)
+            .setDefaultValue(4979)
+            .setTitle("Default response 3D EPSG Code")
+            .setDescription("The default 3D EPSG code in which the geometries are returned.");
+
+    public static final StringSettingDefinition SUPPORTED_CRS_DEFINITION = new StringSettingDefinition()
+            .setGroup(GROUP)
+            .setOrder(ORDER_8)
+            .setKey(SUPPORTED_CRS_KEY)
+            .setDefaultValue("4326,31466,31467,4258")
+            .setTitle("Supported crs")
+            .setDescription("Set the supported crs for this service as ',' separated list! If empty, this tool supported CRS are used!");
 
     public static final StringSettingDefinition EPSG_CODES_WITH_REVERSED_AXIS_ORDER_DEFINITION =
             new StringSettingDefinition()
-                    .setGroup(MiscSettings.GROUP)
-                    .setOrder(ORDER_6)
-                    .setKey(EPSG_CODES_WITH_REVERSED_AXIS_ORDER)
+                    .setGroup(GROUP)
+                    .setOrder(ORDER_9)
+                    .setKey(EPSG_CODES_WITH_NORTHING_FIRST)
                     .setOptional(false)
                     .setDefaultValue(
                             "2044-2045;2081-2083;2085-2086;2093;2096-2098;2105-2132;2169-2170;2176-2180;"
@@ -74,30 +154,13 @@ public class FeatureQuerySettingsProvider implements SettingDefinitionProvider {
                                     + "28402-28432;28462-28492;30161-30179;30800;31251-31259;31275-31279;31281-31290;31466-31700")
                     .setTitle("EPSG Codes with Switched Coordinates")
                     .setDescription(
-                            "A list of all EPSG codes for which the SOS has to switch coordinate order, "
+                            "A list of all EPSG codes with northing first coordinate axis order. The SOS transforms the axis order if the underlying datasource uses a differnent order"
                                     + "for example from lat/lon to lon/lat, or from x/y to y/x.");
 
-    public static final IntegerSettingDefinition DEFAULT_EPSG_DEFINITION = new IntegerSettingDefinition()
-            .setGroup(ServiceSettings.GROUP).setOrder(ORDER_1).setKey(DEFAULT_EPSG).setDefaultValue(Constants.EPSG_WGS84)
-            .setTitle("Default EPSG Code").setDescription("The EPSG code in which the geometries are stored.");
-
-    public static final IntegerSettingDefinition DEFAULT_3D_EPSG_DEFINITION = new IntegerSettingDefinition()
-            .setGroup(ServiceSettings.GROUP).setOrder(ORDER_2).setKey(DEFAULT_3D_EPSG).setDefaultValue(Constants.EPSG_WGS84_3D)
-            .setTitle("Default 3D EPSG Code").setDescription("The 3D EPSG code in which the geometries are stored.");
-
-    public static final BooleanSettingDefinition SPATIAL_DATASOURCE_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(ServiceSettings.GROUP)
-                    .setOrder(ORDER_10)
-                    .setKey(SPATIAL_DATASOURCE)
-                    .setDefaultValue(true)
-                    .setTitle("Is datasource spatial enabled")
-                    .setDescription(
-                            "The underlying datasource supports spatial queries and geometry data types. If not, the SOS only supports Get... operations and only BBOX spatial filtering.");
-
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
-            EPSG_CODES_WITH_REVERSED_AXIS_ORDER_DEFINITION, DEFAULT_EPSG_DEFINITION, DEFAULT_3D_EPSG_DEFINITION,
-            SPATIAL_DATASOURCE_DEFINITION);
+            DATASOURCE_NORTHING_FIRST_DEFINITION, EPSG_CODES_WITH_REVERSED_AXIS_ORDER_DEFINITION,
+            AUTHORITY_DEFINITION, STORAGE_EPSG_DEFINITION, STORAGE_3D_EPSG_DEFINITION, SPATIAL_DATASOURCE_DEFINITION, 
+            SUPPORTED_CRS_DEFINITION, DEFAULT_RESPONSE_EPSG_DEFINITION, DEFAULT_RESPONSE_3D_EPSG_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

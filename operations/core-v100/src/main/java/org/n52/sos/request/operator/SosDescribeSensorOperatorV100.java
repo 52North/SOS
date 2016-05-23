@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,8 +32,10 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.n52.sos.ds.AbstractDescribeSensorDAO;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
@@ -89,8 +91,7 @@ public class SosDescribeSensorOperatorV100 extends
             exceptions.add(owse);
         }
         try {
-            SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
-                    sosRequest.getService(), sosRequest.getVersion());
+            checkProcedureDescriptionFromat(sosRequest.getProcedureDescriptionFormat(), sosRequest);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -103,6 +104,13 @@ public class SosDescribeSensorOperatorV100 extends
         // exceptionText));
         // }
         exceptions.throwIfNotEmpty();
+    }
+    
+    private void checkProcedureDescriptionFromat(String procedureDescriptionFormat, DescribeSensorRequest sosRequest) throws MissingParameterValueException, OwsExceptionReport {
+        if (!checkOnlyRequestableProcedureDescriptionFromats(sosRequest.getProcedureDescriptionFormat(), Sos1Constants.DescribeSensorParams.outputFormat)) {
+            SosHelper.checkOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()),
+                    sosRequest.getService(), sosRequest.getVersion());
+        }
     }
 
 }

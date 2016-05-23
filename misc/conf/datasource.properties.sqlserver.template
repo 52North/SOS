@@ -1,0 +1,26 @@
+# the datasource class (only needed for the admin)
+org.n52.sos.ds.Datasource=org.n52.sos.ds.datasource.SqlServerDatasource
+
+# path to mapping files
+HIBERNATE_DIRECTORY=/mapping/core;/mapping/series/observation;/mapping/transactional;
+
+# hibernate/postgres configuration
+
+hibernate.connection.username=sqlserver
+hibernate.connection.password=sqlserver
+hibernate.connection.url=jdbc\:sqlserver\://localhost\:1433;instance=SQLEXPRESS;databaseName=sos
+
+hibernate.c3p0.acquire_increment=1
+hibernate.c3p0.idle_test_period=1
+hibernate.c3p0.max_size=30
+hibernate.c3p0.max_statements=0
+hibernate.c3p0.min_size=10
+hibernate.c3p0.timeout=0
+
+hibernate.connection.autoReconnect=true
+hibernate.connection.autoReconnectForPools=true
+hibernate.connection.driver_class=com.microsoft.sqlserver.jdbc.SQLServerDriver
+hibernate.connection.provider_class=org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider
+hibernate.connection.testOnBorrow=true
+hibernate.dialect=org.hibernate.spatial.dialect.sqlserver.SqlServer2008SpatialDialect
+hibernate.default_schema=public

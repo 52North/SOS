@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,7 +40,7 @@ import org.n52.sos.util.Cleanupable;
  * 
  * @since 4.0.0
  */
-public interface ConnectionProvider extends Cleanupable {
+public interface ConnectionProvider extends Cleanupable, ConnectionProviderIdentificator {
 
     /**
      * Get a data source connection

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NProcedureMetadata" table="i18nprocedure">
+    	<comment>Table to i18n metadata for the procedure. Mapping file: mapping/i18n/HibernateI18NProcedureMetadata.hbm.xml</comment>
+        <id name="id" type="long">
+            <column name="id">
+            	<comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+            	<param name="sequence">i18nProcedureId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="i18nProcedureProcedureFk">
+           	<column index="i18nProcedureIdx" name="objectId" not-null="true" unique-key="i18nProcedureIdentity">
+            	<comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
+            </column>
+        </many-to-one>
+ 		<property name="locale" type="locale" >
+            <column name="locale" not-null="true" unique-key="i18nProcedureIdentity">
+            	<comment>Locale/language identification, e.g. eng, ger</comment>
+            </column>
+        </property>
+		<property name="name" type="string">
+            <column name="name">
+            	<comment>Locale/language specific name of the procedure</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description">
+            	<comment>Locale/language specific description of the procedure</comment>
+            </column>
+        </property>
+        <property name="shortname" type="string">
+            <column name="shortname">
+            	<comment>Locale/language specific shortname of the procedure</comment>
+            </column>
+        </property>
+        <property name="longname" type="string">
+            <column name="longname">
+            	<comment>Locale/language specific longname of the procedure</comment>
+            </column>
+        </property>
+	</class>
+</hibernate-mapping>

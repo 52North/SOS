@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -45,6 +45,10 @@ public interface CacheConstants {
     String EPSG_CODE = "epsgCode";
 
     String EPSG_CODES = "epsgCodes";
+    
+    String SUPPORTED_LANGUAGE = "supportedLanguage";
+    
+    String SUPPORTED_LANGUAGES = "supportedLanguages";
 
     String FEATURE_OF_INTEREST = "featureOfInterest";
 
@@ -65,7 +69,11 @@ public interface CacheConstants {
     String RELATED_FEATURES = "relatedFeatures";
 
     String NAME = "name";
-
+    
+    String DESCRIPTION = "description";
+    
+    String I18N = "language";
+    
     String ALLOWED_OBSERVATION_TYPE = "allowedObservationType";
 
     String ALLOWED_OBSERVATION_TYPES = "allowedObservationTypes";
@@ -93,5 +101,15 @@ public interface CacheConstants {
     String ENVELOPE = "envelope";
 
     String EVENT_TIME = "eventTime";
+    
+    String NAME_UC = "Name";
+    
+    String FEATURE_OF_INTEREST_NAME = FEATURE_OF_INTEREST + NAME_UC;
+    
+    String OBSERVABLE_PROPERTY_NAME = OBSERVABLE_PROPERTY + NAME_UC;
+    
+    String PROCEDURE_NAME = PROCEDURE + NAME_UC;
+    
+    String OFFERING_NAME = OFFERING + NAME_UC;
 
 }

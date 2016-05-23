@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -74,11 +74,11 @@ public class BatchRequestDecoder extends AbstractSosRequestDecoder<BatchRequest>
         return request;
     }
 
-    private Decoder<AbstractServiceRequest, JsonNode> getDecoder(JsonNode n) throws OwsExceptionReport {
+    private Decoder<AbstractServiceRequest<?>, JsonNode> getDecoder(JsonNode n) throws OwsExceptionReport {
         OperationDecoderKey k =
                 new OperationDecoderKey(n.path(JSONConstants.SERVICE).textValue(), n.path(JSONConstants.VERSION)
                         .textValue(), n.path(JSONConstants.REQUEST).textValue(), MediaTypes.APPLICATION_JSON);
-        Decoder<AbstractServiceRequest, JsonNode> decoder = CodingRepository.getInstance().getDecoder(k);
+        Decoder<AbstractServiceRequest<?>, JsonNode> decoder = CodingRepository.getInstance().getDecoder(k);
         if (decoder == null) {
             // TODO other exception?
             throw new NoDecoderForKeyException(k);

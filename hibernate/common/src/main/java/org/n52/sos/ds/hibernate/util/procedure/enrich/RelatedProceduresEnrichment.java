@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,8 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.hibernate.Session;
-import org.joda.time.DateTime;
+import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
@@ -57,7 +56,6 @@ import com.google.common.collect.Sets;
  */
 public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment {
     private String procedureDescriptionFormat;
-    private Session session;
     private HibernateProcedureConverter converter;
     private Map<String, Procedure> procedureCache;
     private TimePeriod validTime;
@@ -65,12 +63,6 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
     public RelatedProceduresEnrichment setProcedureDescriptionFormat(String pdf) {
         this.procedureDescriptionFormat = checkNotNull(pdf);
         return this;
-    }
-
-    public RelatedProceduresEnrichment setSession(Session session) {
-        this.session = checkNotNull(session);
-        return this;
-
     }
 
     public RelatedProceduresEnrichment setConverter(
@@ -147,16 +139,21 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 for (ValidProcedureTime cvpt : tChild.getValidProcedureTimes()) {
                     TimePeriod thisCvptValidTime = new TimePeriod(cvpt.getStartTime(),
                             cvpt.getEndTime());
-                    //make sure this child's validtime is within the parent's valid time,
-                    //if parent has one
-                    if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
-                        continue;
-                    }
-
-                    if (childVpt == null || cvpt.getEndTime() == null ||
-                            (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
-                            cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                    
+                    if (validTime != null && !validTime.isSetEnd() && !thisCvptValidTime.isSetEnd()) {
                         childVpt = cvpt;
+                    } else {
+                        //make sure this child's validtime is within the parent's valid time,
+                        //if parent has one
+                        if (validTime != null && !thisCvptValidTime.isWithin(validTime)){
+                            continue;
+                        }
+    
+                        if (childVpt == null || cvpt.getEndTime() == null ||
+                                (cvpt.getEndTime() != null && childVpt.getEndTime() != null &&
+                                cvpt.getEndTime().after(childVpt.getEndTime()))) {                       
+                            childVpt = cvpt;
+                        }
                     }
                 }
             }
@@ -165,12 +162,12 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 //matching child validProcedureTime was found, use it to build procedure description
                 SosProcedureDescription childDescription =
                         converter.createSosProcedureDescriptionFromValidProcedureTime(
-                                child, childVpt, getVersion(), session);
+                                child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
                 childProcedures.add(childDescription);                
-            } else {
+            } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description
                 SosProcedureDescription childDescription = converter.createSosProcedureDescription(
-                        child, procedureDescriptionFormat, getVersion(), procedureCache, session);
+                        child, procedureDescriptionFormat, getVersion(), procedureCache, getLocale(), getSession());
                 // TODO check if call is necessary because it is also called in
                 // createSosProcedureDescription()
                 // addValuesToSensorDescription(childProcID,childProcedureDescription,
@@ -183,7 +180,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
 
     private Map<String, Procedure> createProcedureCache() {
         Set<String> identifiers = getCache().getChildProcedures(getIdentifier(), true, false);
-        List<Procedure> children = new ProcedureDAO().getProceduresForIdentifiers(identifiers, session);
+        List<Procedure> children = new ProcedureDAO().getProceduresForIdentifiers(identifiers, getSession());
         Map<String, Procedure> cache = Maps.newHashMapWithExpectedSize(children.size());
         for (Procedure child : children) {
             cache.put(child.getIdentifier(), child);

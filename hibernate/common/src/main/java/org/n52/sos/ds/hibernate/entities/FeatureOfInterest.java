@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,21 +30,19 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasStringOrClobNames;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
 import org.n52.sos.util.StringHelper;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class FeatureOfInterest extends SpatialEntity implements Serializable, HasFeatureOfInterestType, HasGeometry,
-        HasDescriptionXml, HasStringOrClobNames, HasUrl, HasCodespace, HasCoordinate {
+public class FeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
+        HasDescriptionXml, HasUrl, HasCoordinate {
 
     private static final long serialVersionUID = 4142090100433622512L;
 
@@ -53,10 +51,6 @@ public class FeatureOfInterest extends SpatialEntity implements Serializable, Ha
     private long featureOfInterestId;
 
     private FeatureOfInterestType featureOfInterestType;
-
-    private Codespace codespace;
-
-    private String name;
 
     private String url;
 
@@ -79,33 +73,13 @@ public class FeatureOfInterest extends SpatialEntity implements Serializable, Ha
     }
 
     @Override
-    public Codespace getCodespace() {
-        return this.codespace;
-    }
-
-    @Override
-    public void setCodespace(Codespace codespace) {
-        this.codespace = codespace;
-    }
-
-    @Override
     public boolean isSetCodespace() {
         return getCodespace() != null && getCodespace().isSetCodespace();
     }
 
     @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public boolean isSetName() {
-        return StringHelper.isNotEmpty(name);
+    public boolean isSetCodespaceName() {
+        return getCodespaceName() != null && getCodespaceName().isSetCodespace();
     }
 
     @Override
@@ -116,6 +90,11 @@ public class FeatureOfInterest extends SpatialEntity implements Serializable, Ha
     @Override
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Override
+    public boolean isSetDescription() {
+        return StringHelper.isNotEmpty(getDescription());
     }
 
 }

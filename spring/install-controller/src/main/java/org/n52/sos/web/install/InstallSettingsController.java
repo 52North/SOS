@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,22 +30,23 @@ package org.n52.sos.web.install;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.exception.ConfigurationException;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.install.InstallConstants.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.SettingType;
+import org.n52.sos.config.SettingValue;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.install.InstallConstants.Step;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_SETTINGS)
@@ -58,12 +59,24 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
     }
 
     @Override
-    protected void process(Map<String, String> parameters, InstallationConfiguration c)
+    protected void process(Map<String, String> parameters,
+                           InstallationConfiguration c)
             throws InstallationSettingsError {
         logSettings(parameters);
-
-        for (Entry<String, String> p : parameters.entrySet()) {
-            checkSetting(p.getKey(), p.getValue(), c);
+        SettingsManager sm = getSettingsManager(c);
+        for (SettingDefinition<?, ?> def : sm.getSettingDefinitions()) {
+            SettingValue<?> val = null;
+            if (parameters.containsKey(def.getKey())) {
+                val = createSettingValue(sm, def, parameters.get(def.getKey()), c);
+            } else if (def.getType() == SettingType.BOOLEAN) {
+                val = createSettingValue(sm, def, String.valueOf(false), c);
+            }
+            if (val == null) {
+                LOG.warn("No value for setting {}. Ignoring.", def.getKey());
+            } else {
+                checkFileSetting(def, val, c);
+                c.setSetting(def, val);
+            }
         }
     }
 
@@ -79,22 +92,16 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         }
     }
 
-    protected void checkSetting(String key, String stringValue, InstallationConfiguration c)
+    private SettingsManager getSettingsManager(InstallationConfiguration c)
             throws InstallationSettingsError {
         SettingsManager sm;
         try {
             sm = SettingsManager.getInstance();
         } catch (ConfigurationException ex) {
             throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_INSTANTIATE_SETTINGS_MANAGER,
-                    ex.getMessage()), ex);
+                                                                 ex.getMessage()), ex);
         }
-        SettingDefinition<?, ?> def = sm.getDefinitionByKey(key);
-        if (def == null) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.NO_DEFINITON_FOUND, key));
-        }
-        SettingValue<?> val = createSettingValue(sm, def, stringValue, c);
-        checkFileSetting(def, val, c);
-        c.setSetting(def, val);
+        return sm;
     }
 
     protected SettingValue<?> createSettingValue(SettingsManager sm, SettingDefinition<?, ?> def, String stringValue,
@@ -102,8 +109,7 @@ public class InstallSettingsController extends AbstractProcessingInstallationCon
         try {
             return sm.getSettingFactory().newSettingValue(def, stringValue);
         } catch (Exception e) {
-            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER,
-                    def.getTitle(), stringValue));
+            throw new InstallationSettingsError(c, String.format(ErrorMessages.COULD_NOT_VALIDATE_PARAMETER, def.getTitle(), stringValue));
         }
     }
 

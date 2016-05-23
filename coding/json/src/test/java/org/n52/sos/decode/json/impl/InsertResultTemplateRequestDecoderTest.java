@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,7 +54,7 @@ import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.request.InsertResultTemplateRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.util.JsonLoader;
+import com.github.fge.jackson.JsonLoader;
 
 /**
  * @since 4.0.0
@@ -95,7 +95,7 @@ public class InsertResultTemplateRequestDecoderTest {
 
         SweField field1 = structure.getFields().get(0);
         assertThat(field1, is(notNullValue()));
-        errors.checkThat(field1.getName(), is("phenomenonTime"));
+        errors.checkThat(field1.getName().getValue(), is("phenomenonTime"));
         assertThat(field1.getElement(), is(instanceOf(SweTimeRange.class)));
         SweTimeRange phenomenonTime = (SweTimeRange) field1.getElement();
         errors.checkThat(phenomenonTime.getDefinition(),
@@ -104,7 +104,7 @@ public class InsertResultTemplateRequestDecoderTest {
 
         SweField field2 = structure.getFields().get(1);
         assertThat(field2, is(notNullValue()));
-        errors.checkThat(field2.getName(), is("resultTime"));
+        errors.checkThat(field2.getName().getValue(), is("resultTime"));
         assertThat(field2.getElement(), is(instanceOf(SweTime.class)));
         SweTime resultTime = (SweTime) field2.getElement();
         errors.checkThat(resultTime.getDefinition(), is("http://www.opengis.net/def/property/OGC/0/ResultTime"));
@@ -112,7 +112,7 @@ public class InsertResultTemplateRequestDecoderTest {
 
         SweField field3 = structure.getFields().get(2);
         assertThat(field3, is(notNullValue()));
-        errors.checkThat(field3.getName(), is("observable_property_6"));
+        errors.checkThat(field3.getName().getValue(), is("observable_property_6"));
         assertThat(field3.getElement(), is(instanceOf(SweQuantity.class)));
         SweQuantity quantity = (SweQuantity) field3.getElement();
         errors.checkThat(quantity.getDefinition(), is("http://www.52north.org/test/observableProperty/6"));
@@ -126,14 +126,16 @@ public class InsertResultTemplateRequestDecoderTest {
         assertThat(oc, is(notNullValue()));
         assertThat(oc.getObservationType(), is("http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement"));
         assertThat(oc.getProcedure(), is(notNullValue()));
-        assertThat(oc.getProcedure().getIdentifier(), is("http://52north.org/example/procedure/6"));
+        assertThat(oc.getProcedure().getIdentifier(),
+                   is("http://52north.org/example/procedure/6"));
         assertThat(oc.getObservableProperty(), is(notNullValue()));
-        assertThat(oc.getObservableProperty().getIdentifier(), is("http://52north.org/example/observedProperty/6"));
+        assertThat(oc.getObservableProperty().getIdentifier(),
+                   is("http://52north.org/example/observedProperty/6"));
         assertThat(oc.getFeatureOfInterest(), is(notNullValue()));
-        assertThat(oc.getFeatureOfInterest().getIdentifier(), is(notNullValue()));
-        assertThat(oc.getFeatureOfInterest().getIdentifier().getCodeSpace(),
+        assertThat(oc.getFeatureOfInterest().getIdentifierCodeWithAuthority(), is(notNullValue()));
+        assertThat(oc.getFeatureOfInterest().getIdentifierCodeWithAuthority().getCodeSpace(),
                 is("http://www.opengis.net/def/nil/OGC/0/unknown"));
-        assertThat(oc.getFeatureOfInterest().getIdentifier().getValue(), is("http://52north.org/example/feature/6"));
+        assertThat(oc.getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue(), is("http://52north.org/example/feature/6"));
     }
 
     @Test

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,6 +31,9 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collection;
+import java.util.Locale;
+
+import org.hibernate.Session;
 
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -38,6 +41,8 @@ import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.ProcedureDescriptionSettings;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.I18NHelper;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -52,6 +57,8 @@ public abstract class ProcedureDescriptionEnrichment {
     private SosProcedureDescription description;
     private String version;
     private String identifier;
+    private Locale locale = ServiceConfiguration.getInstance().getDefaultLanguage();
+    private Session session;
 
     protected ProcedureDescriptionSettings procedureSettings() {
         return ProcedureDescriptionSettings.getInstance();
@@ -67,8 +74,13 @@ public abstract class ProcedureDescriptionEnrichment {
         Collection<SosOffering> offerings = Lists
                 .newArrayListWithCapacity(identifiers.size());
         for (String offering : identifiers) {
-            offerings.add(new SosOffering(offering, getCache()
-                    .getNameForOffering(offering)));
+            SosOffering sosOffering = new SosOffering(offering, false);
+            // add offering name
+            I18NHelper.addOfferingNames(sosOffering, getLocale());
+            // add offering description
+            I18NHelper.addOfferingDescription(sosOffering, getLocale());
+            // add to list
+            offerings.add(sosOffering);
         }
         return offerings;
     }
@@ -98,6 +110,28 @@ public abstract class ProcedureDescriptionEnrichment {
     public ProcedureDescriptionEnrichment setIdentifier(String identifier) {
         this.identifier = checkNotNull(identifier);
         return this;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public boolean isSetLocale() {
+        return getLocale() != null;
+    }
+
+    public ProcedureDescriptionEnrichment setLocale(Locale locale) {
+        this.locale = locale;
+        return this;
+    }
+
+    public ProcedureDescriptionEnrichment setSession(Session session) {
+        this.session = checkNotNull(session);
+        return this;
+    }
+
+    public Session getSession() {
+        return session;
     }
 
     public boolean isApplicable() {

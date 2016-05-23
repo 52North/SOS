@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -42,12 +42,10 @@ import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.util.http.HTTPConstants;
 import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.http.MediaTypes;
 
@@ -69,67 +67,69 @@ public class GetResultKvpDecoderv20 extends AbstractKvpDecoder {
         GetResultRequest request = new GetResultRequest();
         CompositeOwsException exceptions = new CompositeOwsException();
 
-        boolean foundService = false;
-        boolean foundVersion = false;
         boolean foundOffering = false;
         boolean foundObservedProperty = false;
 
         for (String parameterName : element.keySet()) {
             String parameterValues = element.get(parameterName);
             try {
-                // service (mandatory)
-                if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-                    request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundService = true;
-                } // version (mandatory)
-                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
-                    request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundVersion = true;
-                } // request (mandatory)
-                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-                    KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-                } // offering (mandatory)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.offering.name())) {
-                    request.setOffering(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundOffering = true;
-                } // observedProperty (mandatory)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.observedProperty.name())) {
-                    request.setObservedProperty(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    foundObservedProperty = true;
-                } // featureOfInterest (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
-                    request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
-                            parameterName));
-                } // eventTime (optional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.temporalFilter.name())) {
-                    try {
-                        request.setTemporalFilter(parseTemporalFilter(
+                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
+//                    // service (mandatory)
+//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
+//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+//                        foundService = true;
+//                    } // version (mandatory)
+//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.version.name())) {
+//                        request.setVersion(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+//                        foundVersion = true;
+//                    } // request (mandatory)
+//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
+//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
+//                    } // offering (mandatory)
+//                    else 
+                        
+                        if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.offering.name())) {
+                        request.setOffering(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+                        foundOffering = true;
+                    } // observedProperty (mandatory)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.observedProperty.name())) {
+                        request.setObservedProperty(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+                        foundObservedProperty = true;
+                    } // featureOfInterest (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
+                        request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
+                                parameterName));
+                    } // eventTime (optional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.temporalFilter.name())) {
+                        try {
+                            request.setTemporalFilter(parseTemporalFilter(
+                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
+                        } catch (OwsExceptionReport e) {
+                            throw new InvalidTemporalFilterParameterException(parameterValues).causedBy(e);
+                        }
+    
+                    } // spatialFilter (optional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.spatialFilter.name())) {
+                        request.setSpatialFilter(parseSpatialFilter(
                                 KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
-                    } catch (OwsExceptionReport e) {
-                        throw new InvalidTemporalFilterParameterException(parameterValues).causedBy(e);
+                    } // xmlWrapper (default = false) (optional)
+                      // namespaces (conditional)
+                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
+                        request.setNamespaces(parseNamespaces(parameterValues));
+                    } else {
+                        throw new ParameterNotSupportedException(parameterName);
                     }
-
-                } // spatialFilter (optional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.spatialFilter.name())) {
-                    request.setSpatialFilter(parseSpatialFilter(
-                            KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
-                } // xmlWrapper (default = false) (optional)
-                  // namespaces (conditional)
-                else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
-                    request.setNamespaces(parseNamespaces(parameterValues));
-                } else {
-                    throw new ParameterNotSupportedException(parameterName);
                 }
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
         }
 
-        if (!foundService) {
+        if (!request.isSetService()) {
             exceptions.add(new MissingServiceParameterException());
         }
 
-        if (!foundVersion) {
+        if (!request.isSetVersion()) {
             exceptions.add(new MissingVersionParameterException());
         }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,6 +38,7 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.util.collections.CollectionHelper;
+import org.n52.sos.cache.WritableContentCache;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -53,18 +54,17 @@ import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.TOffering;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.exception.CodedException;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CacheHelper;
-import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
 /**
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<OfferingCacheUpdateTask> {
@@ -73,11 +73,13 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     private static final String THREAD_GROUP_NAME = "offering-cache-update";
 
     private final OfferingDAO offeringDAO = new OfferingDAO();
-    
-    private Collection<Offering> allOfferings;
-    
+
+    private Collection<String> offeringsIdToUpdate = Lists.newArrayList();
+
+    private Collection<Offering> offeringsToUpdate;
+
     private Map<String,Collection<ObservationConstellationInfo>> offObsConstInfoMap;
-    
+
     /**
      * constructor
      * @param threads Thread count
@@ -86,11 +88,16 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
         super(threads, THREAD_GROUP_NAME);
     }
 
-    private Collection<Offering> getAllOfferings() {
-        if (allOfferings == null) {
-            allOfferings = offeringDAO.getOfferingObjects(getSession());
+    public OfferingCacheUpdate(int threads, Collection<String> offeringIdsToUpdate) {
+        super(threads, THREAD_GROUP_NAME);
+        this.offeringsIdToUpdate = offeringIdsToUpdate;
+    }
+
+    private Collection<Offering> getOfferingsToUpdate() {
+        if (offeringsToUpdate == null) {
+            offeringsToUpdate = offeringDAO.getOfferingObjectsForCacheUpdate(offeringsIdToUpdate, getSession());
         }
-        return allOfferings;
+        return offeringsToUpdate;
     }
 
     private Map<String,Collection<ObservationConstellationInfo>> getOfferingObservationConstellationInfo() {
@@ -102,57 +109,55 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     @Override
-    public void execute() {        
+    public void execute() {
         LOGGER.debug("Executing OfferingCacheUpdate (Single Threaded Tasks)");
         startStopwatch();
         //perform single threaded updates here
-        for (Offering offering : getAllOfferings()){
+        WritableContentCache cache = getCache();
+
+        for (Offering offering : getOfferingsToUpdate()) {
             String offeringId = offering.getIdentifier();
             if (shouldOfferingBeProcessed(offeringId)) {
-                String offeringName = offering.getName();
-    
                 String prefixedOfferingId = CacheHelper.addPrefixOrGetOfferingIdentifier(offeringId);
-                
-                getCache().addOffering(prefixedOfferingId);
-                getCache().setNameForOffering(prefixedOfferingId, getOfferingName(prefixedOfferingId, offeringName));
-                
+                cache.addOffering(prefixedOfferingId);
+
                 if (offering instanceof TOffering) {
                     TOffering tOffering = (TOffering) offering;
                     // Related features
-                    getCache().setRelatedFeaturesForOffering(prefixedOfferingId,
+                    cache.setRelatedFeaturesForOffering(prefixedOfferingId,
                             getRelatedFeatureIdentifiersFrom(tOffering));
-                    getCache().setAllowedObservationTypeForOffering(prefixedOfferingId,
+                    cache.setAllowedObservationTypeForOffering(prefixedOfferingId,
                             getObservationTypesFromObservationType(tOffering.getObservationTypes()));
                     // featureOfInterestTypes
-                    getCache().setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
+                    cache.setAllowedFeatureOfInterestTypeForOffering(prefixedOfferingId,
                             getFeatureOfInterestTypesFromFeatureOfInterestType(tOffering.getFeatureOfInterestTypes()));
-                }   
+                }
             }
         }
 
         //time ranges
-        //TODO querying all offering time extrema in a single query is definitely faster for a properly
+        //TODO querying offering time extrema in a single query is definitely faster for a properly
         //     indexed Postgres db, but may not be true for all platforms. move back to multithreaded execution
         //     in OfferingCacheUpdateTask if needed
-        Map<String, OfferingTimeExtrema> allOfferingTimeExtrema = null;
+        Map<String, OfferingTimeExtrema> offeringTimeExtrema = null;
         try {
-            allOfferingTimeExtrema = offeringDAO.getAllOfferingTimeExtrema(getSession());
-        } catch (CodedException ce) {
+            offeringTimeExtrema = offeringDAO.getOfferingTimeExtrema(offeringsIdToUpdate, getSession());
+        } catch (OwsExceptionReport ce) {
             LOGGER.error("Error while querying offering time ranges!", ce);
             getErrors().add(ce);
         }
-        if (!CollectionHelper.isEmpty(allOfferingTimeExtrema)) {
-            for (Entry<String,OfferingTimeExtrema> entry : allOfferingTimeExtrema.entrySet()) {
+        if (!CollectionHelper.isEmpty(offeringTimeExtrema)) {
+            for (Entry<String,OfferingTimeExtrema> entry : offeringTimeExtrema.entrySet()) {
                 String offeringId = entry.getKey();
                 OfferingTimeExtrema ote = entry.getValue();
-                getCache().setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
-                getCache().setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
-                getCache().setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
-                getCache().setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
+                cache.setMinPhenomenonTimeForOffering(offeringId, ote.getMinPhenomenonTime());
+                cache.setMaxPhenomenonTimeForOffering(offeringId, ote.getMaxPhenomenonTime());
+                cache.setMinResultTimeForOffering(offeringId, ote.getMinResultTime());
+                cache.setMaxResultTimeForOffering(offeringId, ote.getMaxResultTime());
             }
         }
         LOGGER.debug("Finished executing OfferingCacheUpdate (Single Threaded Tasks) ({})", getStopwatchResult());
-        
+
         //execute multi-threaded updates
         LOGGER.debug("Executing OfferingCacheUpdate (Multi-Threaded Tasks)");
         startStopwatch();
@@ -161,23 +166,40 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
     }
 
     @Override
-    protected OfferingCacheUpdateTask[] getUpdatesToExecute() {
+    protected OfferingCacheUpdateTask[] getUpdatesToExecute() throws OwsExceptionReport {
         Collection<OfferingCacheUpdateTask> offeringUpdateTasks = Lists.newArrayList();
-        for (Offering offering : getAllOfferings()){
+        boolean hasSamplingGeometry = checkForSamplingGeometry();
+        for (Offering offering : getOfferingsToUpdate()){
             if (shouldOfferingBeProcessed(offering.getIdentifier())) {
-                offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering.getIdentifier(),
-                        getOfferingObservationConstellationInfo().get(offering.getIdentifier())));
+                offeringUpdateTasks.add(new OfferingCacheUpdateTask(offering,
+                        getOfferingObservationConstellationInfo().get(offering.getIdentifier()), hasSamplingGeometry));
             }
         }
         return offeringUpdateTasks.toArray(new OfferingCacheUpdateTask[offeringUpdateTasks.size()]);
     }    
     
+    /**
+     * Check if the observation table contains samplingGeometries with values.
+     * 
+     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     */
+    private boolean checkForSamplingGeometry() {
+        try {
+            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+            return observationDAO.containsSamplingGeometries(getSession());
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while getting observation DAO class from factory!", e);
+            getErrors().add(e);
+        }
+        return false;
+    }
+
     protected boolean shouldOfferingBeProcessed(String offeringIdentifier) {
         try {        
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, getSession())) {
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 return getOfferingObservationConstellationInfo().containsKey(offeringIdentifier);
             } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO(getSession());
+                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
                 Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(getSession());
                 criteria.createCriteria(AbstractObservation.OFFERINGS).add(
                         Restrictions.eq(Offering.IDENTIFIER, offeringIdentifier));
@@ -185,26 +207,11 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
                 LOGGER.debug("QUERY shouldOfferingBeProcessed(offering): {}", HibernateHelper.getSqlString(criteria));
                 return (Long) criteria.uniqueResult() > 0;
             }
-        } catch (CodedException ce) {
-            LOGGER.error("Error while getting observation DAO class from factory!", ce);
-            getErrors().add(ce);
+        } catch (OwsExceptionReport e) {
+            LOGGER.error("Error while getting observation DAO class from factory!", e);
+            getErrors().add(e);
         }
         return false;
-    }
-    
-    private String getOfferingName(String offeringIdentifier, String offeringName){
-        if (!StringHelper.isNotEmpty(offeringName)) {
-            offeringName = offeringIdentifier;
-            if (offeringName.startsWith("http")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf('/') + 1, offeringName.length());
-            } else if (offeringName.startsWith("urn")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf(':') + 1, offeringName.length());
-            }
-            if (offeringName.contains("#")) {
-                offeringName = offeringName.substring(offeringName.lastIndexOf('#') + 1, offeringName.length());
-            }
-        }
-        return offeringName;
     }
 
     protected Set<String> getObservationTypesFromObservationType(Set<ObservationType> observationTypes) {

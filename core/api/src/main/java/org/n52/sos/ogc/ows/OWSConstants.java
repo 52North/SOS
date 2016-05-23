@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -131,4 +131,28 @@ public interface OWSConstants {
             return false;
         }
     }
+    
+    /** enum with names of get request parameters for all requests */
+    enum AdditionalRequestParams {
+        language, crs, returnHumanReadableIdentifier;
+
+        /**
+         * method checks whether the string parameter is contained in this
+         * enumeration
+         * 
+         * @param s
+         *            the name which should be checked
+         * @return true if the name is contained in the enumeration
+         */
+        public static boolean contains(String s) {
+            for (Enum<?> p : values()) {
+                if (p.name().equals(s)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -470,15 +470,15 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                 if (!sampFeat.isSetGeometry()) {
                     FeaturePropertyType featureProperty =
                             FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-                    featureProperty.setHref(sosAbstractFeature.getIdentifier().getValue());
-                    if (sampFeat.isSetNames()) {
+                    featureProperty.setHref(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue());
+                    if (sampFeat.isSetName()) {
                         featureProperty.setTitle(sampFeat.getFirstName().getValue());
                     }
                     return featureProperty;
                 }
                 StringBuilder builder = new StringBuilder();
                 builder.append("sf_");
-                builder.append(JavaHelper.generateID(sosAbstractFeature.getIdentifier().getValue()));
+                builder.append(JavaHelper.generateID(sosAbstractFeature.getIdentifierCodeWithAuthority().getValue()));
                 sosAbstractFeature.setGmlId(builder.toString());
                 Encoder<XmlObject, SamplingFeature> encoder = CodingHelper.getEncoder(SfConstants.NS_SA, sampFeat);
                 if (encoder != null) {
@@ -486,8 +486,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
                 } else {
                     FeaturePropertyType featureProperty =
                             FeaturePropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-                    featureProperty.setHref(sampFeat.getIdentifier().getValue());
-                    if (sampFeat.isSetNames()) {
+                    featureProperty.setHref(sampFeat.getIdentifierCodeWithAuthority().getValue());
+                    if (sampFeat.isSetName()) {
                         featureProperty.setTitle(sampFeat.getFirstName().getValue());
                     }
                     return featureProperty;

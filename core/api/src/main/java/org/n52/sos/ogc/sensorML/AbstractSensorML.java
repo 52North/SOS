@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -40,6 +40,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -50,6 +51,7 @@ import com.google.common.collect.Iterables;
  * 
  */
 public class AbstractSensorML extends SosProcedureDescription {
+    private static final long serialVersionUID = -5715790909736521952L;
     private List<String> keywords = new ArrayList<String>(0);
     private List<SmlIdentifier> identifications = new ArrayList<SmlIdentifier>(0);
     private List<SmlClassifier> classifications = new ArrayList<SmlClassifier>(0);
@@ -58,7 +60,8 @@ public class AbstractSensorML extends SosProcedureDescription {
     private List<SmlContact> contacts = new ArrayList<SmlContact>(0);
     private final List<AbstractSmlDocumentation> documentations = new ArrayList<AbstractSmlDocumentation>(0);
     private String history;
-
+    private String gmlId;
+    
     @Override
     public SosProcedureDescription setIdentifier(final String identifier) {
         super.setIdentifier(identifier);
@@ -274,5 +277,28 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     public boolean isSetHistory() {
         return history != null && !history.isEmpty();
+    }
+
+    public String getGmlId() {
+        return gmlId;
+    }
+
+    public void setGmlId(String gmlId) {
+        this.gmlId = gmlId;
+    }
+
+    public boolean isSetGmlId() {
+        return StringHelper.isNotEmpty(gmlId);
+    }
+    
+    public void copyTo(AbstractSensorML copyOf) {
+        super.copyTo(copyOf);
+        copyOf.setCharacteristics(getCharacteristics());
+        copyOf.setClassifications(getClassifications());
+        copyOf.setContact(getContact());
+        copyOf.setDocumentation(getDocumentation());
+        copyOf.setHistory(getHistory());
+        copyOf.setIdentifications(getIdentifications());
+        copyOf.setKeywords(getKeywords());
     }
 }

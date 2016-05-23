@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -27,11 +27,6 @@
  * Public License for more details.
  */
 package org.n52.sos.convert;
-
-import org.n52.sos.util.CollectionHelper;
-import org.n52.sos.util.StringHelper;
-
-import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0

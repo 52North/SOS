@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 
+import org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -39,7 +40,7 @@ import org.n52.sos.util.StringHelper;
  * 
  */
 public class SeriesSweDataArrayObservation extends SeriesObservation implements Serializable,
-        org.n52.sos.ds.hibernate.entities.interfaces.SweDataArrayObservation {
+        SweDataArrayObservation {
 
     private static final long serialVersionUID = 627306968328720439L;
 
@@ -59,4 +60,9 @@ public class SeriesSweDataArrayObservation extends SeriesObservation implements 
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
+    
+	@Override
+	public String getValueAsString() {
+		return getValue();
+	}
 }

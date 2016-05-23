@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -43,6 +43,14 @@ public class ConfiguringSingletonServiceLoader<T> extends SingletonServiceLoader
 
     public static <T> T loadAndConfigure(Class<? extends T> t, boolean required, T defaultImplementation) {
         return new ConfiguringSingletonServiceLoader<T>(t, required, defaultImplementation).get();
+    }
+    
+    public static <T> T loadAndConfigure(Class<? extends T> t, boolean required, String identification) {
+        return new ConfiguringSingletonServiceLoader<T>(t, required).get(identification);
+    }
+
+    public static <T> T loadAndConfigure(Class<? extends T> t, boolean required, T defaultImplementation, String identification) {
+        return new ConfiguringSingletonServiceLoader<T>(t, required, defaultImplementation).get(identification);
     }
 
     public ConfiguringSingletonServiceLoader(Class<? extends T> c, boolean failIfNotFound) {

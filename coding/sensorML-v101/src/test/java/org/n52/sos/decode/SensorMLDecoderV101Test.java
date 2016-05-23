@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -61,7 +61,7 @@ import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.junit.Test;
-import org.n52.sos.AbstractBeforeAfterClassTest;
+import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
@@ -84,7 +84,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  * 
  * @since 4.0.0
  */
-public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
+public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsManagerTest {
     private static final String TEST_ID_1 = "test-id-1";
 
     private static final String TEST_NAME_1 = "test-name-1";
@@ -171,9 +171,9 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         assertThat(absProcess.getCapabilities().size(), is(1));
         List<SosOffering> sosOfferings = new ArrayList<SosOffering>(absProcess.getOfferings());
         Collections.sort(sosOfferings);
-        assertThat(sosOfferings.get(0).getOfferingIdentifier(), is(TEST_ID_1));
+        assertThat(sosOfferings.get(0).getIdentifier(), is(TEST_ID_1));
         assertThat(sosOfferings.get(0).getOfferingName(), is(TEST_NAME_1));
-        assertThat(sosOfferings.get(1).getOfferingIdentifier(), is(TEST_ID_2));
+        assertThat(sosOfferings.get(1).getIdentifier(), is(TEST_ID_2));
         assertThat(sosOfferings.get(1).getOfferingName(), is(TEST_NAME_2));
     }
 
@@ -225,6 +225,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         AnyScalarPropertyType xbField = xbSimpleDataRecord.addNewField();
         xbField.setName(name);
         xbField.addNewText().setValue(value);
+        xbField.getText().addNewName().setStringValue(name);
     }
 
     private AbstractProcess decodeAbstractProcess(SensorMLDocument xbSmlDoc) throws OwsExceptionReport {
@@ -435,8 +436,18 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassTest {
         dataArray.addNewElementCount().addNewCount().setValue(new BigInteger("1"));
         DataComponentPropertyType addNewElementType = dataArray.addNewElementType();
         addNewElementType.setName("elementType");
-        addNewElementType.addNewBoolean();
+        addNewElementType.addNewAbstractDataRecord();
         return dataArray;
     }
 
+    @Test
+    public void should_set_gml_id() throws OwsExceptionReport {
+        SensorMLDocument xbSmlDoc = getSensorMLDoc();
+        SystemType xbSystem =
+                (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
+                        .substitute(SensorMLConstants.SYSTEM_QNAME, SystemType.type);
+        xbSystem.setId(TEST_ID_1);
+        AbstractProcess absProcess = decodeAbstractProcess(xbSmlDoc);
+        assertThat(absProcess.getGmlId(), is(TEST_ID_1));
+    }    
 }

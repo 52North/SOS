@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,8 +29,6 @@
 package org.n52.sos.encode;
 
 import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
@@ -64,14 +62,14 @@ public class GmlEncoderTest {
 
     @Test
     public void isMeasureTypeValidWithoutUnitTest() throws OwsExceptionReport {
-        QuantityValue quantity = new QuantityValue(new BigDecimal(2.2));
+        QuantityValue quantity = new QuantityValue(2.2);
         XmlObject encode = encoder.encode(quantity);
         assertTrue("Encoded Object is NOT valid", encode.validate());
     }
 
     @Test
     public void isMeasureTypeValidAllSetTest() throws OwsExceptionReport {
-        QuantityValue quantity = new QuantityValue(new BigDecimal(2.2));
+        QuantityValue quantity = new QuantityValue(2.2);
         quantity.setUnit("cm");
         XmlObject encode = encoder.encode(quantity);
         assertTrue("Encoded Object is NOT valid", encode.validate());

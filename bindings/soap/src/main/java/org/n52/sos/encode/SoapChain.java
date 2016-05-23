@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -47,7 +47,7 @@ public class SoapChain {
 
     private final HttpServletResponse httpResponse;
 
-    private AbstractServiceRequest bodyRequest;
+    private AbstractServiceRequest<?> bodyRequest;
 
     private AbstractServiceResponse bodyResponse;
 
@@ -60,7 +60,7 @@ public class SoapChain {
         this.httpResponse = httpResponse;
     }
 
-    public AbstractServiceRequest getBodyRequest() {
+    public AbstractServiceRequest<?> getBodyRequest() {
         return bodyRequest;
     }
 
@@ -68,7 +68,7 @@ public class SoapChain {
         return getBodyRequest() != null;
     }
 
-    public void setBodyRequest(AbstractServiceRequest bodyRequest) {
+    public void setBodyRequest(AbstractServiceRequest<?> bodyRequest) {
         this.bodyRequest = bodyRequest;
     }
 
@@ -82,6 +82,9 @@ public class SoapChain {
 
     public void setBodyResponse(AbstractServiceResponse bodyResponse) {
         this.bodyResponse = bodyResponse;
+        if (hasSoapResponse()) {
+            getSoapResponse().setBodyContent(bodyResponse);
+        }
     }
 
     public SoapRequest getSoapRequest() {
@@ -106,6 +109,9 @@ public class SoapChain {
 
     public void setSoapResponse(SoapResponse soapResponse) {
         this.soapResponse = soapResponse;
+        if (hasBodyResponse() && !soapResponse.isSetBodyContent()) {
+            soapResponse.setBodyContent(getBodyResponse());
+        }
     }
 
     public HttpServletRequest getHttpRequest() {

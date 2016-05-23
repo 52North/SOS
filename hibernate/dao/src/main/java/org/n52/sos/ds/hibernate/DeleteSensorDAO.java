@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -34,12 +34,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.n52.sos.ds.AbstractDeleteSensorDAO;
+import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ValidProcedureTimeDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
@@ -63,6 +66,11 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
      */
     public DeleteSensorDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
 
     @Override
@@ -111,16 +119,16 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             session.saveOrUpdate(procedure);
             session.flush();
             // set deleted flag in ObservationConstellation table to true
-            if (HibernateHelper.isEntitySupported(ObservationConstellation.class, session)) {
+            if (HibernateHelper.isEntitySupported(ObservationConstellation.class)) {
                 new ObservationConstellationDAO().updateObservatioConstellationSetAsDeletedForProcedure(identifier,
                         deleteFlag, session);
             }
             // set deleted flag in Series and Observation table for series concept to true
-            if (HibernateHelper.isEntitySupported(Series.class, session)) {
+            if (EntitiyHelper.getInstance().isSeriesSupported()) {
                 List<Series> series =
-                        new SeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
+                        DaoFactory.getInstance().getSeriesDAO().updateSeriesSetAsDeletedForProcedureAndGetSeries(identifier, deleteFlag,
                                 session);
-                new SeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
+                getSeriesObservationDAO().updateObservationSetAsDeletedForSeries(series, deleteFlag, session);
             } 
             // set deleted flag in Observation table for old concept to true
             else {
@@ -130,4 +138,15 @@ public class DeleteSensorDAO extends AbstractDeleteSensorDAO {
             throw new NoApplicableCodeException().withMessage("The requested identifier is not contained in database");
         }
     }
+    
+    protected AbstractSeriesObservationDAO getSeriesObservationDAO() throws OwsExceptionReport {
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        if (observationDAO instanceof AbstractSeriesObservationDAO) {
+            return (AbstractSeriesObservationDAO) observationDAO;
+        } else {
+            throw new NoApplicableCodeException().withMessage("The required '%s' implementation is no supported!",
+                    AbstractObservationDAO.class.getName());
+        }
+    }
+
 }

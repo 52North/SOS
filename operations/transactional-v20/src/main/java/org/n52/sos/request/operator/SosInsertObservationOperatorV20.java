@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.request.operator;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -145,7 +144,7 @@ public class SosInsertObservationOperatorV20 extends
                     newObservation.setObservationConstellation(observationConstellation);
                     // identifier
                     if (observation.isSetIdentifier()) {
-                        final CodeWithAuthority identifier = observation.getIdentifier();
+                        final CodeWithAuthority identifier = observation.getIdentifierCodeWithAuthority();
                         identifier.setValue(identifier.getValue() + counter);
                         newObservation.setIdentifier(identifier);
                     }
@@ -170,6 +169,9 @@ public class SosInsertObservationOperatorV20 extends
                     } else {
                         newObservation.setResultTime(new TimeInstant(DateTimeHelper.parseIsoString2DateTime(block
                                 .get(resultTimeIndex))));
+                    }
+                    if (observation.isSetParameter()) {
+                    	newObservation.setParameter(observation.getParameter());
                     }
                     // value
                     final ObservationValue<?> value =
@@ -196,9 +198,9 @@ public class SosInsertObservationOperatorV20 extends
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
             value = new SingleObservationValue<Integer>(new CountValue(Integer.parseInt(valueString)));
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_MEASUREMENT)) {
-            final QuantityValue quantity = new QuantityValue(new BigDecimal(valueString));
+            final QuantityValue quantity = new QuantityValue(Double.parseDouble(valueString));
             quantity.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<BigDecimal>(quantity);
+            value = new SingleObservationValue<Double>(quantity);
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
             final CategoryValue cat = new CategoryValue(valueString);
             cat.setUnit(getUom(resultDefinitionField));
@@ -291,7 +293,7 @@ public class SosInsertObservationOperatorV20 extends
         }
         exceptions.throwIfNotEmpty();
     }
-
+    
     /**
      * Check if the observation contains more than one sampling geometry
      * definitions.

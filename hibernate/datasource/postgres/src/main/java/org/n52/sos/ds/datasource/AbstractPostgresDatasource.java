@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -88,6 +88,18 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
 
     public AbstractPostgresDatasource() {
         super();
+        setUsernameDefault(USERNAME_DEFAULT_VALUE);
+        setUsernameDescription(USERNAME_DESCRIPTION);
+        setPasswordDefault(PASSWORD_DEFAULT_VALUE);
+        setPasswordDescription(PASSWORD_DESCRIPTION);
+        setDatabaseDefault(DATABASE_DEFAULT_VALUE);
+        setDatabaseDescription(DATABASE_DESCRIPTION);
+        setHostDefault(HOST_DEFAULT_VALUE);
+        setHostDescription(HOST_DESCRIPTION);
+        setPortDefault(PORT_DEFAULT_VALUE);
+        setPortDescription(PORT_DESCRIPTION);
+        setSchemaDefault(SCHEMA_DEFAULT_VALUE);
+        setSchemaDescription(SCHEMA_DESCRIPTION);
     }
 
     @Override
@@ -107,12 +119,13 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-            String schema = (String) settings.get(createSchemaDefinition().getKey());
-            schema = schema == null ? "" : "." + schema;
+            final String schema = (String) settings.get(createSchemaDefinition().getKey());
+            final String schemaPrefix = schema == null ? "" : "\"" + schema + "\".";
+            final String testTable = schemaPrefix + "sos_installer_test_table";
             final String command =
-                    String.format("BEGIN; " + "DROP TABLE IF EXISTS \"%1$ssos_installer_test_table\"; "
-                            + "CREATE TABLE \"%1$ssos_installer_test_table\" (id integer NOT NULL); "
-                            + "DROP TABLE \"%1$ssos_installer_test_table\"; " + "END;", schema);
+                    String.format("BEGIN; " + "DROP TABLE IF EXISTS %1$s; "
+                            + "CREATE TABLE %1$s (id integer NOT NULL); "
+                            + "DROP TABLE %1$s; " + "END;", testTable);
             stmt.execute(command);
             return true;
         } catch (SQLException e) {
@@ -240,6 +253,15 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
                 checkedSchema.add(string);
             }
         }
-        return checkedSchema.toArray(new String[checkedSchema.size()]);
+        return checkScriptForGeneratedAndDuplicatedEntries(checkedSchema.toArray(new String[checkedSchema.size()]));
     }
+
+    @Override
+    public Properties getDatasourceProperties(Map<String, Object> settings) {
+        Properties p = super.getDatasourceProperties(settings);
+        p.put(HibernateConstants.C3P0_PREFERRED_TEST_QUERY, "SELECT 1");
+        return p;
+    }
+
+
 }

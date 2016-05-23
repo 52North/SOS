@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,6 +54,8 @@ public interface ObservationEncoder<S, T> extends Encoder<S, T> {
      * @return Merge or not
      */
     boolean shouldObservationsWithSameXBeMerged();
+    
+    boolean supportsResultStreamingForMergedValues();
 
     /**
      * Get the supported response formats for this

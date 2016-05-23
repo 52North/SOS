@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,12 +38,6 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.n52.sos.config.SettingDefinition;
-import org.n52.sos.config.SettingValue;
-import org.n52.sos.config.SettingsManager;
-import org.n52.sos.web.AbstractController;
-import org.n52.sos.web.ControllerConstants;
-import org.n52.sos.web.install.InstallConstants.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -51,9 +45,19 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import org.n52.sos.config.SettingDefinition;
+import org.n52.sos.config.SettingValue;
+import org.n52.sos.config.SettingsManager;
+import org.n52.sos.exception.ConfigurationException;
+import org.n52.sos.exception.JSONException;
+import org.n52.sos.util.JSONUtils;
+import org.n52.sos.web.AbstractController;
+import org.n52.sos.web.ControllerConstants;
+import org.n52.sos.web.install.InstallConstants.Step;
+
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 public abstract class AbstractInstallController extends AbstractController {
@@ -90,9 +94,9 @@ public abstract class AbstractInstallController extends AbstractController {
         session.setAttribute(INSTALLATION_CONFIGURATION, settings);
     }
 
-    protected Map<String, Object> toModel(InstallationConfiguration c) {
+    protected Map<String, Object> toModel(InstallationConfiguration c) throws ConfigurationException, JSONException {
         Map<String, Object> model = new HashMap<String, Object>(4);
-        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, toSimpleMap(c.getSettings()));
+        model.put(ControllerConstants.SETTINGS_MODEL_ATTRIBUTE, JSONUtils.print(toJSONValueMap(c.getSettings())));
         model.put(ControllerConstants.DATABASE_SETTINGS_MODEL_ATTRIBUTE, c.getDatabaseSettings());
         model.put(ControllerConstants.ADMIN_USERNAME_REQUEST_PARAMETER, c.getUsername());
         model.put(ControllerConstants.ADMIN_PASSWORD_REQUEST_PARAMETER, c.getPassword());
@@ -146,7 +150,7 @@ public abstract class AbstractInstallController extends AbstractController {
     }
 
     @ExceptionHandler(InstallationSettingsError.class)
-    public ModelAndView onError(HttpSession session, InstallationSettingsError e) {
+    public ModelAndView onError(HttpSession session, InstallationSettingsError e) throws ConfigurationException, JSONException {
         if (e.getCause() != null) {
             LOG.error(e.getMessage(), e.getCause());
         } else {

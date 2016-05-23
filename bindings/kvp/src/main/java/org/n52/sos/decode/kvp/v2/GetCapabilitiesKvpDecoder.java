@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,11 +39,11 @@ import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.concrete.ParameterNotSupportedException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
-import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.GetCapabilitiesRequest;
+import org.n52.sos.util.Constants;
 import org.n52.sos.util.KvpHelper;
 import org.n52.sos.util.http.MediaTypes;
 
@@ -83,33 +83,40 @@ public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
         for (String parameterName : element.keySet()) {
             String parameterValues = element.get(parameterName);
             try {
-                // service (mandatory SOS 1.0.0, SOS 2.0 default)
-                if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
-                    request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                } // request (mandatory)
-                else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
-                    KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
-                } // acceptVersions (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptVersions.name())) {
-                    if (!parameterValues.isEmpty()) {
-                        request.setAcceptVersions(Arrays.asList(parameterValues.split(",")));
+                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
+//                    // service (mandatory SOS 1.0.0, SOS 2.0 default)
+//                    if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.service.name())) {
+//                        request.setService(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+//                    } // request (mandatory)
+//                    else if (parameterName.equalsIgnoreCase(OWSConstants.RequestParams.request.name())) {
+//                        KvpHelper.checkParameterSingleValue(parameterValues, parameterName);
+//                    } // acceptVersions (optional)
+//                    else 
+                        if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptVersions.name())) {
+                        if (!parameterValues.isEmpty()) {
+                            request.setAcceptVersions(Arrays.asList(parameterValues.split(Constants.COMMA_STRING)));
+                        } else {
+                            exceptions.add(new MissingParameterValueException(parameterName));
+                        }
+                    } 
+                        // acceptFormats (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptFormats.name())) {
+                        request.setAcceptFormats(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
+                    } 
+                        // updateSequence (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.updateSequence.name())) {
+                        request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+                    } 
+                        // sections (optional)
+                    else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.Sections.name())) {
+                        request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
+    				} 
+                        // capabilitiesId (optional; non-standard)
+    			else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
+                        request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                     } else {
-                        exceptions.add(new MissingParameterValueException(parameterName));
+                        exceptions.add(new ParameterNotSupportedException(parameterName));
                     }
-                } // acceptFormats (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.AcceptFormats.name())) {
-                    request.setAcceptFormats(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                } // updateSequence (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.updateSequence.name())) {
-                    request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                } // sections (optional)
-                else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.Sections.name())) {
-                    request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-				} // capabilitiesId (optional; non-standard)
-				else if (parameterName.equalsIgnoreCase(SosConstants.GetCapabilitiesParams.CapabilitiesId.name())) {
-                    request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                } else {
-                    exceptions.add(new ParameterNotSupportedException(parameterName));
                 }
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -39,7 +39,7 @@ import org.n52.sos.util.AbstractEnumPropertiesFileHandler;
 public class MetaDataHandler extends AbstractEnumPropertiesFileHandler<MetaDataHandler.Metadata> {
 
     public enum Metadata {
-        SVN_VERSION, VERSION, BUILD_DATE, INSTALL_DATE;
+        GIT_BRANCH, GIT_COMMIT, VERSION, BUILD_DATE, INSTALL_DATE;
     }
 
     private static final String PROPERTIES = "/WEB-INF/classes/meta.properties";

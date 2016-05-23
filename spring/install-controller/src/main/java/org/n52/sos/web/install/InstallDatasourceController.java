@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -33,6 +33,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingValue;
 import org.n52.sos.ds.Datasource;
@@ -40,14 +43,12 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.web.ControllerConstants;
 import org.n52.sos.web.install.InstallConstants.Step;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.google.common.collect.Maps;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 @Controller
 @RequestMapping(ControllerConstants.Paths.INSTALL_DATASOURCE)
@@ -93,7 +94,10 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
                             }
                         }
                     }
-                    datasource.checkSchemaCreation(c.getDatabaseSettings());
+                    if (!datasource.checkSchemaCreation(c.getDatabaseSettings())) {
+                        throw new InstallationSettingsError(c, String.format(
+                                ErrorMessages.COULD_NOT_CREATE_SOS_TABLES, "schema creation test table"));                        
+                    }
                 } else if (!alreadyExistent) {
                     throw new InstallationSettingsError(c, ErrorMessages.NO_TABLES_AND_SHOULD_NOT_CREATE);
                 } else {
@@ -124,7 +128,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         if (datasource.needsSchema()) {
             Boolean overwriteTablesParameter = parseBoolean(parameters, InstallConstants.OVERWRITE_TABLES_PARAMETER);
             if (overwriteTablesParameter != null) {
-                overwriteTables = overwriteTablesParameter.booleanValue();
+                overwriteTables = overwriteTablesParameter;
             }
         }
         parameters.remove(InstallConstants.OVERWRITE_TABLES_PARAMETER);
@@ -138,7 +142,7 @@ public class InstallDatasourceController extends AbstractProcessingInstallationC
         if (datasource.needsSchema()) {
             Boolean createTablesParameter = parseBoolean(parameters, InstallConstants.CREATE_TABLES_PARAMETER);
             if (createTablesParameter != null) {
-                createTables = (overwriteTables) ? overwriteTables : createTablesParameter.booleanValue();
+                createTables = (overwriteTables) ? overwriteTables : createTablesParameter;
             }
         }
         parameters.remove(InstallConstants.CREATE_TABLES_PARAMETER);

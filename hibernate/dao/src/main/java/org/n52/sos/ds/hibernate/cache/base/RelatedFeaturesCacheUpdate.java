@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -53,7 +53,7 @@ public class RelatedFeaturesCacheUpdate extends AbstractThreadableDatasourceCach
         LOGGER.debug("Executing RelatedFeaturesCacheUpdate");
         startStopwatch();
         // TODO Carsten: use RelatedFeatures and query...
-        if (HibernateHelper.isEntitySupported(RelatedFeature.class, getSession())) {
+        if (HibernateHelper.isEntitySupported(RelatedFeature.class)) {
             List<RelatedFeature> relatedFeatures = new RelatedFeatureDAO().getRelatedFeatureObjects(getSession());
             for (RelatedFeature relatedFeature : relatedFeatures) {
                 Set<String> roles = new HashSet<String>(relatedFeature.getRelatedFeatureRoles().size());

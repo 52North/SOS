@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,7 +46,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.InsertSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.util.JsonLoader;
+import com.github.fge.jackson.JsonLoader;
 import com.google.common.collect.Sets;
 
 /**
@@ -134,6 +134,7 @@ public class InsertSensorRequestDecoderTest {
     @Test
     public void testProcedureDescription() throws OwsExceptionReport, IOException {
         assertThat(req.getProcedureDescription(), is(notNullValue()));
-        assertThat(req.getProcedureDescription().getIdentifier(), is("http://www.52north.org/test/procedure/9"));
+        assertThat(req.getProcedureDescription().getIdentifier(),
+                   is("http://www.52north.org/test/procedure/9"));
     }
 }

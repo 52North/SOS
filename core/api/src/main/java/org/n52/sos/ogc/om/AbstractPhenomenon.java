@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,8 @@ package org.n52.sos.ogc.om;
 
 import java.io.Serializable;
 
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
 
 import com.google.common.base.Objects;
 
@@ -39,17 +40,11 @@ import com.google.common.base.Objects;
  * 
  * @since 4.0.0
  */
-public class AbstractPhenomenon implements Comparable<AbstractPhenomenon>, Serializable {
+public class AbstractPhenomenon extends AbstractFeature implements Comparable<AbstractPhenomenon>, Serializable {
     /**
      * serial number
      */
     private static final long serialVersionUID = 8730485367220080360L;
-
-    /** phenomenon identifier */
-    private String identifier;
-
-    /** phenomenon description */
-    private String description;
 
     /**
      * constructor
@@ -58,8 +53,7 @@ public class AbstractPhenomenon implements Comparable<AbstractPhenomenon>, Seria
      *            Phenomenon identifier
      */
     public AbstractPhenomenon(final String identifier) {
-        super();
-        this.identifier = identifier;
+        super(new CodeWithAuthority(identifier));
     }
 
     /**
@@ -71,88 +65,32 @@ public class AbstractPhenomenon implements Comparable<AbstractPhenomenon>, Seria
      *            Phenomenon description
      */
     public AbstractPhenomenon(final String identifier, final String description) {
-        super();
-        this.identifier = identifier;
-        this.description = description;
-    }
-
-    /**
-     * Get phenomenon identifier
-     * 
-     * @return the identifier
-     */
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    /**
-     * Set phenomenon identifier
-     * 
-     * @param identifier
-     *            the identifier to set
-     */
-    public void setIdentifier(final String identifier) {
-        this.identifier = identifier;
-    }
-
-    /**
-     * Check whether identifier is set
-     * 
-     * @return <code>true</code>, if identifier is set
-     */
-    public boolean isSetIdentifier() {
-        return StringHelper.isNotEmpty(getIdentifier());
-    }
-
-    /**
-     * Get phenomenon description
-     * 
-     * @return the description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Set phenomenon description
-     * 
-     * @param description
-     *            the description to set
-     */
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    /**
-     * Check whether description is set
-     * 
-     * @return <code>true</code>, if description is set
-     */
-    public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
+        super(new CodeWithAuthority(identifier));
+        setDescription(description);
     }
 
     @Override
     public boolean equals(final Object paramObject) {
         if (paramObject instanceof AbstractPhenomenon) {
             final AbstractPhenomenon phen = (AbstractPhenomenon) paramObject;
-            return getIdentifier().equals(phen.getIdentifier());
+            return getIdentifierCodeWithAuthority().equals(phen.getIdentifierCodeWithAuthority());
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(getIdentifier());
+        return Objects.hashCode(getIdentifierCodeWithAuthority());
     }
 
     @Override
     public int compareTo(final AbstractPhenomenon o) {
-        return getIdentifier().compareTo(o.getIdentifier());
+        return getIdentifierCodeWithAuthority().compareTo(o.getIdentifierCodeWithAuthority());
     }
-
-    @Override
-    public String toString() {
-        return String.format("AbstractPhenomenon [identifier=%s, description=%s]", getIdentifier(), getDescription());
-    }
+    
+	@Override
+	public String toString()
+	{
+		return String.format("AbstractPhenomenon [identifier=%s, description=%s]", getIdentifierCodeWithAuthority().getValue(), getDescription());
+	}    
 }

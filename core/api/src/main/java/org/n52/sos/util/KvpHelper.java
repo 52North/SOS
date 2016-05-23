@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -80,7 +80,7 @@ public final class KvpHelper {
     }
 
     public static List<String> checkParameterMultipleValues(String values, String name)
-            throws MissingParameterValueException, InvalidParameterValueException {
+            throws MissingParameterValueException {
         if (values.isEmpty()) {
             throw new MissingParameterValueException(name);
         }
@@ -94,7 +94,7 @@ public final class KvpHelper {
     }
 
     public static List<String> checkParameterMultipleValues(String values, Enum<?> name)
-            throws MissingParameterValueException, InvalidParameterValueException {
+            throws MissingParameterValueException {
         return checkParameterMultipleValues(values, name.name());
     }
 

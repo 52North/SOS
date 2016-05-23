@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.i18n.HibernateI18NObservablePropertyMetadata" table="i18nobservableProperty">
+    	<comment>Table to i18n metadata for the observableProperty/phenomenon. Mapping file: mapping/i18n/HibernateI18NObservablePropertyMetadata.hbm.xml</comment>
+        <id name="id" type="long">
+            <column name="id">
+            	<comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+            	<param name="sequence">i18nObsPropId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="objectId" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="i18nObsPropObsPropFk">
+           	<column index="i18nObsPropIdx" name="objectId" not-null="true" unique-key="i18nobsPropIdentity">
+            	<comment>Foreign Key (FK) to the related observableProperty. Contains "observableProperty".observablePropertyid</comment>
+            </column>
+        </many-to-one>
+        <property name="locale" type="locale">
+            <column name="locale" not-null="true" unique-key="i18nobsPropIdentity">
+            	<comment>Locale/language identification, e.g. eng, ger</comment>
+            </column>
+        </property>
+		<property name="name" type="string">
+            <column name="name">
+            	<comment>Locale/language specific name of the observableProperty</comment>
+            </column>
+        </property>
+        <property name="description" type="string">
+            <column name="description">
+            	<comment>Locale/language specific description of the observableProperty</comment>
+            </column>
+        </property>
+	</class>
+</hibernate-mapping>

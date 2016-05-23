@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,7 +28,6 @@
  */
 package org.n52.sos.decode;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,8 +67,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlAbstractGeometry;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
@@ -143,7 +142,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
         if (xmlObject instanceof FeaturePropertyType) {
             return parseFeaturePropertyType((FeaturePropertyType) xmlObject);
         } else if (xmlObject instanceof EnvelopeDocument) {
-            return getGeometry4BBOX((EnvelopeDocument) xmlObject);
+            return parseEnvelope((EnvelopeDocument) xmlObject);
         } else if (xmlObject instanceof TimeInstantType) {
             return parseTimeInstant((TimeInstantType) xmlObject);
         } else if (xmlObject instanceof TimePeriodType) {
@@ -239,7 +238,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
      * @throws OwsExceptionReport
      *             * if parsing the BBOX element failed
      */
-    private Geometry getGeometry4BBOX(EnvelopeDocument envelopeDocument) throws OwsExceptionReport {
+    private Geometry parseEnvelope(EnvelopeDocument envelopeDocument) throws OwsExceptionReport {
         EnvelopeType envelopeType = envelopeDocument.getEnvelope();
         int srid = SosHelper.parseSrsName(envelopeType.getSrsName());
         String lowerCorner = envelopeType.getLowerCorner().getStringValue();
@@ -333,17 +332,17 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
     }
 
     private GmlMeasureType parseMeasureType(MeasureType measureType) {
-        GmlMeasureType sosMeasureType = new GmlMeasureType(new BigDecimal(measureType.getStringValue()));
+        GmlMeasureType sosMeasureType = new GmlMeasureType(measureType.getDoubleValue());
         sosMeasureType.setUnit(measureType.getUom());
         return sosMeasureType;
     }
 
     private Object parseGeometryPropertyType(GeometryPropertyType geometryPropertyType) throws OwsExceptionReport {
-        return decode(geometryPropertyType.getAbstractGeometry());
+        return parseAbstractGeometryType(geometryPropertyType.getAbstractGeometry());
     }
 
-    private GmlAbstractGeometry parseAbstractGeometry(AbstractGeometryType abstractGeometry) {
-        GmlAbstractGeometry gmlAbstractGeometry = new GmlAbstractGeometry(abstractGeometry.getId());
+    private AbstractGeometry parseAbstractGeometryType(AbstractGeometryType abstractGeometry) throws OwsExceptionReport {
+        AbstractGeometry gmlAbstractGeometry = new AbstractGeometry(abstractGeometry.getId());
         if (abstractGeometry.isSetIdentifier()) {
             gmlAbstractGeometry.setIdentifier(parseCodeWithAuthorityTye(abstractGeometry.getIdentifier()));
         }
@@ -359,6 +358,7 @@ public class GmlDecoderv321 implements Decoder<Object, XmlObject> {
                 gmlAbstractGeometry.setDescription(abstractGeometry.getDescription().getStringValue());
             }
         }
+        gmlAbstractGeometry.setGeometry((Geometry)decode(abstractGeometry));
         return gmlAbstractGeometry;
     }
 

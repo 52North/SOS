@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,13 +38,13 @@ import org.n52.sos.request.AbstractServiceRequest;
  */
 public class RequestEvent implements SosEvent {
 
-    private final AbstractServiceRequest request;
+    private final AbstractServiceRequest<?> request;
 
-    public RequestEvent(final AbstractServiceRequest request) {
+    public RequestEvent(final AbstractServiceRequest<?> request) {
         this.request = request;
     }
 
-    public AbstractServiceRequest getRequest() {
+    public AbstractServiceRequest<?> getRequest() {
         return request;
     }
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,14 +30,14 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class Offering implements Serializable, HasIdentifier, HasName {
+public class Offering extends AbstractIdentifierNameDescriptionEntity
+        implements Serializable, HasDisabledFlag {
 
     private static final long serialVersionUID = 6512574941388917166L;
 
@@ -45,9 +45,7 @@ public class Offering implements Serializable, HasIdentifier, HasName {
 
     private long offeringId;
 
-    private String identifier;
-
-    private String name;
+    private Boolean disabled = false;
 
     public long getOfferingId() {
         return this.offeringId;
@@ -58,28 +56,19 @@ public class Offering implements Serializable, HasIdentifier, HasName {
     }
 
     @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public Offering setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public Offering setDisabled(final boolean disabled) {
+        this.disabled = disabled;
         return this;
     }
 
     @Override
-    public String getName() {
-        return this.name;
+    public boolean getDisabled() {
+        return disabled;
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public boolean isDisabled() {
+        return getDisabled();
     }
 
-    @Override
-    public String toString() {
-        return "Offering [identifier=" + identifier + "]";
-    }
 }

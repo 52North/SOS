@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -28,6 +28,8 @@
  */
 package org.n52.sos.service;
 
+import static org.n52.sos.config.SettingDefinitionProvider.ORDER_0;
+
 import java.util.Collections;
 import java.util.Set;
 
@@ -35,7 +37,6 @@ import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.config.SettingDefinitionGroup;
 import org.n52.sos.config.SettingDefinitionProvider;
 import org.n52.sos.config.settings.BooleanSettingDefinition;
-import org.n52.sos.config.settings.IntegerSettingDefinition;
 import org.n52.sos.config.settings.StringSettingDefinition;
 import org.n52.sos.config.settings.UriSettingDefinition;
 
@@ -43,7 +44,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ServiceSettings implements SettingDefinitionProvider {
@@ -64,7 +65,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
 
     public static final String STRICT_SPATIAL_FILTERING_PROFILE = "service.strictSpatialFilteringProfile";
-    
+
     public static final String  VALIDATE_RESPONSE = "service.response.validate";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
@@ -76,19 +77,20 @@ public class ServiceSettings implements SettingDefinitionProvider {
             .setTitle("SOS URL")
             .setDescription(
                     "The endpoint URL of this sos which will be shown in the GetCapabilities response "
-                            + "(e.g. <code>http://localhost:8080/52nSOS/sos</code>). The path to a specific "
-                            + "binding (like <code>/soap</code>) will appended to this URL.");
+                            + "(e.g. <code>http://localhost:8080/52nSOS/sos</code> or <code>http://localhost:8080/52nSOS/service</code>)."
+                            + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
+                            + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>");
 
-    public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
-            new IntegerSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_4)
-                    .setKey(MAX_GET_OBSERVATION_RESULTS)
-                    .setDefaultValue(0)
-                    .setTitle("Maximum number of observations")
-                    .setDescription(
-                            "Maximum number of observation in GetObservation responses. "
-                                    + "Set to <code>0</code> (zero) for unlimited number of observations.");
+//    public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
+//            new IntegerSettingDefinition()
+//                    .setGroup(GROUP)
+//                    .setOrder(ORDER_4)
+//                    .setKey(MAX_GET_OBSERVATION_RESULTS)
+//                    .setDefaultValue(0)
+//                    .setTitle("Maximum number of observations")
+//                    .setDescription(
+//                            "Maximum number of observation in GetObservation responses. "
+//                                    + "Set to <code>0</code> (zero) for unlimited number of observations.");
 
     // TODO quality is not yet supported
     // public static final BooleanSettingDefinition SUPPORTS_QUALITY_DEFINITION
@@ -157,7 +159,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setTitle("Should this SOS support strict Spatial Filtering Profile?")
                     .setDescription(
                             "Whether the SOS should support strict SOS 2.0 Spatial Filtering Profile. That means each observation should contain a om:parameter with sampling geometry. Else the SOS allows observations without om:parameter with sampling geometry!");
-    
+
     public static final BooleanSettingDefinition VALIDATE_RESPONSE_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
@@ -170,11 +172,12 @@ public class ServiceSettings implements SettingDefinitionProvider {
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
-            MAX_GET_OBSERVATION_RESULTS_DEFINITION,
+//            MAX_GET_OBSERVATION_RESULTS_DEFINITION,
             // SUPPORTS_QUALITY_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,
             ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION, DEREGISTER_JDBC_DRIVER_DEFINITION,
-            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION, VALIDATE_RESPONSE_DEFINITION);
+            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
+            VALIDATE_RESPONSE_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

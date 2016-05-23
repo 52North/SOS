@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -31,8 +31,10 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.StringHelper;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.
@@ -41,15 +43,17 @@ import org.n52.sos.util.CollectionHelper;
  * 
  * @since 4.0.0
  */
-public class GetDataAvailabilityRequest extends AbstractServiceRequest {
+public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> {
 
-    private final List<String> procedures = new LinkedList<String>();
+    private List<String> procedures = new LinkedList<String>();
 
-    private final List<String> observedProperties = new LinkedList<String>();
+    private List<String> observedProperties = new LinkedList<String>();
 
-    private final List<String> featuresOfInterest = new LinkedList<String>();
+    private List<String> featuresOfInterest = new LinkedList<String>();
     
-    private final List<String> offerings =  new LinkedList<String>();
+    private List<String> offerings =  new LinkedList<String>();
+    
+    private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
     @Override
     public String getOperationName() {
@@ -114,7 +118,12 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest {
         this.featuresOfInterest.add(featureOfInterest);
     }
     
-    /**
+    public void setFeatureOfInterest(
+			List<String> featuresOfInterest) {
+		this.featuresOfInterest = featuresOfInterest;
+	}
+
+	/**
      * Add a {@code offering} to the request.
      * 
      * @param offering
@@ -124,19 +133,48 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest {
         this.offerings.add(offering);
     }
 
-    public boolean isSetProcedures() {
+    public void setOffering(List<String> offerings) {
+    	this.offerings = offerings;
+	}
+
+	public boolean isSetProcedures() {
         return CollectionHelper.isNotEmpty(getProcedures());
     }
 
-    public boolean isSetObservedProperties() {
+    public void setProcedure(List<String> procedures) {
+		this.procedures = procedures;
+	}
+
+	public boolean isSetObservedProperties() {
         return CollectionHelper.isNotEmpty(getObservedProperties());
     }
 
-    public boolean isSetFeaturesOfInterest() {
+    public void setObservedProperty(
+			List<String> observedProperties) {
+		this.observedProperties = observedProperties;
+	}
+
+	public boolean isSetFeaturesOfInterest() {
         return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
     }
     
     public boolean isSetOfferings() {
         return CollectionHelper.isNotEmpty(getOfferings());
     }
+
+    @Override
+    public GetDataAvailabilityResponse getResponse() throws OwsExceptionReport {
+        return (GetDataAvailabilityResponse) new GetDataAvailabilityResponse().set(this);
+    }
+
+    public void setNamespace(String namspace) {
+        if (StringHelper.isNotEmpty(namspace)) {
+            this.namspace = namspace;
+        }
+    }
+    
+    public String getNamespace() {
+        return this.namspace;
+    }
+    
 }

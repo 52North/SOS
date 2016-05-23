@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -35,9 +35,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.sos.coding.OperationKey;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.coding.json.JSONUtils;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.decode.OperationDecoderKey;
 import org.n52.sos.exception.HTTPException;
@@ -46,10 +48,9 @@ import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.util.JSONUtils;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -98,7 +99,7 @@ public class JSONBinding extends SimpleBinding {
     @Override
     public void doPostOperation(HttpServletRequest req, HttpServletResponse res)
             throws HTTPException, IOException {
-        AbstractServiceRequest request = null;
+        AbstractServiceRequest<?> request = null;
         try {
             request = parseRequest(req);
             checkServiceOperatorKeyTypes(request);
@@ -110,7 +111,7 @@ public class JSONBinding extends SimpleBinding {
         }
     }
 
-    private AbstractServiceRequest parseRequest(HttpServletRequest request)
+    private AbstractServiceRequest<?> parseRequest(HttpServletRequest request)
             throws OwsExceptionReport {
         try {
             JsonNode json = JSONUtils.loadReader(request.getReader());
@@ -122,12 +123,12 @@ public class JSONBinding extends SimpleBinding {
                     json.path(JSONConstants.VERSION).textValue(),
                     json.path(JSONConstants.REQUEST).textValue(),
                     MediaTypes.APPLICATION_JSON);
-            Decoder<AbstractServiceRequest, JsonNode> decoder =
+            Decoder<AbstractServiceRequest<?>, JsonNode> decoder =
                     getDecoder(key);
             if (decoder == null) {
                 throw new NoDecoderForKeyException(key);
             }
-            AbstractServiceRequest sosRequest = decoder.decode(json);
+            AbstractServiceRequest<?> sosRequest = decoder.decode(json);
             sosRequest.setRequestContext(getRequestContext(request));
             return sosRequest;
         } catch (IOException ioe) {

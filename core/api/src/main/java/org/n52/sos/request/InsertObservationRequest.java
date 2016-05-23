@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -32,7 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
@@ -41,7 +43,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public class InsertObservationRequest extends AbstractServiceRequest {
+public class InsertObservationRequest extends AbstractServiceRequest<InsertObservationResponse> {
 
     /**
      * Assigned sensor id
@@ -132,5 +134,10 @@ public class InsertObservationRequest extends AbstractServiceRequest {
 
     public boolean isSetOfferings() {
         return CollectionHelper.isNotEmpty(getOfferings());
+    }
+
+    @Override
+    public InsertObservationResponse getResponse() throws OwsExceptionReport {
+        return (InsertObservationResponse) new InsertObservationResponse().set(this);
     }
 }

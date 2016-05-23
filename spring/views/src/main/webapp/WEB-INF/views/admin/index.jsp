@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -44,7 +44,7 @@
 
 <c:if test="${warning}">
     <script type="text/javascript">
-    showMessage('<b>Warning!</b> You are used the default credentials to log in. Please change them \
+    showMessage('<b>Warning!</b> You are using the default credentials to log in. Please change them \
                    <a href="<c:url value="/admin/settings#credentials"/>">here</a> as soon as possible!');
     </script>
 </c:if>
@@ -53,7 +53,7 @@
 <c:if test="${sos:hasClient()}">
 <div class="row" style="margin-top: 50px">
     <div class="span12">
-    <p>A test data set can be insert using the <a href="<c:url value="/client?load=exampleData"/>">Test client</a>. For this the JSON Binding and the <code>Batch</code>, <code>InsertSensor</code>, <code>InsertObservation</code> and <code>InsertResultTemplate</code> operations have to be active. Be aware that it only can be removed by cleaning the entire database.</p>
+    <p>A test data set can be inserted using the <a href="<c:url value="/client?load=exampleData"/>">Test client</a>. For this the JSON Binding and the <code>Batch</code>, <code>InsertSensor</code>, <code>InsertObservation</code> and <code>InsertResultTemplate</code> operations have to be active. Be aware that it only can be removed by cleaning the entire database.</p>
 </c:if>
 
 
@@ -62,8 +62,11 @@
         <c:if test="${not empty metadata.VERSION}">
             <p><strong>Version:</strong> ${fn:escapeXml(metadata.VERSION)}</p>
         </c:if>
-        <c:if test="${not empty metadata.SVN_VERSION}">
-            <p><strong>Revision:</strong> ${fn:escapeXml(metadata.SVN_VERSION)}</p>
+        <c:if test="${not empty metadata.GIT_BRANCH}">
+            <p><strong>Branch:</strong> ${fn:escapeXml(metadata.GIT_BRANCH)}</p>
+        </c:if>
+        <c:if test="${not empty metadata.GIT_COMMIT}">
+            <p><strong>Revision:</strong><a href="https://github.com/52North/SOS/commit/${fn:escapeXml(metadata.GIT_COMMIT)}"> ${fn:escapeXml(metadata.GIT_COMMIT)}</a></p>
         </c:if>
         <c:if test="${not empty metadata.BUILD_DATE}">
             <p><strong>Build date:</strong> ${fn:escapeXml(metadata.BUILD_DATE)}</p>

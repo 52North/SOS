@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -38,6 +38,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -79,6 +81,15 @@ public class OwsOperationsMetadata {
             commonValues.put(parameterName, values);
         }
         values.add(value);
+    }
+    
+    public void overrideCommonValue(String parameterName, OwsParameterValue value) {
+        if (commonValues == null) {
+            commonValues = new TreeMap<String, List<OwsParameterValue>>();
+        }
+        List<OwsParameterValue> values = Lists.newLinkedList();
+        values.add(value);
+        commonValues.put(parameterName, values);
     }
 
     public boolean isSetCommonValues() {

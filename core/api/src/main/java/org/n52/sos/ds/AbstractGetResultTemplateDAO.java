@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -56,9 +56,8 @@ public abstract class AbstractGetResultTemplateDAO extends AbstractOperationDAO 
             offerings = getCache().getOfferingsWithResultTemplate();
             observableProperties = getCache().getObservablePropertiesWithResultTemplate();
         }
-        opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultTemplateParams.offering, offerings);
-        opsMeta.addPossibleValuesParameter(Sos2Constants.GetResultTemplateParams.observedProperty,
-                observableProperties);
+        addOfferingParameter(opsMeta, offerings);
+        addObservablePropertyParameter(opsMeta, observableProperties);
     }
 
     public abstract GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request)

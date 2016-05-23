@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -68,20 +68,13 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
             throws OwsExceptionReport {
 
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
-
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, getCache().getOfferings());
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, getCache().getProcedures());
+        addOfferingParameter(opsMeta);
+        addProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, getCache()
-                    .getObservableProperties());
-            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featureIDs);
-        } else {
-            opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
-            opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.featureOfInterest);
-        }
+        addObservablePropertyParameter(opsMeta);
+        addFeatureOfInterestParameter(opsMeta, featureIDs);
 
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             // SOS 2.0 parameter

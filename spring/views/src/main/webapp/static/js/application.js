@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -95,7 +95,7 @@ function showMessage(text, type, autoclose) {
 
 function showError(error, autoclose) {
 	if (autoclose === undefined) {
-		autoclose = false; 
+		autoclose = false;
 	}
     showMessage("<strong>Error!</strong> " + error, "error", autoclose);
 }
@@ -104,7 +104,8 @@ function showSuccess(message) {
     showMessage("<strong>Success!</strong> " + message, "success", true);
 }
 
-function generateSettings(settings, container, tabbed) {
+
+function generateSettings(settings, settingValues, container, tabbed) {
     function required() {
         var valid = $(this).val() === "";
         if (valid) {
@@ -113,9 +114,238 @@ function generateSettings(settings, container, tabbed) {
             $(this).parents(".control-group").removeClass("error");
         }
     }
+    function generateStringSetting($setting, setting, settingValues) {
+        var $label = $("<label>").addClass("control-label").attr("for", setting.id).html(setting.title);
+        var $controls = $("<div>").addClass("controls");
+        var $input = null;
+        switch (setting.type) {
+        case "integer":
+            // TODO slider
+        case "string":
+            $input = $("<input>").attr("type", "text").attr("name", setting.id).addClass("span8");
+            break;
+        case "password":
+            $input = $("<input>").attr("type", "password").attr("name", setting.id).addClass("span8");
+            break;
+        case "text":
+            $input = $("<textarea>").attr("rows", 5) // TODO make this a setting
+            .attr("name", setting.id).addClass("span8");
+            break;
+        }
+        if (settingValues[setting.id] !== null && settingValues[setting.id] !== undefined) {
+            $input.val(settingValues[setting.id]);
+        } else if (setting["default"] !== undefined && setting["default"] !== null) {
+            $input.val(setting["default"]);
+        }
+        var $description = $("<span>").addClass("help-block").html(setting.description);
+        if (setting.required) {
+            var $required = $("<span>").addClass("label label-warning").text("required");
+            $description.prepend(" ").prepend($required);
+            $input.bind("keyup input", required);
+            $input.addClass("required");
+        } else {
+            var $optional = $("<span>").addClass("label label-info").text("optional");
+            $description.prepend(" ").prepend($optional);
+        }
+        $setting.append($label).append($controls.append($input).append($description));
+    }
 
-    function generateSetting(setting) {
-        var $setting = $("<div>").addClass("control-group").attr("id", setting.id.toLowerCase().replace(/\W/g, "_"));
+    function generateChoiceSetting($setting, setting, settingValues) {
+        var $controls = $("<div>").addClass("controls");
+        var $label = $("<label>").attr("for", setting.id).addClass("control-label").text(setting.title);
+        var $input = $("<select>").attr("name", setting.id).addClass("span8");
+        $.each(setting.options, function(val, desc) {
+            $("<option>").attr("value", val).text(desc).appendTo($input);
+        });
+
+         if (settingValues[setting.id] !== null && settingValues[setting.id] !== undefined) {
+            $input.val(settingValues[setting.id]);
+        } else if (setting["default"] !== undefined && setting["default"] !== null) {
+            $input.val(setting["default"]);
+        } else {
+            var $option = $("<option>").attr("value", "").attr("selected", true);
+            $input.prepend($option);
+            if (setting.required) {
+                $input.addClass("required");
+                $option.attr("disabled", true).css("display", "none");
+            } else {
+                var $optional = $("<span>").addClass("label label-info").text("optional");
+                $description.prepend(" ").prepend($optional);
+            }
+        }
+
+        var $description = $("<span>").addClass("help-block").html(setting.description);
+        if (setting.required) {
+            var $required = $("<span>").addClass("label label-warning").text("required");
+            $description.prepend(" ").prepend($required);
+            $input.bind("change", required);
+        }
+        $setting.append($label).append($controls.append($input).append($description));
+    }
+
+    function generateBooleanSetting($setting, setting, settingValues) {
+        var $controls = $("<div>").addClass("controls");
+        var $input = $("<input>").attr("type", "checkbox").attr("name", setting.id);
+        var $label = $("<label>").addClass("checkbox").text(setting.title);
+        var $description = $("<span>").addClass("help-block").html(setting.description);
+        $setting.append($label).append($controls.append($label.prepend($input)).append($description));
+        if (settingValues[setting.id] !== null && typeof settingValues[setting.id] === "boolean") {
+        	 $input.attr("checked", settingValues[setting.id]);
+        } else if (typeof setting["default"] === "boolean") {
+        	 $input.attr("checked", setting["default"]);
+        }
+    }
+
+    function generateMultilingualSetting($setting, setting, settingValues) {
+        var $label, $hidden, key, $controls, $description, $blocks;
+
+        var onAdd = function(e) {
+            var $block = createBlock();
+            $block.css("display", "none");
+            $(this).parents(".block").after($block);
+            $block.fadeIn();
+        };
+
+        var onRemove = function(e) {
+            var $oldBlock = $(this).parents(".block");
+            $oldBlock.fadeOut(function() {
+                $oldBlock.remove();
+                 // no block is left; add an empty one
+                if ($blocks.find(".block").length === 0) {
+                    var $newBlock = createBlock();
+                    $newBlock.css("display", "none");
+                    $controls.append($newBlock);
+                    $newBlock.fadeIn();
+                }
+                onChange();
+            });
+        };
+
+        var onChange = function() {
+            var value = {};
+            $setting.find(".block").each(function(i, block) {
+                var $block = $(block);
+                var lang = $block.find("input.lang").val(),
+                    text = $block.find("input.text").val();
+                if (lang) { value[lang] = text; }
+            });
+            $setting.find("input[type=hidden]").val(JSON.stringify(value)).trigger("change");
+        };
+
+        var createBlock = function (lang, text) {
+            var $block = $("<div>")
+                .addClass("block");
+            var $wrapper = $("<div>")
+                .addClass("input-append input-prepend")
+                .appendTo($block);
+
+            //globe
+            $("<span>")
+                .addClass("add-on")
+                .append($("<i>")
+                    .addClass("icon-globe"))
+                .appendTo($wrapper);
+
+            //language input
+            var $lang = $("<input>")
+                .attr("type", "text")
+                .attr("placeholder", "Language")
+                .addClass("lang span2")
+                .appendTo($wrapper);
+
+            //=
+            $("<span>")
+                .addClass("add-on")
+                .text("=")
+                .appendTo($wrapper);
+
+            //text input
+            var $text = $("<input>")
+                .attr("type", "text")
+                .attr("placeholder", "Text...")
+                .addClass("text")
+                .appendTo($wrapper);
+
+            // add button
+            var $add = $("<button>")
+                .attr("type", "button")
+                .addClass("btn add")
+                .append($("<i>")
+                    .addClass("icon-plus"))
+                .appendTo($wrapper);
+
+
+            // add button
+            var $remove = $("<button>")
+                .attr("type", "button")
+                .addClass("btn remove")
+                .append($("<i>")
+                    .addClass("icon-minus"))
+                .appendTo($wrapper);
+
+            // set values if present
+            if (lang) { $lang.val(lang); }
+            if (text) { $text.val(text); }
+
+            $add.on("click", onAdd);
+            $remove.on("click", onRemove);
+            $lang.on("change", onChange);
+            $text.on("change", onChange);
+            return $block;
+        };
+
+        $setting.addClass("multilingual");
+
+        $label = $("<label>")
+            .addClass("control-label")
+            .attr("for", setting.id)
+            .html(setting.title)
+            .appendTo($setting);
+
+        $controls = $("<div>")
+            .addClass("controls")
+            .appendTo($setting);
+
+
+        $hidden = $("<input>")
+            .attr("type", "hidden")
+            .attr("name", setting.id)
+            .appendTo($controls);
+
+        $blocks = $("<div>")
+            .addClass("blocks")
+            .appendTo($controls);
+
+        if (settingValues[setting.id]) {
+            for (key in settingValues[setting.id]) {
+                $block = createBlock(key, settingValues[setting.id][key]);
+                $blocks.append($block);
+            }
+        } else if (setting["default"]) {
+            for (key in setting["default"]) {
+                $block = createBlock(key, setting["default"][key]);
+                $blocks.append($block);
+            }
+        }
+
+        // no default value; add empty block
+        if ($blocks.find(".block").length === 0) {
+            $blocks.append(createBlock());
+        }
+
+        if (setting.description) {
+            $description = $("<span>")
+                .addClass("help-block")
+                .html(setting.description)
+                .appendTo($controls);
+        }
+
+        onChange();
+    }
+
+    function generateSetting(setting, settingValues) {
+        var $setting = $("<div>").addClass("control-group")
+                .attr("id", setting.id.toLowerCase().replace(/\W/g, "_"));
         switch (setting.type) {
         //TODO add validation of parameters
         case "integer":
@@ -123,81 +353,22 @@ function generateSettings(settings, container, tabbed) {
         case "password":
         case "text":
         case "string":
-            var $label = $("<label>").addClass("control-label").attr("for", setting.id).html(setting.title);
-            var $controls = $("<div>").addClass("controls");
-            var $input = null;
-            switch (setting.type) {
-            case "integer":
-                // TODO slider
-            case "string":
-                $input = $("<input>").attr("type", "text").attr("name", setting.id).addClass("span8");
-                break;
-            case "password":
-                $input = $("<input>").attr("type", "password").attr("name", setting.id).addClass("span8");
-                break;
-            case "text":
-                $input = $("<textarea>").attr("rows", 5) // TODO make this a setting
-                .attr("name", setting.id).addClass("span8");
-                break;
-            }
-            if (setting["default"] !== undefined && setting["default"] !== null) {
-                $input.val(setting["default"]);
-            }
-            var $description = $("<span>").addClass("help-block").html(setting.description);
-            if (setting.required) {
-                var $required = $("<span>").addClass("label label-warning").text("required");
-                $description.prepend(" ").prepend($required);
-                $input.bind("keyup input", required);
-                $input.addClass("required");
-            } else {
-                var $optional = $("<span>").addClass("label label-info").text("optional");
-                $description.prepend(" ").prepend($optional);
-            }
-            $setting.append($label).append($controls.append($input).append($description));
+            generateStringSetting($setting, setting, settingValues);
             break;
         case "choice":
-            var $controls = $("<div>").addClass("controls");
-            var $label = $("<label>").attr("for", setting.id).addClass("control-label").text(setting.title);
-            var $input = $("<select>").attr("name", setting.id).addClass("span8");
-            $.each(setting.options, function(val, desc) {
-                $("<option>").attr("value", val).text(desc).appendTo($input);
-            });
-            if (setting["default"] === undefined || setting["default"] === null) {
-                var $option = $("<option>").attr("value", "").attr("selected", true);
-                $input.prepend($option);
-                if (setting.required) {
-                    $input.addClass("required");
-                    $option.attr("disabled", true).css("display", "none");
-                } else {
-                    var $optional = $("<span>").addClass("label label-info").text("optional");
-                    $description.prepend(" ").prepend($optional);
-                }
-            } else {
-                $input.val(setting["default"]);
-            }
-            var $description = $("<span>").addClass("help-block").html(setting.description);
-            if (setting.required) {
-                var $required = $("<span>").addClass("label label-warning").text("required");
-                $description.prepend(" ").prepend($required);
-                $input.bind("change", required);
-            }
-            $setting.append($label).append($controls.append($input).append($description));
+            generateChoiceSetting($setting, setting, settingValues);
             break;
         case "boolean":
-            var $controls = $("<div>").addClass("controls");
-            var $input = $("<input>").attr("type", "checkbox").attr("name", setting.id);
-            var $label = $("<label>").addClass("checkbox").text(setting.title);
-            var $description = $("<span>").addClass("help-block").html(setting.description);
-            $setting.append($label).append($controls.append($label.prepend($input)).append($description));
-            if (typeof setting["default"] === "boolean") {
-                $input.attr("checked", setting["default"]);
-            }
+            generateBooleanSetting($setting, setting, settingValues);
             break;
+		case "multilingual":
+            generateMultilingualSetting($setting, setting, settingValues);
+			break;
         }
         return $setting;
     }
 
-    function generateTabbedSection(section, $tabTitles, $tabs) {
+    function generateTabbedSection(section, $tabTitles, $tabs, settingValues) {
         if (!section.title) {
             return;
         } /* generate the tab title */
@@ -209,39 +380,40 @@ function generateSettings(settings, container, tabbed) {
         }
         $.each(section.settings, function(id, setting) {
             setting.id = id;
-            $tabPane.append(generateSetting(setting));
+            $tabPane.append(generateSetting(setting, settingValues));
         });
         $tabs.append($tabPane);
         $tabTitles.append($tabHead);
 
     }
 
-    function generateSection(section, $container) {
-        if (!section.title) {
-            return;
+    function generateSection(section, $container, settingValues) {
+        if (section.title) {
+            $("<legend>").text(section.title).appendTo($container);
         }
-        $("<legend>").text(section.title).appendTo($container);
         if (section.description) {
             $("<p>").html(section.description).appendTo($container);
         }
         $.each(section.settings, function(id, setting) {
             setting.id = id;
-            $container.append(generateSetting(setting));
+            $container.append(generateSetting(setting, settingValues));
         });
     }
+
     var $container = $(container);
+
     if (tabbed) {
         var $tabTitles = $("<ul>").addClass("nav nav-tabs");
         var $tabs = $("<div>").addClass("tab-content");
         $.each(settings.sections, function(_, section) {
-            generateTabbedSection(section, $tabTitles, $tabs);
+            generateTabbedSection(section, $tabTitles, $tabs, settingValues);
         });
         $tabs.children(":first").addClass("active");
         $tabTitles.children(":first").addClass("active");
         $container.append($tabTitles).append($tabs);
     } else {
         $.each(settings.sections, function(_, section) {
-            generateSection(section, $container);
+            generateSection(section, $container, settingValues);
         });
     }
     $container.find(":input").trigger("input change");
@@ -270,7 +442,10 @@ function setSetting(id, val, settings) {
                     } else {
                         $("input[name='" + setting + "']").removeAttr("checked");
                     }
-                    
+
+                    break;
+                case "multilingual":
+                    console.log("TODO implement");
                     break;
                 }
                 return;

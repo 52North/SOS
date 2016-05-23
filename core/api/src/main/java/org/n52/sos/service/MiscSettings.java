@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,10 +54,10 @@ public class MiscSettings implements SettingDefinitionProvider {
     public static final String TOKEN_SEPARATOR = "misc.tokenSeparator";
 
     public static final String TUPLE_SEPARATOR = "misc.tupleSeparator";
+    
+    public static final String DECIMAL_SEPARATOR = "misc.decimalSeparator";
 
     public static final String CHARACTER_ENCODING = "misc.characterEncoding";
-
-    public static final String GML_DATE_FORMAT = "misc.gmlDateFormat";
 
     public static final String SRS_NAME_PREFIX_SOS_V1 = "misc.srsNamePrefixSosV1";
 
@@ -75,11 +75,11 @@ public class MiscSettings implements SettingDefinitionProvider {
 
     public static final String RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES =
             "misc.relatedSamplingFeatureRoleForChildFeatures";
-    
+
     public static final String HYDRO_MAX_NUMBER_OF_RETURNED_VALUES = "profile.hydrology.maxReturnedValue";
-    
+
     public static final String HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES = "profile.hydrology.maxReturnedTimeSeries";
-    
+
     public static final String RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST = "profile.hydrology.overallExtrema";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Miscellaneous")
@@ -90,31 +90,31 @@ public class MiscSettings implements SettingDefinitionProvider {
             .setTitle("Token separator").setDescription("Token separator in result element (a character)");
 
     public static final StringSettingDefinition TUPLE_SEPERATOR_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_1).setKey(TUPLE_SEPARATOR).setDefaultValue(";")
+            .setGroup(GROUP).setOrder(ORDER_1).setKey(TUPLE_SEPARATOR).setDefaultValue("@@")
             .setTitle("Tuple separator").setDescription("Tuple separator in result element (a character)");
-
-    public static final StringSettingDefinition GML_DATE_FORMAT_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_2).setKey(GML_DATE_FORMAT).setOptional(true)
-            .setTitle("Date format of GML").setDescription("Date format of Geography Markup Language");
+    
+    public static final StringSettingDefinition DECIMAL_SEPERATOR_DEFINITION = new StringSettingDefinition()
+    .setGroup(GROUP).setOrder(ORDER_2).setKey(DECIMAL_SEPARATOR).setDefaultValue(".")
+    .setTitle("Decimal separator").setDescription("Decimal separator in result element (a character)");
 
     public static final StringSettingDefinition SRS_NAME_PREFIX_SOS_V1_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_3).setKey(SRS_NAME_PREFIX_SOS_V1)
+            .setGroup(GROUP).setOrder(ORDER_4).setKey(SRS_NAME_PREFIX_SOS_V1)
             .setDefaultValue(OGCConstants.URN_DEF_CRS_EPSG).setTitle("SOSv1 SRS Prefix")
             .setDescription("Prefix for the SRS name in SOS v1.0.0.");
 
     public static final StringSettingDefinition SRS_NAME_PREFIX_SOS_V2_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_4).setKey(SRS_NAME_PREFIX_SOS_V2)
+            .setGroup(GROUP).setOrder(ORDER_5).setKey(SRS_NAME_PREFIX_SOS_V2)
             .setDefaultValue(OGCConstants.URL_DEF_CRS_EPSG).setTitle("SOSv2 SRS Prefix")
             .setDescription("Prefix for the SRS name in SOS v2.0.0.");
 
     public static final StringSettingDefinition CHARACTER_ENCODING_DEFINITION = new StringSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_5).setKey(CHARACTER_ENCODING).setDefaultValue("UTF-8")
+            .setGroup(GROUP).setOrder(ORDER_6).setKey(CHARACTER_ENCODING).setDefaultValue("UTF-8")
             .setTitle("Character Encoding").setDescription("The character encoding used for responses.");
 
     public static final StringSettingDefinition DEFAULT_OFFERING_PREFIX_DEFINITION =
             new StringSettingDefinition()
                     .setGroup(MiscSettings.GROUP)
-                    .setOrder(ORDER_6)
+                    .setOrder(ORDER_7)
                     .setKey(DEFAULT_OFFERING_PREFIX)
                     .setDefaultValue("http://www.example.org/offering/")
                     .setTitle("Default Offering Prefix")
@@ -124,7 +124,7 @@ public class MiscSettings implements SettingDefinitionProvider {
     public static final StringSettingDefinition DEFAULT_PROCEDURE_PREFIX_DEFINITION =
             new StringSettingDefinition()
                     .setGroup(MiscSettings.GROUP)
-                    .setOrder(ORDER_7)
+                    .setOrder(ORDER_8)
                     .setKey(DEFAULT_PROCEDURE_PREFIX)
                     .setDefaultValue("http://www.example.org/procedure/")
                     .setTitle("Default Procedure Prefix")
@@ -132,14 +132,14 @@ public class MiscSettings implements SettingDefinitionProvider {
                             "The default prefix for procedures (generated if not defined in Register-/InsertSensor requests or values from custom db).");
 
     public static final StringSettingDefinition DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION =
-            new StringSettingDefinition().setGroup(MiscSettings.GROUP).setOrder(ORDER_8)
+            new StringSettingDefinition().setGroup(MiscSettings.GROUP).setOrder(ORDER_9)
                     .setKey(DEFAULT_OBSERVABLEPROPERTY_PREFIX)
                     .setDefaultValue("http://www.example.org/observableProperty/")
                     .setTitle("Default ObservableProperty Prefix")
                     .setDescription("The default prefix for observableProperty (values from custom db).");
 
     public static final StringSettingDefinition DEFAULT_FEATURE_PREFIX_DEFINITION = new StringSettingDefinition()
-            .setGroup(MiscSettings.GROUP).setOrder(ORDER_9).setKey(DEFAULT_FEATURE_PREFIX)
+            .setGroup(MiscSettings.GROUP).setOrder(ORDER_10).setKey(DEFAULT_FEATURE_PREFIX)
             .setDefaultValue("http://www.example.org/feature/").setTitle("Default Feature Prefix")
             .setDescription("The default prefix for features (values from custom db).");
 
@@ -162,28 +162,29 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "The value for the role of an child feature. It is used when a related feature is already sampled at the child feature.")
                     .setOrder(ORDER_13);
-    
+
     // TODO move to Profile settings if implemented
-    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION = new IntegerSettingDefinition()
+    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION =
+            new IntegerSettingDefinition()
                     .setGroup(GROUP)
                     .setKey(HYDRO_MAX_NUMBER_OF_RETURNED_VALUES)
-                    .setDefaultValue(Integer.MAX_VALUE)
-                    .setTitle(String.format("Maximum number of returned observation values Integer.max = %s", Integer.MAX_VALUE))
-                    .setDescription(
-                            "Set the maximum number of returned observation values for the Hydrology-Profile.")
+                    .setDefaultValue(0)
+                    .setTitle("Maximum number of returned observation values")
+                    .setDescription("Set the maximum number of returned observation values for the Hydrology-Profile. Set to <code>0</code> (zero) for unlimited number of observations.")
                     .setOrder(ORDER_14);
- 
+
     // TODO move to Profile settings if implemented
-    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION = new IntegerSettingDefinition()
+    public static final IntegerSettingDefinition HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION =
+            new IntegerSettingDefinition()
                     .setGroup(GROUP)
                     .setKey(HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES)
-                    .setDefaultValue(Integer.MAX_VALUE)
-                    .setTitle(String.format("Maximum number of returned time series Integer.max = %s", Integer.MAX_VALUE))
-                    .setDescription("Set the maximum number of returned time series for the Hydrology-Profile.")
+                    .setDefaultValue(0)
+                    .setTitle("Maximum number of returned time series")
+                    .setDescription("Set the maximum number of returned time series for the Hydrology-Profile. Set to <code>0</code> (zero) for unlimited number of observations.")
                     .setOrder(ORDER_15);
-    
+
     // TODO move to Profile settings if implemented
-    public static final BooleanSettingDefinition RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION  =
+    public static final BooleanSettingDefinition RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
                     .setOrder(ORDER_16)
@@ -193,18 +194,16 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "Should the SOS return overall extrema for first/latest observation queries or for each time series");
 
-
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
-            TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION, GML_DATE_FORMAT_DEFINITION,
+            TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
             SRS_NAME_PREFIX_SOS_V1_DEFINITION, SRS_NAME_PREFIX_SOS_V2_DEFINITION, DEFAULT_OFFERING_PREFIX_DEFINITION,
             DEFAULT_PROCEDURE_PREFIX_DEFINITION, DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION,
             DEFAULT_FEATURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
-            HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION, 
+            HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION,
             HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION
-           /*
-           * ,
-           * RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION
-           */);
+    /*
+     * , RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES_DEFINITION
+     */);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

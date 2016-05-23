@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -54,10 +54,10 @@ import com.google.common.collect.Maps;
 
 /**
  * Hibernate helper class.
- * 
+ *
  * @author Carsten Hollmann <c.hollmann@52north.org>
  * @since 4.0.0
- * 
+ *
  */
 public final class HibernateHelper {
     /**
@@ -69,7 +69,7 @@ public final class HibernateHelper {
 
     /**
      * Get the SQL query string from Criteria.
-     * 
+     *
      * @param criteria
      *            Criteria to get SQL query string from
      * @return SQL query string from criteria
@@ -92,7 +92,7 @@ public final class HibernateHelper {
 
     /**
      * Get the SQL query string from HQL Query.
-     * 
+     *
      * @param query
      *            HQL query to convert to SQL
      * @return SQL query string from HQL
@@ -102,26 +102,51 @@ public final class HibernateHelper {
         SessionFactory sessionFactory = session.getSessionFactory();
         final QueryTranslatorImpl qt =
                 (QueryTranslatorImpl) ast.createQueryTranslator("id", query.getQueryString(), Maps.newHashMap(),
-                        (SessionFactoryImplementor) sessionFactory);
+                        (SessionFactoryImplementor) sessionFactory, null);
         qt.compile(null, false);
         return qt.getSQLString();
     }
 
-    public static boolean isEntitySupported(Class<?> clazz, Session session) {
-        if (session.getSessionFactory() != null) {
-            return session.getSessionFactory().getAllClassMetadata().keySet().contains(clazz.getName());
-        }
-        return false;
+    /**
+     * Checks if the specified entity is supported.
+     *
+     * @param clazz
+     *            the class
+     *
+     * @return if the entity supported
+
+     */
+    public static boolean isEntitySupported(Class<?> clazz) {
+        return HibernateMetadataCache.getInstance().isEntitySupported(clazz);
     }
 
+    /**
+     * Checks if the specified column is supported by this entity.
+     * 
+     * @param clazz
+     *            the class
+     * @param column
+     *            the column
+     * @return if the column supported
+     */
+    public static boolean isColumnSupported(Class<?> clazz, String column) {
+        return HibernateMetadataCache.getInstance().isColumnSupported(clazz, column);
+    }
+
+    /**
+     * Checks if the specified named query is supported.
+     * 
+     * @param namedQuery
+     *            the named query
+     * @param session
+     *            Hibernate session
+     * @return if the named query supported
+     */
     public static boolean isNamedQuerySupported(String namedQuery, Session session) {
         NamedQueryDefinition namedQueryDef = ((SessionImpl) session).getSessionFactory().getNamedQuery(namedQuery);
         NamedSQLQueryDefinition namedSQLQueryDef =
                 ((SessionImpl) session).getSessionFactory().getNamedSQLQuery(namedQuery);
-        if (namedQueryDef == null && namedSQLQueryDef == null) {
-            return false;
-        }
-        return true;
+        return namedQueryDef != null || namedSQLQueryDef != null;
     }
 
     public static Dialect getDialect(Session session) {
@@ -132,15 +157,15 @@ public final class HibernateHelper {
         List<Long> queryIdsList = Lists.newArrayList(queryIds);
         List<List<Long>> lists = Lists.newArrayList();
         if (queryIds.size() > HibernateConstants.LIMIT_EXPRESSION_DEPTH) {
-            List<Long> ids = Lists.newArrayList();
-            for (int i = 0; i < queryIds.size(); i++) {
-                if (i != 0 && i % (HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1) == 0) {
-                    lists.add(ids);
-                    ids = Lists.newArrayList();
-                    ids.add(queryIdsList.get(i));
-                } else {
-                    ids.add(queryIdsList.get(i));
+            int startIndex = 0;
+            int endIndex = HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
+            while (startIndex < queryIdsList.size() - 1) {
+                if (endIndex > (queryIdsList.size())) {
+                    endIndex = (queryIdsList.size());
                 }
+                lists.add(queryIdsList.subList(startIndex, endIndex));
+                startIndex = endIndex;
+                endIndex = endIndex + HibernateConstants.LIMIT_EXPRESSION_DEPTH - 1;
             }
         } else {
             lists.add(queryIdsList);
@@ -150,7 +175,7 @@ public final class HibernateHelper {
 
     /**
      * Check if the requested function is supported by the requested dialect
-     * 
+     *
      * @param dialect
      *            Dialect to check
      * @param function

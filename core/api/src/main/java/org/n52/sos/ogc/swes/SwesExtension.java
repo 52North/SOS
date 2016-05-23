@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -29,12 +29,26 @@
 package org.n52.sos.ogc.swes;
 
 public interface SwesExtension<T> {
+    
+    String getNamespace();
+    
+    SwesExtension<T> setNamespace(String namespace);
+    
+    boolean isSetNamespace();
+    
+    String getIdentifier();
+    
+    SwesExtension<T> setIdentifier(String identifier);
+    
+    boolean isSetIdentifier();
 
-	String getDefinition();
+    String getDefinition();
 
-	SwesExtension<T> setDefinition(String definition);
+    SwesExtension<T> setDefinition(String definition);
+    
+    boolean isSetDefinition();
 
-	T getValue();
+    T getValue();
 
-	SwesExtension<T> setValue(T value);
+    SwesExtension<T> setValue(T value);
 }

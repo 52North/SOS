@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -63,7 +63,7 @@ public class BatchOperationDAO extends AbstractOperationDAO {
         BatchResponse response = new BatchResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
-        for (AbstractServiceRequest r : request) {
+        for (AbstractServiceRequest<?> r : request) {
             try {
                 response.add(getServiceOperator(r).receiveRequest(r));
             } catch (OwsExceptionReport e) {
@@ -76,7 +76,7 @@ public class BatchOperationDAO extends AbstractOperationDAO {
         return response;
     }
 
-    protected ServiceOperator getServiceOperator(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         checkServiceOperatorKeys(request);
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
             ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sokt);
@@ -92,7 +92,7 @@ public class BatchOperationDAO extends AbstractOperationDAO {
         }
     }
 
-    protected void checkServiceOperatorKeys(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected void checkServiceOperatorKeys(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeyType()) {
             checkService(sokt, exceptions);
@@ -115,7 +115,7 @@ public class BatchOperationDAO extends AbstractOperationDAO {
         /* nothing to do here */
     }
 
-    private void checkAcceptVersions(AbstractServiceRequest request, CompositeOwsException exceptions) {
+    private void checkAcceptVersions(AbstractServiceRequest<?> request, CompositeOwsException exceptions) {
         GetCapabilitiesRequest gcr = (GetCapabilitiesRequest) request;
         if (gcr.isSetAcceptVersions()) {
             boolean hasSupportedVersion = false;
@@ -148,5 +148,10 @@ public class BatchOperationDAO extends AbstractOperationDAO {
                 exceptions.add(new InvalidServiceParameterException(sokt.getService()));
             }
         }
+    }
+    
+    @Override
+    public String getDatasourceDaoIdentifier() {
+        return IDEPENDET_IDENTIFIER;
     }
 }

@@ -1,6 +1,6 @@
 <%--
 
-    Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+    Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
     Software GmbH
 
     This program is free software; you can redistribute it and/or modify it
@@ -29,6 +29,11 @@
 
 --%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="sos" uri="http://52north.org/communities/sensorweb/sos/tags" %>
+<%-- include extra title jsp if file exists (used by custom builds) --%>
+<c:if test="${sos:viewExists(pageContext.servletContext, 'common/extra-title.jsp')}">
+    <jsp:include page="extra-title.jsp" />
+</c:if>
 <div class="row">
 	<div class="span9">
 

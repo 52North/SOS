@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -30,7 +30,6 @@ package org.n52.sos.gda;
 
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -43,9 +42,12 @@ import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 /**
  * {@code Encoder} to handle {@link GetDataAvailabilityResponse}s.
@@ -56,6 +58,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDataAvailabilityResponse> {
 
+    @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlEncoder.class);
 
     public GetDataAvailabilityXmlEncoder() {
@@ -65,14 +68,22 @@ public class GetDataAvailabilityXmlEncoder extends AbstractResponseEncoder<GetDa
 
     @Override
     protected Set<SchemaLocation> getConcreteSchemaLocations() {
-        return Collections.emptySet();
+        return Sets.newHashSet(GetDataAvailabilityConstants.GET_DATA_AVAILABILITY_SCHEMA_LOCATION);
     }
 
     @Override
     protected XmlObject create(GetDataAvailabilityResponse response) throws OwsExceptionReport {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+            if (Sos2Constants.NS_SOS_20.equals(response.getNamespace())) {
+                new SosGetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+            } else {
+                new GetDataAvailabilityStreamWriter(response.getVersion(), response.getDataAvailabilities()).write(out);
+                XmlObject encodedObject = XmlObject.Factory.parse(out.toString("UTF8"));
+                LOG.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
+                        XmlHelper.validateDocument(encodedObject));
+                return encodedObject;
+            }
             return XmlObject.Factory.parse(out.toString("UTF8"));
         } catch (XMLStreamException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage("Error encoding response");

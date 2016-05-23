@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd">
+	<env:Body>
+		<sos:GetCapabilities service="AQD"
+			xmlns:sos="http://www.opengis.net/sos/2.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:swe="http://www.opengis.net/swe/2.0"
+			xsi:schemaLocation="http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosGetCapabilities.xsd">
+			<ows:AcceptVersions>
+				<ows:Version>1.0.0</ows:Version>
+			</ows:AcceptVersions>
+			<ows:Sections>
+				<ows:Section>OperationsMetadata</ows:Section>
+				<ows:Section>ServiceIdentification</ows:Section>
+				<ows:Section>ServiceProvider</ows:Section>
+				<ows:Section>FilterCapabilities</ows:Section>
+				<ows:Section>Contents</ows:Section>
+			</ows:Sections>
+		</sos:GetCapabilities>
+	</env:Body>
+</env:Envelope>

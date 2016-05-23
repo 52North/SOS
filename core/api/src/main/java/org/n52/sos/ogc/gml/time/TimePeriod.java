@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2012-2014 52°North Initiative for Geospatial Open Source
+ * Copyright (C) 2012-2015 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -36,6 +36,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.joda.time.format.ISOPeriodFormat;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,7 +159,7 @@ public class TimePeriod extends Time {
     }
 
     /**
-     * Constructor using TimeInstants
+     * Constructor using {@link TimeInstant}s
      * 
      * @param startTime
      *            Start TimeInstant
@@ -178,9 +179,13 @@ public class TimePeriod extends Time {
     }
 
     /**
-     * Constructor using Java Dates, setting unknown indeterminate values if null
-     * @param start start Date
-     * @param end end Date
+     * Constructor using Java {@link Date}s, setting unknown indeterminate
+     * values if null
+     * 
+     * @param start
+     *            start Date
+     * @param end
+     *            end Date
      */
     public TimePeriod(Date start, Date end) {
         if (start != null) {
@@ -194,7 +199,29 @@ public class TimePeriod extends Time {
             this.endIndet = TimeIndeterminateValue.unknown;
         }
     }
-    
+
+    /**
+     * Constructor using Java {@link Object}s, setting unknown indeterminate
+     * values if null
+     * 
+     * @param start
+     *            start {@link Object}
+     * @param end
+     *            end {@link Object}
+     */
+    public TimePeriod(Object start, Object end) {
+        if (start != null) {
+            this.start = new DateTime(start, DateTimeZone.UTC);
+        } else {
+            this.startIndet = TimeIndeterminateValue.unknown;
+        }
+        if (end != null) {
+            this.end = new DateTime(end, DateTimeZone.UTC);
+        } else {
+            this.endIndet = TimeIndeterminateValue.unknown;
+        }
+    }
+
     /**
      * Get duration
      * 
@@ -358,8 +385,10 @@ public class TimePeriod extends Time {
      * @param times
      */
     public void extendToContain(Collection<Time> times) {
-        for (Time time : times) {
-            extendToContain(time);
+        if (CollectionHelper.isNotEmpty(times)) {
+            for (Time time : times) {
+                extendToContain(time);
+            }
         }
     }
 
@@ -370,18 +399,19 @@ public class TimePeriod extends Time {
      *            To contain {@link Time}
      */
     public void extendToContain(Time time) {
-        if (time instanceof TimeInstant) {
-            extendToContain((TimeInstant) time);
-        } else if (time instanceof TimePeriod) {
-            extendToContain((TimePeriod) time);
-        } else {
-            String errorMsg =
-                    String.format("Received ITime type \"%s\" unknown.", time != null ? time.getClass().getName()
-                            : time);
-            LOGGER.error(errorMsg);
-            throw new IllegalArgumentException(errorMsg);
+        if (time != null) {
+            if (time instanceof TimeInstant) {
+                extendToContain((TimeInstant) time);
+            } else if (time instanceof TimePeriod) {
+                extendToContain((TimePeriod) time);
+            } else {
+                String errorMsg =
+                        String.format("Received ITime type \"%s\" unknown.", time != null ? time.getClass().getName()
+                                : time);
+                LOGGER.error(errorMsg);
+                throw new IllegalArgumentException(errorMsg);
+            }
         }
-
     }
 
     /**
@@ -427,10 +457,11 @@ public class TimePeriod extends Time {
     }
 
     /**
-     * Is this TimePeriod contained by another TimePeriod? Equal start/end
-     * times are considered to be containing, as are equal indeterminate times.
+     * Is this TimePeriod contained by another TimePeriod? Equal start/end times
+     * are considered to be containing, as are equal indeterminate times.
      * 
-     * @param otherTimePeriod Potentially containing TimePeriod
+     * @param otherTimePeriod
+     *            Potentially containing TimePeriod
      * @return Whether the argument TimePeriod contains this one
      */
     public boolean isWithin(TimePeriod otherTimePeriod) {
@@ -440,24 +471,20 @@ public class TimePeriod extends Time {
         boolean startWithin = false;
         boolean endWithin = false;
         if (start != null && otherTimePeriod.getStart() != null) {
-            startWithin = start.isEqual(otherTimePeriod.getStart()) ||
-                    start.isAfter(otherTimePeriod.getStart());
-        } else if (start == null && otherTimePeriod.getStart() == null &&
-                startIndet != null && otherTimePeriod.getStartIndet() != null &&
-                startIndet.equals(otherTimePeriod.getStartIndet())){
+            startWithin = start.isEqual(otherTimePeriod.getStart()) || start.isAfter(otherTimePeriod.getStart());
+        } else if (start == null && otherTimePeriod.getStart() == null && startIndet != null
+                && otherTimePeriod.getStartIndet() != null && startIndet.equals(otherTimePeriod.getStartIndet())) {
             startWithin = true;
         }
         if (end != null && otherTimePeriod.getEnd() != null) {
-            endWithin = end.isEqual(otherTimePeriod.getEnd()) ||
-                    end.isBefore(otherTimePeriod.getEnd());
-        } else if (end == null && otherTimePeriod.getEnd() == null &&
-                endIndet != null && otherTimePeriod.getEndIndet() != null &&
-                endIndet.equals(otherTimePeriod.getEndIndet())){
+            endWithin = end.isEqual(otherTimePeriod.getEnd()) || end.isBefore(otherTimePeriod.getEnd());
+        } else if (end == null && otherTimePeriod.getEnd() == null && endIndet != null
+                && otherTimePeriod.getEndIndet() != null && endIndet.equals(otherTimePeriod.getEndIndet())) {
             endWithin = true;
-        }        
+        }
         return startWithin && endWithin;
     }
-    
+
     /**
      * Checks this timeFormat with passed
      * 

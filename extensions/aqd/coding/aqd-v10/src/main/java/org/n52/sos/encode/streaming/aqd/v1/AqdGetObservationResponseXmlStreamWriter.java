@@ -266,20 +266,24 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
         return gmlId;
     }
 
-//    private String prepareObservation(OmObservation omObservation, Encoder<XmlObject, AbstractFeature> encoder,
-//            EncodingValues encodingValues) throws UnsupportedEncoderInputException, OwsExceptionReport, XMLStreamException {
-//        
-//        String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
-//                .getInstance().getXmlOptions());
-//        // TODO check for better solutions
-//        xmlText = xmlText.replace("ns:ReferenceType", "gml:ReferenceType");
-//        xmlText = xmlText.replace(":ns=\"http://www.opengis.net/gml/3.2\"", ":gml=\"http://www.opengis.net/gml/3.2\"");
-//        xmlText = xmlText.replace("ns:DataArrayPropertyType", "swe:DataArrayPropertyType");
-//        xmlText = xmlText.replace(":ns=\"http://www.opengis.net/swe/2.0\"", ":swe=\"http://www.opengis.net/swe/2.0\"");
-//        xmlText = xmlText.replace("<ns:", "<swe:");
-//        xmlText = xmlText.replace("</ns:", "</swe:");
-//        return xmlText;
-//    }
+    private String prepareObservation(OmObservation omObservation, Encoder<XmlObject, AbstractFeature> encoder,
+            EncodingValues encodingValues) throws UnsupportedEncoderInputException, OwsExceptionReport, XMLStreamException {
+        
+        String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
+                .getInstance().getXmlOptions());
+        // TODO check for better solutions
+        xmlText = xmlText.replace("ns:GeometryPropertyType","gml:GeometryPropertyType");
+        xmlText = xmlText.replace("ns","gml:Point");
+        xmlText = xmlText.replace("ns","gml:pos");
+        xmlText = xmlText.replace("ns:id=\"point_","gml:id=\"point_");
+        xmlText = xmlText.replace("ns:ReferenceType", "gml:ReferenceType");
+        xmlText = xmlText.replace(":ns=\"http://www.opengis.net/gml/3.2\"", ":gml=\"http://www.opengis.net/gml/3.2\"");
+        xmlText = xmlText.replace("ns:DataArrayPropertyType", "swe:DataArrayPropertyType");
+        xmlText = xmlText.replace(":ns=\"http://www.opengis.net/swe/2.0\"", ":swe=\"http://www.opengis.net/swe/2.0\"");
+        xmlText = xmlText.replace("<ns:", "<swe:");
+        xmlText = xmlText.replace("</ns:", "</swe:");
+        return xmlText;
+    }
 
     private void writeMember(AbstractFeature abstractFeature, Encoder<XmlObject, AbstractFeature> encoder,
             EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {

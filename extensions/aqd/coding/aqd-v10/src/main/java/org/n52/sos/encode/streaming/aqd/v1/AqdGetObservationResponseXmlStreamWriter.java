@@ -46,6 +46,7 @@ import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gmd.GmdConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -190,10 +191,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                         count++;
                     }
                     omObservation.setResultTime(resultTime);
-                    String xmlTextObservation = (getEncoder(abstractFeature, encodingValues.getAdditionalValues())
-                            .encode(omObservation, encodingValues.getAdditionalValues()))
-                                    .xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
-                    // String xmlTextObservation = prepareObservation(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()), encodingValues);
+                    String xmlTextObservation = prepareObservation(omObservation, getEncoder(abstractFeature, encodingValues.getAdditionalValues()), encodingValues);
                     // stop the timer task
                     stopTimer();
                     writeMember(xmlTextObservation);

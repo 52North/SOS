@@ -46,23 +46,27 @@
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
 					<filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-          <webResources>
-            <resource>
-                <directory>src/main/webapp</directory>
-                <filtering>true</filtering>
-            </resource>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-                <targetPath>WEB-INF/classes</targetPath>
-            </resource>
-          </webResources>
+					<nonFilteredFileExtensions>
+                        <!-- default value contains jpg,jpeg,gif,bmp,png -->
+                        <nonFilteredFileExtension>db</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
+					<webResources>
+						<resource>
+						    <directory>src/main/webapp</directory>
+						    <filtering>true</filtering>
+						</resource>
+						<resource>
+						    <directory>src/main/resources</directory>
+						    <filtering>true</filtering>
+						    <targetPath>WEB-INF/classes</targetPath>
+						</resource>
+					</webResources>
 					<overlays>
 						<overlay>
 							<groupId>${project.groupId}</groupId>
 							<artifactId>webapp</artifactId>
 						</overlay>
-					</overlays>
+	                </overlays>
 				</configuration>
 			</plugin>
 			<plugin>

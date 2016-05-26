@@ -3,18 +3,18 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ObservationType" table="observationType">
-    	<comment>Table to store the observationTypes. Mapping file: mapping/core/ObservationType.hbm.xml</comment>
+        <comment>Table to store the observationTypes. Mapping file: mapping/core/ObservationType.hbm.xml</comment>
         <id name="observationTypeId" type="long">
             <column name="observationTypeId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">observationTypeId_seq</param>
+                <param name="sequence">observationTypeId_seq</param>
             </generator>
         </id>
         <property name="observationType" type="string">
             <column name="observationType" not-null="true" unique-key="observationTypeUK">
-            	<comment>The observationType value, e.g. http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement (OGC OM 2.0 specification) for OM_Measurement</comment>
+                <comment>The observationType value, e.g. http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement (OGC OM 2.0 specification) for OM_Measurement</comment>
             </column>
         </property>
     </class>

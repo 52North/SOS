@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation" 
-    	   table="observation">
+           table="observation">
         <comment>Stores the observations. Mapping file: mapping/old/observation/TemporalReferencedObservation.hbm.xml</comment>
         <id name="observationId" type="long">
             <column name="observationId" />
@@ -13,36 +13,30 @@
         </id>
         <many-to-one name="featureOfInterest"
                      class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="observationFeatureFk">
             <column index="obsFeatureIdx"
                     name="featureOfInterestId"
                     not-null="true">
-           		<comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
-           	</column>
+                   <comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
+               </column>
         </many-to-one>
         <many-to-one name="observableProperty"
                      class="org.n52.sos.ds.hibernate.entities.ObservableProperty"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="observationObPropFk">
             <column index="obsObsPropIdx"
                     name="observablePropertyId"
                     not-null="true">
-           		<comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
-           	</column>
+                   <comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
+               </column>
         </many-to-one>
         <many-to-one name="procedure"
                      class="org.n52.sos.ds.hibernate.entities.Procedure"
-                     fetch="select"
-                     lazy="no-proxy"
                      foreign-key="observationProcedureFk">
             <column index="obsProcedureIdx"
                     name="procedureId"
                     not-null="true">
-           		<comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
-           	</column>
+                   <comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
+               </column>
         </many-to-one>
         <property name="phenomenonTimeStart"
                   type="timestamp" >
@@ -50,7 +44,7 @@
                     name="phenomenonTimeStart"
                     length="29"
                     not-null="true">
-            	<comment>Time stamp when the observation was started or phenomenon was observed</comment>
+                <comment>Time stamp when the observation was started or phenomenon was observed</comment>
             </column>
         </property>
         <property name="phenomenonTimeEnd"
@@ -59,7 +53,7 @@
                     name="phenomenonTimeEnd"
                     length="29"
                     not-null="true">
-            	<comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
+                <comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
             </column>
         </property>
         <property name="resultTime"
@@ -68,7 +62,7 @@
                     name="resultTime"
                     length="29"
                     not-null="true">
-            	<comment>Time stamp when the observation was published or result was published/available</comment>
+                <comment>Time stamp when the observation was published or result was published/available</comment>
             </column>
         </property>
         <property name="deleted"
@@ -77,7 +71,7 @@
                     not-null="true"
                     default="'F'"
                     check="deleted in ('T','F')">
-            	<comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
+                <comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
             </column>
         </property>
         <property name="child"
@@ -87,7 +81,7 @@
                     default="'F'"
                     length="1"
                     check="child in ('T','F')">
-            	<comment>Flag to indicate that this observation is a child observation for complex observation</comment>
+                <comment>Flag to indicate that this observation is a child observation for complex observation</comment>
             </column>
         </property>
         <property name="parent"
@@ -97,7 +91,7 @@
                     default="'F'"
                     length="1"
                     check="parent in ('T','F')">
-            	<comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
+                <comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
             </column>
         </property>
         <property name="validTimeStart"
@@ -106,7 +100,7 @@
                     length="29"
                     not-null="false"
                     default="NULL">
-            	<comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+                <comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
         <property name="validTimeEnd"
@@ -115,38 +109,36 @@
                     length="29"
                     not-null="false"
                     default="NULL">
-            	<comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+                <comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
             </column>
         </property>
- 		<set name="offerings"
+         <set name="offerings"
              table="observationHasOffering"
-             inverse="false"
-             fetch="select"
-             lazy="false" >
+             inverse="false">
             <key>
                 <column name="observationId"
                         not-null="true"
                         index="obshasoffobservationidx">
-	            	<comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
                           foreign-key="observationOfferingFk">
                 <column name="offeringId"
                         not-null="true"
                         index="obshasoffofferingidx">
-	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
             </many-to-many>
         </set>
         <property name="samplingGeometry"
                   type="org.hibernate.spatial.GeometryType"
                   index="samplingGeomIdx" >
             <column name="samplingGeometry">
-            	<comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
+                <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true" lazy="true" fetch="select" cascade="delete-orphan">
+        <set name="parameters" table="parameters" inverse="true"  cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>

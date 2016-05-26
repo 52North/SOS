@@ -48,17 +48,14 @@
                     <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
                 </column>
             </key>
-            <property name="value"
-                       type="string">
+            <property name="value" type="string">
                 <column name="value" index="categoryParamIdx">
                     <comment>Category parameter value</comment>
                 </column>
             </property>
             <many-to-one name="unit"
-                          class="org.n52.sos.ds.hibernate.entities.Unit"
-                          fetch="select"
-                          lazy="no-proxy"
-                          foreign-key="catParamValueUnitFk">
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="catParamValueUnitFk">
                 <column name="unitId"
                         not-null="false">
                     <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
@@ -97,10 +94,8 @@
                 </column>
             </property>
             <many-to-one name="unit"
-                          class="org.n52.sos.ds.hibernate.entities.Unit"
-                          fetch="select"
-                          lazy="no-proxy"
-                          foreign-key="quanParamValueUnitFk">
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="quanParamValueUnitFk">
                 <column name="unitId"
                         not-null="false">
                     <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>

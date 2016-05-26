@@ -3,32 +3,32 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 <subclass name="org.n52.sos.ds.hibernate.entities.TProcedure" extends="org.n52.sos.ds.hibernate.entities.Procedure" discriminator-value="true">
-	<set name="validProcedureTimes" table="validProcedureTime" inverse="true" fetch="join">
-		<key>
-		    <column name="procedureId" not-null="true" />
-		</key>
-		<one-to-many class="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" />
-	</set>
-	<set name="childs" table="sensorSystem" inverse="false" fetch="join">
-		<comment>Relation table to store procedure hierarchies. E.g. define a parent in a query and all childs are also contained in the response.  Mapping file: mapping/transactional/TProcedure.hbm.xml</comment>
-	    <key>
-	        <column name="parentSensorId" not-null="true">
-                	<comment>Foreign Key (FK) to the related parent procedure. Contains "procedure".procedureid</comment>
+    <set name="validProcedureTimes" table="validProcedureTime" inverse="true">
+        <key>
+            <column name="procedureId" not-null="true" />
+        </key>
+        <one-to-many class="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" />
+    </set>
+    <set name="childs" table="sensorSystem" inverse="false">
+        <comment>Relation table to store procedure hierarchies. E.g. define a parent in a query and all childs are also contained in the response.  Mapping file: mapping/transactional/TProcedure.hbm.xml</comment>
+        <key>
+            <column name="parentSensorId" not-null="true">
+                    <comment>Foreign Key (FK) to the related parent procedure. Contains "procedure".procedureid</comment>
                 </column>
-	    </key>
-	    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="procedureChildFk">
-	        <column name="childSensorId" not-null="true">
-                	<comment>Foreign Key (FK) to the related child procedure. Contains "procedure".procedureid</comment>
+        </key>
+        <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="procedureChildFk">
+            <column name="childSensorId" not-null="true">
+                    <comment>Foreign Key (FK) to the related child procedure. Contains "procedure".procedureid</comment>
                 </column>
-	    </many-to-many>
-	</set>
-	<set name="parents" table="sensorSystem" inverse="false" fetch="join">
-	    <key>
-	        <column name="childSensorId" not-null="true" />
-	    </key>
-	    <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="procedureParenfFk">
-	        <column name="parentSensorId" not-null="true" />
-	    </many-to-many>
-	</set>
+        </many-to-many>
+    </set>
+    <set name="parents" table="sensorSystem" inverse="false">
+        <key>
+            <column name="childSensorId" not-null="true" />
+        </key>
+        <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="procedureParenfFk">
+            <column name="parentSensorId" not-null="true" />
+        </many-to-many>
+    </set>
 </subclass>
 </hibernate-mapping>

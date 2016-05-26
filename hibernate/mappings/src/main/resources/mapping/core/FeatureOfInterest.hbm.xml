@@ -3,95 +3,95 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" table="featureOfInterest">
-    	<comment>Table to store the FeatureOfInterest information. Mapping file: mapping/core/FeatureOfInterest.hbm.xml</comment>
+        <comment>Table to store the FeatureOfInterest information. Mapping file: mapping/core/FeatureOfInterest.hbm.xml</comment>
         <id name="featureOfInterestId" type="long">
             <column name="featureOfInterestId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">featureOfInterestId_seq</param>
+                <param name="sequence">featureOfInterestId_seq</param>
             </generator>
         </id>
         <!-- only needed for internal purposes  -->
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" fetch="select" lazy="no-proxy" foreign-key="featureFeatureTypeFk">
+        <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" foreign-key="featureFeatureTypeFk">
             <column name="featureOfInterestTypeId" not-null="true">
-            	<comment>Relation/foreign key to the featureOfInterestType table. Describes the type of the featureOfInterest. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
+                <comment>Relation/foreign key to the featureOfInterestType table. Describes the type of the featureOfInterest. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
             </column>
         </many-to-one>
         <property name="identifier" type="string">
             <column name="identifier" unique-key="foiIdentifierUK">
-            	<comment>The identifier of the featureOfInterest, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+                <comment>The identifier of the featureOfInterest, gml:identifier. Used as parameter for queries. Optional but unique</comment>
             </column>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="featureCodespaceIdentifierFk">
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="featureCodespaceIdentifierFk">
             <column name="codespace">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="name" type="string">
             <column name="name">
-            	<comment>The name of the featureOfInterest, gml:name. Optional</comment>
+                <comment>The name of the featureOfInterest, gml:name. Optional</comment>
             </column>
         </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="featureCodespaceNameFk">
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="featureCodespaceNameFk">
             <column name="codespaceName">
-            	<comment>The name of the featureOfInterest, gml:name. Optional</comment>
+                <comment>The name of the featureOfInterest, gml:name. Optional</comment>
             </column>
         </many-to-one>
         <property name="description" type="string">
             <column name="description">
-            	<comment>Description of the featureOfInterest, gml:description. Optional</comment>
+                <comment>Description of the featureOfInterest, gml:description. Optional</comment>
             </column>
         </property>
         <property name="geom" type="org.hibernate.spatial.GeometryType">
             <column name="geom">
-            	<comment>The geometry of the featureOfInterest (composed of the “latitude” and “longitude”) . Optional</comment>
+                <comment>The geometry of the featureOfInterest (composed of the “latitude” and “longitude”) . Optional</comment>
             </column>
         </property>
         <property name="descriptionXml" type="org.hibernate.type.StringClobType">
             <column name="descriptionXml">
-            	<comment>XML description of the feature, used when transactional profile is supported . Optional</comment>
+                <comment>XML description of the feature, used when transactional profile is supported . Optional</comment>
             </column>
         </property>
         <property name="url" type="string">
             <column name="url" unique-key="featureUrl">
-            	<comment>Reference URL to the feature if it is stored in another service, e.g. WFS. Optional but unique</comment>
+                <comment>Reference URL to the feature if it is stored in another service, e.g. WFS. Optional but unique</comment>
             </column>
         </property>
         <!-- supports types double, big_decimal, and string -->
         <!--  
         <property name="longitude" type="double">
            <column name="longitude" unique-key="featLonLatUk">
-            	<comment>The longitude of the feature. Optional</comment>
+                <comment>The longitude of the feature. Optional</comment>
             </column>
         </property>
         <property name="latitude" type="double">
-        	<column name="latitude" unique-key="featLonLatUk">
-            	<comment>The latitude of the feature. Optional</comment>
+            <column name="latitude" unique-key="featLonLatUk">
+                <comment>The latitude of the feature. Optional</comment>
             </column>
         </property>
         <property name="altitude" type="double">
-        	<column name="altitude">
-            	<comment>The altitude of the feature location. Optional</comment>
+            <column name="altitude">
+                <comment>The altitude of the feature location. Optional</comment>
             </column>
         </property>
         <property name="srid" type="integer">
-        	<column name="srid">
-            	<comment>SRID of the longitude/latitude values. Optional</comment>
+            <column name="srid">
+                <comment>SRID of the longitude/latitude values. Optional</comment>
             </column>
         </property> 
         -->
     </class>
     
     <sql-query name="getEpsgPostgis">
-    	<return-scalar column="srid" type="int"/>
-    	SELECT srid FROM spatial_ref_sys
+        <return-scalar column="srid" type="int"/>
+        SELECT srid FROM spatial_ref_sys
     </sql-query>
     
-   	<sql-query name="transformGeometryPostgis">
-    	<return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
-    	SELECT ST_Transform(:geometry, :srid) as geom
+       <sql-query name="transformGeometryPostgis">
+        <return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
+        SELECT ST_Transform(:geometry, :srid) as geom
     </sql-query>
     
 </hibernate-mapping>

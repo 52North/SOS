@@ -3,43 +3,43 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ObservationConstellation" table="observationConstellation" >
-    	<comment>Table to store the ObservationConstellation information. Contains information about the constellation of observableProperty, procedure, offering and the observationType. Mapping file: mapping/core/ObservationConstellation.hbm.xml</comment>
+        <comment>Table to store the ObservationConstellation information. Contains information about the constellation of observableProperty, procedure, offering and the observationType. Mapping file: mapping/core/ObservationConstellation.hbm.xml</comment>
         <id name="observationConstellationId" type="long">
             <column name="observationConstellationId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">observationConstellationId_seq</param>
+                <param name="sequence">observationConstellationId_seq</param>
             </generator>
         </id>
-        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="obsConstObsPropFk" unique-key="obsnConstellationIdentity">
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" foreign-key="obsConstObsPropFk" unique-key="obsnConstellationIdentity">
             <column index="obsConstObsPropIdx" name="observablePropertyId" not-null="true">
-            	<comment>Foreign Key (FK) to the related observableProperty. Contains "observableproperty".observablepropertyid</comment>
+                <comment>Foreign Key (FK) to the related observableProperty. Contains "observableproperty".observablepropertyid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="obsnConstProcedureFk" unique-key="obsnConstellationIdentity">
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="obsnConstProcedureFk" unique-key="obsnConstellationIdentity">
             <column index="obsConstProcedureIdx" name="procedureId" not-null="true">
-            	<comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
+                <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" fetch="select" lazy="no-proxy" foreign-key="obsConstObservationIypeFk" >
+        <many-to-one name="observationType" class="org.n52.sos.ds.hibernate.entities.ObservationType" foreign-key="obsConstObservationIypeFk" >
             <column name="observationTypeId">
-            	<comment>Foreign Key (FK) to the related observableProperty. Contains "observationtype".observationtypeid</comment>
+                <comment>Foreign Key (FK) to the related observableProperty. Contains "observationtype".observationtypeid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity">
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="obsConstOfferingFk" unique-key="obsnConstellationIdentity">
             <column index="obsConstOfferingIdx" name="offeringId" not-null="true">
-            	<comment>Foreign Key (FK) to the related observableProperty. Contains "offering".offeringid</comment>
+                <comment>Foreign Key (FK) to the related observableProperty. Contains "offering".offeringid</comment>
             </column>
         </many-to-one>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')">
-            	<comment>Flag to indicate that this observationConstellation is deleted or not. Set if the related procedure is deleted via DeleteSensor operation (OGC SWES 2.0 - DeleteSensor operation)</comment>
+                <comment>Flag to indicate that this observationConstellation is deleted or not. Set if the related procedure is deleted via DeleteSensor operation (OGC SWES 2.0 - DeleteSensor operation)</comment>
             </column>
         </property>
         <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
             <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')">
-            	<comment>Flag to indicate that this observationConstellations procedure is a child procedure of another procedure. If true, the related procedure is not contained in OGC SOS 2.0 Capabilities but in OGC SOS 1.0.0 Capabilities.</comment>
+                <comment>Flag to indicate that this observationConstellations procedure is a child procedure of another procedure. If true, the related procedure is not contained in OGC SOS 2.0 Capabilities but in OGC SOS 1.0.0 Capabilities.</comment>
             </column>
         </property>
     </class>

@@ -3,39 +3,39 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" table="validProcedureTime">
-    	<comment>Table to store procedure descriptions which were inserted or updated via the transactional Profile. Mapping file: mapping/transactionl/ValidProcedureTime.hbm.xml</comment>
+        <comment>Table to store procedure descriptions which were inserted or updated via the transactional Profile. Mapping file: mapping/transactionl/ValidProcedureTime.hbm.xml</comment>
         <id name="validProcedureTimeId" type="long">
             <column name="validProcedureTimeId">
-            	<comment>Table primary key</comment>
+                <comment>Table primary key</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">validProcedureTimeId_seq</param>
+                <param name="sequence">validProcedureTimeId_seq</param>
             </generator>
         </id>
-       <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.TProcedure" fetch="select" lazy="no-proxy" foreign-key="validProcedureTimeProcedureFk">
+       <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.TProcedure" foreign-key="validProcedureTimeProcedureFk">
             <column name="procedureId" not-null="true">
-				<comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
-			</column>	
+                <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureid</comment>
+            </column>    
         </many-to-one>
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" foreign-key="validProcProcDescFormatFk">
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" foreign-key="validProcProcDescFormatFk">
             <column name="procedureDescriptionFormatId" not-null="true">
-				<comment>Foreign Key (FK) to the related procedureDescriptionFormat. Contains "procedureDescriptionFormat".procedureDescriptionFormatid</comment>
-			</column>
+                <comment>Foreign Key (FK) to the related procedureDescriptionFormat. Contains "procedureDescriptionFormat".procedureDescriptionFormatid</comment>
+            </column>
         </many-to-one>
         <property name="startTime" type="timestamp">
             <column index="validProcedureTimeStartTimeIdx" name="startTime" length="29" not-null="true">
-				<comment>Timestamp since this procedure description is valid</comment>
-			</column>
+                <comment>Timestamp since this procedure description is valid</comment>
+            </column>
         </property>
         <property name="endTime" type="timestamp">
             <column index="validProcedureTimeEndTimeIdx" name="endTime" length="29">
-				<comment>Timestamp since this procedure description is invalid</comment>
-			</column>
+                <comment>Timestamp since this procedure description is invalid</comment>
+            </column>
         </property>
         <property name="descriptionXml" type="org.hibernate.type.StringClobType" >
             <column name="descriptionXml" not-null="true">
-				<comment>Procedure description as XML string</comment>
-			</column>
+                <comment>Procedure description as XML string</comment>
+            </column>
         </property>
     </class>
 </hibernate-mapping>

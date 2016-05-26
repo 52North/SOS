@@ -3,44 +3,44 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty" table="observableProperty">
-    	<comment>Table to store the ObservedProperty/Phenomenon information. Mapping file: mapping/core/ObservableProperty.hbm.xml</comment>
+        <comment>Table to store the ObservedProperty/Phenomenon information. Mapping file: mapping/core/ObservableProperty.hbm.xml</comment>
         <id name="observablePropertyId" type="long">
             <column name="observablePropertyId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">observablePropertyId_seq</param>
+                <param name="sequence">observablePropertyId_seq</param>
             </generator>
         </id>
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="obsPropIdentifierUK">
-            	<comment>The identifier of the observableProperty, gml:identifier. Used as parameter for queries. Unique</comment>
+                <comment>The identifier of the observableProperty, gml:identifier. Used as parameter for queries. Unique</comment>
             </column>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="obsPropCodespaceIdentifierFk">
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="obsPropCodespaceIdentifierFk">
             <column name="codespace">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="name" type="string">
             <column name="name">
-            	<comment>The name of the observableProperty, gml:name. Optional</comment>
+                <comment>The name of the observableProperty, gml:name. Optional</comment>
             </column>
         </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="obsPropCodespaceNameFk">
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="obsPropCodespaceNameFk">
             <column name="codespaceName">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="description" type="string">
             <column name="description">
-            	<comment>Description of the observableProperty, gml:description. Optional</comment>
+                <comment>Description of the observableProperty, gml:description. Optional</comment>
             </column>
         </property>
-		<property name="disabled" type="org.hibernate.type.TrueFalseType">
+        <property name="disabled" type="org.hibernate.type.TrueFalseType">
             <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')">
-            	<comment>For later use by the SOS. Indicator if this observableProperty should not be provided by the SOS.</comment>
+                <comment>For later use by the SOS. Indicator if this observableProperty should not be provided by the SOS.</comment>
             </column>
         </property>
     </class>

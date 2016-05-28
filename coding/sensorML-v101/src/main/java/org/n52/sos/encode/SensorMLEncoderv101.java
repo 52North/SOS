@@ -697,15 +697,15 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
 
     private void addSystemValues(final SystemType xbSystem, final System system) throws OwsExceptionReport {
         // set inputs
-        if (system.isSetInputs()) {
+        if (system.isSetInputs() && !xbSystem.isSetInputs()) {
             xbSystem.setInputs(createInputs(system.getInputs()));
         }
         // set position
-        if (system.isSetPosition()) {
+        if (system.isSetPosition() && !xbSystem.isSetPosition()) {
             xbSystem.setPosition(createPosition(system.getPosition()));
         }
         // set location
-        if (system.isSetLocation()) {
+        if (system.isSetLocation() && !xbSystem.isSetSmlLocation()) {
             xbSystem.setSmlLocation(createLocation(system.getLocation()));
         }
         // set components
@@ -732,36 +732,27 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             // system.addFeatureOfInterest(getFeaturesFromChild(smlComponents));
         }
         // set outputs
-        if (system.isSetOutputs()) {
+        if (system.isSetOutputs() && !xbSystem.isSetOutputs()) {
             extendOutputs(system);
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
-        }
-    }
-
-    private void extendOutputs(AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetPhenomenon()) {
-            for (SmlIo<?> output : abstractProcess.getOutputs()) {
-                if (abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition())) {
-                    output.getIoValue().setName(
-                            abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName());
-                }
-            }
         }
     }
 
     private void addProcessModelValues(final ProcessModelType processModel, final ProcessModel sosProcessModel)
             throws OwsExceptionReport {
         // set inputs
-        if (sosProcessModel.isSetInputs()) {
+        if (sosProcessModel.isSetInputs() && !processModel.isSetInputs()) {
             processModel.setInputs(createInputs(sosProcessModel.getInputs()));
         }
         // set outputs
-        if (sosProcessModel.isSetOutputs()) {
+        if (sosProcessModel.isSetOutputs() && !processModel.isSetOutputs()) {
             extendOutputs(sosProcessModel);
             processModel.setOutputs(createOutputs(sosProcessModel.getOutputs()));
         }
         // set method
-        processModel.setMethod(createMethod(sosProcessModel.getMethod()));
+        if (processModel.getMethod() != null) {
+            processModel.setMethod(createMethod(sosProcessModel.getMethod()));
+        }
     }
 
     private MethodPropertyType createMethod(final ProcessMethod method) throws CodedException {

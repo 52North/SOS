@@ -704,11 +704,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             addFeatures(apt.getFeaturesOfInterest().getFeatureList(), abstractProcess.getSmlFeatureOfInterest());
         }
         // set inputs
-        if (sosAbstractProcess.isSetInputs() && !apt.isSetInputs()) {
+        if (abstractProcess.isSetInputs() && !apt.isSetInputs()) {
             apt.setInputs(createInputs(abstractProcess.getInputs()));
         }
         // set outputs
-        if (sosAbstractProcess.isSetOutputs() && !apt.isSetOutputs()) {
+        if (abstractProcess.isSetOutputs() && !apt.isSetOutputs()) {
             extendOutputs(abstractProcess);
             apt.setOutputs(createOutputs(abstractProcess.getOutputs()));
         }

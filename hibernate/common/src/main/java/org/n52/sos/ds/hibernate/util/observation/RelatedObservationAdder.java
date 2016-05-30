@@ -33,7 +33,6 @@ import java.net.URLEncoder;
 
 import org.n52.sos.binding.BindingRepository;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
 import org.n52.sos.exception.CodedException;
@@ -43,7 +42,6 @@ import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationContext;
 import org.n52.sos.ogc.ows.OWSConstants;

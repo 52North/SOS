@@ -61,6 +61,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -231,7 +232,6 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
         @Override
         public XmlObject visit(CategoryValue value) throws OwsExceptionReport {
             if (value.isSetValue() && !value.getValue().isEmpty()) {
-                Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
                 return encodeGML(value);
             }
             return null;
@@ -318,6 +318,11 @@ public abstract class AbstractCVDiscretePointCoverageTypeEncoder<T>
                 xbString.setNil();
             }
             return xbString;
+        }
+
+        @Override
+        public XmlObject visit(XmlValue value) throws OwsExceptionReport {
+            return value.getValue();
         }
 
         @Override

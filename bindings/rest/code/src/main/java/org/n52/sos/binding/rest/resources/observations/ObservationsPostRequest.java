@@ -30,6 +30,7 @@ package org.n52.sos.binding.rest.resources.observations;
 
 import net.opengis.om.x20.OMObservationType;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.InsertObservationRequest;
 
 /**
@@ -55,6 +56,16 @@ public class ObservationsPostRequest implements IObservationsRequest {
     public OMObservationType getXb_OMObservation()
     {
         return xb_OMObservation;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getInsertObservationRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getInsertObservationRequest();
     }
 
 }

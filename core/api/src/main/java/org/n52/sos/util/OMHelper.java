@@ -57,9 +57,11 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
@@ -105,6 +107,8 @@ public final class OMHelper {
             return OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
         } else if (component instanceof SweDataRecord) {
             return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION;
+        } else if (component instanceof SweDataArray) {
+            return OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
         }
         // TODO Check for missing types
         throw new NoApplicableCodeException().withMessage(
@@ -250,6 +254,12 @@ public final class OMHelper {
 
         @Override
         public String visit(UnknownValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(XmlValue value)
+                throws OwsExceptionReport {
             return defaultValue();
         }
 

@@ -306,7 +306,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-exi</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-register</artifactId>
+        </dependency>
         <!-- REST BINDING -->
 
         <dependency>

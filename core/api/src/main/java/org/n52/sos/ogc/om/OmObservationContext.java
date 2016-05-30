@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ogc.om;
 
+import java.util.Objects;
+
+import org.apache.commons.pool.impl.SoftReferenceObjectPool;
 import org.n52.sos.ogc.gml.ReferenceType;
 
 /**
@@ -67,6 +70,11 @@ public class OmObservationContext {
      */
     public ReferenceType getRelatedObservation() {
         return relatedObservation;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.role, 234, this.relatedObservation);
     }
 
 }

@@ -123,5 +123,20 @@
          		</column>
          	</property>
         </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureXmlValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="xmlFeatParamValue">
+            <comment>Value table for XML parameter</comment>
+            <key foreign-key="featParamXmlValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "featureParameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value" type="text">
+                <column name="value" index="xmlFeatParamIdx">
+                    <comment>XML parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
     </class>
 </hibernate-mapping>

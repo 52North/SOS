@@ -33,6 +33,7 @@ import org.n52.sos.ds.hibernate.entities.parameter.CategoryValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.XmlValuedParameter;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -40,7 +41,6 @@ public interface ParameterVisitor<T> {
 
     NamedValue<T> visit(QuantityValuedParameter o)
             throws OwsExceptionReport;
-
 
     NamedValue<T> visit(BooleanValuedParameter o)
             throws OwsExceptionReport;
@@ -54,5 +54,7 @@ public interface ParameterVisitor<T> {
     NamedValue<T> visit(TextValuedParameter o)
             throws OwsExceptionReport;
 
-    
+    NamedValue<T> visit(XmlValuedParameter o)
+            throws OwsExceptionReport;
+
 }

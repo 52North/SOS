@@ -49,3 +49,8 @@ alter table public.compositeObservation add constraint observationChildFk foreig
 -- spatial index
 create index featureGeomIdx on public.featureOfInterest USING GIST (geom);
 create index samplingGeomIdx on public.observation USING GIST (samplingGeometry);
+
+-- XML based parameter values
+CREATE TABLE public.xmlparametervalue (parameterid bigint PRIMARY KEY, value text);
+ALTER TABLE public.xmlparametervalue ADD CONSTRAINT parameterxmlvaluefk FOREIGN KEY (parameterid) REFERENCES public.parameter (parameterid)
+CREATE INDEX xmlparamidx ON public.xmlparametervalue USING btree (value);

@@ -39,6 +39,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.sos.ogc.sensorML.elements.SmlIdentifierPredicates;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.StringHelper;
 
@@ -323,6 +324,47 @@ public class AbstractSensorML extends SosProcedureDescription {
 
     public boolean isSetGmlId() {
         return StringHelper.isNotEmpty(gmlId);
+    }
+    
+    protected Predicate<SmlIdentifier> createSmlIdentifierPredicate(String name) {
+        return createSmlIdentifierPredicate(name, name);
+    }
+
+    protected Predicate<SmlIdentifier> createSmlIdentifierPredicate(String name, String definition) {
+        return SmlIdentifierPredicates.nameOrDefinition(name, definition);
+    }
+
+    private boolean isSetShortName() {
+        return isIdentificationSet(createSmlIdentifierPredicate(SensorMLConstants.ELEMENT_NAME_SHORT_NAME));
+    }
+
+    private String getShortName() {
+        if (isSetShortName()) {
+           return findIdentification(createSmlIdentifierPredicate(SensorMLConstants.ELEMENT_NAME_SHORT_NAME)).get()
+                    .getValue();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isSetProcedureName() {
+        if (super.isSetProcedureName()) {
+            return super.isSetProcedureName();
+        } else {
+            return isSetShortName();
+        }
+    }
+
+    @Override
+    public String getProcedureName() {
+        if (isSetProcedureName()) {
+            if (super.isSetProcedureName()) {
+                return super.getProcedureName();
+            } else {
+                return getShortName();
+            }
+        }
+        return null;
     }
     
     public void copyTo(AbstractSensorML copyOf) {

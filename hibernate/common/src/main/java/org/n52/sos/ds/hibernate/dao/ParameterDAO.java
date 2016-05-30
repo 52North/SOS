@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.hibernate.Session;
+
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
@@ -58,6 +59,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -65,9 +67,9 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 
 /**
  * Hibernate DAO class to om:pramameter
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class ParameterDAO {
 
@@ -85,7 +87,7 @@ public class ParameterDAO {
             }
         }
     }
-    
+
     /**
      * If the local unit cache isn't null, use it when retrieving unit.
      *
@@ -128,7 +130,7 @@ public class ParameterDAO {
                     observationId,
                     session);
         }
-        
+
         public ParameterPersister(DAOs daos, Caches caches, NamedValue<?> namedValue, long observationId, Session session) {
             this.observationId = observationId;
             this.caches = caches;
@@ -141,7 +143,7 @@ public class ParameterDAO {
         private static class Caches {
             private final Map<String, Unit> units;
 
-            Caches( Map<String, Unit> units) {
+            Caches(Map<String, Unit> units) {
                 this.units = units;
             }
 
@@ -149,7 +151,7 @@ public class ParameterDAO {
                 return units;
             }
         }
-    
+
         private static class DAOs {
             private final ParameterDAO parameter;
 
@@ -161,22 +163,22 @@ public class ParameterDAO {
                 return this.parameter;
             }
         }
-        
+
         private <V, T extends ValuedParameter<V>> T setUnitAndPersist(T parameter, Value<V> value) throws OwsExceptionReport {
             if (parameter instanceof HasUnit) {
                 ((HasUnit)parameter).setUnit(getUnit(value));
             }
             return persist(parameter, value.getValue());
         }
-        
+
         private Unit getUnit(Value<?> value) {
             return value.isSetUnit() ? daos.parameter().getUnit(value.getUnit(), caches.units(), session) : null;
         }
-        
+
         private <V, T extends ValuedParameter<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
             return persist(parameter, value.getValue());
         }
-        
+
         private <V, T extends ValuedParameter<V>> T persist(T parameter, V value) throws OwsExceptionReport {
             if (parameter instanceof org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter) {
                 if (parameter instanceof HasUnit && !((HasUnit)parameter).isSetUnit()) {
@@ -256,7 +258,13 @@ public class ParameterDAO {
         public ValuedParameter<?> visit(UnknownValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
-        
+
+        @Override
+        public ValuedParameter<?> visit(XmlValue value)
+                throws OwsExceptionReport {
+            return persist(parameterFactory.xml(), value.getValue().xmlText());
+        }
+
         @Override
         public ValuedParameter<?> visit(TLVTValue value) throws OwsExceptionReport {
             throw notSupported(value);

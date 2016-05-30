@@ -74,9 +74,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationDecoder extends JSONDecoder<OmObservation> {
@@ -187,35 +187,35 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 
     private NamedValue<?> parseNamedValueValue(JsonNode value) throws OwsExceptionReport {
         if (value.isTextual()) {
-            NamedValue<W3CHrefAttribute> nv = new NamedValue<W3CHrefAttribute>();
+            NamedValue<W3CHrefAttribute> nv = new NamedValue<>();
             nv.setValue(new HrefAttributeValue(new W3CHrefAttribute(value.asText())));
             return nv;
         } else if (value.isBoolean()) {
-            NamedValue<Boolean> nv = new NamedValue<Boolean>();
+            NamedValue<Boolean> nv = new NamedValue<>();
             nv.setValue(new BooleanValue(value.asBoolean()));
             return nv;
         } else if (value.isInt()) {
-            NamedValue<Integer> nv = new NamedValue<Integer>();
+            NamedValue<Integer> nv = new NamedValue<>();
             nv.setValue(new CountValue(value.asInt()));
             return nv;
         } else if (value.isObject()) {
             if (value.has(JSONConstants.CODESPACE)) {
-                NamedValue<String> nv = new NamedValue<String>();
+                NamedValue<String> nv = new NamedValue<>();
                 nv.setValue(parseCategroyValue(value));
-                return nv;  
+                return nv;
             } else if (value.has(JSONConstants.UOM)) {
-                NamedValue<Double> nv = new NamedValue<Double>();
+                NamedValue<Double> nv = new NamedValue<>();
                 nv.setValue(parseQuantityValue(value));
-                return nv; 
+                return nv;
             } else if (value.has(JSONConstants.COORDINATES)) {
-                NamedValue<Geometry> nv = new NamedValue<Geometry>();
+                NamedValue<Geometry> nv = new NamedValue<>();
                 nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
                 return nv;
             }
         }
         throw new NotYetSupportedException(value.toString());
     }
-	
+
     protected AbstractFeature parseFeatureOfInterest(JsonNode node) throws OwsExceptionReport {
         return featureDecoder.decodeJSON(node.path(JSONConstants.FEATURE_OF_INTEREST), false);
     }
@@ -245,7 +245,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 //                        .path(JSONConstants.RESULT).path(JSONConstants.UOM).textValue());
         return new SingleObservationValue<Double>(parsePhenomenonTime(node), qv);
     }
-    
+
     private QuantityValue parseQuantityValue(JsonNode node) throws OwsExceptionReport {
        return new QuantityValue(node.path(JSONConstants.VALUE).doubleValue(), node.path(JSONConstants.UOM).textValue());
     }
@@ -271,7 +271,7 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
 //                        .path(JSONConstants.RESULT).path(JSONConstants.CODESPACE).textValue());
         return new SingleObservationValue<String>(parsePhenomenonTime(node), v);
     }
-    
+
     private CategoryValue parseCategroyValue(JsonNode node) throws OwsExceptionReport {
         return new CategoryValue(node.path(JSONConstants.VALUE).textValue(), node.path(JSONConstants.CODESPACE).textValue());
     }
@@ -280,5 +280,5 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         GeometryValue v = new GeometryValue(geometryDecoder.decodeJSON(node.path(JSONConstants.RESULT), false));
         return new SingleObservationValue<Geometry>(parsePhenomenonTime(node), v);
     }
-    
+
 }

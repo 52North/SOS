@@ -57,6 +57,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -276,6 +277,12 @@ public class FeatureParameterDAO {
         @Override
         public ValuedParameter<?> visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
             throw notSupported(value);
+        }
+
+        @Override
+        public ValuedParameter<?> visit(XmlValue value)
+                throws OwsExceptionReport {
+            return persist(parameterFactory.xml(), value.getValue().xmlText());
         }
 
         private OwsExceptionReport notSupported(Value<?> value)

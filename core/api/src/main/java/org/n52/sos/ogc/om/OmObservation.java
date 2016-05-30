@@ -824,7 +824,6 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      *            the relatedObservations to set
      */
     public void addRelatedObservation(OmObservationContext relatedObservation) {
-        ;
         this.relatedObservations.add(relatedObservation);
     }
 

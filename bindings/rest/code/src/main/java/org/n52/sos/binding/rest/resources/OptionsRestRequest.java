@@ -29,6 +29,7 @@
 package org.n52.sos.binding.rest.resources;
 
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 
 
 /**
@@ -62,6 +63,16 @@ public class OptionsRestRequest implements RestRequest {
     public boolean isResourceCollection()
     {
         return isResourceCollection;
+    }
+
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return false;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return null;
     }
 
 }

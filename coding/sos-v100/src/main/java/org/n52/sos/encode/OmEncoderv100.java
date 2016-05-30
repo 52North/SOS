@@ -72,6 +72,7 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
@@ -407,14 +408,20 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
 
         // set procedure
         xbObs.addNewProcedure().setHref(sosObservation.getObservationConstellation().getProcedure().getIdentifier());
+        if (sosObservation.getObservationConstellation().getProcedure().isSetName()) {
+            xbObs.getProcedure().setTitle(sosObservation.getObservationConstellation().getProcedure().getFirstName().getValue());
+        }
         // set observedProperty (phenomenon)
         List<OmObservableProperty> phenComponents = null;
         if (sosObservation.getObservationConstellation().getObservableProperty() instanceof OmObservableProperty) {
-            xbObs.addNewObservedProperty().setHref(
-                    sosObservation.getObservationConstellation().getObservableProperty().getIdentifier());
+            OmObservableProperty observableProperty = (OmObservableProperty)sosObservation.getObservationConstellation()
+            .getObservableProperty();
+            xbObs.addNewObservedProperty().setHref(observableProperty.getIdentifier());
+            if (observableProperty.isSetName()) {
+                xbObs.getObservedProperty().setTitle(observableProperty.getFirstName().getValue());
+            }
             phenComponents = new ArrayList<>(1);
-            phenComponents.add((OmObservableProperty) sosObservation.getObservationConstellation()
-                    .getObservableProperty());
+            phenComponents.add(observableProperty);
         } else if (sosObservation.getObservationConstellation().getObservableProperty() instanceof OmCompositePhenomenon) {
             OmCompositePhenomenon compPhen =
                     (OmCompositePhenomenon) sosObservation.getObservationConstellation().getObservableProperty();

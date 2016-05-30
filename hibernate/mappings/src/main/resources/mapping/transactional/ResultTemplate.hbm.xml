@@ -6,45 +6,45 @@
     <comment>Table to store resultTemplates (OGC SOS 2.0 result handling profile). Mapping file: mapping/transactionl/ResultTemplate.hbm.xml</comment>
         <id name="resultTemplateId" type="long">
             <column name="resultTemplateId">
-            	<comment>Table primary key</comment>
+                <comment>Table primary key</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">resultTemplateId_seq</param>
+                <param name="sequence">resultTemplateId_seq</param>
             </generator>
         </id>
-        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" fetch="select" lazy="no-proxy" foreign-key="resultTemplateOfferingIdx">
+        <many-to-one name="offering" class="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="resultTemplateOfferingIdx">
             <column index="resultTempOfferingIdx" name="offeringId" not-null="true">
-            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
             </column>
         </many-to-one>
-        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" fetch="select" lazy="no-proxy" foreign-key="resultTemplateObsPropFk">
+        <many-to-one name="observableProperty" class="org.n52.sos.ds.hibernate.entities.ObservableProperty" foreign-key="resultTemplateObsPropFk">
             <column index="resultTempeObsPropIdx" name="observablePropertyId" not-null="true">
-            	<comment>Foreign Key (FK) to the related observableProperty. Contains "observableProperty".observablePropertyId</comment>
+                <comment>Foreign Key (FK) to the related observableProperty. Contains "observableProperty".observablePropertyId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" fetch="select" lazy="no-proxy" foreign-key="resultTemplateProcedureFk">
+        <many-to-one name="procedure" class="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="resultTemplateProcedureFk">
             <column index="resultTempProcedureIdx" name="procedureId" not-null="true">
-            	<comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureId</comment>
+                <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="resultTemplateFeatureIdx">
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="resultTemplateFeatureIdx">
             <column name="featureOfInterestId" not-null="true">
-            	<comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+                <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>
         </many-to-one>
         <property name="identifier" type="string">
             <column index="resultTempIdentifierIdx" name="identifier" not-null="true">
-            	<comment>The resultTemplate identifier, required for InsertResult requests.</comment>
+                <comment>The resultTemplate identifier, required for InsertResult requests.</comment>
             </column>
         </property>
         <property name="resultStructure" type="org.hibernate.type.StringClobType">
             <column name="resultStructure" not-null="true">
-            	<comment>The resultStructure as XML string. Describes the types and order of the values in a GetResultResponse/InsertResultRequest</comment>
+                <comment>The resultStructure as XML string. Describes the types and order of the values in a GetResultResponse/InsertResultRequest</comment>
             </column>
         </property>
         <property name="resultEncoding" type="org.hibernate.type.StringClobType">
             <column name="resultEncoding" not-null="true">
-            	<comment>The resultEncoding as XML string. Describes the encoding of the values in a GetResultResponse/InsertResultRequest</comment>
+                <comment>The resultEncoding as XML string. Describes the encoding of the values in a GetResultResponse/InsertResultRequest</comment>
             </column>
         </property>
     </class>

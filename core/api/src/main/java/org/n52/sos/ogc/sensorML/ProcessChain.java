@@ -72,4 +72,14 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
         return true;
     }
     
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
+    }
+    
 }

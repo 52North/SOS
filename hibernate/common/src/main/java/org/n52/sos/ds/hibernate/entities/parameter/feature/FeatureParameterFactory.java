@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.parameter.feature;
 
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
+import org.n52.sos.ds.hibernate.entities.parameter.observation.XmlValuedParameter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
@@ -49,6 +50,7 @@ import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
@@ -95,6 +97,14 @@ public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>>
 
     public FeatureTextValuedParameter text() throws OwsExceptionReport {
         return instantiate(textClass());
+    }
+    
+    public Class<? extends FeatureXmlValuedParameter> xmlClass() {
+        return FeatureXmlValuedParameter.class;
+    }
+    
+    public FeatureXmlValuedParameter xml() throws OwsExceptionReport {
+        return instantiate(xmlClass());
     }
 
     private <T extends ValuedParameter<?>> T instantiate(Class<T> c) throws OwsExceptionReport {
@@ -195,6 +205,12 @@ public class FeatureParameterFactory implements ValueVisitor<ValuedParameter<?>>
     @Override
     public ValuedParameter<?> visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
         throw notSupported(value);
+    }
+
+    @Override
+    public ValuedParameter<?> visit(XmlValue value) throws OwsExceptionReport {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private OwsExceptionReport notSupported(Value<?> value)

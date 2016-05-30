@@ -27,7 +27,16 @@
  * Public License for more details.
  */
 package org.n52.sos.binding.rest.requests;
+
+import org.n52.sos.request.AbstractServiceRequest;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  */
-public interface RestRequest {}
+public interface RestRequest {
+    
+    public boolean hasAbstractServiceRequest();
+    
+    public AbstractServiceRequest<?> getAbstractServiceRequest();
+    
+}

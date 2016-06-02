@@ -225,7 +225,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Minimal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
                 .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
     }
@@ -236,7 +236,7 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Maximal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
                 .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
     }

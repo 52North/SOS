@@ -62,7 +62,7 @@ import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.GmlHelper;
@@ -90,13 +90,16 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     protected Session session;
 
-    protected final GetObservationRequest request;
+    protected final AbstractObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
 
     @Override
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
-
+        return mergeObservation(false);
+    }
+    
+    public Collection<OmObservation> mergeObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
@@ -105,7 +108,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
             if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
                 observation = observations.get(nextEntity.getDiscriminator());
             } else {
-                observation = observationTemplate.cloneTemplate();
+                observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
                 addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
                 if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
                     observations.put(Long.toString(nextEntity.getObservationId()), observation);
@@ -145,9 +148,9 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      * constructor
      *
      * @param request
-     *            {@link GetObservationRequest}
+     *            {@link AbstractObservationRequest}
      */
-    public AbstractHibernateStreamingValue(GetObservationRequest request) {
+    public AbstractHibernateStreamingValue(AbstractObservationRequest request) {
         this.request = request;
     }
 

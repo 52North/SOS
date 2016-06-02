@@ -39,7 +39,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -55,6 +55,7 @@ import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
@@ -64,7 +65,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
-public abstract class AbstractSeriesDAO {
+public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptionDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesDAO.class);
 
@@ -83,6 +84,17 @@ public abstract class AbstractSeriesDAO {
      * @throws CodedException
      */
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
+            throws OwsExceptionReport;
+    
+    /**
+     * Get series for GetObservationByIdRequest request
+     * @param request GetObservationByIdRequest request to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series that fit
+     * @throws CodedException
+     */
+    public abstract List<Series> getSeries(GetObservationByIdRequest request, Session session)
             throws OwsExceptionReport;
 
     /**
@@ -204,6 +216,13 @@ public abstract class AbstractSeriesDAO {
         }
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
+        return c;
+    }
+    
+    public Criteria  getSeriesCriteria(GetObservationByIdRequest request, Session session) {
+        final Criteria c = getDefaultSeriesCriteria(session);
+        c.add(Restrictions.in(Series.IDENTIFIER, request.getObservationIdentifier()));
+        LOGGER.debug("QUERY getSeriesCriteria(request): {}", HibernateHelper.getSqlString(c));
         return c;
     }
 

@@ -125,11 +125,6 @@ public class GetObservationKvpDecoderv20 extends AbstractObservationKvpDecoder {
                         KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
                         request.setSpatialFilter(parseSpatialFilter(splittedParameterValues, parameterName));
                     }
-
-                    // responseFormat (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())) {
-                        request.setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    }
                     // namespaces (conditional)
                     else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
                         request.setNamespaces(parseNamespaces(parameterValues));

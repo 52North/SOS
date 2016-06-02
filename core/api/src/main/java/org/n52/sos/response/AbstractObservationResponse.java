@@ -31,10 +31,14 @@ package org.n52.sos.response;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.sos.ogc.om.AbstractStreaming;
 import org.n52.sos.ogc.om.ObservationMerger;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
@@ -43,7 +47,7 @@ import org.n52.sos.util.StringHelper;
  * 
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
+public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat, StreamingDataResponse {
     private List<OmObservation> observationCollection;
 
     private String responseFormat;
@@ -132,6 +136,33 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     public void setObservationMerger(ObservationMerger observationMerger) {
         this.observationMerger = observationMerger;
         setMergeObservations(true);
+    }
+    
+    @Override
+    public boolean hasStreamingData() {
+        OmObservation observation = getFirstObservation();
+        if (observation != null) {
+            return observation.getValue() instanceof AbstractStreaming;
+        }
+        return false;
+    }
+
+    @Override
+    public void mergeStreamingData() throws OwsExceptionReport {
+        List<OmObservation> observations = Lists.newArrayList();
+        if (hasStreamingData()) {
+            for (OmObservation observation : getObservationCollection()) {
+                AbstractStreaming values = (AbstractStreaming) observation.getValue();
+                if (values.hasNextValue()) {
+                    if (isSetMergeObservation()) { 
+                        observations.addAll(values.mergeObservation());
+                    } else {
+                        observations.addAll(values.getObservation());
+                    }
+                }
+            }
+        }
+        setObservationCollection(observations);
     }
     
 }

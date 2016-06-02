@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.values;
 
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollableResults;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
@@ -105,9 +104,9 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
-            OmObservation observation = observationTemplate.cloneTemplate();
+            OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
 //            addValuesToObservation(observation, resultObject);
@@ -135,15 +134,18 @@ public class HibernateScrollableStreamingValue extends HibernateStreamingValue {
             session = sessionHolder.getSession();
         }
         try {
-            // query with temporal filter
-            if (temporalFilterCriterion != null) {
-                setScrollableResult(valueDAO.getStreamingValuesFor(request, procedure, observableProperty,
-                        featureOfInterest, temporalFilterCriterion, session));
-            }
-            // query without temporal or indeterminate filters
-            else {
-                setScrollableResult(valueDAO.getStreamingValuesFor(request, procedure, observableProperty,
-                        featureOfInterest, session));
+            if (request instanceof GetObservationRequest) {
+                GetObservationRequest getObsReq = (GetObservationRequest)request;
+                // query with temporal filter
+                if (temporalFilterCriterion != null) {
+                    setScrollableResult(valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty,
+                            featureOfInterest, temporalFilterCriterion, session));
+                }
+                // query without temporal or indeterminate filters
+                else {
+                    setScrollableResult(valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty,
+                            featureOfInterest, session));
+                }
             }
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);

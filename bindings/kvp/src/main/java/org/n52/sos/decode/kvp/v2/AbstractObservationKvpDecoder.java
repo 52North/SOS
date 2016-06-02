@@ -30,23 +30,26 @@ package org.n52.sos.decode.kvp.v2;
 
 import org.n52.sos.decode.kvp.AbstractKvpDecoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.util.KvpHelper;
 
 public abstract class AbstractObservationKvpDecoder extends AbstractKvpDecoder {
     
-    private static final String RESULT_TYPE = "resultType";
-
     @Override
     protected boolean parseDefaultParameter(AbstractServiceRequest<?> request, String parameterValues,
             String parameterName) throws OwsExceptionReport {
-        if (parameterName.equalsIgnoreCase(RESULT_TYPE)) {
+        if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.resultType.name())) {
             if (request instanceof AbstractObservationRequest) {
                 ((AbstractObservationRequest)request).setResultModel(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
                 return true;
             }
-            return false;
+        }
+        // responseFormat (optional)
+        else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())) {
+            ((AbstractObservationRequest)request).setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
+            return true;
         }
         return super.parseDefaultParameter(request, parameterValues, parameterName);
     }

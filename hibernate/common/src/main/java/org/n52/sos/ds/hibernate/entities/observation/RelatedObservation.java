@@ -28,51 +28,43 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
-import com.google.common.base.Strings;
-
-public class RelatedObservation {
+public class RelatedObservation extends AbstractRelation {
     
-    private RelatedObservationId relatedObservationId;
-    
-    private String role;
+    private Observation<?> observation;
+    private Observation<?> relatedObservation; 
     
     /**
-     * @return the relatedObservationId
+     * @return the observation
      */
-    public RelatedObservationId getRelatedObservationId() {
-        return relatedObservationId;
+    public Observation<?> getObservation() {
+        return observation;
     }
 
     /**
-     * @param relatedObservationId the relatedObservationId to set
+     * @param observation
+     *            the observation to set
      */
-    public void setRelatedObservationId(RelatedObservationId relatedObservationId) {
-        this.relatedObservationId = relatedObservationId;
-    }
-
-    /**
-     * @return the role
-     */
-    public String getRole() {
-        return role;
-    }
-
-    /**
-     * @param role the role to set
-     */
-    public void setRole(String role) {
-        this.role = role;
-    }
-    
-    public boolean isSetRole() {
-        return !Strings.isNullOrEmpty(getRole());
+    public void setObservation(Observation<?> observation) {
+        this.observation = observation;
     }
 
     /**
      * @return the relatedObservation
      */
     public Observation<?> getRelatedObservation() {
-        return getRelatedObservationId().getRelatedObservation();
+        return relatedObservation;
+    }
+
+    /**
+     * @param relatedObservation
+     *            the relatedObservation to set
+     */
+    public void setRelatedObservation(Observation<?> relatedObservation) {
+        this.relatedObservation = relatedObservation;
+    }
+    
+    public boolean isSetRelatedObservation() {
+        return getRelatedObservation() != null;
     }
 
 }

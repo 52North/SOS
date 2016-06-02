@@ -66,7 +66,11 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
 
     public abstract boolean hasNextValue() throws OwsExceptionReport;
 
-    public abstract OmObservation nextSingleObservation() throws OwsExceptionReport;
+    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+        return nextSingleObservation(false);
+    }
+    
+    public abstract OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport;
     
     public Collection<OmObservation> mergeObservation() throws OwsExceptionReport {
         List<OmObservation> observations = getObservation();
@@ -103,9 +107,13 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     }
 
     public List<OmObservation> getObservation() throws OwsExceptionReport {
+        return getObservation(false);
+    }
+    
+    public List<OmObservation> getObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         List<OmObservation> observations = Lists.newArrayList();
         do {
-            observations.add(nextSingleObservation());
+            observations.add(nextSingleObservation(withIdentifierNameDesription));
         } while (hasNextValue());
         return observations;
     }

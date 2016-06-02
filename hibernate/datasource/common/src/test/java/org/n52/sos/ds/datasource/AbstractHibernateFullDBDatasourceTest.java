@@ -56,7 +56,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     
     private static final int CHANGEABLE_COUNT = 10;
     
-    private static final int MAX_COUNT = 16;
+    private static final int MAX_COUNT = 17;
 
     @Override
     protected void setUp() throws Exception {
@@ -113,6 +113,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
         boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
+        boolean seriesMetadata = keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY);
 
         assertTrue(keys.contains(AbstractHibernateDatasource.HOST_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.PORT_KEY));
@@ -129,6 +130,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
+        assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
 
         if (changeable) {
             assertEquals(CHANGEABLE_COUNT, keys.size());
@@ -138,6 +140,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             if (!concept) { counter--; }
             if (!featureConcept) { counter--; }
             if (!multiLanguage){ counter--; }
+            if (!seriesMetadata){ counter--; }
             if (settingsDefinitions){ counter--; }
             assertEquals(counter, keys.size());
         }

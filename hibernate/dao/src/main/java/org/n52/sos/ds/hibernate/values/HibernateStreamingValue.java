@@ -87,21 +87,24 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
             if (session == null) {
                 session = sessionHolder.getSession();
             }
-            TemporalReferencedLegacyObservation minTime;
-            TemporalReferencedLegacyObservation maxTime;
-            // query with temporal filter
-            if (temporalFilterCriterion != null) {
-                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
-                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+            if (request instanceof GetObservationRequest) {
+                GetObservationRequest getObsReq = (GetObservationRequest)request;
+                TemporalReferencedLegacyObservation minTime;
+                TemporalReferencedLegacyObservation maxTime;
+                // query with temporal filter
+                if (temporalFilterCriterion != null) {
+                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, temporalFilterCriterion, session);
+                }
+                // query without temporal or indeterminate filters
+                else {
+                    minTime = valueTimeDAO.getMinValueFor(getObsReq, procedure, observableProperty, featureOfInterest, session);
+                    maxTime = valueTimeDAO.getMaxValueFor(getObsReq, procedure, observableProperty, featureOfInterest, session);
+                }
+                setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
+                setResultTime(createResutlTime(maxTime));
+                setValidTime(createValidTime(minTime, maxTime));
             }
-            // query without temporal or indeterminate filters
-            else {
-                minTime = valueTimeDAO.getMinValueFor(request, procedure, observableProperty, featureOfInterest, session);
-                maxTime = valueTimeDAO.getMaxValueFor(request, procedure, observableProperty, featureOfInterest, session);
-            }
-            setPhenomenonTime(createPhenomenonTime(minTime, maxTime));
-            setResultTime(createResutlTime(maxTime));
-            setValidTime(createValidTime(minTime, maxTime));
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying times", owse);
         }
@@ -110,7 +113,9 @@ public abstract class HibernateStreamingValue extends AbstractHibernateStreaming
     @Override
     protected void queryUnit() {
         try {
-            setUnit(valueDAO.getUnit(request, procedure, observableProperty, featureOfInterest, session));
+            if (request instanceof GetObservationRequest) {
+                setUnit(valueDAO.getUnit((GetObservationRequest)request, procedure, observableProperty, featureOfInterest, session));
+            }
         } catch (OwsExceptionReport owse) {
             LOGGER.error("Error while querying unit", owse);
         }

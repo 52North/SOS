@@ -35,11 +35,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmObservableProperty;
@@ -110,6 +111,8 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
             sosObservation.setDecimalSeparator(getDecimalSeparator());
             sosObservation.setObservationConstellation(obsConst);
             checkForAdditionalObservationCreator(series, sosObservation);
+            addParameter(sosObservation, series);
+            // TODO
             final NilTemplateValue value = new NilTemplateValue();
             value.setUnit(obsProp.getUnit());
             sosObservation.setValue(new SingleObservationValue(new TimeInstant(), value));
@@ -194,12 +197,16 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
     }
     
     @SuppressWarnings("unchecked")
-    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) {
+    protected void checkForAdditionalObservationCreator(Series series, OmObservation sosObservation) throws CodedException {
         AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), series.getClass());
         if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
             AdditionalObservationCreator<Series> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, series);
+            creator.create(sosObservation, series, getSession());
         }
+    }
+    
+    private void addParameter(OmObservation observation, Series series) throws OwsExceptionReport {
+        new SeriesParameterAdder(observation, new SeriesParameterDAO().getSeriesParameter(series, getSession())).add();
     }
 
     private String queryUnit() {

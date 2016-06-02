@@ -62,6 +62,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.AbstractGML;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -260,6 +261,7 @@ public abstract class AbstractOmEncoderv20
         }
 
         setObservationIdentifier(sosObservation, xbObservation);
+        setObservationName(sosObservation, xbObservation);
         setDescription(sosObservation, xbObservation);
         setObservationType(sosObservation, xbObservation);
         setRelatedObservations(sosObservation, xbObservation);
@@ -321,6 +323,16 @@ public abstract class AbstractOmEncoderv20
         if (observation.isSetIdentifier()) {
             XmlObject xbId = encodeGML(observation.getIdentifierCodeWithAuthority());
             xb.addNewIdentifier().set(xbId);
+        }
+    }
+    
+    private void setObservationName(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+        // set observation identifier if available
+        if (observation.isSetIdentifier()) {
+            for (CodeType name : observation.getName()) {
+                XmlObject xbId = encodeGML(name);
+                xb.addNewName().set(xbId);
+            }
         }
     }
 

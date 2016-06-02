@@ -39,6 +39,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
@@ -73,7 +74,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
+    public HibernateChunkSeriesStreamingValue(AbstractObservationRequest request, long series) throws CodedException {
         super(request, series);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
@@ -123,10 +124,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate();
+                OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
                 AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
                 resultObject.addValuesToObservation(observation, getResponseFormat());
                 checkForModifications(observation);

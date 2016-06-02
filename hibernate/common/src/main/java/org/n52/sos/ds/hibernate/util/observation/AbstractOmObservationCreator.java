@@ -42,6 +42,7 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
@@ -58,6 +59,7 @@ import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -210,20 +212,25 @@ public abstract class AbstractOmObservationCreator {
         return feature;
     }
 
-    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) {
-        AdditionalObservationCreatorKey key = new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass());
-        if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
-            AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
-            creator.create(sosObservation, hObservation);
-        } else {
-            AdditionalObservationCreatorKey key2 = new AdditionalObservationCreatorKey(null, hObservation.getClass());
-            if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key2)) {
-                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key2);
-                creator.add(sosObservation, hObservation);
-            }
+    protected void checkForAdditionalObservationCreator(Observation<?> hObservation, OmObservation sosObservation) throws CodedException {
+        for (AdditionalObservationCreatorKey key : getAdditionalObservationCreatorKeys(hObservation)) {
+            if (AdditionalObservationCreatorRepository.getInstance().hasAdditionalObservationCreatorFor(key)) {
+                AdditionalObservationCreator<?> creator = AdditionalObservationCreatorRepository.getInstance().get(key);
+                creator.create(sosObservation, hObservation, getSession());
+                break;
+            } 
         }
     }
     
+    private List<AdditionalObservationCreatorKey> getAdditionalObservationCreatorKeys(Observation<?> hObservation) {
+        List<AdditionalObservationCreatorKey> keys = Lists.newArrayList();
+        keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass()));
+        keys.add(new AdditionalObservationCreatorKey(getResponseFormat(), hObservation.getClass().getSuperclass()));
+        keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass()));
+        keys.add(new AdditionalObservationCreatorKey(null, hObservation.getClass().getSuperclass()));
+        return keys;
+    }
+
     public static String checkVersion(AbstractObservationRequest request) {
         if (request != null) {
             return request.getVersion();

@@ -76,6 +76,17 @@ public class DaoFactory {
                     .withMessage("Implemented series DAO is missing!");
         }
     }
+    
+    public boolean isSeriesDAO() {
+        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
+            return true;
+        } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
+            return true;
+        } else {
+           return false;
+        }
+    }
+    
 
     /**
      * Get the currently supported Hibernate Observation data access

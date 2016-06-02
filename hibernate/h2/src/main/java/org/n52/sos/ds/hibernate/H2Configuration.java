@@ -139,6 +139,8 @@ public class H2Configuration {
             resources.add("/mapping/series/observation/Observation.hbm.xml");
             resources.add("/mapping/series/observation/TemporalReferencedObservation.hbm.xml");
             resources.add("/mapping/series/observation/ContextualReferencedObservation.hbm.xml");
+            resources.add("/mapping/parameter/feature/FeatureParameterValues.hbm.xml");
+            resources.add("/mapping/parameter/observation/ParameterValues.hbm.xml");
             return resources;
         }
     };

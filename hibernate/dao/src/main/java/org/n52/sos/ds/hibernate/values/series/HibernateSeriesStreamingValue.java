@@ -41,6 +41,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
+    public HibernateSeriesStreamingValue(AbstractObservationRequest request, long series) throws CodedException {
         super(request);
         this.series.add(series);
         this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();

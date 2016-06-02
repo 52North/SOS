@@ -717,9 +717,20 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
        return cloneTemplate(new OmObservation());
     }
     
+    public OmObservation cloneTemplate(boolean withIdentifierNameDesription) {
+        OmObservation clonedTemplate = cloneTemplate(new OmObservation());
+        if (withIdentifierNameDesription) {
+            clonedTemplate.setIdentifier(this.getIdentifier());
+            clonedTemplate.setName(this.getName());
+            clonedTemplate.setDescription(this.getDescription());
+        }
+        return clonedTemplate;
+     }
+    
     protected OmObservation cloneTemplate(OmObservation clone) {
         clone.setObservationConstellation(this.getObservationConstellation());
         clone.setParameter(this.getParameter());
+        clone.setRelatedObservations(this.getRelatedObservations());
         clone.setResultType(this.getResultType());
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());
@@ -741,6 +752,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
         copyOf.setTupleSeparator(getTupleSeparator());
         copyOf.setDecimalSeparator(getDecimalSeparator());
         copyOf.setResultQuality(getResultQuality());
+        copyOf.setRelatedObservations(getRelatedObservations());
         copyOf.setAdditionalMergeIndicator(getAdditionalMergeIndicator());
         return copyOf;
     } 

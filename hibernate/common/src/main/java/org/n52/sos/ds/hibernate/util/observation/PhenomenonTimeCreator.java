@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -38,12 +39,26 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 public class PhenomenonTimeCreator {
 
     private TemporalReferencedObservation hObservation;
+    private Series hSeries;
 
     public PhenomenonTimeCreator(TemporalReferencedObservation hObservation) {
         this.hObservation = hObservation;
     }
+    
+    public PhenomenonTimeCreator(Series hSeries) {
+        this.hSeries = hSeries;
+    }
 
     public Time create() {
+        if (hObservation != null) {
+            return createFromObservation();
+        } else if (hSeries != null && hSeries.isSetFirstLastTime()) {
+            return createFromSeries();
+        }
+        return null;
+    }
+    
+    private Time createFromObservation() {
         // create time element
         final DateTime phenStartTime = new DateTime(hObservation.getPhenomenonTimeStart(), DateTimeZone.UTC);
         DateTime phenEndTime;
@@ -54,7 +69,14 @@ public class PhenomenonTimeCreator {
         }
         return createTime(phenStartTime, phenEndTime);
     }
-    
+
+    private Time createFromSeries() {
+        // create time element
+        final DateTime phenStartTime = new DateTime(hSeries.getFirstTimeStamp(), DateTimeZone.UTC);
+        final DateTime phenEndTime = new DateTime(hSeries.getLastTimeStamp(), DateTimeZone.UTC);
+        return createTime(phenStartTime, phenEndTime);
+    }
+
     /**
      * Create {@link Time} from {@link DateTime}s
      *

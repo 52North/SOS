@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
@@ -51,6 +52,12 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Series> getSeries(GetObservationByIdRequest request, Session session) throws OwsExceptionReport {
+        return getSeriesCriteria(request, session).list();
     }
 
     @Override

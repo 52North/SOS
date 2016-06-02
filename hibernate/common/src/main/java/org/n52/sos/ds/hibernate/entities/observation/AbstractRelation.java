@@ -28,44 +28,61 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
-import java.io.Serializable;
+import com.google.common.base.Strings;
 
-public class RelatedObservationId implements Serializable {
+public class AbstractRelation {
 
-    private static final long serialVersionUID = -5434701943309191104L;
-
-    private Observation<?> observation;
-
-    private Observation<?> relatedObservation;
-
+    private long relationId;
+    private String role;
+    private String relatedUrl;
+    
     /**
-     * @return the observation
+     * @return the relationId
      */
-    public Observation<?> getObservation() {
-        return observation;
+    public long getRelationId() {
+        return relationId;
     }
 
     /**
-     * @param observation
-     *            the observation to set
+     * @param relationId the relationId to set
      */
-    public void setObservation(Observation<?> observation) {
-        this.observation = observation;
+    public void setRelationId(long relationId) {
+        this.relationId = relationId;
+    }
+    
+    /**
+     * @return the role
+     */
+    public String getRole() {
+        return role;
     }
 
     /**
-     * @return the relatedObservation
+     * @param role the role to set
      */
-    public Observation<?> getRelatedObservation() {
-        return relatedObservation;
+    public void setRole(String role) {
+        this.role = role;
+    }
+    
+    public boolean isSetRole() {
+        return !Strings.isNullOrEmpty(getRole());
+    }
+    
+    /**
+     * @return the relatedUrl
+     */
+    public String getRelatedUrl() {
+        return relatedUrl;
     }
 
     /**
-     * @param relatedObservation
-     *            the relatedObservation to set
+     * @param relatedUrl the relatedUrl to set
      */
-    public void setRelatedObservation(Observation<?> relatedObservation) {
-        this.relatedObservation = relatedObservation;
+    public void setRelatedUrl(String relatedUrl) {
+        this.relatedUrl = relatedUrl;
     }
-
+    
+    public boolean isSetRelatedUrl() {
+        return !Strings.isNullOrEmpty(getRelatedUrl());
+    }
 }

@@ -22,7 +22,7 @@
             	<comment>Parameter name</comment>
             </column>
         </property>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureBooleanValuedParameter"
+        <!-- <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureBooleanValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
                          table="booleanFeatParamValue"
                          check="value in ('T','F')">
@@ -137,6 +137,6 @@
                     <comment>XML parameter value</comment>
                 </column>
             </property>
-        </joined-subclass>
+        </joined-subclass> -->
     </class>
 </hibernate-mapping>

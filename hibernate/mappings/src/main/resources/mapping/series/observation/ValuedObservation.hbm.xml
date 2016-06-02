@@ -171,7 +171,7 @@
             </key>
             <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.observation.Parameter" />
         </set>
-        <set name="relatedObservations" table="relatedobservations" lazy="true" access="field" fetch="select" cascade="all">
+        <set name="relatedObservations" table="relatedobservations" access="field" cascade="all">
 	        <key>
 	            <column name="observationId" not-null="true" index="relatedObsObsIdx" />
 	        </key>
@@ -354,7 +354,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.GeologyLogCoverageValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="geologyLocCoverageValue">
+                         table="geologyLogCoverageValue">
            <comment>Value table for GeologyLogCoverage observation</comment>
         	<key foreign-key="observationGeoLogCovValueFk">
 	        	<column name="observationId" >

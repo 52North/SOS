@@ -29,16 +29,24 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.util.Constants;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -50,7 +58,7 @@ import org.n52.sos.ds.hibernate.entities.Unit;
  * @since 4.0.0
  *
  */
-public class Series
+public class Series extends AbstractIdentifierNameDescriptionEntity
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,

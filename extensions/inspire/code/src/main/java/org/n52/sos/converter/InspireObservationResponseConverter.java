@@ -51,8 +51,11 @@ import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
+import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.AbstractServiceResponse;
+import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
@@ -92,9 +95,9 @@ public class InspireObservationResponseConverter
     private static Set<RequestResponseModifierKeyType> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<GetObservationRequest, GetObservationResponse> requestResponseMap = Maps.newHashMap();
-
+        Map<AbstractObservationRequest, AbstractObservationResponse> requestResponseMap = Maps.newHashMap();
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
+        requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
         Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
@@ -115,8 +118,8 @@ public class InspireObservationResponseConverter
 
     @Override
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
-        if (request instanceof GetObservationRequest) {
-            GetObservationRequest req = (GetObservationRequest) request;
+        if (request instanceof AbstractObservationRequest) {
+            AbstractObservationRequest req = (AbstractObservationRequest) request;
             if (req.isSetResponseFormat() && InspireOMSOConstants.NS_OMSO_30.equals(req.getResponseFormat())) {
                 if (req.isSetResultModel()) {
                     checkRequestedResultType(req.getResultModel());
@@ -129,8 +132,8 @@ public class InspireObservationResponseConverter
     @Override
     public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws OwsExceptionReport {
-        if (response instanceof GetObservationResponse) {
-            GetObservationResponse resp = (GetObservationResponse) response;
+        if (response instanceof AbstractObservationResponse) {
+            AbstractObservationResponse resp = (AbstractObservationResponse) response;
             if (InspireOMSOConstants.NS_OMSO_30.equals(resp.getResponseFormat())
                     && CollectionHelper.isNotEmpty(resp.getObservationCollection())) {
                 if (resp.hasStreamingData()) {
@@ -144,7 +147,7 @@ public class InspireObservationResponseConverter
     }
 
     /**
-     * Check the {@link GetObservationResponse} with {@link StreamingValue}
+     * Check the {@link AbstractObservationResponse} with {@link StreamingValue}
      * 
      * @param request
      *            The request
@@ -153,16 +156,17 @@ public class InspireObservationResponseConverter
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    private void checkForStreamingData(AbstractServiceRequest<?> request, GetObservationResponse response)
+    private void checkForStreamingData(AbstractServiceRequest<?> request, AbstractObservationResponse response)
             throws OwsExceptionReport {
         Map<String, List<OmObservation>> map = Maps.newHashMap();
         for (OmObservation omObservation : response.getObservationCollection()) {
             if (omObservation.getValue() instanceof StreamingValue<?>) {
                 if (checkRequestedObservationTypeForOffering(omObservation, request)) {
-                    List<OmObservation> observations = ((StreamingValue<?>) omObservation.getValue()).getObservation();
-                    for (OmObservation observation : observations) {
-                        if (CollectionHelper.isNotEmpty(observations)) {
-                            String observationType = checkForObservationTypeForStreaming(observation, request);
+                    boolean withIdentifierNameDesription = checkForObservationTypeForMerging(omObservation, request);
+                    String observationType = checkForObservationTypeForStreaming(omObservation, request);
+                    List<OmObservation> observations = ((StreamingValue<?>) omObservation.getValue()).getObservation(withIdentifierNameDesription);
+                    if (CollectionHelper.isNotEmpty(observations)) {
+                        for (OmObservation observation : observations) {
                             if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
                                 putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
                                         convertToProfileObservations(observation));
@@ -191,25 +195,36 @@ public class InspireObservationResponseConverter
     }
 
     /**
-     * Check the {@link GetObservationResponse} with default values
+     * Check the {@link AbstractObservationResponse} with default values
      * 
      * @param request
      *            The request
      * @param response
      *            The response
+     * @throws CodedException 
      */
-    private void checkForNonStreamingData(AbstractServiceRequest<?> request, GetObservationResponse response) {
+    private void checkForNonStreamingData(AbstractServiceRequest<?> request, AbstractObservationResponse response) throws CodedException {
         Map<String, List<OmObservation>> map = Maps.newHashMap();
-        String requestedObservationType = ((AbstractObservationRequest) request).getResultModel();
-        for (OmObservation obs : response.getObservationCollection()) {
-            // TODO check for requested type
-            if (obs.isSetHeightDepthParameter()) {
-                putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION, convertToProfileObservations(obs));
-            } else if (obs.isSetSpatialFilteringProfileParameter()) {
-                putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
-                        convertToTrajectoryObservations(obs));
-            } else {
-                putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION, convertToPointObservations(obs));
+        for (OmObservation observation : response.getObservationCollection()) {
+            if (checkRequestedObservationTypeForOffering(observation, request)) {
+                String observationType = checkForObservationTypeForStreaming(observation, request);
+                if (InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION.equals(observationType)) {
+                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_PROFILE_OBSERVATION,
+                            convertToProfileObservations(observation));
+                } else if (InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType)) {
+                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION,
+                            convertToTrajectoryObservations(observation));
+                } else if (InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION.equals(observationType)) {
+                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_MULTI_POINT_OBSERVATION,
+                            convertToMultiPointObservations(observation));
+                } else if (InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION
+                        .equals(observationType)) {
+                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION,
+                            convertToPointTimeSeriesObservations(observation));
+                } else if (InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION.equals(observationType)) {
+                    putOrAdd(map, InspireOMSOConstants.OBS_TYPE_POINT_OBSERVATION,
+                            convertToPointObservations(observation));
+                }
             }
         }
         response.setObservationCollection(mergeObservations(map));
@@ -458,6 +473,12 @@ public class InspireObservationResponseConverter
             return checkForObservationType(observation, observationType);
         }
         return true;
+    }
+
+    private boolean checkForObservationTypeForMerging(OmObservation observation, AbstractServiceRequest<?> request) {
+        String observationType = checkForObservationTypeForStreaming(observation, request);
+        return InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION.equals(observationType)
+                || InspireOMSOConstants.OBS_TYPE_TRAJECTORY_OBSERVATION.equals(observationType);
     }
 
     /**

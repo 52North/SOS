@@ -35,7 +35,7 @@ import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingObservation;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class EReportingDaoHelper {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EReportingDaoHelper.class);
 
-    public static void addValidityAndVerificationRestrictions(Criteria c, GetObservationRequest request) throws InvalidParameterValueException {
+    public static void addValidityAndVerificationRestrictions(Criteria c, AbstractObservationRequest request) throws InvalidParameterValueException {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E1B.equals(flow)) {

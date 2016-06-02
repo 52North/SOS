@@ -35,6 +35,7 @@ import org.hibernate.Session;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 
@@ -48,10 +49,15 @@ public class XmlStringDescriptionCreationStrategy implements
     @Override
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription desc = readXml(p.getDescriptionFile());
-        desc.setIdentifier(p.getIdentifier());
-        desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
-        return desc;
+        try {
+            SosProcedureDescription desc = readXml(p.getDescriptionFile());
+            desc.setIdentifier(p.getIdentifier());
+            desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
+            return desc;
+        } catch (OwsExceptionReport owse) {
+            return new SosProcedureDescriptionUnknowType(p.getIdentifier(),
+                    p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), p.getDescriptionFile());
+        }
     }
 
     @Override

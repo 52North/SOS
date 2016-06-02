@@ -128,5 +128,30 @@
                 <comment>Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid</comment>
             </column>
         </many-to-one>
+        <property name="identifier" type="string">
+            <column name="identifier" not-null="false" unique-key="seriesIdentifierUK">
+                <comment>The identifier of the series, gml:identifier. Unique</comment>
+            </column>
+        </property>
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="seriesCodespaceIdentifierFk">
+            <column name="codespace">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="name" type="string">
+            <column name="name">
+                <comment>The name of the series, gml:name. Optional</comment>
+            </column>
+        </property>
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="seriesCodespaceNameFk">
+            <column name="codespaceName">
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+            </column>
+        </many-to-one>
+        <property name="description" type="string">
+            <column name="description">
+                <comment>Description of the series, gml:description. Optional</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

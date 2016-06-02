@@ -42,6 +42,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -116,7 +117,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String TRANSACTIONAL_KEY = "sos.transactional";
 
     protected static final boolean TRANSACTIONAL_DEFAULT_VALUE = true;
-
+    
     protected static final String MULTILINGUALISM_TITLE = "Multilingualism support";
 
     protected static final String MULTILINGUALISM_DESCRIPTION = "Should the database support multilingualism?";
@@ -124,6 +125,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected static final String MULTILINGUALISM_KEY = "sos.language";
 
     protected static final boolean MULTILINGUALISM_DEFAULT_VALUE = false;
+    
+    protected static final String SERIES_METADATA_TITLE = "Series metadata support";
+
+    protected static final String SERIES_METADATA_DESCRIPTION = "Should the database support series metadata? This holds global data for observations of this series.";
+
+    protected static final String SERIES_METADATA_KEY = "sos.series.metadata";
+
+    protected static final boolean SERIES_METADATA_DEFAULT_VALUE = false;
 
     protected static final String USERNAME_KEY = HibernateConstants.CONNECTION_USERNAME;
 
@@ -157,7 +166,10 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     private final BooleanSettingDefinition multilingualismDefinition = createMultilingualismDefinition();
 
     private boolean multilingualismDatasource = true;
+    
+    private final BooleanSettingDefinition seriesMetadataDefiniton = createSeriesMetadataDefinition();
 
+    private boolean seriesMetadataDatasource = true;
     /**
      * Create settings definition for username
      *
@@ -215,11 +227,22 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setTitle(TRANSACTIONAL_TITLE).setDescription(TRANSACTIONAL_DESCRIPTION).setGroup(ADVANCED_GROUP)
                 .setOrder(SettingDefinitionProvider.ORDER_4).setKey(TRANSACTIONAL_KEY);
     }
-
+    
     protected BooleanSettingDefinition createMultilingualismDefinition() {
         return new BooleanSettingDefinition().setDefaultValue(MULTILINGUALISM_DEFAULT_VALUE)
                 .setTitle(MULTILINGUALISM_TITLE).setDescription(MULTILINGUALISM_DESCRIPTION).setGroup(ADVANCED_GROUP)
                 .setOrder(SettingDefinitionProvider.ORDER_5).setKey(MULTILINGUALISM_KEY);
+    }
+    
+    /**
+     * Create settings definition for transactional support
+     *
+     * @return Transactional support settings definition
+     */
+    protected BooleanSettingDefinition createSeriesMetadataDefinition() {
+        return new BooleanSettingDefinition().setDefaultValue(SERIES_METADATA_DEFAULT_VALUE)
+                .setTitle(SERIES_METADATA_TITLE).setDescription(SERIES_METADATA_DESCRIPTION).setGroup(ADVANCED_GROUP)
+                .setOrder(SettingDefinitionProvider.ORDER_6).setKey(SERIES_METADATA_KEY);
     }
 
     /**
@@ -231,16 +254,16 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return new BooleanSettingDefinition().setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE)
                 .setTitle(PROVIDED_JDBC_DRIVER_TITLE).setDescription(PROVIDED_JDBC_DRIVER_DESCRIPTION)
                 .setDefaultValue(PROVIDED_JDBC_DRIVER_DEFAULT_VALUE).setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_6).setKey(PROVIDED_JDBC_DRIVER_KEY);
+                .setOrder(SettingDefinitionProvider.ORDER_9).setKey(PROVIDED_JDBC_DRIVER_KEY);
     }
-
+    
     /**
      * Create settings definition for JDBC batch size
      *
      * @return JDBC batch size settings definition
      */
     protected IntegerSettingDefinition createBatchSizeDefinition() {
-        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_10)
                 .setKey(BATCH_SIZE_KEY).setTitle(BATCH_SIZE_TITLE).setDescription(BATCH_SIZE_DESCRIPTION)
                 .setDefaultValue(BATCH_SIZE_DEFAULT_VALUE);
     }
@@ -256,7 +279,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         CustomConfiguration config = new CustomConfiguration();
         config.configure("/sos-hibernate.cfg.xml");
         config.addDirectory(resource(HIBERNATE_MAPPING_CORE_PATH));
-        config.addDirectory(resource(getDatabaseConceptMappingDirectory(settings)));
+        for (String resource : getDatabaseConceptMappingDirectory(settings)) {
+            config.addDirectory(resource(resource));
+        }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
             config.addDirectory(resource(featureConceptMappingDirectory));
@@ -271,6 +296,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Boolean multiLanguage = (Boolean) settings.get(this.multilingualismDefinition.getKey());
             if (multiLanguage != null && multiLanguage.booleanValue()) {
                 config.addDirectory(resource(HIBERNATE_MAPPING_I18N_PATH));
+            }
+        }
+        DatabaseConcept databaseConcept = getDatabaseConcept(settings);
+        if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+            Boolean t = (Boolean) settings.get(this.seriesMetadataDefiniton.getKey());
+            if (t != null && t) {
+                config.addDirectory(resource(HIBERNATE_MAPPING_SERIES_METADATA_PATH));
             }
         }
         if (isSetSchema(settings)) {
@@ -306,7 +339,43 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         }
     }
 
-    protected String getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
+    protected Set<String> getDatabaseConceptMappingDirectory(Map<String, Object> settings) {
+//        String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
+//        if (concept == null || concept.isEmpty()) {
+//            String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
+//            concept = DatabaseConcept.SERIES_CONCEPT.name();
+//            if (hibernateDirectories.contains(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH)) {
+//                concept = DatabaseConcept.EREPORTING_CONCEPT.name();
+//            } else if (hibernateDirectories.contains(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH)) {
+//                concept = DatabaseConcept.OLD_CONCEPT.name();
+//            }
+//            LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
+//                    + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
+//                    databaseConceptDefinition.getKey(),
+//                    HibernateDatasourceConstants.HIBERNATE_DIRECTORY,
+//                    concept,
+//                    databaseConceptDefinition.getKey(),
+//                    concept);
+//        }
+        HashSet<String> mappings = Sets.newHashSet(HIBERNATE_MAPPING_PARAMETER_FEATURE_PATH, HIBERNATE_MAPPING_PARAMETER_OBSERVATION_PATH);
+        switch (getDatabaseConcept(settings)) {
+            case SERIES_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                break;
+            case EREPORTING_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH);
+                break;
+            case OLD_CONCEPT:
+                mappings.add(HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH);
+                break;
+            default:
+                mappings.add(HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH);
+                break;
+        }
+        return mappings;
+    }
+    
+    private DatabaseConcept getDatabaseConcept(Map<String, Object> settings) {
         String concept = (String)settings.get(this.databaseConceptDefinition.getKey());
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
@@ -324,16 +393,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     databaseConceptDefinition.getKey(),
                     concept);
         }
-        switch (DatabaseConcept.valueOf(concept)) {
-        case SERIES_CONCEPT:
-            return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;
-        case EREPORTING_CONCEPT:
-            return HIBERNATE_MAPPING_EREPORTING_CONCEPT_OBSERVATION_PATH;
-        case OLD_CONCEPT:
-            return HIBERNATE_MAPPING_OLD_CONCEPT_OBSERVATION_PATH;
-        default:
-            return HIBERNATE_MAPPING_SERIES_CONCEPT_OBSERVATION_PATH;
-        }
+        return DatabaseConcept.valueOf(concept);
     }
 
     /**
@@ -649,8 +709,9 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     protected void addMappingFileDirectories(Map<String, Object> settings, Properties p) {
         StringBuilder builder = new StringBuilder();
         builder.append(HIBERNATE_MAPPING_CORE_PATH);
-        builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
-                getDatabaseConceptMappingDirectory(settings));
+        for (String path : getDatabaseConceptMappingDirectory(settings)) {
+            builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(path);
+        }
         String featureConceptMappingDirectory = getFeatureConceptMappingDirectory(settings);
         if (!Strings.isNullOrEmpty(featureConceptMappingDirectory)) {
             builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(
@@ -666,6 +727,14 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
             Boolean t = (Boolean) settings.get(multilingualismDefinition.getKey());
             if (t != null && t) {
                 builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_I18N_PATH);
+            }
+        }
+        DatabaseConcept databaseConcept = getDatabaseConcept(settings);
+        if (isSeriesMetadataDatasource() && (DatabaseConcept.SERIES_CONCEPT.equals(databaseConcept)
+                || DatabaseConcept.EREPORTING_CONCEPT.equals(databaseConcept))) {
+            Boolean t = (Boolean) settings.get(seriesMetadataDefiniton.getKey());
+            if (t != null && t) {
+                builder.append(SessionFactoryProvider.PATH_SEPERATOR).append(HIBERNATE_MAPPING_SERIES_METADATA_PATH);
             }
         }
         p.put(SessionFactoryProvider.HIBERNATE_DIRECTORY, builder.toString());
@@ -708,6 +777,28 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected BooleanSettingDefinition getMulitLanguageDefiniton() {
         return multilingualismDefinition;
+    }
+    
+    /**
+     * Check if properties contains series metadata mapping path
+     *
+     * @param properties
+     *            Datasource properties
+     * @return <code>true</code>, if properties contains series metadata mapping
+     *         path
+     */
+    protected boolean isSeriesMetadata(Properties properties) {
+        String p = properties.getProperty(SessionFactoryProvider.HIBERNATE_DIRECTORY);
+        return p == null || p.contains(HIBERNATE_MAPPING_SERIES_METADATA_PATH);
+    }
+
+    /**
+     * Get series metadata setting definition
+     *
+     * @return Series metadata setting definition
+     */
+    protected BooleanSettingDefinition getSeriesMetadataDefiniton() {
+        return seriesMetadataDefiniton;
     }
 
     private String[] concat(String[] first, String[]... rest) {
@@ -774,7 +865,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
     public void setTransactional(boolean transactionalDatasource) {
         this.transactionalDatasource = transactionalDatasource;
     }
-
+    
     /**
      * @return the multi language
      */
@@ -788,6 +879,25 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
      */
     public void setMultiLangugage(boolean multiLanguageDatasource) {
         this.multilingualismDatasource = multiLanguageDatasource;
+    }
+
+    /**
+     * Check if the datasource is series metadata
+     *
+     * @return <code>true</code>, if it is a seriesMetadataDatasource
+     */
+    public boolean isSeriesMetadataDatasource() {
+        return seriesMetadataDatasource;
+    }
+
+    /**
+     * Set series metadata datasource flag
+     *
+     * @param seriesMetadataDatasource
+     *            the seriesMetadataDatasource flag to set
+     */
+    public void setSeriesMetadataDatasource(boolean seriesMetadataDatasource) {
+        this.seriesMetadataDatasource = seriesMetadataDatasource;
     }
 
     /**

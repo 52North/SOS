@@ -113,7 +113,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
     }
 
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
             OmObservation observation;
             Object resultObject = result.get()[0];

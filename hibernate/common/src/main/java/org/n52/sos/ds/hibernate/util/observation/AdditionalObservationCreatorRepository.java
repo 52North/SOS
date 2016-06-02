@@ -83,7 +83,7 @@ public class AdditionalObservationCreatorRepository extends AbstractConfiguringS
     }
 
     public boolean hasAdditionalObservationCreatorFor(AdditionalObservationCreatorKey key) {
-            return additionalObservationCreator.containsKey(key);
+        return additionalObservationCreator.containsKey(key);
     }
 
     public static AdditionalObservationCreatorRepository getInstance() {

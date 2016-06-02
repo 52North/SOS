@@ -28,51 +28,17 @@
  */
 package org.n52.sos.response;
 
-import java.util.List;
-
-import org.n52.sos.ogc.om.AbstractStreaming;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
-
-import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
  * 
  */
-public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse {
+public class GetObservationResponse extends AbstractObservationResponse {
     
     @Override
     public String getOperationName() {
         return SosConstants.Operations.GetObservation.name();
-    }
-    
-    @Override
-    public boolean hasStreamingData() {
-        OmObservation observation = getFirstObservation();
-        if (observation != null) {
-            return observation.getValue() instanceof AbstractStreaming;
-        }
-        return false;
-    }
-
-    @Override
-    public void mergeStreamingData() throws OwsExceptionReport {
-        List<OmObservation> observations = Lists.newArrayList();
-        if (hasStreamingData()) {
-            for (OmObservation observation : getObservationCollection()) {
-                AbstractStreaming values = (AbstractStreaming) observation.getValue();
-                if (values.hasNextValue()) {
-                    if (isSetMergeObservation()) { 
-                        observations.addAll(values.mergeObservation());
-                    } else {
-                        observations.addAll(values.getObservation());
-                    }
-                }
-            }
-        }
-        setObservationCollection(observations);
     }
     
 }

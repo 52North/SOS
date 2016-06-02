@@ -100,17 +100,23 @@ public class SQLScriptGenerator {
         switch (selection) {
         case 1:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/parameter").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/metadata").toURI()));
             break;
         case 2:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
             configuration
                     .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/parameter").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/metadata").toURI()));
             break;
         case 3:
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/core").toURI()));
             configuration
                     .addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/transactional").toURI()));
             configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/i18n").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/parameter").toURI()));
+            configuration.addDirectory(new File(SQLScriptGenerator.class.getResource("/mapping/metadata").toURI()));
             break;
         default:
             throw new Exception("The entered value is invalid!");

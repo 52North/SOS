@@ -121,12 +121,12 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+    
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate();
+                OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
                 AbstractValuedLegacyObservation<?> resultObject = nextEntity();
                 resultObject.addValuesToObservation(observation, getResponseFormat());
 //                addValuesToObservation(observation, resultObject);
@@ -153,21 +153,22 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
             session = sessionHolder.getSession();
         }
         try {
-            // query with temporal filter
-            final Collection<ValuedObservation<?>> valuesResult;
-            if (temporalFilterCriterion != null) {
-                valuesResult =
-                        valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
-                                temporalFilterCriterion, chunkSize, currentRow, session);
+            if (request instanceof GetObservationRequest) {
+                // query with temporal filter
+                GetObservationRequest getObsReq = (GetObservationRequest)request;
+                if (temporalFilterCriterion != null) {
+                    setObservationValuesResult(
+                            valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty, featureOfInterest,
+                                    temporalFilterCriterion, chunkSize, currentRow, session));
+                }
+                // query without temporal or indeterminate filters
+                else {
+                    setObservationValuesResult(
+                            valueDAO.getStreamingValuesFor(getObsReq, procedure, observableProperty, featureOfInterest,
+                                    chunkSize, currentRow, session));
+                }
+                currentRow += chunkSize;
             }
-            // query without temporal or indeterminate filters
-            else {
-                valuesResult =
-                        valueDAO.getStreamingValuesFor(request, procedure, observableProperty, featureOfInterest,
-                                chunkSize, currentRow, session);
-            }
-            currentRow += chunkSize;
-            setObservationValuesResult(valuesResult);
         } catch (final HibernateException he) {
             sessionHolder.returnSession(session);
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")

@@ -40,9 +40,14 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
+import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -74,18 +79,12 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservationOmObservationCreator.class);
 
     private final Collection<? extends Observation<?>> observations;
-
     private final AbstractObservationRequest request;
-
     private final Map<String, AbstractFeature> features = Maps.newHashMap();
-
     private final Map<String, AbstractPhenomenon> observedProperties = Maps.newHashMap();
-
     private final Map<String, SosProcedureDescription> procedures = Maps.newHashMap();
-
-    
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
-
+    private final Map<Long, List<Parameter>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
 
 
@@ -197,8 +196,16 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     }
 
     private void addParameter(OmObservation observation, Observation<?> hObservation) throws OwsExceptionReport {
+        if (hObservation instanceof AbstractSeriesObservation) {
+            Series series = ((AbstractSeriesObservation) hObservation).getSeries();
+            if (!seriesParameter.containsKey(series.getSeriesId())) {
+                seriesParameter.put(series.getSeriesId(), new SeriesParameterDAO().getSeriesParameter(series, getSession()));
+            }
+            if (!seriesParameter.get(series.getSeriesId()).isEmpty()) {
+                new SeriesParameterAdder(observation, seriesParameter.get(series.getSeriesId())).add();
+            }
+        }
         new ParameterAdder(observation, hObservation).add();
-        
     }
 
     private void checkOrSetObservablePropertyUnit(AbstractPhenomenon phen, String unit) {

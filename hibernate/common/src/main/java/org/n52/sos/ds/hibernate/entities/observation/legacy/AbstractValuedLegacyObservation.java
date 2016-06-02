@@ -45,6 +45,7 @@ import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterAdder;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ds.hibernate.util.observation.RelatedObservationAdder;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
+import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
@@ -151,14 +152,21 @@ public abstract class AbstractValuedLegacyObservation<T>
     public OmObservation addValuesToObservation(OmObservation observation, String responseFormat)
             throws OwsExceptionReport {
         observation.setObservationID(Long.toString(getObservationId()));
-        if (isSetIdentifier()) {
+        if (!observation.isSetIdentifier() && isSetIdentifier()) {
             CodeWithAuthority identifier = new CodeWithAuthority(getIdentifier());
             if (isSetCodespace()) {
                 identifier.setCodeSpace(getCodespace().getCodespace());
             }
             observation.setIdentifier(identifier);
         }
-        if (isSetDescription()) {
+        if (!observation.isSetName() && isSetDescription()) {
+            CodeType name = new CodeType(getName());
+            if (isSetCodespace()) {
+                name.setCodeSpace(getCodespace().getCodespace());
+            }
+            observation.setName(name);
+        }
+        if (!observation.isSetDescription() && isSetDescription()) {
             observation.setDescription(getDescription());
         }
         Value<?> value = accept(new ObservationValueCreator());

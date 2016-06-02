@@ -72,11 +72,15 @@ public class RelatedObservationAdder {
                     if (hRelatedObservation.isSetRole()) {
                         role.setHref(hRelatedObservation.getRole());
                     }
-                    if (hRelatedObservation.getRelatedObservation().isSetIdentifier()) {
-                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getRelatedObservation().getIdentifier()))));
-                    } else if (hRelatedObservation instanceof ContextualReferencedObservation) {
-                        // TODO check if this should be set because result may not be a unique observation.
-                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl((ContextualReferencedObservation)hRelatedObservation))));
+                    if (hRelatedObservation.isSetRelatedUrl()) {
+                        observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(hRelatedObservation.getRelatedUrl())));
+                    } else {
+                        if (hRelatedObservation.getRelatedObservation().isSetIdentifier()) {
+                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationByIdUrl(hRelatedObservation.getRelatedObservation().getIdentifier()))));
+                        } else if (hRelatedObservation instanceof ContextualReferencedObservation) {
+                            // TODO check if this should be set because result may not be a unique observation.
+                            observation.addRelatedObservation(new OmObservationContext(role, new ReferenceType(createGetObservationUrl((ContextualReferencedObservation)hRelatedObservation))));
+                        }
                     }
                 }
             }

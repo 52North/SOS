@@ -36,6 +36,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.http.HTTPStatus;
 
@@ -61,7 +62,7 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *            Datasource series id
      * @throws CodedException 
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
+    public HibernateScrollableSeriesStreamingValue(AbstractObservationRequest request, long series) throws CodedException {
         super(request, series);
     }
 
@@ -103,9 +104,9 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     }
     
     @Override
-    public OmObservation nextSingleObservation() throws OwsExceptionReport {
+    public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
-            OmObservation observation = observationTemplate.cloneTemplate();
+            OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
             AbstractValuedLegacyObservation<?> resultObject = nextEntity();
             resultObject.addValuesToObservation(observation, getResponseFormat());
 //            addValuesToObservation(observation, resultObject);

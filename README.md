@@ -1,4 +1,103 @@
 # 52°North SOS [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService)
+
+The 52°North SOS is a reference implementation of the
+[OGC Sensor Observation Service specification (version 2.0)][2]. It was
+implemented during the [OGC Web Services Testbed,  Phase 9 (OWS-9)][3] and
+tested to be compliant to this specification within the [OGC CITE testing][4]
+in December of 2012.
+
+## Build Status
+* Master: [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS)
+* Develop: [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS)
+
+## Features
+
+  - INSPIRE Download Service
+  - OGC Hydro Profile
+  - SensorML 1.0.1 and 2.0
+  - AQD e-Reporting flows E
+  - Multiple DB support
+  - 
+
+## License
+
+ The SOS is published under the [GPLv2](LICENSE)
+
+## Changelog
+
+ See the SOS [RELEASE-NOTES](RELEASE-NOTES)
+
+## Quick Start
+
+ See the [installation guide](https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation#Installation)
+
+## Sample Data
+    
+ The SOS provides sample data via the Test Client.
+
+## UserGuide/Tutorial
+
+ See the SOS [tutorial](http://www.ogcnetwork.net/SOS_2_0/tutorial)
+
+## Demo
+
+    http://sensorweb.demo.52north.org/sensorwebtestbed/
+
+## References
+
+ TODO
+
+## Contact
+
+ - Carsten Hollmann (c.hollmann@52north.org)
+ - Christian Autermann (c.autermann@52north.org)
+ - Eike Hinderk Jürrens [@EHJ-52n](e.h.juerrens@52north.org)
+ 
+## Support
+
+You can get support in the community mailing list and forums:
+
+    http://52north.org/resources/mailing-lists-and-forums/
+
+## Contributing
+
+You are interesting in contributing the 52°North SOS and you want to pull your changes to the 52N repository to make it available to all?
+
+In that case we need your official permission and for this purpose we have a so called contributors license agreement (CLA) in place. With this agreement you grant us the rights to use and publish your code under an open source license.
+
+A link to the contributors license agreement and further explanations are available here: 
+
+    http://52north.org/about/licensing/cla-guidelines
+
+## Credits
+
+### Contributors
+
+| Name | Organisation |
+| ------------- | :-------------: |
+| [Carsten Hollmann](http://52north.org/about/52-north-team/25-carsten-hollmann) | [52&deg;North](http://52north.org) |
+| [Eike Hinderk J&uuml;rrens](http://52north.org/about/52-north-team/14-eike-hinderk-juerrens) | [52&deg;North](http://52north.org) |
+| [Christian Autermann](http://52north.org/about/52-north-team/30-autermann-christian) | [52&deg;North](http://52north.org) |
+| [Christoph Stasch](http://52north.org/about/52-north-team/31-stasch-christoph) | [52&deg;North](http://52north.org) |
+| Shane StClair | [Axiom Data Science](http://www.axiomdatascience.com) |
+| Victor Gonz&aacute;lez | [geomati.co](http://geomati.co/en) |
+| Oscar Fonts | [geomati.co](http://geomati.co/en) |
+| Carlos Giraldo | [Instituto Tecnol&oacute;gico de Galicia (ITG)](http://www.itg.es/) |
+| Alexander Kmoch | [Z_GIS](http://www.zgis.at),  [Universit&auml;t Salzburg</a> (Austria and Germany)](http://www.uni-salzburg.at) |
+| Carl Schroedl | Center for Integrated Data Analytics ([CIDA](http://cida.usgs.gov)), [USGS](http://www.usgs.gov) |
+| Jordan Walker | Center for Integrated Data Analytics ([CIDA](http://cida.usgs.gov)), [USGS](http://www.usgs.gov) |
+
+### Contributing organizations
+
+### Funding organizations/projects
+
+
+### 
+
+
+
+
+
 README file for the 52°North Sensor Observation Service (SOS) version 4.3.x
 
 This is the repository of the [52°North Sensor Observation Service (SOS)][1].
@@ -8,10 +107,6 @@ The 52°North SOS is a reference implementation of the
 implemented during the [OGC Web Services Testbed,  Phase 9 (OWS-9)][3] and
 tested  to be compliant to this specification within the [OGC CITE testing][4]
 in December of 2012.
-
-## Build Status
-* Master: [![Master Build Status](https://travis-ci.org/52North/SOS.png?branch=master)](https://travis-ci.org/52North/SOS)
-* Develop: [![Develop Build Status](https://travis-ci.org/52North/SOS.png?branch=develop)](https://travis-ci.org/52North/SOS)
 
 ## Branches
 

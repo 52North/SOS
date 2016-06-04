@@ -546,13 +546,12 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             abstractProcess.setCharacteristicsArray(createCharacteristics(sosAbstractProcess.getCharacteristics()));
         }
         // set documentation
-        if (sosAbstractProcess.isSetDocumentation()) {
+        if (sosAbstractProcess.isSetDocumentation() && CollectionHelper.isNullOrEmpty(abstractProcess.getDocumentationArray())) {
             abstractProcess.setDocumentationArray(createDocumentationArray(sosAbstractProcess.getDocumentation()));
         }
         // set contacts if contacts aren't already present in the abstract
         // process
-        if (sosAbstractProcess.isSetContact()
-                && (abstractProcess.getContactArray() == null || abstractProcess.getContactArray().length == 0)) {
+        if (sosAbstractProcess.isSetContact() && CollectionHelper.isNullOrEmpty(abstractProcess.getContactArray())) {
             ContactList contactList = createContactList(sosAbstractProcess.getContact());
             if (contactList != null && contactList.getMemberArray().length > 0) {
                 abstractProcess.addNewContact().setContactList(contactList);

@@ -31,6 +31,7 @@ package org.n52.sos.ogc.swe.simpleType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
@@ -41,6 +42,7 @@ import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
 
     private RangeValue<Integer> value;
+    private Referenceable<SweAllowedValues> constraint;
 
     @Override
     public RangeValue<Integer> getValue() {
@@ -61,6 +63,31 @@ public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
     @Override
     public String getStringValue() {
         return value.toString();
+    }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedValues> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedValues constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedValues> constraint) {
+        this.constraint = constraint;
     }
 
     @Override
@@ -90,6 +117,9 @@ public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
         }
         if (isSetValue()) {
             clone.setValue((RangeValue<Integer>)getValue().clone());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
         }
         return clone;
     }

@@ -3,18 +3,18 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Unit" table="unit">
-    	<comment>Table to store the unit of measure information, used in observations. Mapping file: mapping/core/Unit.hbm.xml</comment>
+        <comment>Table to store the unit of measure information, used in observations. Mapping file: mapping/core/Unit.hbm.xml</comment>
         <id name="unitId" type="long">
             <column name="unitId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native" >
-            	<param name="sequence">unitId_seq</param>
+                <param name="sequence">unitId_seq</param>
             </generator>
         </id>
         <property name="unit" type="string">
             <column name="unit" not-null="true" unique-key="unitUK">
-            	<comment>The unit of measure of observations. See http://unitsofmeasure.org/ucum.html</comment>
+                <comment>The unit of measure of observations. See http://unitsofmeasure.org/ucum.html</comment>
             </column>
         </property>
     </class>

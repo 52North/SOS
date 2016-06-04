@@ -3,44 +3,44 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.RelatedFeature" table="relatedFeature">
-    	<comment>Table to store related feature information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
+        <comment>Table to store related feature information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
         <id name="relatedFeatureId" type="long">
             <column name="relatedFeatureId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">relatedFeatureId_seq</param>
+                <param name="sequence">relatedFeatureId_seq</param>
             </generator>
         </id>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.TFeatureOfInterest" fetch="select" lazy="no-proxy" foreign-key="relatedFeatureFeatureFk">
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.TFeatureOfInterest" foreign-key="relatedFeatureFeatureFk">
             <column name="featureOfInterestId" not-null="true">
-            	<comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+                <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>
         </many-to-one>
-        <set name="relatedFeatureRoles" table="relatedFeatureHasRole" inverse="false" fetch="select" lazy="false">
-        	<comment>Relation table to store relatedFeatures and their associated relatedFeatureRoles. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
+        <set name="relatedFeatureRoles" table="relatedFeatureHasRole" inverse="false">
+            <comment>Relation table to store relatedFeatures and their associated relatedFeatureRoles. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
             <key>
                 <column name="relatedFeatureId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related relatedFeature. Contains "relatedFeature".relatedFeatureid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related relatedFeature. Contains "relatedFeature".relatedFeatureid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.RelatedFeatureRole" foreign-key="relatedFeatRelatedFeatRoleFk">
                 <column name="relatedFeatureRoleId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related relatedFeatureRole. Contains "relatedFeatureRole".relatedFeatureRoleid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related relatedFeatureRole. Contains "relatedFeatureRole".relatedFeatureRoleid</comment>
+                </column>
             </many-to-many>
         </set>
-        <set name="offerings" table="offeringHasRelatedFeature" inverse="true" fetch="select" lazy="false">
-        	<comment>Relation table to store relatedFeatures and their associated offerings. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
+        <set name="offerings" table="offeringHasRelatedFeature" inverse="true">
+            <comment>Relation table to store relatedFeatures and their associated offerings. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
             <key>
                 <column name="relatedFeatureId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related relatedFeature. Contains "relatedFeature".relatedFeatureid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related relatedFeature. Contains "relatedFeature".relatedFeatureid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.TOffering" foreign-key="relatedFeatureOfferingFk">
                 <column name="offeringId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
             </many-to-many>
         </set>
     </class>

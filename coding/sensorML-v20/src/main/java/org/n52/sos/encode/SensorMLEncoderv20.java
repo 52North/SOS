@@ -617,10 +617,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // set identification
         if (describedObject.isSetIdentifications()) {
-            if (!CollectionHelper.isNullOrEmpty(dot.getIdentificationArray())) {
-                // TODO check for merging identifications if exists
-            }
             dot.setIdentificationArray(createIdentification(describedObject.getIdentifications()));
+            // TODO check for merging identifications if exists
         }
         // set classification
         if (describedObject.isSetClassifications()) {
@@ -647,38 +645,41 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         // set legalConstraints
         // set characteristics
         if (describedObject.isSetCharacteristics()) {
-            dot.setCharacteristicsArray(createCharacteristics(describedObject.getCharacteristics()));
+            if (CollectionHelper.isNullOrEmpty(dot.getCharacteristicsArray())) {
+                dot.setCharacteristicsArray(createCharacteristics(describedObject.getCharacteristics()));
+            }
         }
         // set contacts if contacts aren't already present in the abstract
         // process
         // if (describedObject.isSetContact() &&
         // CollectionHelper.isNotNullOrEmpty(dot.getContactsArray())) {
         if (describedObject.isSetContact()) {
-            ContactListType cl = ContactListType.Factory.newInstance();
-            for (SmlContact contact : describedObject.getContact()) {
-                if (contact instanceof SmlResponsibleParty) {
-                    if (contact.isSetHref()) {
-                        Map<SosConstants.HelperValues, String> additionalValues = Maps.newHashMap();
-                        additionalValues.put(HelperValues.PROPERTY_TYPE, "true");
-                        XmlObject encodeObjectToXml =
-                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, additionalValues);
-                        cl.addNewContact().set(encodeObjectToXml);
-                    } else {
-                        XmlObject encodeObjectToXml =
-                                CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
-                        if (encodeObjectToXml != null) {
-                            cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
+            if (CollectionHelper.isNullOrEmpty(dot.getContactsArray())) {
+                ContactListType cl = ContactListType.Factory.newInstance();
+                for (SmlContact contact : describedObject.getContact()) {
+                    if (contact instanceof SmlResponsibleParty) {
+                        if (contact.isSetHref()) {
+                            Map<SosConstants.HelperValues, String> additionalValues = Maps.newHashMap();
+                            additionalValues.put(HelperValues.PROPERTY_TYPE, "true");
+                            XmlObject encodeObjectToXml =
+                                    CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact, additionalValues);
+                            cl.addNewContact().set(encodeObjectToXml);
+                        } else {
+                            XmlObject encodeObjectToXml =
+                                    CodingHelper.encodeObjectToXml(GmdConstants.NS_GMD, (SmlResponsibleParty) contact);
+                            if (encodeObjectToXml != null) {
+                                cl.addNewContact().addNewCIResponsibleParty().set(encodeObjectToXml);
+                            }
                         }
                     }
                 }
             }
-            if (CollectionHelper.isNotNullOrEmpty(cl.getContactArray())) {
-                dot.addNewContacts().setContactList(cl);
-            }
         }
         // set documentation
         if (describedObject.isSetDocumentation()) {
-            dot.setDocumentationArray(createDocumentationArray(describedObject.getDocumentation()));
+            if (CollectionHelper.isNullOrEmpty(dot.getDocumentationArray())) {
+                dot.setDocumentationArray(createDocumentationArray(describedObject.getDocumentation()));
+            }
         }
         // set history
 

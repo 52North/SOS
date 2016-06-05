@@ -2,45 +2,45 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-	<subclass name="org.n52.sos.ds.hibernate.entities.TOffering" extends="org.n52.sos.ds.hibernate.entities.Offering" discriminator-value="true">
-		<set name="relatedFeatures" table="offeringHasRelatedFeature" inverse="false" fetch="select">
-			<comment>Table to store relations between offering and associated relatedFeatures. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
+    <subclass name="org.n52.sos.ds.hibernate.entities.TOffering" extends="org.n52.sos.ds.hibernate.entities.Offering" discriminator-value="true">
+        <set name="relatedFeatures" table="offeringHasRelatedFeature" inverse="false">
+            <comment>Table to store relations between offering and associated relatedFeatures. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
             <key>
                 <column name="offeringId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.RelatedFeature" foreign-key="offeringRelatedFeatureFk">
                 <column name="relatedFeatureId" not-null="true">
-            	<comment>Foreign Key (FK) to the related reladedFeature. Contains "reladedFeature".relatedFeatureId</comment>
+                <comment>Foreign Key (FK) to the related reladedFeature. Contains "reladedFeature".relatedFeatureId</comment>
             </column>
             </many-to-many>
         </set>
-        <set name="observationTypes" table="offeringAllowedObservationType" inverse="false" fetch="select">
-        	<comment>Table to store relations between offering and allowed observationTypes, defined in InsertSensor request. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
+        <set name="observationTypes" table="offeringAllowedObservationType" inverse="false">
+            <comment>Table to store relations between offering and allowed observationTypes, defined in InsertSensor request. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
             <key>
                 <column name="offeringId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.ObservationType" foreign-key="offeringObservationTypeFk">
                 <column name="observationTypeId" not-null="true">
-            	<comment>Foreign Key (FK) to the related observationType. Contains "observationType".observationTypeId</comment>
+                <comment>Foreign Key (FK) to the related observationType. Contains "observationType".observationTypeId</comment>
             </column>
             </many-to-many>
         </set>
-        <set name="featureOfInterestTypes" table="offeringAllowedFeatureType" inverse="false" fetch="select">
-        	<comment>Table to store relations between offering and allowed featureOfInterestTypes, defined in InsertSensor request. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
+        <set name="featureOfInterestTypes" table="offeringAllowedFeatureType" inverse="false">
+            <comment>Table to store relations between offering and allowed featureOfInterestTypes, defined in InsertSensor request. Mapping file: mapping/transactional/TOffering.hbm.xml</comment>
             <key>
                 <column name="offeringId" not-null="true">
-	            	<comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
-	            </column>
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
             </key>
             <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" foreign-key="offeringFeatureTypeFk">
                 <column name="featureOfInterestTypeId" not-null="true">
-            	<comment>Foreign Key (FK) to the related featureOfInterestTypeId. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
+                <comment>Foreign Key (FK) to the related featureOfInterestTypeId. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
             </column>
             </many-to-many>
         </set>
-	</subclass>
+    </subclass>
 </hibernate-mapping>

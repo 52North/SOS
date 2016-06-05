@@ -71,6 +71,7 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
@@ -99,7 +100,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
      * file
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(OmEncoderv20.class);
-    
+
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(OmConstants.NS_OM_2,
             OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
 
@@ -440,6 +441,12 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(UnknownValue value)
+                throws OwsExceptionReport {
+            return null;
+        }
+
+        @Override
+        public XmlObject visit(XmlValue value)
                 throws OwsExceptionReport {
             return null;
         }

@@ -41,6 +41,7 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.UnknownValue;
+import org.n52.sos.ogc.om.values.XmlValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
@@ -140,6 +141,13 @@ public abstract class VoidValueVisitor implements ValueVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(XmlValue value)
+            throws OwsExceptionReport {
+        _visit(value);
+        return null;
+    }
+
     protected abstract void _visit(BooleanValue value)
             throws OwsExceptionReport;
 
@@ -177,5 +185,8 @@ public abstract class VoidValueVisitor implements ValueVisitor<Void> {
             throws OwsExceptionReport;
 
     protected abstract void _visit(UnknownValue value)
+            throws OwsExceptionReport;
+
+    protected abstract void _visit(XmlValue value)
             throws OwsExceptionReport;
 }

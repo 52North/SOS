@@ -3,18 +3,18 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" table="procedureDescriptionFormat">
-    	<comment>Table to store the ProcedureDescriptionFormat information of procedures. Mapping file: mapping/core/ProcedureDescriptionFormat.hbm.xml</comment>
+        <comment>Table to store the ProcedureDescriptionFormat information of procedures. Mapping file: mapping/core/ProcedureDescriptionFormat.hbm.xml</comment>
         <id name="procedureDescriptionFormatId" type="long">
             <column name="procedureDescriptionFormatId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">procDescFormatId_seq</param>
+                <param name="sequence">procDescFormatId_seq</param>
             </generator>
         </id>
         <property name="procedureDescriptionFormat" type="string">
             <column name="procedureDescriptionFormat" not-null="true" unique-key="procDescFormatUK">
-            	<comment>The procedureDescriptionFormat value, e.g. http://www.opengis.net/sensorML/1.0.1 for procedures descriptions as specified in OGC SensorML 1.0.1</comment>
+                <comment>The procedureDescriptionFormat value, e.g. http://www.opengis.net/sensorML/1.0.1 for procedures descriptions as specified in OGC SensorML 1.0.1</comment>
             </column>
         </property>
     </class>

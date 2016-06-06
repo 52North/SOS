@@ -2,7 +2,7 @@
 
 1. **Create SOS package**
 
-  1. Check, if [feature/sos-js](https://github.com/EHJ-52n/SOS/tree/feature/sos-js) could be merged if the ```resultModel:=om:Measurement``` issue is fixed.
+  1. Check, if [feature/sos-js](https://github.com/EHJ-52n/SOS/tree/feature/sos-js) could be merged if the ```resultModel:=om:Measurement``` [issue is fixed](https://github.com/52North/SOS/pull/429).
 
   1. Checkout the branch:
 
@@ -14,18 +14,13 @@
 
   1. Fix conflicts.
 
-  1. Ensure that ```conf.sos.name``` in the root ```pom.xml``` is set to ```52nSOS```.
+  1. Ensure that in the root ```pom.xml```:
+
+    * ```conf.sos.name``` is set to ```52nSOS``` and
+
+    * ```conf.osgeo.live.version``` in set to the latest OSGeo-Live version e.g. ```10.0```.
 
   1. Build with maven: ```mvn clean install```.
-
-  1. Ensure that
-
-    * *REST API*, and
-    * *jsClient*
-
-    are contained in the bundle in ```webapp-bundle/target```.
-
-  1. Copy ```webapp-bundle/target/52nSOS##x.y.z.war``` to your OSGeo-Live package folder.
 
 1. **Example Data Update**
 
@@ -41,26 +36,44 @@
 
   1. Update json requests to current year:
 
-     *Update the search patterns, but ensure to use a month with 31 days!*
+    *Update the search patterns, but ensure to use a month with **31** days!*
 
     ```$ find . -name "*.json" -exec sed -i s/2016-07/yyyy-mm/g {} \;```
 
   1. Insert all data using the ```data-request_*.json``` files with the *JSON* binding.
 
-  1. Set the i18n settings for feature of interest and observable properties via the [I18N settings](http://localhost:8080/52nSOS/admin/i18n).
+  1. Set the i18n settings for
 
-  1. Export the current database into file ```52nSOS.sql``` in your OSGeo-Live package folder using the following settings in e.g. PGAdmin III:
+    * feature of interest and
+
+    * observable properties
+
+    via the [I18N settings](http://localhost:8080/52nSOS/admin/i18n).
+
+  1. Export the current database into file ```52nSOS.sql``` in ```webapp-osgeo-live/src/main/resources``` folder using the following settings in e.g. PGAdmin III:
 
     * File: ```52nSOS.sql```
     * Format: ```plain```
     * Encoding: ```UTF8```
     * Rolename: ```user```
 
+  1. **Optional**: Update the following files from the deployed 52N-SOS instance:
+
+    * In the case of 52N-SOS configuration changes:
+
+        ```configuration.db``` into ```webapp-osgeo-live/src/main/webapp```
+
+    * In the case of datasource configuration changes:
+
+        ```datasource.properties``` into ```webapp-osgeo-live/src/main/webapp/WEB-INF```
+
+    * In the case of jsClient configuration changes:
+
+        ```settings.json``` into ```webapp-osgeo-live/src/main/webapp/static/client/jsClient```
+
 1. **Final Package**
 
-  1. Add database configuration
-
-  1. Add service configuration
+  Run ```mvn clean install``` for the last time and copy the resulting ```52n-sos-osgeo-live-X.Y.tar.gz``` to the 52N webdav folder for OSGeo-Live ````https://52north.org/files/sensorweb/osgeo-live/```.
 
 1. **Update Installer**
 

@@ -67,10 +67,6 @@ public class MiscSettings implements SettingDefinitionProvider {
 
     public static final String DEFAULT_PROCEDURE_PREFIX = "misc.defaultProcedurePrefix";
 
-    public static final String DEFAULT_OBSERVABLEPROPERTY_PREFIX = "misc.defaultObservablePropertyPrefix";
-
-    public static final String DEFAULT_FEATURE_PREFIX = "misc.defaultFeaturePrefix";
-
     public static final String HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING = "misc.httpResponseCodeUseInKvpAndPoxBinding";
 
     public static final String RELATED_SAMPLING_FEATURE_ROLE_FOR_CHILD_FEATURES =
@@ -145,7 +141,7 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setDefaultValue("http://www.example.org/offering/")
                     .setTitle("Default Offering Prefix")
                     .setDescription(
-                            "The default prefix for offerings (generated if not defined in Register-/InsertSensor requests or values from custom db).");
+                            "The default prefix for generated offerings (if not defined in Register-/InsertSensor requests).");
 
     public static final StringSettingDefinition DEFAULT_PROCEDURE_PREFIX_DEFINITION =
             new StringSettingDefinition()
@@ -155,25 +151,7 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setDefaultValue("http://www.example.org/procedure/")
                     .setTitle("Default Procedure Prefix")
                     .setDescription(
-                            "The default prefix for procedures (generated if not defined in Register-/InsertSensor requests or values from custom db).");
-
-    public static final StringSettingDefinition DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION =
-            new StringSettingDefinition()
-		            .setGroup(MiscSettings.GROUP)
-		            .setOrder(ORDER_9)
-                    .setKey(DEFAULT_OBSERVABLEPROPERTY_PREFIX)
-                    .setDefaultValue("http://www.example.org/observableProperty/")
-                    .setTitle("Default ObservableProperty Prefix")
-                    .setDescription("The default prefix for observableProperty (values from custom db).");
-
-    public static final StringSettingDefinition DEFAULT_FEATURE_PREFIX_DEFINITION = 
-    		new StringSettingDefinition()
-		            .setGroup(MiscSettings.GROUP)
-		            .setOrder(ORDER_10)
-		            .setKey(DEFAULT_FEATURE_PREFIX)
-		            .setDefaultValue("http://www.example.org/feature/")
-		            .setTitle("Default Feature Prefix")
-		            .setDescription("The default prefix for features (values from custom db).");
+                            "The default prefix for generated procedures (if not defined in Register-/InsertSensor requests).");
 
     public static final BooleanSettingDefinition HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION =
             new BooleanSettingDefinition()
@@ -229,8 +207,7 @@ public class MiscSettings implements SettingDefinitionProvider {
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,
             SRS_NAME_PREFIX_SOS_V1_DEFINITION, SRS_NAME_PREFIX_SOS_V2_DEFINITION, DEFAULT_OFFERING_PREFIX_DEFINITION,
-            DEFAULT_PROCEDURE_PREFIX_DEFINITION, DEFAULT_OBSERVABLEPROPERTY_PREFIX_DEFINITION,
-            DEFAULT_FEATURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
+            DEFAULT_PROCEDURE_PREFIX_DEFINITION, CHARACTER_ENCODING_DEFINITION,
             HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING_DEFINITION, HYDRO_MAX_NUMBER_OF_RETURNED_TIME_SERIES_DEFINITION,
             HYDRO_MAX_NUMBER_OF_RETURNED_VALUES_DEFINITION, RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST_DEFINITION
     /*

@@ -35,6 +35,7 @@
         <module>third-party</module>
         <module>webapp</module>
         <module>webapp-bundle</module>
+        <module>webapp-osgeo-live</module>
     </modules>
     <licenses>
         <license>
@@ -47,6 +48,8 @@
     <properties>
         <!-- sos name -->
         <conf.sos.name>52nSOS</conf.sos.name>
+        <!-- version of the current osgeo-live-release in development -->
+        <conf.osgeo.live.version>10.0</conf.osgeo.live.version>
         <timestamp>${maven.build.timestamp}</timestamp>
         <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

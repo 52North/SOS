@@ -35,6 +35,8 @@
         <module>third-party</module>
         <module>webapp</module>
         <module>webapp-bundle</module>
+        <module>OPeNDAP</module>
+        <module>OPeNDAP/Common</module>
     </modules>
     <licenses>
         <license>

@@ -17,10 +17,81 @@
  */
 package org.n52.sensorweb.sos.common.entities;
 
+import java.util.HashSet;
+import java.util.Set;
+import com.google.common.collect.Sets;
+import org.n52.sos.util.StringHelper;
 /**
  *
  * @author ankit
  */
-public class FeatureOfInterest {
+//Spatial Entity Stores the Geometry Imformation
+public class FeatureOfInterest extends SpatialEntity{
+
+    private String descriptionXml;
+    public static final String ID = "featureOfInterestId";
+    private String url;
+    //need to discuss the Example for this
+    private Set<FeatureOfInterest> childs = Sets.newHashSet();
+    private Set<FeatureOfInterest> parents = Sets.newHashSet();
+    
+    
+    public String getUrl() {
+        return this.url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+    
+    //Setting Up the DescriptionXML
+    public String getDescriptionXml() {
+        return descriptionXml;
+    }
+
+    public void setDescriptionXml(String descriptionXml) {
+        this.descriptionXml = descriptionXml;
+    }
+
+    public boolean isSetDescriptionXml() {
+        return StringHelper.isNotEmpty(descriptionXml);
+    }
+
+    public Set<FeatureOfInterest> getParents() {
+        return parents;
+    }
+    
+    
+    public void setParents(final Set<FeatureOfInterest> parents) {
+        this.parents = parents;
+    }
+
+    public Set<FeatureOfInterest> getChilds() {
+        return childs;
+    }
+
+    public void setChilds(final Set<FeatureOfInterest> childs) {
+        this.childs = childs;
+    }
+
+    public void addParent(FeatureOfInterest parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    public void addChild(FeatureOfInterest child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
+    }
     
 }

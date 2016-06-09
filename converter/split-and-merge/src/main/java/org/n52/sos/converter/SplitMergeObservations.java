@@ -356,12 +356,24 @@ public class SplitMergeObservations
                 }
             }
 
-            if (encoder != null) {
-                return encoder.shouldObservationsWithSameXBeMerged();
+            if (encoder != null && encoder.shouldObservationsWithSameXBeMerged()) {
+                if (Sos1Constants.SERVICEVERSION.equals(response.getVersion())) {
+                    return checkResultModel(response);
+                }
+                return true;
             }
 
         }
         return false;
+    }
+
+    private boolean checkResultModel(GetObservationResponse response) {
+        if (response.isSetResultModel()) {
+            if (!OmConstants.OBS_TYPE_OBSERVATION.equals(response.getResultModel())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private AbstractServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {

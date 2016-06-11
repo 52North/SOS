@@ -34,7 +34,6 @@ import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
-import org.n52.sos.util.CacheHelper;
 
 /**
  * @since 4.0.0
@@ -50,7 +49,7 @@ public class DatasourceCacheUpdateHelper {
             Collection<ObservationConstellation> observationConstellations) {
         Set<String> offerings = new HashSet<String>(observationConstellations.size());
         for (ObservationConstellation oc : observationConstellations) {
-            offerings.add(CacheHelper.addPrefixOrGetOfferingIdentifier(oc.getOffering().getIdentifier()));
+            offerings.add(oc.getOffering().getIdentifier());
         }
         return offerings;
     }
@@ -59,7 +58,7 @@ public class DatasourceCacheUpdateHelper {
             Collection<ObservationConstellationInfo> observationConstellationInfos) {
         Set<String> offerings = new HashSet<String>(observationConstellationInfos.size());
         for (ObservationConstellationInfo oci : observationConstellationInfos) {
-            offerings.add(CacheHelper.addPrefixOrGetOfferingIdentifier(oci.getOffering()));
+            offerings.add(oci.getOffering());
         }
         return offerings;
     }
@@ -68,7 +67,7 @@ public class DatasourceCacheUpdateHelper {
             Collection<ObservationConstellation> observationConstellations) {
         Set<String> procedures = new HashSet<String>(observationConstellations.size());
         for (ObservationConstellation oc : observationConstellations) {
-            procedures.add(CacheHelper.addPrefixOrGetProcedureIdentifier(oc.getProcedure().getIdentifier()));
+            procedures.add(oc.getProcedure().getIdentifier());
         }
         return procedures;
     }
@@ -94,7 +93,7 @@ public class DatasourceCacheUpdateHelper {
                 }
             }
             if (addProcedure) {
-                procedures.add(CacheHelper.addPrefixOrGetProcedureIdentifier(oci.getProcedure()));
+                procedures.add(oci.getProcedure());
             }
         }
         return procedures;
@@ -104,8 +103,7 @@ public class DatasourceCacheUpdateHelper {
             Collection<ObservationConstellation> observationConstellations) {
         Set<String> observableProperties = new HashSet<String>(observationConstellations.size());
         for (ObservationConstellation oc : observationConstellations) {
-            observableProperties.add(CacheHelper.addPrefixOrGetObservablePropertyIdentifier(oc.getObservableProperty()
-                    .getIdentifier()));
+            observableProperties.add(oc.getObservableProperty().getIdentifier());
         }
         return observableProperties;
     }
@@ -114,7 +112,7 @@ public class DatasourceCacheUpdateHelper {
             Collection<ObservationConstellationInfo> observationConstellationInfos) {
         Set<String> observableProperties = new HashSet<>(observationConstellationInfos.size());
         for (ObservationConstellationInfo oci : observationConstellationInfos) {
-            observableProperties.add(CacheHelper.addPrefixOrGetObservablePropertyIdentifier(oci.getObservableProperty()));
+            observableProperties.add(oci.getObservableProperty());
         }
         return observableProperties;
     }

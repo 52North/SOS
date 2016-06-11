@@ -29,17 +29,12 @@
 package org.n52.sos.service;
 
 import static org.n52.sos.service.MiscSettings.CHARACTER_ENCODING;
-import static org.n52.sos.service.MiscSettings.DEFAULT_FEATURE_PREFIX;
-import static org.n52.sos.service.MiscSettings.DEFAULT_OBSERVABLEPROPERTY_PREFIX;
-import static org.n52.sos.service.MiscSettings.DEFAULT_OFFERING_PREFIX;
-import static org.n52.sos.service.MiscSettings.DEFAULT_PROCEDURE_PREFIX;
 import static org.n52.sos.service.MiscSettings.HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V1;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
 import static org.n52.sos.service.ServiceSettings.SENSOR_DIRECTORY;
 import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
 import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
-import static org.n52.sos.service.ServiceSettings.USE_DEFAULT_PREFIXES;
 import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
 
 import java.net.URI;
@@ -212,43 +207,47 @@ public class ServiceConfiguration {
         return defaultOfferingPrefix;
     }
 
-    @Setting(DEFAULT_OFFERING_PREFIX)
+    @Deprecated
     public void setDefaultOfferingPrefix(final String prefix) {
         defaultOfferingPrefix = prefix;
     }
 
+    @Deprecated
     public String getDefaultProcedurePrefix() {
         return defaultProcedurePrefix;
     }
 
-    @Setting(DEFAULT_OBSERVABLEPROPERTY_PREFIX)
+    @Deprecated
     public void setDefaultObservablePropertyPrefix(final String prefix) {
         defaultObservablePropertyPrefix = prefix;
     }
 
+    @Deprecated
     public String getDefaultObservablePropertyPrefix() {
         return defaultObservablePropertyPrefix;
     }
 
-    @Setting(DEFAULT_PROCEDURE_PREFIX)
+    @Deprecated
     public void setDefaultProcedurePrefix(final String prefix) {
         defaultProcedurePrefix = prefix;
     }
 
+    @Deprecated
     public String getDefaultFeaturePrefix() {
         return defaultFeaturePrefix;
     }
 
-    @Setting(DEFAULT_FEATURE_PREFIX)
+    @Deprecated
     public void setDefaultFeaturePrefix(final String prefix) {
         defaultFeaturePrefix = prefix;
     }
 
+    @Deprecated
     public boolean isUseDefaultPrefixes() {
         return useDefaultPrefixes;
     }
-
-    @Setting(USE_DEFAULT_PREFIXES)
+    
+    @Deprecated
     public void setUseDefaultPrefixes(final boolean prefix) {
         useDefaultPrefixes = prefix;
     }

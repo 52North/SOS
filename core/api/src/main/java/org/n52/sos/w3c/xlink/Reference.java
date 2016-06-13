@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.util;
+package org.n52.sos.w3c.xlink;
 
 import java.net.URI;
 
@@ -38,12 +38,10 @@ import com.google.common.base.Strings;
  * TODO JavaDoc
  *
  * @author Christian Autermann
- * @deprecated {@link org.n52.sos.w3c.xlink.Reference}
  */
-@Deprecated
 public class Reference {
 
-    private URI href;
+    private Optional<URI> href = Optional.absent();
     private Optional<String> type = Optional.absent();
     private Optional<String> role = Optional.absent();
     private Optional<String> arcrole = Optional.absent();
@@ -61,12 +59,12 @@ public class Reference {
         return this;
     }
 
-    public URI getHref() {
+    public Optional<URI> getHref() {
         return href;
     }
 
     public Reference setHref(URI href) {
-        this.href = href;
+        this.href = Optional.fromNullable(href);
         return this;
 
     }

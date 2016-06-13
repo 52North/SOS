@@ -51,6 +51,7 @@ import org.n52.sos.ogc.swe.SweSimpleDataRecord;
 import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCategoryRange;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
@@ -139,6 +140,12 @@ public class ValueCreatingSweDataComponentVisitor implements
 
     @Override
     public Value<?> visit(SweCountRange component)
+            throws OwsExceptionReport {
+        throw notSupported(component);
+    }
+
+    @Override
+    public Value<?> visit(SweCategoryRange component) 
             throws OwsExceptionReport {
         throw notSupported(component);
     }

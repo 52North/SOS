@@ -34,6 +34,7 @@ import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
 import org.n52.sos.ogc.sensorML.v20.SmlFeatureOfInterest;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCategoryRange;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweCountRange;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
@@ -69,6 +70,9 @@ public interface SweDataComponentVisitor<T> {
             throws OwsExceptionReport;
 
     T visit(SweCategory component)
+            throws OwsExceptionReport;
+    
+    T visit(SweCategoryRange component)
             throws OwsExceptionReport;
 
     T visit(SweObservableProperty component)

@@ -33,6 +33,7 @@ import org.joda.time.DateTime;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
@@ -45,6 +46,7 @@ import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 public class SweTimeRange extends SweAbstractUomType<RangeValue<DateTime>> {
 
     private RangeValue<DateTime> value;
+    private Referenceable<SweAllowedTimes> constraint;
 
     @Override
     public RangeValue<DateTime> getValue() {
@@ -65,6 +67,31 @@ public class SweTimeRange extends SweAbstractUomType<RangeValue<DateTime>> {
     public SweTimeRange setValue(final RangeValue<DateTime> value) {
         this.value = value;
         return this;
+    }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedTimes> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedTimes constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedTimes> constraint) {
+        this.constraint = constraint;
     }
 
     @Override
@@ -94,6 +121,9 @@ public class SweTimeRange extends SweAbstractUomType<RangeValue<DateTime>> {
         }
         if (isSetValue()) {
             clone.setValue((RangeValue<DateTime>)getValue().clone());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
         }
         return clone;
     }

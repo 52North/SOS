@@ -31,6 +31,7 @@ package org.n52.sos.ogc.swe.simpleType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
@@ -51,6 +52,7 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
      * value
      */
     private RangeValue<Double> value;
+    private Referenceable<SweAllowedValues> constraint;
 
     /**
      * constructor
@@ -127,6 +129,31 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
     public boolean isSetAxisID() {
         return axisID != null && !axisID.isEmpty();
     }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedValues> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedValues constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedValues> constraint) {
+        this.constraint = constraint;
+    }
 
     @Override
     public SweDataComponentType getDataComponentType() {
@@ -158,6 +185,9 @@ public class SweQuantityRange extends SweAbstractUomType<RangeValue<Double>> imp
         }
         if (isSetValue()) {
             clone.setValue((RangeValue<Double>)getValue().clone());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
         }
         return clone;
     }

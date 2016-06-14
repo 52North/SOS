@@ -47,6 +47,7 @@ public class ObservationContext {
     private FeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private String seriesType;
 
     /**
      * @return the featureOfInterest
@@ -134,4 +135,14 @@ public class ObservationContext {
             contextual.setProcedure(getProcedure());
         }
     }
+
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+    
+    public String getSeriesType() {
+        return this.seriesType;
+    }
+
+    
 }

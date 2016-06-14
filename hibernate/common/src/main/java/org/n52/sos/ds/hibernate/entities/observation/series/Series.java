@@ -37,6 +37,9 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.util.Constants;
+
+import com.google.common.base.Strings;
+
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
@@ -80,6 +83,7 @@ public class Series
     private Double lastNumericValue;
     private Unit unit;
     private boolean hiddenChild;
+    private String seriesType;
 
     /**
      * Get series id
@@ -272,5 +276,17 @@ public class Series
 
     public boolean isSetFirstLastTime() {
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
+    }
+    
+    public String getSeriesType() {
+        return this.seriesType;
+    }
+
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+    
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
     }
 }

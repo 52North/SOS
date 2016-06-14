@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
@@ -48,7 +49,7 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     public GeometryValue(AbstractGeometry abstractGeometry) {
         setDescription(abstractGeometry.getDescription());
@@ -69,8 +70,9 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     }
 
     @Override
-    public void setValue(Geometry value) {
+    public GeometryValue setValue(Geometry value) {
         setGeometry(value);
+        return this;
     }
 
     @Override
@@ -80,12 +82,30 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
@@ -97,11 +117,6 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     @Override
     public boolean isSetValue() {
         return isSetGeometry();
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
     }
 
     @Override

@@ -29,7 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.parameter;
 
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.CategoryValuedParameter;
@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.XmlValuedParameter;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -108,7 +109,15 @@ public class ValuedParameterVisitor implements ParameterVisitor<NamedValue<?>> {
 
     protected void addUnit(ValuedParameter<?> vp, Value<?> v) {
         if (!v.isSetUnit() && vp instanceof HasUnit && ((HasUnit)vp).isSetUnit()) {
-            v.setUnit(((HasUnit)vp).getUnit().getUnit());
+            Unit unit = ((HasUnit)vp).getUnit();
+            UoM uom = new UoM(unit.getUnit());
+            if (unit.isSetName()) {
+                uom.setName(unit.getName());
+            }
+            if (unit.isSetLink()) {
+                uom.setLink(unit.getLink());
+            }
+            v.setUnit(uom);
         }
     }
 

@@ -35,6 +35,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.OmConstants;
@@ -84,8 +85,9 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     }
 
     @Override
-    public void setValue(final SweDataArray value) {
+    public SweDataArrayValue setValue(final SweDataArray value) {
         this.value = value;
+        return this;
     }
 
     @Override
@@ -101,6 +103,16 @@ public class SweDataArrayValue implements MultiValue<SweDataArray> {
     @Override
     public String getUnit() {
         return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return null;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        // do nothing
     }
 
     /**

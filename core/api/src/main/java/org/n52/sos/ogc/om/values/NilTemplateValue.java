@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -48,10 +49,11 @@ public class NilTemplateValue implements Value<String> {
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     @Override
-    public void setValue(String value) {
+    public NilTemplateValue setValue(String value) {
+        return this;
     }
 
     @Override
@@ -61,12 +63,25 @@ public class NilTemplateValue implements Value<String> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
     }
 
     @Override

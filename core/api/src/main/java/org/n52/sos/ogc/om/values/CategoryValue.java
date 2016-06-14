@@ -28,10 +28,11 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
 
 /**
  * Category measurement representation for observation
@@ -39,21 +40,12 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  *
  */
-public class CategoryValue implements Value<String> {
+public class CategoryValue extends SweCategory implements Value<String> {
+    
     /**
      * serial number
      */
     private static final long serialVersionUID = 8364802854103009470L;
-
-    /**
-     * Measurement value
-     */
-    private String value;
-
-    /**
-     * Unit of measure
-     */
-    private String unit;
 
     /**
      * constructor
@@ -62,7 +54,8 @@ public class CategoryValue implements Value<String> {
      *            Measurement value
      */
     public CategoryValue(String value) {
-        this(value, null);
+        super();
+        super.setValue(value);
     }
 
     /**
@@ -74,28 +67,50 @@ public class CategoryValue implements Value<String> {
      *            Unit of measure
      */
     public CategoryValue(String value, String unit) {
-        this.value = value;
-        this.unit = unit;
+        super(value, unit);
     }
-
-    @Override
-    public void setValue(String value) {
-        this.value = value;
+    
+    /**
+     * * constructor
+     *
+     * @param value
+     *            Measurement value
+     * @param unit
+     *            Unit of measure
+     */
+    public CategoryValue(String value, UoM unit) {
+       super(value, unit);
     }
-
+    
     @Override
-    public String getValue() {
-        return value;
+    public CategoryValue setValue(final String value) {
+        super.setValue(value);
+        return this;
     }
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        super.setUom(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        return super.getUom();
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return super.getUomObject();
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+       super.setUom(unit);
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return super.isSetUom();
     }
 
     @Override
@@ -104,16 +119,6 @@ public class CategoryValue implements Value<String> {
     }
 
     @Override
-    public boolean isSetValue() {
-        return StringHelper.isNotEmpty(getValue());
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
-    }
-
-        @Override
     public <X> X accept(ValueVisitor<X> visitor)
             throws OwsExceptionReport {
         return visitor.visit(this);

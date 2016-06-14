@@ -28,10 +28,10 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.StringHelper;
 
 /**
  * Unknown value for observation if type is unknown
@@ -53,7 +53,7 @@ public class UnknownValue implements Value<Object> {
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     /**
      * Constructor
@@ -66,8 +66,9 @@ public class UnknownValue implements Value<Object> {
     }
 
     @Override
-    public void setValue(Object value) {
+    public UnknownValue setValue(Object value) {
         this.value = value;
+        return this;
     }
 
     @Override
@@ -77,12 +78,30 @@ public class UnknownValue implements Value<Object> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
@@ -94,11 +113,6 @@ public class UnknownValue implements Value<Object> {
     @Override
     public boolean isSetValue() {
         return value != null;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
     }
 
     @Override

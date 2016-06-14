@@ -35,6 +35,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.om.x20.NamedValueDocument;
+import net.opengis.om.x20.NamedValuePropertyType;
 import net.opengis.om.x20.NamedValueType;
 import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationPropertyType;
@@ -83,7 +85,7 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -171,6 +173,8 @@ public abstract class AbstractOmEncoderv20
     protected abstract boolean convertEncodedProcedure();
     
     protected abstract OMObservationType createOmObservationType(); 
+    
+    protected abstract void addAddtitionalInformation(OMObservationType omot, OmObservation observation) throws OwsExceptionReport;
 
     @Override
     public boolean forceStreaming() {
@@ -184,7 +188,18 @@ public abstract class AbstractOmEncoderv20
         if (element instanceof OmObservation) {
             encodedObject = encodeOmObservation((OmObservation) element, additionalValues);
         } else if (element instanceof NamedValue) {
-            encodedObject = createNamedValue((NamedValue<?>) element);
+            NamedValueType nvt = createNamedValue((NamedValue<?>) element);
+            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                NamedValueDocument nvd = NamedValueDocument.Factory.newInstance();
+                nvd.setNamedValue(nvt);
+                encodedObject = nvd;
+            } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+                NamedValuePropertyType nvpt = NamedValuePropertyType.Factory.newInstance();
+                nvpt.setNamedValue(nvt);
+                encodedObject = nvpt;
+            } else {
+                encodedObject = nvt;
+            }
         } else if (element instanceof AbstractFeature) {
             encodedObject = encodeFeatureOfInterest((AbstractFeature) element);
         } else if (element instanceof SosProcedureDescription) {
@@ -274,7 +289,7 @@ public abstract class AbstractOmEncoderv20
         setFeatureOfInterest(sosObservation, xbObservation);
         setResultQualities(xbObservation, sosObservation);
         setResult(sosObservation, xbObservation);
-
+        addAddtitionalInformation(xbObservation, sosObservation);
         if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
             return createObservationPropertyType(xbObservation);
         } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
@@ -781,7 +796,7 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
+        public XmlObject visit(ProfileValue value) throws OwsExceptionReport {
             return defaultValue(value);
         }
 

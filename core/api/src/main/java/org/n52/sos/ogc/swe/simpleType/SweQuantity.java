@@ -30,6 +30,7 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import java.util.Collection;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
@@ -57,6 +58,16 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
      * constructor
      */
     public SweQuantity() {
+    }
+    
+    public SweQuantity(Double value, String uom) {
+        this.value = value;
+        setUom(uom);
+    }
+    
+    public SweQuantity(Double value, UoM uom) {
+        this.value = value;
+        setUom(uom);
     }
 
     /**
@@ -110,6 +121,9 @@ public class SweQuantity extends SweAbstractUomType<Double> implements SweQualit
         }
         final SweQuantity other = (SweQuantity) obj;
         if ((getAxisID() == null) ? (other.getAxisID() != null) : !getAxisID().equals(other.getAxisID())) {
+            return false;
+        }
+        if ((getValue() == null) ? (other.getValue() != null) : !getValue().equals(other.getValue())) {
             return false;
         }
         return super.equals(obj);

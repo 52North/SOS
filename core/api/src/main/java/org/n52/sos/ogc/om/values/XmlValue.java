@@ -33,7 +33,7 @@ import java.util.Objects;
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -49,15 +49,16 @@ public class XmlValue implements Value<XmlObject> {
     private static final long serialVersionUID = 5895818649831864521L;
 
     private XmlObject xml;
-    private String unit;
+    private UoM unit;
 
     public XmlValue(XmlObject xml) {
         this.xml = xml;
     }
 
     @Override
-    public void setValue(XmlObject value) {
+    public XmlValue setValue(XmlObject value) {
         this.xml = value;
+        return this;
     }
 
     @Override
@@ -67,22 +68,35 @@ public class XmlValue implements Value<XmlObject> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
         return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public boolean isSetValue() {
         return this.xml != null;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return this.unit != null && !this.unit.isEmpty();
     }
 
     @Override

@@ -26,51 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities;
+package org.n52.sos.ogc;
 
-import java.io.Serializable;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.util.StringHelper;
 
-/**
- * @since 4.0.0
- * 
- */
-public class Unit implements Serializable {
+public class UoM {
 
-    private static final long serialVersionUID = -2187591132344983125L;
+    private String uom;
 
-    public static final String ID = "unitId";
-
-    public static final String UNIT = HasUnit.UNIT;
-
-    private long unitId;
-
-    private String unit;
-    
     private String name;
-    
+
     private String link;
 
-    public long getUnitId() {
-        return this.unitId;
+    public UoM(String uom) {
+        this.uom = uom;
     }
 
-    public void setUnitId(long unitId) {
-        this.unitId = unitId;
+    /**
+     * @return the uom
+     */
+    public String getUom() {
+        return uom;
     }
 
-    public String getUnit() {
-        return this.unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+    /**
+     * @param uom
+     *            the uom to set
+     */
+    public void setUom(String uom) {
+        this.uom = uom;
     }
 
     /**
@@ -81,7 +65,8 @@ public class Unit implements Serializable {
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -99,7 +84,8 @@ public class Unit implements Serializable {
     }
 
     /**
-     * @param link the link to set
+     * @param link
+     *            the link to set
      */
     public void setLink(String link) {
         this.link = link;
@@ -109,4 +95,15 @@ public class Unit implements Serializable {
         return StringHelper.isNotEmpty(getLink());
     }
 
+    public boolean isEmpty() {
+        return getUom() == null || (getUom() != null && getUom().isEmpty());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof UoM) {
+            return getUom().equals(((UoM) o).getUom());
+        }
+        return false;
+    }
 }

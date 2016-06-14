@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -38,7 +39,7 @@ import com.google.common.base.Objects;
 public class ComplexValue implements Value<SweAbstractDataRecord> {
     private static final long serialVersionUID = 7864029515468084800L;
     private SweAbstractDataRecord value;
-    private String unit;
+    private UoM unit;
 
     public ComplexValue() {
         this(null);
@@ -49,8 +50,9 @@ public class ComplexValue implements Value<SweAbstractDataRecord> {
     }
 
     @Override
-    public void setValue(SweAbstractDataRecord value) {
+    public ComplexValue setValue(SweAbstractDataRecord value) {
         this.value = value;
+        return this;
     }
 
     @Override
@@ -59,23 +61,36 @@ public class ComplexValue implements Value<SweAbstractDataRecord> {
     }
 
     @Override
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public String getUnit() {
-        return this.unit;
-    }
-
-    @Override
     public boolean isSetValue() {
         return this.value != null;
     }
 
     @Override
+    public void setUnit(String unit) {
+        this.unit = new UoM(unit);
+    }
+
+    @Override
+    public String getUnit() {
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
     public boolean isSetUnit() {
-        return this.unit != null && !this.unit.isEmpty();
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override

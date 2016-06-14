@@ -28,10 +28,11 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.StringHelper;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
 
 /**
  * Count measurement representation for observation
@@ -39,21 +40,16 @@ import org.n52.sos.util.StringHelper;
  * @since 4.0.0
  *
  */
-public class CountValue implements Value<Integer> {
+public class CountValue extends SweCount implements Value<Integer> {
     /**
      * serial number
      */
     private static final long serialVersionUID = 6995364149748171024L;
 
     /**
-     * Measurement value
-     */
-    private Integer value;
-
-    /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     /**
      * constructor
@@ -62,27 +58,42 @@ public class CountValue implements Value<Integer> {
      *            Measurement value
      */
     public CountValue(Integer value) {
-        this.value = value;
+        super();
+        super.setValue(value);
     }
 
     @Override
-    public void setValue(Integer value) {
-        this.value = value;
-    }
-
-    @Override
-    public Integer getValue() {
-        return value;
+    public CountValue setValue(Integer value) {
+        super.setValue(value);
+        return this;
     }
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
@@ -90,15 +101,6 @@ public class CountValue implements Value<Integer> {
         return String.format("CountValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
-    @Override
-    public boolean isSetValue() {
-        return value != null;
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
-    }
 
         @Override
     public <X> X accept(ValueVisitor<X> visitor)

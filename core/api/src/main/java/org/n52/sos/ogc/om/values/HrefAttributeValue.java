@@ -28,10 +28,10 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.W3CHrefAttribute;
 
 public class HrefAttributeValue implements Value<W3CHrefAttribute> {
@@ -43,7 +43,7 @@ public class HrefAttributeValue implements Value<W3CHrefAttribute> {
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     public HrefAttributeValue() {
     }
@@ -53,8 +53,9 @@ public class HrefAttributeValue implements Value<W3CHrefAttribute> {
     }
 
     @Override
-    public void setValue(W3CHrefAttribute value) {
+    public HrefAttributeValue setValue(W3CHrefAttribute value) {
         this.value = value;
+        return this;
     }
 
     @Override
@@ -64,22 +65,35 @@ public class HrefAttributeValue implements Value<W3CHrefAttribute> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isSetHref();
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
     }
 
     @Override

@@ -53,6 +53,7 @@ import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmObservation;
@@ -359,7 +360,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         private final Map<AbstractFeature, FeatureOfInterest> featureCache = Maps.newHashMap();
         private final Table<OmObservationConstellation, String, ObservationConstellation> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();
         private final Map<String, Codespace> codespaceCache = Maps.newHashMap();
-        private final Map<String, Unit> unitCache = Maps.newHashMap();
+        private final Map<UoM, Unit> unitCache = Maps.newHashMap();
         private final HashMultimap<OmObservationConstellation, String> obsConstOfferingCheckedMap = HashMultimap.create();
         private final HashMultimap<AbstractFeature, String> relatedFeatureCheckedMap = HashMultimap.create();
 
@@ -394,7 +395,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         public Map<String, Codespace> getCodespaceCache() {
             return codespaceCache;
         }
-        public Map<String, Unit> getUnitCache() {
+        public Map<UoM, Unit> getUnitCache() {
             return unitCache;
         }
         public Set<String> getAllOfferings() {

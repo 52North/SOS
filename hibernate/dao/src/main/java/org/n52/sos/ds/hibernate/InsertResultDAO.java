@@ -60,6 +60,7 @@ import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
@@ -135,8 +136,8 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
         Session session = null;
         Transaction transaction = null;
         
-        Map<String,Codespace> codespaceCache = Maps.newHashMap();
-        Map<String,Unit> unitCache = Maps.newHashMap();
+        Map<String, Codespace> codespaceCache = Maps.newHashMap();
+        Map<UoM, Unit> unitCache = Maps.newHashMap();
         
         try {
             session = sessionHolder.getSession();

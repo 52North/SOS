@@ -87,6 +87,7 @@ import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.time.Time;
@@ -101,7 +102,7 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -482,7 +483,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public void insertObservationMultiValue(Set<ObservationConstellation> observationConstellations,
             FeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
-            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+            Map<UoM, Unit> unitCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
             insertObservationSingleValue(observationConstellations, feature, sosObservation, codespaceCache, unitCache,
@@ -532,7 +533,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
             FeatureOfInterest hFeature, OmObservation sosObservation,
             Map<String, Codespace> codespaceCache,
-            Map<String, Unit> unitCache, Session session)
+            Map<UoM, Unit> unitCache, Session session)
             throws OwsExceptionReport {
         SingleObservationValue<?> value
                 = (SingleObservationValue) sosObservation.getValue();
@@ -590,7 +591,21 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      * @return Unit
      */
-    protected Unit getUnit(String unit, Map<String, Unit> localCache, Session session) {
+    protected Unit getUnit(String unit, Map<UoM, Unit> localCache, Session session) {
+       return getUnit(new UoM(unit), localCache, session);
+    }
+    
+    /**
+     * If the local unit cache isn't null, use it when retrieving unit.
+     *
+     * @param unit
+     *            Unit
+     * @param localCache
+     *            Cache (possibly null)
+     * @param session
+     * @return Unit
+     */
+    protected Unit getUnit(UoM unit, Map<UoM, Unit> localCache, Session session) {
         if (localCache != null && localCache.containsKey(unit)) {
             return localCache.get(unit);
         } else {
@@ -1286,7 +1301,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 Set<ObservationConstellation> hObservationConstellations,
                 FeatureOfInterest hFeature,
                 Map<String, Codespace> codespaceCache,
-                Map<String, Unit> unitCache,
+                Map<UoM, Unit> unitCache,
                 Session session)
                 throws OwsExceptionReport {
             this(new DAOs(observationDao),
@@ -1433,7 +1448,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
         @Override
-        public Observation<?> visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
+        public Observation<?> visit(ProfileValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 
@@ -1494,7 +1509,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
         private Unit getUnit(Value<?> value) {
-            return value.isSetUnit() ? daos.observation().getUnit(value.getUnit(), caches.units(), session) : null;
+            return value.isSetUnit() ? daos.observation().getUnit(value.getUnitObject(), caches.units(), session) : null;
         }
 
         private <V, T extends Observation<V>> T persist(T observation, V value) throws OwsExceptionReport {
@@ -1564,9 +1579,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
         private static class Caches {
             private final Map<String, Codespace> codespaces;
-            private final Map<String, Unit> units;
+            private final Map<UoM, Unit> units;
 
-            Caches(Map<String, Codespace> codespaces, Map<String, Unit> units) {
+            Caches(Map<String, Codespace> codespaces, Map<UoM, Unit> units) {
                 this.codespaces = codespaces;
                 this.units = units;
             }
@@ -1575,7 +1590,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 return codespaces;
             }
 
-            public Map<String, Unit> units() {
+            public Map<UoM, Unit> units() {
                 return units;
             }
         }

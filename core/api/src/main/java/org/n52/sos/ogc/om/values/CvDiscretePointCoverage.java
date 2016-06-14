@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
 
@@ -57,7 +57,7 @@ public class CvDiscretePointCoverage implements Value<PointValuePair> {
 
     private PointValuePair value;
 
-    private String unit;
+    private UoM unit;
 
     public CvDiscretePointCoverage(String gmlId) {
         if (Strings.isNullOrEmpty(gmlId)) {
@@ -107,8 +107,9 @@ public class CvDiscretePointCoverage implements Value<PointValuePair> {
     }
 
     @Override
-    public void setValue(PointValuePair value) {
+    public CvDiscretePointCoverage setValue(PointValuePair value) {
         this.value = value;
+        return this;
     }
 
     @Override
@@ -117,23 +118,36 @@ public class CvDiscretePointCoverage implements Value<PointValuePair> {
     }
 
     @Override
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public String getUnit() {
-        return unit;
-    }
-
-    @Override
     public boolean isSetValue() {
         return getValue() != null && !getValue().isEmpty();
     }
 
     @Override
+    public void setUnit(String unit) {
+        this.unit = new UoM(unit);
+    }
+
+    @Override
+    public String getUnit() {
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
     public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override

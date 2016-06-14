@@ -32,6 +32,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.SortedMap;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -57,7 +58,7 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
 
     private SortedMap<Double, Value<?>> value = Maps.newTreeMap();
 
-    private String unit;
+    private UoM unit;
 
     public RectifiedGridCoverage(String gmlId) {
         if (Strings.isNullOrEmpty(gmlId)) {
@@ -73,9 +74,10 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
     }
 
     @Override
-    public void setValue(SortedMap<Double, Value<?>> value) {
+    public RectifiedGridCoverage setValue(SortedMap<Double, Value<?>> value) {
         this.value.clear();
         addValue(value);
+        return this;
     }
 
     public void addValue(Double key, Value<?> value) {
@@ -93,22 +95,35 @@ public class RectifiedGridCoverage implements DiscreteCoverage<SortedMap<Double,
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
-        return unit;
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
+        return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public boolean isSetValue() {
         return CollectionHelper.isNotEmpty(value);
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return !Strings.isNullOrEmpty(unit);
     }
 
     @Override

@@ -51,6 +51,7 @@ import org.joda.time.DateTime;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -436,7 +437,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbQuantity.setValue(Double.valueOf(quantity.getValue()));
         }
         if (quantity.isSetUom()) {
-            xbQuantity.addNewUom().set(createUom(quantity.getUom()));
+            xbQuantity.addNewUom().set(createUom(quantity.getUomObject()));
         }
         if (quantity.isSetQuality()) {
         	xbQuantity.setQualityArray(createQuality(quantity.getQuality()));
@@ -454,7 +455,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
             xbQuantityRange.setValue(quantityRange.getValue().getRangeAsList());
         }
         if (quantityRange.isSetUom()) {
-            xbQuantityRange.addNewUom().set(createUom(quantityRange.getUom()));
+            xbQuantityRange.addNewUom().set(createUom(quantityRange.getUomObject()));
         }
         if (quantityRange.isSetQuality()) {
         	xbQuantityRange.setQualityArray(createQuality(quantityRange.getQuality()));
@@ -803,15 +804,33 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         timeCursor.dispose();
         return xbTimeGeometricPrimitiveProperty;
     }
-
-    private UomPropertyType createUom(final String uom) {
-        final UomPropertyType xbUom =
-                UomPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (uom.startsWith("urn:") || uom.startsWith("http://")) {
-            xbUom.setHref(uom);
+    
+    private UomPropertyType createUom(final UoM uom) {
+        final UomPropertyType upt =
+                UomPropertyType.Factory.newInstance(getXmlOptions());
+        if (!uom.isSetLink() && (uom.getUom().startsWith("urn:") || uom.getUom().startsWith("http://"))) {
+            upt.setHref(uom.getUom());
         } else {
-            xbUom.setCode(uom);
+            upt.setCode(uom.getUom());
         }
-        return xbUom;
+        if (uom.isSetName()) {
+            upt.setTitle(uom.getName());
+        }
+        if (uom.isSetLink()) {
+            upt.setHref(uom.getLink());
+        }
+        return upt;
     }
+    
+    private UomPropertyType createUom(final String uom) {
+        final UomPropertyType upt =
+                UomPropertyType.Factory.newInstance(getXmlOptions());
+        if (uom.startsWith("urn:") || uom.startsWith("http://")) {
+            upt.setHref(uom);
+        } else {
+            upt.setCode(uom);
+        }
+        return upt;
+    }
+
 }

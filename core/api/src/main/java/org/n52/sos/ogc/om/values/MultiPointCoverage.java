@@ -32,13 +32,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.PointValuePair;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -69,7 +69,7 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     public MultiPointCoverage(String gmlId) {
         if (Strings.isNullOrEmpty(gmlId)) {
@@ -95,9 +95,10 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
     }
 
     @Override
-    public void setValue(List<PointValuePair> value) {
+    public MultiPointCoverage setValue(List<PointValuePair> value) {
         this.value.clear();
         this.value.addAll(value);
+        return this;
     }
 
     /**
@@ -122,22 +123,35 @@ public class MultiPointCoverage implements DiscreteCoverage<List<PointValuePair>
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
         return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public boolean isSetUnit() {
+        return getUnitObject() != null && !getUnitObject().isEmpty();
     }
 
     @Override
     public boolean isSetValue() {
         return CollectionHelper.isNotEmpty(getValue());
-    }
-
-    @Override
-    public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
     }
 
     /**

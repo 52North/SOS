@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.TimeValuePair;
@@ -62,12 +63,13 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     /**
      * Unit of measure
      */
-    private String unit;
+    private UoM unit;
 
     @Override
-    public void setValue(List<TimeValuePair> value) {
+    public TVPValue setValue(List<TimeValuePair> value) {
         this.value.clear();
         this.value.addAll(value);
+        return this;
     }
 
     @Override
@@ -98,12 +100,25 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
     @Override
     public void setUnit(String unit) {
-        this.unit = unit;
+        this.unit = new UoM(unit);
     }
 
     @Override
     public String getUnit() {
+        if (isSetUnit()) {
+            return unit.getUom();
+        }
+        return null;
+    }
+
+    @Override
+    public UoM getUnitObject() {
         return this.unit;
+    }
+
+    @Override
+    public void setUnit(UoM unit) {
+        this.unit = unit;
     }
 
     @Override
@@ -138,4 +153,5 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
             throws OwsExceptionReport {
         visitor.visit(this);
     }
+
 }

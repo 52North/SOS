@@ -79,6 +79,8 @@ import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
@@ -409,12 +411,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
 
         if (xbQuantity.getUom() != null) {
-            final UnitReference uom = xbQuantity.getUom();
-            if (uom.isSetCode()) {
-                sosQuantity.setUom(uom.getCode());
-            } else if (uom.isSetHref()) {
-                sosQuantity.setUom(uom.getHref());
-            }
+            sosQuantity.setUom(parseUnitOfReference(xbQuantity.getUom()));
         }
 
         if (xbQuantity.isSetValue()) {
@@ -432,12 +429,30 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     		sweQuantityRange.setLabel(quantityRange.getLabel());
     	}
     	if (!quantityRange.getUom().isNil() && quantityRange.getUom().isSetCode()) {
-    		sweQuantityRange.setUom(quantityRange.getUom().getCode());
+    		sweQuantityRange.setUom(parseUnitOfReference(quantityRange.getUom()));
     	}
     	if (quantityRange.getValue() != null) {
     		sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
     	}
         return sweQuantityRange;
+    }
+    
+    private UoM parseUnitOfReference(UnitReference ur) {
+        UoM uom = null;
+        if (ur.isSetCode()) {
+            uom = new UoM(ur.getCode());
+        } else if (ur.isSetHref()) {
+            uom = new UoM(ur.getHref());
+        } else {
+            uom = new UoM(OGCConstants.UNKNOWN);
+        }
+        if (ur.isSetHref()) {
+            uom.setLink(ur.getHref());
+        }
+        if (ur.isSetTitle()) {
+            uom.setName(ur.getTitle());
+        }
+        return uom;
     }
 
     private RangeValue<Double> parseRangeValue(List<?> value) throws CodedException {
@@ -463,7 +478,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             sosTime.setValue(DateTimeHelper.parseIsoString2DateTime(xbTime.getValue().toString()));
         }
         if (xbTime.getUom() != null) {
-            sosTime.setUom(xbTime.getUom().getHref());
+            sosTime.setUom(parseUnitOfReference(xbTime.getUom()));
         }
         return sosTime;
     }

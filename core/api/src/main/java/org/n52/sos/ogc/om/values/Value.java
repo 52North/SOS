@@ -31,6 +31,7 @@ package org.n52.sos.ogc.om.values;
 
 import java.io.Serializable;
 
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -51,7 +52,7 @@ public interface Value<T> extends Serializable {
      * @param value
      *            Value to set
      */
-    void setValue(T value);
+    Value<T> setValue(T value);
 
     /**
      * Get the measurement value
@@ -67,6 +68,21 @@ public interface Value<T> extends Serializable {
      *            Unit of measure
      */
     void setUnit(String unit);
+
+    /**
+     * Get the unit of measure object
+     *
+     * @return Unit of measure
+     */
+    UoM getUnitObject();
+    
+    /**
+     * Set the unit of measure object
+     *
+     * @param unit
+     *            Unit of measure
+     */
+    void setUnit(UoM unit);
 
     /**
      * Get the unit of measure

@@ -33,7 +33,7 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
@@ -103,7 +103,7 @@ public interface ValueVisitor<T> {
     T visit(RectifiedGridCoverage value)
             throws OwsExceptionReport;
     
-    T visit(GWGeologyLogCoverage value)
+    T visit(ProfileValue value)
             throws OwsExceptionReport;
 
     T visit(UnknownValue value)

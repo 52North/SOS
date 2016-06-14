@@ -110,7 +110,7 @@ public class OfferingCacheUpdate extends AbstractQueueingDatasourceCacheUpdate<O
             String offeringId = offering.getIdentifier();
             if (shouldOfferingBeProcessed(offeringId)) {
                 getCache().addOffering(offeringId);
-                getCache().setAllowedObservationTypeForOffering(prefixedOfferingId,
+                getCache().setAllowedObservationTypeForOffering(offeringId,
                         getObservationTypesFromObservationType(offering.getObservationTypes()));
 
                 if (offering instanceof TOffering) {

@@ -124,8 +124,7 @@ public abstract class AbstractV2TransactionalRequestOperator<D extends Operation
     }
 
     protected static boolean isComplexObservation(OmObservation observation) {
-        return observation.getObservationConstellation().getObservationType()
-                .equalsIgnoreCase(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION) &&
+        return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION.equalsIgnoreCase(observation.getObservationConstellation().getObservationType()) &&
                observation.getValue().getValue() instanceof ComplexValue;
     }
 }

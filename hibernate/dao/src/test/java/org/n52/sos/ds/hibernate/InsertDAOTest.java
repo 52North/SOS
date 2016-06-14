@@ -793,7 +793,7 @@ public class InsertDAOTest extends HibernateTestCase {
         }
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.isSetHeightParameter(), is(true));
-        checkNamedValue(omObservation.getHeightParameter(), OmConstants.PARAMETER_NAME_HEIGHT, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
+        checkNamedValue(omObservation.getHeightParameter(), OmConstants.PARAMETER_NAME_HEIGHT_URL, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
     }
 
     @Test
@@ -836,7 +836,7 @@ public class InsertDAOTest extends HibernateTestCase {
         }
         assertThat(omObservation.isSetParameter(), is(true));
         assertThat(omObservation.isSetDepthParameter(), is(true));
-        checkNamedValue(omObservation.getDepthParameter(), OmConstants.PARAMETER_NAME_DEPTH, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
+        checkNamedValue(omObservation.getDepthParameter(), OmConstants.PARAMETER_NAME_DEPTH_URL, HEIGHT_DEPTH_VALUE, HEIGHT_DEPTH_UNIT);
     }
 
     @Test(expected=OwsExceptionReport.class)
@@ -921,11 +921,11 @@ public class InsertDAOTest extends HibernateTestCase {
     }
 
     private NamedValue<?> createHeight(double value) {
-        return createQuantityParameter(OmConstants.PARAMETER_NAME_HEIGHT, value, HEIGHT_DEPTH_UNIT);
+        return createQuantityParameter(OmConstants.PARAMETER_NAME_HEIGHT_URL, value, HEIGHT_DEPTH_UNIT);
     }
 
     private NamedValue<?> createDepth(double value) {
-        return createQuantityParameter(OmConstants.PARAMETER_NAME_DEPTH, value, HEIGHT_DEPTH_UNIT);
+        return createQuantityParameter(OmConstants.PARAMETER_NAME_DEPTH_URL, value, HEIGHT_DEPTH_UNIT);
     }
 
     private GetObservationRequest createDefaultGetObservationRequest(String reqOffering, String reqProcedure, String reqObsProp, DateTime time,

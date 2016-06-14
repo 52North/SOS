@@ -648,7 +648,9 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     
     private boolean isHeightParameter(NamedValue<?> namedValue) {
         return namedValue.isSetName() && namedValue.getName().isSetHref()
-                && namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT)
+                && (namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT_URL)
+                 || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT)
+                 || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_ELEVATION))
                 && namedValue.getValue() instanceof QuantityValue;
     }
 
@@ -687,7 +689,8 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     
     private boolean isDepthParameter(NamedValue<?> namedValue) {
         return namedValue.isSetName() && namedValue.getName().isSetHref()
-                && namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH)
+                && (namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH_URL)
+                || namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH))
                 && namedValue.getValue() instanceof QuantityValue;
     }
     

@@ -189,9 +189,31 @@ public interface OmConstants {
 
     String PARAM_NAME_SAMPLING_GEOMETRY = "http://www.opengis.net/def/param-name/OGC-OM/2.0/samplingGeometry";
   
-    String PARAMETER_NAME_DEPTH = "http://www.opengis.net/def/param-name/OGC-OM/2.0/depth";
+    String PARAMETER_NAME_DEPTH_URL = "http://www.opengis.net/def/param-name/OGC-OM/2.0/depth";
   
-    String PARAMETER_NAME_HEIGHT = "http://www.opengis.net/def/param-name/OGC-OM/2.0/height";
+    String PARAMETER_NAME_HEIGHT_URL = "http://www.opengis.net/def/param-name/OGC-OM/2.0/height";
+    
+    String PARAMETER_NAME_DEPTH = "depth";
+    
+    String PARAMETER_NAME_HEIGHT = "height";
+    
+    String PARAMETER_NAME_ELEVATION = "elevation";
+    
+    String PARAMETER_NAME_FROM = "from";
+    
+    String PARAMETER_NAME_TO = "to";
+    
+    String PARAMETER_NAME_FROM_DEPTH = "fromDepth";
+    
+    String PARAMETER_NAME_TO_DEPTH = "toDepth";
+    
+    String PARAMETER_NAME_FROM_HEIGHT = "fromHeight";
+    
+    String PARAMETER_NAME_TO_HEIGHT = "toHeight";
+    
+    String PARAMETER_NAME_FROM_ELEVATION = "fromEelvation";
+    
+    String PARAMETER_NAME_TO_ELEVATION = "toElevation";
 
     // observation types
     String OBS_TYPE_MEASUREMENT = "http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement";

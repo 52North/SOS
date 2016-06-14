@@ -1,0 +1,29 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close()">&times;</button>
+        <div class="modal-title" translate="listSelection.header"></div>
+    </div>
+    <div class="modal-body"
+         ng-controller="SwcListSelectionParametersCtrl">
+        <uib-tabset class="selectionListContent">
+            <uib-tab>
+                <uib-tab-heading>
+                    <span translate="listSelection.headers.category"></span>
+                </uib-tab-heading>
+                <swc-modal-list-selection parameters="categoryParams" listselectionid="'category'"></swc-modal-list-selection>
+            </uib-tab>
+            <uib-tab>
+                <uib-tab-heading>
+                    <span translate="listSelection.headers.station"></span>
+                </uib-tab-heading>
+                <swc-modal-list-selection parameters="stationParams" listselectionid="'station'"></swc-modal-list-selection>
+            </uib-tab>
+            <uib-tab>
+                <uib-tab-heading>
+                    <span translate="listSelection.headers.phenomenon"></span>
+                </uib-tab-heading>
+                <swc-modal-list-selection parameters="phenomenonParams" listselectionid="'phenomenon'"></swc-modal-list-selection>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</div>

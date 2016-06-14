@@ -1,0 +1,8 @@
+<div class="map-control search-control" ng-controller="SwcSearchCtrl">
+    <form class="btn-sm btn-default" ng-submit="startSearch(searchTerm)">
+        <span class="glyphicon glyphicon-search search-icon"></span>
+        <span>
+            <input type="text" ng-model="searchTerm" placeholder="{{'map.search.label' | translate}}"/>
+        </span>
+    </form>
+</div>

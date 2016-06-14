@@ -1,0 +1,15 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <!--<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+        <div class="modal-title">{{header}}</div>
+    </div>
+    <div class="modal-body">
+        <div>{{text}}</div>
+        <div>
+            <textarea id="importContent" class="form-control" rows="10" ng-model="content"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="confirmImportExport" translate='ok' ng-click="submit()"></button>
+    </div>
+</div>

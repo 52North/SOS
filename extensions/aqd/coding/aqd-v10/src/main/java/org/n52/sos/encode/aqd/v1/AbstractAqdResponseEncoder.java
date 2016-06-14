@@ -59,27 +59,27 @@ import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 
-public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
-	
+public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceResponse>
+        extends AbstractResponseEncoder<T> {
+
     public AbstractAqdResponseEncoder(String operation, Class<T> responseType) {
-        super(AqdConstants.AQD, AqdConstants.VERSION, operation, AqdConstants.NS_AQD,
-        		AqdConstants.NS_AQD_PREFIX, responseType);
+        super(AqdConstants.AQD, AqdConstants.VERSION, operation, AqdConstants.NS_AQD, AqdConstants.NS_AQD_PREFIX,
+                responseType);
     }
 
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(AqdConstants.NS_AQD_SCHEMA_LOCATION);
     }
-    
-	protected EReportingHeader getEReportingHeader(ReportObligationType type)
-			throws CodedException {
-		return ReportObligationRepository.getInstance().createHeader(type);
-	}
+
+    protected EReportingHeader getEReportingHeader(ReportObligationType type) throws CodedException {
+        return ReportObligationRepository.getInstance().createHeader(type);
+    }
 
     protected Profile getActiveProfile() {
         return Configurator.getInstance().getProfileHandler().getActiveProfile();
     }
-    
+
     protected AqdHelper getAqdHelper() {
         return AqdHelper.getInstance();
     }
@@ -115,13 +115,13 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
     protected XmlObject encodeSwe(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
-    
+
     protected AbstractServiceResponse changeResponseServiceVersion(AbstractServiceResponse response) {
-    	response.setService(SosConstants.SOS);
-		response.setVersion(Sos2Constants.SERVICEVERSION);
-		return response;
-	}
-    
+        response.setService(SosConstants.SOS);
+        response.setVersion(Sos2Constants.SERVICEVERSION);
+        return response;
+    }
+
     /**
      * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
      * requested contentType
@@ -135,12 +135,12 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         OperationEncoderKey key = new OperationEncoderKey(asr.getOperationKey(), getContentType());
         Encoder<?, ?> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
-                    getContentType())));
+            throw new RuntimeException(
+                    new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(), getContentType())));
         }
-        return (Encoder<Object, AbstractServiceResponse>)encoder;
+        return (Encoder<Object, AbstractServiceResponse>) encoder;
     }
-    
+
     protected XmlObject encodeWithSosEncoder(T response) throws OwsExceptionReport {
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
         if (encoder != null) {

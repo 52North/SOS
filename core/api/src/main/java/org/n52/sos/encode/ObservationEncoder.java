@@ -71,7 +71,7 @@ public interface ObservationEncoder<S, T> extends Encoder<S, T> {
      */
     Set<String> getSupportedResponseFormats(String service, String version);
     
-    Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes();
+    Map<String, Set<String>> getSupportedResponseFormatObservationTypes();
     
     
 

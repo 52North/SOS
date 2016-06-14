@@ -42,7 +42,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
@@ -222,8 +222,8 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         if (value instanceof QuantityValue) {
             QuantityValue quantityValue = (QuantityValue) value;
             return Double.toString(quantityValue.getValue().doubleValue());
-        } else if (value instanceof GWGeologyLogCoverage) {
-            GWGeologyLogCoverage gwglcValue = (GWGeologyLogCoverage)value;
+        } else if (value instanceof ProfileValue) {
+            ProfileValue gwglcValue = (ProfileValue)value;
             if (gwglcValue.isSetValue()) {
                 return getValue(gwglcValue.getValue().iterator().next().getSimpleValue());
             }       

@@ -50,7 +50,7 @@ import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -132,7 +132,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     }
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(WaterMLConstants.NS_WML_20, getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }
 
@@ -283,11 +283,11 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                             addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
                                     value);
                         }
-                    } else if (timeValuePair.getValue() instanceof GWGeologyLogCoverage) {
-                        GWGeologyLogCoverage gwglcValue = (GWGeologyLogCoverage)timeValuePair.getValue();
-                        if (gwglcValue.isSetValue()) {
-                            if (gwglcValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
-                                QuantityValue quantityValue = (QuantityValue)gwglcValue.getValue().iterator().next().getSimpleValue();
+                    } else if (timeValuePair.getValue() instanceof ProfileValue) {
+                        ProfileValue profileValue = (ProfileValue)timeValuePair.getValue();
+                        if (profileValue.isSetValue()) {
+                            if (profileValue.getValue().iterator().next().getSimpleValue() instanceof QuantityValue) {
+                                QuantityValue quantityValue = (QuantityValue)profileValue.getValue().iterator().next().getSimpleValue();
                                 if (!quantityValue.getValue().equals(Double.NaN)) {
                                     timeValuePair.getTime();
                                     String time = getTimeString(timeValuePair.getTime());

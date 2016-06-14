@@ -174,7 +174,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
     }
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(OmConstants.CONTENT_TYPE_OM.toString(), getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }
 

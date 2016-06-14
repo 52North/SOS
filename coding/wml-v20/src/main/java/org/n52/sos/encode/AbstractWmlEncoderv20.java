@@ -176,6 +176,11 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
         super.addNamespacePrefixToMap(nameSpacePrefixMap);
         nameSpacePrefixMap.put(WaterMLConstants.NS_WML_20, WaterMLConstants.NS_WML_20_PREFIX);
     }
+    
+    @Override
+    protected void addAddtitionalInformation(OMObservationType omot, OmObservation observation) throws OwsExceptionReport {
+        // do nothing
+    }
 
     /**
      * Encodes a SOS GetObservationResponse to a single WaterML 2.0 observation

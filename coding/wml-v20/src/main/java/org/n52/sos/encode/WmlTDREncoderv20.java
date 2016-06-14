@@ -136,7 +136,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(WaterMLConstants.NS_WML_20_DR, getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }
 

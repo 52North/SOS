@@ -26,61 +26,33 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.observation.valued;
+package org.n52.sos.ds.hibernate.dao.metadata;
 
-import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import java.util.List;
 
-public interface GeologyLogCoverageValuedObservation extends ValuedObservation<GWGeologyLogCoverage> {
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
+
+public class SeriesMetadataDAO {
+    
+    @SuppressWarnings("unchecked")
+    public List<SeriesMetadata> getMetadata(long series, Session session) {
+        Criteria c = getDefaultSeriesCriteria(session);
+        c.add(Restrictions.eq(SeriesMetadata.SERIES_ID, series));
+        return c.list();
+    }
     
     /**
-     * @return the fromDepth
+     * Get default Hibernate Criteria for querying metadata
+     *
+     * @param session
+     *            Hibernate Session
+     * @return Default criteria
      */
-    Double getFromDepth();
+    public Criteria getDefaultSeriesCriteria(Session session) {
+        return session.createCriteria(SeriesMetadata.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
 
-    /**
-     * @param fromDepth the fromDepth to set
-     */
-    void setFromDepth(Double fromDepth);
-
-    boolean isSetFromDepth();
-
-    /**
-     * @return the toDepth
-     */
-    Double getToDepth();
-    /**
-     * @param toDepth the toDepth to set
-     */
-    void setToDepth(Double toDepth);
-
-    boolean isSetToDepth();
-
-    /**
-     * @return the depthunit
-     */
-    Unit getDepthunit();
-
-    /**
-     * @param depthunit the depthunit to set
-     */
-    void setDepthunit(Unit depthunit);
-
-    boolean isSetDephtUnit();
-
-    /**
-     * @return the logValue
-     */
-    Double getLogValue();
-
-    /**
-     * @param logValue the logValue to set
-     */
-    void setLogValue(Double logValue);
-
-    boolean isSetLogValue();
-    
-    
-    
 }

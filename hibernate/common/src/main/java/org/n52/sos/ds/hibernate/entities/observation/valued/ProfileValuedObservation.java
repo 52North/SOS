@@ -26,33 +26,51 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.metadata;
+package org.n52.sos.ds.hibernate.entities.observation.valued;
 
-import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.metadata.MDMetadata;
+import java.util.Set;
 
-public class MDMetadataDAO {
-    
-    @SuppressWarnings("unchecked")
-    public List<MDMetadata> getMetadata(long series, Session session) {
-        Criteria c = getDefaultSeriesCriteria(session);
-        c.add(Restrictions.eq(MDMetadata.SERIES_ID, series));
-        return c.list();
-    }
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
+
+public interface ProfileValuedObservation extends ValuedObservation<Set<Observation<?>>> {
     
     /**
-     * Get default Hibernate Criteria for querying metadata
-     *
-     * @param session
-     *            Hibernate Session
-     * @return Default criteria
+     * @return the fromLevel
      */
-    public Criteria getDefaultSeriesCriteria(Session session) {
-        return session.createCriteria(MDMetadata.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-    }
+    Double getFromLevel();
 
+    /**
+     * @param fromLevel the fromLevel to set
+     */
+    void setFromLevel(Double fromLevel);
+
+    boolean isSetFromLevel();
+
+    /**
+     * @return the toLevel
+     */
+    Double getToLevel();
+    /**
+     * @param toLevel the toLevel to set
+     */
+    void setToLevel(Double toLevel);
+
+    boolean isSetToLevel();
+
+    /**
+     * @return the levelUnit
+     */
+    Unit getLevelUnit();
+
+    /**
+     * @param depthunit the levelunit to set
+     */
+    void setLevelUnit(Unit levelunit);
+
+    boolean isSetLevelUnit();
+
+    
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata"
+           table="seriesMetadata">
+        <id name="metadataId"
+            type="long">
+            <column name="metadataId">
+            	<comment>Table primary key, used for relations</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">metadataId_seq</param>
+            </generator>
+        </id>
+        <property name="seriesId" type="long">
+            <column name="seriesId" not-null="true">
+                <comment>Foreign Key (FK) to the related series. Contains "series".seriesId</comment>
+            </column>
+        </property>
+        <property name="identifier"
+                  type="string">
+            <column name="identifier"
+                    not-null="true">
+                <comment>The identifier of the metadata value.</comment>
+            </column>
+        </property>
+        <property name="value"
+                  type="string">
+            <column name="value"
+                    not-null="true">
+                <comment>The metadata value.</comment>
+            </column>
+        </property>
+        <property name="domain"
+                  type="string">
+            <column name="domain"
+                    not-null="true">
+                <comment>The metadata value domain.</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

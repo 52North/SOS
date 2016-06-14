@@ -28,14 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.entities.metadata;
 
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-
-public class MDMetadata {
+public class SeriesMetadata {
 
     public static final String SERIES_ID = "seriesId";
     public static String ID = "metadataId";
     private long metadataId;
-    private Series series;
+    private long seriesId;
+    private String identifier;
+    private String value;
+    private String domain;
     
     /**
      * @return the metadataId
@@ -56,18 +57,60 @@ public class MDMetadata {
      *
      * @return Series
      */
-    public Series getSeries() {
-        return series;
+    public long getSeriesId() {
+        return seriesId;
     }
 
     /**
-     * Set series 
+     * Set series
      *
      * @param series
-     *                 Series 
+     *            Series
      */
-    public void setSeries(final Series series) {
-        this.series = series;
+    public void setSeriesId(final long seriesId) {
+        this.seriesId = seriesId;
+    }
+
+    /**
+     * @return the identifier
+     */
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * @return the value
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * @param value the value to set
+     */
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    /**
+     * @return the domain
+     */
+    public String getDomain() {
+        return domain;
+    }
+
+    /**
+     * @param domain the domain to set
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
     }
     
 }

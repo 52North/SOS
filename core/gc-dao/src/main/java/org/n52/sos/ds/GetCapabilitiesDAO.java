@@ -106,6 +106,7 @@ import org.n52.sos.util.I18NHelper;
 import org.n52.sos.util.MultiMaps;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SetMultiMap;
+import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -507,9 +508,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             final Collection<String> procedures = getProceduresForOffering(offering, version);
             final SosEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering);
             final Set<String> featuresForoffering = getFOI4offering(offering);
-            final Collection<String> responseFormats =
-                    CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
-                            Sos1Constants.SERVICEVERSION);
+            final Collection<String> responseFormats = getResponseFormatForOffering(offering, Sos1Constants.SERVICEVERSION);
             if (checkOfferingValues(procedures, envelopeForOffering, featuresForoffering, responseFormats)) {
                 final SosObservationOffering sosObservationOffering = new SosObservationOffering();
 
@@ -1124,19 +1123,49 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
     }
 
     protected void setUpResponseFormatForOffering(final String version, final SosObservationOffering sosOffering) {
-        // initialize as new HashSet so that collection is modifiable
-        final Collection<String> responseFormats =
-                new HashSet<String>(CodingRepository.getInstance().getSupportedResponseFormats(SosConstants.SOS,
-                        version));
-        sosOffering.setResponseFormats(responseFormats);
-        // TODO set as property
+        sosOffering.setResponseFormats(getResponseFormatForOffering(sosOffering.getOffering().getIdentifier(), version));
+    }
+    
+    protected Set<String> getResponseFormatForOffering(String offering, String version) {
+        Set<String> responseFormats = Sets.newHashSet();
+        for (String observationType : getCache().getAllObservationTypesForOffering(offering)) {
+            Set<String> responseFormatsForObservationType = CodingRepository.getInstance().getResponseFormatsForObservationType(observationType, SosConstants.SOS, version);
+            if (CollectionHelper.isNotEmpty(responseFormatsForObservationType)) {
+                responseFormats.addAll(responseFormatsForObservationType);
+            }
+        }
+        if (Sos1Constants.SERVICEVERSION.equals(version)) {
+           return checkForMimeType(responseFormats, true);
+        } else if (Sos2Constants.SERVICEVERSION.equals(version)) {
+           return checkForMimeType(responseFormats, false);
+        }
+        return responseFormats;
+    }
+
+    private Set<String> checkForMimeType(Set<String> responseFormats, boolean onlyMimeTypes) {
+        Set<String> validFormats = Sets.newHashSet();
+        for (String format : responseFormats) {
+            boolean isMediaType = MediaType.check(format);
+            if (isMediaType && onlyMimeTypes) {
+                validFormats.add(format);
+            } else if (!isMediaType && !onlyMimeTypes) {
+                validFormats.add(format);
+            }
+        }
+        return validFormats;
     }
 
     protected void setUpProcedureDescriptionFormatForOffering(final SosObservationOffering sosOffering,
             final String version) {
-        // TODO: set procDescFormat <-- what is required here?
-        sosOffering.setProcedureDescriptionFormat(CodingRepository.getInstance()
-                .getSupportedProcedureDescriptionFormats(SosConstants.SOS, version));
+        Set<String> formats = Sets.newHashSet();
+        for (String procedure : sosOffering.getProcedures()) {
+            formats.addAll(getCache().getProcedureDescriptionFormatsForProcedure(procedure));
+        }
+        if (Sos1Constants.SERVICEVERSION.equals(version)) {
+            sosOffering.setProcedureDescriptionFormat(checkForMimeType(formats, true));
+        } else if (Sos2Constants.SERVICEVERSION.equals(version)) {
+            sosOffering.setProcedureDescriptionFormat(checkForMimeType(formats, false));
+        }
     }
 
     private SosEnvelope getObservedArea(Set<String> offerings) throws CodedException {

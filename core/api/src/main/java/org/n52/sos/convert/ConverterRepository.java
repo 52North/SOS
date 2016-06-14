@@ -78,6 +78,16 @@ public class ConverterRepository extends AbstractConfiguringServiceLoaderReposit
     public <T, F> Converter<T, F> getConverter(final String fromNamespace, final String toNamespace) {
         return getConverter(new ConverterKeyType(fromNamespace, toNamespace));
     }
+    
+    public Set<String> getConvertableProcedureDescriptionFormatsFor(String pdf) {
+        Set<String> formats = Sets.newHashSet();
+        for (ConverterKeyType key : converter.keySet()) {
+            if (key.getFromNamespace().equals(pdf)) {
+                formats.add(key.getToNamespace());
+            }
+        }
+        return formats;
+    }
 
     @SuppressWarnings("unchecked")
     public <T, F> Converter<T, F> getConverter(final ConverterKeyType key) {
@@ -100,6 +110,24 @@ public class ConverterRepository extends AbstractConfiguringServiceLoaderReposit
             }
         }
         return fromNamespaces;
+    }
+    
+    /**
+     * Get all namespaces for which a converter is available to convert to
+     * requested format to default format
+     * 
+     * @param fromNamespace
+     *            Requested format
+     * @return Swt with all possible formats
+     */
+    public Set<String> getToNamespaceConverterFrom(final String fromNamespace) {
+        final Set<String> toNamespaces = Sets.newHashSet();
+        for (final ConverterKeyType converterKey : converter.keySet()) {
+            if (fromNamespace.equals(converterKey.getFromNamespace())) {
+                toNamespaces.add(converterKey.getToNamespace());
+            }
+        }
+        return toNamespaces;
     }
 
     /**

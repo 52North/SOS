@@ -803,6 +803,8 @@ public interface ContentCache
     Set<String> getInstancesForProcedure(String identifier);
 
     boolean hasInstancesForProcedure(String identifier);
+    
+    Set<String> getProcedureDescriptionFormatsForProcedure(String procedure);
 
     enum TypeInstance {
         TYPE, INSTANCE;

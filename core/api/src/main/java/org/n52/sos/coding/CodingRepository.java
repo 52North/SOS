@@ -226,7 +226,7 @@ public class CodingRepository {
         for (final Encoder<?, ?> e : getEncoders()) {
             if (e instanceof ObservationEncoder) {
                 final ObservationEncoder<?, ?> oe = (ObservationEncoder<?, ?>) e;
-                Map<String, Set<String>> supportedResponseFormatObsrevationTypes = oe.getSupportedResponseFormatObsrevationTypes();
+                Map<String, Set<String>> supportedResponseFormatObsrevationTypes = oe.getSupportedResponseFormatObservationTypes();
                 if (supportedResponseFormatObsrevationTypes != null && !supportedResponseFormatObsrevationTypes.isEmpty()) {
                     for (final String responseFormat : supportedResponseFormatObsrevationTypes.keySet()) {
                         Set<String> values = Sets.newHashSet(supportedResponseFormatObsrevationTypes.get(responseFormat));

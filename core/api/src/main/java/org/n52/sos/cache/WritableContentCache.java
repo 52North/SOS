@@ -420,6 +420,8 @@ public interface WritableContentCache
     void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName);
 
     void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
+    
+    void addProcedureDescriptionFormatsForProcedure(String identifier, Set<String> formats);
 
     /**
      * Dissociate the specified allowed observation type with the specified
@@ -669,6 +671,14 @@ public interface WritableContentCache
      *            the procedure
      */
     void removeProcedureForOffering(String offering, String procedure);
+    
+    /**
+     * Remove the specified procedure from map.
+     * 
+     * @param identifier
+     *            the procedure
+     */
+    void removeProcedureDescriptionFormatsForProcedure(String identifier);
 
     /**
      * Dissociate the specified procedure with the specified offering.

@@ -125,6 +125,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
     private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
     private Map<String, Set<String>> typeOfProcedures = newSynchronizedMap();
+    private final SetMultiMap<String,String> procedureProcedureDescriptionFormats = newSynchronizedSetMultiMap();
 
     /**
      * @param envelope
@@ -212,7 +213,8 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                                 compositePhenomenonForObservableProperty,
                                 typeInstanceProcedures,
                                 componentAggregationProcedures,
-                                typeOfProcedures);
+                                typeOfProcedures,
+                                procedureProcedureDescriptionFormats);
     }
 
     @Override
@@ -277,7 +279,8 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
                     && Objects.equal(this.compositePhenomenonForObservableProperty, other.compositePhenomenonForObservableProperty)
                     && Objects.equal(this.typeInstanceProcedures, other.typeInstanceProcedures)
                     && Objects.equal(this.componentAggregationProcedures, other.componentAggregationProcedures)
-                    && Objects.equal(this.typeOfProcedures, other.typeOfProcedures);
+                    && Objects.equal(this.typeOfProcedures, other.typeOfProcedures)
+                    && Objects.equal(this.procedureProcedureDescriptionFormats, other.procedureProcedureDescriptionFormats);
             }
         return false;
     }
@@ -2257,65 +2260,60 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
         this.supportedLanguages.remove(language);
     }
 
-	@Override
-	public void addFeatureOfInterestIdentifierHumanReadableName(
-			String identifier, String humanReadableName) {
-		if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-			if (!featureOfInterestIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+    @Override
+    public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+            if (!featureOfInterestIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 featureOfInterestIdentifierForHumanReadableName.put(humanReadableName, identifier);
-			}
-			if (!featureOfInterestHumanReadableNameForIdentifier.containsKey(identifier)) {
+            }
+            if (!featureOfInterestHumanReadableNameForIdentifier.containsKey(identifier)) {
                 featureOfInterestHumanReadableNameForIdentifier.put(identifier, humanReadableName);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Override
-	public void addObservablePropertyIdentifierHumanReadableName(
-			String identifier, String humanReadableName) {
-		if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-			if (!observablePropertyIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+    @Override
+    public void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+            if (!observablePropertyIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 observablePropertyIdentifierForHumanReadableName.put(humanReadableName, identifier);
-			}
-			if (!observablePropertyHumanReadableNameForIdentifier.containsKey(humanReadableName)) {
+            }
+            if (!observablePropertyHumanReadableNameForIdentifier.containsKey(humanReadableName)) {
                 observablePropertyHumanReadableNameForIdentifier.put(identifier, humanReadableName);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Override
-	public void addProcedureIdentifierHumanReadableName(String identifier,
-			String humanReadableName) {
-		if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-			if (!procedureIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+    @Override
+    public void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+            if (!procedureIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 procedureIdentifierForHumanReadableName.put(humanReadableName, identifier);
-			}
-			if (!procedureHumanReadableNameForIdentifier.containsKey(humanReadableName)) {
+            }
+            if (!procedureHumanReadableNameForIdentifier.containsKey(humanReadableName)) {
                 procedureHumanReadableNameForIdentifier.put(identifier, humanReadableName);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Override
-	public void addOfferingIdentifierHumanReadableName(String identifier,
-			String humanReadableName) {
-		if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
-			if (!offeringIdentifierForHumanReadableName.containsKey(humanReadableName)) {
+    @Override
+    public void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName) {
+        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+            if (!offeringIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 offeringIdentifierForHumanReadableName.put(humanReadableName, identifier);
-			}
-			if (!offeringHumanReadableNameForIdentifier.containsKey(humanReadableName)) {
+            }
+            if (!offeringHumanReadableNameForIdentifier.containsKey(humanReadableName)) {
                 offeringHumanReadableNameForIdentifier.put(identifier, humanReadableName);
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Override
-	public void removeFeatureOfInterestIdentifierForHumanReadableName(
-			String humanReadableName) {
-		notNullOrEmpty(FEATURE_OF_INTEREST_NAME, humanReadableName);
-	    LOG.trace("Removing featuresOfInterest identifier for humanReadableName {}", humanReadableName);
+    @Override
+    public void removeFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName) {
+        notNullOrEmpty(FEATURE_OF_INTEREST_NAME, humanReadableName);
+        LOG.trace("Removing featuresOfInterest identifier for humanReadableName {}", humanReadableName);
         featureOfInterestIdentifierForHumanReadableName.remove(humanReadableName);
-	}
+    }
 
 	@Override
 	public void removeFeatureOfInterestHumanReadableNameForIdentifier(
@@ -2827,6 +2825,24 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
      */
     protected void logClearing(String type) {
         LOG.trace("Clearing '{}'", type);
+    }
+
+
+    @Override
+    public void addProcedureDescriptionFormatsForProcedure(String procedure, Set<String> formats) {
+        procedureProcedureDescriptionFormats.addAll(procedure, formats);
+    }
+
+
+    @Override
+    public void removeProcedureDescriptionFormatsForProcedure(String procedure) {
+        procedureProcedureDescriptionFormats.remove(procedure);
+    }
+
+
+    @Override
+    public Set<String> getProcedureDescriptionFormatsForProcedure(String procedure) {
+        return procedureProcedureDescriptionFormats.get(procedure);
     }
 
 }

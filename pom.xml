@@ -1606,6 +1606,10 @@
 			<id>unidata-releases</id>
 			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
     	</repository>
+		<repository>
+			<id>boundlessgeo-releases</id>
+			<url>https://repo.boundlessgeo.com/main</url>
+    	</repository>
     </repositories>
     <profiles>
         <profile>

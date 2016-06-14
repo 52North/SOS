@@ -41,6 +41,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
+import org.joda.time.DateTime;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
@@ -52,6 +53,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swe.RangeValue;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweCoordinate;
@@ -62,6 +64,9 @@ import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTimes;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTokens;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedValues;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -73,18 +78,31 @@ import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.Nillable;
 import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingDocument;
 import net.opengis.swe.x20.AbstractEncodingType;
+import net.opengis.swe.x20.AllowedTimesPropertyType;
+import net.opengis.swe.x20.AllowedTimesType;
+import net.opengis.swe.x20.AllowedTokensPropertyType;
+import net.opengis.swe.x20.AllowedTokensType;
+import net.opengis.swe.x20.AllowedValuesPropertyType;
+import net.opengis.swe.x20.AllowedValuesType;
 import net.opengis.swe.x20.BooleanType;
 import net.opengis.swe.x20.CategoryType;
 import net.opengis.swe.x20.CountType;
@@ -406,6 +424,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosCategory.isSetValue()) {
             xbCategory.setValue(sosCategory.getValue());
         }
+        if (sosCategory.isSetContstraint()) {
+            createConstraint(xbCategory.addNewConstraint(), sosCategory.getConstraint());
+        }
         return xbCategory;
     }
 
@@ -414,6 +435,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosCount.isSetValue()) {
             final BigInteger bigInt = new BigInteger(Integer.toString(sosCount.getValue().intValue()));
             xbCount.setValue(bigInt);
+        }
+        if (sosCount.isSetContstraint()) {
+            createConstraint(xbCount.addNewConstraint(), sosCount.getConstraint());
         }
         return xbCount;
     }
@@ -440,6 +464,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             // TODO implement
             logWarnQualityNotSupported(xbQuantity.schemaType());
         }
+        if (quantity.isSetContstraint()) {
+            createConstraint(xbQuantity.addNewConstraint(), quantity.getConstraint());
+        }
         return xbQuantity;
     }
 
@@ -461,6 +488,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             // TODO implement
             logWarnQualityNotSupported(xbQuantityRange.schemaType());
         }
+        if (quantityRange.isSetContstraint()) {
+            createConstraint(xbQuantityRange.addNewConstraint(), quantityRange.getConstraint());
+        }
         return xbQuantityRange;
     }
 
@@ -468,6 +498,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         final TextType xbText = TextType.Factory.newInstance(getXmlOptions());
         if (text.isSetValue()) {
             xbText.setValue(text.getValue());
+        }
+        if (text.isSetContstraint()) {
+            createConstraint(xbText.addNewConstraint(), text.getConstraint());
         }
         return xbText;
     }
@@ -484,6 +517,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             // TODO implement
             logWarnQualityNotSupported(xbTime.schemaType());
         }
+        if (sosTime.isSetContstraint()) {
+            createConstraint(xbTime.addNewConstraint(), sosTime.getConstraint());
+        }
         return xbTime;
     }
 
@@ -499,7 +535,169 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             // TODO implement
             logWarnQualityNotSupported(xbTimeRange.schemaType());
         }
+        if (sosTimeRange.isSetContstraint()) {
+            createConstraint(xbTimeRange.addNewConstraint(), sosTimeRange.getConstraint());
+        }
         return xbTimeRange;
+    }
+
+    private AllowedValuesPropertyType createConstraint(AllowedValuesPropertyType avpt,
+            Referenceable<SweAllowedValues> constraint) {
+        if (constraint.isInstance()) {
+            createAllowedValues(avpt.addNewAllowedValues(), constraint.getInstance());
+        } else if (constraint.isReference()) {
+            org.n52.sos.w3c.xlink.Reference ref = constraint.getReference();
+            if (ref.getHref().isPresent()) {
+                avpt.setHref(ref.getHref().get().toString());
+            }
+            if (ref.getTitle().isPresent()) {
+                avpt.setTitle(ref.getTitle().get());
+            }
+            if (ref.getActuate().isPresent()) {
+                avpt.setActuate(ActuateType.Enum.forString(ref.getActuate().get()));
+            }
+            if (ref.getArcrole().isPresent()) {
+                avpt.setArcrole(ref.getArcrole().get());
+            }
+            if (ref.getRole().isPresent()) {
+                avpt.setRole(ref.getRole().get());
+            }
+            if (ref.getShow().isPresent()) {
+                avpt.setShow(ShowType.Enum.forString(ref.getShow().get()));
+            }
+            if (ref.getType().isPresent()) {
+                avpt.setType(TypeType.Enum.forString(ref.getType().get()));
+            }
+        }
+        return avpt;
+    }
+
+    private AllowedValuesType createAllowedValues(AllowedValuesType avt, Nillable<SweAllowedValues> instance) {
+        if (instance.isPresent()) {
+            if (instance.get().isSetGmlID()) {
+                avt.setId(instance.get().getGmlId());
+            }
+            if (instance.get().isSetValue()) {
+                for (Double value : instance.get().getValue()) {
+                    avt.addNewValue().setDoubleValue(value);
+                }          
+            }
+            if (instance.get().isSetInterval()) {
+                for (RangeValue<Double> interval : instance.get().getInterval()) {
+                    avt.addInterval(interval.getRangeAsList());
+                }
+            }
+            if (instance.get().isSetSignificantFigures()) {
+                avt.setSignificantFigures(instance.get().getSignificantFigures());
+            }
+        }
+        return avt;
+    }
+
+    private AllowedTokensPropertyType createConstraint(AllowedTokensPropertyType atpt,
+            Referenceable<SweAllowedTokens> constraint) {
+        if (constraint.isInstance()) {
+            createAllowedTokens(atpt.addNewAllowedTokens(), constraint.getInstance());
+        } else if (constraint.isReference()) {
+            org.n52.sos.w3c.xlink.Reference ref = constraint.getReference();
+            if (ref.getHref().isPresent()) {
+                atpt.setHref(ref.getHref().get().toString());
+            }
+            if (ref.getTitle().isPresent()) {
+                atpt.setTitle(ref.getTitle().get());
+            }
+            if (ref.getActuate().isPresent()) {
+                atpt.setActuate(ActuateType.Enum.forString(ref.getActuate().get()));
+            }
+            if (ref.getArcrole().isPresent()) {
+                atpt.setArcrole(ref.getArcrole().get());
+            }
+            if (ref.getRole().isPresent()) {
+                atpt.setRole(ref.getRole().get());
+            }
+            if (ref.getShow().isPresent()) {
+                atpt.setShow(ShowType.Enum.forString(ref.getShow().get()));
+            }
+            if (ref.getType().isPresent()) {
+                atpt.setType(TypeType.Enum.forString(ref.getType().get()));
+            }
+        }
+        return atpt;
+    }
+
+    private AllowedTokensType createAllowedTokens(AllowedTokensType att, Nillable<SweAllowedTokens> instance) {
+        if (instance.isPresent()) {
+            if (instance.get().isSetGmlID()) {
+                att.setId(instance.get().getGmlId());
+            }
+            if (instance.get().isSetValue()) {
+                for (String value : instance.get().getValue()) {
+                    att.addNewValue().setStringValue(value);
+                }          
+            }
+            if (instance.get().isSetPattern()) {
+                att.setPattern(instance.get().getPattern());
+            }
+        }
+        return att;
+    }
+
+    private AllowedTimesPropertyType createConstraint(AllowedTimesPropertyType atpt,
+            Referenceable<SweAllowedTimes> constraint) {
+        if (constraint.isInstance()) {
+            createAllowedTimes(atpt.addNewAllowedTimes(), constraint.getInstance());
+        } else if (constraint.isReference()) {
+            org.n52.sos.w3c.xlink.Reference ref = constraint.getReference();
+            if (ref.getHref().isPresent()) {
+                atpt.setHref(ref.getHref().get().toString());
+            }
+            if (ref.getTitle().isPresent()) {
+                atpt.setTitle(ref.getTitle().get());
+            }
+            if (ref.getActuate().isPresent()) {
+                atpt.setActuate(ActuateType.Enum.forString(ref.getActuate().get()));
+            }
+            if (ref.getArcrole().isPresent()) {
+                atpt.setArcrole(ref.getArcrole().get());
+            }
+            if (ref.getRole().isPresent()) {
+                atpt.setRole(ref.getRole().get());
+            }
+            if (ref.getShow().isPresent()) {
+                atpt.setShow(ShowType.Enum.forString(ref.getShow().get()));
+            }
+            if (ref.getType().isPresent()) {
+                atpt.setType(TypeType.Enum.forString(ref.getType().get()));
+            }
+        }
+        return atpt;
+    }
+
+    private AllowedTimesType createAllowedTimes(AllowedTimesType att, Nillable<SweAllowedTimes> instance) {
+        if (instance.isPresent()) {
+            if (instance.get().isSetGmlID()) {
+                att.setId(instance.get().getGmlId());
+            }
+            if (instance.get().isSetValue()) {
+                for (DateTime value : instance.get().getValue()) {
+                    att.addNewValue().setStringValue(DateTimeHelper.formatDateTime2IsoString(value));
+                }          
+            }
+            if (instance.get().isSetInterval()) {
+                for (RangeValue<DateTime> interval : instance.get().getInterval()) {
+                    List<String> list = Lists.newArrayListWithCapacity(2);
+                    list.add(DateTimeHelper.formatDateTime2IsoString(interval.getRangeStart()));
+                    if (interval.isSetEndValue()) {
+                        list.add(DateTimeHelper.formatDateTime2IsoString(interval.getRangeEnd()));
+                    }
+                    att.addInterval(list);
+                }
+            }
+            if (instance.get().isSetSignificantFigures()) {
+                att.setSignificantFigures(instance.get().getSignificantFigures());
+            }
+        }
+        return att;
     }
 
     private VectorType createVector(SweVector sweVector) throws OwsExceptionReport {

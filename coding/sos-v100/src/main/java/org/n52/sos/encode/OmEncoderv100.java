@@ -41,22 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.om.x10.CategoryObservationDocument;
-import net.opengis.om.x10.CategoryObservationType;
-import net.opengis.om.x10.CountObservationDocument;
-import net.opengis.om.x10.CountObservationType;
-import net.opengis.om.x10.GeometryObservationDocument;
-import net.opengis.om.x10.GeometryObservationType;
-import net.opengis.om.x10.MeasurementDocument;
-import net.opengis.om.x10.MeasurementType;
-import net.opengis.om.x10.ObservationCollectionDocument;
-import net.opengis.om.x10.ObservationCollectionType;
-import net.opengis.om.x10.ObservationDocument;
-import net.opengis.om.x10.ObservationPropertyType;
-import net.opengis.om.x10.ObservationType;
-import net.opengis.om.x10.TruthObservationDocument;
-import net.opengis.om.x10.TruthObservationType;
-
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
@@ -116,6 +100,22 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import net.opengis.om.x10.CategoryObservationDocument;
+import net.opengis.om.x10.CategoryObservationType;
+import net.opengis.om.x10.CountObservationDocument;
+import net.opengis.om.x10.CountObservationType;
+import net.opengis.om.x10.GeometryObservationDocument;
+import net.opengis.om.x10.GeometryObservationType;
+import net.opengis.om.x10.MeasurementDocument;
+import net.opengis.om.x10.MeasurementType;
+import net.opengis.om.x10.ObservationCollectionDocument;
+import net.opengis.om.x10.ObservationCollectionType;
+import net.opengis.om.x10.ObservationDocument;
+import net.opengis.om.x10.ObservationPropertyType;
+import net.opengis.om.x10.ObservationType;
+import net.opengis.om.x10.TruthObservationDocument;
+import net.opengis.om.x10.TruthObservationType;
 
 /**
  * @since 4.0.0

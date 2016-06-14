@@ -30,29 +30,29 @@ package org.n52.sos.ogc.swe.simpleType;
 
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
-/**
- * @since 4.0.0
- *
- */
-public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
+public class SweCategoryRange extends SweAbstractUomType<RangeValue<String>> implements SweQuality {
+    
+    /**
+     * value
+     */
+    private RangeValue<String> value;
+    private Referenceable<SweAllowedTokens> constraint;
 
-    private RangeValue<Integer> value;
-    private Referenceable<SweAllowedValues> constraint;
 
     @Override
-    public RangeValue<Integer> getValue() {
+    public RangeValue<String> getValue() {
         return value;
     }
 
     @Override
-    public SweCountRange setValue(final RangeValue<Integer> value) {
-        this.value = value;
-        return this;
+    public String getStringValue() {
+        return value.toString();
     }
 
     @Override
@@ -61,21 +61,22 @@ public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
     }
 
     @Override
-    public String getStringValue() {
-        return value.toString();
+    public SweAbstractSimpleType<RangeValue<String>> setValue(RangeValue<String> value) {
+        this.value = value;
+        return this;
     }
     
     /**
      * @return the constraint
      */
-    public Referenceable<SweAllowedValues> getConstraint() {
+    public Referenceable<SweAllowedTokens> getConstraint() {
         return constraint;
     }
 
     /**
      * @param constraint the constraint to set
      */
-    public void setConstraint(SweAllowedValues constraint) {
+    public void setConstraint(SweAllowedTokens constraint) {
         this.constraint = Referenceable.of(constraint);
     }
     
@@ -86,37 +87,35 @@ public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
     /**
      * @param constraint the constraint to set
      */
-    public void setConstraint(Referenceable<SweAllowedValues> constraint) {
+    public void setConstraint(Referenceable<SweAllowedTokens> constraint) {
         this.constraint = constraint;
     }
 
     @Override
     public SweDataComponentType getDataComponentType() {
-        return SweDataComponentType.CountRange;
+        return SweDataComponentType.CategoryRange;
     }
 
     @Override
-    public <T> T accept(SweDataComponentVisitor<T> visitor)
-            throws OwsExceptionReport {
+    public <T> T accept(SweDataComponentVisitor<T> visitor) throws OwsExceptionReport {
         return visitor.visit(this);
     }
 
     @Override
-    public void accept(VoidSweDataComponentVisitor visitor)
-            throws OwsExceptionReport {
+    public void accept(VoidSweDataComponentVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
-    public SweCountRange clone() {
-        SweCountRange clone = new SweCountRange();
+    public SweAbstractDataComponent clone() throws CloneNotSupportedException {
+        SweCategoryRange clone = new SweCategoryRange();
         copyValueTo(clone);
         if (isSetQuality()) {
             clone.setQuality(cloneQuality());
         }
         if (isSetValue()) {
-            clone.setValue((RangeValue<Integer>)getValue().clone());
+            clone.setValue((RangeValue<String>)getValue().clone());
         }
         if (isSetContstraint()) {
             clone.setConstraint(getConstraint());
@@ -124,4 +123,22 @@ public class SweCountRange extends SweAbstractSimpleType<RangeValue<Integer>> {
         return clone;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 97;
+        int hash = 7;
+        hash = prime * hash + super.hashCode();
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        return super.equals(obj);
+    }
 }

@@ -39,12 +39,15 @@ import org.n52.sos.service.ServiceConfiguration;
  * @since 4.0.0
  * 
  */
+@Deprecated
 public final class CacheHelper {
 
+    @Deprecated
     protected static Configurator getConfigurator() {
         return Configurator.getInstance();
     }
 
+    @Deprecated
     public static String addPrefixOrGetOfferingIdentifier(String offering) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return ServiceConfiguration.getInstance().getDefaultOfferingPrefix() + offering;
@@ -52,6 +55,7 @@ public final class CacheHelper {
         return offering;
     }
 
+    @Deprecated
     public static String removePrefixAndGetOfferingIdentifier(String offering) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return offering.replace(ServiceConfiguration.getInstance().getDefaultOfferingPrefix(),
@@ -60,6 +64,7 @@ public final class CacheHelper {
         return offering;
     }
 
+    @Deprecated
     public static String addPrefixOrGetProcedureIdentifier(String procedure) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return ServiceConfiguration.getInstance().getDefaultProcedurePrefix() + procedure;
@@ -67,6 +72,7 @@ public final class CacheHelper {
         return procedure;
     }
 
+    @Deprecated
     public static String removePrefixAndGetProcedureIdentifier(String procedure) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return procedure.replace(ServiceConfiguration.getInstance().getDefaultProcedurePrefix(),
@@ -75,6 +81,7 @@ public final class CacheHelper {
         return procedure;
     }
 
+    @Deprecated
     public static String addPrefixOrGetFeatureIdentifier(String feature) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return ServiceConfiguration.getInstance().getDefaultFeaturePrefix() + feature;
@@ -82,6 +89,7 @@ public final class CacheHelper {
         return feature;
     }
 
+    @Deprecated
     public static String removePrefixAndGetFeatureIdentifier(String feature) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return feature.replace(ServiceConfiguration.getInstance().getDefaultFeaturePrefix(),
@@ -90,6 +98,7 @@ public final class CacheHelper {
         return feature;
     }
 
+    @Deprecated
     public static String addPrefixOrGetObservablePropertyIdentifier(String observableProperty) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return ServiceConfiguration.getInstance().getDefaultObservablePropertyPrefix() + observableProperty;
@@ -97,6 +106,7 @@ public final class CacheHelper {
         return observableProperty;
     }
 
+    @Deprecated
     public static String removePrefixAndGetObservablePropertyIdentifier(String observableProperty) {
         if (ServiceConfiguration.getInstance().isUseDefaultPrefixes()) {
             return observableProperty.replace(ServiceConfiguration.getInstance().getDefaultObservablePropertyPrefix(),

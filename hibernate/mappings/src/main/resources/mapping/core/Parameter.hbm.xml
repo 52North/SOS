@@ -128,7 +128,7 @@
                 </column>
             </key>
             <property name="value" type="text">
-                <column name="value" index="xmlParamIdx">
+                <column name="value">
                     <comment>XML parameter value</comment>
                 </column>
             </property>

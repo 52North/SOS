@@ -28,9 +28,11 @@
  */
 package org.n52.sos.decode;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +41,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.sos.ogc.gml.CodeType;
@@ -58,6 +61,9 @@ import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTimes;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTokens;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedValues;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -74,6 +80,8 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +92,12 @@ import net.opengis.swe.x101.AbstractDataArrayType.ElementCount;
 import net.opengis.swe.x101.AbstractDataComponentType;
 import net.opengis.swe.x101.AbstractDataRecordDocument;
 import net.opengis.swe.x101.AbstractDataRecordType;
+import net.opengis.swe.x101.AllowedTimesDocument.AllowedTimes;
+import net.opengis.swe.x101.AllowedTimesPropertyType;
+import net.opengis.swe.x101.AllowedTokensDocument.AllowedTokens;
+import net.opengis.swe.x101.AllowedTokensPropertyType;
+import net.opengis.swe.x101.AllowedValuesDocument.AllowedValues;
+import net.opengis.swe.x101.AllowedValuesPropertyType;
 import net.opengis.swe.x101.AnyScalarPropertyType;
 import net.opengis.swe.x101.BlockEncodingPropertyType;
 import net.opengis.swe.x101.BooleanDocument;
@@ -433,6 +447,9 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         if (category.isSetQuality()) {
         	sosCategory.setQuality(parseQuality(category.getQuality()));
         }
+        if (category.isSetConstraint()) {
+            sosCategory.setConstraint(parseConstraint(category.getConstraint()));
+        }
         return sosCategory;
     }
 
@@ -443,6 +460,9 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         }
         if (xbCount.isSetValue()) {
             sosCount.setValue(xbCount.getValue().intValue());
+        }
+        if (xbCount.isSetConstraint()) {
+            sosCount.setConstraint(parseConstraint(xbCount.getConstraint()));
         }
         return sosCount;
     }
@@ -470,6 +490,9 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         }
         if (xbQuantity.isSetValue()) {
             sosQuantity.setValue(Double.valueOf(xbQuantity.getValue()));
+        }
+        if (xbQuantity.isSetConstraint()) {
+            sosQuantity.setConstraint(parseConstraint(xbQuantity.getConstraint()));
         }
         return sosQuantity;
     }
@@ -501,8 +524,8 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     		catch (final IndexOutOfBoundsException e) { throw createParsingException(e); }
     	}
     	if (xbQuantityRange.isSetConstraint()) {
-    		LOGGER.error("Decoding of swe:QuantityRange/swe:constraint is not implemented");
-    	}
+    	    sosQuantityRange.setConstraint(parseConstraint(xbQuantityRange.getConstraint()));
+        }
     	if (xbQuantityRange.getQualityArray() != null && xbQuantityRange.getQualityArray().length > 0) {
     		LOGGER.error("Decoding of swe:QuantityRange/swe:quality is not implemented");
     	}
@@ -532,6 +555,9 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         if (time.getUom() != null) {
             sosTime.setUom(time.getUom().getHref());
         }
+        if (time.isSetConstraint()) {
+            sosTime.setConstraint(parseConstraint(time.getConstraint()));
+        }
         return sosTime;
     }
 
@@ -556,7 +582,179 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         if (timeRange.getUom() != null) {
             sosTimeRange.setUom(timeRange.getUom().getHref());
         }
+        if (timeRange.isSetConstraint()) {
+            sosTimeRange.setConstraint(parseConstraint(timeRange.getConstraint()));
+        }
         return sosTimeRange;
+    }
+
+    private Referenceable<SweAllowedValues> parseConstraint(AllowedValuesPropertyType avpt) {
+        if (avpt.isSetAllowedValues()) {
+            return Referenceable.of(parseAllowedValues(avpt.getAllowedValues()));
+        } else {
+            Reference ref = new Reference();
+            if (avpt.isSetHref()) {
+                ref.setHref(URI.create(avpt.getHref()));
+            }
+            if (avpt.isSetTitle()) {
+                ref.setTitle(avpt.getTitle());
+            }
+            if (avpt.isSetActuate()) {
+                ref.setActuate(avpt.getActuate().toString());
+            }
+            if (avpt.isSetArcrole()) {
+                ref.setArcrole(avpt.getArcrole());
+            }
+            if (avpt.isSetRole()) {
+                ref.setRole(avpt.getRole());
+            }
+            if (avpt.isSetShow()) {
+                ref.setShow(avpt.getShow().toString());
+            }
+            if (avpt.isSetType()) {
+                ref.setType(avpt.getType().toString());
+            }
+            return Referenceable.of(ref);
+        }
+        
+    }
+
+    private Referenceable<SweAllowedTokens> parseConstraint(AllowedTokensPropertyType atpt) {
+        if (atpt.isSetAllowedTokens()) {
+            return Referenceable.of(parseAllowedTokens(atpt.getAllowedTokens()));
+        } else {
+            Reference ref = new Reference();
+            if (atpt.isSetHref()) {
+                ref.setHref(URI.create(atpt.getHref()));
+            }
+            if (atpt.isSetTitle()) {
+                ref.setTitle(atpt.getTitle());
+            }
+            if (atpt.isSetActuate()) {
+                ref.setActuate(atpt.getActuate().toString());
+            }
+            if (atpt.isSetArcrole()) {
+                ref.setArcrole(atpt.getArcrole());
+            }
+            if (atpt.isSetRole()) {
+                ref.setRole(atpt.getRole());
+            }
+            if (atpt.isSetShow()) {
+                ref.setShow(atpt.getShow().toString());
+            }
+            if (atpt.isSetType()) {
+                ref.setType(atpt.getType().toString());
+            }
+            return Referenceable.of(ref);
+        }
+    }
+
+    private Referenceable<SweAllowedTimes> parseConstraint(AllowedTimesPropertyType atpt) throws DateTimeParseException {
+        if (atpt.isSetAllowedTimes()) {
+            return Referenceable.of(parseAllowedTimes(atpt.getAllowedTimes()));
+        } else {
+            Reference ref = new Reference();
+            if (atpt.isSetHref()) {
+                ref.setHref(URI.create(atpt.getHref()));
+            }
+            if (atpt.isSetTitle()) {
+                ref.setTitle(atpt.getTitle());
+            }
+            if (atpt.isSetActuate()) {
+                ref.setActuate(atpt.getActuate().toString());
+            }
+            if (atpt.isSetArcrole()) {
+                ref.setArcrole(atpt.getArcrole());
+            }
+            if (atpt.isSetRole()) {
+                ref.setRole(atpt.getRole());
+            }
+            if (atpt.isSetShow()) {
+                ref.setShow(atpt.getShow().toString());
+            }
+            if (atpt.isSetType()) {
+                ref.setType(atpt.getType().toString());
+            }
+            return Referenceable.of(ref);
+        }
+        
+    }
+
+    private SweAllowedValues parseAllowedValues(AllowedValues avt) {
+        SweAllowedValues allowedValues = new SweAllowedValues();
+        if (avt.isSetId()) {
+            allowedValues.setGmlId(avt.getId());
+        }
+        if (CollectionHelper.isNotNullOrEmpty(avt.getValueListArray())) {
+            for (List list : avt.getValueListArray()) {
+                if (CollectionHelper.isNotEmpty(list)) {
+                    for (Object value : list) {
+                        allowedValues.addValue(Double.parseDouble(value.toString()));
+                    }
+                }
+            }
+        }
+        if (CollectionHelper.isNotNullOrEmpty(avt.getIntervalArray())) {
+            for (List interval : avt.getIntervalArray()) {
+                RangeValue<Double> rangeValue = new RangeValue<Double>();
+                Iterator<Double> iterator = interval.iterator();
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeStart(iterator.next());
+                }
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeEnd(iterator.next());
+                }
+                allowedValues.addInterval(rangeValue);
+            }
+        }
+        return allowedValues;
+    }
+
+    private SweAllowedTokens parseAllowedTokens(AllowedTokens att) {
+        SweAllowedTokens allowedTokens = new SweAllowedTokens();
+        if (att.isSetId()) {
+            allowedTokens.setGmlId(att.getId());
+        }
+        if (CollectionHelper.isNotNullOrEmpty(att.getValueListArray())) {
+            for (List list : att.getValueListArray()) {
+                if (CollectionHelper.isNotEmpty(list)) {
+                    for (Object value : list) {
+                        allowedTokens.setValue(list);
+                    }
+                }
+            }
+        }
+        return allowedTokens;
+    }
+
+    private SweAllowedTimes parseAllowedTimes(AllowedTimes att) throws DateTimeParseException {
+        SweAllowedTimes allowedTimes = new SweAllowedTimes();
+        if (att.isSetId()) {
+            allowedTimes.setGmlId(att.getId());
+        }
+        if (CollectionHelper.isNotNullOrEmpty(att.getValueListArray())) {
+            for (List list : att.getValueListArray()) {
+                if (CollectionHelper.isNotEmpty(list)) {
+                    for (Object value : list) {
+                        allowedTimes.addValue(DateTimeHelper.parseIsoString2DateTime(value.toString()));
+                    }
+                }
+            }
+        }
+        if (CollectionHelper.isNotNullOrEmpty(att.getIntervalArray())) {
+            for (List interval : att.getIntervalArray()) {
+                RangeValue<DateTime> rangeValue = new RangeValue<DateTime>();
+                Iterator iterator = interval.iterator();
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeStart(DateTimeHelper.parseIsoString2DateTime(iterator.next().toString()));
+                }
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(iterator.next().toString()));
+                }
+                allowedTimes.addInterval(rangeValue);
+            }
+        }
+        return allowedTimes;
     }
 
     private Collection<SweQuality> parseQuality(final QualityPropertyType... qualityArray) throws OwsExceptionReport {

@@ -31,6 +31,7 @@ package org.n52.sos.ogc.swe.simpleType;
 import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.ogc.swe.SweDataComponentVisitor;
 import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
@@ -42,6 +43,7 @@ import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 public class SweCategory extends SweAbstractUomType<String> implements SweQuality {
 
     private String value;
+    private Referenceable<SweAllowedTokens> constraint;
     
     public SweCategory() {
     }
@@ -95,6 +97,31 @@ public class SweCategory extends SweAbstractUomType<String> implements SweQualit
     public String getStringValue() {
         return value;
     }
+    
+    /**
+     * @return the constraint
+     */
+    public Referenceable<SweAllowedTokens> getConstraint() {
+        return constraint;
+    }
+
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(SweAllowedTokens constraint) {
+        this.constraint = Referenceable.of(constraint);
+    }
+    
+    public boolean isSetContstraint() {
+        return getConstraint() != null && !getConstraint().isAbsent();
+    }
+    
+    /**
+     * @param constraint the constraint to set
+     */
+    public void setConstraint(Referenceable<SweAllowedTokens> constraint) {
+        this.constraint = constraint;
+    }
 
     @Override
     public SweDataComponentType getDataComponentType() {
@@ -122,6 +149,9 @@ public class SweCategory extends SweAbstractUomType<String> implements SweQualit
         }
         if (isSetValue()) {
             clone.setValue(getValue());
+        }
+        if (isSetContstraint()) {
+            clone.setConstraint(getConstraint());
         }
         return clone;
     }

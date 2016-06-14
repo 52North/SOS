@@ -28,17 +28,75 @@
  */
 package org.n52.sos.decode;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.joda.time.DateTime;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.DateTimeParseException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTimes;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTokens;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedValues;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweCountRange;
+import org.n52.sos.ogc.swe.simpleType.SweQuality;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.xlink.Reference;
+import org.n52.sos.w3c.xlink.Referenceable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+
 import net.opengis.swe.x20.AbstractDataComponentDocument;
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingType;
+import net.opengis.swe.x20.AllowedTimesPropertyType;
+import net.opengis.swe.x20.AllowedTimesType;
+import net.opengis.swe.x20.AllowedTokensPropertyType;
+import net.opengis.swe.x20.AllowedTokensType;
+import net.opengis.swe.x20.AllowedValuesPropertyType;
+import net.opengis.swe.x20.AllowedValuesType;
 import net.opengis.swe.x20.AnyScalarPropertyType;
 import net.opengis.swe.x20.BooleanPropertyType;
 import net.opengis.swe.x20.BooleanType;
@@ -67,49 +125,6 @@ import net.opengis.swe.x20.TimeType;
 import net.opengis.swe.x20.UnitReference;
 import net.opengis.swe.x20.VectorType;
 import net.opengis.swe.x20.VectorType.Coordinate;
-
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.n52.sos.exception.CodedException;
-import org.n52.sos.exception.ows.InvalidParameterValueException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.UoM;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweCountRange;
-import org.n52.sos.ogc.swe.simpleType.SweQuality;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-
-import com.google.common.base.Joiner;
 
 
 public class SweCommonDecoderV20 implements Decoder<Object, Object> {
@@ -383,6 +398,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         if (xbCategory.isSetValue()) {
             sosSweCategory.setValue(xbCategory.getValue());
         }
+        if (xbCategory.isSetConstraint()) {
+            sosSweCategory.setConstraint(parseConstraint(xbCategory.getConstraint()));
+        }
         return sosSweCategory;
     }
 
@@ -393,6 +411,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         if (count.isSetValue()) {
             sosCount.setValue(count.getValue().intValue());
+        }
+        if (count.isSetConstraint()) {
+            sosCount.setConstraint(parseConstraint(count.getConstraint()));
         }
         return sosCount;
     }
@@ -417,6 +438,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         if (xbQuantity.isSetValue()) {
             sosQuantity.setValue(Double.valueOf(xbQuantity.getValue()));
         }
+        if (xbQuantity.isSetConstraint()) {
+            sosQuantity.setConstraint(parseConstraint(xbQuantity.getConstraint()));
+        }
         return sosQuantity;
     }
 
@@ -434,6 +458,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     	if (quantityRange.getValue() != null) {
     		sweQuantityRange.setValue(parseRangeValue(quantityRange.getValue()));
     	}
+    	if (quantityRange.isSetConstraint()) {
+    	    sweQuantityRange.setConstraint(parseConstraint(quantityRange.getConstraint()));
+        }
         return sweQuantityRange;
     }
     
@@ -469,6 +496,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         if (xbText.isSetValue()) {
             sosText.setValue(xbText.getValue());
         }
+        if (xbText.isSetConstraint()) {
+            sosText.setConstraint(parseConstraint(xbText.getConstraint()));
+        }
         return sosText;
     }
 
@@ -479,6 +509,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         if (xbTime.getUom() != null) {
             sosTime.setUom(parseUnitOfReference(xbTime.getUom()));
+        }
+        if (xbTime.isSetConstraint()) {
+            sosTime.setConstraint(parseConstraint(xbTime.getConstraint()));
         }
         return sosTime;
     }
@@ -503,7 +536,174 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         if (xbTime.getUom() != null) {
             sosTimeRange.setUom(xbTime.getUom().getHref());
         }
+        if (xbTime.isSetConstraint()) {
+            sosTimeRange.setConstraint(parseConstraint(xbTime.getConstraint()));
+        }
         return sosTimeRange;
+    }
+
+    private Referenceable<SweAllowedValues> parseConstraint(AllowedValuesPropertyType avpt) {
+        if (avpt.isSetAllowedValues()) {
+            return Referenceable.of(parseAllowedValues(avpt.getAllowedValues()));
+        } else {
+            Reference ref = new Reference();
+            if (avpt.isSetHref()) {
+                ref.setHref(URI.create(avpt.getHref()));
+            }
+            if (avpt.isSetTitle()) {
+                ref.setTitle(avpt.getTitle());
+            }
+            if (avpt.isSetActuate()) {
+                ref.setActuate(avpt.getActuate().toString());
+            }
+            if (avpt.isSetArcrole()) {
+                ref.setArcrole(avpt.getArcrole());
+            }
+            if (avpt.isSetRole()) {
+                ref.setRole(avpt.getRole());
+            }
+            if (avpt.isSetShow()) {
+                ref.setShow(avpt.getShow().toString());
+            }
+            if (avpt.isSetType()) {
+                ref.setType(avpt.getType().toString());
+            }
+            return Referenceable.of(ref);
+        }
+    }
+    
+    private Referenceable<SweAllowedTokens> parseConstraint(AllowedTokensPropertyType atpt) {
+        if (atpt.isSetAllowedTokens()) {
+            return Referenceable.of(parseAllowedTokens(atpt.getAllowedTokens()));
+        } else {
+            Reference ref = new Reference();
+            if (atpt.isSetHref()) {
+                ref.setHref(URI.create(atpt.getHref()));
+            }
+            if (atpt.isSetTitle()) {
+                ref.setTitle(atpt.getTitle());
+            }
+            if (atpt.isSetActuate()) {
+                ref.setActuate(atpt.getActuate().toString());
+            }
+            if (atpt.isSetArcrole()) {
+                ref.setArcrole(atpt.getArcrole());
+            }
+            if (atpt.isSetRole()) {
+                ref.setRole(atpt.getRole());
+            }
+            if (atpt.isSetShow()) {
+                ref.setShow(atpt.getShow().toString());
+            }
+            if (atpt.isSetType()) {
+                ref.setType(atpt.getType().toString());
+            }
+            return Referenceable.of(ref);
+        }
+    }
+    
+    private Referenceable<SweAllowedTimes> parseConstraint(AllowedTimesPropertyType atpt) throws DateTimeParseException {
+        if (atpt.isSetAllowedTimes()) {
+            return Referenceable.of(parseAllowedTimes(atpt.getAllowedTimes()));
+        } else {
+            Reference ref = new Reference();
+            if (atpt.isSetHref()) {
+                ref.setHref(URI.create(atpt.getHref()));
+            }
+            if (atpt.isSetTitle()) {
+                ref.setTitle(atpt.getTitle());
+            }
+            if (atpt.isSetActuate()) {
+                ref.setActuate(atpt.getActuate().toString());
+            }
+            if (atpt.isSetArcrole()) {
+                ref.setArcrole(atpt.getArcrole());
+            }
+            if (atpt.isSetRole()) {
+                ref.setRole(atpt.getRole());
+            }
+            if (atpt.isSetShow()) {
+                ref.setShow(atpt.getShow().toString());
+            }
+            if (atpt.isSetType()) {
+                ref.setType(atpt.getType().toString());
+            }
+            return Referenceable.of(ref);
+        }
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private SweAllowedValues parseAllowedValues(AllowedValuesType avt) {
+        SweAllowedValues allowedValues = new SweAllowedValues();
+        if (avt.isSetId()) {
+            allowedValues.setGmlId(avt.getId());
+        }
+        if (avt.getValueArray() != null && avt.getValueArray().length > 0) {
+            for (double value : avt.getValueArray()) {
+                allowedValues.addValue(value);
+            }
+        }
+        if (CollectionHelper.isNotNullOrEmpty(avt.getIntervalArray())) {
+            for (List interval : avt.getIntervalArray()) {
+                RangeValue<Double> rangeValue = new RangeValue<Double>();
+                Iterator<Double> iterator = interval.iterator();
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeStart(iterator.next());
+                }
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeEnd(iterator.next());
+                }
+                allowedValues.addInterval(rangeValue);
+            }
+        }
+        if (avt.isSetSignificantFigures()) {
+            allowedValues.setSignificantFigures(avt.getSignificantFigures());
+        }
+        return allowedValues;
+    }
+
+    private SweAllowedTokens parseAllowedTokens(AllowedTokensType att) {
+        SweAllowedTokens allowedTokens = new SweAllowedTokens();
+        if (att.isSetId()) {
+            allowedTokens.setGmlId(att.getId());
+        }
+        if (CollectionHelper.isNotNullOrEmpty(att.getValueArray())) {
+            allowedTokens.setValue(Arrays.asList(att.getValueArray()));
+        }
+        if (att.isSetPattern()) {
+            allowedTokens.setPattern(att.getPattern());
+        }
+        return allowedTokens;
+    }
+    
+    @SuppressWarnings("rawtypes")
+    private SweAllowedTimes parseAllowedTimes(AllowedTimesType att) throws DateTimeParseException {
+        SweAllowedTimes allowedTimes = new SweAllowedTimes();
+        if (att.isSetId()) {
+            allowedTimes.setGmlId(att.getId());
+        }
+        if (CollectionHelper.isNotNullOrEmpty(att.getValueArray())) {
+            for (Object value : att.getValueArray()) {
+                allowedTimes.addValue(DateTimeHelper.parseIsoString2DateTime(value.toString()));
+            }
+        }
+        if (CollectionHelper.isNotNullOrEmpty(att.getIntervalArray())) {
+            for (List interval : att.getIntervalArray()) {
+                RangeValue<DateTime> rangeValue = new RangeValue<DateTime>();
+                Iterator iterator = interval.iterator();
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeStart(DateTimeHelper.parseIsoString2DateTime(iterator.next().toString()));
+                }
+                if (iterator.hasNext()) {
+                    rangeValue.setRangeEnd(DateTimeHelper.parseIsoString2DateTime(iterator.next().toString()));
+                }
+                allowedTimes.addInterval(rangeValue);
+            }
+        }
+        if (att.isSetSignificantFigures()) {
+            allowedTimes.setSignificantFigures(att.getSignificantFigures());
+        }
+        return allowedTimes;
     }
 
     private Collection<SweQuality> parseQuality(final XmlObject[] qualityArray) throws OwsExceptionReport {

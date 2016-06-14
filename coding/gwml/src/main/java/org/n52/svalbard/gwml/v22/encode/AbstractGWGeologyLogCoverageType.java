@@ -29,17 +29,17 @@
 package org.n52.svalbard.gwml.v22.encode;
 
 import org.n52.sos.ogc.gml.CodeType;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
-import org.n52.sos.ogc.om.values.LogValue;
+import org.n52.sos.ogc.om.values.ProfileValue;
+import org.n52.sos.ogc.om.values.ProfileLevel;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.JavaHelper;
 
 import net.opengis.gwmlWell.x22.GWGeologyLogCoverageType;
 
 public abstract class AbstractGWGeologyLogCoverageType<T>
-        extends AbstractGroundWaterMLEncoder<T, GWGeologyLogCoverage> {
+        extends AbstractGroundWaterMLEncoder<T, ProfileValue> {
 
-    protected GWGeologyLogCoverageType encodeGWGeologyLogCoverage(GWGeologyLogCoverage gwGeologyLogCoverage)
+    protected GWGeologyLogCoverageType encodeGWGeologyLogCoverage(ProfileValue gwGeologyLogCoverage)
             throws OwsExceptionReport {
         GWGeologyLogCoverageType gwglct = GWGeologyLogCoverageType.Factory.newInstance();
         setGmlId(gwglct, gwGeologyLogCoverage);
@@ -50,7 +50,7 @@ public abstract class AbstractGWGeologyLogCoverageType<T>
         return gwglct;
     }
 
-    private void setGmlId(GWGeologyLogCoverageType gwglct, GWGeologyLogCoverage gwGeologyLogCoverage) {
+    private void setGmlId(GWGeologyLogCoverageType gwglct, ProfileValue gwGeologyLogCoverage) {
         if (!gwGeologyLogCoverage.isSetGmlID()) {
             gwGeologyLogCoverage.setGmlId(JavaHelper.generateID(Double.toString(System.currentTimeMillis()
                   * Math.random())));
@@ -59,20 +59,20 @@ public abstract class AbstractGWGeologyLogCoverageType<T>
         gwglct.setId(gwGeologyLogCoverage.getGmlId());
     }
 
-    private void setIdentifier(GWGeologyLogCoverageType gwglct, GWGeologyLogCoverage gwGeologyLogCoverage)
+    private void setIdentifier(GWGeologyLogCoverageType gwglct, ProfileValue gwGeologyLogCoverage)
             throws OwsExceptionReport {
         if (gwGeologyLogCoverage.isSetIdentifier()) {
             gwglct.addNewIdentifier().set(encodeGML(gwGeologyLogCoverage.getIdentifierCodeWithAuthority()));
         }
     }
 
-    private void setDescription(GWGeologyLogCoverageType gwglct, GWGeologyLogCoverage gwGeologyLogCoverage) {
+    private void setDescription(GWGeologyLogCoverageType gwglct, ProfileValue gwGeologyLogCoverage) {
         if (gwGeologyLogCoverage.isSetDescription()) {
             gwglct.addNewDescription().setStringValue(gwGeologyLogCoverage.getDescription());
         }
     }
 
-    private void setNames(GWGeologyLogCoverageType gwglct, GWGeologyLogCoverage gwGeologyLogCoverage)
+    private void setNames(GWGeologyLogCoverageType gwglct, ProfileValue gwGeologyLogCoverage)
             throws OwsExceptionReport {
         if (gwGeologyLogCoverage.isSetName()) {
             for (CodeType name : gwGeologyLogCoverage.getName()) {
@@ -81,10 +81,10 @@ public abstract class AbstractGWGeologyLogCoverageType<T>
         }
     }
 
-    private void setElements(GWGeologyLogCoverageType gwglct, GWGeologyLogCoverage gwGeologyLogCoverage)
+    private void setElements(GWGeologyLogCoverageType gwglct, ProfileValue gwGeologyLogCoverage)
             throws OwsExceptionReport {
         if (gwGeologyLogCoverage.isSetValue()) {
-            for (LogValue logValue : gwGeologyLogCoverage.getValue()) {
+            for (ProfileLevel logValue : gwGeologyLogCoverage.getValue()) {
                 gwglct.addNewElement().set(encodeGWMLProperty(logValue));
             }
         }

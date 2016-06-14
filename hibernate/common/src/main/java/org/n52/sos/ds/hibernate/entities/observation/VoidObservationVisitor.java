@@ -33,7 +33,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeologyLogCoverageObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
@@ -75,7 +75,7 @@ public abstract class VoidObservationVisitor
     protected abstract void _visit(SweDataArrayObservation o)
             throws OwsExceptionReport;
     
-    protected abstract void _visit(GeologyLogCoverageObservation o)
+    protected abstract void _visit(ProfileObservation o)
             throws OwsExceptionReport;
 
     @Override
@@ -142,7 +142,7 @@ public abstract class VoidObservationVisitor
     }
     
     @Override
-    public Void visit(GeologyLogCoverageObservation o)
+    public Void visit(ProfileObservation o)
             throws OwsExceptionReport {
         _visit(o);
         return null;

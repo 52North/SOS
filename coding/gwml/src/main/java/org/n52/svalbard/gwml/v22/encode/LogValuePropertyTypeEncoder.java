@@ -38,7 +38,7 @@ import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gwml.GWMLConstants;
-import org.n52.sos.ogc.om.values.LogValue;
+import org.n52.sos.ogc.om.values.ProfileLevel;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
@@ -49,8 +49,8 @@ import net.opengis.gwmlWell.x22.LogValuePropertyType;
 public class LogValuePropertyTypeEncoder extends AbstractLogValueTypeEncoder<LogValuePropertyType> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-            new ClassToClassEncoderKey(LogValue.class, LogValuePropertyType.class),
-            new XmlPropertyTypeEncoderKey(GWMLConstants.NS_GWML_22, LogValue.class));
+            new ClassToClassEncoderKey(ProfileLevel.class, LogValuePropertyType.class),
+            new XmlPropertyTypeEncoderKey(GWMLConstants.NS_GWML_22, ProfileLevel.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -58,13 +58,13 @@ public class LogValuePropertyTypeEncoder extends AbstractLogValueTypeEncoder<Log
     }
 
     @Override
-    public LogValuePropertyType encode(LogValue logValue)
+    public LogValuePropertyType encode(ProfileLevel logValue)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         return encode(logValue,  new EnumMap<HelperValues, String>(HelperValues.class));
     }
 
     @Override
-    public LogValuePropertyType encode(LogValue logValue, Map<HelperValues, String> additionalValues)
+    public LogValuePropertyType encode(ProfileLevel logValue, Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         LogValuePropertyType lvpt = LogValuePropertyType.Factory.newInstance();
         if (logValue.isSetValue()) {

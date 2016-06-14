@@ -28,10 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.full;
 
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import java.util.Set;
 
-public interface GeologyLogCoverageObservation extends GeologyLogCoverageValuedObservation, Observation<GWGeologyLogCoverage> {
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
+
+public interface ProfileObservation extends ProfileValuedObservation, Observation<Set<Observation<?>>> {
 
 }

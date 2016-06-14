@@ -28,68 +28,147 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
-import org.n52.sos.ds.hibernate.entities.observation.series.HibernateSeriesRelations.HasSeries;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
-import org.n52.sos.ogc.om.values.LogValue;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
+import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
+import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
+import org.n52.sos.ogc.UoM;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.OmConstants;
+import org.n52.sos.ogc.om.values.ProfileLevel;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.util.SweHelper;
+import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GeologyLogCoverageGeneratorSplitter {
-    private static final Logger LOG = LoggerFactory.getLogger(GeologyLogCoverageGeneratorSplitter.class);
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
-    public static GWGeologyLogCoverage create(GeologyLogCoverageValuedObservation entity) {
-        GWGeologyLogCoverage coverage = new GWGeologyLogCoverage();
-        coverage.setGmlId("glc_" + entity.getObservationId());
-        coverage.addValue(createLogValue(entity));
-        return coverage;
+public class ProfileGeneratorSplitter {
+    private static final Logger LOG = LoggerFactory.getLogger(ProfileGeneratorSplitter.class);
+    
+    public static ProfileValue create(ProfileValuedObservation entity) throws OwsExceptionReport {
+        ProfileValue profileValue = new ProfileValue();
+        profileValue.setGmlId("pv" + entity.getObservationId());
+        UoM uom = null;
+        if (entity.isSetLevelUnit()) {
+            Unit levelunit = entity.getLevelUnit();
+            uom = new UoM(levelunit.getUnit());
+            if (levelunit.isSetName()) {
+                uom.setName(levelunit.getName());
+            }
+            if (levelunit.isSetLink()) {
+                uom.setLink(levelunit.getLink());
+            }
+        }
+        if (entity.isSetFromLevel()) {
+            profileValue.setFromLevel(new QuantityValue(entity.getFromLevel(), uom));
+        }
+        if (entity.isSetToLevel()) {
+            profileValue.setToLevel(new QuantityValue(entity.getToLevel(), uom));
+        }
+        profileValue.setValue(createProfileLevel(entity));
+        return profileValue;
+    }
+    
+    public static SweAbstractDataComponent createValue(ProfileValuedObservation entity) throws OwsExceptionReport {
+        return create(entity).asDataRecord();
     }
 
-    private static LogValue createLogValue(GeologyLogCoverageValuedObservation entity) {
-        LogValue logValue = new LogValue();
-        String uom = "";
-        if (entity.isSetDephtUnit()) {
-            uom = entity.getDepthunit().getUnit();
+    private static List<ProfileLevel> createProfileLevel(ProfileValuedObservation entity) throws OwsExceptionReport {
+        Map<Double, ProfileLevel> map = Maps.newTreeMap();
+        if (entity.isSetValue()) {
+            for (Observation<?> observation : entity.getValue()) {
+                if (observation.hasParameters() && observation.isSetValue()) {
+                    QuantityValue levelStart = getLevelStart(observation.getParameters());
+                    QuantityValue levelEnd = getLevelEnd(observation.getParameters());
+                    Double key = getKey(levelStart, levelEnd);
+                    Value<?> value = observation.accept(new ObservationValueCreator());
+                    if (map.containsKey(key)) {
+                        map.get(key).addValue(value);
+                    } else {
+                        ProfileLevel profileLevel = new ProfileLevel();
+                        profileLevel.setLevelStart(levelStart);
+                        profileLevel.setLevelEnd(levelEnd);
+                        if (observation.hasSamplingGeometry()) {
+                            profileLevel.setLocation(observation.getSamplingGeometry());
+                        }
+                        profileLevel.addValue(value);
+                        map.put(key, profileLevel);
+                    }
+                }
+            }
         }
-        if (entity.isSetFromDepth()) {
-            logValue.setFromDepth(SweHelper.createSweQuantity(entity.getFromDepth(), uom));
-        }
-        if (entity.isSetToDepth()) {
-            logValue.setToDepth(SweHelper.createSweQuantity(entity.getToDepth(), uom));
-        }
-        if (entity.isSetLogValue()) {
-            logValue.setValue(createValue(entity));
-            logValue.setSimpleValue(new QuantityValue(entity.getLogValue()));
-        }
-        return logValue;
+        return (List<ProfileLevel>)Lists.newArrayList(map.values());
     }
 
-    private static DataRecord createValue(GeologyLogCoverageValuedObservation entity) {
-        SweDataRecord dataRecord = new SweDataRecord();
-        String observedProperty = getObservedProperty(entity);
-        dataRecord.setDefinition(observedProperty);
-        dataRecord.addField(new SweField(getFieldNameFrom(observedProperty),
-                SweHelper.createSweQuantity(entity.getLogValue(), entity.getUnit().getUnit())));
-        return dataRecord;
-    }
-
-    private static String getObservedProperty(GeologyLogCoverageValuedObservation entity) {
-        if (entity instanceof HasSeries) {
-            return ((HasSeries) entity).getSeries().getObservableProperty().getIdentifier();
+    private static Double getKey(QuantityValue levelStart, QuantityValue levelEnd) {
+        if (levelStart != null && levelStart.isSetValue()) {
+            return levelStart.getValue();
+        } else if (levelEnd != null && levelEnd.isSetValue()) {
+            return levelEnd.getValue();
         }
-        return "unknown";
+        return Double.NaN;
     }
 
-    private static String getFieldNameFrom(String observedProperty) {
-        return observedProperty.substring(observedProperty.lastIndexOf("/") + 1);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static QuantityValue getLevelStart(Set<Parameter> parameters) throws OwsExceptionReport {
+        for (Parameter parameter : parameters) {
+            if (checkParameterForStartLevel(parameter.getName())) {
+                NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
+                if (namedValue.getValue() instanceof QuantityValue) {
+                    QuantityValue value = (QuantityValue)namedValue.getValue();
+                    value.setDefinition(parameter.getName());
+                    value.setName(parameter.getName());
+                    return value;
+                }
+            }
+        }
+        return null;
     }
 
-    public static void split(GWGeologyLogCoverage coverage, GeologyLogCoverageValuedObservation entity) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static QuantityValue getLevelEnd(Set<Parameter> parameters) throws OwsExceptionReport {
+        for (Parameter parameter : parameters) {
+            if (checkParameterForEndLevel(parameter.getName())) {
+                NamedValue namedValue = parameter.accept(new ValuedParameterVisitor());
+                if (namedValue.getValue() instanceof QuantityValue) {
+                    QuantityValue value = (QuantityValue)namedValue.getValue();
+                    value.setDefinition(parameter.getName());
+                    value.setName(parameter.getName());
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean checkParameterForStartLevel(String name) {
+        return OmConstants.PARAMETER_NAME_DEPTH_URL.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_DEPTH_URL.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_DEPTH.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_DEPTH.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_ELEVATION.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_FROM.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_FROM_DEPTH.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_FROM_HEIGHT.equalsIgnoreCase(name);
+    }
+
+    private static boolean checkParameterForEndLevel(String name) {
+        return OmConstants.PARAMETER_NAME_TO.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_TO_DEPTH.equalsIgnoreCase(name)
+                || OmConstants.PARAMETER_NAME_TO_HEIGHT.equalsIgnoreCase(name);
+    }
+
+    public static void split(ProfileValue coverage, ProfileValuedObservation entity) {
         LOG.warn("Inserting of GW_GeologyLogCoverages is not yet supported!");
     }
 

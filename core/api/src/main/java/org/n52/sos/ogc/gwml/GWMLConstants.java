@@ -41,7 +41,7 @@ public interface GWMLConstants {
 
     SchemaLocation GWML_22_SCHEMA_LOCATION = new SchemaLocation(NS_GWML_22, SCHEMA_LOCATION_URL_GWML_22);
 
-    String OBS_TYPE_GEOLOGY_LOG_COVERAGE = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLogCoverage";
+    String OBS_TYPE_GEOLOGY_LOG = "http://www.opengis.net/def/observationType/OGC-GWML/2.2/GW_GeologyLog";
     
     MediaType CONTENT_TYPE_GWML_22 = new MediaType("text", "xml", "subtype", "gwml/2.2");
 }

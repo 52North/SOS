@@ -39,12 +39,13 @@ import javax.xml.stream.XMLStreamException;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.OmEncoderv20;
-import org.n52.svalbard.gwml.v21.encode.streaming.GwmlV22XmlStreamWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
+
+import net.opengis.om.x20.OMObservationType;
 
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gwml.GWMLConstants;
@@ -60,6 +61,7 @@ import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
+import org.n52.svalbard.gwml.v22.encode.streaming.GwmlV22XmlStreamWriter;
 
 public class GwmlEncoderv22 extends OmEncoderv20 {
     /**
@@ -72,7 +74,7 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
             OmObservation.class, NamedValue.class, SingleObservationValue.class, MultiObservationValues.class);
 
     private static final Map<SupportedTypeKey, Set<String>> SUPPORTED_TYPES = Collections.singletonMap(
-            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE));
+            SupportedTypeKey.ObservationType, (Set<String>) Sets.newHashSet(GWMLConstants.OBS_TYPE_GEOLOGY_LOG));
 
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
@@ -95,7 +97,7 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
     }
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(GWMLConstants.NS_GWML_22, getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }
 
@@ -132,6 +134,11 @@ public class GwmlEncoderv22 extends OmEncoderv20 {
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(OmConstants.OM_20_SCHEMA_LOCATION);
+    }
+    
+    @Override
+    protected OMObservationType createOmObservationType() {
+        return super.createOmObservationType();
     }
     
     @Override

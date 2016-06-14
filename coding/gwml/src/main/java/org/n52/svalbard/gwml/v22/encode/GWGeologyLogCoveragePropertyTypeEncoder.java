@@ -38,7 +38,7 @@ import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.XmlPropertyTypeEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gwml.GWMLConstants;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 
@@ -50,8 +50,8 @@ import net.opengis.gwmlWell.x22.GWGeologyLogCoveragePropertyType;
 public class GWGeologyLogCoveragePropertyTypeEncoder extends AbstractGWGeologyLogCoverageType<GWGeologyLogCoveragePropertyType> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = Sets.newHashSet(
-            new ClassToClassEncoderKey(GWGeologyLogCoverage.class, GWGeologyLogCoveragePropertyType.class),
-            new XmlPropertyTypeEncoderKey(GWMLConstants.NS_GWML_22, GWGeologyLogCoverage.class));
+            new ClassToClassEncoderKey(ProfileValue.class, GWGeologyLogCoveragePropertyType.class),
+            new XmlPropertyTypeEncoderKey(GWMLConstants.NS_GWML_22, ProfileValue.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -60,13 +60,13 @@ public class GWGeologyLogCoveragePropertyTypeEncoder extends AbstractGWGeologyLo
 
 
     @Override
-    public GWGeologyLogCoveragePropertyType encode(GWGeologyLogCoverage gwGeologyLogCoverage)
+    public GWGeologyLogCoveragePropertyType encode(ProfileValue gwGeologyLogCoverage)
             throws OwsExceptionReport, UnsupportedEncoderInputException {
         return encode(gwGeologyLogCoverage, new EnumMap<HelperValues, String>(HelperValues.class));
     }
 
     @Override
-    public GWGeologyLogCoveragePropertyType encode(GWGeologyLogCoverage gwGeologyLogCoverage,
+    public GWGeologyLogCoveragePropertyType encode(ProfileValue gwGeologyLogCoverage,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport, UnsupportedEncoderInputException {
         GWGeologyLogCoveragePropertyType gwglcpt = GWGeologyLogCoveragePropertyType.Factory.newInstance();
         gwglcpt.setGWGeologyLogCoverage(encodeGWGeologyLogCoverage(gwGeologyLogCoverage));

@@ -28,36 +28,36 @@
  */
 package org.n52.svalbard.gwml.v22.encode;
 
-import org.n52.sos.ogc.om.values.LogValue;
+import org.n52.sos.ogc.om.values.ProfileLevel;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import net.opengis.gwmlWell.x22.LogValueType;
 
-public abstract class AbstractLogValueTypeEncoder<T> extends AbstractGroundWaterMLEncoder<T, LogValue> {
+public abstract class AbstractLogValueTypeEncoder<T> extends AbstractGroundWaterMLEncoder<T, ProfileLevel> {
 
-    protected LogValueType encodeLogValue(LogValue logValue) throws OwsExceptionReport {
+    protected LogValueType encodeLogValue(ProfileLevel profileLevel) throws OwsExceptionReport {
         LogValueType lvt = LogValueType.Factory.newInstance();
-        setFromDepth(lvt, logValue);
-        setToDepth(lvt, logValue);
-        setValue(lvt, logValue);
+        setFromDepth(lvt, profileLevel);
+        setToDepth(lvt, profileLevel);
+        setValue(lvt, profileLevel);
         return lvt;
     }
     
-    private void setFromDepth(LogValueType lvt, LogValue logValue) throws OwsExceptionReport {
-        if (logValue.isSetFromDepth()) {
-            lvt.addNewFromDepth().addNewQuantity().set(encodeSweCommon(logValue.getFromDepth()));
+    private void setFromDepth(LogValueType lvt, ProfileLevel profileLevel) throws OwsExceptionReport {
+        if (profileLevel.isSetLevelStart()) {
+            lvt.addNewFromDepth().addNewQuantity().set(encodeSweCommon(profileLevel.getLevelStart()));
         }
     }
 
-    private void setToDepth(LogValueType lvt, LogValue logValue) throws OwsExceptionReport {
-        if (logValue.isSetToDepth()) {
-            lvt.addNewToDepth().addNewQuantity().set(encodeSweCommon(logValue.getToDepth()));
+    private void setToDepth(LogValueType lvt, ProfileLevel profileLevel) throws OwsExceptionReport {
+        if (profileLevel.isSetLevelEnd()) {
+            lvt.addNewToDepth().addNewQuantity().set(encodeSweCommon(profileLevel.getLevelEnd()));
         }
     }
 
-    private void setValue(LogValueType lvt, LogValue logValue) throws OwsExceptionReport {
-        if (logValue.isSetValue()) {
-            lvt.addNewValue().addNewDataRecord().set(encodeSweCommon(logValue.getValue()));
+    private void setValue(LogValueType lvt, ProfileLevel profileLevel) throws OwsExceptionReport {
+        if (profileLevel.isSetValue()) {
+            lvt.addNewValue().addNewDataRecord().set(encodeSweCommon(profileLevel.valueAsDataRecord()));
         }
     }
 }

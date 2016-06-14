@@ -33,7 +33,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.GeologyLogCoverageValuedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
@@ -74,7 +74,7 @@ public interface ValuedObservationVisitor<T> {
     T visit(SweDataArrayValuedObservation o)
             throws OwsExceptionReport;
     
-    T visit(GeologyLogCoverageValuedObservation o)
+    T visit(ProfileValuedObservation o)
             throws OwsExceptionReport;
     
 

@@ -59,6 +59,7 @@ import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithFeatureType;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithGeometry;
@@ -143,7 +144,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             insertNameAndDescription(feature, abstractFeature, session);
         }
         if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetParameter()) {
-            Map<String, Unit> unitCache = Maps.newHashMap();
+            Map<UoM, Unit> unitCache = Maps.newHashMap();
             new FeatureParameterDAO().insertParameter(((SamplingFeature) abstractFeature).getParameters(),
                     feature.getFeatureOfInterestId(), unitCache, session);
         }

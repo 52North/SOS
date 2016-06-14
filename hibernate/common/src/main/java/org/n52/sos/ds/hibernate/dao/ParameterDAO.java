@@ -32,24 +32,23 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter;
 import org.n52.sos.ds.hibernate.entities.parameter.observation.ParameterFactory;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -73,7 +72,7 @@ import org.n52.sos.ogc.sos.Sos2Constants;
  */
 public class ParameterDAO {
 
-    public void insertParameter(Collection<NamedValue<?>> parameter, long observationId, Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+    public void insertParameter(Collection<NamedValue<?>> parameter, long observationId, Map<UoM, Unit> unitCache, Session session) throws OwsExceptionReport {
         for (NamedValue<?> namedValue : parameter) {
             if (!Sos2Constants.HREF_PARAMETER_SPATIAL_FILTERING_PROFILE.equals(namedValue.getName().getHref())) {
                 ParameterPersister persister = new ParameterPersister(
@@ -98,7 +97,21 @@ public class ParameterDAO {
      * @param session
      * @return Unit
      */
-    protected Unit getUnit(String unit, Map<String, Unit> localCache, Session session) {
+    protected Unit getUnit(String unit, Map<UoM, Unit> localCache, Session session) {
+        return getUnit(new UoM(unit), localCache, session);
+    }
+    
+    /**
+     * If the local unit cache isn't null, use it when retrieving unit.
+     *
+     * @param unit
+     *            Unit
+     * @param localCache
+     *            Cache (possibly null)
+     * @param session
+     * @return Unit
+     */
+    protected Unit getUnit(UoM unit, Map<UoM, Unit> localCache, Session session) {
         if (localCache != null && localCache.containsKey(unit)) {
             return localCache.get(unit);
         } else {
@@ -123,7 +136,7 @@ public class ParameterDAO {
         private final DAOs daos;
         private final ParameterFactory parameterFactory;
 
-        public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, long observationId, Map<String, Unit> unitCache, Session session) {
+        public ParameterPersister(ParameterDAO parameterDAO, NamedValue<?> namedValue, long observationId, Map<UoM, Unit> unitCache, Session session) {
             this(new DAOs(parameterDAO),
                     new Caches(unitCache),
                     namedValue,
@@ -141,13 +154,13 @@ public class ParameterDAO {
         }
 
         private static class Caches {
-            private final Map<String, Unit> units;
+            private final Map<UoM, Unit> units;
 
-            Caches(Map<String, Unit> units) {
+            Caches(Map<UoM, Unit> units) {
                 this.units = units;
             }
 
-            public Map<String, Unit> units() {
+            public Map<UoM, Unit> units() {
                 return units;
             }
         }
@@ -172,7 +185,7 @@ public class ParameterDAO {
         }
 
         private Unit getUnit(Value<?> value) {
-            return value.isSetUnit() ? daos.parameter().getUnit(value.getUnit(), caches.units(), session) : null;
+            return value.isSetUnit() ? daos.parameter().getUnit(value.getUnitObject(), caches.units(), session) : null;
         }
 
         private <V, T extends ValuedParameter<V>> T persist(T parameter, Value<V> value) throws OwsExceptionReport {
@@ -286,7 +299,7 @@ public class ParameterDAO {
         }
 
         @Override
-        public ValuedParameter<?> visit(GWGeologyLogCoverage value) throws OwsExceptionReport {
+        public ValuedParameter<?> visit(ProfileValue value) throws OwsExceptionReport {
             throw notSupported(value);
         }
 

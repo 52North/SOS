@@ -164,7 +164,7 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
     }
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(NetcdfConstants.CONTENT_TYPE_NETCDF.toString(),
                 (Set<String>) getSupportedTypes().get(SupportedTypeKey.ObservationType));
     }

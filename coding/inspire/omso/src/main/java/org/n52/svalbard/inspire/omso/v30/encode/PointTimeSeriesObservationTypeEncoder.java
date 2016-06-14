@@ -71,7 +71,7 @@ public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEnco
     }
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(InspireOMSOConstants.NS_OMSO_30,
                 (Set<String>) Sets.newHashSet(InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION));
     }

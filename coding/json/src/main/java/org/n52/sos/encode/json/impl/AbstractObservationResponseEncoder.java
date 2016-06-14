@@ -91,7 +91,7 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
     }    
     
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Collections.singletonMap(MediaTypes.APPLICATION_JSON.toString(),
                 (Set<String>) Sets.newHashSet(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION,
                         OmConstants.OBS_TYPE_COUNT_OBSERVATION, OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION,

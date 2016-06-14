@@ -110,7 +110,7 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
     }
 
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Maps.newHashMap();
     }
 

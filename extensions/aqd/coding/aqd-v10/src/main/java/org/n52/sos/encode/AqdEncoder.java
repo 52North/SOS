@@ -129,7 +129,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
     }
 
     @Override
-    public Map<String, Set<String>> getSupportedResponseFormatObsrevationTypes() {
+    public Map<String, Set<String>> getSupportedResponseFormatObservationTypes() {
         return Maps.newHashMap();
     }
 

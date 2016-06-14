@@ -28,91 +28,97 @@
  */
 package org.n52.sos.ogc.om.values;
 
-import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import java.util.List;
+
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+
+import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
- * Represents the GroundWaterML 2.0 LogValue
+ * Represents the level of a profile
  * 
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.4.0
  *
  */
-public class LogValue {
+public class ProfileLevel implements Comparable<ProfileLevel> {
 
-    private SweQuantity fromDepth;
-    private SweQuantity toDepth;
-    private DataRecord value;
-    private Value<?> simpleValue;
-    
+    private QuantityValue levelStart;
+    private QuantityValue levelEnd;
+    private List<Value<?>> value = Lists.newArrayList();
+    private Geometry location;
+
     /**
      * constructor
      */
-    public LogValue() {
+    public ProfileLevel() {
         super();
     }
     
     /**
      * constructor
      * 
-     * @param fromDepth
-     *            the fromDepth value
+     * @param levelStart
+     *            the levelStart value
      * @param toDepth
      *            the toDepth value
      * @param value
      *            the values
      */
-    public LogValue(SweQuantity fromDepth, SweQuantity toDepth, DataRecord value) {
+    public ProfileLevel(QuantityValue levelStart, QuantityValue levelEnd, List<Value<?>> value) {
         super();
-        this.fromDepth = fromDepth;
-        this.toDepth = toDepth;
+        this.levelStart = levelStart;
+        this.levelEnd = levelEnd;
         this.value = value;
     }
 
     /**
-     * @return the fromDepth
+     * @return the levelStart
      */
-    public SweQuantity getFromDepth() {
-        return fromDepth;
+    public QuantityValue getLevelStart() {
+        return levelStart;
     }
 
     /**
-     * @param fromDepth
-     *            the fromDepth to set
+     * @param levelStart
+     *            the levelStart to set
      */
-    public LogValue setFromDepth(SweQuantity fromDepth) {
-        this.fromDepth = fromDepth;
+    public ProfileLevel setLevelStart(QuantityValue levelStart) {
+        this.levelStart = levelStart;
         return this;
     }
     
-    public boolean isSetFromDepth() {
-        return getFromDepth() != null;
+    public boolean isSetLevelStart() {
+        return getLevelStart() != null;
     }
 
     /**
-     * @return the toDepth
+     * @return the levelEnd
      */
-    public SweQuantity getToDepth() {
-        return toDepth;
+    public QuantityValue getLevelEnd() {
+        return levelEnd;
     }
 
     /**
-     * @param toDepth
-     *            the toDepth to set
+     * @param levelEnd
+     *            the levelEnd to set
      */
-    public LogValue setToDepth(SweQuantity toDepth) {
-        this.toDepth = toDepth;
+    public ProfileLevel setLevelEnd(QuantityValue levelEnd) {
+        this.levelEnd = levelEnd;
         return this;
     }
     
-    public boolean isSetToDepth() {
-        return getToDepth() != null;
+    public boolean isSetLevelEnd() {
+        return getLevelEnd() != null;
     }
 
     /**
      * @return the value
      */
-    public DataRecord getValue() {
+    public List<Value<?>> getValue() {
         return value;
     }
 
@@ -120,8 +126,18 @@ public class LogValue {
      * @param value
      *            the value to set
      */
-    public LogValue setValue(DataRecord value) {
-        this.value = value;
+    public ProfileLevel setValue(List<Value<?>> value) {
+        this.value.clear();
+        this.value.addAll(value);
+        return this;
+    }
+    
+    /**
+     * @param value
+     *            the value to set
+     */
+    public ProfileLevel addValue(Value<?> value) {
+        this.value.add(value);
         return this;
     }
     
@@ -133,14 +149,74 @@ public class LogValue {
      * @return the simpleValue
      */
     public Value<?> getSimpleValue() {
-        return simpleValue;
+        return value.iterator().next();
     }
 
     /**
-     * @param simpleValue the simpleValue to set
+     * @return the location
      */
-    public void setSimpleValue(Value<?> simpleValue) {
-        this.simpleValue = simpleValue;
+    public Geometry getLocation() {
+        return location;
     }
 
+    /**
+     * @param location
+     *            the location to set
+     */
+    public ProfileLevel setLocation(Geometry location) {
+        this.location = location;
+        return this;
+    }
+    
+    public boolean isSetLocation() {
+        return getLocation() != null;
+    }
+
+    @Override
+    public int compareTo(ProfileLevel o) {
+        if (o == null) {
+            throw new NullPointerException();
+        }
+        if (getLevelStart() == null ^ o.getLevelStart() == null) {
+            return (getLevelStart() == null) ? -1 : 1;
+        }
+        if (getLevelStart() == null && o.getLevelStart() == null) {
+            return 0;
+        }
+        return getLevelStart().compareTo(o.getLevelStart());
+    }
+    
+    public SweDataRecord asDataRecord() {
+        SweDataRecord dataRecord = new SweDataRecord();
+        if (isSetLevelStart()) {
+            dataRecord.addField(new SweField(getLevelStart().getName(), getLevelStart()));
+        }
+        if (isSetLevelStart()) {
+            dataRecord.addField(new SweField(getLevelStart().getName(), getLevelStart()));
+        }
+        return valueAsDataRecord(dataRecord);
+    }
+    
+    public SweDataRecord valueAsDataRecord() {
+        return valueAsDataRecord(new SweDataRecord());
+    }
+    
+    public SweDataRecord valueAsDataRecord(SweDataRecord dataRecord) {
+        int counter = 0;
+        for (Value<?> value : getValue()) {
+            if (value instanceof SweAbstractDataComponent) {
+                SweAbstractDataComponent adc = (SweAbstractDataComponent) value;
+                String name = "";
+                if (adc.isSetName()) {
+                    name = adc.getName().getValue();
+                } else if (adc.isSetDefinition()) {
+                    name = adc.getDefinition();
+                } else {
+                    name = "component_" + counter++;
+                }
+                dataRecord.addField(new SweField(name, adc));
+            }
+        }
+        return dataRecord;
+    }
 }

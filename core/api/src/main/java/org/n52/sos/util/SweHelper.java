@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
+import org.n52.sos.ogc.UoM;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractObservationValue;
@@ -355,6 +356,19 @@ public final class SweHelper {
      */
     public static SweQuantity createSweQuantity(Object value, String uom) {
         return new SweQuantity().setUom(uom).setValue(JavaHelper.asDouble(value));
+    }
+    
+    /**
+     * Create a {@link SweQuantity} from parameter
+     *
+     * @param value
+     *            the {@link SweQuantity} value
+     * @param uom
+     *            the {@link SweQuantity} unit of measure
+     * @return the {@link SweQuantity} from parameter
+     */
+    public static SweQuantity createSweQuantity(Object value, UoM uom) {
+        return (SweQuantity)new SweQuantity().setValue(JavaHelper.asDouble(value)).setUom(uom);
     }
 
     private SweHelper() {

@@ -28,13 +28,26 @@
  */
 package org.n52.svalbard.inspire.omso;
 
+import java.util.List;
+
+import org.n52.sos.exception.ows.concrete.InvalidSridException;
+import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
+import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.ProfileLevel;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferencableGridCoverage;
+import org.n52.sos.util.CollectionHelper;
+
+import com.google.common.collect.Lists;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 
 public class ProfileObservation extends AbstractInspireObservation {
 
@@ -72,6 +85,27 @@ public class ProfileObservation extends AbstractInspireObservation {
             super.setValue(value);
         } else if (value.getValue() instanceof RectifiedGridCoverage || value.getValue() instanceof ReferencableGridCoverage) {
             super.setValue(value);
+        } else if (value.getValue() instanceof ProfileValue) {
+            ProfileValue profile = (ProfileValue) value.getValue();
+            RectifiedGridCoverage rectifiedGridCoverage = new RectifiedGridCoverage(getObservationID());
+            rectifiedGridCoverage.setUnit(value.getValue().getUnit());
+            List<Coordinate> coordinates = Lists.newArrayList();
+            int srid = 0;
+            for (ProfileLevel level : profile.getValue()) {
+                rectifiedGridCoverage.addValue(level.getLevelStart().getValue(), level.getSimpleValue());
+                if (level.isSetLocation()) {
+                    Coordinate coordinate = level.getLocation().getCoordinate();
+                    coordinate.z = level.getLevelStart().getValue();
+                    coordinates.add(coordinate);
+                    if (srid == 0) {
+                        srid = level.getLocation().getSRID();
+                    }
+                }
+            }
+            if (CollectionHelper.isNotEmpty(coordinates)) {
+                setFeatureGeometry(coordinates, srid);
+            }
+            super.setValue(new SingleObservationValue<>(value.getPhenomenonTime(), rectifiedGridCoverage));
         } else {
             double heightDepth = 0;
             if (isSetHeightDepthParameter()) {
@@ -85,12 +119,34 @@ public class ProfileObservation extends AbstractInspireObservation {
         }
     }
     
+    private void setFeatureGeometry(List<Coordinate> coordinates, int srid) {
+        AbstractFeature featureOfInterest = getObservationConstellation().getFeatureOfInterest();
+        if (featureOfInterest instanceof SamplingFeature) {
+            SamplingFeature sf = (SamplingFeature) featureOfInterest;
+            Coordinate[] coords = coordinates.toArray(new Coordinate[0]);
+            try {
+                LineString lineString = new GeometryFactory().createLineString(coords);
+                lineString.setSRID(srid);
+                sf.setGeometry(lineString);
+                sf.setFeatureType(SfConstants.SAMPLING_FEAT_TYPE_SF_SAMPLING_CURVE);
+            } catch (InvalidSridException e) {
+                // TODO
+            }
+        }
+    }
+
     @Override
     protected void mergeValues(ObservationValue<?> observationValue) {
       if (observationValue.getValue() instanceof RectifiedGridCoverage) {
           ((RectifiedGridCoverage)getValue().getValue()).addValue(((RectifiedGridCoverage)observationValue.getValue()).getValue());
 //      } else if (observationValue.getValue() instanceof ReverencableGridCoverage) {
 //          ((ReverencableGridCoverage)getValue()).addValue(((ReverencableGridCoverage)observationValue).getValue());
+          
+          if (getObservationConstellation().getFeatureOfInterest() instanceof SamplingFeature) {
+              if (((SamplingFeature) getObservationConstellation().getFeatureOfInterest()).isSetGeometry()) {
+                  // TODO check for SamplingCurve and Depht/Height
+              }
+          }
       } else {
           super.mergeValues(observationValue);
       }

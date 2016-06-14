@@ -35,7 +35,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
+import org.n52.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -89,8 +89,8 @@ public class GetDataAvailabilityStreamWriter extends AbstractGetDataAvailability
         }
         if (da.isSetFormatDescriptors()) {
             Set<String> observationTypes = Sets.newHashSet();
-            for (FormatDescriptor fd : da.getFormatDescriptors()) {
-                observationTypes.addAll(fd.getObservationTypes());
+            for (ObservationFormatDescriptor ofd : da.getFormatDescriptor().getObservationFormatDescriptors()) {
+                observationTypes.addAll(ofd.getObservationTypes());
             }
             writeObservationTypes(observationTypes, GetDataAvailabilityConstants.GDA_EXTENSION);
         }

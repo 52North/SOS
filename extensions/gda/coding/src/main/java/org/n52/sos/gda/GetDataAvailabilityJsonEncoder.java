@@ -28,10 +28,13 @@
  */
 package org.n52.sos.gda;
 
+import java.util.Set;
+
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
+import org.n52.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
+import org.n52.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -63,19 +66,32 @@ public class GetDataAvailabilityJsonEncoder extends AbstractSosResponseEncoder<G
                     objectNode.put(JSONConstants.OFFERING, da.getOffering().getHref());
                 }
                 if (da.isSetFormatDescriptors()) {
-                    ArrayNode fdArray = objectNode.putArray(GetDataAvailabilityConstants.FORMAT_DESCRIPTOR);
-                    for (FormatDescriptor fd : da.getFormatDescriptors()) {
-                        ObjectNode fdNode = fdArray.addObject();
-                        fdNode.put(GetDataAvailabilityConstants.RESPONSE_FORMAT, fd.getResponseFormat());
-                        ArrayNode otArray = fdNode.putArray(GetDataAvailabilityConstants.OBSERVATION_TYPE);
-                        for (String obsType : fd.getObservationTypes()) {
-                            otArray.add(obsType);
-                        }
-                    }
+                    ObjectNode fdNode = objectNode.putObject(GetDataAvailabilityConstants.FORMAT_DESCRIPTOR);
+                    encodeProcedureFormatDescriptor(da.getFormatDescriptor().getProcedureDescriptionFormatDescriptor(), fdNode);
+                    encodeObservationFormatDescriptor(da.getFormatDescriptor().getObservationFormatDescriptors(), fdNode);
                 }
             }
             if (da.isSetCount()) {
                 objectNode.put(JSONConstants.COUNT, da.getCount());
+            }
+        }
+    }
+
+    private void encodeProcedureFormatDescriptor(
+            ProcedureDescriptionFormatDescriptor procedureDescriptionFormatDescriptor, ObjectNode fdNode) {
+        ObjectNode pfdNode = fdNode.putObject(GetDataAvailabilityConstants.PROCEDURE_FORMAT_DESCRIPTOR);
+        pfdNode.put(GetDataAvailabilityConstants.PROCEDURE_DESCRIPTION_FORMAT, procedureDescriptionFormatDescriptor.getProcedureDescriptionFormat());
+    }
+
+    private void encodeObservationFormatDescriptor(Set<ObservationFormatDescriptor> observationFormatDescriptors,
+            ObjectNode fdNode) {
+        ArrayNode ofdArray = fdNode.putArray(GetDataAvailabilityConstants.OBSERVATION_FORMAT_DESCRIPTOR);
+        for (ObservationFormatDescriptor ofd : observationFormatDescriptors) {
+            ObjectNode ofdNode = ofdArray.addObject();
+            ofdNode.put(GetDataAvailabilityConstants.RESPONSE_FORMAT, ofd.getResponseFormat());
+            ArrayNode otArray = ofdNode.putArray(GetDataAvailabilityConstants.OBSERVATION_TYPE);
+            for (String obsType : ofd.getObservationTypes()) {
+                otArray.add(obsType);
             }
         }
     }

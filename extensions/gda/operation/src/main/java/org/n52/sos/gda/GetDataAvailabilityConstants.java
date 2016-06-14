@@ -60,6 +60,12 @@ public interface GetDataAvailabilityConstants {
     
     String FORMAT_DESCRIPTOR = "formatDescriptor";
     
+    String PROCEDURE_FORMAT_DESCRIPTOR = "procedureDescriptionFormatDescriptor";
+    
+    String OBSERVATION_FORMAT_DESCRIPTOR = "observationFormatDescriptor";
+    
+    String PROCEDURE_DESCRIPTION_FORMAT = "procedureDescriptionFormat";
+    
     String RESPONSE_FORMAT = "responseFormat";
     
     String OBSERVATION_TYPE = "observationType";
@@ -193,6 +199,21 @@ public interface GetDataAvailabilityConstants {
      * The {@code QName} for {@code gda:formatDescriptor}.
      */
     QName GDA_20_FORMAT_DESCRIPTOR = new QName(GetDataAvailabilityConstants.NS_GDA_20, FORMAT_DESCRIPTOR, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:procedureFormatDescriptor}.
+     */
+    QName GDA_20_PROCEDURE_FORMAT_DESCRIPTOR = new QName(GetDataAvailabilityConstants.NS_GDA_20, PROCEDURE_FORMAT_DESCRIPTOR, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:observatinFormatDescriptor}.
+     */
+    QName GDA_20_OBSERVATION_FORMAT_DESCRIPTOR = new QName(GetDataAvailabilityConstants.NS_GDA_20, OBSERVATION_FORMAT_DESCRIPTOR, GetDataAvailabilityConstants.NS_GDA_PREFIX);
+    
+    /**
+     * The {@code QName} for {@code gda:procedureDescriptionFormat}.
+     */
+    QName GDA_20_PROCEDURE_DESCRIPTION_FORMAT = new QName(GetDataAvailabilityConstants.NS_GDA_20, PROCEDURE_DESCRIPTION_FORMAT, GetDataAvailabilityConstants.NS_GDA_PREFIX);
     
     /**
      * The {@code QName} for {@code gda:responseFormat}.

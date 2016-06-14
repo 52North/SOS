@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -44,16 +43,20 @@ import org.n52.sos.encode.XmlEventWriter;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.gml.time.Time.TimeFormat;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.gml.time.Time.TimeFormat;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.w3c.W3CConstants;
+
+import com.google.common.collect.Maps;
 
 public abstract class AbstractGetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAvailability>> {
 
@@ -239,10 +242,16 @@ public abstract class AbstractGetDataAvailabilityStreamWriter extends XmlEventWr
         end(element);
     }
 
-    protected void writeMetadata(Object metadata, QName element) throws XMLStreamException {
-//        start(GetDataAvailabilityConstants.GDA_EXTENSION);
-//        // TODO 
-//        end(GetDataAvailabilityConstants.GDA_EXTENSION);
+    @SuppressWarnings("rawtypes")
+    protected void writeMetadata(Map<String, NamedValue> metadata, QName element) throws XMLStreamException, OwsExceptionReport {
+        for (String key : metadata.keySet()) {
+            start(GetDataAvailabilityConstants.GDA_EXTENSION);
+            attr("name", key);
+            Map<HelperValues, String> additionalValues = Maps.newHashMap();
+            additionalValues.put(HelperValues.DOCUMENT, "true");
+            rawText(CodingHelper.encodeObjectToXmlText(OmConstants.NS_OM_2, metadata.get(key), additionalValues));
+            end(GetDataAvailabilityConstants.GDA_EXTENSION);
+        }
     }
     
     protected List<DataAvailability> getGDAs() {

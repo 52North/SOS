@@ -50,6 +50,7 @@ import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
+import org.n52.sos.ds.hibernate.dao.metadata.SeriesMetadataDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
@@ -58,6 +59,7 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -72,11 +74,15 @@ import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.gda.GetDataAvailabilityResponse.FormatDescriptor;
+import org.n52.sos.gda.GetDataAvailabilityResponse.ObservationFormatDescriptor;
+import org.n52.sos.gda.GetDataAvailabilityResponse.ProcedureDescriptionFormatDescriptor;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -349,12 +355,25 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                                 context.getRequest(), session));
                     }
                     dataAvailability.setOffering(getOfferingReference(context.getOfferings(), ommt.getOffering(), session));
-                    dataAvailability.setFormatDescriptors(getFormatDescriptors(ommt.getOffering(), context));
+                    dataAvailability.setFormatDescriptor(getFormatDescriptor(ommt.getOffering(), context, series));
+                    checkForMetadataExtension(dataAvailability, series, session);
                     context.addDataAvailability(dataAvailability);
                 }
             }
         }
         checkForParentOfferings(context);
+    }
+
+    private void checkForMetadataExtension(DataAvailability dataAvailability, Series series, Session session) {
+        if (HibernateHelper.isEntitySupported(SeriesMetadata.class)) {
+            List<SeriesMetadata> metadataList = new SeriesMetadataDAO().getMetadata(series.getSeriesId(), session);
+            if (CollectionHelper.isNotEmpty(metadataList)) {
+                for (SeriesMetadata seriesMetadata : metadataList) {
+                    dataAvailability.addMetadata(seriesMetadata.getDomain(), new NamedValue<>(new ReferenceType(seriesMetadata.getIdentifier()),
+                            new ReferenceValue(new ReferenceType(seriesMetadata.getValue()))));
+                }
+            }
+        }
     }
 
     private void checkForParentOfferings(GdaRequestContext context) {
@@ -622,7 +641,14 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         return (Long) criteria.uniqueResult();
     }
 
-    private Set<FormatDescriptor> getFormatDescriptors(String offering, GdaRequestContext context) {
+    private FormatDescriptor getFormatDescriptor(String offering, GdaRequestContext context, Series series) {
+        return new FormatDescriptor(
+                new ProcedureDescriptionFormatDescriptor(
+                        series.getProcedure().getProcedureDescriptionFormat().getProcedureDescriptionFormat()),
+                getObservationFormatDescriptors(offering, context));
+    }
+
+    private Set<ObservationFormatDescriptor> getObservationFormatDescriptors(String offering, GdaRequestContext context) {
         Map<String, Set<String>> responsFormatObservationTypesMap = Maps.newHashMap();
         for (String observationType : getCache().getAllObservationTypesForOffering(offering)) {
             Set<String> responseFormats = CodingRepository.getInstance().getResponseFormatsForObservationType(observationType, context.getRequest().getService(), context.getRequest().getVersion());
@@ -634,9 +660,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 }
             }
         }
-        Set<FormatDescriptor> formatDescriptors = Sets.newHashSet();
+        Set<ObservationFormatDescriptor> formatDescriptors = Sets.newHashSet();
         for (String responsFormat : responsFormatObservationTypesMap.keySet()) {
-            formatDescriptors.add(new FormatDescriptor(responsFormat, responsFormatObservationTypesMap.get(responsFormat)));
+            formatDescriptors.add(new ObservationFormatDescriptor(responsFormat, responsFormatObservationTypesMap.get(responsFormat)));
         }
         return formatDescriptors;
     }

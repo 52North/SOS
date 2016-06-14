@@ -32,11 +32,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
@@ -44,6 +46,7 @@ import org.n52.sos.util.StringHelper;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -151,9 +154,9 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         
         private ReferenceType offering;
         
-        private Set<FormatDescriptor> formatDescriptors;
+        private FormatDescriptor formatDescriptor;
         
-        private Object metadata;
+        private Map<String, NamedValue> metadata = Maps.newHashMap();
         
         /**
          * Creates a new {@code DataAvailability}.
@@ -294,37 +297,44 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         /**
          * @return the observationTypes
          */
-        public Set<FormatDescriptor> getFormatDescriptors() {
-            return formatDescriptors;
+        public FormatDescriptor getFormatDescriptor() {
+            return formatDescriptor;
         }
 
         /**
          * @param observationTypes the observationTypes to set
          */
-        public void setFormatDescriptors(Set<FormatDescriptor> formatDescriptors) {
-            this.formatDescriptors = formatDescriptors;
+        public void setFormatDescriptor(FormatDescriptor formatDescriptor) {
+            this.formatDescriptor = formatDescriptor;
         }
         
         public boolean isSetFormatDescriptors() {
-            return CollectionHelper.isNotEmpty(getFormatDescriptors());
+            return getFormatDescriptor() != null;
         }
 
         /**
          * @return the metadata
          */
-        public Object getMetadata() {
+        public Map<String, NamedValue> getMetadata() {
             return metadata;
         }
 
         /**
          * @param metadata the metadata to set
          */
-        public void setMetadata(Object metadata) {
-            this.metadata = metadata;
+        public void setMetadata( Map<String, NamedValue> metadata) {
+            this.metadata.clear();
+            this.metadata.putAll(metadata);
+        }
+        /**
+         * @param metadata the metadata to add
+         */
+        public void addMetadata(String key, NamedValue metadata) {
+            this.metadata.put(key, metadata);
         }
         
         public boolean isSetMetadata() {
-            return getMetadata() != null;
+            return getMetadata() != null && !getMetadata().isEmpty();
         }
         
         @Override
@@ -355,11 +365,12 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
             DataAvailability dataAvailability = new DataAvailability(procedure, observedProperty, featureOfInterest, new TimePeriod(phenomenonTime.getStart(), phenomenonTime.getEnd()));
             dataAvailability.setOffering(offering);
             dataAvailability.setCount(getCount());
-            Set<FormatDescriptor> fds = Sets.newHashSet();
-            for (FormatDescriptor fd : getFormatDescriptors()) {
-                fds.add(fd.clone());
-            }
-            dataAvailability.setFormatDescriptors(fds);
+//            Set<FormatDescriptor> fds = Sets.newHashSet();
+//            for (FormatDescriptor fd : getFormatDescriptors()) {
+//                fds.add(fd.clone());
+//            }
+//            dataAvailability.setFormatDescriptors(fds);
+            dataAvailability.setFormatDescriptor(getFormatDescriptor().clone());
             dataAvailability.setMetadata(getMetadata());
             dataAvailability.setResultTimes(getResultTimes());
             return dataAvailability;
@@ -368,21 +379,21 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
         public boolean merge(DataAvailability toMerge, boolean differentOfferings) {
             if (differentOfferings && sameConstellation(toMerge)) {
                 getPhenomenonTime().extendToContain(toMerge.getPhenomenonTime());
-                mergeFormatDescriptors(toMerge.getFormatDescriptors());
+                mergeFormatDescriptors(toMerge.getFormatDescriptor());
                 return true;
             } else if (equals(toMerge)) {
                 getPhenomenonTime().extendToContain(toMerge.getPhenomenonTime());
-                mergeFormatDescriptors(toMerge.getFormatDescriptors());
+                mergeFormatDescriptors(toMerge.getFormatDescriptor());
                 return true;
             }
             return false;
         }
 
-        private void mergeFormatDescriptors(Set<FormatDescriptor> fdsToMerge) {
-            for (FormatDescriptor formatDescriptor : getFormatDescriptors()) {
-                for (FormatDescriptor fdToMerge : fdsToMerge) {
-                    if (formatDescriptor.getResponseFormat().equals(fdToMerge.getResponseFormat())) {
-                        formatDescriptor.getObservationTypes().addAll(fdToMerge.getObservationTypes());
+        private void mergeFormatDescriptors(FormatDescriptor fdToMerge) {
+            for (ObservationFormatDescriptor formatDescriptor : getFormatDescriptor().getObservationFormatDescriptors()) {
+                for (ObservationFormatDescriptor ofdToMerge : fdToMerge.getObservationFormatDescriptors()) {
+                    if (formatDescriptor.getResponseFormat().equals(ofdToMerge.getResponseFormat())) {
+                        formatDescriptor.getObservationTypes().addAll(ofdToMerge.getObservationTypes());
                     }
                 }
             }
@@ -395,6 +406,59 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
      *
      */
     public static class FormatDescriptor { 
+        private ProcedureDescriptionFormatDescriptor procedureDescriptionFormatDescriptor;
+        private Set<ObservationFormatDescriptor> observationFormatDescriptors;
+        
+        /**
+         * @param procedureDescriptionFormatDescriptor
+         * @param observationFormatDescriptors
+         */
+        public FormatDescriptor(ProcedureDescriptionFormatDescriptor procedureDescriptionFormatDescriptor, Set<ObservationFormatDescriptor> observationFormatDescriptors) {
+            super();
+            this.procedureDescriptionFormatDescriptor = procedureDescriptionFormatDescriptor;
+            this.observationFormatDescriptors = observationFormatDescriptors;
+        }
+        
+        /**
+         * @return the procedureDescriptionFormatDescriptor
+         */
+        public ProcedureDescriptionFormatDescriptor getProcedureDescriptionFormatDescriptor() {
+            return procedureDescriptionFormatDescriptor;
+        }
+        
+        /**
+         * @param procedureDescriptionFormatDescriptor the procedureDescriptionFormatDescriptor to set
+         */
+        public void setProcedureDescriptionFormatDescriptor(ProcedureDescriptionFormatDescriptor procedureDescriptionFormatDescriptor) {
+            this.procedureDescriptionFormatDescriptor = procedureDescriptionFormatDescriptor;
+        }
+        
+        /**
+         * @return the observationFormatDescriptors
+         */
+        public Set<ObservationFormatDescriptor> getObservationFormatDescriptors() {
+            return observationFormatDescriptors;
+        }
+        
+        /**
+         * @param observationFormatDescriptors the observationFormatDescriptors to set
+         */
+        public void setObservationFormatDescriptors(Set<ObservationFormatDescriptor> observationFormatDescriptors) {
+            this.observationFormatDescriptors.clear();
+            this.observationFormatDescriptors.addAll(observationFormatDescriptors);
+        }
+        
+        public FormatDescriptor clone() {
+            return new FormatDescriptor(procedureDescriptionFormatDescriptor, Sets.newHashSet(observationFormatDescriptors));
+        }
+    }
+    
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
+    public static class ObservationFormatDescriptor { 
         private String responseFormat;
         private Set<String> observationTypes;
         
@@ -402,7 +466,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
          * @param responseFormat
          * @param observationTypes
          */
-        public FormatDescriptor(String responseFormat, Set<String> observationTypes) {
+        public ObservationFormatDescriptor(String responseFormat, Set<String> observationTypes) {
             super();
             this.responseFormat = responseFormat;
             this.observationTypes = observationTypes;
@@ -437,9 +501,46 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
             this.observationTypes.addAll(observationTypes);
         }
         
-        public FormatDescriptor clone() {
-            return new FormatDescriptor(responseFormat, Sets.newHashSet(observationTypes));
+        public ObservationFormatDescriptor clone() {
+            return new ObservationFormatDescriptor(responseFormat, Sets.newHashSet(observationTypes));
         }
-        
     }
+    
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since 4.4.0
+     *
+     */
+    public static class ProcedureDescriptionFormatDescriptor {
+
+        private String procedureDescriptionFormat;
+
+        /**
+         * @param procedureDescriptionFormat
+         */
+        public ProcedureDescriptionFormatDescriptor(String procedureDescriptionFormat) {
+            super();
+            this.procedureDescriptionFormat = procedureDescriptionFormat;
+        }
+
+        /**
+         * @return the procedureDescriptionFormat
+         */
+        public String getProcedureDescriptionFormat() {
+            return procedureDescriptionFormat;
+        }
+
+        /**
+         * @param procedureDescriptionFormat
+         *            the procedureDescriptionFormat to set
+         */
+        public void setProcedureDescriptionFormat(String procedureDescriptionFormat) {
+            this.procedureDescriptionFormat = procedureDescriptionFormat;
+        }
+
+        public ProcedureDescriptionFormatDescriptor clone() {
+            return new ProcedureDescriptionFormatDescriptor(procedureDescriptionFormat);
+        }
+    }
+    
 }

@@ -35,6 +35,8 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObserv
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
+
 public class CategoryValuedEReportingObservation
         extends AbstractValuedEReportingObservation<String>
         implements CategoryValuedObservation {
@@ -42,6 +44,8 @@ public class CategoryValuedEReportingObservation
     private static final long serialVersionUID = -2982044562561414669L;
 
     private String value;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -58,14 +62,43 @@ public class CategoryValuedEReportingObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
-    public void accept(VoidValuedObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void setValueName(String valueName) {
+        this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
+    }
+
+    @Override
+    public void accept(VoidValuedObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 

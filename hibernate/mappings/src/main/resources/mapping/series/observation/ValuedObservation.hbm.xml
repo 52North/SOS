@@ -243,6 +243,18 @@
                      <comment>Category observation value</comment>
                  </column>
              </property>
+             <property name="valueName" 
+                       type="string">
+                 <column name="name">
+                     <comment>SweCategory observation name</comment>
+                 </column>
+             </property>
+             <property name="valueDescription" 
+                       type="string">
+                 <column name="description">
+                     <comment>SweCategory observation description</comment>
+                 </column>
+             </property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.CountValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
@@ -307,6 +319,18 @@
                      <comment>Text observation value</comment>
                  </column>
              </property>
+             <property name="valueName" 
+                       type="string">
+                 <column name="name">
+                     <comment>SweCategory observation name</comment>
+                 </column>
+             </property>
+             <property name="valueDescription" 
+                       type="string">
+                 <column name="description">
+                     <comment>SweCategory observation description</comment>
+                 </column>
+             </property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.SweDataArrayValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
@@ -352,45 +376,56 @@
                 </many-to-many>
             </set>
         </joined-subclass>
-        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.GeologyLogCoverageValuedSeriesObservation"
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ProfileValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="geologyLogCoverageValue">
-           <comment>Value table for GeologyLogCoverage observation</comment>
-        	<key foreign-key="observationGeoLogCovValueFk">
+                         table="profileValue">
+           <comment>Value table for profile observation</comment>
+        	<key foreign-key="observationProfileValueFk">
 	        	<column name="observationId" >
 	        		<comment>Foreign Key (FK) to the related observation from the observation table. Contains "observation".observationid</comment>
 	        	</column>
         	</key>
-        	<property name="fromDepth" 
+        	<property name="fromLevel" 
         			  type="double">
-         		<column name="fromDepth"
+         		<column name="fromlevel"
          				not-null="false">
-         			<comment>Value of fromDepth</comment>
+         			<comment>Value of fromLevel</comment>
          		</column>
          	</property>
-         	<property name="toDepth" 
+         	<property name="toLevel" 
         			  type="double">
-         		<column name="toDepth"
+         		<column name="tolevel"
          				not-null="false">
-         			<comment>Value of toDepth</comment>
+         			<comment>Value of toLevel</comment>
          		</column>
          	</property>
-         	<many-to-one name="depthunit"
+         	<many-to-one name="levelUnit"
                      class="org.n52.sos.ds.hibernate.entities.Unit"
                      fetch="select"
                      lazy="no-proxy"
-                     foreign-key="geoLocCovUnitFk">
-            <column name="depthunitid"
-                    not-null="false">
-            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
-            </column>
+                     foreign-key="profileUnitFk">
+	            <column name="levelunitid"
+	                    not-null="false">
+	            	<comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+	            </column>
         	</many-to-one>
-        	<property name="logValue" 
-        			  type="double">
-         		<column name="value">
-         			<comment>GeologLogCoverage observation value</comment>
-         		</column>
-         	</property>
+            <set name="value"
+                 table="profileObservation"
+                 inverse="false"
+                 cascade="delete-orphan">
+                <comment>Relation table for complex parent/child observations</comment>
+                <key foreign-key="profileObsParentFK" >
+                     <column name="observationId" not-null="true">
+                         <comment>Foreign Key (FK) to the related parent complex observation. Contains "observation".observationid</comment>
+                    </column>
+                </key>
+                <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
+                              foreign-key="profileObsChildFk">
+                    <column name="childObservationId" not-null="true">
+                        <comment>Foreign Key (FK) to the related child complex observation. Contains "observation".observationid</comment>
+                    </column>
+                </many-to-many>
+            </set>
         </joined-subclass>
     </class>
 </hibernate-mapping>

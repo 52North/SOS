@@ -37,12 +37,16 @@ import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
+
 public class EReportingCategoryObservation
         extends AbstractEReportingObservation<String>
         implements CategoryObservation {
 
     private static final long serialVersionUID = -2517964577762542717L;
     private String value;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -59,14 +63,43 @@ public class EReportingCategoryObservation
         return StringHelper.isNotEmpty(value);
     }
 
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
+    @Override
+    public String getValueAsString() {
+        return getValue();
+    }
 
     @Override
-    public void accept(VoidObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public void setValueName(String valueName) {
+        this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
+    }
+
+    @Override
+    public void accept(VoidObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 

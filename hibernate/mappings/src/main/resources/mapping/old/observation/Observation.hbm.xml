@@ -238,6 +238,24 @@
                      <comment>Category observation value</comment>
                  </column>
              </property>
+             <property name="valueName" 
+                       type="string">
+                 <column name="name">
+                     <comment>SweCategory observation name</comment>
+                 </column>
+             </property>
+             <property name="valueDefinition" 
+                       type="string">
+                 <column name="definition">
+                     <comment>SweCategory observation definition</comment>
+                 </column>
+             </property>
+             <property name="valueDescription" 
+                       type="string">
+                 <column name="description">
+                     <comment>SweCategory observation description</comment>
+                 </column>
+             </property>
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyCountObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation"
@@ -300,6 +318,24 @@
                       type="org.hibernate.type.StringClobType">
                  <column name="value">
                      <comment>Text observation value</comment>
+                 </column>
+             </property>
+             <property name="valueName" 
+                       type="string">
+                 <column name="name">
+                     <comment>SweCategory observation name</comment>
+                 </column>
+             </property>
+             <property name="valueDefinition" 
+                       type="string">
+                 <column name="definition">
+                     <comment>SweCategory observation definition</comment>
+                 </column>
+             </property>
+             <property name="valueDescription" 
+                       type="string">
+                 <column name="description">
+                     <comment>SweCategory observation description</comment>
                  </column>
              </property>
         </joined-subclass>

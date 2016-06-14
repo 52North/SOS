@@ -38,6 +38,8 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObserv
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
+import com.google.common.base.Strings;
+
 /**
  * Implementation of a full {@link Observation} for the legacy observation
  * concept, that holds a category value.
@@ -50,6 +52,8 @@ public class LegacyCategoryObservation
 
     private static final long serialVersionUID = -1495946668761330077L;
     private String value;
+    private String valueName;
+    private String valueDescription;
 
     @Override
     public String getValue() {
@@ -65,15 +69,44 @@ public class LegacyCategoryObservation
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(value);
     }
-    
-	@Override
-	public String getValueAsString() {
-		return getValue();
-	}
 
     @Override
-    public void accept(VoidObservationVisitor visitor)
-            throws OwsExceptionReport {
+    public String getValueAsString() {
+        return getValue();
+    }
+
+    @Override
+    public void setValueName(String valueName) {
+        this.valueName = valueName;
+    }
+
+    @Override
+    public String getValueName() {
+        return valueName;
+    }
+
+    @Override
+    public boolean isSetValueName() {
+        return !Strings.isNullOrEmpty(getValueName());
+    }
+
+    @Override
+    public void setValueDescription(String valueDescription) {
+        this.valueDescription = valueDescription;
+    }
+
+    @Override
+    public String getValueDescription() {
+        return valueDescription;
+    }
+
+    @Override
+    public boolean isSetValueDescription() {
+        return !Strings.isNullOrEmpty(getValueDescription());
+    }
+
+    @Override
+    public void accept(VoidObservationVisitor visitor) throws OwsExceptionReport {
         visitor.visit(this);
     }
 

@@ -34,7 +34,7 @@ import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeologyLogCoverageObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
@@ -99,8 +99,8 @@ public class ObservationTypeObservationVisitor implements ObservationVisitor<Str
     }
     
     @Override
-    public String visit(GeologyLogCoverageObservation o) throws OwsExceptionReport {
-        return GWMLConstants.OBS_TYPE_GEOLOGY_LOG_COVERAGE;
+    public String visit(ProfileObservation o) throws OwsExceptionReport {
+        return GWMLConstants.OBS_TYPE_GEOLOGY_LOG;
     }
 
     public static ObservationTypeObservationVisitor getInstance() {

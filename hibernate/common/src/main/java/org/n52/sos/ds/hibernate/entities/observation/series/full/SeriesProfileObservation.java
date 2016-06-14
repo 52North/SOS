@@ -28,39 +28,35 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.series.full;
 
+import java.util.Set;
+
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.observation.GeologyLogCoverageGeneratorSplitter;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
-import org.n52.sos.ds.hibernate.entities.observation.full.GeologyLogCoverageObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.ProfileObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
-import org.n52.sos.ogc.om.values.GWGeologyLogCoverage;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class SeriesGeologyLogCoverageObservation extends AbstractSeriesObservation<GWGeologyLogCoverage>
-    implements GeologyLogCoverageObservation {
+public class SeriesProfileObservation extends AbstractSeriesObservation<Set<Observation<?>>>
+    implements ProfileObservation {
 
     private static final long serialVersionUID = -3825062615148354938L;
-    private GWGeologyLogCoverage value;
-    private Double fromDepth;
-    private Double toDepth;
-    private Unit depthunit;
-    private Double logValue;
+    private Set<Observation<?>> value;
+    private Double fromLevel;
+    private Double toLevel;
+    private Unit levelUnit;
 
     @Override
-    public GWGeologyLogCoverage getValue() {
-        if (value == null) {
-            setValue(GeologyLogCoverageGeneratorSplitter.create(this));
-        }
+    public Set<Observation<?>> getValue() {
         return value;
     }
 
     @Override
-    public void setValue(GWGeologyLogCoverage value) {
+    public void setValue(Set<Observation<?>> value) {
        this.value = value;
-       GeologyLogCoverageGeneratorSplitter.split(value, this);
     }
 
     @Override
@@ -69,68 +65,48 @@ public class SeriesGeologyLogCoverageObservation extends AbstractSeriesObservati
     }
 
     @Override
-    public String getValueAsString() {
-        return getLogValue().toString();
+    public Double getFromLevel() {
+        return fromLevel;
     }
 
     @Override
-    public Double getFromDepth() {
-        return fromDepth;
+    public void setFromLevel(Double fromLevel) {
+        this.fromLevel = fromLevel;
     }
 
     @Override
-    public void setFromDepth(Double fromDepth) {
-        this.fromDepth = fromDepth;
+    public boolean isSetFromLevel() {
+        return getFromLevel() != null;
     }
 
     @Override
-    public boolean isSetFromDepth() {
-        return getFromDepth() != null;
+    public Double getToLevel() {
+        return toLevel;
     }
 
     @Override
-    public Double getToDepth() {
-        return toDepth;
+    public void setToLevel(Double toLevel) {
+        this.toLevel = toLevel;
     }
 
     @Override
-    public void setToDepth(Double toDepth) {
-        this.toDepth = toDepth;
+    public boolean isSetToLevel() {
+        return getToLevel() != null;
     }
 
     @Override
-    public boolean isSetToDepth() {
-        return getToDepth() != null;
+    public Unit getLevelUnit() {
+        return levelUnit;
     }
 
     @Override
-    public Unit getDepthunit() {
-        return depthunit;
+    public void setLevelUnit(Unit levelUnit) {
+        this.levelUnit = levelUnit;
     }
 
     @Override
-    public void setDepthunit(Unit depthunit) {
-        this.depthunit = depthunit;
-    }
-
-    @Override
-    public boolean isSetDephtUnit() {
-        return getDepthunit() != null && getDepthunit().isSetUnit();
-    }
-
-    @Override
-    public Double getLogValue() {
-        return logValue;
-    }
-
-    @Override
-    public void setLogValue(Double logValue) {
-        this.logValue = logValue;
-    }
-
-    @Override
-    public boolean isSetLogValue() {
-        return getLogValue() != null;
+    public boolean isSetLevelUnit() {
+        return getLevelUnit() != null && getLevelUnit().isSetUnit();
     }
 
     @Override
@@ -156,4 +132,5 @@ public class SeriesGeologyLogCoverageObservation extends AbstractSeriesObservati
             throws OwsExceptionReport {
         return visitor.visit(this);
     }
+
 }

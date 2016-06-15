@@ -110,9 +110,14 @@
         SELECT srid FROM spatial_ref_sys
     </sql-query>
     
-       <sql-query name="transformGeometryPostgis">
+    <sql-query name="transformGeometryPostgis">
         <return-scalar column="geom" type="org.hibernate.spatial.GeometryType"/>
         SELECT ST_Transform(:geometry, :srid) as geom
+    </sql-query>
+    
+    <sql-query name="getEnvelope">
+        <return-scalar column="geom" type="string"/>
+        SELECT PC_Envelope(pa) AS geom FROM pcpatch WHERE feaure_id IN (:features)
     </sql-query>
     
 </hibernate-mapping>

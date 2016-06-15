@@ -243,6 +243,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-common</artifactId>
         </dependency>
+        <!-- 
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-dao</artifactId>
@@ -250,6 +251,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hibernate-feature</artifactId>
+        </dependency> 
+        -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hibernate-lidar</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

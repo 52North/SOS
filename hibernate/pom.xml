@@ -18,6 +18,7 @@
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>
+		<module>lidar</module>
 	</modules>
 	<profiles>
         <profile>

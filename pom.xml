@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <!-- Remove the parent in the case of 52°North repos are not available -->
     <parent>
         <groupId>org.n52</groupId>
@@ -48,7 +49,8 @@
         <!-- sos name -->
         <conf.sos.name>52n-sos-webapp</conf.sos.name>
         <timestamp>${maven.build.timestamp}</timestamp>
-        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! ** -->
+        <!-- Source encoding during build process ** !!! DO NOT CHANGE !!! 
+            ** -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -290,10 +292,10 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-	            <groupId>${project.groupId}</groupId>
-	            <artifactId>request-response-coordinate-transformer</artifactId>
-	             <version>${project.version}</version>
-	        </dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>request-response-coordinate-transformer</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>common-controller</artifactId>
@@ -333,24 +335,24 @@
                 <type>war</type>
             </dependency>
             <dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>inspire-code</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-	        	<artifactId>inspire-xml</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			
-			 <!-- EREPORTING -->
-			<dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-code</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>inspire-xml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- EREPORTING -->
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ereporting</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			
-			<!-- AQD eReporting -->
+
+            <!-- AQD eReporting -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>coding-aqd-v10</artifactId>
@@ -387,7 +389,7 @@
                 <artifactId>prefixed-identifier</artifactId>
                 <version>${project.version}</version>
             </dependency>
-             <dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>ereporting-identifier</artifactId>
                 <version>${project.version}</version>
@@ -501,7 +503,7 @@
                 <version>2.3</version>
             </dependency>
 
-            
+
             <!-- Hibernate Core Dependencies -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -615,20 +617,20 @@
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-gmd-v20120713</artifactId>
-	            <version>${n52.common.xml.version}</version>
-       		</dependency>
-       		<dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-gco-v20120713</artifactId>
-	            <version>${n52.common.xml.version}</version>
-       		</dependency>
-       		<dependency>
-	            <groupId>org.n52.sensorweb</groupId>
-	            <artifactId>52n-xml-sosgda-v10</artifactId>
-	           <version>${n52.common.xml.version}</version>
-       		</dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gmd-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-gco-v20120713</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosgda-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.n52.sensorweb</groupId>
                 <artifactId>52n-xml-om-v100</artifactId>
@@ -977,12 +979,13 @@
                 <version>15.0</version>
             </dependency>
             <dependency>
-			  <groupId>se.jiderhamn</groupId>
-			  <artifactId>classloader-leak-prevention</artifactId>
-			  <version>1.13.0</version>
-			</dependency>
+                <groupId>se.jiderhamn</groupId>
+                <artifactId>classloader-leak-prevention</artifactId>
+                <version>1.13.0</version>
+            </dependency>
             <!-- third party dialects -->
-            <!-- Remove third party ncname resolver from SOS and use OXF instead -->
+            <!-- Remove third party ncname resolver from SOS and use OXF 
+                instead -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>third-party-ncname-resolver</artifactId>
@@ -993,65 +996,65 @@
                 <artifactId>xmlunit</artifactId>
                 <version>1.5</version>
             </dependency>
-	        <dependency>
-	            <groupId>com.oracle</groupId>
-	            <artifactId>ojdbc6</artifactId>
-	            <version>${ojdbc6.version}</version>
-	        </dependency>
-	        <dependency>
-	            <groupId>com.microsoft</groupId>
-	            <artifactId>sqljdbc4</artifactId>
-	            <version>${sqljdbc4.version}</version>
-	        </dependency>            
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc6</artifactId>
+                <version>${ojdbc6.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.microsoft</groupId>
+                <artifactId>sqljdbc4</artifactId>
+                <version>${sqljdbc4.version}</version>
+            </dependency>
             <!-- geotools -->
-             <dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-epsg-hsql</artifactId>
-				<version>${geotools.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-epsg-hsql</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
                 <artifactId>gt-main</artifactId>
                 <version>${geotools.version}</version>
             </dependency>
-			<dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-api</artifactId>
-				<version>${geotools.version}</version>
-			</dependency><dependency>
-				<groupId>org.geotools</groupId>
-				<artifactId>gt-referencing</artifactId>
-				<version>${geotools.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>java3d</groupId>
-						<artifactId>vecmath</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>java3d</groupId>
-				<artifactId>vecmath</artifactId>
-				<version>1.5.2</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.reflections</groupId>
-				<artifactId>reflections</artifactId>
-				<version>0.9.9-RC1</version>
-			</dependency>
-			<!-- EXI - Efficient XML Interchange -->
-			<dependency>
-				<groupId>com.siemens.ct.exi</groupId>
-				<artifactId>exificient</artifactId>
-				<version>0.9.4</version>
-			</dependency>
-			<dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-referencing</artifactId>
+                <version>${geotools.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>java3d</groupId>
+                        <artifactId>vecmath</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>java3d</groupId>
+                <artifactId>vecmath</artifactId>
+                <version>1.5.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.geotools</groupId>
+                <artifactId>gt-api</artifactId>
+                <version>${geotools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>0.9.9-RC1</version>
+            </dependency>
+            <!-- EXI - Efficient XML Interchange -->
+            <dependency>
+                <groupId>com.siemens.ct.exi</groupId>
+                <artifactId>exificient</artifactId>
+                <version>0.9.4</version>
+            </dependency>
+            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>2.11.0</version>
             </dependency>
-			<dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>binding-exi</artifactId>
                 <version>${project.version}</version>
@@ -1061,62 +1064,63 @@
                 <artifactId>coding-exi</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            
+
             <!-- netCDF -->
-			<dependency>
-        		<groupId>edu.ucar</groupId>
-		        <artifactId>netcdf</artifactId>
-		        <version>4.3.22</version>
-			</dependency>   
-			<dependency>
-				<groupId>com.axiomalaska</groupId>
-				<artifactId>cf4j</artifactId>
-				<version>27.2</version>      
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
+            <dependency>
+                <groupId>edu.ucar</groupId>
+                <artifactId>netcdf</artifactId>
+                <version>4.3.22</version>
+            </dependency>
+            <dependency>
+                <groupId>com.axiomalaska</groupId>
+                <artifactId>cf4j</artifactId>
+                <version>27.2</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>api-netcdf</artifactId>
-                <version>${project.version}</version>   
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>coding-netcdf</artifactId>
-                <version>${project.version}</version>   
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>coding-oceansites</artifactId>
-                <version>${project.version}</version>   
-			</dependency>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
-    	<dependency>
-    		<groupId>org.mockito</groupId>
-    		<artifactId>mockito-core</artifactId>
-    		<version>1.9.0</version>
-    		<exclusions>
-    			<exclusion>
-    				<artifactId>hamcrest-core</artifactId>
-    				<groupId>org.hamcrest</groupId>
-    			</exclusion>
-    		</exclusions>
-    	</dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.9.0</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>hamcrest-core</artifactId>
+                    <groupId>org.hamcrest</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
-                <!-- execute "install" goal during release:prepare (instead of "integration-test") -->
+                <!-- execute "install" goal during release:prepare (instead 
+                    of "integration-test") -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <configuration>
                     <preparationGoals>clean install</preparationGoals>
                 </configuration>
             </plugin>
-            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId>
-            <version>1.5</version> <executions> <execution> <id>download-licenses</id>
-            <goals> <goal>download-licenses</goal> </goals> </execution> </executions>
-            </plugin> -->
+            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>license-maven-plugin</artifactId> 
+                <version>1.5</version> <executions> <execution> <id>download-licenses</id> 
+                <goals> <goal>download-licenses</goal> </goals> </execution> </executions> 
+                </plugin> -->
             <plugin>
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
@@ -1128,48 +1132,35 @@
                         </goals>
                         <phase>validate</phase>
                         <configuration>
-                        	<dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
-                            <!-- Only changing prefix since properties conflicts with jgit above
-                            <prefix>git-commit-id</prefix>-->
-                            <!-- We're using a pom in this example
-                            <skipPoms>false</skipPoms>-->
+                            <dateFormat>yyyy-MM-dd HH:mm:ssZ</dateFormat>
+                            <!-- Only changing prefix since properties conflicts 
+                                with jgit above <prefix>git-commit-id</prefix> -->
+                            <!-- We're using a pom in this example <skipPoms>false</skipPoms> -->
                             <gitDescribe>
-                                <!-- Faster to get just branch if skip = true -->
-                                <!--  true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
+                                <!-- Faster to get just branch if skip = 
+                                    true -->
+                                <!-- true to solve https://github.com/ktoso/maven-git-commit-id-plugin/issues/61 -->
                                 <skip>true</skip>
                             </gitDescribe>
-                            <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
+                            <timestampFormat>{0,date,yyyy-MM-dd
+                                HH:mm:ss}</timestampFormat>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <configuration>
-                    <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
-                    <timestampFormat>{0,date,yyyy-MM-dd HH:mm:ss}</timestampFormat>
-                    <revisionOnScmFailure>0</revisionOnScmFailure>
-                    <getRevisionOnlyOnce>true</getRevisionOnlyOnce>
-                    <shortRevisionLength>5</shortRevisionLength>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> -->
+            <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
+                <configuration> <doCheck>false</doCheck> <doUpdate>false</doUpdate> <timestampFormat>{0,date,yyyy-MM-dd 
+                HH:mm:ss}</timestampFormat> <revisionOnScmFailure>0</revisionOnScmFailure> 
+                <getRevisionOnlyOnce>true</getRevisionOnlyOnce> <shortRevisionLength>5</shortRevisionLength> 
+                </configuration> <executions> <execution> <phase>validate</phase> <goals> 
+                <goal>create</goal> </goals> </execution> </executions> </plugin> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <show>private</show>
                     <nohelp>true</nohelp>
-                     <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
+                    <!-- see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
                     <additionalJOption>-Xdoclint:none</additionalJOption>
                 </configuration>
                 <executions>
@@ -1194,7 +1185,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.groovy.maven</groupId>
                 <artifactId>gmaven-plugin</artifactId>
@@ -1258,28 +1249,31 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true -DallowSnapshots=true -Psqlserver,oracle -->
-            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true -Psqlserver,oracle -->
+            <!-- Start new release: mvn jgitflow:release-start -DautoVersionSubmodules=true 
+                -DallowSnapshots=true -Psqlserver,oracle -->
+            <!-- Finish new release: mvn jgitflow:release-finish -DnoDeploy=true 
+                -Psqlserver,oracle -->
             <plugin>
-				<groupId>external.atlassian.jgitflow</groupId>
-				<artifactId>jgitflow-maven-plugin</artifactId>
-				<version>1.0-m5.1</version>
-				<configuration>
-					<flowInitContext>
-				         <masterBranchName>master</masterBranchName>
-				         <developBranchName>develop</developBranchName>
-				         <featureBranchPrefix>feature/</featureBranchPrefix>
-				         <releaseBranchPrefix>release/</releaseBranchPrefix>
-				         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
-				         <versionTagPrefix />
-				       </flowInitContext>
-				       <useReleaseProfile>false</useReleaseProfile>
-				</configuration>
-			</plugin>
+                <groupId>external.atlassian.jgitflow</groupId>
+                <artifactId>jgitflow-maven-plugin</artifactId>
+                <version>1.0-m5.1</version>
+                <configuration>
+                    <flowInitContext>
+                        <masterBranchName>master</masterBranchName>
+                        <developBranchName>develop</developBranchName>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <versionTagPrefix />
+                    </flowInitContext>
+                    <useReleaseProfile>false</useReleaseProfile>
+                </configuration>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
-                <!-- m2e fix – Plugin execution not covered by lifecycle configuration-->
+                <!-- m2e fix – Plugin execution not covered by lifecycle 
+                    configuration -->
                 <!-- See http://sourcevirtues.wordpress.com/2012/02/01/m2e-fix-plugin-execution-lifecycle-configuration/ -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -1335,8 +1329,8 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <!-- xmlbeans plugin only used to generate the classes not for compiling
-                        or jar generation. -->
+                        <!-- xmlbeans plugin only used to generate the classes 
+                            not for compiling or jar generation. -->
                         <noJavac>true</noJavac>
                         <memoryInitialSize>256</memoryInitialSize>
                         <memoryMaximumSize>256</memoryMaximumSize>
@@ -1357,17 +1351,12 @@
                     </configuration>
                 </plugin>
                 <plugin>
-	                <groupId>pl.project13.maven</groupId>
-	                <artifactId>git-commit-id-plugin</artifactId>
-	                <version>2.1.9</version>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>2.1.9</version>
                 </plugin>
-                <!-- 
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.3</version>
-                </plugin> 
-                -->
+                <!-- <plugin> <groupId>org.codehaus.mojo</groupId> <artifactId>buildnumber-maven-plugin</artifactId> 
+                    <version>1.3</version> </plugin> -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
@@ -1495,18 +1484,18 @@
             </snapshots>
         </repository>
         <repository>
-			<id>boundlessgeo</id>
-			<name>Boundless Cloud Repository</name>
-			<url>https://boundless.artifactoryonline.com/boundless/main</url>
-		</repository>
-		<repository>
-			<id>unidata-releases</id>
-			<url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
-    	</repository>
-		<repository>
-			<id>boundlessgeo-releases</id>
-			<url>https://repo.boundlessgeo.com/main</url>
-    	</repository>
+            <id>boundlessgeo</id>
+            <name>Boundless Cloud Repository</name>
+            <url>https://boundless.artifactoryonline.com/boundless/main</url>
+        </repository>
+        <repository>
+            <id>unidata-releases</id>
+            <url>https://artifacts.unidata.ucar.edu/content/repositories/unidata-releases/</url>
+        </repository>
+        <repository>
+            <id>boundlessgeo-releases</id>
+            <url>https://repo.boundlessgeo.com/main</url>
+        </repository>
     </repositories>
     <profiles>
         <profile>
@@ -1519,8 +1508,8 @@
         </profile>
         <profile>
             <id>release</id>
-            <!-- a profile which shall be activated if a release is performed, it
-            is also automatic activated in the ci environment. -->
+            <!-- a profile which shall be activated if a release is performed, 
+                it is also automatic activated in the ci environment. -->
             <activation>
                 <property>
                     <name>env</name>
@@ -1533,8 +1522,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
                         <configuration>
-                            <!-- no build in release:prepare (takes to long time), so in bad cases
-                            release fails on perform -->
+                            <!-- no build in release:prepare (takes to long 
+                                time), so in bad cases release fails on perform -->
                             <preparationGoals>clean</preparationGoals>
                             <autoVersionSubmodules>true</autoVersionSubmodules>
                             <tagBase>https://svn.52north.org/svn/swe/main/SOS/Service/tags/</tagBase>

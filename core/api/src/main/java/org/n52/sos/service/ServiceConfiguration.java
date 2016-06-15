@@ -154,6 +154,8 @@ public class ServiceConfiguration {
     private boolean streamingEncoding = true;
 
     private boolean includeChildObservableProperties = false;
+    
+    private boolean updateFeatureGeometry = false;
 
     /**
      * Returns the default token seperator for results.
@@ -475,7 +477,15 @@ public class ServiceConfiguration {
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
     }
+    
+    @Setting(ServiceSettings.UPDATE_FEATURE_GEOMETRY)
+    public void setUpdateFeatureGeometry(boolean updateFeatureGeometry) {
+        this.updateFeatureGeometry = updateFeatureGeometry;
+    }
 
+    public boolean isUpdateFeatureGeometry() {
+        return this.updateFeatureGeometry;
+    }
 
     /*
      * Now, we return the list of returned features and not a complex encoded

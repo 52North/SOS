@@ -77,6 +77,22 @@
 									</swe:field>
 								</swe:SimpleDataRecord>
 							</sml:capabilities>
+                <sml:capabilities name="metadata">
+                    <swe:SimpleDataRecord>
+                        <!-- status indicates, whether sensor is insitu (true) or remote (false) -->
+                        <swe:field name="insitu">
+                            <swe:Boolean definition="insitu">
+                                <swe:value>true</swe:value>
+                            </swe:Boolean>
+                        </swe:field>
+                        <!-- status indicates, whether sensor is mobile (true) or fixed/stationary (false) -->
+                        <swe:field name="mobile">
+                            <swe:Boolean definition="mobile">
+                                <swe:value>false</swe:value>
+                            </swe:Boolean>
+                        </swe:field>
+                    </swe:SimpleDataRecord>
+                </sml:capabilities>
 		
 							<sml:position name="sensorPosition">
 								<swe:Position referenceFrame="urn:ogc:def:crs:EPSG::4326">

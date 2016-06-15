@@ -108,5 +108,10 @@
                 <comment>Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid</comment>
             </column>
         </many-to-one>
+        <property name="seriesType" type="string">
+            <column name="seriesType" not-null="false">
+                <comment>Definition of the series type, e.g. measurement for OM_Measurement. Optional</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

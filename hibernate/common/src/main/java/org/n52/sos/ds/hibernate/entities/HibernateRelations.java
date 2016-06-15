@@ -335,7 +335,16 @@ public interface HibernateRelations {
 
         void setProcedure(Procedure procedure);
     }
+    
+    interface HasSeriesType {
 
+        void setSeriesType(String seriesType);
+        
+        String getSeriesType();
+        
+        boolean isSetSeriesType();
+    }
+    
     interface HasProcedureDescriptionFormat {
         String PROCEDURE_DESCRIPTION_FORMAT = "procedureDescriptionFormat";
 

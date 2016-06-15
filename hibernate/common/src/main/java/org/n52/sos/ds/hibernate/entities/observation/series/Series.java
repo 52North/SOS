@@ -36,6 +36,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.util.Constants;
 
 import com.google.common.base.Strings;
@@ -54,7 +55,7 @@ public class Series
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, HasPublishedFlag {
+                   HasUnit, HasPublishedFlag, HasSeriesType {
 
     private static final long serialVersionUID = 7838379468605356753L;
     

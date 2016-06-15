@@ -57,6 +57,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
@@ -1494,6 +1495,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             daos.observation().addTime(sosObservation, observation);
 
             observation.setSamplingGeometry(samplingGeometry);
+            checkUpdateFeatureOfInterestGeometry();
 
             ObservationContext observationContext = daos.observation().createObservationContext();
             Set<Offering> offerings = observation.getOfferings();
@@ -1541,6 +1543,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             NamedValue<Geometry> spatialFilteringProfileParameter = sosObservation.getSpatialFilteringProfileParameter();
             Geometry geometry = spatialFilteringProfileParameter.getValue().getValue();
             return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+        }
+
+        private void checkUpdateFeatureOfInterestGeometry() {
+            if (samplingGeometry != null && ServiceConfiguration.getInstance().isUpdateFeatureGeometry()) {
+                new FeatureOfInterestDAO().updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
+            }
+            
         }
 
         private static class Caches {

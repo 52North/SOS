@@ -407,8 +407,19 @@ public class AbstractSensorML extends SosProcedureDescription {
     }
     
     private SweBoolean getSweBooleanFromCapabilitiesFor(Set<String> definitions) {
-        if (isSetCapabilities()) {
-            for (SmlCapabilities caps : capabilities) {
+        if (this instanceof SensorML && ((SensorML)this).isWrapper()) {
+            for (AbstractProcess absProcess : ((SensorML)this).getMembers()) {
+                return getSweBooleanFromCapabilitiesFor(absProcess, definitions);
+            }
+        } else {
+            return getSweBooleanFromCapabilitiesFor(this, definitions);
+        }
+        return null;
+    }
+
+    private SweBoolean getSweBooleanFromCapabilitiesFor(AbstractSensorML sml, Set<String> definitions) {
+        if (sml.isSetCapabilities()) {
+            for (SmlCapabilities caps : sml.getCapabilities()) {
                 for (SmlCapability cap : caps.getCapabilities()) {
                     if (cap.getAbstractDataComponent() instanceof SweDataRecord) {
                         for (SweField field : ((SweDataRecord)cap.getAbstractDataComponent()).getFields()) {

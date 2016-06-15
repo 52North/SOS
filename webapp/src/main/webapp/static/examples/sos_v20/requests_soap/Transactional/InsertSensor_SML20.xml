@@ -52,14 +52,14 @@
                         <!-- status indicates, whether sensor is insitu (true) 
                             or remote (false) -->
                         <sml:capability name="insitu">
-                            <swe:Boolean>
+                            <swe:Boolean definition="insitu">
                                 <swe:value>true</swe:value>
                             </swe:Boolean>
                         </sml:capability>
                         <!-- status indicates, whether sensor is mobile (true) 
                             or fixed/stationary (false) -->
                         <sml:capability name="mobile">
-                            <swe:Boolean>
+                            <swe:Boolean definition="mobile">
                                 <swe:value>false</swe:value>
                             </swe:Boolean>
                         </sml:capability>

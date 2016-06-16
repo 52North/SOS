@@ -1,14 +1,18 @@
 <?xml version="1.0"?>
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.n52.series.db.da.beans">
-    <class name="CategoryEntity" table="observableproperty">
+<hibernate-mapping>
+    <class name="org.n52.series.db.da.beans.ext.PlatformEntity" table="procedure">
         <id name="pkid" type="long">
-            <column name="observablepropertyid" />
+            <column name="procedureid" />
             <generator class="assigned" />
         </id>
+
         <property name="domainId" column="identifier" type="string" insert="false" update="false"/>
         <property name="name" column="name" type="string" />
-        <property name="description" column="name" type="string" insert="false" update="false"/>
+
+        <property column="mobile" name="mobile" type="org.hibernate.type.TrueFalseType" insert="false" update="false"/>
+        <property column="insitu" name="insitu" type="org.hibernate.type.TrueFalseType" insert="false" update="false"/>
+
     </class>
 </hibernate-mapping>

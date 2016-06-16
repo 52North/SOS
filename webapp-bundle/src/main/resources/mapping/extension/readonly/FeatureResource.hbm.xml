@@ -1,15 +1,20 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
-    <class name="FeatureEntity" table="featureOfInterest">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class abstract="true" name="org.n52.series.db.da.beans.FeatureEntity" table="featureofinterest">
         <id name="pkid" type="long">
-            <column name="featureofinterestid" />
-            <generator class="assigned" />
+            <column name="featureofinterestid"/>
+            <generator class="assigned"/>
         </id>
-        <property name="canonicalId" column="identifier" type="string" insert="false" update="false"/>
+        <property name="domainId" column="identifier" type="string" insert="false" update="true"/>
         <property name="name" column="name" type="string" />
-        <property name="description" column="description" type="string"/>
-        <property name="geom" column="geom" type="org.hibernate.spatial.GeometryType" />
+        <property name="description" column="name" type="string" insert="false" update="false"/>
+        <component class="org.n52.series.db.da.beans.ext.GeometryEntity" name="geometry">
+            <!--
+            <property column="lat" name="lat" type="double" />
+            <property column="lon" name="lon" type="double" />
+             -->
+            <property column="geom" name="geometry" type="org.hibernate.spatial.GeometryType"/>
+        </component>
     </class>
 </hibernate-mapping>

@@ -1,18 +1,26 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping package="org.n52.series.api.v1.db.da.beans">
-    <class name="ObservationEntity" table="observation">
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.db.da.beans.ext">
+    <class name="AbstractObservationEntity" table="observation" abstract="true">
         <id name="pkid" type="long">
-            <column name="observationid" />
-            <generator class="assigned" />
+            <column name="observationid"/>
+            <generator class="assigned"/>
         </id>
-        <property name="seriesPkid" column="seriesid"  type="long" />
-        <property name="timestamp" column="phenomenontimeend" type="timestamp" />
-        <property name="deleted" column="deleted" type="org.hibernate.type.TrueFalseType" />
-        <join table="numericvalue" fetch="join">
-            <key column="observationid" foreign-key="observationid" />
-            <property name="value" type="double" />
-        </join>
+        <property column="seriesid" name="seriesPkid" type="long"/>
+        <property column="phenomenonTimeStart" name="timestamp" type="timestamp"/>
+        <property column="deleted" name="deleted" type="org.hibernate.type.TrueFalseType"/>
+        <component class="org.n52.series.db.da.beans.ext.GeometryEntity" name="geometry">
+            <!--
+            <property column="lat" name="lat" type="double" />
+            <property column="lon" name="lon" type="double" />
+             -->
+            <property column="samplingGeometry" name="geometry" type="org.hibernate.spatial.GeometryType"/>
+        </component>
+        <joined-subclass name="MeasurementEntity"
+                         extends="AbstractObservationEntity"
+                         table="numericValue">
+        	<key column="observationId"/>
+         	<property column="value" name="value" type="double" />
+        </joined-subclass>
     </class>
 </hibernate-mapping>

@@ -69,8 +69,8 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     public HibernateSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
         super(request);
         this.series = series;
-        this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
-        this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
+        this.seriesValueDAO =  DaoFactory.getInstance().getValueDAO();
+        this.seriesValueTimeDAO = DaoFactory.getInstance().getValueTimeDAO();
     }
 
     @Override

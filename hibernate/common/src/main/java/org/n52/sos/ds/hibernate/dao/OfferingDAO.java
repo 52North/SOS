@@ -659,7 +659,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
         }
 
         @Override
-        @SuppressWarnings({ "rawtypes", "unchecked" })
+        @SuppressWarnings({ "rawtypes"})
         public List transformList(List collection) {
             return collection;
         }

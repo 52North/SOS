@@ -1,0 +1,7 @@
+{
+    "timeformat": "YYYY-MM-dd, HH:mm",
+    "generalizer": {
+        "defaultGeneralizer": "lttb",
+        "noDataGapThreshold": 5
+    }
+}

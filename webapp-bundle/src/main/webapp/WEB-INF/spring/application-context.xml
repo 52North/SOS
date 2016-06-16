@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <import resource="spi-impl-dao_common.xml"/>
+
+    <ctx:component-scan base-package="org.n52.series.db">
+        <!-- exclude V2 beans from autowiring -->
+        <ctx:exclude-filter type="regex" expression="org\.n52\.series\.db\.*\.v2\.*" />
+    </ctx:component-scan>
+
+    <!-- timeseries api web controller bindings -->
+    <import resource="spi-impl-dao_v1_beans.xml"/>
+    <import resource="spi-impl-dao_v1_beans_ext.xml"/>
+
+
+    <!--<import resource="spi-impl-dao_tasks.xml" />-->
+
+    <!-- For SOS Bundles (instead of extra database config) -->
+    <bean class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
+
+</beans>

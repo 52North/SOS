@@ -107,6 +107,8 @@ This project includes:
   Apache FOP under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   API interfaces under GNU Lesser General Public License (LGPL) version 2.1
+  AspectJ tools under Eclipse Public License - v 1.0
+  AspectJ weaver under Eclipse Public License - v 1.0
   Avalon Framework API under The Apache Software License, Version 2.0
   Avalon Framework Implementation under The Apache Software License, Version 2.0
   Batik animation engine under The Apache Software License, Version 2.0
@@ -156,15 +158,15 @@ This project includes:
   HttpClient under Apache License
   HttpCore under Apache License
   HyperSQL Database under HSQLDB License, a BSD open source license
-  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
-  Java Excel API under GNU Lesser General Public License
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
+  Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
@@ -230,29 +232,31 @@ This project includes:
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0
-  Sensor Web Timeseries API - IO under GNU General Public License, Version 2.0
-  Sensor Web Timeseries API - REST Binding under GNU General Public License, Version 2.0
-  Sensor Web Timeseries API - SPI under GNU General Public License, Version 2.0
-  Sensor Web Timeseries API - SPI Impl DAO under GNU General Public License, Version 2.0
+  Series REST API - DAO module under GNU General Public License, Version 2.0
+  Series REST API - IO module under GNU General Public License, Version 2.0
+  Series REST API - REST module under GNU General Public License, Version 2.0
+  Series REST API - SOS DAO module under GNU General Public License, Version 2.0
+  Series REST API - SPI module under GNU General Public License, Version 2.0
   servlet-api under CDDL 1.1 or GPL2 w/ CPE
   SLF4J API Module under MIT License
   Spring AOP under The Apache Software License, Version 2.0
+  Spring Aspects under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
   Spring Context under The Apache Software License, Version 2.0
+  Spring Context Support under The Apache Software License, Version 2.0
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
+  Spring JDBC under The Apache Software License, Version 2.0
+  Spring Object/XML Marshalling under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
+  Spring Transaction under The Apache Software License, Version 2.0
   Spring Web under The Apache Software License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
-  spring-aop under The Apache Software License, Version 2.0
-  spring-asm under The Apache Software License, Version 2.0
-  spring-jdbc under The Apache Software License, Version 2.0
   spring-security-acl under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  spring-tx under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
   sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <ctx:annotation-config />
+
+    <bean id="jobScheduler" class="org.n52.io.task.JobScheduler" init-method="init" destroy-method="shutdown">
+        <property name="scheduler">
+            <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+                <property name="jobFactory">
+                    <bean class="org.n52.io.task.AutowiringSpringBeanJobFactory" />
+                </property>
+            </bean>
+        </property>
+        <property name="enabled" value="true" />
+        <property name="startupDelayInSeconds" value="5" />
+        <property name="scheduledJobs">
+            <list>
+                <ref bean="preRenderingJobV1" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="preRenderingJobV1" class="org.n52.io.PreRenderingJob">
+        <!-- start with '/' to place config under WEB-INF/classes folder -->
+        <property name="configFile" value="/config-task-prerendering-v1.json" />
+
+        <property name="jobName" value="Prerendering Job for API v1" />
+        <property name="jobDescription" value="Job prerendering charts." />
+        <property name="triggerName" value="preRenderingV1_dailyAt_03:00am" />
+        <!-- http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-06 -->
+        <property name="cronExpression" value="0 0 03 * * ?" />
+        <property name="triggerAtStartup" value="true" />
+        <property name="enabled" value="false" />
+
+        <property name="timeseriesMetadataService" ref="timeseriesService" />
+        <property name="timeseriesDataService" ref="timeseriesService" />
+        <!--        <property name="outputPath" value="generated/prerendered/v1" />
+        <property name="width" value="800" />
+        <property name="height" value="500" />
+        <property name="language" value="de" />
+        <property name="showGrid" value="true" />-->
+    </bean>
+
+</beans>

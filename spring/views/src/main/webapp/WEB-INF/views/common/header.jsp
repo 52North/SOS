@@ -80,14 +80,21 @@
                                                 <span class="menu-title">Client</span>
                                             </a>
                                             <ul>
+                                              <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/helgoland/index.html')}">
+                                                <li>
+                                                    <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/helgoland" />">
+                                                        <span class="menu-title">Sensor Web Thin Client (Helgoland)</span>
+                                                    </a>
+                                                </li>
+                                              </c:if>
                                              	<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
-			                                        <li>
-			                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
-			                                                <span class="menu-title">Sensor Web JS Client</span>
-			                                            </a>
-			                                        </li>
-		                                    	</c:if>
-                                   			 </ul>
+				                                        <li>
+				                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
+				                                                <span class="menu-title">Sensor Web JS Client (old)</span>
+				                                            </a>
+				                                        </li>
+		                                    	    </c:if>
+                                            </ul>
                                         </li>
                                     </c:if>
                                         <li>

@@ -238,6 +238,12 @@
                      <comment>Category observation value</comment>
                  </column>
              </property>
+             <property name="valueIdentifier" 
+                       type="string">
+                 <column name="identifier">
+                     <comment>SweCategory observation identifier</comment>
+                 </column>
+             </property>
              <property name="valueName" 
                        type="string">
                  <column name="name">
@@ -320,16 +326,22 @@
                      <comment>Text observation value</comment>
                  </column>
              </property>
+             <property name="valueIdentifier" 
+                       type="string">
+                 <column name="identifier">
+                     <comment>SweText observation identifier</comment>
+                 </column>
+             </property>
              <property name="valueName" 
                        type="string">
                  <column name="name">
-                     <comment>SweCategory observation name</comment>
+                     <comment>SweText observation name</comment>
                  </column>
              </property>
              <property name="valueDefinition" 
                        type="string">
                  <column name="definition">
-                     <comment>SweCategory observation definition</comment>
+                     <comment>SweText observation definition</comment>
                  </column>
              </property>
              <property name="valueDescription" 

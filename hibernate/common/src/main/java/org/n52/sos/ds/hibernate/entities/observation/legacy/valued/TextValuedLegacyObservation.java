@@ -50,6 +50,7 @@ public class TextValuedLegacyObservation
 
     private static final long serialVersionUID = 8686486888350904512L;
     private String value;
+    private String valueIdentifier;
     private String valueName;
     private String valueDescription;
 
@@ -71,6 +72,21 @@ public class TextValuedLegacyObservation
     @Override
     public String getValueAsString() {
         return getValue();
+    }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
+
+    @Override
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
     }
 
     @Override

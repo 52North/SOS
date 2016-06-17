@@ -50,6 +50,7 @@ public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation
     private static final long serialVersionUID = -4907297395374635905L;
 
     private String value;
+    private String valueIdentifier;
     private String valueName;
     private String valueDescription;
 
@@ -66,6 +67,21 @@ public class TextValuedSeriesObservation extends AbstractValuedSeriesObservation
     @Override
     public boolean isSetValue() {
         return StringHelper.isNotEmpty(getValue());
+    }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
+
+    @Override
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
     }
 
     @Override

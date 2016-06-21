@@ -1227,7 +1227,7 @@
 				<configuration>
 					<flowInitContext>
 				         <masterBranchName>master</masterBranchName>
-				         <developBranchName>develop</developBranchName>
+				         <developBranchName>maintenance/4.3</developBranchName>
 				         <featureBranchPrefix>feature/</featureBranchPrefix>
 				         <releaseBranchPrefix>release/</releaseBranchPrefix>
 				         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>

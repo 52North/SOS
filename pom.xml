@@ -1459,6 +1459,10 @@
 			<name>Boundless Cloud Repository</name>
 			<url>https://boundless.artifactoryonline.com/boundless/main</url>
 		</repository>
+		<repository>
+            <id>boundlessgeo-releases</id>
+            <url>https://repo.boundlessgeo.com/main</url>
+		</repository>
     </repositories>
     <profiles>
         <profile>

@@ -28,6 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
+import java.util.Collection;
+
+import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
+import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+
 /**
  * Abstract valut time data access object
  * 
@@ -36,5 +44,9 @@ package org.n52.sos.ds.hibernate.dao;
  *
  */
 public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
+    
+    public abstract ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilter, Session session) throws OwsExceptionReport;
+
+    public abstract ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilter, Session session) throws OwsExceptionReport;
 
 }

@@ -165,7 +165,6 @@ public class TimePeriod extends Time {
      *            Start TimeInstant
      * @param endTime
      *            End TimeInstant
-     * @throws ParseException
      */
     public TimePeriod(TimeInstant startTime, TimeInstant endTime) {
         if (startTime != null) {

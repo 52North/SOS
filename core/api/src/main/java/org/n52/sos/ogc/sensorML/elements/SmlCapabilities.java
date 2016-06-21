@@ -83,7 +83,12 @@ public class SmlCapabilities extends AbstractSmlDataComponentContainer<SmlCapabi
         if (!hasCapabilities() && isSetAbstractDataComponents()) {
             List<SmlCapability> capabilities = Lists.newArrayList();
             for (SweAbstractDataComponent component : getAbstractDataComponents()) {
-                SmlCapability smlCapability = new SmlCapability(component.getName().getValue());
+                SmlCapability smlCapability = new SmlCapability();
+                if (component.isSetName()) {
+                    smlCapability.setName(component.getName().getValue());
+                } else if (component.isSetDefinition()) {
+                    smlCapability.setName(component.getDefinition());
+                }
                 smlCapability.setAbstractDataComponent(component);
                 capabilities.add(smlCapability);
             }

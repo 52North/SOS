@@ -3,38 +3,38 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingNetwork" table="network">
-    	<comment>Table to store the AQD e-Reporting network information. Mapping file: mapping/ereporting/EReportingNetwork.hbm.xml</comment>
+        <comment>Table to store the AQD e-Reporting network information. Mapping file: mapping/ereporting/EReportingNetwork.hbm.xml</comment>
         <id name="networkId" type="long">
             <column name="networkId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">networkId_seq</param>
+                <param name="sequence">networkId_seq</param>
             </generator>
         </id>
        <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="networkIdentifierUK">
-            	<comment>The identifier of the Network, gml:identifier. Used as parameter for queries. Optional but unique</comment>
+                <comment>The identifier of the Network, gml:identifier. Used as parameter for queries. Optional but unique</comment>
             </column>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" lazy="no-proxy" foreign-key="networkCodespaceIdFk">
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="networkCodespaceIdFk">
             <column name="codespace">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="name" type="string">
             <column name="name">
-            	<comment>The name of the network, gml:name. Optional</comment>
+                <comment>The name of the network, gml:name. Optional</comment>
             </column>
         </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="networkCodespaceNameFk">
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="networkCodespaceNameFk">
             <column name="codespaceName">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="description" type="string">
             <column name="description">
-            	<comment>Description of the network, gml:description. Optional</comment>
+                <comment>Description of the network, gml:description. Optional</comment>
             </column>
         </property>
     </class>

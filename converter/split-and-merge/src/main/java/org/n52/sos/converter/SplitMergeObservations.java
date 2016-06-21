@@ -39,6 +39,7 @@ import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierFacilitator;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -162,10 +163,22 @@ public class SplitMergeObservations implements
                     (ObservationEncoder<XmlObject, OmObservation>) CodingHelper.getEncoder(
                             response.getResponseFormat(), new OmObservation());
             if (encoder.shouldObservationsWithSameXBeMerged()) {
+                if (Sos1Constants.SERVICEVERSION.equals(response.getVersion())) {
+                    return checkResultModel(response);
+                }
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean checkResultModel(GetObservationResponse response) {
+        if (response.isSetResultModel()) {
+            if (!OmConstants.OBS_TYPE_OBSERVATION.equals(response.getResultModel())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private AbstractServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {

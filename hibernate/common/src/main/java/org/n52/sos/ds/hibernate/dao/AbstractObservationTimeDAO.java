@@ -31,5 +31,5 @@ package org.n52.sos.ds.hibernate.dao;
 public abstract class AbstractObservationTimeDAO {
 	
     protected abstract Class<?> getObservationTimeClass();
-
+    
 }

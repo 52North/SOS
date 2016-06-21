@@ -6,11 +6,11 @@
         <id name="observationId" type="long">
             <column name="observationId" />
             <generator class="native">
-            	<param name="sequence">observationId_seq</param>
+                <param name="sequence">observationId_seq</param>
             </generator>
         </id>
-        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" fetch="select" lazy="no-proxy" foreign-key="observationSeriesFk">
-           	<column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="observationIdentity"/>
+        <many-to-one name="series" class="org.n52.sos.ds.hibernate.entities.series.Series" foreign-key="observationSeriesFk">
+               <column index="obsSeriesIdx" name="seriesId" not-null="true" unique-key="observationIdentity"/>
         </many-to-one>
          <property name="phenomenonTimeStart" type="timestamp" insert="false" update="false">
             <column index="obsPhenTimeStartIdx" name="phenomenonTimeStart" length="29" not-null="true" unique-key="observationIdentity"/>
@@ -27,7 +27,7 @@
         <property name="validTimeEnd" type="timestamp">
             <column name="validTimeEnd" length="29" />
         </property>
-                <set name="offerings" table="observationHasOffering" inverse="false" fetch="select" lazy="true" >
+                <set name="offerings" table="observationHasOffering" inverse="false">
             <key>
                 <column name="observationId" not-null="true" index="obshasoffobservationidx" />
             </key>

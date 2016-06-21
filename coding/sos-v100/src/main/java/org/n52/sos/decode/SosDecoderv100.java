@@ -37,21 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.ogc.SpatialOpsType;
-import net.opengis.sos.x10.DescribeSensorDocument;
-import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
-import net.opengis.sos.x10.GetCapabilitiesDocument;
-import net.opengis.sos.x10.GetCapabilitiesDocument.GetCapabilities;
-import net.opengis.sos.x10.GetFeatureOfInterestDocument;
-import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest;
-import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest.Location;
-import net.opengis.sos.x10.GetObservationByIdDocument;
-import net.opengis.sos.x10.GetObservationByIdDocument.GetObservationById;
-import net.opengis.sos.x10.GetObservationDocument;
-import net.opengis.sos.x10.GetObservationDocument.GetObservation;
-import net.opengis.sos.x10.GetObservationDocument.GetObservation.FeatureOfInterest;
-import net.opengis.sos.x10.ResponseModeType.Enum;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -82,6 +67,21 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import net.opengis.ogc.SpatialOpsType;
+import net.opengis.sos.x10.DescribeSensorDocument;
+import net.opengis.sos.x10.DescribeSensorDocument.DescribeSensor;
+import net.opengis.sos.x10.GetCapabilitiesDocument;
+import net.opengis.sos.x10.GetCapabilitiesDocument.GetCapabilities;
+import net.opengis.sos.x10.GetFeatureOfInterestDocument;
+import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest;
+import net.opengis.sos.x10.GetFeatureOfInterestDocument.GetFeatureOfInterest.Location;
+import net.opengis.sos.x10.GetObservationByIdDocument;
+import net.opengis.sos.x10.GetObservationByIdDocument.GetObservationById;
+import net.opengis.sos.x10.GetObservationDocument;
+import net.opengis.sos.x10.GetObservationDocument.GetObservation;
+import net.opengis.sos.x10.GetObservationDocument.GetObservation.FeatureOfInterest;
+import net.opengis.sos.x10.ResponseModeType.Enum;
 
 /**
  * @since 4.0.0

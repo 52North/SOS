@@ -3,59 +3,59 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Procedure" table="`procedure`">
-    	<comment>Table to store the procedure/sensor. Mapping file: mapping/core/Procedure.hbm.xml</comment>
+        <comment>Table to store the procedure/sensor. Mapping file: mapping/core/Procedure.hbm.xml</comment>
         <id name="procedureId" type="long">
             <column name="procedureId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">procedureId_seq</param>
+                <param name="sequence">procedureId_seq</param>
             </generator>
         </id>
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
-        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" fetch="select" lazy="no-proxy" foreign-key="procProcDescFormatFk">
+        <many-to-one name="procedureDescriptionFormat" class="org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat" foreign-key="procProcDescFormatFk">
             <column name="procedureDescriptionFormatId" not-null="true">
-            	<comment>Relation/foreign key to the procedureDescriptionFormat table. Describes the format of the procedure description.</comment>
+                <comment>Relation/foreign key to the procedureDescriptionFormat table. Describes the format of the procedure description.</comment>
             </column>
         </many-to-one>
         <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="procIdentifierUK">
-            	<comment>The identifier of the procedure, gml:identifier. Used as parameter for queries. Unique</comment>
+                <comment>The identifier of the procedure, gml:identifier. Used as parameter for queries. Unique</comment>
             </column>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceIdentifierFk">
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="procCodespaceIdentifierFk">
             <column name="codespace">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="name" type="string">
             <column name="name">
-            	<comment>The name of the procedure, gml:name. Optional</comment>
+                <comment>The name of the procedure, gml:name. Optional</comment>
             </column>
         </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="procCodespaceNameFk">
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="procCodespaceNameFk">
             <column name="codespaceName">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="description" type="string">
             <column name="description">
-            	<comment>Description of the procedure, gml:description. Optional</comment>
+                <comment>Description of the procedure, gml:description. Optional</comment>
             </column>
         </property>
         <property name="deleted" type="org.hibernate.type.TrueFalseType">
             <column name="deleted" not-null="true" default="'F'" check="deleted in ('T','F')">
-            	<comment>Flag to indicate that this procedure is deleted or not (OGC SWES 2.0 - DeleteSensor operation)</comment>
+                <comment>Flag to indicate that this procedure is deleted or not (OGC SWES 2.0 - DeleteSensor operation)</comment>
             </column>
         </property>
         <property name="disabled" type="org.hibernate.type.TrueFalseType">
             <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')">
-            	<comment>For later use by the SOS. Indicator if this procedure should not be provided by the SOS.</comment>
+                <comment>For later use by the SOS. Indicator if this procedure should not be provided by the SOS.</comment>
             </column>
         </property>
         <property name="descriptionFile" type="org.hibernate.type.StringClobType">
             <column name="descriptionFile">
-            	<comment>Field for full (XML) encoded procedure description or link to a procedure description file. Optional</comment>
+                <comment>Field for full (XML) encoded procedure description or link to a procedure description file. Optional</comment>
             </column>
         </property>
         <!-- optional properties, used for automatic sensor description creation if available -->
@@ -63,7 +63,7 @@
         <!--
         <property name="geom" type="org.hibernate.spatial.GeometryType">
             <column name="geom" unique-key="procGeomUk">
-            	<comment>The geometry/location of the procedure. Optional</comment>
+                <comment>The geometry/location of the procedure. Optional</comment>
             </column>
         </property>
         -->
@@ -72,31 +72,31 @@
         <!--  
         <property name="longitude" type="bigDecimal">
            <column name="longitude" unique-key="procLonLatUk">
-            	<comment>The longitude of the procedure. Optional</comment>
+                <comment>The longitude of the procedure. Optional</comment>
             </column>
         </property>
         <property name="latitude" type="bigDecimal">
-        	<column name="latitude" unique-key="procLonLatUk">
-            	<comment>The latitude of the procedure. Optional</comment>
+            <column name="latitude" unique-key="procLonLatUk">
+                <comment>The latitude of the procedure. Optional</comment>
             </column>
         </property>
         <property name="srid" type="integer">
-        	<column name="srid">
-            	<comment>SRID of the longitude/latitude values. Optional</comment>
+            <column name="srid">
+                <comment>SRID of the longitude/latitude values. Optional</comment>
             </column>
         </property> 
         -->
         <!--
         <property name="altitude" type="bigDecimal">
-        	<column name="altitude">
-            	<comment>The altitude of the procedure location</comment>
+            <column name="altitude">
+                <comment>The altitude of the procedure location</comment>
             </column>
         </property>
         -->
         <!-- for timeseries API  -->
         <property name="reference" type="org.hibernate.type.TrueFalseType">
-        	<column name="referenceFlag" default="'F'" check="referenceFlag in ('T','F')">
-            	<comment>Flag to indicate that this procedure is a reference procedure of another procedure. Not used by the SOS but by the Sensor Web REST-API</comment>
+            <column name="referenceFlag" default="'F'" check="referenceFlag in ('T','F')">
+                <comment>Flag to indicate that this procedure is a reference procedure of another procedure. Not used by the SOS but by the Sensor Web REST-API</comment>
             </column>
         </property>
     </class>

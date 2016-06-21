@@ -74,6 +74,17 @@ public class I18NDAORepository extends AbstractConfiguringServiceLoaderRepositor
         // TODO check for subtypes
         return (I18NDAO<T>) daos.get(c);
     }
+    
+    public boolean isSupported() {
+        if (!daos.isEmpty()) {
+            for (I18NDAO<?> dao : daos.values()) {
+                if (dao.isSupported()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     @Override
     protected  void processConfiguredImplementations(Set<I18NDAO> implementations) throws ConfigurationException {

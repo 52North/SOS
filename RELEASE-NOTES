@@ -6,6 +6,38 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+      Release 52n-sensorweb-sos-4.3.7
+=====================================
+
+  --- New features ---
+  
+    * Support for samplingGeometry stored as lat/lon
+    
+  --- Changes ---
+ 
+    * Issue #427: Check and remove lazy and fetch attributes from Hibernate mapping files
+    * Change XML validation to validate encoded objects only if debug log level is enabled.
+    * Update REST-API version of bundle to 1.8.0
+  
+  --- Fixed issues ---
+  
+    * NPE in SmlCapabilities when calling getCapabilities
+    * Fix indentation and implement short-circuit of the loop (https://github.com/52North/SOS/commit/23ab94e9da25f74a83c89ce22593228b39ac0890)
+    * Fix random id generation (https://github.com/52North/SOS/commit/6cbfd9a1f7849af0358d2b99de3a41605beb07f7)
+    * Issue #215: i18N GUI not rendered if required tables are missing
+    * Issue #250: Dispatching after reset is wrong
+    * Issue #382: Deleting Complex Observation
+    * Issue #393: SamplingGeometry in InsertObservation is not inserted into database using JSON binding
+    * Issue #397: InsertResult adding result to every observation offering available
+    * Issue #398: Invalid namespace prefix when querying AQD GetObservation with samplingGeometry in the response.
+    * Issue #405: Observation data failing to insert
+    * Issue #416: Test Client - wrong type of the wml2:metadata element?
+    * Issue #417: REST InsertObservation does not permit resultTime specified as xlink
+    * Issue #418: REST binding does not work with enabled transactional security
+    * Issue #424: AQD GetObservation executes a query for each series to get min/max phenomenonTime
+    * Issue #426: Add OGC-SOS 1.0.0 GetObservation resultModel support
+    
+
      Release 52n-sensorweb-sos-4.3.6
 ===================================
 
@@ -20,7 +52,7 @@ RELEASE NOTES
   
   
      Release 52n-sensorweb-sos-4.3.5
-===================================
+====================================
 
   --- New features ---
   
@@ -37,32 +69,18 @@ RELEASE NOTES
       * Issue #359: Missing "Version" and "Build date"
       * Issue #362: Minor typo in "Datasource configuration" wizard  
       * Issue #365: SOS Client InsertResultTemplate example '[POX] InsertResultTemplate - with ResultTime (SOS 2.0.0)'
-      
- 
-    Release 52n-sensorweb-sos-4.3.4
-===================================
-
-  --- New features ---
-  
-      * Add alternative Hibernate mapping files for REST-API which can be used with e-Reporting databse concept.
-  
-  --- Changes ---
- 
-      * Update REST-API version of bundle to 1.6.0
-  
-  --- Fixed issues ---
-  
-      * 
  
    Release 52n-sensorweb-sos-4.3.4
 ===================================
 
   --- New features ---
   
-       * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
+    * Support OM_SamplingObservation in JSON binding (samplingGeometry in om:paramerter)
+    * Add alternative Hibernate mapping files for REST-API which can be used with e-Reporting databse concept.
   
   --- Changes ---
   
+    * Update REST-API version of bundle to 1.6.0
   
   --- Fixed issues ---
   

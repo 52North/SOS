@@ -33,36 +33,9 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import net.opengis.sos.x20.GetCapabilitiesDocument;
-import net.opengis.sos.x20.GetCapabilitiesType;
-import net.opengis.sos.x20.GetFeatureOfInterestDocument;
-import net.opengis.sos.x20.GetFeatureOfInterestType;
-import net.opengis.sos.x20.GetObservationByIdDocument;
-import net.opengis.sos.x20.GetObservationByIdType;
-import net.opengis.sos.x20.GetObservationDocument;
-import net.opengis.sos.x20.GetObservationType;
-import net.opengis.sos.x20.GetResultDocument;
-import net.opengis.sos.x20.GetResultResponseDocument;
-import net.opengis.sos.x20.GetResultResponseType;
-import net.opengis.sos.x20.GetResultTemplateDocument;
-import net.opengis.sos.x20.GetResultTemplateResponseDocument;
-import net.opengis.sos.x20.GetResultTemplateResponseType;
-import net.opengis.sos.x20.GetResultTemplateType;
-import net.opengis.sos.x20.GetResultType;
-import net.opengis.sos.x20.InsertObservationDocument;
-import net.opengis.sos.x20.InsertObservationType;
-import net.opengis.sos.x20.InsertObservationType.Observation;
-import net.opengis.sos.x20.InsertResultDocument;
-import net.opengis.sos.x20.InsertResultTemplateDocument;
-import net.opengis.sos.x20.InsertResultTemplateType;
-import net.opengis.sos.x20.InsertResultType;
-import net.opengis.sos.x20.ResultTemplateType;
-import net.opengis.sos.x20.ResultTemplateType.ObservationTemplate;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -113,20 +86,48 @@ import org.w3c.dom.NodeList;
 
 import com.google.common.base.Joiner;
 
+import net.opengis.sos.x20.GetCapabilitiesDocument;
+import net.opengis.sos.x20.GetCapabilitiesType;
+import net.opengis.sos.x20.GetFeatureOfInterestDocument;
+import net.opengis.sos.x20.GetFeatureOfInterestType;
+import net.opengis.sos.x20.GetObservationByIdDocument;
+import net.opengis.sos.x20.GetObservationByIdType;
+import net.opengis.sos.x20.GetObservationDocument;
+import net.opengis.sos.x20.GetObservationType;
+import net.opengis.sos.x20.GetResultDocument;
+import net.opengis.sos.x20.GetResultResponseDocument;
+import net.opengis.sos.x20.GetResultResponseType;
+import net.opengis.sos.x20.GetResultTemplateDocument;
+import net.opengis.sos.x20.GetResultTemplateResponseDocument;
+import net.opengis.sos.x20.GetResultTemplateResponseType;
+import net.opengis.sos.x20.GetResultTemplateType;
+import net.opengis.sos.x20.GetResultType;
+import net.opengis.sos.x20.InsertObservationDocument;
+import net.opengis.sos.x20.InsertObservationType;
+import net.opengis.sos.x20.InsertObservationType.Observation;
+import net.opengis.sos.x20.InsertResultDocument;
+import net.opengis.sos.x20.InsertResultTemplateDocument;
+import net.opengis.sos.x20.InsertResultTemplateType;
+import net.opengis.sos.x20.InsertResultType;
+import net.opengis.sos.x20.ResultTemplateType;
+import net.opengis.sos.x20.ResultTemplateType.ObservationTemplate;
+
 /**
  * @since 4.0.0
  * 
  */
-public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class SosDecoderv20 extends AbstractSwesDecoderv20
+        implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosDecoderv20.class);
 
     @SuppressWarnings("unchecked")
-    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(CodingHelper.decoderKeysForElements(
-            Sos2Constants.NS_SOS_20, GetCapabilitiesDocument.class, GetObservationDocument.class,
-            GetFeatureOfInterestDocument.class, GetObservationByIdDocument.class, InsertObservationDocument.class,
-            InsertResultTemplateDocument.class, InsertResultDocument.class, GetResultTemplateDocument.class,
-            GetResultDocument.class, GetResultTemplateResponseDocument.class, GetResultResponseDocument.class),
+    private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
+            CodingHelper.decoderKeysForElements(Sos2Constants.NS_SOS_20, GetCapabilitiesDocument.class,
+                    GetObservationDocument.class, GetFeatureOfInterestDocument.class, GetObservationByIdDocument.class,
+                    InsertObservationDocument.class, InsertResultTemplateDocument.class, InsertResultDocument.class,
+                    GetResultTemplateDocument.class, GetResultDocument.class, GetResultTemplateResponseDocument.class,
+                    GetResultResponseDocument.class),
             CodingHelper.xmlDecoderKeysForOperation(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
                     SosConstants.Operations.GetCapabilities, SosConstants.Operations.GetObservation,
                     SosConstants.Operations.GetFeatureOfInterest, SosConstants.Operations.GetObservationById,
@@ -135,8 +136,8 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
                     SosConstants.Operations.GetResult));
 
     public SosDecoderv20() {
-        LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(DECODER_KEYS));
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                Joiner.on(", ").join(DECODER_KEYS));
     }
 
     @Override
@@ -217,9 +218,9 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         if (getCapsType.getSections() != null && getCapsType.getSections().getSectionArray().length != 0) {
             request.setSections(Arrays.asList(getCapsType.getSections().getSectionArray()));
         }
-        
+
         if (getCapsType.getExtensionArray() != null && getCapsType.getExtensionArray().length > 0) {
-        	request.setExtensions(parseExtensibleRequestExtension(getCapsType.getExtensionArray()));
+            request.setExtensions(parseExtensibleRequestExtension(getCapsType.getExtensionArray()));
         }
 
         return request;
@@ -264,18 +265,19 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         return getObsRequest;
     }
 
-//	private SwesExtensions parseSwesExtensions(final XmlObject[] extensionArray) throws OwsExceptionReport
-//	{
-//		final SwesExtensions extensions = new SwesExtensions();
-//    	for (final XmlObject xbSwesExtension : extensionArray) {
-//    		
-//    		final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
-//			if (obj instanceof SwesExtension<?>) {
-//				extensions.addSwesExtension((SwesExtension<?>) obj);
-//    		}
-//		}
-//		return extensions;
-//	}
+    // private SwesExtensions parseSwesExtensions(final XmlObject[]
+    // extensionArray) throws OwsExceptionReport
+    // {
+    // final SwesExtensions extensions = new SwesExtensions();
+    // for (final XmlObject xbSwesExtension : extensionArray) {
+    //
+    // final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
+    // if (obj instanceof SwesExtension<?>) {
+    // extensions.addSwesExtension((SwesExtension<?>) obj);
+    // }
+    // }
+    // return extensions;
+    // }
 
     /**
      * parses the passes XmlBeans document and creates a SOS
@@ -337,26 +339,34 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         insertObservationRequest.setExtensions(parseExtensibleRequest(insertObservationType));
 
         if (insertObservationType.getObservationArray() != null) {
-            final int length = insertObservationType.getObservationArray().length;
-            final Map<String, Time> phenomenonTimes = new HashMap<String, Time>(length);
-            final Map<String, TimeInstant> resultTimes = new HashMap<String, TimeInstant>(length);
-            final Map<String, AbstractFeature> features = new HashMap<String, AbstractFeature>(length);
+//            final int length = insertObservationType.getObservationArray().length;
+            // final Map<String, Time> phenomenonTimes = new HashMap<String,
+            // Time>(length);
+            // final Map<String, TimeInstant> resultTimes = new HashMap<String,
+            // TimeInstant>(length);
+            // final Map<String, AbstractFeature> features = new HashMap<String,
+            // AbstractFeature>(length);
             final CompositeOwsException exceptions = new CompositeOwsException();
             for (final Observation observation : insertObservationType.getObservationArray()) {
                 final Object decodedObject = CodingHelper.decodeXmlElement(observation.getOMObservation());
                 if (decodedObject instanceof OmObservation) {
-                    final OmObservation sosObservation = (OmObservation) decodedObject;
-                    checkAndAddPhenomenonTime(sosObservation.getPhenomenonTime(), phenomenonTimes);
-                    checkAndAddResultTime(sosObservation.getResultTime(), resultTimes);
-                    checkAndAddFeatures(sosObservation.getObservationConstellation().getFeatureOfInterest(), features);
-                    insertObservationRequest.addObservation(sosObservation);
+                    // final OmObservation sosObservation = (OmObservation)
+                    // decodedObject;
+                    // checkAndAddPhenomenonTime(sosObservation.getPhenomenonTime(),
+                    // phenomenonTimes);
+                    // checkAndAddResultTime(sosObservation.getResultTime(),
+                    // resultTimes);
+                    // checkAndAddFeatures(sosObservation.getObservationConstellation().getFeatureOfInterest(),
+                    // features);
+                    insertObservationRequest.addObservation((OmObservation) decodedObject);
                 } else {
                     throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
                             .withMessage("The requested observation type (%s) is not supported by this server!",
                                     observation.getOMObservation().getDomNode().getNodeName());
                 }
             }
-            checkReferencedElements(insertObservationRequest.getObservations(), phenomenonTimes, resultTimes, features);
+            // checkReferencedElements(insertObservationRequest.getObservations(),
+            // phenomenonTimes, resultTimes, features);
             exceptions.throwIfNotEmpty();
         } else {
             // TODO MissingMandatoryParameterException?
@@ -367,8 +377,8 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
 
     }
 
-    private AbstractServiceRequest<?> parseInsertResultTemplate(final InsertResultTemplateDocument insertResultTemplateDoc)
-            throws OwsExceptionReport {
+    private AbstractServiceRequest<?> parseInsertResultTemplate(
+            final InsertResultTemplateDocument insertResultTemplateDoc) throws OwsExceptionReport {
         final InsertResultTemplateRequest sosInsertResultTemplate = new InsertResultTemplateRequest();
         final InsertResultTemplateType insertResultTemplate = insertResultTemplateDoc.getInsertResultTemplate();
         sosInsertResultTemplate.setService(insertResultTemplate.getService());
@@ -379,10 +389,10 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
                 parseObservationTemplate(resultTemplate.getObservationTemplate());
         sosObservationConstellation.addOffering(resultTemplate.getOffering());
         sosInsertResultTemplate.setObservationTemplate(sosObservationConstellation);
-        sosInsertResultTemplate.setResultStructure(parseResultStructure(resultTemplate.getResultStructure()
-                .getAbstractDataComponent()));
-        sosInsertResultTemplate.setResultEncoding(parseResultEncoding(resultTemplate.getResultEncoding()
-                .getAbstractEncoding()));
+        sosInsertResultTemplate.setResultStructure(
+                parseResultStructure(resultTemplate.getResultStructure().getAbstractDataComponent()));
+        sosInsertResultTemplate
+                .setResultEncoding(parseResultEncoding(resultTemplate.getResultEncoding().getAbstractEncoding()));
         sosInsertResultTemplate.setExtensions(parseExtensibleRequest(insertResultTemplate));
         return sosInsertResultTemplate;
     }
@@ -607,18 +617,21 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         }
     }
 
+    @Deprecated
     private void checkAndAddPhenomenonTime(final Time phenomenonTime, final Map<String, Time> phenomenonTimes) {
         if (!phenomenonTime.isReferenced()) {
             phenomenonTimes.put(phenomenonTime.getGmlId(), phenomenonTime);
         }
     }
 
+    @Deprecated
     private void checkAndAddResultTime(final TimeInstant resultTime, final Map<String, TimeInstant> resultTimes) {
         if (!resultTime.isReferenced()) {
             resultTimes.put(resultTime.getGmlId(), resultTime);
         }
     }
 
+    @Deprecated
     private void checkAndAddFeatures(final AbstractFeature featureOfInterest,
             final Map<String, AbstractFeature> features) {
         if (!featureOfInterest.isReferenced()) {
@@ -626,6 +639,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
         }
     }
 
+    @Deprecated
     private void checkReferencedElements(final List<OmObservation> observations,
             final Map<String, Time> phenomenonTimes, final Map<String, TimeInstant> resultTimes,
             final Map<String, AbstractFeature> features) throws OwsExceptionReport {
@@ -648,8 +662,8 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
                         final TimePeriod timePeriod = (TimePeriod) iTime;
                         observation.setResultTime(new TimeInstant(timePeriod.getEnd()));
                     } else {
-                        throw new InvalidParameterValueException().at("observation.resultTime").withMessage(
-                                "The time value type is not supported");
+                        throw new InvalidParameterValueException().at("observation.resultTime")
+                                .withMessage("The time value type is not supported");
                     }
 
                 }
@@ -657,8 +671,8 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Abs
             // featureOfInterest
             final AbstractFeature featureOfInterest = observation.getObservationConstellation().getFeatureOfInterest();
             if (featureOfInterest.isReferenced()) {
-                observation.getObservationConstellation().setFeatureOfInterest(
-                        features.get(featureOfInterest.getGmlId()));
+                observation.getObservationConstellation()
+                        .setFeatureOfInterest(features.get(featureOfInterest.getGmlId()));
             }
 
         }

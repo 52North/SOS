@@ -26,38 +26,35 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.binding.rest.resources.offerings;
+package org.n52.sos.util;
 
-import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.request.AbstractServiceRequest;
-import org.n52.sos.request.GetCapabilitiesRequest;
 
-/**
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
- *
- */
-public class OfferingsRequest implements RestRequest {
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
+import org.joda.time.DateTime;
+import org.junit.Test;
+
+public class JavaHelperTest {
     
-    private GetCapabilitiesRequest getCapabilitiesRequest;
-
-    public OfferingsRequest(GetCapabilitiesRequest getCapabilitiesRequest)
-    {
-        this.getCapabilitiesRequest = getCapabilitiesRequest;
+    @Test
+    public void test() {
+        JavaHelper.generateID("123" + System.currentTimeMillis());
     }
-
-    public GetCapabilitiesRequest getGetCapabilitiesRequest()
-    {
-        return getCapabilitiesRequest;
+    
+    @Test
+    public void test_generateID() { 
+        String generateID = JavaHelper.generateID("123" + System.currentTimeMillis());
+        String generateID2 = JavaHelper.generateID("123" + System.currentTimeMillis());
+        assertThat(generateID.equals(generateID2), is(false));
     }
-
-    @Override
-    public boolean hasAbstractServiceRequest() {
-        return getGetCapabilitiesRequest() != null;
+    
+    @Test
+    public void test_generateID_2() {
+        String id = "123" + System.currentTimeMillis();
+        String generateID = JavaHelper.generateID(id);
+        String generateID2 = JavaHelper.generateID(id);
+        assertThat(generateID.equals(generateID2), is(false));
     }
-
-    @Override
-    public AbstractServiceRequest<?> getAbstractServiceRequest() {
-        return getGetCapabilitiesRequest();
-    }
-
+    
 }

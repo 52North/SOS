@@ -33,6 +33,7 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 
+import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.service.DatabaseSettingsHandler;
 import org.n52.sos.util.JSONUtils;
 
@@ -135,5 +136,9 @@ public class JstlFunctions {
             node.put(key.toString(), String.valueOf(map.get(key)));
         }
         return JSONUtils.print(node);
+    }
+    
+    public static boolean supportsI18N() {
+    	return I18NDAORepository.getInstance().isSupported();
     }
 }

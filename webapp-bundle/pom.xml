@@ -11,7 +11,7 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<timeseries.api.version>1.7.2</timeseries.api.version>
+		<timeseries.api.version>1.8.0</timeseries.api.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}##${project.version}</finalName>

@@ -66,13 +66,5 @@
 			<version>${project.version}</version>
 			<type>war</type>
 		</dependency>
-		<dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-oracle</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hibernate-datasource-sqlserver</artifactId>
-        </dependency>
 	</dependencies>
 </project>

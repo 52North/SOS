@@ -339,7 +339,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /**
      * Merge this observation with passed observation
      * 
-     * @param sosObservation
+     * @param observationValue
      *            Observation to merge
      */
     public void mergeWithObservation(ObservationValue<?> observationValue) {

@@ -126,8 +126,6 @@ public abstract class AbstractValuedLegacyObservation<T>
     /**
      * Create a {@link TimeValuePair} from {@link AbstractValue}
      * 
-     * @param abstractValue
-     *            {@link AbstractValue} to create {@link TimeValuePair} from
      * @return resulting {@link TimeValuePair}
      * @throws OwsExceptionReport
      *             If an error occurs when getting the value

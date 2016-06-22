@@ -184,14 +184,8 @@ public class ValueTimeDAO extends AbstractValueDAO {
         }
 
         String logArgs = "request, series, offerings";
-        if (temporalFilterCriterion != null) {
-            logArgs += ", filterCriterion";
-            c.add(temporalFilterCriterion);
-        }
-        if (sosIndeterminateTime != null) {
-            logArgs += ", sosIndeterminateTime";
-            addIndeterminateTimeRestriction(c, sosIndeterminateTime);
-        }
+        addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
+        addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;

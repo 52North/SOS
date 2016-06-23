@@ -53,6 +53,7 @@ This project includes:
   52°North SOS - Hibernate Feature Query DAO under GPLv2
   52°North SOS - Hibernate H2 under GPLv2
   52°North SOS - Hibernate H2 Datasource under GPLv2
+  52°North SOS - Hibernate Lidar under GPLv2
   52°North SOS - Hibernate Mappings under GPLv2
   52°North SOS - Hibernate Module under GPLv2
   52°North SOS - Hibernate MySQL Datasource under GPLv2
@@ -105,6 +106,8 @@ This project includes:
   AOP alliance under Public Domain
   Apache Commons Codec under Apache License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
+  Apache HttpClient under Apache License
+  Apache HttpCore under Apache License
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
   API interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Avalon Framework API under The Apache Software License, Version 2.0
@@ -154,11 +157,10 @@ This project includes:
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate/c3p0 Integration under GNU Lesser General Public License
   HttpClient under Apache License
-  HttpCore under Apache License
   HyperSQL Database under HSQLDB License, a BSD open source license
-  Jackson-annotations under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
-  Jackson-core under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
-  jackson-databind under The Apache Software License, Version 2.0 or GNU Lesser General Public License, Version 2.1
+  Jackson-annotations under The Apache Software License, Version 2.0
+  Jackson-core under The Apache Software License, Version 2.0
+  jackson-databind under The Apache Software License, Version 2.0
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java Excel API under GNU Lesser General Public License

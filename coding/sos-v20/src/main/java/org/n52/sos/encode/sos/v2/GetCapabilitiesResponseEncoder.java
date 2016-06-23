@@ -29,6 +29,7 @@
 package org.n52.sos.encode.sos.v2;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x20.CapabilitiesDocument;
@@ -60,6 +61,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.response.GetCapabilitiesResponse;
 import org.n52.sos.util.CodingHelper;
@@ -68,6 +70,7 @@ import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -352,9 +355,10 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
                             throw new XmlDecodingException("SwesExtension", extension.getExtension(), ex);
                     }
                 } else {
-                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention));
+                    Map<HelperValues, String> additionalValues = Maps.newHashMap();
+                    additionalValues.put(HelperValues.PROPERTY_TYPE, "true");
+                    xbObsOff.addNewExtension().set(CodingHelper.encodeObjectToXml(swesExtention.getNamespace(), swesExtention.getValue(), additionalValues));
                 }
-                
             }
         }
     }

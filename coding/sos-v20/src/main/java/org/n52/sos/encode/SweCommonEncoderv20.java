@@ -117,8 +117,10 @@ import net.opengis.swe.x20.DataRecordType.Field;
 import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.Reference;
+import net.opengis.swe.x20.TextDocument;
 import net.opengis.swe.x20.TextEncodingDocument;
 import net.opengis.swe.x20.TextEncodingType;
+import net.opengis.swe.x20.TextPropertyType;
 import net.opengis.swe.x20.TextType;
 import net.opengis.swe.x20.TimeRangeType;
 import net.opengis.swe.x20.TimeType;
@@ -263,7 +265,18 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                 dataRecordDoc.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordDoc;
             }
-
+        }
+        if (abstractDataComponentType instanceof TextType) {
+            if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+                final TextPropertyType tpt = TextPropertyType.Factory.newInstance(getXmlOptions());
+                tpt.setText((TextType) abstractDataComponentType);
+                return tpt;
+            }
+            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                final TextDocument td = TextDocument.Factory.newInstance(getXmlOptions());
+                td.setText((TextType) abstractDataComponentType);
+                return td;
+            }
         }
         return abstractDataComponentType;
     }

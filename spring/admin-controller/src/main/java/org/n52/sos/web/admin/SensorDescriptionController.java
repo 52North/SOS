@@ -122,28 +122,28 @@ public class SensorDescriptionController extends AbstractAdminController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView view() throws OwsExceptionReport {
         Map<String, Object> model = new HashMap<String, Object>(5);
-		boolean getKvp = false, getSoap = false, update = false, delete = false;
+        boolean getKvp = false, getSoap = false, update = false, delete = false;
         try {
-			for (Binding b : BindingRepository.getInstance().getBindings().values()) {
-				if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {
-					getKvp = true;
-				}
-				if (b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_KVP)) {
-					update = true;
-				}
-				if (b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_KVP)) {
-					delete = true;
-				}
-				if (b.checkOperationHttpPostSupported(DESCRIBE_SENSOR_DECODER_KEY_SOAP)) {
-					getSoap = true;
-				}
-				if (b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_SOAP)) {
-					update = true;
-				}
-				if (b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_SOAP)) {
-					delete = true;
-				}
-			}
+            for (Binding b : BindingRepository.getInstance().getBindings().values()) {
+                if (b.checkOperationHttpGetSupported(DESCRIBE_SENSOR_DECODER_KEY_KVP)) {
+                    getKvp = true;
+                }
+                if (b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_KVP)) {
+                    update = true;
+                }
+                if (b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_KVP)) {
+                    delete = true;
+                }
+                if (b.checkOperationHttpPostSupported(DESCRIBE_SENSOR_DECODER_KEY_SOAP)) {
+                    getSoap = true;
+                }
+                if (b.checkOperationHttpPostSupported(UPDATE_SENSOR_DECODER_KEY_SOAP)) {
+                    update = true;
+                }
+                if (b.checkOperationHttpPostSupported(DELETE_SENSOR_DECODER_KEY_SOAP)) {
+                    delete = true;
+                }
+            }
         } catch (HTTPException ex) {
             log.error("Error requesting DCP for operation.", ex);
         }

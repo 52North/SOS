@@ -31,7 +31,6 @@ package org.n52.sos.ds.hibernate;
 import static org.n52.sos.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.Properties;
-import java.util.Scanner;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -50,6 +49,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Sets;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import org.apache.commons.io.IOUtils;
+import org.n52.lidar.importer.core.DockerAppContext;
+import org.n52.lidar.importer.core.db.PostgresSettings;
+import org.n52.lidar.importer.pdal.PdalContainerHandler;
+import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
+import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Implementation of the abstract class AbstractGetResultDAO
@@ -60,6 +69,7 @@ import com.google.common.collect.Sets;
 public class GetResultDAO extends AbstractGetResultDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
+    private static final String BASE_OUTPUT_DIR = "C:\\Users\\adewa\\data\\";
 
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
@@ -79,61 +89,70 @@ public class GetResultDAO extends AbstractGetResultDAO {
     public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
-            session = sessionHolder.getSession();
+
             final GetResultResponse response = new GetResultResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
 
-            Properties properties = ((SessionFactoryImpl)session.getSessionFactory()).getProperties();
-            properties.getProperty("hibernate.connection.password");
-            properties.getProperty("hibernate.connection.username");
-            properties.getProperty("hibernate.connection.url");
-            
-//            String content = new Scanner(new File("filename")).useDelimiter("\\Z").next();
-//            System.out.println(content);
-            
             if (!request.isSetFeatureOfInterest()) {
-                // TODO exception missing feature
+                throw new MissingFeatureOfInterestTypeException()
+                        .setStatus(HTTPStatus.NOT_FOUND);
             } else if (request.getFeatureIdentifiers().size() != 1) {
-             // TODO exception too many feature
+                // TODO exception too many feature
             }
-            
-            // TODO does thos work? OR should we set the File as resultValues?
-              String content = new Scanner(getFileName(request)).useDelimiter("\\Z").next();
-              response.setResultValues(content);
-            
-              return response;
-//            final Set<String> featureIdentifier = QueryHelper.getFeatures(request, session);
-//            final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
-//            if (isNotEmpty(resultTemplates)) {
-//                final SosResultEncoding sosResultEncoding =
-//                        new SosResultEncoding(resultTemplates.get(0).getResultEncoding());
-//                final SosResultStructure sosResultStructure =
-//                        new SosResultStructure(resultTemplates.get(0).getResultStructure());
-//                final List<Observation<?>> observations;
-//                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
-//                    observations = querySeriesObservation(request, featureIdentifier, session);
-//                } else {
-//                    observations = queryObservation(request, featureIdentifier, session);
-//                }
-//
-//                response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations,
-//                        sosResultEncoding, sosResultStructure));
-//            }
-//            return response;
+
+            File exportFeature = exportFeature(request);
+            String content = IOUtils.toString(new FileInputStream(exportFeature));
+
+            response.setResultValues(content);
+            return response;
         } catch (final HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
+            throw new NoApplicableCodeException()
+                    .causedBy(he)
+                    .withMessage("Error while querying result data!")
+                    .setStatus(INTERNAL_SERVER_ERROR);
+        } catch (FileNotFoundException ex) {
+            throw new NoApplicableCodeException()
+                    .causedBy(ex)
+                    .withMessage("Error while reading result file!")
+                    .setStatus(INTERNAL_SERVER_ERROR);
+        } catch (IOException ex) {
+            throw new NoApplicableCodeException()
+                    .causedBy(ex)
+                    .withMessage("Error while reading result file!")
                     .setStatus(INTERNAL_SERVER_ERROR);
         } finally {
             sessionHolder.returnSession(session);
         }
     }
 
-    private String getFileName(GetResultRequest request) {
+    private File exportFeature(GetResultRequest request) throws OwsExceptionReport {
         String feature = request.getFeatureIdentifiers().iterator().next();
         String offering = request.getOffering();
         // TODO get filename for feature and offering
-        return "";
+
+        // Get the database properties
+        Session session = sessionHolder.getSession();
+        Properties properties = ((SessionFactoryImpl) session.getSessionFactory()).getProperties();
+        String password = properties.getProperty("hibernate.connection.password");
+        String username = properties.getProperty("hibernate.connection.username");
+        String url = properties.getProperty("hibernate.connection.url");
+
+        // Instantiate a new PDAL Container handler
+        PdalContainerHandler pdal = new PdalContainerHandler(
+                DockerAppContext.createDefaultAppConfigBuilder().build(),
+                new PostgresSettings(url, username, password, "test", "patches_new")
+        );
+
+        // Export the feature to the file;
+        pdal.exportDBEntryToLas(feature);
+
+        // return the file of the exported feature
+        return getExportedFile(feature);
+    }
+
+    private File getExportedFile(String feature) {
+        return new File(BASE_OUTPUT_DIR + feature + ".laz");
     }
 
     @Override

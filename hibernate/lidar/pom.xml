@@ -12,6 +12,22 @@
     <description>52°North Sensor Observation Service Hibernate Lidar module</description>
     <dependencies>
         <dependency>
+            <groupId>org.n52.lidar</groupId>
+            <artifactId>lidar-importer-pdal</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -48,10 +64,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
@@ -63,13 +79,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.n52.sensorweb</groupId>
-        	<artifactId>52n-xml-sensorML-v101</artifactId>
-        	<scope>test</scope>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sensorML-v101</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.n52.sensorweb</groupId>
-        	<artifactId>52n-xml-sweCommon-v20</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sweCommon-v20</artifactId>
         </dependency>
     </dependencies>
 </project>

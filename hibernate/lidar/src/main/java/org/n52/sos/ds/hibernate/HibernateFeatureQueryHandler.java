@@ -221,7 +221,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                     uniqueResult = namedQuery.uniqueResult();
                 } else {
                     // PC_Envelope(column) FROM table WHERE feaure_id IN (...);
-                    uniqueResult = session.createSQLQuery("SELECT PC_Envelope(pa) FROM pcpatch WHERE feaure_id IN (" + getFeatureList(queryObject.getFeatureIdentifiers()) + ")").uniqueResult();
+                    uniqueResult = session.createSQLQuery("SELECT PC_Envelope(pa) FROM patches_new WHERE feaure_id IN (" + getFeatureList(queryObject.getFeatureIdentifiers()) + ")").uniqueResult();
                 }
                 if (uniqueResult != null) {
                     WKBReader reader = new WKBReader();

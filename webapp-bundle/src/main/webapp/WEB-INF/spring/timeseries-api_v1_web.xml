@@ -66,7 +66,7 @@
                 <bean class="org.n52.io.extension.v1.StatusIntervalsExtension" />
                 <!-- Using DatabaseMetadataExtension requires some preparation work. -->
                 <!-- Have a look at the README.md at TBD -->
-                <bean class="org.n52.io.extension.DatabaseMetadataExtension" />
+                <!-- <bean class="org.n52.io.extension.DatabaseMetadataExtension" /> -->
             </list>
         </property>
     </bean>
@@ -84,10 +84,6 @@
         <property name="timeseriesMetadataService" ref="timeseriesService" />
         <property name="timeseriesDataService" ref="timeseriesService" />
         <property name="outputPath" value="generated/prerendered" />
-        <property name="width" value="800" />
-        <property name="height" value="500" />
-        <property name="language" value="de" />
-        <property name="showGrid" value="true" />
         <property name="periodInMinutes" value="1440" />
         <property name="enabled" value="false" />
     </bean>

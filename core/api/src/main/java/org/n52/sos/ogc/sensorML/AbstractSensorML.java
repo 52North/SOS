@@ -32,20 +32,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.sensorML.elements.AbstractSmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.sos.ogc.sensorML.elements.SmlCapability;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifierPredicates;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -367,8 +374,79 @@ public class AbstractSensorML extends SosProcedureDescription {
         return null;
     }
     
+    @Override
+    public boolean isSetMobile() {
+        return getSweBooleanFromCapabilitiesFor(Sets.newHashSet(SensorMLConstants.STATIONARY, SensorMLConstants.MOBILE)) == null ? false : true;
+    }
+    
+    @Override
+    public boolean getMobile() {
+        SweBoolean sweBoolean = getSweBooleanFromCapabilitiesFor(Sets.newHashSet(SensorMLConstants.STATIONARY, SensorMLConstants.MOBILE, SensorMLConstants.FIXED));
+        if (SensorMLConstants.MOBILE.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return sweBoolean.getValue();
+        } else if (SensorMLConstants.STATIONARY.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return !sweBoolean.getValue();
+        }
+        return super.getMobile();
+    }
+    
+    @Override
+    public boolean isSetInsitu() {
+        return getSweBooleanFromCapabilitiesFor(Sets.newHashSet(Sets.newHashSet(SensorMLConstants.INSITU, SensorMLConstants.REMOTE))) == null ? false : true;
+    }
+    
+    @Override
+    public boolean getInsitu() {
+        SweBoolean sweBoolean = getSweBooleanFromCapabilitiesFor(Sets.newHashSet(Sets.newHashSet(SensorMLConstants.INSITU, SensorMLConstants.REMOTE)));
+        if (SensorMLConstants.INSITU.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return sweBoolean.getValue();
+        } else if (SensorMLConstants.REMOTE.equalsIgnoreCase(sweBoolean.getDefinition())) {
+            return !sweBoolean.getValue();
+        }
+        return super.getInsitu();
+    }
+    
+    private SweBoolean getSweBooleanFromCapabilitiesFor(Set<String> definitions) {
+        if (this instanceof SensorML && ((SensorML)this).isWrapper()) {
+            for (AbstractProcess absProcess : ((SensorML)this).getMembers()) {
+                return getSweBooleanFromCapabilitiesFor(absProcess, definitions);
+            }
+        } else {
+            return getSweBooleanFromCapabilitiesFor(this, definitions);
+        }
+        return null;
+    }
+
+    private SweBoolean getSweBooleanFromCapabilitiesFor(AbstractSensorML sml, Set<String> definitions) {
+        if (sml.isSetCapabilities()) {
+            for (SmlCapabilities caps : sml.getCapabilities()) {
+                for (SmlCapability cap : caps.getCapabilities()) {
+                    if (cap.getAbstractDataComponent() instanceof SweDataRecord) {
+                        for (SweField field : ((SweDataRecord)cap.getAbstractDataComponent()).getFields()) {
+                            if (field.getElement() instanceof SweBoolean) {
+                                if (field.getElement().isSetDefinition() && definitions.contains(field.getElement().getDefinition().toLowerCase(Locale.ROOT))) {
+                                    return (SweBoolean)field.getElement();
+                                } else if (cap.isSetName() && definitions.contains(cap.getName().toLowerCase(Locale.ROOT))) {
+                                    return (SweBoolean)field.getElement();
+                                }
+                            }
+                        }
+                    } else if (cap.getAbstractDataComponent() instanceof SweBoolean) {
+                        if (cap.getAbstractDataComponent().isSetDefinition() && definitions.contains(cap.getAbstractDataComponent().getDefinition().toLowerCase(Locale.ROOT))) {
+                            return (SweBoolean)cap.getAbstractDataComponent();
+                        } else if (cap.isSetName() && definitions.contains(cap.getName().toLowerCase(Locale.ROOT))) {
+                            return (SweBoolean)cap.getAbstractDataComponent();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     public void copyTo(AbstractSensorML copyOf) {
         super.copyTo(copyOf);
+        copyOf.addCapabilities(getCapabilities());
         copyOf.setCharacteristics(getCharacteristics());
         copyOf.setClassifications(getClassifications());
         copyOf.setContact(getContact());

@@ -63,6 +63,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
     
     public static final String LIST_ONLY_PARENT_OFFERINGS = "service.capabilities.listOnlyParentOfferings";
+    
+    public static final String UPDATE_FEATURE_GEOMETRY = "service.updateFeatureGeometry";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -140,6 +142,16 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setTitle("List only parent offerings in Capabilities")
                      .setDescription(
                              "Should the service list only parent offerings in Capabilities. Lower level offerings would be referenced in extension element of related ObservationOffering.");
+     
+     public static final BooleanSettingDefinition UPDATE_FEATURE_GEOMETRY_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(ORDER_18)
+                     .setKey(UPDATE_FEATURE_GEOMETRY)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS expand the featureOfInterest geometry with the samplingGeometry?")
+                     .setDescription(
+                             "Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation.");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
@@ -148,7 +160,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
             VALIDATE_RESPONSE_DEFINITION,
             EXPOSE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION,
-            LIST_ONLY_PARENT_OFFERINGS_DEFINITON);
+            LIST_ONLY_PARENT_OFFERINGS_DEFINITON,
+            UPDATE_FEATURE_GEOMETRY_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

@@ -196,6 +196,7 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                     stopTimer();
                     writeMember(xmlTextObservation);
                 }
+                stopTimer();
             } else {
                 writeMember(abstractFeature, getEncoder(abstractFeature, encodingValues.getAdditionalValues()),
                         encodingValues);
@@ -271,8 +272,8 @@ public class AqdGetObservationResponseXmlStreamWriter extends XmlStreamWriter<Fe
                 .getInstance().getXmlOptions());
         // TODO check for better solutions
         xmlText = xmlText.replace("ns:GeometryPropertyType","gml:GeometryPropertyType");
-        xmlText = xmlText.replace("ns","gml:Point");
-        xmlText = xmlText.replace("ns","gml:pos");
+        xmlText = xmlText.replace("ns:Point","gml:Point");
+        xmlText = xmlText.replace("ns:pos","gml:pos");
         xmlText = xmlText.replace("ns:id=\"point_","gml:id=\"point_");
         xmlText = xmlText.replace("ns:ReferenceType", "gml:ReferenceType");
         xmlText = xmlText.replace(":ns=\"http://www.opengis.net/gml/3.2\"", ":gml=\"http://www.opengis.net/gml/3.2\"");

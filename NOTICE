@@ -117,7 +117,7 @@ This project includes:
   Apache Commons Codec under Apache License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
   Apache XML Graphics Commons under The Apache Software License, Version 2.0
-  API interfaces under Lesser General Public License (LGPL)
+  API interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Avalon Framework API under The Apache Software License, Version 2.0
   Avalon Framework Implementation under The Apache Software License, Version 2.0
   Batik animation engine under The Apache Software License, Version 2.0
@@ -149,7 +149,8 @@ This project includes:
   CORS Filter under The Apache Software License, Version 2.0
   dom4j under DOM4J license, http://dom4j.sourceforge.net/dom4j-1.6.1/license.html (BSD style)
   Ehcache Core under The Apache Software License, Version 2.0
-  EPSG Authority Service using HSQL database under Lesser General Public License (LGPL) or EPSG database distribution license or BSD License for HSQL
+  EJML under The Apache Software License, Version 2.0
+  EPSG Authority Service using HSQL database under GNU Lesser General Public License (LGPL) version 2.1
   EXIficient under GNU General Public License (GPL), Version 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
@@ -163,9 +164,9 @@ This project includes:
   Hibernate Commons Annotations under GNU Lesser General Public License
   hibernate-spatial under GNU Lesser General Public License (LGPL) version 2.1
   Hibernate/c3p0 Integration under GNU Lesser General Public License
-  HSQLDB under HSQLDB License
   HttpClient under Apache License
   HttpCore under Apache License
+  HyperSQL Database under HSQLDB License, a BSD open source license
   INSPIRE Addresses schema (spec. v4.0) under The Apache Software License, Version 2.0
   INSPIRE Administrative Units schema (spec. v4.0) under The Apache Software License, Version 2.0
   INSPIRE base schema (spec. v3.3) under The Apache Software License, Version 2.0
@@ -186,6 +187,7 @@ This project includes:
   Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java Excel API under GNU Lesser General Public License
+  Java implementation of GeographicLib under The MIT License(MIT)
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
@@ -197,7 +199,7 @@ This project includes:
   JBoss Logging I18n Annotations under Public Domain
   JCL 1.1.1 implemented over SLF4J under MIT License
   JCommon under GNU Lesser General Public Licence
-  JDOM under JDOM license (Apache style), https://github.com/hunterhacker/jdom/blob/master/LICENSE.txt
+  JDOM under Similar to Apache License but with the acknowledgment clause removed
   JFreeChart under GNU Lesser General Public Licence
   jgridshift under GNU Lesser General Public License, version 2.0 (LGPLv2)
   JNA under GNU Lesser General Public License, version 3.0 (LGPLv3)
@@ -213,9 +215,9 @@ This project includes:
   Log4j Implemented Over SLF4J under Apache Software Licenses
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
-  Main module under Lesser General Public License (LGPL)
+  Main module under GNU Lesser General Public License (LGPL) version 2.1
   mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
-  Metadata under Lesser General Public License (LGPL)
+  Metadata under GNU Lesser General Public License (LGPL) version 2.1
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
   MySQL Connector/J under The GNU General Public License, Version 2
@@ -247,13 +249,13 @@ This project includes:
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC XML schemas under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
-  Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
+  Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver under BSD License
+  PostgreSQL JDBC Driver - JDBC 4.2 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
   Quartz Enterprise Job Scheduler under Apache 2.0
-  Referencing services under Lesser General Public License (LGPL)
+  Referencing services under GNU Lesser General Public License (LGPL) version 2.1
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0
   Sensor Web Timeseries API - IO under GNU General Public License, Version 2.0

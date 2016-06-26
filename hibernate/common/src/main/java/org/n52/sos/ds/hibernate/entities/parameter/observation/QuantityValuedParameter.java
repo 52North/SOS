@@ -29,11 +29,11 @@
 package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.VoidParameterVisitor;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.Unit;
 
 public class QuantityValuedParameter extends Parameter<Double> implements org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter, HasUnit {
 

@@ -502,7 +502,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
         }
     }
 
-    public void updateFeatureOfInterestGeometry(FeatureOfInterest featureOfInterest, Geometry geom, Session session) {
+    public void updateFeatureOfInterestGeometry(AbstractFeatureOfInterest featureOfInterest, Geometry geom, Session session) {
         if (featureOfInterest.isSetGeometry()) {
             if (geom instanceof Point) {
                 List<Coordinate> coords = Lists.newArrayList();

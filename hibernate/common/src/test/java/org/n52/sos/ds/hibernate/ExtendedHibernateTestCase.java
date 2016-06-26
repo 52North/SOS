@@ -29,7 +29,6 @@
 package org.n52.sos.ds.hibernate;
 
 import org.hibernate.Session;
-
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;

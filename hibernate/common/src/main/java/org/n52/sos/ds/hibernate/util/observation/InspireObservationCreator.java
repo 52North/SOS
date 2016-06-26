@@ -45,8 +45,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
 
-import net.opengis.fes.x20.LogicalOperatorsDocument.LogicalOperators;
-
 public class InspireObservationCreator implements AdditionalObservationCreator<Series> {
 
     private final static String NS_OMSO_30 = "http://inspire.ec.europa.eu/schemas/omso/3.0";

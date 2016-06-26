@@ -29,8 +29,8 @@
 package org.n52.sos.ds.hibernate.entities.parameter.observation;
 
 import org.n52.sos.ds.hibernate.entities.observation.BaseObservation;
-import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
+import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 

@@ -30,14 +30,13 @@ package org.n52.sos.ds.hibernate.dao.observation;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
-import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
-
-import com.google.common.base.Strings;
-
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+
+import com.google.common.base.Strings;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,

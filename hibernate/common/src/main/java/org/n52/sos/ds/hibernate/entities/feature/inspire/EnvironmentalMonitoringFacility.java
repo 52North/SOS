@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.entities.feature.inspire;
 
-import java.util.Set;
-
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureVisitor;
 import org.n52.sos.ds.hibernate.entities.feature.GeometryVisitor;

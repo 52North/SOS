@@ -35,14 +35,13 @@ import java.util.Set;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
 
 import com.google.common.collect.Sets;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 
 /**
  * @since 4.0.0

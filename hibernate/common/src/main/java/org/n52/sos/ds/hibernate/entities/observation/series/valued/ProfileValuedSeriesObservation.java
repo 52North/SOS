@@ -31,13 +31,11 @@ package org.n52.sos.ds.hibernate.entities.observation.series.valued;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ds.hibernate.entities.observation.ProfileGeneratorSplitter;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
-import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class ProfileValuedSeriesObservation extends AbstractValuedSeriesObservation<Set<Observation<?>>>

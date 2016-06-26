@@ -36,7 +36,6 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasRelatedFeatureRoles;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 
 /**
  * @since 4.0.0

@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.SpatialEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestType;
@@ -41,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
+import org.n52.sos.ds.hibernate.entities.SpatialEntity;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;

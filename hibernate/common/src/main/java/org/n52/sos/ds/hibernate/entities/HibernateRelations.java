@@ -33,7 +33,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;

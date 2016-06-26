@@ -28,9 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
-import java.util.Set;
-
 import java.util.Collection;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;

@@ -81,7 +81,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
 
     public Geometry getFeatureExtent(Set<String> identifiers, Session session) {
         return (Geometry) getDefaultCriteria(session)
-                .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers))
+                .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers))
                 .setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY))
                 .uniqueResult();
     }
@@ -100,7 +100,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
             Criteria criteria = getDefaultCriteria(session)
-                    .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
+                    .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         }
@@ -130,7 +130,7 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         final Criteria c = getDefaultCriteria(session);
         boolean filtered = false;
         if (CollectionHelper.isNotEmpty(identifiers)) {
-            c.add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
+            c.add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
             filtered = true;
         }
         if (CollectionHelper.isNotEmpty(filters)) {

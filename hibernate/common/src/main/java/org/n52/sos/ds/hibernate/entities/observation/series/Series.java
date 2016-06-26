@@ -29,13 +29,13 @@
 package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
@@ -52,6 +52,9 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.util.Constants;
+
+import com.google.common.base.Strings;
 
 /**
  * Hibernate entity for series
@@ -63,7 +66,9 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, HasPublishedFlag,
+                   HasUnit, 
+                   HasPublishedFlag, 
+                   HasSeriesType,
                    HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
@@ -94,6 +99,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Unit unit;
     private boolean hiddenChild;
     private Offering offering;
+    private String seriesType;
 
     /**
      * Get series id
@@ -302,4 +308,16 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
         return getOffering() != null;
     }
 
+    
+    public String getSeriesType() {
+        return this.seriesType;
+    }
+
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+    
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
+    }
 }

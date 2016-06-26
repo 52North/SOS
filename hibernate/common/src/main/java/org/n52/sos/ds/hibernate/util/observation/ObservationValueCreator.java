@@ -39,7 +39,7 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.ComplexValuedObserva
 import org.n52.sos.ds.hibernate.entities.observation.valued.CountValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.ProfileValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObservation;
-import org.n52.sos.ds.hibernate.entities.observation.valued.NamDescription;
+import org.n52.sos.ds.hibernate.entities.observation.valued.IdentifierNamDescription;
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
@@ -146,7 +146,10 @@ public class ObservationValueCreator
 
 
     @SuppressWarnings("rawtypes")
-    protected void addAdditonalData(NamDescription o, SweAbstractSimpleType v) {
+    protected void addAdditonalData(IdentifierNamDescription o, SweAbstractSimpleType v) {
+        if (o.isSetValueIdentifier()) {
+            v.setIdentifier(o.getValueIdentifier());
+        }
         if (o.isSetValueName()) {
             v.setName(o.getValueName());
         }

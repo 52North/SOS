@@ -28,7 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.valued;
 
-public interface NamDescription {
+public interface IdentifierNamDescription {
+    
+    void setValueIdentifier(String valueIdentifier);
+    
+    String getValueIdentifier();
+    
+    boolean isSetValueIdentifier();
 
     void setValueName(String valueName);
     

@@ -143,5 +143,10 @@
                 <comment>Description of the series, gml:description. Optional</comment>
             </column>
         </property>
+        <property name="seriesType" type="string">
+            <column name="seriesType" not-null="false">
+                <comment>Definition of the series type, e.g. measurement for OM_Measurement. Optional</comment>
+            </column>
+        </property>
     </class>
 </hibernate-mapping>

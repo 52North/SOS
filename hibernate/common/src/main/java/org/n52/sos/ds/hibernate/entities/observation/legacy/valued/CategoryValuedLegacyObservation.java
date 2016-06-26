@@ -51,6 +51,7 @@ public class CategoryValuedLegacyObservation
     private static final long serialVersionUID = -4424991652267169645L;
 
     private String value;
+    private String valueIdentifier;
     private String valueName;
     private String valueDescription;
 
@@ -72,6 +73,21 @@ public class CategoryValuedLegacyObservation
     @Override
     public String getValueAsString() {
         return getValue();
+    }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
+
+    @Override
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
     }
 
     @Override

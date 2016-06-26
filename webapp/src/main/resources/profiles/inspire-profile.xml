@@ -3,7 +3,7 @@
 	xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.52north.org/sensorweb/sos/profile sos-profile.xsd">
 	<profile:identifier>INSPIRE_PROFILE</profile:identifier>
-	<profile:activeProfile>true</profile:activeProfile>
+	<profile:activeProfile>false</profile:activeProfile>
 	<profile:observationResponseFormat>http://inspire.ec.europa.eu/schemas/omso/3.0</profile:observationResponseFormat>
 	<profile:encodeFeatureOfInterestInObservations>true</profile:encodeFeatureOfInterestInObservations>
 	<profile:encodingNamespaceForFeatureOfInterestEncoding></profile:encodingNamespaceForFeatureOfInterestEncoding>

@@ -243,6 +243,12 @@
                      <comment>Category observation value</comment>
                  </column>
              </property>
+             <property name="valueIdentifier" 
+                       type="string">
+                 <column name="identifier">
+                     <comment>SweCategory observation identifier</comment>
+                 </column>
+             </property>
              <property name="valueName" 
                        type="string">
                  <column name="name">
@@ -319,16 +325,22 @@
                      <comment>Text observation value</comment>
                  </column>
              </property>
+             <property name="valueIdentifier" 
+                       type="string">
+                 <column name="identifier">
+                     <comment>SweText observation identifier</comment>
+                 </column>
+             </property>
              <property name="valueName" 
                        type="string">
                  <column name="name">
-                     <comment>SweCategory observation name</comment>
+                     <comment>SweText observation name</comment>
                  </column>
              </property>
              <property name="valueDescription" 
                        type="string">
                  <column name="description">
-                     <comment>SweCategory observation description</comment>
+                     <comment>SweText observation description</comment>
                  </column>
              </property>
         </joined-subclass>

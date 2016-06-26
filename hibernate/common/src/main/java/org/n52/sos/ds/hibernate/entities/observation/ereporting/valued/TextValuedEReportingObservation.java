@@ -43,6 +43,7 @@ public class TextValuedEReportingObservation
 
     private static final long serialVersionUID = -9156707657634066902L;
     private String value;
+    private String valueIdentifier;
     private String valueName;
     private String valueDescription;
 
@@ -64,6 +65,21 @@ public class TextValuedEReportingObservation
     @Override
     public String getValueAsString() {
         return getValue();
+    }
+    
+    @Override
+    public void setValueIdentifier(String valueIdentifier) {
+        this.valueIdentifier = valueIdentifier;
+    }
+
+    @Override
+    public String getValueIdentifier() {
+        return valueIdentifier;
+    }
+
+    @Override
+    public boolean isSetValueIdentifier() {
+        return !Strings.isNullOrEmpty(getValueIdentifier());
     }
 
     @Override

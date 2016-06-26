@@ -32,6 +32,10 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
+
+import com.google.common.base.Strings;
+
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 
@@ -47,6 +51,7 @@ public class ObservationContext {
     private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private String seriesType;
 
     /**
      * @return the featureOfInterest
@@ -133,5 +138,21 @@ public class ObservationContext {
         if (isSetProcedure()) {
             contextual.setProcedure(getProcedure());
         }
+        if (contextual instanceof HasSeriesType && isSetSeriesType()) {
+            ((HasSeriesType)contextual).setSeriesType(getSeriesType());
+        }
     }
+
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
+    
+    public String getSeriesType() {
+        return this.seriesType;
+    }
+    
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
+    }
+
 }

@@ -680,6 +680,7 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private SweAllowedValues parseAllowedValues(AllowedValues avt) {
         SweAllowedValues allowedValues = new SweAllowedValues();
         if (avt.isSetId()) {
@@ -710,6 +711,7 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         return allowedValues;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private SweAllowedTokens parseAllowedTokens(AllowedTokens att) {
         SweAllowedTokens allowedTokens = new SweAllowedTokens();
         if (att.isSetId()) {
@@ -718,15 +720,14 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
         if (CollectionHelper.isNotNullOrEmpty(att.getValueListArray())) {
             for (List list : att.getValueListArray()) {
                 if (CollectionHelper.isNotEmpty(list)) {
-                    for (Object value : list) {
-                        allowedTokens.setValue(list);
-                    }
+                    allowedTokens.setValue(list);
                 }
             }
         }
         return allowedTokens;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private SweAllowedTimes parseAllowedTimes(AllowedTimes att) throws DateTimeParseException {
         SweAllowedTimes allowedTimes = new SweAllowedTimes();
         if (att.isSetId()) {
@@ -758,24 +759,21 @@ public class SweCommonDecoderV101 implements Decoder<Object, Object> {
     }
 
     private Collection<SweQuality> parseQuality(final QualityPropertyType... qualityArray) throws OwsExceptionReport {
-    	if (qualityArray != null && qualityArray.length > 0) {
-    		final ArrayList<SweQuality> sosQualities = Lists.newArrayListWithCapacity(qualityArray.length);
-    		for (final QualityPropertyType quality : qualityArray) {
-				if (quality.isSetQuantity()) {
-					sosQualities.add((SweQuality) parseQuantity(quality.getQuantity()));
-				}
-				else if (quality.isSetQuantityRange()) {
-					sosQualities.add((SweQuality) parseQuantityRange(quality.getQuantityRange()));
-				}
-				else if (quality.isSetCategory()) {
-					sosQualities.add((SweQuality) parseCategory(quality.getCategory()));
-				}
-				else if (quality.isSetText()) {
-					sosQualities.add((SweQuality) parseText(quality.getText()));
-				}
-			}
-    		return sosQualities;
-    	}
+        if (qualityArray != null && qualityArray.length > 0) {
+            final ArrayList<SweQuality> sosQualities = Lists.newArrayListWithCapacity(qualityArray.length);
+            for (final QualityPropertyType quality : qualityArray) {
+                if (quality.isSetQuantity()) {
+                    sosQualities.add((SweQuality) parseQuantity(quality.getQuantity()));
+                } else if (quality.isSetQuantityRange()) {
+                    sosQualities.add((SweQuality) parseQuantityRange(quality.getQuantityRange()));
+                } else if (quality.isSetCategory()) {
+                    sosQualities.add((SweQuality) parseCategory(quality.getCategory()));
+                } else if (quality.isSetText()) {
+                    sosQualities.add((SweQuality) parseText(quality.getText()));
+                }
+            }
+            return sosQualities;
+        }
         return Collections.emptyList();
     }
 

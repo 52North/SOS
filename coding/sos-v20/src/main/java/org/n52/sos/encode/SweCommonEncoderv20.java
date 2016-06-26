@@ -30,13 +30,13 @@ package org.n52.sos.encode;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -70,6 +70,7 @@ import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.sos.ogc.swe.simpleType.SweQuality;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
 import org.n52.sos.ogc.swe.simpleType.SweText;
@@ -114,6 +115,7 @@ import net.opengis.swe.x20.DataRecordDocument;
 import net.opengis.swe.x20.DataRecordPropertyType;
 import net.opengis.swe.x20.DataRecordType;
 import net.opengis.swe.x20.DataRecordType.Field;
+import net.opengis.swe.x20.QualityPropertyType;
 import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.Reference;
@@ -166,6 +168,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return Sets.newHashSet(SwesConstants.SWES_20_SCHEMA_LOCATION);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public XmlObject encode(final Object sosSweType, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
@@ -207,6 +210,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return encodedObject;
     }
 
+    @SuppressWarnings("rawtypes")
     private XmlObject createAbstractDataComponent(final SweAbstractDataComponent sosSweAbstractDataComponent,
             final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (sosSweAbstractDataComponent == null) {
@@ -405,15 +409,18 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         throw new NotYetSupportedException(SweAbstractSimpleType.class.getSimpleName(), sosSimpleType);
     }
 
-    private BooleanType createBoolean(final SweBoolean sosElement) {
+    private BooleanType createBoolean(final SweBoolean sosElement) throws OwsExceptionReport {
         final BooleanType xbBoolean = BooleanType.Factory.newInstance(getXmlOptions());
         if (sosElement.isSetValue()) {
             xbBoolean.setValue(sosElement.getValue());
         }
+        if (sosElement.isSetQuality()) {
+            xbBoolean.setQualityArray(createQuality(sosElement.getQuality()));
+        }
         return xbBoolean;
     }
 
-    private CategoryType createCategory(final SweCategory sosCategory) {
+    private CategoryType createCategory(final SweCategory sosCategory) throws OwsExceptionReport {
         final CategoryType xbCategory =
                 CategoryType.Factory.newInstance(getXmlOptions());
         if (sosCategory.getCodeSpace() != null) {
@@ -426,10 +433,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosCategory.isSetContstraint()) {
             createConstraint(xbCategory.addNewConstraint(), sosCategory.getConstraint());
         }
+        if (sosCategory.isSetQuality()) {
+            xbCategory.setQualityArray(createQuality(sosCategory.getQuality()));
+        }
         return xbCategory;
     }
 
-    private CountType createCount(final SweCount sosCount) {
+    private CountType createCount(final SweCount sosCount) throws OwsExceptionReport {
         final CountType xbCount = CountType.Factory.newInstance(getXmlOptions());
         if (sosCount.isSetValue()) {
             final BigInteger bigInt = new BigInteger(Integer.toString(sosCount.getValue().intValue()));
@@ -438,6 +448,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosCount.isSetContstraint()) {
             createConstraint(xbCount.addNewConstraint(), sosCount.getConstraint());
         }
+        if (sosCount.isSetQuality()) {
+            xbCount.setQualityArray(createQuality(sosCount.getQuality()));
+        }
         return xbCount;
     }
 
@@ -445,7 +458,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         throw new RuntimeException("NOT YET IMPLEMENTED: encoding of swe:ObservableProperty");
     }
 
-    protected QuantityType createQuantity(final SweQuantity quantity) {
+    protected QuantityType createQuantity(final SweQuantity quantity) throws OwsExceptionReport {
         final QuantityType xbQuantity =
                 QuantityType.Factory.newInstance(getXmlOptions());
         if (quantity.isSetAxisID()) {
@@ -459,9 +472,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         } else {
             xbQuantity.setUom(createUnknownUnitReference());
         }
-        if (quantity.getQuality() != null) {
-            // TODO implement
-            logWarnQualityNotSupported(xbQuantity.schemaType());
+        if (quantity.isSetQuality()) {
+            xbQuantity.setQualityArray(createQuality(quantity.getQuality()));
         }
         if (quantity.isSetContstraint()) {
             createConstraint(xbQuantity.addNewConstraint(), quantity.getConstraint());
@@ -469,7 +481,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbQuantity;
     }
 
-    protected QuantityRangeType createQuantityRange(final SweQuantityRange quantityRange) {
+    protected QuantityRangeType createQuantityRange(final SweQuantityRange quantityRange) throws OwsExceptionReport {
         final QuantityRangeType xbQuantityRange =
                 QuantityRangeType.Factory.newInstance(getXmlOptions());
         if (quantityRange.isSetAxisID()) {
@@ -484,8 +496,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             xbQuantityRange.setUom(createUnknownUnitReference());
         }
         if (quantityRange.isSetQuality()) {
-            // TODO implement
-            logWarnQualityNotSupported(xbQuantityRange.schemaType());
+            xbQuantityRange.setQualityArray(createQuality(quantityRange.getQuality()));
         }
         if (quantityRange.isSetContstraint()) {
             createConstraint(xbQuantityRange.addNewConstraint(), quantityRange.getConstraint());
@@ -504,7 +515,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbText;
     }
 
-    private TimeType createTime(final SweTime sosTime) {
+    private TimeType createTime(final SweTime sosTime) throws OwsExceptionReport {
         final TimeType xbTime = TimeType.Factory.newInstance(getXmlOptions());
         if (sosTime.isSetValue()) {
             xbTime.setValue(sosTime.getValue());
@@ -512,9 +523,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosTime.isSetUom()) {
             xbTime.setUom(createUnitReference(sosTime.getUom()));
         }
-        if (sosTime.getQuality() != null) {
-            // TODO implement
-            logWarnQualityNotSupported(xbTime.schemaType());
+        if (sosTime.isSetQuality()) {
+            xbTime.setQualityArray(createQuality(sosTime.getQuality()));
         }
         if (sosTime.isSetContstraint()) {
             createConstraint(xbTime.addNewConstraint(), sosTime.getConstraint());
@@ -522,7 +532,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return xbTime;
     }
 
-    private TimeRangeType createTimeRange(final SweTimeRange sosTimeRange) {
+    private TimeRangeType createTimeRange(final SweTimeRange sosTimeRange) throws OwsExceptionReport {
         final TimeRangeType xbTimeRange = TimeRangeType.Factory.newInstance(getXmlOptions());
         if (sosTimeRange.isSetUom()) {
             xbTimeRange.addNewUom().setHref(sosTimeRange.getUom());
@@ -531,8 +541,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             xbTimeRange.setValue(sosTimeRange.getValue().getRangeAsStringList());
         }
         if (sosTimeRange.isSetQuality()) {
-            // TODO implement
-            logWarnQualityNotSupported(xbTimeRange.schemaType());
+            xbTimeRange.setQualityArray(createQuality(sosTimeRange.getQuality()));
         }
         if (sosTimeRange.isSetContstraint()) {
             createConstraint(xbTimeRange.addNewConstraint(), sosTimeRange.getConstraint());
@@ -698,6 +707,28 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         }
         return att;
     }
+    
+    private QualityPropertyType[] createQuality(final Collection<SweQuality> quality) throws OwsExceptionReport {
+        if (!quality.isEmpty()) {
+            final ArrayList<QualityPropertyType> xbQualities = Lists.newArrayListWithCapacity(quality.size());
+            for (final SweQuality sweQuality : quality) {
+                final QualityPropertyType xbQuality = QualityPropertyType.Factory.newInstance();
+                if (sweQuality instanceof SweText) {
+                    xbQuality.addNewText().set(createText((SweText) sweQuality));
+                } else if (sweQuality instanceof SweCategory) {
+                    xbQuality.addNewCategory().set(createCategory((SweCategory) sweQuality));
+                } else if (sweQuality instanceof SweQuantity) {
+                    xbQuality.addNewQuantity().set(createQuantity((SweQuantity) sweQuality));
+                } else if (sweQuality instanceof SweQuantityRange) {
+                    xbQuality.addNewQuantityRange().set(createQuantityRange((SweQuantityRange) sweQuality));
+                }
+                xbQualities.add(xbQuality);
+            }
+            return xbQualities.toArray(new QualityPropertyType[xbQualities.size()]);
+        }
+        final QualityPropertyType[] result = { QualityPropertyType.Factory.newInstance() };
+        return result;
+    }
 
     private VectorType createVector(SweVector sweVector) throws OwsExceptionReport {
         final VectorType xbVector = VectorType.Factory.newInstance(getXmlOptions());
@@ -774,10 +805,6 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                 UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         unitReference.setHref(OGCConstants.UNKNOWN);
         return unitReference;
-    }
-
-    private void logWarnQualityNotSupported(SchemaType schemaType) {
-        LOGGER.warn("Quality encoding is not supported for {}", schemaType);
     }
 
     protected static XmlOptions getXmlOptions() {

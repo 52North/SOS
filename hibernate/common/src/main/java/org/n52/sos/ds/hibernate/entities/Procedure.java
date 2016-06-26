@@ -83,9 +83,9 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     
     private boolean isAggregation;
     
-    private boolean mobile;
+    private boolean mobile = false;
     
-    private boolean insitu;
+    private boolean insitu = true;
     
     private Set<Procedure> childs = Sets.newHashSet();
 

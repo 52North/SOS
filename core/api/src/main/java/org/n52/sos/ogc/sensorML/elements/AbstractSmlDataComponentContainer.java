@@ -107,7 +107,7 @@ public class AbstractSmlDataComponentContainer<T> extends AbstractReferenceType 
      * @return the dataRecord
      */
     public DataRecord getDataRecord() {
-        if (!isSetAbstractDataRecord() && isSetDataComponents()) {
+        if (!isSetDataRecord() && isSetDataComponents()) {
             SweSimpleDataRecord sdr = new SweSimpleDataRecord();
             int counter = 1;
             for (SweAbstractDataComponent element : abstractDataComponents) {

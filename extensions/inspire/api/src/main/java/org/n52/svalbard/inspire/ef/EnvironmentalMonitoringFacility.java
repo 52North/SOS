@@ -31,6 +31,9 @@ package org.n52.svalbard.inspire.ef;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
@@ -288,5 +291,5 @@ public class EnvironmentalMonitoringFacility extends AbstractMonitoringFeature {
     public void wasEncoded() {
         this.wasEncoded  = true;
     }
-    
+
 }

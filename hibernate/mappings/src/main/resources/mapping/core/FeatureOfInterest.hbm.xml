@@ -2,9 +2,9 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
+    <class name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
+           abstract="true"
            table="featureOfInterest">
-        <comment>Table to store the FeatureOfInterest information. Mapping file: mapping/core/FeatureOfInterest.hbm.xml</comment>
         <id name="featureOfInterestId"
             type="long">
             <column name="featureOfInterestId">
@@ -14,6 +14,7 @@
                 <param name="sequence">featureOfInterestId_seq</param>
             </generator>
         </id>
+        <discriminator column="hibernatediscriminator" type="string" not-null="false"/>
         <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" foreign-key="featureFeatureTypeFk">
             <column name="featureOfInterestTypeId" not-null="true">
                 <comment>Relation/foreign key to the featureOfInterestType table. Describes the type of the featureOfInterest. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
@@ -89,7 +90,7 @@
                     <comment>Foreign Key (FK) to the related parent featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
                 </column>
             </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="featureOfInterestChildFk">
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" foreign-key="featureOfInterestChildFk">
                 <column name="childFeatureId" not-null="true">
                     <comment>Foreign Key (FK) to the related child featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
                 </column>
@@ -99,7 +100,7 @@
             <key>
                 <column name="childFeatureId" not-null="true" />
             </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="featureOfInterestParentFk">
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" foreign-key="featureOfInterestParentFk">
                 <column name="parentFeatureId" not-null="true" />
             </many-to-many>
         </set>
@@ -110,6 +111,10 @@
             <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter" />
         </set>
     </class>
+    <subclass name="org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest" 
+              extends="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest" 
+              discriminator-value="null">
+    </subclass>
     
     <sql-query name="getEpsgPostgis">
         <return-scalar column="srid" type="int"/>

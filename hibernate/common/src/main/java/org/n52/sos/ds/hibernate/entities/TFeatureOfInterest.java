@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *

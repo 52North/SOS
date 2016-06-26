@@ -27,7 +27,7 @@
                 <comment>Foreign Key (FK) to the related procedure. Contains "procedure".procedureId</comment>
             </column>
         </many-to-one>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="resultTemplateFeatureIdx">
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest" foreign-key="resultTemplateFeatureIdx">
             <column name="featureOfInterestId" not-null="true">
                 <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>

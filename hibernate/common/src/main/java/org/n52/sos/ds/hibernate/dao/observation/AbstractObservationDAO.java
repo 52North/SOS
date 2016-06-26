@@ -63,11 +63,12 @@ import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
 import org.n52.sos.ds.hibernate.dao.ParameterDAO;
 import org.n52.sos.ds.hibernate.dao.UnitDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
@@ -482,7 +483,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *             If an error occurs
      */
     public void insertObservationMultiValue(Set<ObservationConstellation> observationConstellations,
-            FeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
+            AbstractFeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
             Map<UoM, Unit> unitCache, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
@@ -531,7 +532,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     @SuppressWarnings("rawtypes")
     public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
-            FeatureOfInterest hFeature, OmObservation sosObservation,
+            AbstractFeatureOfInterest hFeature, OmObservation sosObservation,
             Map<String, Codespace> codespaceCache,
             Map<UoM, Unit> unitCache, Session session)
             throws OwsExceptionReport {
@@ -1286,7 +1287,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     private static class ObservationPersister
             implements ValueVisitor<Observation<?>> {
         private final Set<ObservationConstellation> observationConstellations;
-        private final FeatureOfInterest featureOfInterest;
+        private final AbstractFeatureOfInterest featureOfInterest;
         private final Caches caches;
         private final Session session;
         private final Geometry samplingGeometry;
@@ -1299,7 +1300,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 AbstractObservationDAO observationDao,
                 OmObservation sosObservation,
                 Set<ObservationConstellation> hObservationConstellations,
-                FeatureOfInterest hFeature,
+                AbstractFeatureOfInterest hFeature,
                 Map<String, Codespace> codespaceCache,
                 Map<UoM, Unit> unitCache,
                 Session session)
@@ -1319,7 +1320,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 Caches caches,
                 OmObservation observation,
                 Set<ObservationConstellation> hObservationConstellations,
-                FeatureOfInterest hFeature,
+                AbstractFeatureOfInterest hFeature,
                 Geometry samplingGeometry,
                 Session session,
                 boolean childObservation)

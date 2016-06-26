@@ -37,8 +37,9 @@ import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ResultTemplateDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
@@ -100,7 +101,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                                 session, Sos2Constants.InsertResultTemplateParams.proposedTemplate.name());
                 if (obsConst != null) {
                     FeatureOfInterestDAO featureOfInterestDAO = new FeatureOfInterestDAO();
-                    FeatureOfInterest feature =
+                    AbstractFeatureOfInterest feature =
                             featureOfInterestDAO.checkOrInsertFeatureOfInterest(sosObsConst.getFeatureOfInterest(),
                                     session);
                     featureOfInterestDAO.checkOrInsertFeatureOfInterestRelatedFeatureRelation(feature,

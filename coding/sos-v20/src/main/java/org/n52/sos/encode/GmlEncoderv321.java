@@ -272,6 +272,8 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
                     String namespace;
                     if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
                         namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);
+                    } else if (samplingFeature.isSetDefaultElementEncoding()) {
+                        namespace = samplingFeature.getDefaultElementEncoding();
                     } else {
                         namespace = OMHelper.getNamespaceForFeatureType(samplingFeature.getFeatureType());
                     }

@@ -90,6 +90,8 @@ public final class OMHelper {
                 || SfConstants.FT_SAMPLINGCURVE.equals(featureType)
                 || SfConstants.FT_SAMPLINGSURFACE.equals(featureType)) {
             return SfConstants.NS_SA;
+        } else if (SfConstants.SAMPLING_FEAT_TYPE_SF_SPECIMEN.equals(featureType)) {
+            return SfConstants.NS_SPEC;
         }
         return SfConstants.NS_SAMS;
     }

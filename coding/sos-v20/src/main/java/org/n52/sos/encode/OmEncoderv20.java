@@ -246,7 +246,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
     @Override
     public String getDefaultFeatureEncodingNamespace() {
-        return SfConstants.NS_SAMS;
+        return null;
     }
 
     @Override

@@ -60,7 +60,7 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.Referenceable;
+import org.n52.sos.w3c.xlink.Referenceable;
 import org.n52.sos.w3c.SchemaLocation;
 
 public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse> implements

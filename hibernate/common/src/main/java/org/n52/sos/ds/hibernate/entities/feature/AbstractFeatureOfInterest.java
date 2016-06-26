@@ -26,40 +26,46 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities;
+package org.n52.sos.ds.hibernate.entities.feature;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
+import org.n52.sos.ds.hibernate.entities.SpatialEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParameters;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Geometry;
 
-/**
- * @since 4.0.0
- *
- */
-public class FeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
-        HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<FeatureOfInterest>, HasParameters {
+public abstract class AbstractFeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
+HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<AbstractFeatureOfInterest>, HasParameters {
+    
+    private static final long serialVersionUID = -5435922563580498368L;
 
-    private static final long serialVersionUID = 4142090100433622512L;
+    public abstract AbstractFeature accept(FeatureVisitor visitor) throws OwsExceptionReport;
+
+    public abstract Geometry accept(GeometryVisitor visitor) throws OwsExceptionReport;
+    
     public static final String ID = "featureOfInterestId";
     private long featureOfInterestId;
     private FeatureOfInterestType featureOfInterestType;
     private String url;
-    private Set<FeatureOfInterest> childs = Sets.newHashSet();
-    private Set<FeatureOfInterest> parents = Sets.newHashSet();
+    private Set<AbstractFeatureOfInterest> childs = Sets.newHashSet();
+    private Set<AbstractFeatureOfInterest> parents = Sets.newHashSet();
     private Set<Parameter> parameters = new HashSet<>(0);
 
     public long getFeatureOfInterestId() {
@@ -111,27 +117,27 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     }
     
     @Override
-    public Set<FeatureOfInterest> getParents() {
+    public Set<AbstractFeatureOfInterest> getParents() {
         return parents;
     }
 
     @Override
-    public void setParents(final Set<FeatureOfInterest> parents) {
+    public void setParents(final Set<AbstractFeatureOfInterest> parents) {
         this.parents = parents;
     }
 
     @Override
-    public Set<FeatureOfInterest> getChilds() {
+    public Set<AbstractFeatureOfInterest> getChilds() {
         return childs;
     }
 
     @Override
-    public void setChilds(final Set<FeatureOfInterest> childs) {
+    public void setChilds(final Set<AbstractFeatureOfInterest> childs) {
         this.childs = childs;
     }
 
     @Override
-    public void addParent(FeatureOfInterest parent) {
+    public void addParent(AbstractFeatureOfInterest parent) {
         if (parent == null) {
             return;
         }
@@ -142,7 +148,7 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     }
 
     @Override
-    public void addChild(FeatureOfInterest child) {
+    public void addChild(AbstractFeatureOfInterest child) {
         if (child == null) {
             return;
         }

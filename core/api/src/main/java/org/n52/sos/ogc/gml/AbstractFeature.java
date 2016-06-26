@@ -30,6 +30,9 @@ package org.n52.sos.ogc.gml;
 
 import java.io.Serializable;
 
+import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
 /**
@@ -75,7 +78,7 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
      *            Feature identifier
      */
     public AbstractFeature(CodeWithAuthority featureIdentifier) {
-        super(featureIdentifier);
+        this(featureIdentifier, null);
     }
 
     /**
@@ -107,4 +110,7 @@ public abstract class AbstractFeature extends AbstractGML implements Serializabl
     	return StringHelper.isNotEmpty(getDefaultElementEncoding());
     }
 
+    public <X> X accept(FeatureOfInterestVisitor<X> visitor) throws OwsExceptionReport {
+        return null;
+    }
 }

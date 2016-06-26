@@ -151,7 +151,7 @@ public class Reference {
                 .omitNullValues()
                 .add("actuate", getActuate().orNull())
                 .add("arcrole", getArcrole().orNull())
-                .add("href", getHref())
+                .add("href", getHref().orNull())
                 .add("remoteSchema", getRemoteSchema().orNull())
                 .add("role", getRole().orNull())
                 .add("show", getShow().orNull())

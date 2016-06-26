@@ -32,12 +32,20 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.FeatureWith.*;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
+import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 
+import net.opengis.gml.x32.AbstractFeatureType;
 import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
 
 public abstract class AbstractGmlEncoderv321<T> extends AbstractXmlEncoder<T> {
     
@@ -86,6 +94,50 @@ public abstract class AbstractGmlEncoderv321<T> extends AbstractXmlEncoder<T> {
             }
         }
 
+    }
+    
+    protected void addId(AbstractFeatureType aft, AbstractFeature abstractFeature) {
+        aft.setId(abstractFeature.getGmlId());
+    }
+    
+    protected void addIdentifier(AbstractFeatureType aft, AbstractFeature abstractFeature) throws OwsExceptionReport {
+        if (aft != null && abstractFeature != null) {
+            if (abstractFeature.isSetIdentifier() && SosHelper.checkFeatureOfInterestIdentifierForSosV2(
+                    abstractFeature.getIdentifierCodeWithAuthority().getValue(), Sos2Constants.SERVICEVERSION)) {
+                aft.addNewIdentifier().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
+                        abstractFeature.getIdentifierCodeWithAuthority()));
+            }
+        }
+    }
+
+    protected void addName(AbstractFeatureType aft, AbstractFeature abstractFeature) throws OwsExceptionReport {
+        if (aft != null && abstractFeature != null) {
+            if (abstractFeature.isSetName()) {
+                removeExitingNames(aft);
+                for (org.n52.sos.ogc.gml.CodeType codeType : abstractFeature.getName()) {
+                    aft.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, codeType));
+                }
+            }
+        }
+    }
+
+    protected void addDescription(AbstractFeatureType aft, AbstractFeature abstractFeature) {
+        if (aft != null && abstractFeature != null) {
+            if (abstractFeature.isSetDescription()) {
+                if (!aft.isSetDescription()) {
+                    aft.addNewDescription();
+                }
+                aft.getDescription().setStringValue(abstractFeature.getDescription());
+            }
+        }
+    }
+    
+    protected void removeExitingNames(AbstractFeatureType aft) {
+        if (CollectionHelper.isNotNullOrEmpty(aft.getNameArray())) {
+            for (int i = 0; i < aft.getNameArray().length; i++) {
+                aft.removeName(i);
+            }
+        }
     }
     
     protected FeaturePropertyType createFeaturePropertyType() {

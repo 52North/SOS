@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.feature.create;
+package org.n52.sos.ds.hibernate.create;
 
 import java.util.Locale;
 import java.util.Map;
@@ -34,17 +34,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.hibernate.Session;
-import org.hibernate.proxy.HibernateProxyHelper;
-import org.n52.sos.ds.hibernate.dao.inspire.EnvironmentalMonitoringFacilityDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.inspire.EnvironmentalMonitoringFacility;
+import org.n52.sos.ds.hibernate.entities.feature.inspire.MediaMonitored;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OWSConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OWSConstants.RequestParams;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.service.ServiceConfiguration;
@@ -57,21 +58,16 @@ import org.n52.svalbard.inspire.ef.ObservingCapability;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Geometry;
 
-public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCreationStrategy {
+public class EnvironmentalMonitoringFacilityCreator extends AbstractFeatureCreator<EnvironmentalMonitoringFacility> {
 
-    public EnvironmentalMonitoringFacilityStrategy(int storageEPSG, int storage3DEPSG) {
+    public EnvironmentalMonitoringFacilityCreator(int storageEPSG, int storage3DEPSG) {
         super(storageEPSG, storage3DEPSG);
     }
 
     @Override
-    public boolean apply(FeatureOfInterest feature) {
-        return EnvironmentalMonitoringFacility.class
-                .equals(HibernateProxyHelper.getClassWithoutInitializingProxy(feature));
-    }
-
-    @Override
-    public AbstractFeature create(FeatureOfInterest f, Locale i18n, String version, Session s)
+    public AbstractFeature create(EnvironmentalMonitoringFacility f, Locale i18n, String version, Session s)
             throws OwsExceptionReport {
         if (f.isSetUrl()) {
             return new org.n52.svalbard.inspire.ef.EnvironmentalMonitoringFacility(
@@ -79,7 +75,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
         }
         if (f instanceof EnvironmentalMonitoringFacility) {
             EnvironmentalMonitoringFacility emf = (EnvironmentalMonitoringFacility) f;
-            EnvironmentalMonitoringFacilityDAO featureDAO = new EnvironmentalMonitoringFacilityDAO();
+            FeatureOfInterestDAO featureDAO = new FeatureOfInterestDAO();
             final CodeWithAuthority identifier = featureDAO.getIdentifier(emf);
             if (!SosHelper.checkFeatureOfInterestIdentifierForSosV2(emf.getIdentifier(), version)) {
                 identifier.setValue(null);
@@ -113,9 +109,15 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
         return null;
     }
 
-    private Set<ReferenceType> getMediaMonitored(Set<String> mediaMonitored) {
-        Set<ReferenceType> referenceTypes = Sets.newHashSetWithExpectedSize(mediaMonitored.size());
-        for (String mm : mediaMonitored) {
+    @Override
+    public Geometry createGeometry(EnvironmentalMonitoringFacility feature, Session session)
+            throws OwsExceptionReport {
+        return createGeometryFrom(feature, session);
+    }
+
+    private Set<ReferenceType> getMediaMonitored(MediaMonitored mediaMonitored) {
+        Set<ReferenceType> referenceTypes = Sets.newHashSetWithExpectedSize(mediaMonitored.getMediaMonitored().size());
+        for (String mm : mediaMonitored.getMediaMonitored()) {
             referenceTypes.add(new ReferenceType(mm));
         }
         return referenceTypes;
@@ -125,7 +127,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
             FeatureOfInterest feature) {
         emFeature.addObservingCapability(createObservingCapability(feature.getIdentifier()));
         if (feature.hasChilds()) {
-            for (FeatureOfInterest child : feature.getChilds()) {
+            for (AbstractFeatureOfInterest child : feature.getChilds()) {
                 emFeature.addObservingCapability(createObservingCapability(child.getIdentifier()));
             }
         }
@@ -143,7 +145,7 @@ public class EnvironmentalMonitoringFacilityStrategy extends AbstractFeatureCrea
                 getCache().getOfferingsForFeatureOfInterest(feature.getIdentifier()));
         // check for child features
         if (feature.hasChilds()) {
-            for (FeatureOfInterest child : feature.getChilds()) {
+            for (AbstractFeatureOfInterest child : feature.getChilds()) {
                 Set<String> childOfferings = getCache().getOfferingsForFeatureOfInterest(child.getIdentifier());
                 if (CollectionHelper.isNotEmpty(childOfferings)) {
                     featureOfferings.put(child.getIdentifier(), childOfferings);

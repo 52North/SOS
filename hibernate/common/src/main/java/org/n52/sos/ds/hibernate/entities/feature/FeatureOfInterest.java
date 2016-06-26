@@ -26,61 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.entities.inspire;
+package org.n52.sos.ds.hibernate.entities.feature;
 
-import java.util.Set;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import com.vividsolutions.jts.geom.Geometry;
 
-public class EnvironmentalMonitoringFacility extends FeatureOfInterest {
+/**
+ * @since 4.0.0
+ *
+ */
+public class FeatureOfInterest extends AbstractFeatureOfInterest {
 
-    private static final long serialVersionUID = -4612931300484622090L;
+    private static final long serialVersionUID = 4142090100433622512L;
 
-    private Set<String> mediaMonitored;
+    @Override
+    public AbstractFeature accept(FeatureVisitor visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public Geometry accept(GeometryVisitor visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
     
-    private String measurementRegime;
-    
-    private boolean mobile;
-
-    /**
-     * @return the mediaMonitored
-     */
-    public Set<String> getMediaMonitored() {
-        return mediaMonitored;
-    }
-
-    /**
-     * @param mediaMonitored the mediaMonitored to set
-     */
-    public void setMediaMonitored(Set<String> mediaMonitored) {
-        this.mediaMonitored = mediaMonitored;
-    }
-
-    /**
-     * @return the measurementRegime
-     */
-    public String getMeasurementRegime() {
-        return measurementRegime;
-    }
-
-    /**
-     * @param measurementRegime the measurementRegime to set
-     */
-    public void setMeasurementRegime(String measurementRegime) {
-        this.measurementRegime = measurementRegime;
-    }
-
-    /**
-     * @return the mobile
-     */
-    public boolean isMobile() {
-        return mobile;
-    }
-
-    /**
-     * @param mobile the mobile to set
-     */
-    public void setMobile(boolean mobile) {
-        this.mobile = mobile;
-    }
 }

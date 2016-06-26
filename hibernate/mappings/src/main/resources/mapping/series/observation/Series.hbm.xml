@@ -15,7 +15,7 @@
             </generator>
         </id>
         <many-to-one name="featureOfInterest"
-                     class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
+                     class="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
                      foreign-key="seriesFeatureFk">
             <column index="seriesFeatureIdx"
                     name="featureOfInterestId"

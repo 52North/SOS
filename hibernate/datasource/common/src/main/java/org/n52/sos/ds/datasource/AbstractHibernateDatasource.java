@@ -211,8 +211,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                 .setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_3).setKey(FEATURE_CONCEPT_KEY);
         choiceSettingDefinition.addOption(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name(),
                 FeatureConcept.DEFAULT_FEATURE_CONCEPT.getDisplayName());
-        choiceSettingDefinition.addOption(FeatureConcept.INSPIRE_FEATURE_CONCEPT.name(),
-                FeatureConcept.INSPIRE_FEATURE_CONCEPT.getDisplayName());
+        choiceSettingDefinition.addOption(FeatureConcept.EXTENDED_FEATURE_CONCEPT.name(),
+                FeatureConcept.EXTENDED_FEATURE_CONCEPT.getDisplayName());
         choiceSettingDefinition.setDefaultValue(FeatureConcept.DEFAULT_FEATURE_CONCEPT.name());
         return choiceSettingDefinition;
     }
@@ -320,8 +320,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (concept == null || concept.isEmpty()) {
             String hibernateDirectories = (String) settings.get(HibernateDatasourceConstants.HIBERNATE_DIRECTORY);
             concept = FeatureConcept.DEFAULT_FEATURE_CONCEPT.name();
-            if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_INSPIRE_PATH)) {
-                    concept = FeatureConcept.INSPIRE_FEATURE_CONCEPT.name();
+            if (hibernateDirectories.contains(HIBERNATE_MAPPING_FEATURE_PATH)) {
+                    concept = FeatureConcept.EXTENDED_FEATURE_CONCEPT.name();
             }
             LOG.error("Setting with key '{}' not found in datasource property file! Setting it using '{}' to '{}'."
                     + " If this produces no error, please add the following setting to your datasource properties: '{}={}'\n\n",
@@ -332,8 +332,8 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
                     concept);
         }
         switch (FeatureConcept.valueOf(concept)) {
-        case INSPIRE_FEATURE_CONCEPT:
-            return HIBERNATE_MAPPING_FEATURE_INSPIRE_PATH;
+        case EXTENDED_FEATURE_CONCEPT:
+            return HIBERNATE_MAPPING_FEATURE_PATH;
         default:
             return null;
         }

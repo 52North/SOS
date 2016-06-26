@@ -32,6 +32,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Set;
 
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.RelatedObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
@@ -150,12 +152,12 @@ public interface HibernateRelations {
     interface HasFeatureOfInterestGetter {
         String FEATURE_OF_INTEREST = "featureOfInterest";
 
-        FeatureOfInterest getFeatureOfInterest();
+        AbstractFeatureOfInterest getFeatureOfInterest();
     }
 
     interface HasFeatureOfInterest extends HasFeatureOfInterestGetter {
 
-        void setFeatureOfInterest(FeatureOfInterest featureOfInterest);
+        void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest);
     }
 
     interface HasReadableObservationContext

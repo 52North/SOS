@@ -2,6 +2,7 @@ org.n52.sos.encode.FesEncoderv20
 org.n52.sos.encode.GmlEncoderv321
 org.n52.sos.encode.OmEncoderv20
 org.n52.sos.encode.SamplingEncoderv20
+org.n52.sos.encode.SpecimenEncoderv20
 org.n52.sos.encode.SosRequestEncoderv20
 org.n52.sos.encode.SweCommonEncoderv20
 org.n52.sos.encode.XlinkEncoderv1999

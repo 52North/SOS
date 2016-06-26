@@ -39,7 +39,8 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.spatial.criterion.SpatialProjections;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
@@ -58,19 +59,19 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractFeatureOfInterestDAO.class);
 
-    public abstract FeatureOfInterest insertFeature(AbstractFeature samplingFeature, Session session) throws OwsExceptionReport;
+    public abstract AbstractFeatureOfInterest insertFeature(AbstractFeature samplingFeature, Session session) throws OwsExceptionReport;
     
-    public FeatureOfInterest getFeature(String identifier, Session session) {
-        Criteria criteria = session.createCriteria(featureClass())
+    public AbstractFeatureOfInterest getFeature(String identifier, Session session) {
+        Criteria criteria = getDefaultCriteria(session)
                 .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getFeature(identifier): {}", HibernateHelper.getSqlString(criteria));
-        return (FeatureOfInterest) criteria.uniqueResult();
+        return (AbstractFeatureOfInterest) criteria.uniqueResult();
     }
     
 
     @SuppressWarnings("unchecked")
     public List<String> getFeatureIdentifiers(SpatialFilter filter, Session session) throws OwsExceptionReport {
-        final Criteria c = session.createCriteria(featureClass())
+        final Criteria c = getDefaultCriteria(session)
                 .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
         if (filter != null) {
             c.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(), filter.getGeometry()));
@@ -79,15 +80,12 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
     }
 
     public Geometry getFeatureExtent(Set<String> identifiers, Session session) {
-        return (Geometry) session
-                .createCriteria(featureClass())
+        return (Geometry) getDefaultCriteria(session)
                 .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers))
                 .setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY))
                 .uniqueResult();
     }
 
-    public abstract Class<? extends FeatureOfInterest> featureClass();
-    
     /**
      * Get featureOfInterest objects for featureOfInterest identifiers
      *
@@ -98,10 +96,10 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
      * @return FeatureOfInterest objects
      */
     @SuppressWarnings("unchecked")
-    public List<FeatureOfInterest> getFeatureOfInterestObjects(final Collection<String> identifiers,
+    public List<AbstractFeatureOfInterest> getFeatureOfInterestObjects(final Collection<String> identifiers,
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
-            Criteria criteria = session.createCriteria(featureClass())
+            Criteria criteria = getDefaultCriteria(session)
                     .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObjects(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
@@ -109,29 +107,27 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         return Collections.emptyList();
     }
     
-    protected FeatureOfInterest getFeatureOfInterest(final String identifier, final Geometry geometry,
+    protected AbstractFeatureOfInterest getFeatureOfInterest(final String identifier, final Geometry geometry,
             final Session session) throws OwsExceptionReport {
         if (!identifier.startsWith(SosConstants.GENERATED_IDENTIFIER_PREFIX)) {
-            return (FeatureOfInterest) session.createCriteria(featureClass())
+            return (FeatureOfInterest) getDefaultCriteria(session)
                     .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, identifier)).uniqueResult();
         } else {
-            return (FeatureOfInterest) session
-                    .createCriteria(featureClass())
+            return (FeatureOfInterest) getDefaultCriteria(session)
                     .add(SpatialRestrictions.eq(FeatureOfInterest.GEOMETRY, GeometryHandler.getInstance()
                             .switchCoordinateAxisFromToDatasourceIfNeeded(geometry))).uniqueResult();
         }
     }
     
     @SuppressWarnings("unchecked")
-    public List<FeatureOfInterest> getFeatures(Session session) {
-        return session.createCriteria(featureClass()).list();
+    public List<AbstractFeatureOfInterest> getFeatures(Session session) {
+        return getDefaultCriteria(session).list();
     }
 
     @SuppressWarnings("unchecked")
-    public List<FeatureOfInterest> getFeatures(Set<String> identifiers, List<SpatialFilter> filters,
+    public List<AbstractFeatureOfInterest> getFeatures(Set<String> identifiers, List<SpatialFilter> filters,
             Session session) throws OwsExceptionReport {
-        final Criteria c =
-                session.createCriteria(featureClass()).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        final Criteria c = getDefaultCriteria(session);
         boolean filtered = false;
         if (CollectionHelper.isNotEmpty(identifiers)) {
             c.add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
@@ -153,4 +149,8 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
         }
     }
 
+    protected Criteria getDefaultCriteria(Session session) {
+        return session.createCriteria(AbstractFeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+    
 }

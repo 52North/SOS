@@ -26,28 +26,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.inspire;
+package org.n52.sos.ogc.om.features.samplingFeatures;
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.inspire.EnvironmentalMonitoringFacility;
-import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
-public class EnvironmentalMonitoringFacilityDAO extends FeatureOfInterestDAO {
+public interface FeatureOfInterestVisitor<T> {
+    
+    T visit(SamplingFeature value)
+            throws OwsExceptionReport;
 
-    @Override
-    public EnvironmentalMonitoringFacility insertFeature(AbstractFeature samplingFeature, Session session)
-            throws OwsExceptionReport {
-        // TODO implement
-        return null;
-    }
-
-
-    @Override
-    public Class<? extends FeatureOfInterest> featureClass() {
-        return EnvironmentalMonitoringFacility.class;
-    }
+    T visit(SfSpecimen value)
+            throws OwsExceptionReport;
 
 }

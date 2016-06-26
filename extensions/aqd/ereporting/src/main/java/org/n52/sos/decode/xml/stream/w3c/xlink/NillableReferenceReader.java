@@ -30,7 +30,7 @@ package org.n52.sos.decode.xml.stream.w3c.xlink;
 
 import org.n52.sos.decode.xml.stream.NillableReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.util.Reference;
+import org.n52.sos.w3c.xlink.Reference;
 
 public class NillableReferenceReader extends NillableReader<Reference> {
 

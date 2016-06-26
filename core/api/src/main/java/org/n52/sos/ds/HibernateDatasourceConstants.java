@@ -46,9 +46,8 @@ public interface HibernateDatasourceConstants {
 
     String HIBERNATE_MAPPING_CORE_PATH = HIBERNATE_MAPPING_PATH + "/core";
     
-    String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature";
-    
-    String HIBERNATE_MAPPING_FEATURE_INSPIRE_PATH = HIBERNATE_MAPPING_FEATURE_PATH + "/inspire";
+    // TODO change to /feature
+    String HIBERNATE_MAPPING_FEATURE_PATH = HIBERNATE_MAPPING_PATH + "/feature/specimen";
     
     String HIBERNATE_MAPPING_TRANSACTIONAL_PATH = HIBERNATE_MAPPING_PATH + "/transactional";
     
@@ -113,7 +112,7 @@ public interface HibernateDatasourceConstants {
     
     public enum FeatureConcept {
         DEFAULT_FEATURE_CONCEPT("Default feature concept"),
-        INSPIRE_FEATURE_CONCEPT("Inspire feature concept");
+        EXTENDED_FEATURE_CONCEPT("Extended feature concept");
         
         private final String displayName;
         

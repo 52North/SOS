@@ -44,12 +44,14 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.Specimen;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
@@ -64,7 +66,12 @@ import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithFeatureType;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithXmlDescription;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.features.samplingFeatures.SfSpecimen;
+import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
@@ -93,68 +100,14 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
             "getFeatureOfInterestIdentifiersForObservationConstellation";
 
     @Override
-    public FeatureOfInterest insertFeature(AbstractFeature abstractFeature, Session session)
+    public AbstractFeatureOfInterest insertFeature(AbstractFeature abstractFeature, Session session)
             throws OwsExceptionReport {
-        final String newId = abstractFeature.getIdentifierCodeWithAuthority().getValue();
-        Geometry geom = null;
-        if (abstractFeature instanceof FeatureWithGeometry) {
-            geom = ((FeatureWithGeometry) abstractFeature).getGeometry();
-    
-        }
-        FeatureOfInterest feature = getFeatureOfInterest(newId, geom, session);
-        if (feature == null) {
-            feature = new FeatureOfInterest();
-            addIdentifierNameDescription(abstractFeature, feature, session);
-            if (abstractFeature instanceof FeatureWithGeometry) {
-                if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
-                    feature.setGeom(((FeatureWithGeometry) abstractFeature).getGeometry());
-                }
-            }
-            if (abstractFeature instanceof FeatureWithXmlDescription
-                    && ((FeatureWithXmlDescription) abstractFeature).isSetXmlDescription()) {
-                feature.setDescriptionXml(((FeatureWithXmlDescription) abstractFeature).getXmlDescription());
-            }
-            if (abstractFeature instanceof FeatureWithFeatureType
-                    && ((FeatureWithFeatureType) abstractFeature).isSetFeatureType()) {
-                feature.setFeatureOfInterestType(new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestType(
-                        ((FeatureWithFeatureType) abstractFeature).getFeatureType(), session));
-            }
-            if (abstractFeature instanceof SamplingFeature) {
-                SamplingFeature samplingFeature = (SamplingFeature) abstractFeature;
-                if (samplingFeature.isSetSampledFeatures()) {
-                    Set<FeatureOfInterest> parents =
-                            Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
-                    for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
-                        if (!OGCConstants.UNKNOWN.equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
-                            if (sampledFeature instanceof SamplingFeature) {
-                                parents.add(insertFeature((SamplingFeature) sampledFeature, session));
-                            } else {
-                                parents.add(insertFeature(
-                                        new SamplingFeature(sampledFeature.getIdentifierCodeWithAuthority()),
-                                        session));
-                            }
-                        }
-                    }
-                    feature.setParents(parents);
-                }
-            }
-            session.save(feature);
-            session.flush();
-            session.refresh(feature);
-            insertNameAndDescription(feature, abstractFeature, session);
-        }
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetParameter()) {
-            Map<UoM, Unit> unitCache = Maps.newHashMap();
-            new FeatureParameterDAO().insertParameter(((SamplingFeature) abstractFeature).getParameters(),
-                    feature.getFeatureOfInterestId(), unitCache, session);
-        }
-        return feature;
-    
-    }
-
-    @Override
-    public Class<? extends FeatureOfInterest> featureClass() {
-        return FeatureOfInterest.class;
+        
+        FeatureOfInterestPersister persister = new FeatureOfInterestPersister(
+                this,
+                session
+        );
+        return abstractFeature.accept(persister);
     }
 
     /**
@@ -166,7 +119,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      *            Hibernate session Hibernate session
      * @return FeatureOfInterest entity
      */
-    public FeatureOfInterest getFeatureOfInterest(final String identifier, final Session session) {
+    public AbstractFeatureOfInterest getFeatureOfInterest(final String identifier, final Session session) {
         Criteria criteria = session.createCriteria(FeatureOfInterest.class)
                 .add(Restrictions.eq(FeatureOfInterest.IDENTIFIER, identifier));
         LOGGER.debug("QUERY getFeatureOfInterest(identifier): {}", HibernateHelper.getSqlString(criteria));
@@ -339,9 +292,9 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      *            Hibernate session
      * @return FeatureOfInterest object
      */
-    public FeatureOfInterest getOrInsertFeatureOfInterest(final String identifier, final String url,
+    public AbstractFeatureOfInterest getOrInsertFeatureOfInterest(final String identifier, final String url,
             final Session session) {
-        FeatureOfInterest feature = getFeatureOfInterest(identifier, session);
+        AbstractFeatureOfInterest feature = getFeatureOfInterest(identifier, session);
         if (feature == null) {
             feature = new FeatureOfInterest();
             feature.setIdentifier(identifier);
@@ -370,8 +323,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session
      */
-    public void insertFeatureOfInterestRelationShip(final FeatureOfInterest parentFeature,
-            final FeatureOfInterest childFeature, final Session session) {
+    public void insertFeatureOfInterestRelationShip(final AbstractFeatureOfInterest parentFeature,
+            final AbstractFeatureOfInterest childFeature, final Session session) {
         parentFeature.getChilds().add(childFeature);
         session.saveOrUpdate(parentFeature);
         // don't flush here because we may be batching
@@ -388,7 +341,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      * @param session
      *            Hibernate session
      */
-    public void checkOrInsertFeatureOfInterestRelatedFeatureRelation(final FeatureOfInterest featureOfInterest,
+    public void checkOrInsertFeatureOfInterestRelatedFeatureRelation(final AbstractFeatureOfInterest featureOfInterest,
             final Offering offering, final Session session) {
         final List<RelatedFeature> relatedFeatures =
                 new RelatedFeatureDAO().getRelatedFeatureForOffering(offering.getIdentifier(), session);
@@ -414,7 +367,7 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
      *             If SOS feature type is not supported (with status
      *             {@link HTTPStatus}.BAD_REQUEST
      */
-    public FeatureOfInterest checkOrInsertFeatureOfInterest(final AbstractFeature featureOfInterest,
+    public AbstractFeatureOfInterest checkOrInsertFeatureOfInterest(final AbstractFeature featureOfInterest,
             final Session session) throws OwsExceptionReport {
         if (featureOfInterest instanceof SamplingFeature) {
             final String featureIdentifier = Configurator.getInstance().getFeatureQueryHandler()
@@ -426,6 +379,121 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     .withMessage("The used feature type '%s' is not supported.",
                             featureOfInterest != null ? featureOfInterest.getClass().getName() : featureOfInterest)
                     .setStatus(BAD_REQUEST);
+        }
+    }
+    
+    public static class FeatureOfInterestPersister implements FeatureOfInterestVisitor<AbstractFeatureOfInterest> {
+        
+        private FeatureOfInterestDAO dao;
+        private Session session;
+        
+        public FeatureOfInterestPersister(FeatureOfInterestDAO dao, Session sesion) {
+           this.dao = dao;
+           this.session = sesion;
+        }
+
+        @Override
+        public AbstractFeatureOfInterest visit(SamplingFeature value) throws OwsExceptionReport {
+            AbstractFeatureOfInterest feature = getFeatureOfInterest(value);
+            if (feature == null) {
+                return persist(new FeatureOfInterest(), value, true);
+            }
+            return persist(feature, value, false);
+        }
+
+        @Override
+        public AbstractFeatureOfInterest visit(SfSpecimen value) throws OwsExceptionReport {
+            AbstractFeatureOfInterest feature = getFeatureOfInterest(value);
+            if (feature == null) {
+                Specimen specimen = new Specimen();
+                specimen.setMaterialClass(value.getMaterialClass().getHref());
+                if (value.getSamplingTime() instanceof TimeInstant) {
+                    TimeInstant time = (TimeInstant) value.getSamplingTime();
+                    specimen.setSamplingTimeStart(time.getValue().toDate());
+                    specimen.setSamplingTimeEnd(time.getValue().toDate());
+                } else if (value.getSamplingTime() instanceof TimePeriod) {
+                    TimePeriod time = (TimePeriod) value.getSamplingTime();
+                    specimen.setSamplingTimeStart(time.getStart().toDate());
+                    specimen.setSamplingTimeEnd(time.getEnd().toDate());
+                }
+                if (value.isSetSamplingMethod()) {
+                    specimen.setSamplingMethod(value.getSamplingMethod().getReference().getHref().toString());
+                }
+                if (value.isSetSize()) {
+                    specimen.setSize(value.getSize().getValue());
+                    specimen.setSizeUnit(getUnit(value.getSize()));
+                }
+                if (value.isSetCurrentLocation()) {
+                    specimen.setCurrentLocation(value.getCurrentLocation().getReference().getHref().toString());
+                }
+                if (value.isSetSpecimenType()) {
+                    specimen.setSpecimenType(value.getSpecimenType().getHref());
+                }
+                return persist(specimen, value, true);
+            }
+            return persist(feature, value, false);
+        }
+        
+        private AbstractFeatureOfInterest persist(AbstractFeatureOfInterest feature, AbstractFeature abstractFeature, boolean add) throws OwsExceptionReport {
+            if (add) {
+                dao.addIdentifierNameDescription(abstractFeature, feature, session);
+                if (abstractFeature instanceof FeatureWithGeometry) {
+                    if (((FeatureWithGeometry) abstractFeature).isSetGeometry()) {
+                        feature.setGeom(((FeatureWithGeometry) abstractFeature).getGeometry());
+                    }
+                }
+                if (abstractFeature instanceof FeatureWithXmlDescription
+                        && ((FeatureWithXmlDescription) abstractFeature).isSetXmlDescription()) {
+                    feature.setDescriptionXml(((FeatureWithXmlDescription) abstractFeature).getXmlDescription());
+                }
+                if (abstractFeature instanceof FeatureWithFeatureType
+                        && ((FeatureWithFeatureType) abstractFeature).isSetFeatureType()) {
+                    feature.setFeatureOfInterestType(new FeatureOfInterestTypeDAO().getOrInsertFeatureOfInterestType(
+                            ((FeatureWithFeatureType) abstractFeature).getFeatureType(), session));
+                }
+                if (abstractFeature instanceof SamplingFeature) {
+                    SamplingFeature samplingFeature = (SamplingFeature) abstractFeature;
+                    if (samplingFeature.isSetSampledFeatures()) {
+                        Set<AbstractFeatureOfInterest> parents =
+                                Sets.newHashSetWithExpectedSize(samplingFeature.getSampledFeatures().size());
+                        for (AbstractFeature sampledFeature : samplingFeature.getSampledFeatures()) {
+                            if (!OGCConstants.UNKNOWN.equals(sampledFeature.getIdentifierCodeWithAuthority().getValue())) {
+                                if (sampledFeature instanceof SamplingFeature) {
+                                    parents.add(dao.insertFeature((SamplingFeature) sampledFeature, session));
+                                } else {
+                                    parents.add(dao.insertFeature(
+                                            new SamplingFeature(sampledFeature.getIdentifierCodeWithAuthority()),
+                                            session));
+                                }
+                            }
+                        }
+                        feature.setParents(parents);
+                    }
+                }
+                session.saveOrUpdate(feature);
+                session.flush();
+                session.refresh(feature);
+            }
+            if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetParameter()) {
+                Map<UoM, Unit> unitCache = Maps.newHashMap();
+                new FeatureParameterDAO().insertParameter(((SamplingFeature) abstractFeature).getParameters(),
+                        feature.getFeatureOfInterestId(), unitCache, session);
+            }
+            return feature;
+        }
+
+        private Unit getUnit(Value<?> value) {
+            return value.isSetUnit() ? new UnitDAO().getOrInsertUnit(value.getUnitObject(), session) : null;
+        }
+
+        private AbstractFeatureOfInterest getFeatureOfInterest(SamplingFeature value) throws OwsExceptionReport {
+            final String newId = value.getIdentifierCodeWithAuthority().getValue();
+            Geometry geom = null;
+            if (value instanceof FeatureWithGeometry) {
+                geom = ((FeatureWithGeometry) value).getGeometry();
+        
+            }
+            return dao.getFeatureOfInterest(newId, geom, session);
         }
     }
 

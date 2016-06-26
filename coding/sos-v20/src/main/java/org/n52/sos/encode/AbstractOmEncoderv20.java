@@ -117,6 +117,7 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
@@ -594,8 +595,10 @@ public abstract class AbstractOmEncoderv20
         if (StringHelper.isNotEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
             additionalValues.put(HelperValues.ENCODE_NAMESPACE,
                     activeProfile.getEncodingNamespaceForFeatureOfInterest());
-        } else {
+        } else if (!Strings.isNullOrEmpty(getDefaultFeatureEncodingNamespace())) {
             additionalValues.put(HelperValues.ENCODE_NAMESPACE, getDefaultFeatureEncodingNamespace());
+        } else {
+            additionalValues.put(HelperValues.ENCODE_NAMESPACE, feature.getDefaultElementEncoding());
         }
         return encodeGML(feature, additionalValues);
     }

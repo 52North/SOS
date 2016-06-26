@@ -31,7 +31,7 @@ package org.n52.svalbard.inspire.base2;
 import java.util.List;
 
 import org.n52.sos.iso.gmd.PT_FreeText;
-import org.n52.sos.util.Nillable;
+import org.n52.sos.w3c.Nillable;
 import org.n52.svalbard.inspire.ad.AddressRepresentation;
 
 import com.google.common.base.Preconditions;

@@ -84,7 +84,7 @@ public interface ConformanceClasses {
     String OM_V2_SAMPLING_SURFACE = "http://www.opengis.net/spec/OMXML/2.0/conf/samplingSurface";
 
     String OM_V2_SPATIAL_SAMPLING = "http://www.opengis.net/spec/OMXML/2.0/conf/spatialSampling";
-
+    
     String SWE_V2_CORE = "http://www.opengis.net/spec/SWE/2.0/conf/core";
 
     String SWE_V2_UML_SIMPLE_COMPONENTS = "http://www.opengis.net/spec/SWE/2.0/conf/uml-simple-components";

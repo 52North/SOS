@@ -26,22 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.feature.create;
+package org.n52.sos.ogc.om.features.samplingFeatures;
 
-import java.util.Locale;
+public class PreparationStep {
 
-import org.hibernate.Session;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-
-import com.google.common.base.Predicate;
-import com.vividsolutions.jts.geom.Geometry;
-
-public interface FeatureCreationStrategy extends Predicate<FeatureOfInterest> {
-    
-    AbstractFeature create(FeatureOfInterest f,Locale i18n, String version, Session s)
-            throws OwsExceptionReport;
-
-    Geometry createGeometry(FeatureOfInterest feature, Session session) throws OwsExceptionReport;
 }

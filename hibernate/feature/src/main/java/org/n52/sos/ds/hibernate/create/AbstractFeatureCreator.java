@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.util.feature.create;
+package org.n52.sos.ds.hibernate.create;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +36,7 @@ import org.n52.sos.cache.ContentCache;
 import org.n52.sos.ds.I18NDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.i18n.I18NDAORepository;
 import org.n52.sos.i18n.LocalizedString;
@@ -51,16 +51,15 @@ import org.n52.sos.util.GeometryHandler;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
-public abstract class AbstractFeatureCreationStrategy implements FeatureCreationStrategy {
+public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implements FeatureCreator<T> {
 
     private int storageEPSG;
     private int storage3DEPSG;
 
-    public AbstractFeatureCreationStrategy(int storageEPSG, int storage3DEPSG) {
+    public AbstractFeatureCreator(int storageEPSG, int storage3DEPSG) {
         this.storageEPSG = storageEPSG;
         this.storage3DEPSG = storage3DEPSG;
         
@@ -117,8 +116,7 @@ public abstract class AbstractFeatureCreationStrategy implements FeatureCreation
      * @return geometry
      * @throws OwsExceptionReport
      */
-    @Override
-    public Geometry createGeometry(final FeatureOfInterest feature, Session session) throws OwsExceptionReport {
+    protected Geometry createGeometryFrom(FeatureOfInterest feature, Session session) throws OwsExceptionReport {
         if (feature.isSetGeometry()) {
             return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
         } else if (feature.isSetLongLat()) {
@@ -173,6 +171,14 @@ public abstract class AbstractFeatureCreationStrategy implements FeatureCreation
     
     protected Configurator getConfigurator() {
         return Configurator.getInstance();
+    }
+
+    protected int getStorageEPSG() {
+        return storageEPSG;
+    }
+
+    protected int getStorage3DEPSG() {
+        return storage3DEPSG;
     }
     
 }

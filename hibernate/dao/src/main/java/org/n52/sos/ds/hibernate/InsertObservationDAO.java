@@ -47,9 +47,10 @@ import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
-import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
+import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
@@ -178,7 +179,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         cache.addOfferings(offerings);
 
         Set<ObservationConstellation> hObservationConstellations = new HashSet<>();
-        FeatureOfInterest hFeature = null;
+        AbstractFeatureOfInterest hFeature = null;
 
         for (String offeringID : sosObsConst.getOfferings()) {
             ObservationConstellation hObservationConstellation = cache.get(sosObsConst, offeringID);
@@ -303,12 +304,12 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
      * @param abstractFeature
      * @param cache
      * @param session
-     * @return hibernet FeatureOfInterest
+     * @return hibernate AbstractFeatureOfInterest
      * @throws OwsExceptionReport
      */
-    private FeatureOfInterest getFeature(AbstractFeature abstractFeature,
+    private AbstractFeatureOfInterest getFeature(AbstractFeature abstractFeature,
             InsertObservationCache cache, Session session) throws OwsExceptionReport {
-        FeatureOfInterest hFeature = cache.getFeature(abstractFeature);
+        AbstractFeatureOfInterest hFeature = cache.getFeature(abstractFeature);
         if (hFeature == null) {
             hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
@@ -357,7 +358,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
     private static class InsertObservationCache {
         private final Set<String> allOfferings = Sets.newHashSet();
-        private final Map<AbstractFeature, FeatureOfInterest> featureCache = Maps.newHashMap();
+        private final Map<AbstractFeature, AbstractFeatureOfInterest> featureCache = Maps.newHashMap();
         private final Table<OmObservationConstellation, String, ObservationConstellation> obsConstOfferingHibernateObsConstTable = HashBasedTable.create();
         private final Map<String, Codespace> codespaceCache = Maps.newHashMap();
         private final Map<UoM, Unit> unitCache = Maps.newHashMap();
@@ -383,13 +384,13 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         public void checkFeature(AbstractFeature feature, String offering) {
             this.relatedFeatureCheckedMap.put(feature, offering);
         }
-        public void putFeature(AbstractFeature sfeature, FeatureOfInterest hfeature) {
+        public void putFeature(AbstractFeature sfeature, AbstractFeatureOfInterest hfeature) {
             this.featureCache.put(sfeature, hfeature);
         }
-        public FeatureOfInterest getFeature(AbstractFeature sfeature) {
+        public AbstractFeatureOfInterest getFeature(AbstractFeature sfeature) {
             return this.featureCache.get(sfeature);
         }
-        public Map<AbstractFeature, FeatureOfInterest> getFeatureCache() {
+        public Map<AbstractFeature, AbstractFeatureOfInterest> getFeatureCache() {
             return featureCache;
         }
         public Map<String, Codespace> getCodespaceCache() {

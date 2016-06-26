@@ -43,6 +43,8 @@ import org.n52.sos.ogc.gml.FeatureWith.FeatureWithGeometry;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithUrl;
 import org.n52.sos.ogc.gml.FeatureWith.FeatureWithXmlDescription;
 import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.StringHelper;
@@ -57,7 +59,8 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  * 
  */
-public class SamplingFeature extends AbstractFeature implements FeatureWithGeometry, FeatureWithFeatureType, FeatureWithUrl, FeatureWithXmlDescription, FeatureWithEncode {
+public class SamplingFeature extends AbstractFeature implements FeatureWithGeometry, FeatureWithFeatureType,
+        FeatureWithUrl, FeatureWithXmlDescription, FeatureWithEncode {
 
     /**
      * serial number
@@ -113,7 +116,8 @@ public class SamplingFeature extends AbstractFeature implements FeatureWithGeome
      *            identifier of sampling feature
      */
     public SamplingFeature(final CodeWithAuthority featureIdentifier) {
-        super(featureIdentifier);
+        this(featureIdentifier, null);
+       
     }
 
     /**
@@ -126,6 +130,7 @@ public class SamplingFeature extends AbstractFeature implements FeatureWithGeome
      */
     public SamplingFeature(final CodeWithAuthority featureIdentifier, final String gmlId) {
         super(featureIdentifier, gmlId);
+        setDefaultElementEncoding(SfConstants.NS_SAMS);
     }
 
     @Override
@@ -346,6 +351,11 @@ public class SamplingFeature extends AbstractFeature implements FeatureWithGeome
      */
     public boolean isSetRelatedSamplingFeatures() {
         return CollectionHelper.isNotEmpty(relatedSamplingFeatures);
+    }
+    
+    @Override
+    public <X> X accept(FeatureOfInterestVisitor<X> visitor) throws OwsExceptionReport {
+        return visitor.visit(this);
     }
 
     @Override

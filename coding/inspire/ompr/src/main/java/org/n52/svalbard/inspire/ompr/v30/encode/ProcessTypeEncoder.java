@@ -72,6 +72,7 @@ import com.google.common.collect.Sets;
 import eu.europa.ec.inspire.schemas.ompr.x30.ProcessDocument;
 import eu.europa.ec.inspire.schemas.ompr.x30.ProcessPropertyType;
 import eu.europa.ec.inspire.schemas.ompr.x30.ProcessType;
+import eu.europa.ec.inspire.schemas.ompr.x30.ProcessType.InspireId;
 import net.opengis.gml.x32.FeaturePropertyType;
 
 public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
@@ -160,7 +161,9 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
             try {
                 encodedObject = XmlObject.Factory.parse(process.getSensorDescriptionXmlString());
                 if (encodedObject instanceof ProcessType) {
-                    return (ProcessType) encodedObject;
+                    ProcessType pt = (ProcessType) encodedObject;
+                    checkForInspireId(pt, process);
+                    return pt;
                 } else if (encodedObject instanceof ProcessDocument) {
                     return ((ProcessDocument) encodedObject).getProcess();
                 } else if (encodedObject instanceof ProcessPropertyType) {
@@ -183,6 +186,19 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
             addResponsibleParty(pt, process);
             return pt;
         }
+    }
+
+    private void checkForInspireId(ProcessType pt, Process process) throws OwsExceptionReport {
+        if (pt.getInspireId() == null) {
+            if (process.isSetIdentifier()) {
+                addInspireId(pt, process);
+            } else {
+                InspireId iId = pt.addNewInspireId();
+                iId.setNil();
+                iId.setNilReason("unknown");
+            }
+        }
+        
     }
 
     private void addInspireId(ProcessType pt, Process process) throws OwsExceptionReport {

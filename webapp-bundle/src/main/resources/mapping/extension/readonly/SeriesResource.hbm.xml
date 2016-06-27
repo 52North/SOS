@@ -18,7 +18,7 @@
         <property column="seriesType" name="observationType" type="string" insert="false" update="false"/>
         <subclass name="org.n52.series.db.da.beans.ext.MeasurementSeriesEntity" discriminator-value="measurement">
             <property name="numberOfDecimals" type="int" formula="3" />
-            <many-to-one class="org.n52.series.db.da.beans.UnitEntity" column="seriesid" name="unit" insert="false" update="false" />
+            <many-to-one class="org.n52.series.db.da.beans.UnitEntity" column="unitid" name="unit" insert="false" update="false" />
             <component class="org.n52.series.db.da.beans.ext.MeasurementEntity" name="firstValue">
                 <property column="firsttimestamp" name="timestamp" type="timestamp"/>
                 <property column="firstnumericvalue" name="value" type="double"/>
@@ -29,9 +29,38 @@
             </component>
             <list fetch="select" inverse="true" name="observations" table="observation">
                 <key column="seriesid"/>
-                <index column="phenomenontime"/>
-                <one-to-many class="org.n52.series.db.da.beans.ext.MeasurementEntity"/>
+                <index column="phenomenonTimeStart"/>
+                <one-to-many class="org.n52.series.db.da.beans.ext.AbstractObservationEntity"/>
             </list>
         </subclass>
+        <!-- 
+        <subclass name="org.n52.series.db.da.beans.ext.TextObservationSeriesEntity" discriminator-value="text">
+            <component class="org.n52.series.db.da.beans.ext.TextObservationEntity" name="firstValue">
+                <property column="firsttimestamp" name="timestamp" type="timestamp"/>
+            </component>
+            <component class="org.n52.series.db.da.beans.ext.TextObservationEntity" name="lastValue">
+                <property column="lasttimestamp" name="timestamp" type="timestamp"/>
+            </component>
+            <list fetch="select" inverse="true" name="observations" table="observation">
+                <key column="seriesid"/>
+                <index column="phenomenonTimeStart"/>
+                <one-to-many class="org.n52.series.db.da.beans.ext.AbstractObservationEntity"/>
+            </list>
+        </subclass>
+        <subclass name="org.n52.series.db.da.beans.ext.CountObservationSeriesEntity" discriminator-value="count">
+            <component class="org.n52.series.db.da.beans.ext.CountObservationEntity" name="firstValue">
+                <property column="firsttimestamp" name="timestamp" type="timestamp"/>
+            </component>
+            <component class="org.n52.series.db.da.beans.ext.CountObservationEntity" name="lastValue">
+                <property column="lasttimestamp" name="timestamp" type="timestamp"/>
+            </component>
+            <list fetch="select" inverse="true" name="observations" table="observation">
+                <key column="seriesid"/>
+                <index column="phenomenonTimeStart"/>
+                <one-to-many class="org.n52.series.db.da.beans.ext.AbstractObservationEntity"/>
+            </list>
+        </subclass>
+         -->
+        <subclass name="org.n52.series.db.da.beans.ext.UnsupportedSeriesEntity" discriminator-value="not null" />
     </class>
 </hibernate-mapping>

@@ -22,5 +22,19 @@
         	<key column="observationId"/>
          	<property column="value" name="value" type="double" />
         </joined-subclass>
+        <!-- 
+        <joined-subclass name="TextObservationEntity"
+                         extends="AbstractObservationEntity"
+                         table="textValue">
+        	<key column="observationId"/>
+         	<property column="value" name="value" type="string" />
+        </joined-subclass>
+         <joined-subclass name="CountObservationEntity"
+                         extends="AbstractObservationEntity"
+                         table="countValue">
+        	<key column="observationId"/>
+         	<property column="value" name="value" type="integer" />
+        </joined-subclass>
+         -->
     </class>
 </hibernate-mapping>

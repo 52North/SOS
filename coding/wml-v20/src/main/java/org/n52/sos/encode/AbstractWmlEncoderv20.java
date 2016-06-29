@@ -146,6 +146,8 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (element instanceof ObservationProcess) {
             return createObservationProcess((ObservationProcess) element, additionalValues);
+        } else if (element instanceof OmObservation) {
+            return super.encode(element, additionalValues);
         } else if (element instanceof AbstractFeature) {
             return encodeAbstractFeature((AbstractFeature) element, additionalValues);
         } else {

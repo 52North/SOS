@@ -139,9 +139,9 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
     @Override
     public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+        return getUnitObject() != null && StringHelper.isNotEmpty(unit.getUom());
     }
-
+    
     @Override
     public <X> X accept(ValueVisitor<X> visitor)
             throws OwsExceptionReport {

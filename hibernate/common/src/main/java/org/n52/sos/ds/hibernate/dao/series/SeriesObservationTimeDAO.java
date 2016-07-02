@@ -32,6 +32,7 @@ import java.util.Collection;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationTimeDAO;
@@ -39,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
 import org.n52.sos.ds.hibernate.entities.values.ObservationValueTime;
+import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.util.CollectionHelper;
 
 /**
@@ -49,54 +51,52 @@ import org.n52.sos.util.CollectionHelper;
  */
 public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
 
-	/**
-	 * Create criteria for series
-	 * 
-	 * @param clazz
-	 *            Class to query
-	 * @param series
-	 *            Series to get values for
-	 * @param session
-	 *            Hibernate session
-	 * @return Criteria for series
-	 */
-	private Criteria createCriteriaFor(Class<?> clazz, Series series,
-			Session session) {
-		final Criteria criteria = session.createCriteria(clazz)
-				.add(Restrictions.eq(ObservationValueTime.DELETED, false))
-				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.add(Restrictions.eq(SeriesObservationTime.SERIES, series));
-		return criteria;
-	}
+    /**
+     * Create criteria for series
+     * 
+     * @param clazz
+     *            Class to query
+     * @param series
+     *            Series to get values for
+     * @param session
+     *            Hibernate session
+     * @return Criteria for series
+     */
+    private Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
+        final Criteria criteria =
+                session.createCriteria(clazz)
+                .add(Restrictions.eq(ObservationValueTime.DELETED, false))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq(SeriesObservationTime.SERIES, series));
+        return criteria;
+    }
 
-	/**
-	 * Create criteria to get min/max time values for a series
-	 * 
-	 * @param series
-	 *            Series to get time values for
-	 * @param session
-	 *            Hibernate session
-	 * @return Criteria for time values
-	 */
-	public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
-			Series series, Collection<String> offerings, Session session) {
-		Criteria criteria = createCriteriaFor(getObservationTimeClass(),
-				series, session);
-		if (CollectionHelper.isNotEmpty(offerings)) {
-			criteria.createCriteria(SeriesObservationTime.OFFERINGS).add(
-					Restrictions.in(Offering.IDENTIFIER, offerings));
-		}
-		criteria.setProjection(Projections
-				.projectionList()
-				.add(Projections
-						.min(SeriesObservationTime.PHENOMENON_TIME_START))
-				.add(Projections.max(SeriesObservationTime.PHENOMENON_TIME_END)));
-		return criteria;
-	}
+    /**
+     * Create criteria to get min/max time values for a series
+     * 
+     * @param series
+     *            Series to get time values for
+     * @param session
+     *            Hibernate session
+     * @return Criteria for time values
+     */
+    public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series, Collection<String> offerings,
+            Session session) {
+        Criteria criteria = createCriteriaFor(getObservationTimeClass(), series, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            criteria.createCriteria(SeriesObservationTime.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
+        }
+        criteria.setProjection(
+                Projections.projectionList()
+                .add(Projections.min(SeriesObservationTime.PHENOMENON_TIME_START))
+                .add(Projections.max(SeriesObservationTime.PHENOMENON_TIME_END)));
+        return criteria;
+    }
 
-	@Override
-	protected Class<?> getObservationTimeClass() {
-		return SeriesObservationTime.class;
-	}
+    @Override
+    protected Class<?> getObservationTimeClass() {
+        return SeriesObservationTime.class;
+    }
 
 }

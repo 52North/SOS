@@ -3,12 +3,12 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>bindings</artifactId>
-        <version>4.3.7-SNAPSHOT</version>
+        <version>4.3.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rest</artifactId>
     <packaging>pom</packaging>
-    <version>4.3.7-SNAPSHOT</version>
+    <version>4.3.8-SNAPSHOT</version>
     <name>52°North SOS - Extension REST Binding</name>
     <description>RESTful binding for the 52°North SOS</description>
     <url>http://52north.org/communities/sensorweb/sosREST/</url>

@@ -3,44 +3,44 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.Offering" table="offering">
-    	<comment>Table to store the offering information. Mapping file: mapping/core/Offering.hbm.xml</comment>
+        <comment>Table to store the offering information. Mapping file: mapping/core/Offering.hbm.xml</comment>
         <id name="offeringId" type="long">
             <column name="offeringId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">offeringId_seq</param>
+                <param name="sequence">offeringId_seq</param>
             </generator>
         </id>
         <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="offIdentifierUK">
-            	<comment>The identifier of the offering, gml:identifier. Used as parameter for queries. Unique</comment>
+                <comment>The identifier of the offering, gml:identifier. Used as parameter for queries. Unique</comment>
             </column>
         </property>
-        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceIdentifierFk">
+        <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="offCodespaceIdentifierFk">
             <column name="codespace">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:identifier codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="name" type="string">
             <column name="name">
-            	<comment>The name of the offering, gml:name. If available, displyed in the contents of the Capabilites. Optional</comment>
+                <comment>The name of the offering, gml:name. If available, displyed in the contents of the Capabilites. Optional</comment>
             </column>
         </property>
-        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" fetch="select" foreign-key="offCodespaceNameFk">
+        <many-to-one name="codespaceName" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="offCodespaceNameFk">
             <column name="codespaceName">
-            	<comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
+                <comment>Relation/foreign key to the codespace table. Contains the gml:name codespace. Optional</comment>
             </column>
         </many-to-one>
         <property name="description" type="string">
             <column name="description">
-            	<comment>Description of the offering, gml:description. Optional</comment>
+                <comment>Description of the offering, gml:description. Optional</comment>
             </column>
         </property>
         <property name="disabled" type="org.hibernate.type.TrueFalseType">
             <column name="disabled" not-null="true" default="'F'" check="disabled in ('T','F')">
-            	<comment>For later use by the SOS. Indicator if this offering should not be provided by the SOS.</comment>
+                <comment>For later use by the SOS. Indicator if this offering should not be provided by the SOS.</comment>
             </column>
         </property>
     </class>

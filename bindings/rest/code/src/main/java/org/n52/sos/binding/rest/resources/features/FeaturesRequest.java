@@ -29,6 +29,7 @@
 package org.n52.sos.binding.rest.resources.features;
 
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 
 /**
@@ -47,7 +48,15 @@ public class FeaturesRequest implements RestRequest {
     {
         return getFeatureOfInterestRequest;
     }
-    
-    
+
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getGetFeatureOfInterestRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getGetFeatureOfInterestRequest();
+    }
 
 }

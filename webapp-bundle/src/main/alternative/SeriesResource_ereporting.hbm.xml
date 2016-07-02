@@ -24,7 +24,7 @@
             <property name="timestamp" column="lasttimestamp" type="timestamp" />
             <property name="value" column="lastnumericvalue" type="double" />
         </component>
-        <list name="observations" table="observation" fetch="select" inverse="true">
+        <list name="observations" table="observation" inverse="true">
             <key column="observationid" />
             <index column="seriesid" />
             <one-to-many class="ObservationEntity" />

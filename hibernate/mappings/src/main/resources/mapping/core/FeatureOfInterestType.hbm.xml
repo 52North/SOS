@@ -3,18 +3,18 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" table="featureOfInterestType">
-    	<comment>Table to store the FeatureOfInterestType information. Mapping file: mapping/core/FeatureOfInterestType.hbm.xml</comment>
+        <comment>Table to store the FeatureOfInterestType information. Mapping file: mapping/core/FeatureOfInterestType.hbm.xml</comment>
         <id name="featureOfInterestTypeId" type="long">
             <column name="featureOfInterestTypeId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">featureOfInterestTypeId_seq</param>
+                <param name="sequence">featureOfInterestTypeId_seq</param>
             </generator>
         </id>
         <property name="featureOfInterestType" type="string">
             <column name="featureOfInterestType" not-null="true" unique-key="featureTypeUK">
-            	<comment>The featureOfInterestType value, e.g. http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint (OGC OM 2.0 specification) for point features</comment>
+                <comment>The featureOfInterestType value, e.g. http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint (OGC OM 2.0 specification) for point features</comment>
             </column>
         </property>
     </class>

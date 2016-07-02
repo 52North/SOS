@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.3.7-SNAPSHOT</version>
+    <version>4.3.8-SNAPSHOT</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -81,7 +81,7 @@
         <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
         <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -1237,7 +1237,7 @@
 				<configuration>
 					<flowInitContext>
 				         <masterBranchName>master</masterBranchName>
-				         <developBranchName>develop</developBranchName>
+				         <developBranchName>maintenance/4.3</developBranchName>
 				         <featureBranchPrefix>feature/</featureBranchPrefix>
 				         <releaseBranchPrefix>release/</releaseBranchPrefix>
 				         <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
@@ -1457,13 +1457,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>Hibernate Spatial repo</id>
-            <url>http://www.hibernatespatial.org/repository</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
             <url>http://download.osgeo.org/webdav/geotools/</url>
@@ -1476,11 +1469,10 @@
 			<name>Boundless Cloud Repository</name>
 			<url>https://boundless.artifactoryonline.com/boundless/main</url>
 		</repository>
-        <!-- <repository>
-			<id>boundless</id>
-			<name>Boundless, formerly OpenGeo</name>
-			<url>http://repo.boundlessgeo.com/main/</url>
-		</repository> -->
+		<repository>
+            <id>boundlessgeo-releases</id>
+            <url>https://repo.boundlessgeo.com/main</url>
+		</repository>
     </repositories>
     <profiles>
         <profile>

@@ -3,18 +3,18 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.RelatedFeatureRole" table="relatedFeatureRole">
-    	<comment>Table to store related feature role information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeatureRole.hbm.xml</comment>
+        <comment>Table to store related feature role information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeatureRole.hbm.xml</comment>
         <id name="relatedFeatureRoleId" type="long">
             <column name="relatedFeatureRoleId">
-            	<comment>Table primary key, used for relations</comment>
+                <comment>Table primary key, used for relations</comment>
             </column>
             <generator class="native">
-            	<param name="sequence">relatedFeatureRoleId_seq</param>
+                <param name="sequence">relatedFeatureRoleId_seq</param>
             </generator>
         </id>
         <property name="relatedFeatureRole" type="string">
             <column name="relatedFeatureRole" not-null="true" unique-key="relFeatRoleUK">
-            	<comment>The related feature role definition. See OGC SWES 2.0 specification</comment>
+                <comment>The related feature role definition. See OGC SWES 2.0 specification</comment>
             </column>
         </property>
     </class>

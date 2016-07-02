@@ -124,9 +124,14 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
         FeatureCollection featureCollection = getFeatureCollection(response);
         EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
         featureCollection.addMember(eReportingHeader);
-        TimePeriod timePeriod = addToFeatureCollectionAndGetTimePeriod(featureCollection, response, eReportingHeader);
-        if (!timePeriod.isEmpty()) {
-            eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
+        if (response.hasGlobalValues() && response.getGlobalValues().isSetPhenomenonTime()) {
+            eReportingHeader.setReportingPeriod(Referenceable.of((Time) response.getGlobalValues().getPhenomenonTime()));
+            addToFeatureCollection(featureCollection, response, eReportingHeader);
+        } else {
+            TimePeriod timePeriod = addToFeatureCollectionAndGetTimePeriod(featureCollection, response, eReportingHeader);
+            if (!timePeriod.isEmpty()) {
+                eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
+            }
         }
         encodingValues.setEncodingNamespace(OmConstants.NS_OM_2);
         Map<HelperValues, String> additionalValues = encodingValues.getAdditionalValues();
@@ -143,6 +148,17 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
     private ReportObligationType getReportObligationType(GetObservationResponse response)
             throws InvalidParameterValueException {
         return getAqdHelper().getFlow(response.getExtensions());
+    }
+    
+    private void addToFeatureCollection(FeatureCollection featureCollection,
+            GetObservationResponse response, EReportingHeader eReportingHeader) {
+        TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
+        int counter = 1;
+        for (OmObservation observation : response.getObservationCollection()) {
+            getAqdHelper().processObservation(observation, resultTime, featureCollection,
+                    eReportingHeader, counter++);
+
+        }
     }
 
     private TimePeriod addToFeatureCollectionAndGetTimePeriod(FeatureCollection featureCollection,

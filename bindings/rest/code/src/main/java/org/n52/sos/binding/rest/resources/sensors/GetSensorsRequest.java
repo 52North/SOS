@@ -28,6 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
+import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetCapabilitiesRequest;
 
 /**
@@ -45,6 +46,16 @@ public class GetSensorsRequest implements ISensorsRequest {
     public GetCapabilitiesRequest getCapabilitiesRequest()
     {
         return capabilitiesRequest;
+    }
+    
+    @Override
+    public boolean hasAbstractServiceRequest() {
+        return getCapabilitiesRequest() != null;
+    }
+
+    @Override
+    public AbstractServiceRequest<?> getAbstractServiceRequest() {
+        return getCapabilitiesRequest();
     }
 
 }

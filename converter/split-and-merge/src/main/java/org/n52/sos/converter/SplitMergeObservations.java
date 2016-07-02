@@ -306,33 +306,10 @@ public class SplitMergeObservations
         // TODO merge all observations with the same observationContellation
         // FIXME Failed to set the observation type to sweArrayObservation for
         // the merged Observations
-        // (proc, obsProp, foi)
+        // (proc, obsProp, foi, off)
         if (response.getObservationCollection() != null) {
             ObservationMerger observationMerger = new ObservationMerger();
-            response.setObservationCollection(observationMerger.mergeObservations(response.getObservationCollection(), new ObservationMergeIndicator()));
-//            
-//            final List<OmObservation> mergedObservations = new LinkedList<OmObservation>();
-//            int obsIdCounter = 1;
-//            for (final OmObservation sosObservation : response.getObservationCollection()) {
-//                if (mergedObservations.isEmpty()) {
-//                    sosObservation.setObservationID(Integer.toString(obsIdCounter++));
-//                    mergedObservations.add(sosObservation);
-//                } else {
-//                    boolean combined = false;
-//                    for (final OmObservation combinedSosObs : mergedObservations) {
-//                        if (combinedSosObs.checkForMerge(sosObservation)) {
-//                            combinedSosObs.setResultTime(null);
-//                            combinedSosObs.mergeWithObservation(sosObservation);
-//                            combined = true;
-//                            break;
-//                        }
-//                    }
-//                    if (!combined) {
-//                        mergedObservations.add(sosObservation);
-//                    }
-//                }
-//            }
-//            response.setObservationCollection(mergedObservations);
+            response.setObservationCollection(observationMerger.mergeObservations(response.getObservationCollection(), ObservationMergeIndicator.defaultObservationMergerIndicator()));
         }
     }
 

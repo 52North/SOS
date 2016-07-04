@@ -28,15 +28,24 @@
  */
 package org.n52.svalbard.inspire.omso.v30.encode;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.lang.model.element.Element;
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.n52.sos.encode.AbstractXmlEncoder;
 import org.n52.sos.encode.EncoderKey;
+import org.n52.sos.encode.EncodingValues;
 import org.n52.sos.encode.ObservationEncoder;
+import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -46,6 +55,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
+import org.n52.svalbard.inspire.omso.v30.encode.streaming.PointTimeSeriesObservationXmlStreamWriter;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -58,7 +68,7 @@ import com.google.common.collect.Sets;
  *
  */
 public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
-        implements ObservationEncoder<XmlObject, Object> {
+        implements ObservationEncoder<XmlObject, Object>, StreamingEncoder<XmlObject, Object> {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
             CodingHelper.encoderKeysForElements(InspireOMSOConstants.NS_OMSO_30, OmObservation.class);
@@ -79,6 +89,43 @@ public class InspireOmObservationEncoder extends AbstractXmlEncoder<Object>
             return encodeInspireOmsoType((OmObservation) element);
         }
         throw new UnsupportedEncoderInputException(this, element);
+    }
+
+    @Override
+    public void encode(Object objectToEncode, OutputStream outputStream) throws OwsExceptionReport {
+        encode(objectToEncode, outputStream, new EncodingValues());
+    }
+
+    @Override
+    public void encode(Object element, OutputStream outputStream, EncodingValues encodingValues)
+            throws OwsExceptionReport {
+        try {
+            if (element instanceof OmObservation && InspireOMSOConstants.OBS_TYPE_POINT_TIME_SERIES_OBSERVATION
+                    .equals(((OmObservation) element).getObservationConstellation().getObservationType())) {
+                new PointTimeSeriesObservationXmlStreamWriter().write((OmObservation)element, outputStream, encodingValues);
+            } else {
+                XmlOptions xmlOptions = getXmlOptions();
+                if (encodingValues.isEmbedded()) {
+                    xmlOptions.setSaveNoXmlDecl();
+                }
+                // writeIndent(encodingValues.getIndent(), outputStream);
+                encode(element, encodingValues.getAdditionalValues()).save(outputStream, xmlOptions);
+            }
+        } catch (IOException ioe) {
+            throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
+        } catch (XMLStreamException xmlse) {
+                throw new NoApplicableCodeException().causedBy(xmlse)
+                        .withMessage("Error while writing element to stream!");
+        } finally {
+            if (encodingValues.isEmbedded()) {
+                getXmlOptions().remove(XmlOptions.SAVE_NO_XML_DECL);
+            }
+        }
+    }
+
+    @Override
+    public boolean forceStreaming() {
+        return false;
     }
 
     protected static XmlObject encodeInspireOmsoType(OmObservation o) throws OwsExceptionReport {

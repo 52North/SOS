@@ -33,10 +33,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.encode.Encoder;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.EncodingValues;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmObservation;
@@ -46,6 +49,7 @@ import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.inspire.omso.InspireOMSOConstants;
 import org.n52.svalbard.inspire.omso.PointTimeSeriesObservation;
+import org.n52.svalbard.inspire.omso.v30.encode.streaming.PointTimeSeriesObservationXmlStreamWriter;
 
 import com.google.common.collect.Sets;
 
@@ -101,6 +105,15 @@ public class PointTimeSeriesObservationTypeEncoder extends AbstractOmInspireEnco
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
             throws OwsExceptionReport {
         encodingValues.setEncoder(this);
+        if (objectToEncode instanceof OmObservation) {
+            try {
+                new PointTimeSeriesObservationXmlStreamWriter().write((OmObservation) objectToEncode, outputStream,
+                        encodingValues);
+            } catch (XMLStreamException xmlse) {
+                throw new NoApplicableCodeException().causedBy(xmlse)
+                        .withMessage("Error while writing element to stream!");
+            }
+        }
         super.encode(objectToEncode, outputStream, encodingValues);
     }
 

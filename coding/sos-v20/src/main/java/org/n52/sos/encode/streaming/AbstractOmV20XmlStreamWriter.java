@@ -151,7 +151,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *             error occurs when creating elements to be written
      */
     protected void writeOmObservationDoc(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
-        start(OmConstants.QN_OM_20_OBSERVATION);
+        start(getDocumentName());
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
@@ -193,7 +193,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         writeResult(observation, encodingValues);
         writeNewLine();
         indent--;
-        end(OmConstants.QN_OM_20_OBSERVATION);
+        end(getDocumentName());
         indent++;
     }
 
@@ -536,6 +536,10 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     protected String getTimeString(Time time) throws DateTimeFormatException {
         DateTime dateTime = getTime(time);
         return DateTimeHelper.formatDateTime2String(dateTime, time.getTimeFormat());
+    }
+
+    protected QName getDocumentName() {
+        return OmConstants.QN_OM_20_OBSERVATION;
     }
 
     /**

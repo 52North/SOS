@@ -199,10 +199,10 @@ public class MiscSettings implements SettingDefinitionProvider {
                     .setGroup(GROUP)
                     .setOrder(ORDER_16)
                     .setKey(RETURN_OVERALL_EXTREMA_FOR_FIRST_LATEST)
-                    .setDefaultValue(true)
+                    .setDefaultValue(false)
                     .setTitle("Should the SOS return overall extrema?")
                     .setDescription(
-                            "Should the SOS return overall extrema for first/latest observation queries or for each time series");
+                            "Should the SOS return overall extrema for first/latest observation queries (<code>true</code>) or for each time series(<code>false</code>)");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet.<SettingDefinition<?, ?>> of(
             TOKEN_SEPERATOR_DEFINITION, TUPLE_SEPERATOR_DEFINITION,DECIMAL_SEPERATOR_DEFINITION,

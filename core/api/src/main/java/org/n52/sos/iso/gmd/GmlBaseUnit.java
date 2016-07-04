@@ -28,6 +28,7 @@
  */
 package org.n52.sos.iso.gmd;
 
+import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.JavaHelper;
@@ -37,7 +38,7 @@ import org.n52.sos.util.JavaHelper;
  *
  * @author Christian Autermann
  */
-public class GmlBaseUnit {
+public class GmlBaseUnit extends AbtractGmd {
             
     private String id;
     private final String identifier;

@@ -28,12 +28,14 @@
  */
 package org.n52.sos.iso.gmd;
 
+import org.n52.sos.iso.gco.AbtractGmd;
+
 /**
  * TODO JavaDoc
  *
  * @author Christian Autermann
  */
-public class GmdCitationDate {
+public class GmdCitationDate extends AbtractGmd {
 
     private final GmdDateType dateType;
     private final String date;

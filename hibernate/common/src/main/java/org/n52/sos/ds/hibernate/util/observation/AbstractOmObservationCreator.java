@@ -43,7 +43,9 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.iso.gmd.CiOnlineResource;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
@@ -106,9 +108,26 @@ public abstract class AbstractOmObservationCreator {
     protected String getDecimalSeparator() {
         return ServiceConfiguration.getInstance().getDecimalSeparator();
     }
-
+    
     protected String getNoDataValue() {
         return getActiveProfile().getResponseNoDataPlaceholder();
+    }
+    
+    protected void addDefaultValuesToObservation(OmObservation o) {
+        o.setNoDataValue(getActiveProfile().getResponseNoDataPlaceholder());
+        o.setNoDataValue(getNoDataValue());
+        o.setTokenSeparator(getTokenSeparator());
+        o.setTupleSeparator(getTupleSeparator());
+        o.setDecimalSeparator(getDecimalSeparator());
+        addMetadata(o);
+    }
+
+    private void addMetadata(OmObservation o) {
+        if (MetaDataConfigurations.getInstance().isShowCiOnlineReourceInObservations()) {
+            CiOnlineResource ciOnlineResource = new CiOnlineResource(ServiceConfiguration.getInstance().getServiceURL());
+            ciOnlineResource.setProtocol("OGC:SOS-2.0.0");
+            o.addMetaDataProperty(new GenericMetaData(ciOnlineResource));
+        }
     }
 
     public abstract List<OmObservation> create() throws OwsExceptionReport,
@@ -132,7 +151,6 @@ public abstract class AbstractOmObservationCreator {
     public Locale getI18N() {
         return i18n;
     }
-
 
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry) throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<>();

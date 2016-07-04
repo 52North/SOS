@@ -28,6 +28,8 @@
  */
 package org.n52.svalbard.inspire.omso;
 
+import javax.xml.namespace.QName;
+
 import org.n52.sos.w3c.SchemaLocation;
 
 /**
@@ -58,5 +60,9 @@ public interface InspireOMSOConstants {
     String OBS_TYPE_PROFILE_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/ProfileObservation";
 
     String OBS_TYPE_TRAJECTORY_OBSERVATION = "http://inspire.ec.europa.eu/featureconcept/TrajectoryObservation";
+
+    String EN_OMSO_POINT_TIMESERIES_OBSERVATION = "PointTimeSeriesObservation";
+
+    QName QN_POINT_TIMESERES_OBSERVATION = new QName(NS_OMSO_30, EN_OMSO_POINT_TIMESERIES_OBSERVATION, NS_OMSO_PREFIX);;
 
 }

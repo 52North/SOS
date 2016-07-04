@@ -30,6 +30,7 @@ package org.n52.sos.ogc.gml;
 
 import java.io.Serializable;
 
+import org.n52.sos.ogc.DefaultEncoding;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.features.samplingFeatures.FeatureOfInterestVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
@@ -48,7 +49,7 @@ import org.n52.sos.util.StringHelper;
  * @since
  * 
  */
-public abstract class AbstractFeature extends AbstractGML implements Serializable {
+public abstract class AbstractFeature extends AbstractGML implements Serializable, DefaultEncoding<AbstractFeature> {
 
     /**
      * serial number

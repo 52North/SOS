@@ -26,45 +26,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.iso.gmd;
+package org.n52.sos.ogc.gml;
 
-import java.util.Set;
-
-import org.n52.sos.iso.gco.AbtractGmd;
-import org.n52.sos.util.CollectionHelper;
-
-import com.google.common.collect.Sets;
-
-public class PT_FreeText extends AbtractGmd {
+public class AbstractMetaData {
     
-    private Set<LocalisedCharacterString> textGroup = Sets.newHashSet();
-
-    /**
-     * @return the textGroup
-     */
-    public Set<LocalisedCharacterString> getTextGroup() {
-        return textGroup;
-    }
-
-    /**
-     * @param textGroup the textGroup to set
-     */
-    public PT_FreeText setTextGroup(Set<LocalisedCharacterString> textGroup) {
-        this.textGroup.clear();
-        this.textGroup.addAll(textGroup);
-        return this;
-    }
-    
-    /**
-     * @param textGroup the textGroup to add
-     */
-    public PT_FreeText addTextGroup(LocalisedCharacterString textGroup) {
-        this.textGroup.add(textGroup);
-        return this;
-    }
-    
-    public boolean isSetTextGroup() {
-        return CollectionHelper.isNotEmpty(getTextGroup());
-    }
-
 }

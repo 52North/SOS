@@ -28,7 +28,7 @@
  */
 package org.n52.sos.iso.gco;
 
-public abstract class AbstractObject {
+public abstract class AbstractObject extends AbtractGmd {
 
     private String id;
     

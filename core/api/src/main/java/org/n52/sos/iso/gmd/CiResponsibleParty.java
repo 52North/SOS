@@ -28,6 +28,7 @@
  */
 package org.n52.sos.iso.gmd;
 
+import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.iso.gco.Role;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
@@ -37,7 +38,7 @@ import org.n52.sos.w3c.xlink.SimpleAttrs;
  * @since
  *
  */
-public class CiResponsibleParty implements AttributeSimpleAttrs {
+public class CiResponsibleParty extends AbtractGmd implements AttributeSimpleAttrs {
 
     private SimpleAttrs simpleAttrs;
 

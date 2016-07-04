@@ -35,17 +35,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.om.x20.NamedValueDocument;
-import net.opengis.om.x20.NamedValuePropertyType;
-import net.opengis.om.x20.NamedValueType;
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationPropertyType;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.om.x20.OMProcessPropertyType;
-import net.opengis.om.x20.ObservationContextPropertyType;
-import net.opengis.om.x20.ObservationContextType;
-import net.opengis.om.x20.TimeObjectPropertyType;
-
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
@@ -53,9 +42,6 @@ import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.XmlString;
 import org.isotc211.x2005.gmd.AbstractDQElementDocument;
 import org.isotc211.x2005.gmd.DQElementPropertyType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.convert.Converter;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.convert.ConverterRepository;
@@ -64,6 +50,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.AbstractGML;
+import org.n52.sos.ogc.gml.AbstractMetaData;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -72,12 +59,12 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractObservationValue;
 import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservationContext;
 import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.ogc.om.OmObservationContext;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -85,11 +72,11 @@ import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.CvDiscretePointCoverage;
-import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.MultiPointCoverage;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.ProfileValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.RectifiedGridCoverage;
 import org.n52.sos.ogc.om.values.ReferenceValue;
@@ -116,10 +103,23 @@ import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.W3CConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
+import net.opengis.om.x20.NamedValueDocument;
+import net.opengis.om.x20.NamedValuePropertyType;
+import net.opengis.om.x20.NamedValueType;
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationPropertyType;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.OMProcessPropertyType;
+import net.opengis.om.x20.ObservationContextPropertyType;
+import net.opengis.om.x20.ObservationContextType;
+import net.opengis.om.x20.TimeObjectPropertyType;
 
 
 public abstract class AbstractOmEncoderv20
@@ -275,10 +275,11 @@ public abstract class AbstractOmEncoderv20
                 ((AbstractObservationValue)sosObservation.getValue()).setObservationID(sosObservation.getObservationID());
             }
         }
-
+        
         setObservationIdentifier(sosObservation, xbObservation);
         setObservationName(sosObservation, xbObservation);
         setDescription(sosObservation, xbObservation);
+        setMetaDataProperty(sosObservation, xbObservation);
         setObservationType(sosObservation, xbObservation);
         setRelatedObservations(sosObservation, xbObservation);
         setPhenomenonTime(sosObservation, xbObservation);
@@ -348,6 +349,16 @@ public abstract class AbstractOmEncoderv20
             for (CodeType name : observation.getName()) {
                 XmlObject xbId = encodeGML(name);
                 xb.addNewName().set(xbId);
+            }
+        }
+    }
+
+    private void setMetaDataProperty(OmObservation sosObservation, OMObservationType xbObservation) throws OwsExceptionReport {
+        if (sosObservation.isSetMetaDataProperty()) {
+            for (AbstractMetaData abstractMetaData : sosObservation.getMetaDataProperty()) {
+                XmlObject encodeObject = encodeGML32(abstractMetaData);
+                XmlObject substituteElement = XmlHelper.substituteElement(xbObservation.addNewMetaDataProperty().addNewAbstractMetaData(), encodeObject);
+                substituteElement.set(encodeObject);
             }
         }
     }

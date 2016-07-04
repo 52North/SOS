@@ -28,6 +28,7 @@
  */
 package org.n52.sos.iso.gmd;
 
+import org.n52.sos.iso.gco.AbtractGmd;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
 import org.n52.sos.w3c.xlink.SimpleAttrs;
 
@@ -36,7 +37,7 @@ import org.n52.sos.w3c.xlink.SimpleAttrs;
  *
  * @author Christian Autermann
  */
-public class GmdCitation implements AttributeSimpleAttrs {
+public class GmdCitation extends AbtractGmd implements AttributeSimpleAttrs {
 
     private static final GmdCitation EC_50_2008
             = new GmdCitation("EC/50/2008", new GmdCitationDate(GmdDateType.publication(), "2008"));

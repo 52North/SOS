@@ -40,7 +40,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.isotc211.x2005.gco.CharacterStringPropertyType;
 import org.isotc211.x2005.gco.CodeListValueType;
 import org.isotc211.x2005.gco.UnitOfMeasurePropertyType;
@@ -50,6 +49,9 @@ import org.isotc211.x2005.gmd.CICitationPropertyType;
 import org.isotc211.x2005.gmd.CICitationType;
 import org.isotc211.x2005.gmd.CIContactType;
 import org.isotc211.x2005.gmd.CIDateType;
+import org.isotc211.x2005.gmd.CIOnlineResourceDocument;
+import org.isotc211.x2005.gmd.CIOnlineResourcePropertyType;
+import org.isotc211.x2005.gmd.CIOnlineResourceType;
 import org.isotc211.x2005.gmd.CIResponsiblePartyDocument;
 import org.isotc211.x2005.gmd.CIResponsiblePartyPropertyType;
 import org.isotc211.x2005.gmd.CIResponsiblePartyType;
@@ -71,11 +73,13 @@ import org.isotc211.x2005.gmd.MDMetadataDocument;
 import org.isotc211.x2005.gmd.MDMetadataPropertyType;
 import org.isotc211.x2005.gmd.MDMetadataType;
 import org.isotc211.x2005.gmd.PTFreeTextType;
+import org.isotc211.x2005.gmd.URLPropertyType;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.iso.GcoConstants;
 import org.n52.sos.iso.gco.AbstractRole;
 import org.n52.sos.iso.gmd.AbstractMDIdentification;
 import org.n52.sos.iso.gmd.CiContact;
+import org.n52.sos.iso.gmd.CiOnlineResource;
 import org.n52.sos.iso.gmd.CiResponsibleParty;
 import org.n52.sos.iso.gmd.GmdCitation;
 import org.n52.sos.iso.gmd.GmdCitationDate;
@@ -135,7 +139,7 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
     @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
             encoderKeysForElements(GmdConstants.NS_GMD, SmlResponsibleParty.class, GmdQuantitativeResult.class,
-                    GmdConformanceResult.class, CiResponsibleParty.class, MDMetadata.class, PT_FreeText.class), 
+                    GmdConformanceResult.class, CiResponsibleParty.class, MDMetadata.class, PT_FreeText.class, CiOnlineResource.class), 
             encoderKeysForElements(null, GmdQuantitativeResult.class, GmdConformanceResult.class));
 
     public Iso19139GmdEncoder() {
@@ -178,6 +182,8 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
             encodedObject = encodeMDDataIdentification((MDDataIdentification) element, additionalValues);
         } else if (element instanceof PT_FreeText) {
             encodedObject = encodePTFreeText((PT_FreeText) element, additionalValues);
+        } else if (element instanceof CiOnlineResource) {
+            encodedObject = encodeCiOnlineResource((CiOnlineResource) element, additionalValues);
         } else {
             if (element instanceof GmdDomainConsistency) {
                 encodedObject = encodeGmdDomainConsistency((GmdDomainConsistency)element, additionalValues);
@@ -637,6 +643,44 @@ public class Iso19139GmdEncoder extends AbstractIso19139GcoEncoder {
             values.add(cspt);
         }
         return values.toArray(new CharacterStringPropertyType[0]);
+    }
+
+    private XmlObject encodeCiOnlineResource(CiOnlineResource element, Map<HelperValues, String> additionalValues) {
+        CIOnlineResourceType ciort = CIOnlineResourceType.Factory.newInstance(getXmlOptions());
+        if (element.getLinkage().isPresent()) {
+            ciort.addNewLinkage().setURL(element.getLinkage().get().toString());
+        } else {
+            URLPropertyType urlpt = ciort.addNewLinkage();
+            urlpt.setNil();
+            if (element.getLinkage().getNilReason().isPresent()) {
+                urlpt.setNilReason(element.getLinkage().getNilReason().get());
+            }
+        }
+        
+        // protocol
+        if (element.isSetProtocol()) {
+            if (element.getProtocol().isPresent()) {
+                ciort.addNewProtocol().setCharacterString(element.getProtocol().get().toString());
+            } else {
+                CharacterStringPropertyType cspt = ciort.addNewProtocol();
+                cspt.setNil();
+                if (element.getProtocol().getNilReason().isPresent()) {
+                    cspt.setNilReason(element.getProtocol().getNilReason().get());
+                }
+            }
+        }
+        // ...
+        
+        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            CIOnlineResourcePropertyType ciorpt = CIOnlineResourcePropertyType.Factory.newInstance(getXmlOptions());
+            ciorpt.setCIOnlineResource(ciort);
+            return ciorpt;
+        } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            CIOnlineResourceDocument ciord = CIOnlineResourceDocument.Factory.newInstance(getXmlOptions());
+            ciord.setCIOnlineResource(ciort);
+            return ciord;
+        }
+        return ciort;
     }
 
 }

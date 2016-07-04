@@ -26,45 +26,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.iso.gmd;
+package org.n52.sos.iso.gco;
 
-import java.util.Set;
+import org.n52.sos.iso.gmd.GmdConstants;
+import org.n52.sos.ogc.DefaultEncoding;
 
-import org.n52.sos.iso.gco.AbtractGmd;
-import org.n52.sos.util.CollectionHelper;
+import com.google.common.base.Strings;
 
-import com.google.common.collect.Sets;
-
-public class PT_FreeText extends AbtractGmd {
+public abstract class AbtractGmd implements DefaultEncoding<AbtractGmd> {
     
-    private Set<LocalisedCharacterString> textGroup = Sets.newHashSet();
+    private String defaultEncoding = GmdConstants.NS_GMD;
 
-    /**
-     * @return the textGroup
-     */
-    public Set<LocalisedCharacterString> getTextGroup() {
-        return textGroup;
+    @Override
+    public String getDefaultElementEncoding() {
+        return defaultEncoding;
     }
-
-    /**
-     * @param textGroup the textGroup to set
-     */
-    public PT_FreeText setTextGroup(Set<LocalisedCharacterString> textGroup) {
-        this.textGroup.clear();
-        this.textGroup.addAll(textGroup);
+    
+    @Override
+    public AbtractGmd setDefaultElementEncoding(String defaultEncoding) {
+        this.defaultEncoding = defaultEncoding;
         return this;
     }
     
-    /**
-     * @param textGroup the textGroup to add
-     */
-    public PT_FreeText addTextGroup(LocalisedCharacterString textGroup) {
-        this.textGroup.add(textGroup);
-        return this;
+    @Override
+    public boolean isSetDefaultElementEncoding() {
+        return !Strings.isNullOrEmpty(getDefaultElementEncoding());
     }
-    
-    public boolean isSetTextGroup() {
-        return CollectionHelper.isNotEmpty(getTextGroup());
-    }
-
 }

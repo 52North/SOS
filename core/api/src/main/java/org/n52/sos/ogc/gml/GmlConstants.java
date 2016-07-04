@@ -146,6 +146,8 @@ public interface GmlConstants extends Constants {
     String EN_FEATURE_MEMBER = "featureMember";
 
     String EN_IDENTIFIER = "identifier";
+    
+    String EN_META_DATA_PROPERTY = "metaDataProperty";
 
     /* attribute names in GML */
 
@@ -249,6 +251,8 @@ public interface GmlConstants extends Constants {
     QName QN_IDENTIFIER_32 = new QName(NS_GML_32, EN_IDENTIFIER, NS_GML_PREFIX);
 
     QName QN_INDETERMINATE_POSITION_32 = new QName(NS_GML_32, AN_INDETERMINATE_POSITION, NS_GML_PREFIX);
+    
+    QName QN_OM_20_META_DATA_PROPERTY_32 = new QName(NS_GML_32, EN_META_DATA_PROPERTY , NS_GML_PREFIX);
 
     /** string constant for ascending sorting order */
     String SORT_ORDER_ASC = SortingOrder.ASC.name();

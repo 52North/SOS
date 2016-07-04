@@ -30,6 +30,7 @@ package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +55,7 @@ import org.n52.sos.encode.XmlStreamWriter;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.AbstractMetaData;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -169,6 +171,10 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             writeObservationType(observation.getObservationConstellation().getObservationType());
             writeNewLine();
         }
+        if (observation.isSetMetaDataProperty()) {
+            writeMetaDataProperty(observation.getMetaDataProperty());
+            writeNewLine();
+        }
         Time phenomenonTime = observation.getPhenomenonTime();
         if (phenomenonTime.getGmlId() == null) {
             phenomenonTime.setGmlId(OmConstants.PHENOMENON_TIME_NAME + "_" + observationID);
@@ -231,6 +237,25 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         start(GmlConstants.QN_DESCRIPTION_32);
         chars(description);
         endInline(GmlConstants.QN_DESCRIPTION_32);
+    }
+
+    /**
+     * Write metaData as gml:metaDataProperty to stream
+     * @param metaDataProperty MetaData to write
+     * @throws XMLStreamException If an error occurs when writing to stream
+     * @throws OwsExceptionReport If an error occurs when creating elements to be written
+     */
+    protected void writeMetaDataProperty(List<AbstractMetaData> metaDataProperty) throws XMLStreamException, OwsExceptionReport {
+        for (AbstractMetaData abstractMetaData : metaDataProperty) {
+            start(GmlConstants.QN_OM_20_META_DATA_PROPERTY_32);
+            writeNewLine();
+            XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, abstractMetaData, getDocumentAdditionalHelperValues());
+            rawText(xmlObject.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
+            writeNewLine();
+            indent--;
+            end(GmlConstants.QN_OM_20_META_DATA_PROPERTY_32);
+            indent++;
+        }
     }
 
     /**

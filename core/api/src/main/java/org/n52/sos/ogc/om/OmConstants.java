@@ -166,7 +166,7 @@ public interface OmConstants {
     String EN_NAMED_VALUE = "NamedValue";
 
     String EN_VALID_TIME = "validTime";
-
+    
     // /////////////////////////////////////////////////////////////////////////////////
     // other constants
     String PHEN_SAMPLING_TIME = "http://www.opengis.net/def/property/OGC/0/SamplingTime";
@@ -299,7 +299,7 @@ public interface OmConstants {
     QName QN_OM_20_PARAMETER = new QName(NS_OM_2, EN_PARAMETER, NS_OM_PREFIX);
 
     QName QN_OM_20_NAMED_VALUE = new QName(NS_OM_2, EN_NAMED_VALUE, NS_OM_PREFIX);
-
+    
     Set<String> OBSERVATION_TYPES = ImmutableSet.of(
             OBS_TYPE_MEASUREMENT,
             OBS_TYPE_CATEGORY_OBSERVATION,

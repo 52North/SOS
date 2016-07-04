@@ -67,6 +67,9 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -129,6 +132,8 @@ public class SplitMergeObservations
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request instanceof InsertObservationRequest) {
             splitObservations((InsertObservationRequest) request);
+        } else if (request instanceof AbstractObservationRequest) {
+            checkGetObservationRequest((AbstractObservationRequest) request);
         }
         return request;
     }
@@ -136,6 +141,17 @@ public class SplitMergeObservations
     private void splitObservations(InsertObservationRequest request) throws OwsExceptionReport {
         if (request.isSetExtensionSplitDataArrayIntoObservations()) {
             splitDataArrayIntoObservations(request);
+        }
+    }
+
+    private void checkGetObservationRequest(AbstractObservationRequest request) {
+        if (request.isSetResultModel()) {
+            if (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(request.getResultModel())) {
+                request.addExtension(new SwesExtensionImpl<SweBoolean>()
+                        .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())
+                        .setValue((SweBoolean) new SweBoolean().setValue(true)
+                                .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())));
+            }
         }
     }
 

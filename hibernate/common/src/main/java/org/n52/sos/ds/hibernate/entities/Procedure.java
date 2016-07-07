@@ -40,6 +40,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.StringHelper;
 
 import com.google.common.collect.Sets;
 
@@ -125,6 +126,10 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
 
     public void setDescriptionFile(String descriptionFile) {
         this.descriptionFile = descriptionFile;
+    }
+    
+    public boolean isSetDescriptionFile() {
+        return StringHelper.isNotEmpty(descriptionFile);
     }
 
     @Override

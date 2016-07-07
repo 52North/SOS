@@ -123,7 +123,7 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
             return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
                     new HibernateGeometryCreator(storageEPSG, storage3DEPSG).createGeometry(feature));
         } else {
-            if (session != null) {
+            if (!feature.isSetUrl() && session != null) {
                 int srid = getGeometryHandler().getStorageEPSG();
                 if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() < 100) {
                     List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);

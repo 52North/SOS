@@ -12,7 +12,6 @@
                 <param name="sequence">observablePropertyId_seq</param>
             </generator>
         </id>
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <property name="identifier" type="string">
             <column name="identifier" not-null="true" unique-key="obsPropIdentifierUK">
                 <comment>The identifier of the observableProperty, gml:identifier. Used as parameter for queries. Unique</comment>
@@ -43,5 +42,29 @@
                 <comment>For later use by the SOS. Indicator if this observableProperty should not be provided by the SOS.</comment>
             </column>
         </property>
+        <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
+            <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')"/>
+        </property>
+        <set name="childs" table="compositePhenomenon" inverse="false">
+            <comment>Relation table to store observableProperty hierarchies, aka compositePhenomenon. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TObservableProperty.hbm.xml</comment>
+            <key>
+                <column name="parentObservablePropertyId" not-null="true">
+                    <comment>Foreign Key (FK) to the related parent observableProperty. Contains "observableProperty".observablePropertyid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.ObservableProperty" foreign-key="observablePropertyChildFk">
+                <column name="childObservablePropertyId" not-null="true">
+                    <comment>Foreign Key (FK) to the related child observableProperty. Contains "observableProperty".observablePropertyid</comment>
+                </column>
+            </many-to-many>
+        </set>
+        <set name="parents" table="compositePhenomenon" inverse="false" >
+            <key>
+                <column name="childObservablePropertyId" not-null="true" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.ObservableProperty" foreign-key="observablePropertyParentFk">
+                <column name="parentObservablePropertyId" not-null="true" />
+            </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

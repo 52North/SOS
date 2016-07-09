@@ -28,6 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;

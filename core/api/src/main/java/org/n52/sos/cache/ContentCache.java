@@ -35,7 +35,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.n52.sos.i18n.LocalizedString;
 import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.ogc.sos.SosEnvelope;
+
 
 /**
  * This encapsulates relationships between the different metadata components of
@@ -44,14 +44,17 @@ import org.n52.sos.ogc.sos.SosEnvelope;
  * the DB for this information. (Usually the informations stored here do not
  * often change)
  *
- * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  * @author Christian Autermann <c.autermann@52north.org>
  *
  * @since 4.0.0
  */
-public interface ContentCache extends Serializable {
-    
+public interface ContentCache
+        extends Serializable,
+                TemporalCache,
+                SpatialCache,
+                CompositePhenomenonCache {
+
     /**
      * @return the last cache update time
      */
@@ -61,174 +64,6 @@ public interface ContentCache extends Serializable {
      * @return the maximal phenomenon time for all observations
      */
     DateTime getMaxPhenomenonTime();
-
-    /**
-     * @return if the maximal phenomenon time is set
-     */
-    boolean hasMaxPhenomenonTime();
-
-    /**
-     * Returns the maximal phenomenon time for the specified offering.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return the maximal phenomenon time for or null if it is not set
-     */
-    DateTime getMaxPhenomenonTimeForOffering(String offering);
-
-    /**
-     * Returns the whether or not the maximal phenomenon time for the specified
-     * offering is set.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return if the maximal phenomenon time is set
-     */
-    boolean hasMaxPhenomenonTimeForOffering(String offering);
-
-    /**
-     * Returns the maximal phenomenon time period for the specified procedure.
-     *
-     * @param procedure
-     *            the procedure identifier
-     *
-     * @return the maximal phenomenon time for the specified procedure or null
-     *         if it is not set
-     */
-    DateTime getMaxPhenomenonTimeForProcedure(String procedure);
-
-    /**
-     * Returns the whether or not the maximal phenomenon time for the specified
-     * procedure is set.
-     *
-     * @param procedure
-     *            the procedure identifier
-     *
-     * @return if the maximal phenomenon time is set
-     */
-    boolean hasMaxPhenomenonTimeForProcedure(String procedure);
-
-    /**
-     * @return the minimal phenomenon time for all observations
-     */
-    DateTime getMinPhenomenonTime();
-
-    /**
-     * @return if the minimal phenomenon time is set
-     */
-    boolean hasMinPhenomenonTime();
-
-    /**
-     * Returns the minimal phenomenon time for the specified offering.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return the minimal phenomenon time for or null if it is not set
-     */
-    DateTime getMinPhenomenonTimeForOffering(String offering);
-
-    /**
-     * Returns the whether or not the minimal phenomenon time for the specified
-     * offering is set.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return if the minimal phenomenon time is set
-     */
-    boolean hasMinPhenomenonTimeForOffering(String offering);
-
-    /**
-     * Returns the minimal phenomenon time period for the specified procedure.
-     *
-     * @param procedure
-     *            the procedure identifier
-     *
-     * @return the minimal phenomenon time for the specified procedure or null
-     *         if it is not set
-     */
-    DateTime getMinPhenomenonTimeForProcedure(String procedure);
-
-    /**
-     * Returns the whether or not the minimal phenomenon time for the specified
-     * procedure is set.
-     *
-     * @param procedure
-     *            the procedure identifier
-     *
-     * @return if the minimal phenomenon time is set
-     */
-    boolean hasMinPhenomenonTimeForProcedure(String procedure);
-
-    /**
-     * @return the maximal result time for all observations
-     */
-    DateTime getMaxResultTime();
-
-    /**
-     * @return if the maximal result time is set
-     */
-    boolean hasMaxResultTime();
-
-    /**
-     * Returns the maximal result time for the specified offering.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return the maximal result time for or null if it is not set
-     */
-    DateTime getMaxResultTimeForOffering(String offering);
-
-    /**
-     * Returns the whether or not the maximal result time for the specified
-     * offering is set.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return if the maximal result time is set
-     */
-    boolean hasMaxResultTimeForOffering(String offering);
-
-    /**
-     * @return the minimal result time for all observations
-     */
-    DateTime getMinResultTime();
-
-    /**
-     * @return if the minimal result time is set
-     */
-    boolean hasMinResultTime();
-
-    /**
-     * Returns the minimal result time for the specified offering.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return the minimal result time for or null if it is not set
-     */
-    DateTime getMinResultTimeForOffering(String offering);
-
-    /**
-     * Returns the whether or not the minimal result time for the specified
-     * offering is set.
-     *
-     * @param offering
-     *            the offering identifier
-     *
-     * @return if the minimal result time is set
-     */
-    boolean hasMinResultTimeForOffering(String offering);
-
-    /**
-     * @return the default EPSG code
-     */
-    int getDefaultEPSGCode();
 
     /**
      * Returns the allowed observation types for the specified offering.
@@ -421,6 +256,17 @@ public interface ContentCache extends Serializable {
      * @return the offerings
      */
     Set<String> getOfferingsForProcedure(String procedure);
+    
+    
+    /**
+     * Get the offerings associated with the specified procedures.
+     *
+     * @param procedures
+     *            the procedures
+     *
+     * @return the offerings
+     */
+    Set<String> getOfferingsForProcedures(Set<String> procedures);
 
     /**
      * @return all offerings that are associated with a result template
@@ -428,7 +274,7 @@ public interface ContentCache extends Serializable {
     Set<String> getOfferingsWithResultTemplate();
 
     /**
-     * @return all procedures
+     * @return procedures
      */
     Set<String> getProcedures();
 
@@ -441,7 +287,7 @@ public interface ContentCache extends Serializable {
      * @return {@code true} if it exists
      */
     boolean hasProcedure(String procedure);
-
+    
     /**
      * Get the procedures associated with the specified feature of interest.
      *
@@ -542,57 +388,6 @@ public interface ContentCache extends Serializable {
      */
     Set<String> getRolesForRelatedFeature(String relatedFeature);
 
-    /**
-     * Get the envelope associated with the specified offering.
-     *
-     * @param offering
-     *            the offering
-     *
-     * @return the envelope
-     */
-    SosEnvelope getEnvelopeForOffering(String offering);
-
-    /**
-     * Get the Spatial Filtering Profile envelope associated with the specified
-     * offering.
-     *
-     * @param offering
-     *            the offering
-     *
-     * @return the envelope
-     */
-    SosEnvelope getSpatialFilteringProfileEnvelopeForOffering(String offering);
-
-    /**
-     * Checks whether the specified offering has a envelope.
-     *
-     * @param offering
-     *            the offering
-     *
-     * @return {@code true} if it has a envelope
-     */
-    boolean hasEnvelopeForOffering(String offering);
-
-    /**
-     * Checks whether the specified offering has a Spatial Filtering Profile
-     * envelope.
-     *
-     * @param offering
-     *            the offering
-     *
-     * @return {@code true} if it has a envelope
-     */
-    boolean hasSpatialFilteringProfileEnvelopeForOffering(String offering);
-
-    /**
-     * @return the global spatial envelope (never null)
-     */
-    SosEnvelope getGlobalEnvelope();
-
-    /**
-     * @return whether the global spatial envelope is set or not
-     */
-    boolean hasGlobalEnvelope();
 
     /**
      * Gets the name of the specified offering.
@@ -667,29 +462,9 @@ public interface ContentCache extends Serializable {
     MultilingualString getI18nDescriptionsForOffering(String offering);
 
     /**
-     * Get the composite phenomenons associated with the specified offering.
-     *
-     * @param offering
-     *            the offering
-     *
-     * @return the composite phenomenons
-     */
-    Set<String> getCompositePhenomenonsForOffering(String offering);
-
-    /**
      * @return all features of interest
      */
     Set<String> getFeaturesOfInterest();
-
-    /**
-     * Get the observable properties associated with the specified procedure.
-     *
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     *
-     * @return the observable properties
-     */
-    Set<String> getObservablePropertiesForCompositePhenomenon(String compositePhenomenon);
 
     /**
      * Returns collection containing parent features for the passed feature,
@@ -737,7 +512,7 @@ public interface ContentCache extends Serializable {
      * @param includeSelf
      *            whether or not to include the passed feature id in the result
      *
-     * @return Collection<String> containing the passed feature id's children
+     * @return Collection containing the passed feature id's children
      *         (and optionally itself)
      */
     Set<String> getChildFeatures(String featureOfInterest, boolean fullHierarchy, boolean includeSelf);
@@ -791,7 +566,7 @@ public interface ContentCache extends Serializable {
      *            whether or not to include the passed procedure id in the
      *            result
      *
-     * @return Collection<String> containing the passed procedure id's children
+     * @return Collection containing the passed procedure id's children
      *         (and optionally itself)
      */
     Set<String> getChildProcedures(String procedure, boolean fullHierarchy, boolean includeSelf);
@@ -808,25 +583,10 @@ public interface ContentCache extends Serializable {
      *            whether or not to include the passed procedure ids in the
      *            result
      *
-     * @return Collection<String> containing the passed procedure ids' children
+     * @return Collection containing the passed procedure ids' children
      *         (and optionally themselves)
      */
     Set<String> getChildProcedures(Set<String> procedure, boolean fullHierarchy, boolean includeSelves);
-
-    /**
-     * @return all epsg codes
-     */
-    Set<Integer> getEpsgCodes();
-
-    /**
-     * Checks whether the specified epsg code exists.
-     *
-     * @param epsgCode
-     *            the epsg code
-     *
-     * @return {@code true} if it exists
-     */
-    boolean hasEpsgCode(Integer epsgCode);
 
     /**
      * Checks whether the specified related feature has been used as sampling
@@ -861,13 +621,13 @@ public interface ContentCache extends Serializable {
      * @return <code>true</code>, if the specific lanugage is supported
      */
     boolean isLanguageSupported(Locale language);
-    
+
     /**
      * Get supported requestable procedure description format
      *
      * @return Supported requestable procedure description format
      */
-    public Set<String> getRequstableProcedureDescriptionFormat();
+    public Set<String> getRequestableProcedureDescriptionFormat();
     
     /**
      * Is the specific requestable procedure description format supported
@@ -876,22 +636,73 @@ public interface ContentCache extends Serializable {
      *            format to check
      * @return <code>true</code>, if the specific format is supported
      */
-    public boolean hasRequstableProcedureDescriptionFormat(String format);
-    
+    public boolean hasRequestableProcedureDescriptionFormat(String format);
+
     String getFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getFeatureOfInterestHumanReadableNameForIdentifier(String identifier);
-    
+
     String getObservablePropertyIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getObservablePropertyHumanReadableNameForIdentifier(String identifier);
-    
+
     String getProcedureIdentifierForHumanReadableName(String humanReadableName);
-    
+
     String getProcedureHumanReadableNameForIdentifier(String identifier);
-    
-	String getOfferingIdentifierForHumanReadableName(String humanReadableName);
-    
+
+    String getOfferingIdentifierForHumanReadableName(String humanReadableName);
+
     String getOfferingHumanReadableNameForIdentifier(String identifier);
+
+    /**
+     * Get procedures usable for transactional insert observation operations
+     * (InsertObservation, InsertResultTemplate).
+     * 
+     * @return the procedures
+     */
+    Set<String> getTransactionalObservationProcedures();
+    
+    /**
+     * Checks whether the specified procedure exists for transactional insert
+     * observation operations (InsertObservation, InsertResultTemplate).
+     *
+     * @param procedure
+     *            the procedure
+     *
+     * @return {@code true} if it exists
+     */
+    boolean hasTransactionalObservationProcedure(String procedureID);
+
+    /**
+     * Get procedures usable for querying.
+     * 
+     * @return the procedures
+     */
+    Set<String> getQueryableProcedures();
+
+    /**
+     * Checks whether the specified procedure exists for querying.
+     * 
+     * @param procedureID
+     *            the procedure
+     * @return {@code true} if it exists
+     */
+    boolean hasQueryableProcedure(String procedureID);
+
+    Set<String> getTypeInstanceProcedure(TypeInstance typeInstance);
+
+    Set<String> getComponentAggregationProcedure(ComponentAggregation componentAggregation);
+    
+    Set<String> getInstancesForProcedure(String identifier);
+
+    boolean hasInstancesForProcedure(String identifier);
+
+    enum TypeInstance {
+        TYPE, INSTANCE;
+    }
+    
+    enum ComponentAggregation {
+        COMPONENT, AGGREGATION;
+    }
 
 }

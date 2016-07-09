@@ -29,30 +29,33 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUrl;
 import org.n52.sos.util.StringHelper;
+
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
  *
  */
 public class FeatureOfInterest extends SpatialEntity  implements Serializable, HasFeatureOfInterestType, HasGeometry,
-        HasDescriptionXml, HasUrl, HasCoordinate {
+        HasDescriptionXml, HasUrl, HasCoordinate, HasParentChilds<FeatureOfInterest> {
 
     private static final long serialVersionUID = 4142090100433622512L;
-
     public static final String ID = "featureOfInterestId";
-
     private long featureOfInterestId;
-
     private FeatureOfInterestType featureOfInterestType;
-
     private String url;
+    private Set<FeatureOfInterest> childs = Sets.newHashSet();
+    private Set<FeatureOfInterest> parents = Sets.newHashSet();
 
     public long getFeatureOfInterestId() {
         return this.featureOfInterestId;
@@ -95,6 +98,48 @@ public class FeatureOfInterest extends SpatialEntity  implements Serializable, H
     @Override
     public boolean isSetDescription() {
         return StringHelper.isNotEmpty(getDescription());
+    }
+    
+    @Override
+    public Set<FeatureOfInterest> getParents() {
+        return parents;
+    }
+
+    @Override
+    public void setParents(final Set<FeatureOfInterest> parents) {
+        this.parents = parents;
+    }
+
+    @Override
+    public Set<FeatureOfInterest> getChilds() {
+        return childs;
+    }
+
+    @Override
+    public void setChilds(final Set<FeatureOfInterest> childs) {
+        this.childs = childs;
+    }
+
+    @Override
+    public void addParent(FeatureOfInterest parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(FeatureOfInterest child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
     }
 
 }

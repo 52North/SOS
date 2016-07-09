@@ -104,7 +104,7 @@ public class DeleteObservationRequestOperator
                 exceptions.add(owse);
             }
             try {
-                checkObservedProperties(sosRequest.getObservedProperties(), DeleteObservationConstants.PARAM_OBSERVED_PROPERTY);
+                checkObservedProperties(sosRequest.getObservedProperties(), DeleteObservationConstants.PARAM_OBSERVED_PROPERTY, false);
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }

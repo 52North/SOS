@@ -52,6 +52,8 @@ import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hibernate.spatial.dialect.oracle.OracleSpatial10gDoubleFloatDialect;
+
 
 /**
  * Abstract class for Oracle datasources
@@ -60,6 +62,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDatasource {
+	
     private static final Logger LOG = LoggerFactory.getLogger(AbstractOracleDatasource.class);
 
     protected static final String ORACLE_DRIVER_CLASS = "oracle.jdbc.OracleDriver";
@@ -170,22 +173,12 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
-
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-
-            Iterator<Table> tables = config.getTableMappings();
-            List<String> names = new ArrayList<String>();
-            while (tables.hasNext()) {
-                Table table = tables.next();
-                if (table.isPhysicalTable()) {
-                    names.add(table.getName());
-                }
-            }
+            List<String> names = getQuotedSchemaTableNames(settings, conn);
 
             while (names.size() > 0) {
                 int clearedThisPass = 0;
@@ -247,7 +240,7 @@ public abstract class AbstractOracleDatasource extends AbstractHibernateFullDBDa
 
     @Override
     protected Dialect createDialect() {
-        return new OracleSpatial10gDialect();
+        return new OracleSpatial10gDoubleFloatDialect();
     }
 
     @Override

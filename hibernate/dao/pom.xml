@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate</artifactId>
-        <version>4.3.8-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-dao</artifactId>
@@ -31,6 +31,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sos-v20</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>split-and-merge</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

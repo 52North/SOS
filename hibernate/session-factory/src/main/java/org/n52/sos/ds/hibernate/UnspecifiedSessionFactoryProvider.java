@@ -44,15 +44,16 @@ import org.n52.sos.ds.DataConnectionProvider;
 import org.n52.sos.ds.Datasource;
 import org.n52.sos.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
+import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.exception.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionFactoryProvider implements DataConnectionProvider,
-HibernateDatasourceConstants {
-    
+public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionFactoryProvider
+        implements DataConnectionProvider, HibernateDatasourceConstants {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryProvider.class);
 
     /**
@@ -64,12 +65,7 @@ HibernateDatasourceConstants {
      * Configuration instance
      */
     protected Configuration configuration = null;
-    
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#getConnection()
-     */
+
     @Override
     public Session getConnection() throws ConnectionProviderException {
         try {
@@ -86,11 +82,6 @@ HibernateDatasourceConstants {
 
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.ds.ConnectionProvider#returnConnection(java.lang.Object)
-     */
     @Override
     public void returnConnection(Object connection) {
         try {
@@ -106,13 +97,11 @@ HibernateDatasourceConstants {
         }
 
     }
-    
-    
+
     protected DatasourceCallback getDatasourceCallback(Properties properties) {
         if (properties.containsKey(Datasource.class.getName())) {
             try {
-                Class<?> c = Class.forName((String) properties
-                        .get(Datasource.class.getName()));
+                Class<?> c = Class.forName((String) properties.get(Datasource.class.getName()));
                 Datasource datasource = (Datasource) c.newInstance();
                 DatasourceCallback callback = datasource.getCallback();
                 if (callback != null) {
@@ -133,20 +122,21 @@ HibernateDatasourceConstants {
     protected SessionFactory getSessionFactory() {
         return this.sessionFactory;
     }
-    
+
     @Override
     public void initialize(Properties properties) throws ConfigurationException {
-        final DatasourceCallback datasourceCallback
-                = getDatasourceCallback(properties);
+        final DatasourceCallback datasourceCallback = getDatasourceCallback(properties);
         datasourceCallback.onInit(properties);
         try {
             LOGGER.debug("Instantiating configuration and session factory");
             configuration = getConfiguration(properties);
             configuration.mergeProperties(properties);
 
-            // set timestamp mapping to a special type to ensure time is always
-            // queried in UTC
-            configuration.registerTypeOverride(new UtcTimestampType());
+            /*
+             * set timestamp mapping to a special type to ensure time is always
+             * queried in defined time zone
+             */
+            registerTimestampMapping(configuration, properties);
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -155,8 +145,7 @@ HibernateDatasourceConstants {
                 HibernateMetadataCache.init(s);
                 s.doWork(new Work() {
                     @Override
-                    public void execute(Connection connection)
-                            throws SQLException {
+                    public void execute(Connection connection) throws SQLException {
                         datasourceCallback.onFirstConnection(connection);
                     }
                 });
@@ -170,7 +159,17 @@ HibernateDatasourceConstants {
             throw new ConfigurationException(exceptionText, he);
         }
     }
-    
+
+    private void registerTimestampMapping(Configuration configuration, Properties properties) {
+        if (properties.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)
+                && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE).isEmpty()) {
+            configuration.registerTypeOverride(
+                    new ConfigurableTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
+        } else {
+            configuration.registerTypeOverride(new UtcTimestampType());
+        }
+    }
+
     protected abstract Configuration getConfiguration(Properties properties);
 
 }

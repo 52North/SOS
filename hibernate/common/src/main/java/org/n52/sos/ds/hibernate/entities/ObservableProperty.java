@@ -29,22 +29,28 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
+
+import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
-public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDisabledFlag {
+public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity implements Serializable, HasDisabledFlag, HasHiddenChildFlag,HasParentChilds<ObservableProperty> {
 
     private static final long serialVersionUID = -4804791207463850138L;
-
     public static final String ID = "observablePropertyId";
-
     private long observablePropertyId;
-    
     private Boolean disabled = false;
+    private Boolean hiddenChild = false;
+    private Set<ObservableProperty> childs = Sets.newHashSet();
+    private Set<ObservableProperty> parents = Sets.newHashSet();
 
     public long getObservablePropertyId() {
         return this.observablePropertyId;
@@ -55,9 +61,13 @@ public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity 
     }
 
     @Override
-    public ObservableProperty setDisabled(final boolean disabled) {
+    public void setDisabled(final boolean disabled) {
         this.disabled = disabled;
-        return this;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return getDisabled();
     }
 
     @Override
@@ -66,8 +76,55 @@ public class ObservableProperty extends AbstractIdentifierNameDescriptionEntity 
     }
 
     @Override
-    public boolean isDisabled() {
-        return getDisabled();
+    public void setHiddenChild(boolean hiddenChild) {
+        this.hiddenChild = hiddenChild;
+    }
+
+    @Override
+    public boolean isHiddenChild() {
+        return this.hiddenChild;
+    }
+    
+    @Override
+    public Set<ObservableProperty> getParents() {
+        return parents;
+    }
+
+    @Override
+    public void setParents(final Set<ObservableProperty> parents) {
+        this.parents = parents;
+    }
+
+    @Override
+    public Set<ObservableProperty> getChilds() {
+        return childs;
+    }
+
+    @Override
+    public void setChilds(final Set<ObservableProperty> childs) {
+        this.childs = childs;
+    }
+
+    @Override
+    public void addParent(ObservableProperty parent) {
+        if (parent == null) {
+            return;
+        }
+        if (parents == null) {
+            parents = new HashSet<>();
+        }
+        parents.add(parent);
+    }
+
+    @Override
+    public void addChild(ObservableProperty child) {
+        if (child == null) {
+            return;
+        }
+        if (childs == null) {
+            childs = new HashSet<>();
+        }
+        childs.add(child);
     }
 
 }

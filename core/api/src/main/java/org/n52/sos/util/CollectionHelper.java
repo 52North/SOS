@@ -51,7 +51,7 @@ import com.google.common.collect.Sets;
  * @author Christian Autermann <c.autermann@52north.org>
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
  */
 public final class CollectionHelper {
@@ -81,7 +81,7 @@ public final class CollectionHelper {
      * @return an <i>unmodifiable</i> map with all given entries
      */
     public static <K, V> Map<K, V> map(final Entry<K, V>... entries) {
-        final HashMap<K, V> map = new HashMap<K, V>(entries.length);
+        final HashMap<K, V> map = new HashMap<>(entries.length);
         for (final Entry<K, V> entry : entries) {
             map.put(entry.getKey(), entry.getValue());
         }
@@ -197,16 +197,18 @@ public final class CollectionHelper {
     }
 
     @Deprecated
+    @SuppressWarnings("unchecked")
     public static <T> List<T> asList(final T t, final T... ts) {
-        final ArrayList<T> list = new ArrayList<T>(ts.length + 1);
+        final ArrayList<T> list = new ArrayList<>(ts.length + 1);
         list.add(t);
         Collections.addAll(list, ts);
         return list;
     }
 
     @Deprecated
+    @SuppressWarnings("unchecked")
     public static <T> Set<T> asSet(final T t, final T... ts) {
-        final Set<T> set = new HashSet<T>(ts.length + 1);
+        final Set<T> set = new HashSet<>(ts.length + 1);
         set.add(t);
         Collections.addAll(set, ts);
         return set;
@@ -217,7 +219,7 @@ public final class CollectionHelper {
         s1.retainAll(list2);
         return new ArrayList<T>(s1);
     }
-    
+
     public static <T> Set<T> conjunctCollectionsToSet(final Collection<T> list1, final Collection<T> list2) {
         final HashSet<T> s1 = new HashSet<T>(list1);
         s1.retainAll(list2);
@@ -242,7 +244,7 @@ public final class CollectionHelper {
 
     /**
      * Constructs a new synchronized {@code Set} based on a {@link HashSet}.
-     * 
+     *
      * @return a synchronized Set
      */
     public static <T> Set<T> synchronizedSet() {
@@ -252,10 +254,10 @@ public final class CollectionHelper {
     /**
      * Constructs a new synchronized {@code Set} based on a {@link HashSet} with
      * the specified {@code initialCapacity}.
-     * 
+     *
      * @param initialCapacity
      *            the initial capacity of the set
-     * 
+     *
      * @return a synchronized Set
      */
     public static <T> Set<T> synchronizedSet(final int initialCapacity) {
@@ -264,7 +266,7 @@ public final class CollectionHelper {
 
     /**
      * Constructs a new synchronized {@code List} based on a {@link LinkedList}.
-     * 
+     *
      * @return a synchronized List
      */
     public static <E> List<E> synchronizedList() {
@@ -274,10 +276,10 @@ public final class CollectionHelper {
     /**
      * Constructs a new synchronized {@code List} based on a {@link ArrayList}
      * with the specified {@code initialCapacity}.
-     * 
+     *
      * @param initialCapacity
      *            the initial capacity of the array list
-     * 
+     *
      * @return a synchronized List
      */
     public static <E> List<E> synchronizedList(final int initialCapacity) {
@@ -287,7 +289,7 @@ public final class CollectionHelper {
     /**
      * @param collectionOfCollection
      *            a Collection&lt;Collection&lt;T>>
-     * 
+     *
      * @return a Set&lt;T> containing all values of all Collections&lt;T>
      *         without any duplicates
      */
@@ -310,10 +312,10 @@ public final class CollectionHelper {
 
     /**
      * Check if collection is not null and not empty
-     * 
+     *
      * @param collection
      *            Collection to check
-     * 
+     *
      * @return empty or not
      */
     public static <T> boolean isNotEmpty(final Collection<T> collection) {
@@ -322,10 +324,10 @@ public final class CollectionHelper {
 
     /**
      * Check if collection is not <tt>null</tt> and empty
-     * 
+     *
      * @param collection
      *            Collection to check
-     * 
+     *
      * @return <tt>true</tt>, if collection is not null and empty, else
      *         <tt>false</tt>
      */
@@ -335,11 +337,11 @@ public final class CollectionHelper {
 
     /**
      * Check if collection is not null and not empty
-     * 
-     * 
+     *
+     *
      * @param map
      *            Map to check
-     * 
+     *
      * @return <tt>false</tt>, if map is <tt>null</tt> or empty, else
      *         <tt>true</tt>.
      */
@@ -349,10 +351,10 @@ public final class CollectionHelper {
 
     /**
      * Check if map is not <tt>null</tt> and empty
-     * 
+     *
      * @param map
      *            map to check
-     * 
+     *
      * @return <tt>true</tt>, if map is not null and empty, else <tt>false</tt>
      */
     public static <K, V> boolean isEmpty(final Map<K, V> map) {
@@ -361,14 +363,14 @@ public final class CollectionHelper {
 
     /**
      * Reverses a map (switches key and value types).
-     * 
+     *
      * @param <K>
      *            the key type
      * @param <V>
      *            the value type
      * @param map
      *            the map
-     * 
+     *
      * @return the reversed map
      */
     public static <K, V> Map<V, K> reverse(final Map<K, V> map) {
@@ -382,7 +384,7 @@ public final class CollectionHelper {
     /**
      * Examine a collection and determines if it is null, empty, or contains
      * only null values
-     * 
+     *
      * @param collection
      *            Collection to examine
      * @return whether the collection is null, empty, or contains only nulls
@@ -397,10 +399,10 @@ public final class CollectionHelper {
         }
         return true;
     }
-    
+
     /**
      * Check if array is not null and not empty
-     * 
+     *
      * @param array
      *            Array to check
      * @return <code>true</code>, if array is not null and not empty
@@ -411,7 +413,7 @@ public final class CollectionHelper {
 
     /**
      * Check if array is not null or not empty
-     * 
+     *
      * @param array
      *            Array to check
      * @return <code>true</code>, if array is null or empty
@@ -438,7 +440,7 @@ public final class CollectionHelper {
 
     /**
      * Add a value to a map collection, initializing the key's collection if needed
-     * 
+     *
      * @param key Key whose value collection should be added to
      * @param valueToAdd Vale to add to the key's collection
      * @param map Map holding collections
@@ -450,7 +452,7 @@ public final class CollectionHelper {
         Collection<V> collection = map.get(key);
         if (collection == null) {
             collection = Lists.newArrayList();
-            map.put(key, collection);            
+            map.put(key, collection);
         }
         collection.add(valueToAdd);
     }
@@ -469,5 +471,71 @@ public final class CollectionHelper {
     	}
     	return result;
     }
+    
+	/**
+	 * Parse CSV string to {@link List}
+	 * 
+	 * @param csv
+	 *            CSV string
+	 * @return {@link List} with separated values
+	 */
+    public static List<String> csvStringToList(String csv) {
+    	return svStringToList(csv, Constants.COMMA_STRING);
+    }
+    
+	/**
+	 * Parse separated value string to {@link List}
+	 * 
+	 * @param sv
+	 *            Separated value string
+	 * @param separator
+	 *            Separator character
+	 * @return {@link List} with separated values
+	 */
+	public static List<String> svStringToList(String sv, String separator) {
+		return Lists.newArrayList(sv, separator);
+	}
+
+	/**
+	 * Parse CSV string to {@link Set}
+	 * 
+	 * @param csv
+	 *            CSV string
+	 * @return {@link Set} with separated values
+	 */
+	public static Set<String> csvStringToSet(String csv) {
+		return svStringToSet(csv, Constants.COMMA_STRING);
+	}
+
+	/**
+	 * Parse separated value string to {@link Set}
+	 * 
+	 * @param sv
+	 *            Separated value string
+	 * @param separator
+	 *            Seperator character
+	 * @return {@link Set} with separated values
+	 */
+	public static Set<String> svStringToSet(String sv, String separator) {
+		return Sets.newHashSet(svStringToArray(sv, separator));
+	}
+
+	/**
+	 * Parse separated value string to array with trimmed values
+	 * 
+	 * @param sv
+	 *            Separated value string
+	 * @param separator
+	 *            Separator character
+	 * @return Array with separated values
+	 */
+	public static String[] svStringToArray(String sv, String separator) {
+		String[] split = sv.split(separator);
+		for (int i = 0; i < split.length; i++) {
+			split[i] = split[i].trim();
+		}
+		return split;
+	}
+    
 
 }

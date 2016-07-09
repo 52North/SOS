@@ -41,7 +41,9 @@ import com.google.common.base.Optional;
  *
  * @author Christian Autermann
  * @param <T> the instance type
+ * @deprecated {@link org.n52.sos.w3c.Nillable}
  */
+@Deprecated
 public abstract class Nillable<T> {
 
     public Nillable() {

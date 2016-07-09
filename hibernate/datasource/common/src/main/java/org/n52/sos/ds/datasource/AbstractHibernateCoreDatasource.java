@@ -45,7 +45,6 @@ import com.google.common.collect.Sets;
 
 public abstract class AbstractHibernateCoreDatasource implements Datasource, HibernateDatasourceConstants {
 
-
     protected static final String USERNAME_TITLE = "User Name";
 
     protected static final String PASSWORD_TITLE = "Password";
@@ -79,14 +78,18 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String C3P0_CONNECTION_POOL =
             "org.hibernate.service.jdbc.connections.internal.C3P0ConnectionProvider";
 
-//    protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE = false;
+    // protected static final Boolean PROVIDED_JDBC_DRIVER_DEFAULT_VALUE =
+    // false;
 
-//    protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC driver";
-//
-//    protected static final String PROVIDED_JDBC_DRIVER_DESCRIPTION =
-//            "Is the JDBC driver provided and should not be derigistered during shutdown?";
-//
-//    protected static final String PROVIDED_JDBC_DRIVER_KEY = "sos.jdbc.provided";
+    // protected static final String PROVIDED_JDBC_DRIVER_TITLE = "Provided JDBC
+    // driver";
+    //
+    // protected static final String PROVIDED_JDBC_DRIVER_DESCRIPTION =
+    // "Is the JDBC driver provided and should not be derigistered during
+    // shutdown?";
+    //
+    // protected static final String PROVIDED_JDBC_DRIVER_KEY =
+    // "sos.jdbc.provided";
 
     protected static final String MIN_POOL_SIZE_KEY = "jdbc.pool.min";
 
@@ -103,42 +106,65 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
     protected static final String MAX_POOL_SIZE_DESCRIPTION = "Maximum size of the ConnectionPool";
 
     protected static final Integer MAX_POOL_SIZE_DEFAULT_VALUE = 30;
+
+    protected static final String TIMEZONE_TITLE = "Datasource time zone";
+
+    protected static final String TIMEZONE_DESCRIPTION =
+            "Define the time zone of the datasource to ensure time is always queried in the defined time zone. "
+            + "Valid values are see <a href=\"http://docs.oracle.com/javase/8/docs/api/java/util/TimeZone.html\" target=\"_blank\">Java TimeZone</a>."
+            + " Default is UTC.";
+
+    protected static final String TIMEZONE_KEY = "datasource.timezone";
+
+    protected static final String TIMEZONE_DEFAULT_VALUE = "UTC";
+
     private String usernameDefault;
+
     private String usernameDescription;
+
     private String passwordDefault;
+
     private String passwordDescription;
+
     private String databaseDefault;
+
     private String databaseDescription;
+
     private String hostDefault;
+
     private String hostDescription;
+
     private int portDefault;
+
     private String portDescription;
+
     private int minPoolSizeDefault;
+
     private int maxPoolSizeDefault;
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-        return Sets.<SettingDefinition<?, ?>> newHashSet(
-                        createUsernameDefinition(usernameDefault),
-                        createPasswordDefinition(passwordDefault),
-                        createDatabaseDefinition(databaseDefault),
-                        createHostDefinition(hostDefault),
-                        createPortDefinition(portDefault),
-                        createMinPoolSizeDefinition(minPoolSizeDefault),
-                        createMaxPoolSizeDefinition(maxPoolSizeDefault));
+        return Sets.<SettingDefinition<?, ?>> newHashSet(createUsernameDefinition(usernameDefault),
+                createPasswordDefinition(passwordDefault),
+                createDatabaseDefinition(databaseDefault),
+                createHostDefinition(hostDefault),
+                createPortDefinition(portDefault),
+                createMinPoolSizeDefinition(minPoolSizeDefault),
+                createMaxPoolSizeDefinition(maxPoolSizeDefault),
+                createTimeZoneDefinition(TIMEZONE_DEFAULT_VALUE));
     }
 
     @Override
     public Set<SettingDefinition<?, ?>> getChangableSettingDefinitions(Properties current) {
         Map<String, Object> settings = parseDatasourceProperties(current);
-        return Sets.<SettingDefinition<?, ?>> newHashSet(
-                createUsernameDefinition((String) settings.get(USERNAME_KEY)),
+        return Sets.<SettingDefinition<?, ?>> newHashSet(createUsernameDefinition((String) settings.get(USERNAME_KEY)),
                 createPasswordDefinition((String) settings.get(PASSWORD_KEY)),
                 createDatabaseDefinition((String) settings.get(DATABASE_KEY)),
                 createHostDefinition((String) settings.get(HOST_KEY)),
                 createPortDefinition(JavaHelper.asInteger(settings.get(PORT_KEY))),
                 createMinPoolSizeDefinition(JavaHelper.asInteger(settings.get(MIN_POOL_SIZE_KEY))),
-                createMaxPoolSizeDefinition(JavaHelper.asInteger(settings.get(MAX_POOL_SIZE_KEY))));
+                createMaxPoolSizeDefinition(JavaHelper.asInteger(settings.get(MAX_POOL_SIZE_KEY))),
+                createTimeZoneDefinition((String) settings.get(TIMEZONE_KEY)));
     }
 
     /**
@@ -147,11 +173,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Username settings definition
      */
     protected StringSettingDefinition createUsernameDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_1)
-                .setKey(USERNAME_KEY)
-                .setTitle(USERNAME_TITLE);
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_1)
+                .setKey(USERNAME_KEY).setTitle(USERNAME_TITLE);
     }
 
     /**
@@ -160,11 +183,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Password settings definition
      */
     protected StringSettingDefinition createPasswordDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_2)
-                .setKey(PASSWORD_KEY)
-                .setTitle(PASSWORD_TITLE);
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_2)
+                .setKey(PASSWORD_KEY).setTitle(PASSWORD_TITLE);
     }
 
     /**
@@ -173,12 +193,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return database name settings definition
      */
     protected StringSettingDefinition createDatabaseDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_3)
-                .setKey(DATABASE_KEY)
-                .setTitle(DATABASE_TITLE)
-                .setDescription(DATABASE_DESCRIPTION)
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_3)
+                .setKey(DATABASE_KEY).setTitle(DATABASE_TITLE).setDescription(DATABASE_DESCRIPTION)
                 .setDefaultValue(DATABASE_DEFAULT_VALUE);
     }
 
@@ -188,12 +204,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Host settings definition
      */
     protected StringSettingDefinition createHostDefinition() {
-        return new StringSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_4)
-                .setKey(HOST_KEY)
-                .setTitle(HOST_TITLE)
-                .setDescription(HOST_DESCRIPTION)
+        return new StringSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_4)
+                .setKey(HOST_KEY).setTitle(HOST_TITLE).setDescription(HOST_DESCRIPTION)
                 .setDefaultValue(HOST_DEFAULT_VALUE);
     }
 
@@ -203,11 +215,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Port settings definition
      */
     protected IntegerSettingDefinition createPortDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(BASE_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_5)
-                .setKey(PORT_KEY)
-                .setTitle(PORT_TITLE);
+        return new IntegerSettingDefinition().setGroup(BASE_GROUP).setOrder(SettingDefinitionProvider.ORDER_5)
+                .setKey(PORT_KEY).setTitle(PORT_TITLE);
     }
 
     /**
@@ -216,12 +225,8 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Minimal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMinPoolSizeDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_6)
-                .setKey(MIN_POOL_SIZE_KEY)
-                .setTitle(MIN_POOL_SIZE_TITLE)
-                .setDescription(MIN_POOL_SIZE_DESCRIPTION)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_6)
+                .setKey(MIN_POOL_SIZE_KEY).setTitle(MIN_POOL_SIZE_TITLE).setDescription(MIN_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MIN_POOL_SIZE_DEFAULT_VALUE);
     }
 
@@ -231,53 +236,52 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
      * @return Maximal connection pool size settings definition
      */
     protected IntegerSettingDefinition createMaxPoolSizeDefinition() {
-        return new IntegerSettingDefinition()
-                .setGroup(ADVANCED_GROUP)
-                .setOrder(SettingDefinitionProvider.ORDER_7)
-                .setKey(MAX_POOL_SIZE_KEY)
-                .setTitle(MAX_POOL_SIZE_TITLE)
-                .setDescription(MAX_POOL_SIZE_DESCRIPTION)
+        return new IntegerSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_7)
+                .setKey(MAX_POOL_SIZE_KEY).setTitle(MAX_POOL_SIZE_TITLE).setDescription(MAX_POOL_SIZE_DESCRIPTION)
                 .setDefaultValue(MAX_POOL_SIZE_DEFAULT_VALUE);
     }
 
+    /**
+     * Create settings definition for time zone
+     *
+     * @return Time zone settings definition
+     */
+    protected StringSettingDefinition createTimeZoneDefinition() {
+        return new StringSettingDefinition().setGroup(ADVANCED_GROUP).setOrder(SettingDefinitionProvider.ORDER_8)
+                .setKey(TIMEZONE_KEY).setTitle(TIMEZONE_TITLE).setDescription(TIMEZONE_DESCRIPTION)
+                .setDefaultValue(TIMEZONE_DEFAULT_VALUE).setOptional(true);
+    }
+
     protected StringSettingDefinition createUsernameDefinition(String defaultValue) {
-        return createUsernameDefinition()
-                .setDescription(usernameDescription)
-                .setDefaultValue(defaultValue);
+        return createUsernameDefinition().setDescription(usernameDescription).setDefaultValue(defaultValue);
     }
 
     protected StringSettingDefinition createPasswordDefinition(String defaultValue) {
-        return createPasswordDefinition()
-                .setDescription(passwordDescription)
-                .setDefaultValue(defaultValue);
+        return createPasswordDefinition().setDescription(passwordDescription).setDefaultValue(defaultValue);
     }
 
     protected StringSettingDefinition createDatabaseDefinition(String defaultValue) {
-        return createDatabaseDefinition()
-                .setDescription(databaseDescription)
-                .setDefaultValue(defaultValue);
+        return createDatabaseDefinition().setDescription(databaseDescription).setDefaultValue(defaultValue);
     }
 
     protected StringSettingDefinition createHostDefinition(String defaultValue) {
-        return createHostDefinition()
-                .setDescription(hostDescription)
-                .setDefaultValue(defaultValue);
+        return createHostDefinition().setDescription(hostDescription).setDefaultValue(defaultValue);
     }
 
     protected IntegerSettingDefinition createPortDefinition(int defaultValue) {
-        return createPortDefinition()
-                .setDescription(portDescription)
-                .setDefaultValue(defaultValue);
+        return createPortDefinition().setDescription(portDescription).setDefaultValue(defaultValue);
     }
 
     protected SettingDefinition<?, ?> createMinPoolSizeDefinition(Integer defaultValue) {
-        return createMinPoolSizeDefinition()
-                .setDefaultValue(defaultValue);
+        return createMinPoolSizeDefinition().setDefaultValue(defaultValue);
     }
 
     protected SettingDefinition<?, ?> createMaxPoolSizeDefinition(Integer defaultValue) {
-        return createMaxPoolSizeDefinition()
-                .setDefaultValue(defaultValue);
+        return createMaxPoolSizeDefinition().setDefaultValue(defaultValue);
+    }
+
+    protected StringSettingDefinition createTimeZoneDefinition(String defaultValue) {
+        return createTimeZoneDefinition().setDefaultValue(defaultValue);
     }
 
     /**
@@ -387,15 +391,6 @@ public abstract class AbstractHibernateCoreDatasource implements Datasource, Hib
         settings.putAll(changed);
         return settings;
     }
-
-    /**
-     * Parse datasource properties to map
-     *
-     * @param current
-     *            Current datasource properties
-     * @return Map with String key and Object value
-     */
-    protected abstract Map<String, Object> parseDatasourceProperties(Properties current);
 
     /**
      * Converts the given connection settings into a valid JDBC string.

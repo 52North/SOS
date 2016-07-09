@@ -40,14 +40,16 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.junit.After;
 import org.junit.Before;
+
 import org.n52.sos.ds.hibernate.ExtendedHibernateTestCase;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase {
@@ -60,9 +62,9 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
         try {
             session = getSession();
             transaction = session.beginTransaction();
-            ScrollableIterable<AbstractObservation> i =
-                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass(session)));
-            for (AbstractObservation o : i) {
+            ScrollableIterable<Observation<?>> i =
+                    ScrollableIterable.fromCriteria(session.createCriteria(getObservationClass()));
+            for (Observation<?> o : i) {
                 session.delete(o);
             }
             i.close();
@@ -98,7 +100,7 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     private Set<Identifier> filter(TimePrimitiveFieldDescriptor d, TemporalRestriction r, Time time, Session session)
             throws OwsExceptionReport {
         List<String> list =
-                session.createCriteria(getObservationClass(session)).add(r.get(d, time))
+                session.createCriteria(getObservationClass()).add(r.get(d, time))
                         .setProjection(Projections.distinct(Projections.property(AbstractObservation.IDENTIFIER))).list();
         Set<Identifier> s = EnumSet.noneOf(Identifier.class);
         for (String id : list) {
@@ -116,6 +118,31 @@ public abstract class TemporalRestrictionTest extends ExtendedHibernateTestCase 
     }
 
     public enum Identifier {
-        PP_AFTER_ID, PP_MEETS_ID, PP_OVERLAPS_ID, PP_ENDED_BY_ID, PP_CONTAINS_ID, PP_EQUALS_ID, PP_BEGUN_BY_ID, PP_OVERLAPPED_BY_ID, PP_MET_BY_ID, PP_BEFORE_ID, PP_BEGINS_ID, PP_ENDS_ID, PP_DURING_ID, IP_BEFORE_ID, IP_BEGINS_ID, IP_DURING_ID, IP_ENDS_ID, IP_AFTER_ID, PI_CONTAINS_ID, PI_BEFORE_ID, PI_AFTER_ID, PI_ENDED_BY_ID, PI_BEGUN_BY_ID, II_AFTER_ID, II_EQUALS_ID, II_BEFORE_ID;
+        PP_AFTER_ID,
+        PP_MEETS_ID,
+        PP_OVERLAPS_ID,
+        PP_ENDED_BY_ID,
+        PP_CONTAINS_ID,
+        PP_EQUALS_ID,
+        PP_BEGUN_BY_ID,
+        PP_OVERLAPPED_BY_ID,
+        PP_MET_BY_ID,
+        PP_BEFORE_ID,
+        PP_BEGINS_ID,
+        PP_ENDS_ID,
+        PP_DURING_ID,
+        IP_BEFORE_ID,
+        IP_BEGINS_ID,
+        IP_DURING_ID,
+        IP_ENDS_ID,
+        IP_AFTER_ID,
+        PI_CONTAINS_ID,
+        PI_BEFORE_ID,
+        PI_AFTER_ID,
+        PI_ENDED_BY_ID,
+        PI_BEGUN_BY_ID,
+        II_AFTER_ID,
+        II_EQUALS_ID,
+        II_BEFORE_ID;
     }
 }

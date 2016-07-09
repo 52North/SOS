@@ -35,20 +35,21 @@ import java.util.List;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.ConnectionProviderException;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
-import org.n52.sos.ds.hibernate.entities.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.ObservationType;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyNumericObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -60,12 +61,12 @@ import org.n52.sos.request.GetObservationByIdRequest;
 /**
  * The class <code>HibernateObservationUtilitiesTest</code> contains tests for
  * the class {@link <code>HibernateObservationUtilities</code>}
- * 
+ *
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike
  *         HinderkJ&uuml;rrens</a>
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class HibernateObservationUtilitiesTest extends HibernateTestCase {
     private static final String PROCEDURE = "junit_test_procedure_id";
@@ -114,7 +115,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             ObservationConstellation hObservationConstellation = new ObservationConstellation();
             Codespace hCodespace = new Codespace();
             Procedure hProcedure = new Procedure();
-            NumericObservation hObservation = new NumericObservation();
+            LegacyNumericObservation hObservation = new LegacyNumericObservation();
 
             hProcedureDescriptionFormat.setProcedureDescriptionFormat(PROCEDURE_DESCRIPTION_FORMAT);
             hCodespace.setCodespace(CODESPACE);
@@ -153,7 +154,7 @@ public class HibernateObservationUtilitiesTest extends HibernateTestCase {
             hObservation.setFeatureOfInterest(hFeatureOfInterest);
             hObservation.setDeleted(false);
 
-            List<AbstractObservation> observationsFromDataBase = new ArrayList<AbstractObservation>();
+            ArrayList<Observation<?>> observationsFromDataBase = new ArrayList<>();
             observationsFromDataBase.add(hObservation);
             // CALL
             List<OmObservation> resultList =

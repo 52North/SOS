@@ -31,6 +31,10 @@ package org.n52.sos.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.AbstractObservationValue;
@@ -41,6 +45,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
@@ -64,57 +69,29 @@ import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.service.ServiceConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * SWE helper class.
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class SweHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SweHelper.class);
 
-    /*
-     * public static SweDataArray
-     * createSosSweDataArrayFromObservationValue(OmObservation sosObservation)
-     * throws OwsExceptionReport { if (sosObservation.getv) { return
-     * createSosSweDataArrayWithResultTemplate(sosObservation); } else { return
-     * createSosSweDataArrayWithoutResultTemplate(sosObservation); } }
+    /**
+     * Create {@link SweDataArray} from {@link OmObservation}
      * 
-     * private static SweDataArray
-     * createSosSweDataArrayWithResultTemplate(OmObservation sosObservation)
-     * throws OwsExceptionReport { SosResultTemplate sosResultTemplate =
-     * sosObservation.getObservationConstellation().getResultTemplate(); String
-     * observablePropertyIdentifier =
-     * sosObservation.getObservationConstellation(
-     * ).getObservableProperty().getIdentifier(); SweDataArrayValue
-     * dataArrayValue = new SweDataArrayValue(); SweDataArray dataArray = new
-     * SweDataArray();
-     * dataArray.setElementType(sosResultTemplate.getResultStructure());
-     * dataArray.setEncoding(sosResultTemplate.getResultEncoding());
-     * dataArrayValue.setValue(dataArray); if (sosObservation.getValue()
-     * instanceof SingleObservationValue) { SingleObservationValue<?>
-     * singleValue = (SingleObservationValue) sosObservation.getValue();
-     * dataArrayValue.addBlock(createBlock(dataArray.getElementType(),
-     * sosObservation.getPhenomenonTime(), observablePropertyIdentifier,
-     * singleValue.getValue())); } else if (sosObservation.getValue() instanceof
-     * MultiObservationValues) { MultiObservationValues<?> multiValue =
-     * (MultiObservationValues) sosObservation.getValue(); if
-     * (multiValue.getValue() instanceof SweDataArrayValue) { return
-     * ((SweDataArrayValue) multiValue.getValue()).getValue(); } else if
-     * (multiValue.getValue() instanceof TVPValue) { TVPValue tvpValues =
-     * (TVPValue) multiValue.getValue(); for (TimeValuePair timeValuePair :
-     * tvpValues.getValue()) { List<String> newBlock =
-     * createBlock(dataArray.getElementType(), timeValuePair.getTime(),
-     * observablePropertyIdentifier, timeValuePair.getValue());
-     * dataArrayValue.addBlock(newBlock); } } } return
-     * dataArrayValue.getValue(); }
+     * @param observationValue
+     *            The {@link OmObservation} to create
+     *            {@link SweDataArray} from
+     * @return Created {@link SweDataArray}
+     * @throws CodedException
+     *             If the service does not support the {@link SweDataArray}
+     *             creation from value of {@link OmObservation}
      */
-
-    public static SweDataArray createSosSweDataArray(OmObservation sosObservation) {
+    public static SweDataArray createSosSweDataArray(OmObservation sosObservation) throws CodedException {
         String observablePropertyIdentifier =
                 sosObservation.getObservationConstellation().getObservableProperty().getIdentifier();
         SweDataArrayValue dataArrayValue = new SweDataArrayValue();
@@ -151,7 +128,18 @@ public final class SweHelper {
         return dataArray;
     }
 
-    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) {
+    /**
+     * Create {@link SweDataArray} from {@link AbstractObservationValue}
+     * 
+     * @param observationValue
+     *            The {@link AbstractObservationValue} to create
+     *            {@link SweDataArray} from
+     * @return Created {@link SweDataArray}
+     * @throws CodedException
+     *             If the service does not support the {@link SweDataArray}
+     *             creation from {@link AbstractObservationValue}
+     */
+    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) throws CodedException {
         String observablePropertyIdentifier = observationValue.getObservableProperty();
         SweDataArrayValue dataArrayValue = new SweDataArrayValue();
         SweDataArray dataArray = new SweDataArray();
@@ -187,14 +175,14 @@ public final class SweHelper {
         return dataArray;
     }
 
-    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) {
+    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) throws CodedException {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField(tvp.getTime()));
         dataRecord.addField(getFieldForValue(tvp.getValue(), name));
         return dataRecord;
     }
 
-    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) {
+    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) throws CodedException {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField(sov.getPhenomenonTime()));
         dataRecord.addField(getFieldForValue(sov.getValue(), name));
@@ -213,13 +201,13 @@ public final class SweHelper {
         return new SweField(OmConstants.PHENOMENON_TIME_NAME, time);
     }
 
-    private static SweField getFieldForValue(Value<?> iValue, String name) {
+    private static SweField getFieldForValue(Value<?> iValue, String name) throws CodedException {
         SweAbstractDataComponent value = getValue(iValue);
         value.setDefinition(name);
         return new SweField(name, value);
     }
 
-    private static SweAbstractDataComponent getValue(Value<?> iValue) {
+    private static SweAbstractDataComponent getValue(Value<?> iValue) throws CodedException {
         if (iValue instanceof BooleanValue) {
             return new SweBoolean();
         } else if (iValue instanceof CategoryValue) {
@@ -236,15 +224,19 @@ public final class SweHelper {
             return new SweText();
         } else if (iValue instanceof NilTemplateValue) {
             return new SweText();
+        } else if (iValue instanceof ComplexValue) {
+            throw new NotYetSupportedException().withMessage("The merging of '%s' is not yet supported!",
+                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
         }
-        return null;
+        throw new NotYetSupportedException().withMessage("The merging of value type '%s' is not yet supported!",
+                iValue.getClass().getName());
     }
 
     /**
      * Create a TextEncoding object for token and tuple separators from
      * SosObservation. If separators not set, definitions from Configurator are
      * used.
-     * 
+     *
      * @param sosObservation
      *            SosObservation with token and tuple separator
      * @return TextEncoding
@@ -269,7 +261,7 @@ public final class SweHelper {
      * Create a TextEncoding object for token and tuple separators from
      * SosObservation. If separators not set, definitions from Configurator are
      * used.
-     * 
+     *
      * @param observationValue
      *            AbstractObservationValue with token and tuple separator
      * @return TextEncoding
@@ -292,7 +284,7 @@ public final class SweHelper {
 
     /**
      * Create a TextEncoding object for token and tuple separators.
-     * 
+     *
      * @param tupleSeparator
      *            Token separator
      * @param tokenSeparator
@@ -315,7 +307,7 @@ public final class SweHelper {
             Value<?> value) {
         if (elementType instanceof SweDataRecord) {
             SweDataRecord elementTypeRecord = (SweDataRecord) elementType;
-            List<String> block = new ArrayList<String>(elementTypeRecord.getFields().size());
+            List<String> block = new ArrayList<>(elementTypeRecord.getFields().size());
             for (SweField sweField : elementTypeRecord.getFields()) {
                 if (!(value instanceof NilTemplateValue)) {
                     if (sweField.getElement() instanceof SweTime || sweField.getElement() instanceof SweTimeRange) {
@@ -339,7 +331,7 @@ public final class SweHelper {
 
     /**
      * Create a {@link SweQuantity} from parameter
-     * 
+     *
      * @param value
      *            the {@link SweQuantity} value
      * @param axis

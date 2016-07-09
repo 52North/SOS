@@ -91,7 +91,7 @@ public class H2InMemoryDatasource extends AbstractH2Datasource {
     }
 
     @Override
-    protected Map<String, Object> parseDatasourceProperties(Properties current) {
+    public Map<String, Object> parseDatasourceProperties(Properties current) {
         Map<String, Object> settings = new HashMap<>(2);
         settings.put(getTransactionalDefiniton().getKey(), isTransactional(current));
         return settings;

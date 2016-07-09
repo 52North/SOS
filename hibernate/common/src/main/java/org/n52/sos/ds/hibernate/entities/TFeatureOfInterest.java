@@ -28,48 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import java.util.Set;
-
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
-
-import com.google.common.collect.Sets;
-
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * 
+ *
  * @since 4.0.0
  */
-public class TFeatureOfInterest extends FeatureOfInterest implements
-        HasParentChilds<FeatureOfInterest, TFeatureOfInterest> {
+@Deprecated
+public class TFeatureOfInterest extends FeatureOfInterest {
     private static final long serialVersionUID = -880472749711995015L;
 
-    private Set<FeatureOfInterest> childs = Sets.newHashSet();
-
-    private Set<FeatureOfInterest> parents = Sets.newHashSet();
-
-    public TFeatureOfInterest() {
-        super();
-    }
-
-    @Override
-    public Set<FeatureOfInterest> getParents() {
-        return parents;
-    }
-
-    @Override
-    public TFeatureOfInterest setParents(final Set<FeatureOfInterest> parents) {
-        this.parents = parents;
-        return this;
-    }
-
-    @Override
-    public Set<FeatureOfInterest> getChilds() {
-        return childs;
-    }
-
-    @Override
-    public TFeatureOfInterest setChilds(final Set<FeatureOfInterest> childs) {
-        this.childs = childs;
-        return this;
-    }
+    
 }

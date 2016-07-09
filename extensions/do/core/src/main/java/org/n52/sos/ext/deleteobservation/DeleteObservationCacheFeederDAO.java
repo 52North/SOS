@@ -32,9 +32,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.DatasourceCacheUpdate;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.exception.CodedException;
@@ -47,7 +44,8 @@ import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.util.CacheHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -81,7 +79,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * Set of offering identifiers to keep track for which offerings we already
      * updated the spatial bounding box.
      */
-    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<String>(0);
+    private final Set<String> updatedOfferingBoundingBoxes = new HashSet<>(0);
 
     public void setDeletedObservation(OmObservation deletedObservation) {
         this.o = deletedObservation;
@@ -104,12 +102,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      *             if the FeatureQueryHandler fails
      */
     protected SosEnvelope getEnvelope(Set<String> features) throws OwsExceptionReport {
-        final Set<String> dbFeatures = new HashSet<String>(features.size());
-        for (String feature : features) {
-            dbFeatures.add(CacheHelper.removePrefixAndGetFeatureIdentifier(feature));
-        }
-        return getFeatureQueryHandler().getEnvelopeForFeatureIDs(
-                new FeatureQueryHandlerQueryObject().setFeatureIdentifiers(dbFeatures).setConnection(getConnection()));
+        return getFeatureQueryHandler().getEnvelopeForFeatureIDs(features, getConnection());
     }
 
     /**
@@ -155,14 +148,11 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
         final String feature =
                 o.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
         final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
-        final String dbFeature = CacheHelper.removePrefixAndGetFeatureIdentifier(feature);
-        final String dbProcedure = CacheHelper.removePrefixAndGetProcedureIdentifier(procedure);
-        if (isLastForProcedure(dbFeature, dbProcedure)) {
+        if (isLastForProcedure(feature, procedure)) {
             getCache().removeProcedureForFeatureOfInterest(feature, procedure);
         }
         for (String offering : o.getObservationConstellation().getOfferings()) {
-            final String dbOffering = CacheHelper.removePrefixAndGetOfferingIdentifier(offering);
-            if (isLastForOffering(dbFeature, dbOffering)) {
+            if (isLastForOffering(feature, offering)) {
                 getCache().removeFeatureOfInterestForOffering(offering, feature);
             }
         }
@@ -289,25 +279,24 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
 
         for (String offering : o.getObservationConstellation().getOfferings()) {
             DateTime minPhenomenonTimeForOffering = getCache().getMinPhenomenonTimeForOffering(offering);
-            final String dsOffering = CacheHelper.removePrefixAndGetOfferingIdentifier(offering);
             if (minPhenomenonTimeForOffering != null && minPhenomenonTimeForOffering.equals(minPhenomenonTime)) {
                 log.debug("Updating minimal phenomenon time for offering {}", offering);
-                getCache().setMinPhenomenonTimeForOffering(offering, getMinDateForOffering(dsOffering));
+                getCache().setMinPhenomenonTimeForOffering(offering, getMinDateForOffering(offering));
             }
             DateTime maxPhenomenonTimeForOffering = getCache().getMaxPhenomenonTimeForOffering(offering);
             if (maxPhenomenonTimeForOffering != null && maxPhenomenonTimeForOffering.equals(maxPhenomenonTime)) {
                 log.debug("Updating maximal phenomenon time for offering {}", offering);
-                getCache().setMaxPhenomenonTimeForOffering(offering, getMaxDateForOffering(dsOffering));
+                getCache().setMaxPhenomenonTimeForOffering(offering, getMaxDateForOffering(offering));
             }
             DateTime minResultTimeForOffering = getCache().getMinResultTimeForOffering(offering);
             if (minResultTimeForOffering != null && minResultTimeForOffering.equals(resultTime)) {
                 log.debug("Updating minimal result time for offering {}", offering);
-                getCache().setMinResultTimeForOffering(offering, getMinResultTimeForOffering(dsOffering));
+                getCache().setMinResultTimeForOffering(offering, getMinResultTimeForOffering(offering));
             }
             DateTime maxResultTimeForOffering = getCache().getMaxResultTimeForOffering(offering);
             if (maxResultTimeForOffering != null && maxResultTimeForOffering.equals(resultTime)) {
                 log.debug("Updating maximal result time for offering {}", offering);
-                getCache().setMaxResultTimeForOffering(offering, getMaxResultTimeForOffering(dsOffering));
+                getCache().setMaxResultTimeForOffering(offering, getMaxResultTimeForOffering(offering));
             }
         }
     }

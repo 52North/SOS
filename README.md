@@ -1,5 +1,5 @@
 # 52°North SOS [![OpenHUB](https://www.openhub.net/p/SensorObservationService/widgets/project_thin_badge.gif)](https://www.openhub.net/p/SensorObservationService)
-README file for the 52°North Sensor Observation Service (SOS) version 4.3.x
+README file for the 52°North Sensor Observation Service (SOS) version 4.4.x
 
 This is the repository of the [52°North Sensor Observation Service (SOS)][1].
 
@@ -31,7 +31,7 @@ Here you can find some information that relates to the distributions of the 52°
 
 The latest release of 52°North SOS can be downloaded from this website:
 
-    http://52north.org/downloads/sensor-web/sos
+    http://52north.org/downloads/category/3-sos
 
 ### Contents
   * `/src` :                 The source files of 52°North SOS modules

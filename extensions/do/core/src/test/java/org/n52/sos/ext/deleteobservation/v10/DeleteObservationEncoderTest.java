@@ -45,9 +45,11 @@ import java.util.Set;
 
 import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import org.n52.sos.config.SettingsManager;
 import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.encode.OperationEncoderKey;
 import org.n52.sos.encode.XmlEncoderKey;

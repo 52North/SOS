@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.sos.convert.AbstractIdentifierModifier;
-import org.n52.sos.convert.RequestResponseModifierFacilitator;
+import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierKeyType;
 import org.n52.sos.converter.util.PrefixedIdentifierHelper;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -41,6 +41,7 @@ import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
@@ -53,6 +54,7 @@ import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.request.GetResultTemplateRequest;
+import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.response.GetCapabilitiesResponse;
@@ -66,8 +68,15 @@ import org.n52.sos.util.Constants;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+/**
+ * {@link RequestResponseModifier} to dynamically added/removed to/from the
+ * identifier in the responses/requests.
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
- // TODO add this class to org.n52.sos.convert.RequestResponseModifier file
 
     private Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES;
 
@@ -108,7 +117,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         }
         return Collections.unmodifiableSet(REQUEST_RESPONSE_MODIFIER_KEY_TYPES);
     }
-
+    
     @Override
     protected boolean checkForFlag(AbstractServiceRequest<?> request, AbstractServiceResponse response)
             throws InvalidParameterValueException {
@@ -183,7 +192,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     @Override
     protected String checkFeatureOfInterestIdentifier(String identifier) {
         if (getPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
-            checkGlobalPrefix(getPrefixedIdentifierHelper().getFeatureOfInterestPrefix() + identifier);
+            return checkGlobalPrefix(getPrefixedIdentifierHelper().getFeatureOfInterestPrefix() + identifier);
         }
         return checkGlobalPrefix(identifier);
     }
@@ -191,7 +200,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     @Override
     protected String checkObservablePropertyIdentifier(String identifier) {
         if (getPrefixedIdentifierHelper().isSetObservablePropertyPrefix()) {
-            checkGlobalPrefix(getPrefixedIdentifierHelper().getObservablePropertyPrefix() + identifier);
+            return checkGlobalPrefix(getPrefixedIdentifierHelper().getObservablePropertyPrefix() + identifier);
         }
         return checkGlobalPrefix(identifier);
     }
@@ -199,7 +208,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     @Override
     protected String checkProcedureIdentifier(String identifier) {
         if (getPrefixedIdentifierHelper().isSetProcedurePrefix()) {
-            checkGlobalPrefix(getPrefixedIdentifierHelper().getProcedurePrefix() + identifier);
+            return  checkGlobalPrefix(getPrefixedIdentifierHelper().getProcedurePrefix() + identifier);
         }
         return checkGlobalPrefix(identifier);
     }
@@ -207,51 +216,45 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     @Override
     protected String checkOfferingIdentifier(String identifier) {
         if (getPrefixedIdentifierHelper().isSetOfferingPrefix()) {
-            checkGlobalPrefix(getPrefixedIdentifierHelper().getOfferingPrefix() + identifier);
+            return checkGlobalPrefix(getPrefixedIdentifierHelper().getOfferingPrefix() + identifier);
         }
         return checkGlobalPrefix(identifier);
     }
 
     @Override
     protected void checkAndChangeFeatureOfInterestIdentifier(AbstractFeature abstractFeature) {
-        if (getPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
+        if (abstractFeature != null) {
             checkAndChangeIdentifierOfAbstractFeature(abstractFeature);
         }
     }
     
     private void checkAndChangeIdentifierOfAbstractFeature(AbstractFeature abstractFeature) {
-        if (getPrefixedIdentifierHelper().isSetFeatureOfInterestPrefix()) {
-            abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature
-                    .getIdentifier()));
+        if (abstractFeature != null) {
+            abstractFeature.setIdentifier(checkFeatureOfInterestIdentifier(abstractFeature.getIdentifier()));
+            if (abstractFeature instanceof SamplingFeature
+                    && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
+                ((SamplingFeature) abstractFeature).setXmlDescription(null);
+            }
         }
-        if (abstractFeature instanceof SamplingFeature && ((SamplingFeature) abstractFeature).isSetXmlDescription()) {
-            ((SamplingFeature) abstractFeature).setXmlDescription(null);
-        }
-
     }
 
     @Override
     protected void checkAndChangeProcedureIdentifier(AbstractFeature abstractFeature) {
-        if (getPrefixedIdentifierHelper().isSetProcedurePrefix()) {
-            if (!abstractFeature.isSetHumanReadableIdentifier()) {
-                abstractFeature.setIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
-            }
+        if (abstractFeature != null) {
+            abstractFeature.setIdentifier(checkProcedureIdentifier(abstractFeature.getIdentifier()));
         }
     }
 
     @Override
     protected void checkAndChangeObservablePropertyIdentifier(AbstractFeature abstractFeature) {
-        if (getPrefixedIdentifierHelper().isSetObservablePropertyPrefix()) {
-            if (!abstractFeature.isSetHumanReadableIdentifier()) {
-                abstractFeature.setIdentifier(checkObservablePropertyIdentifier(abstractFeature
-                        .getIdentifier()));
-            }
+        if (abstractFeature != null) {
+            abstractFeature.setIdentifier(checkObservablePropertyIdentifier(abstractFeature.getIdentifier()));
         }
     }
 
     @Override
     protected void checkAndChangOfferingIdentifier(SosOffering offering) {
-        if (offering != null && getPrefixedIdentifierHelper().isSetOfferingPrefix()) {
+        if (offering != null) {
             offering.setIdentifier(checkOfferingIdentifier(offering.getIdentifier()));
         }
     }
@@ -260,8 +263,4 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
         return PrefixedIdentifierHelper.getInstance();
     }
     
-    @Override
-    public RequestResponseModifierFacilitator getFacilitator() {
-        return super.getFacilitator();
-    }
 }

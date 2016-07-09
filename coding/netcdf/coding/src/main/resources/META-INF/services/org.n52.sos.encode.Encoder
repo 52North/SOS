@@ -1,0 +1,2 @@
+org.n52.sos.encode.NetcdfEncoder
+org.n52.sos.encode.NetcdfZipEncoder

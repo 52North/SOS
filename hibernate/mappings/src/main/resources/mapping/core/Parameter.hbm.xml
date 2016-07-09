@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.parameter.Parameter" table="parameter">
+        <comment>Table to store additional obervation information (om:parameter). Mapping file: mapping/core/Parameter.hbm.xml</comment>
+        <id name="parameterId" type="long">
+            <column name="parameterId">
+                <comment>Table primary key</comment>
+            </column>
+            <generator class="native">
+                <param name="sequence">parameterId_seq</param>
+            </generator>
+        </id>
+        <property name="observationId" type="long">
+            <column name="observationId" not-null="true">
+                <comment>Foreign Key (FK) to the related observation. Contains "observation".observationId</comment>
+            </column>
+        </property>
+        <property name="name" type="string">
+            <column name="name" not-null="true" index="paramNameIdx">
+                <comment>Parameter name</comment>
+            </column>
+        </property>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.BooleanValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="booleanParameterValue"
+                         check="value in ('T','F')">
+            <comment>Value table for boolean parameter</comment>
+            <key foreign-key="parameterBooleanValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="org.hibernate.type.TrueFalseType">
+                <column name="value"  index="booleanParamIdx">
+                    <comment>Boolean parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.CategoryValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="categoryParameterValue">
+            <comment>Value table for category parameter</comment>
+            <key foreign-key="parameterCategoryValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value" type="string">
+                <column name="value" index="categoryParamIdx">
+                    <comment>Category parameter value</comment>
+                </column>
+            </property>
+            <many-to-one name="unit"
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="catParamValueUnitFk">
+                <column name="unitId"
+                        not-null="false">
+                    <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+                </column>
+            </many-to-one>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.CountValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="countParameterValue">
+            <comment>Value table for count parameter</comment>
+            <key foreign-key="parameterCountValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="integer">
+                <column name="value" index="countParamIdx">
+                    <comment>Count parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.QuantityValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="numericParameterValue">
+            <comment>Value table for numeric/Measurment parameter</comment>
+            <key foreign-key="parameterNumericValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="double">
+                <column name="value" index="quantityParamIdx">
+                    <comment>Numeric/Quantity parameter value</comment>
+                </column>
+            </property>
+            <many-to-one name="unit"
+                         class="org.n52.sos.ds.hibernate.entities.Unit"
+                         foreign-key="quanParamValueUnitFk">
+                <column name="unitId"
+                        not-null="false">
+                    <comment>Foreign Key (FK) to the related unit of measure. Contains "unit".unitid. Optional</comment>
+                </column>
+            </many-to-one>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="textParameterValue">
+            <comment>Value table for text parameter</comment>
+            <key foreign-key="parameterTextValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value"
+                      type="string">
+                <column name="value" index="textParamIdx">
+                    <comment>Text parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+        <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.XmlValuedParameter"
+                         extends="org.n52.sos.ds.hibernate.entities.parameter.ValuedParameter"
+                         table="xmlParameterValue">
+            <comment>Value table for XML parameter</comment>
+            <key foreign-key="parameterXmlValueFk">
+                <column name="parameterId" >
+                    <comment>Foreign Key (FK) to the related parameter from the parameter table. Contains "parameter".parameterid</comment>
+                </column>
+            </key>
+            <property name="value" type="text">
+                <column name="value">
+                    <comment>XML parameter value</comment>
+                </column>
+            </property>
+        </joined-subclass>
+    </class>
+</hibernate-mapping>

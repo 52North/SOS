@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -40,6 +41,7 @@ import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.quality.OmResultQuality;
 import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
@@ -516,7 +518,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
      */
     public void addParameter(NamedValue<?> namedValue) {
         if (parameter == null) {
-            parameter = Sets.newHashSet();
+            parameter = Sets.newTreeSet();
         }
         parameter.add(namedValue);
     }
@@ -574,7 +576,107 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 && namedValue.getName().getHref().equals(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY)
                 && namedValue.getValue() instanceof GeometryValue;
     }
+    
+    /**
+     * Check whether height parameter is set
+     * 
+     * @return <code>true</code>, if height parameter is set
+     */
+    public boolean isSetHeightParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Get height parameter
+     * 
+     * @return Height parameter
+     */
+    @SuppressWarnings("unchecked")
+    public NamedValue<Double> getHeightParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightParameter(namedValue)) {
+                    return (NamedValue<Double>) namedValue;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private boolean isHeightParameter(NamedValue<?> namedValue) {
+        return namedValue.isSetName() && namedValue.getName().isSetHref()
+                && namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_HEIGHT)
+                && namedValue.getValue() instanceof QuantityValue;
+    }
+
+    /**
+     * Check whether depth parameter is set
+     * 
+     * @return <code>true</code>, if depth parameter is set
+     */
+    public boolean isSetDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isDepthParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get depth parameter
+     * 
+     * @return Depth parameter
+     */
+    @SuppressWarnings("unchecked")
+    public NamedValue<Double> getDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightDepthParameter(namedValue)) {
+                    return (NamedValue<Double>) namedValue;
+                }
+            }
+        }
+        return null;
+    }
+    
+    private boolean isDepthParameter(NamedValue<?> namedValue) {
+        return namedValue.isSetName() && namedValue.getName().isSetHref()
+                && namedValue.getName().getHref().equals(OmConstants.PARAMETER_NAME_DEPTH)
+                && namedValue.getValue() instanceof QuantityValue;
+    }
+    
+    public boolean isSetHeightDepthParameter() {
+        if (isSetParameter()) {
+            for (NamedValue<?> namedValue : getParameter()) {
+                if (isHeightDepthParameter(namedValue)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    public NamedValue<Double> getHeightDepthParameter() {
+        if (isSetDepthParameter()) {
+            return getDepthParameter();
+        }
+        return getHeightParameter();
+    }
+
+    private boolean isHeightDepthParameter(NamedValue<?> namedValue) {
+        return isHeightParameter(namedValue) || isDepthParameter(namedValue);
+    }
+    
     public OmObservation cloneTemplate() {
         OmObservation clone = new OmObservation();
         clone.setObservationConstellation(this.getObservationConstellation());
@@ -649,7 +751,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
                 || (!isSetAdditionalMergeIndicator() && observation.isSetAdditionalMergeIndicator())) {
             merge = false;
         }
-        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge;
+        return getObservationConstellation().equals(observation.getObservationConstellation()) && merge && getObservationConstellation().checkObservationTypeForMerging();
     }
-
+    
 }

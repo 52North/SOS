@@ -92,6 +92,19 @@ public abstract class SweAbstractDataRecord extends SweAbstractDataComponent imp
         }
         return -1;
     }
+    
+    @Override
+    public SweField getFieldByIdentifier(final String fieldNameOrElementDefinition) {
+        if (existsFieldForIdentifier(fieldNameOrElementDefinition)) {
+            return getFields().get(getFieldIndexByIdentifier(fieldNameOrElementDefinition));
+        }
+        return null;
+    }
+    
+    @Override
+    public boolean existsFieldForIdentifier(final String fieldNameOrElementDefinition) {
+        return getFieldIndexByIdentifier(fieldNameOrElementDefinition) >= 0;
+    }
 
     boolean isFieldName(final String fieldNameOrElementDefinition, final SweField sweField) {
         return sweField.isSetName()

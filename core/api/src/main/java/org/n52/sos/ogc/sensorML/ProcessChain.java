@@ -67,4 +67,19 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
         return components != null && !components.isEmpty();
     }
 
+    @Override
+    public boolean isAggragation() {
+        return true;
+    }
+    
+    @Override
+    public String getDescriptionFormat() {
+        return SensorMLConstants.NS_SML;
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return SensorMLConstants.NS_SML;
+    }
+    
 }

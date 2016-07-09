@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -41,10 +40,10 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -56,11 +55,12 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CollectionHelper;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
- * 
+ *
  * @since 1.0.0
  */
 public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
@@ -110,17 +110,17 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
     private void deleteObservationsByIdentifier(DeleteObservationRequest request, DeleteObservationResponse response,
             Session session) throws OwsExceptionReport, ConverterException {
         Set<String> ids = request.getObservationIdentifiers();
-        List<AbstractObservation> observations = DaoFactory.getInstance().getObservationDAO().getObservationByIdentifiers(ids, session);
+        List<Observation<?>> observations = DaoFactory.getInstance().getObservationDAO().getObservationByIdentifiers(ids, session);
         if (CollectionHelper.isNotEmpty(observations)) {
-            for (AbstractObservation observation : observations) {
+            for (Observation<?> observation : observations) {
                 delete(observation, session);
             }
             if (DeleteObservationConstants.NS_SOSDO_1_0.equals(request.getResponseFormat())) {
-                AbstractObservation observation = observations.iterator().next();
+                Observation<?> observation = observations.iterator().next();
                 OmObservation so = HibernateObservationUtilities
-                            .createSosObservationsFromObservations(Collections.singleton(observation), getRequest(request),
-                                    null, session)
-                            .iterator().next();
+                        .createSosObservationsFromObservations(Sets.<Observation<?>>newHashSet(observation), getRequest(request),
+                                null, session)
+                        .iterator().next();
                     delete(observation, session);
                 response.setObservationId(request.getObservationIdentifiers().iterator().next());
                 response.setDeletedObservation(so);
@@ -143,11 +143,11 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                 request.getObservedProperties(), request.getFeatureIdentifiers(), request.getOfferings(),
                 filter, session);
         while (result.next()) {
-            delete((AbstractObservation) result.get()[0], session);
+            delete((Observation<?>) result.get()[0], session);
         }
     }
     
-    private void delete(AbstractObservation observation, Session session) {
+    private void delete(Observation<?> observation, Session session) {
         if (observation != null) {
             observation.setDeleted(true);
             session.saveOrUpdate(observation);
@@ -164,7 +164,7 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
      * @param session
      *            Hibernate session
      */
-    private void checkSeriesForFirstLatest(AbstractObservation observation, Session session) {
+    private void checkSeriesForFirstLatest(Observation<?> observation, Session session) {
         if (observation instanceof SeriesObservation) {
             Series series = ((SeriesObservation) observation).getSeries();
             if (series.getFirstTimeStamp().equals(observation.getPhenomenonTimeStart())

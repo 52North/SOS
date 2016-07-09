@@ -313,6 +313,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected AbstractServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
         for (SosProcedureDescription procedure : response.getProcedureDescriptions()) {
             checkAndChangeProcedure(procedure);
+            // TODO check typeOf title
         }
         return response;
     }

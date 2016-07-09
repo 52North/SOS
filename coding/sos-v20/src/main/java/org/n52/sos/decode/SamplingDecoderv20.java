@@ -73,7 +73,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @since 4.0.0
  * 
  */
-public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
+public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingDecoderv20.class);
 
@@ -130,19 +130,8 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
     private AbstractFeature parseSpatialSamplingFeature(final SFSpatialSamplingFeatureType spatialSamplingFeature)
             throws OwsExceptionReport {
         final SamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
-        if (spatialSamplingFeature.getIdentifier() != null
-                && spatialSamplingFeature.getIdentifier().getStringValue() != null
-                && !spatialSamplingFeature.getIdentifier().getStringValue().isEmpty()) {
-            final CodeWithAuthority identifier =
-                    (CodeWithAuthority) CodingHelper.decodeXmlElement(spatialSamplingFeature.getIdentifier());
-            sosFeat.setIdentifier(identifier);
-        }
-        if (spatialSamplingFeature.getNameArray() != null) {
-            sosFeat.setName(getNames(spatialSamplingFeature));
-        }
-        if (spatialSamplingFeature.isSetDescription()) {
-            sosFeat.setDescription(spatialSamplingFeature.getDescription().getStringValue());
-        }
+        // parse identifier, names, description
+        parseAbstractFeatureType(spatialSamplingFeature, sosFeat);
         sosFeat.setFeatureType(getFeatureType(spatialSamplingFeature.getType()));
         sosFeat.setSampledFeatures(getSampledFeatures(spatialSamplingFeature.getSampledFeatureArray()));
         sosFeat.setXmlDescription(getXmlDescription(spatialSamplingFeature));
@@ -157,19 +146,6 @@ public class SamplingDecoderv20 implements Decoder<AbstractFeature, XmlObject> {
                 SFSpatialSamplingFeatureDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         featureDoc.setSFSpatialSamplingFeature(spatialSamplingFeature);
         return featureDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
-    }
-
-    private List<CodeType> getNames(final SFSpatialSamplingFeatureType spatialSamplingFeature)
-            throws OwsExceptionReport {
-        final int length = spatialSamplingFeature.getNameArray().length;
-        final List<CodeType> names = new ArrayList<CodeType>(length);
-        for (int i = 0; i < length; i++) {
-            final Object decodedElement = CodingHelper.decodeXmlObject(spatialSamplingFeature.getNameArray(i));
-            if (decodedElement instanceof CodeType) {
-                names.add((CodeType) decodedElement);
-            }
-        }
-        return names;
     }
 
     private String getFeatureType(final ReferenceType type) {

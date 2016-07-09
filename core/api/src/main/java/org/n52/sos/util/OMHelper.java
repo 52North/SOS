@@ -39,14 +39,24 @@ import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
+import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
+import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
@@ -56,12 +66,12 @@ import org.n52.sos.util.http.HTTPStatus;
 
 /**
  * Utility class for Observation and Measurement
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public final class OMHelper {
-
+    private static final ValueVisitor<String> OBSERVATION_TYPE_VISITOR = new ObservationTypeVisitor();
     private OMHelper() {
     }
 
@@ -89,6 +99,10 @@ public final class OMHelper {
             return OmConstants.OBS_TYPE_COUNT_OBSERVATION;
         } else if (component instanceof SweCategory) {
             return OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
+        } else if (component instanceof SweDataRecord) {
+            return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION;
+        } else if (component instanceof SweDataArray) {
+            return OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
         }
         // TODO Check for missing types
         throw new NoApplicableCodeException().withMessage(
@@ -96,23 +110,9 @@ public final class OMHelper {
                 .setStatus(HTTPStatus.BAD_REQUEST);
     }
 
-    public static String getObservationTypeFor(final Value<?> value) {
-        if (value instanceof BooleanValue) {
-            return OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
-        } else if (value instanceof CategoryValue) {
-            return OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
-        } else if (value instanceof CountValue) {
-            return OmConstants.OBS_TYPE_COUNT_OBSERVATION;
-        } else if (value instanceof QuantityValue) {
-            return OmConstants.OBS_TYPE_MEASUREMENT;
-        } else if (value instanceof TextValue) {
-            return OmConstants.OBS_TYPE_TEXT_OBSERVATION;
-        } else if (value instanceof SweDataArrayValue) {
-            return OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
-        } else if (value instanceof GeometryValue) {
-            return OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION;
-        }
-        return OmConstants.OBS_TYPE_OBSERVATION;
+    public static String getObservationTypeFor(Value<?> value)
+            throws OwsExceptionReport {
+        return value.accept(OBSERVATION_TYPE_VISITOR);
     }
 
     public static String getObservationTypeFor(final QName resultModel) {
@@ -128,19 +128,21 @@ public final class OMHelper {
             return OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
         } else if (OmConstants.RESULT_MODEL_TEXT_OBSERVATION.equals(resultModel)) {
             return OmConstants.OBS_TYPE_TEXT_OBSERVATION;
+        } else if (OmConstants.RESULT_MODEL_COMPLEX_OBSERVATION.equals(resultModel)) {
+            return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION;
         }
         return OmConstants.OBS_TYPE_OBSERVATION;
     }
 
     /**
      * Get the QName for resultModels from observationType constant
-     * 
+     *
      * @param resultModels4Offering
      *            Observation types
      * @return QNames for resultModel parameter
      */
     public static Collection<QName> getQNamesForResultModel(final Collection<String> resultModels4Offering) {
-        final List<QName> resultModels = new ArrayList<QName>(9);
+        final List<QName> resultModels = new ArrayList<>(resultModels4Offering.size());
         for (final String string : resultModels4Offering) {
             resultModels.add(getQNameFor(string));
         }
@@ -148,21 +150,25 @@ public final class OMHelper {
     }
 
     public static QName getQNameFor(final String observationType) {
-        if (OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType)) {
-            return OmConstants.RESULT_MODEL_MEASUREMENT;
-        } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
-            return OmConstants.RESULT_MODEL_CATEGORY_OBSERVATION;
-        } else if (OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION.equals(observationType)) {
-            return OmConstants.RESULT_MODEL_GEOMETRY_OBSERVATION;
-        } else if (OmConstants.OBS_TYPE_COUNT_OBSERVATION.equals(observationType)) {
-            return OmConstants.RESULT_MODEL_COUNT_OBSERVATION;
-        } else if (OmConstants.OBS_TYPE_TRUTH_OBSERVATION.equals(observationType)) {
-            return OmConstants.RESULT_MODEL_TRUTH_OBSERVATION;
-        } else if (OmConstants.OBS_TYPE_TEXT_OBSERVATION.equals(observationType)) {
-            return OmConstants.RESULT_MODEL_TEXT_OBSERVATION;
-        } else {
-            return OmConstants.RESULT_MODEL_OBSERVATION;
+        if (null != observationType) {
+            switch (observationType) {
+                case OmConstants.OBS_TYPE_MEASUREMENT:
+                    return OmConstants.RESULT_MODEL_MEASUREMENT;
+                case OmConstants.OBS_TYPE_CATEGORY_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_CATEGORY_OBSERVATION;
+                case OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_GEOMETRY_OBSERVATION;
+                case OmConstants.OBS_TYPE_COUNT_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_COUNT_OBSERVATION;
+                case OmConstants.OBS_TYPE_TRUTH_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_TRUTH_OBSERVATION;
+                case OmConstants.OBS_TYPE_TEXT_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_TEXT_OBSERVATION;
+                case OmConstants.OBS_TYPE_COMPLEX_OBSERVATION:
+                    return OmConstants.RESULT_MODEL_COMPLEX_OBSERVATION;
+            }
         }
+        return OmConstants.RESULT_MODEL_OBSERVATION;
     }
 
     public static Object getEncodedResultModelFor(final String resultModel) {
@@ -172,5 +178,82 @@ public final class OMHelper {
         builder.append(":");
         builder.append(qNameFor.getLocalPart());
         return builder.toString();
+    }
+
+    private static class ObservationTypeVisitor implements ValueVisitor<String> {
+        @Override
+        public String visit(BooleanValue value) {
+            return OmConstants.OBS_TYPE_TRUTH_OBSERVATION;
+        }
+
+        @Override
+        public String visit(CategoryValue value) {
+            return OmConstants.OBS_TYPE_CATEGORY_OBSERVATION;
+        }
+
+        @Override
+        public String visit(ComplexValue value) {
+            return OmConstants.OBS_TYPE_COMPLEX_OBSERVATION;
+        }
+
+        @Override
+        public String visit(CountValue value) {
+            return OmConstants.OBS_TYPE_COUNT_OBSERVATION;
+        }
+
+        @Override
+        public String visit(GeometryValue value) {
+            return OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION;
+        }
+
+        @Override
+        public String visit(HrefAttributeValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(NilTemplateValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(QuantityValue value) {
+            return OmConstants.OBS_TYPE_MEASUREMENT;
+        }
+
+        @Override
+        public String visit(ReferenceValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(SweDataArrayValue value) {
+            return OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION;
+        }
+
+        @Override
+        public String visit(TVPValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(TextValue value) {
+            return OmConstants.OBS_TYPE_TEXT_OBSERVATION;
+        }
+
+        @Override
+        public String visit(UnknownValue value) {
+            return defaultValue();
+        }
+
+        @Override
+        public String visit(XmlValue value)
+                throws OwsExceptionReport {
+            return defaultValue();
+        }
+
+        private static String defaultValue() {
+            return OmConstants.OBS_TYPE_OBSERVATION;
+        }
     }
 }

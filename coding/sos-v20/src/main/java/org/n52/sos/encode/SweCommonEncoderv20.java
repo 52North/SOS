@@ -30,17 +30,79 @@ package org.n52.sos.encode;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlString;
+import org.joda.time.DateTime;
+import org.n52.oxf.xml.NcNameResolver;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.ogc.OGCConstants;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.ConformanceClasses;
+import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.swe.RangeValue;
+import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.ogc.swe.SweCoordinate;
+import org.n52.sos.ogc.swe.SweDataArray;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweVector;
+import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTimes;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedTokens;
+import org.n52.sos.ogc.swe.simpleType.SweAllowedValues;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swe.simpleType.SweCategory;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.sos.ogc.swe.simpleType.SweQuality;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
+import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.sos.ogc.swes.SwesConstants;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.Nillable;
+import org.n52.sos.w3c.SchemaLocation;
+import org.n52.sos.w3c.xlink.Referenceable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3.x1999.xlink.ActuateType;
+import org.w3.x1999.xlink.ShowType;
+import org.w3.x1999.xlink.TypeType;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import net.opengis.swe.x20.AbstractDataComponentType;
 import net.opengis.swe.x20.AbstractEncodingDocument;
 import net.opengis.swe.x20.AbstractEncodingType;
+import net.opengis.swe.x20.AllowedTimesPropertyType;
+import net.opengis.swe.x20.AllowedTimesType;
+import net.opengis.swe.x20.AllowedTokensPropertyType;
+import net.opengis.swe.x20.AllowedTokensType;
+import net.opengis.swe.x20.AllowedValuesPropertyType;
+import net.opengis.swe.x20.AllowedValuesType;
 import net.opengis.swe.x20.BooleanType;
 import net.opengis.swe.x20.CategoryType;
 import net.opengis.swe.x20.CountType;
@@ -48,10 +110,12 @@ import net.opengis.swe.x20.DataArrayDocument;
 import net.opengis.swe.x20.DataArrayPropertyType;
 import net.opengis.swe.x20.DataArrayType;
 import net.opengis.swe.x20.DataArrayType.ElementType;
+import net.opengis.swe.x20.DataArrayType.Encoding;
 import net.opengis.swe.x20.DataRecordDocument;
 import net.opengis.swe.x20.DataRecordPropertyType;
 import net.opengis.swe.x20.DataRecordType;
 import net.opengis.swe.x20.DataRecordType.Field;
+import net.opengis.swe.x20.QualityPropertyType;
 import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
 import net.opengis.swe.x20.Reference;
@@ -64,55 +128,7 @@ import net.opengis.swe.x20.UnitReference;
 import net.opengis.swe.x20.VectorType;
 import net.opengis.swe.x20.VectorType.Coordinate;
 
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlString;
-import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.OGCConstants;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.ConformanceClasses;
-import org.n52.sos.ogc.sos.SosConstants;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweConstants;
-import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweVector;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
-import org.n52.sos.ogc.swes.SwesConstants;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
-/**
- * @since 4.0.0
- * 
- */
 public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweCommonEncoderv20.class);
 
@@ -152,6 +168,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return Sets.newHashSet(SwesConstants.SWES_20_SCHEMA_LOCATION);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public XmlObject encode(final Object sosSweType, final Map<HelperValues, String> additionalValues)
             throws OwsExceptionReport {
@@ -159,15 +176,15 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         if (sosSweType instanceof SweCoordinate) {
             encodedObject = createCoordinate((SweCoordinate) sosSweType);
         } else if (sosSweType instanceof SweAbstractEncoding) {
-            encodedObject = createAbstractEncoding((SweAbstractEncoding) sosSweType, additionalValues);
+            encodedObject = createAbstractEncoding((SweAbstractEncoding) sosSweType);
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
                 if (encodedObject instanceof TextEncodingType) {
-                    final TextEncodingDocument textEncodingDoc = TextEncodingDocument.Factory.newInstance();
+                    final TextEncodingDocument textEncodingDoc = TextEncodingDocument.Factory.newInstance(getXmlOptions());
                     textEncodingDoc.setTextEncoding((TextEncodingType) encodedObject);
                     encodedObject = textEncodingDoc;
                 } else {
                     final AbstractEncodingDocument abstractEncodingDoc =
-                            AbstractEncodingDocument.Factory.newInstance();
+                            AbstractEncodingDocument.Factory.newInstance(getXmlOptions());
                     abstractEncodingDoc.setAbstractEncoding((AbstractEncodingType) encodedObject);
                     return abstractEncodingDoc;
                 }
@@ -178,7 +195,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             final DataArrayType dataArrayType = createDataArray((SweDataArray) sosSweType);
             if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
                 final DataArrayPropertyType dataArrayProperty =
-                        DataArrayPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                        DataArrayPropertyType.Factory.newInstance(getXmlOptions());
                 dataArrayProperty.setDataArray1(dataArrayType);
                 encodedObject = dataArrayProperty;
             }
@@ -193,6 +210,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return encodedObject;
     }
 
+    @SuppressWarnings("rawtypes")
     private XmlObject createAbstractDataComponent(final SweAbstractDataComponent sosSweAbstractDataComponent,
             final Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
         if (sosSweAbstractDataComponent == null) {
@@ -234,18 +252,18 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         }
         if ((abstractDataComponentType instanceof DataArrayType)
                 && additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
-            final DataArrayPropertyType dataArrayProperty = DataArrayPropertyType.Factory.newInstance();
+            final DataArrayPropertyType dataArrayProperty = DataArrayPropertyType.Factory.newInstance(getXmlOptions());
             dataArrayProperty.setDataArray1((DataArrayType) abstractDataComponentType);
             return dataArrayProperty;
         }
         if ((abstractDataComponentType instanceof DataRecordType)) {
             if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
-                final DataRecordPropertyType dataRecordProperty = DataRecordPropertyType.Factory.newInstance();
+                final DataRecordPropertyType dataRecordProperty = DataRecordPropertyType.Factory.newInstance(getXmlOptions());
                 dataRecordProperty.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordProperty;
             }
             if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-                final DataRecordDocument dataRecordDoc = DataRecordDocument.Factory.newInstance();
+                final DataRecordDocument dataRecordDoc = DataRecordDocument.Factory.newInstance(getXmlOptions());
                 dataRecordDoc.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordDoc;
             }
@@ -256,9 +274,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
 
     private DataRecordType createDataRecord(final SweDataRecord sosDataRecord) throws OwsExceptionReport {
         final List<SweField> sosFields = sosDataRecord.getFields();
-        final DataRecordType xbDataRecord = DataRecordType.Factory.newInstance();
+        final DataRecordType xbDataRecord = DataRecordType.Factory.newInstance(getXmlOptions());
         if (sosFields != null) {
-            final ArrayList<Field> xbFields = new ArrayList<DataRecordType.Field>(sosFields.size());
+            final ArrayList<Field> xbFields = new ArrayList<>(sosFields.size());
             for (final SweField sosSweField : sosFields) {
                 if (sosSweField != null) {
                     final Field xbField = createField(sosSweField);
@@ -290,7 +308,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             }
 
             final DataArrayType xbDataArray =
-                    DataArrayType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                    DataArrayType.Factory.newInstance(getXmlOptions());
             if (sosDataArray.isSetElementCount()) {
                 xbDataArray.addNewElementCount().setCount(createCount(sosDataArray.getElementCount()));
             } else {
@@ -304,26 +322,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
                     elementType.setName("Components");
                 }
 
-                elementType.addNewAbstractDataComponent().set(
-                        createDataRecord((SweDataRecord) sosDataArray.getElementType()));
-                // TODO allow other dataComponents.
-                elementType.getAbstractDataComponent().substitute(
-                        new QName(SweConstants.NS_SWE_20, SweConstants.EN_DATA_RECORD, SweConstants.NS_SWE_PREFIX),
-                        DataRecordType.type);
+                elementType.addNewAbstractDataComponent().set(createDataRecord((SweDataRecord) sosDataArray.getElementType()));
+                elementType.getAbstractDataComponent().substitute(SweConstants.QN_DATA_RECORD_SWE_200, DataRecordType.type);
             }
             if (sosDataArray.isSetEncoding()) {
-                xbDataArray.addNewEncoding().addNewAbstractEncoding();
-                xbDataArray
-                        .getEncoding()
-                        .getAbstractEncoding()
-                        .set(createAbstractEncoding(sosDataArray.getEncoding(),
-                                Maps.<HelperValues, String> newEnumMap(HelperValues.class)));
-                xbDataArray
-                        .getEncoding()
-                        .getAbstractEncoding()
-                        .substitute(
-                                new QName(SweConstants.NS_SWE_20, SweConstants.EN_TEXT_ENCODING,
-                                        SweConstants.NS_SWE_PREFIX), TextEncodingType.type);
+                Encoding xbEncoding = xbDataArray.addNewEncoding();
+                xbEncoding.setAbstractEncoding(createAbstractEncoding(sosDataArray.getEncoding()));
+                xbEncoding.getAbstractEncoding().substitute(SweConstants.QN_TEXT_ENCODING_SWE_200, TextEncodingType.type);
             }
             if (sosDataArray.isSetValues()) {
                 xbDataArray.addNewValues().set(createValues(sosDataArray.getValues(), sosDataArray.getEncoding()));
@@ -355,7 +360,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         // remove last block sep
         valueString = valueString.substring(0, valueString.lastIndexOf(blockSeparator));
         // create XB result object
-        final XmlString xbValueString = XmlString.Factory.newInstance();
+        final XmlString xbValueString = XmlString.Factory.newInstance(getXmlOptions());
         xbValueString.setStringValue(valueString);
         return xbValueString;
     }
@@ -364,45 +369,24 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         final SweAbstractDataComponent sosElement = sweField.getElement();
         LOGGER.trace("sweField: {}, sosElement: {}", sweField, sosElement);
         final DataRecordType.Field xbField =
-                DataRecordType.Field.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                DataRecordType.Field.Factory.newInstance(getXmlOptions());
         if (sweField.isSetName()) {
             xbField.setName(NcNameResolver.fixNcName(sweField.getName().getValue()));
         }
-        final AbstractDataComponentType xbDCD = xbField.addNewAbstractDataComponent();
-        xbDCD.set(createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
-                HelperValues.class)));
-        if (sosElement instanceof SweBoolean) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_BOOLEAN_SWE_200, BooleanType.type);
-        } else if (sosElement instanceof SweCategory) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_CATEGORY_SWE_200, CategoryType.type);
-        } else if (sosElement instanceof SweCount) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_COUNT_SWE_200, CountType.type);
-        } else if (sosElement instanceof SweQuantity) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_QUANTITY_SWE_200, QuantityType.type);
-        } else if (sosElement instanceof SweText) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_TEXT_SWE_200, TextType.type);
-        } else if (sosElement instanceof SweTimeRange) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_TIME_RANGE_SWE_200, TimeRangeType.type);
-        } else if (sosElement instanceof SweTime) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_TIME_SWE_200, TimeType.type);
-        } else if (sosElement instanceof SweDataArray) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_DATA_ARRAY_SWE_200, DataArrayType.type);
-        } else if (sosElement instanceof SweDataRecord) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_DATA_RECORD_SWE_200, DataRecordType.type);
-        } else if (sosElement instanceof SweVector) {
-            xbField.getAbstractDataComponent().substitute(SweConstants.QN_VECTOR_SWE_200, VectorType.type);
-        } else {
-            throw new NotYetSupportedException(SweAbstractDataComponent.class.getName(), sosElement);
-        }
+        
+        final XmlObject encodeObjectToXml = createAbstractDataComponent(sosElement, new EnumMap<SosConstants.HelperValues, String>(
+                HelperValues.class));
+        XmlObject substituteElement =
+                XmlHelper.substituteElement(xbField.addNewAbstractDataComponent(), encodeObjectToXml);
+        substituteElement.set(encodeObjectToXml);
         return xbField;
     }
 
     /*
-     * 
+     *
      * SIMPLE TYPES
      */
-    private AbstractDataComponentType createSimpleType(final SweAbstractSimpleType<?> sosSimpleType)
-            throws OwsExceptionReport {
+    private AbstractDataComponentType createSimpleType(final SweAbstractSimpleType<?> sosSimpleType) throws OwsExceptionReport {
         if (sosSimpleType instanceof SweBoolean) {
             return createBoolean((SweBoolean) sosSimpleType);
         } else if (sosSimpleType instanceof SweCategory) {
@@ -425,29 +409,47 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         throw new NotYetSupportedException(SweAbstractSimpleType.class.getSimpleName(), sosSimpleType);
     }
 
-    private BooleanType createBoolean(final SweBoolean sosElement) {
-        final BooleanType xbBoolean = BooleanType.Factory.newInstance();
+    private BooleanType createBoolean(final SweBoolean sosElement) throws OwsExceptionReport {
+        final BooleanType xbBoolean = BooleanType.Factory.newInstance(getXmlOptions());
         if (sosElement.isSetValue()) {
             xbBoolean.setValue(sosElement.getValue());
+        }
+        if (sosElement.isSetQuality()) {
+            xbBoolean.setQualityArray(createQuality(sosElement.getQuality()));
         }
         return xbBoolean;
     }
 
-    private CategoryType createCategory(final SweCategory sosCategory) {
+    private CategoryType createCategory(final SweCategory sosCategory) throws OwsExceptionReport {
         final CategoryType xbCategory =
-                CategoryType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                CategoryType.Factory.newInstance(getXmlOptions());
         if (sosCategory.getCodeSpace() != null) {
             final Reference xbCodespace = xbCategory.addNewCodeSpace();
             xbCodespace.setHref(sosCategory.getCodeSpace());
         }
+        if (sosCategory.isSetValue()) {
+            xbCategory.setValue(sosCategory.getValue());
+        }
+        if (sosCategory.isSetContstraint()) {
+            createConstraint(xbCategory.addNewConstraint(), sosCategory.getConstraint());
+        }
+        if (sosCategory.isSetQuality()) {
+            xbCategory.setQualityArray(createQuality(sosCategory.getQuality()));
+        }
         return xbCategory;
     }
 
-    private CountType createCount(final SweCount sosCount) {
-        final CountType xbCount = CountType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+    private CountType createCount(final SweCount sosCount) throws OwsExceptionReport {
+        final CountType xbCount = CountType.Factory.newInstance(getXmlOptions());
         if (sosCount.isSetValue()) {
             final BigInteger bigInt = new BigInteger(Integer.toString(sosCount.getValue().intValue()));
             xbCount.setValue(bigInt);
+        }
+        if (sosCount.isSetContstraint()) {
+            createConstraint(xbCount.addNewConstraint(), sosCount.getConstraint());
+        }
+        if (sosCount.isSetQuality()) {
+            xbCount.setQualityArray(createQuality(sosCount.getQuality()));
         }
         return xbCount;
     }
@@ -456,30 +458,32 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         throw new RuntimeException("NOT YET IMPLEMENTED: encoding of swe:ObservableProperty");
     }
 
-    protected QuantityType createQuantity(final SweQuantity quantity) {
+    protected QuantityType createQuantity(final SweQuantity quantity) throws OwsExceptionReport {
         final QuantityType xbQuantity =
-                QuantityType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                QuantityType.Factory.newInstance(getXmlOptions());
         if (quantity.isSetAxisID()) {
             xbQuantity.setAxisID(quantity.getAxisID());
         }
         if (quantity.isSetValue()) {
-            xbQuantity.setValue(Double.valueOf(quantity.getValue()));
+            xbQuantity.setValue(quantity.getValue());
         }
         if (quantity.isSetUom()) {
             xbQuantity.setUom(createUnitReference(quantity.getUom()));
         } else {
             xbQuantity.setUom(createUnknownUnitReference());
         }
-        if (quantity.getQuality() != null) {
-            // TODO implement
-            logWarnQualityNotSupported(xbQuantity.schemaType());
+        if (quantity.isSetQuality()) {
+            xbQuantity.setQualityArray(createQuality(quantity.getQuality()));
+        }
+        if (quantity.isSetContstraint()) {
+            createConstraint(xbQuantity.addNewConstraint(), quantity.getConstraint());
         }
         return xbQuantity;
     }
 
-    protected QuantityRangeType createQuantityRange(final SweQuantityRange quantityRange) {
+    protected QuantityRangeType createQuantityRange(final SweQuantityRange quantityRange) throws OwsExceptionReport {
         final QuantityRangeType xbQuantityRange =
-                QuantityRangeType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                QuantityRangeType.Factory.newInstance(getXmlOptions());
         if (quantityRange.isSetAxisID()) {
             xbQuantityRange.setAxisID(quantityRange.getAxisID());
         }
@@ -492,37 +496,44 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             xbQuantityRange.setUom(createUnknownUnitReference());
         }
         if (quantityRange.isSetQuality()) {
-            // TODO implement
-            logWarnQualityNotSupported(xbQuantityRange.schemaType());
+            xbQuantityRange.setQualityArray(createQuality(quantityRange.getQuality()));
+        }
+        if (quantityRange.isSetContstraint()) {
+            createConstraint(xbQuantityRange.addNewConstraint(), quantityRange.getConstraint());
         }
         return xbQuantityRange;
     }
 
     private TextType createText(final SweText text) {
-        final TextType xbText = TextType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        final TextType xbText = TextType.Factory.newInstance(getXmlOptions());
         if (text.isSetValue()) {
             xbText.setValue(text.getValue());
+        }
+        if (text.isSetContstraint()) {
+            createConstraint(xbText.addNewConstraint(), text.getConstraint());
         }
         return xbText;
     }
 
-    private TimeType createTime(final SweTime sosTime) {
-        final TimeType xbTime = TimeType.Factory.newInstance();
+    private TimeType createTime(final SweTime sosTime) throws OwsExceptionReport {
+        final TimeType xbTime = TimeType.Factory.newInstance(getXmlOptions());
         if (sosTime.isSetValue()) {
             xbTime.setValue(sosTime.getValue());
         }
         if (sosTime.isSetUom()) {
             xbTime.setUom(createUnitReference(sosTime.getUom()));
         }
-        if (sosTime.getQuality() != null) {
-            // TODO implement
-            logWarnQualityNotSupported(xbTime.schemaType());
+        if (sosTime.isSetQuality()) {
+            xbTime.setQualityArray(createQuality(sosTime.getQuality()));
+        }
+        if (sosTime.isSetContstraint()) {
+            createConstraint(xbTime.addNewConstraint(), sosTime.getConstraint());
         }
         return xbTime;
     }
 
-    private TimeRangeType createTimeRange(final SweTimeRange sosTimeRange) {
-        final TimeRangeType xbTimeRange = TimeRangeType.Factory.newInstance();
+    private TimeRangeType createTimeRange(final SweTimeRange sosTimeRange) throws OwsExceptionReport {
+        final TimeRangeType xbTimeRange = TimeRangeType.Factory.newInstance(getXmlOptions());
         if (sosTimeRange.isSetUom()) {
             xbTimeRange.addNewUom().setHref(sosTimeRange.getUom());
         }
@@ -530,14 +541,197 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             xbTimeRange.setValue(sosTimeRange.getValue().getRangeAsStringList());
         }
         if (sosTimeRange.isSetQuality()) {
-            // TODO implement
-            logWarnQualityNotSupported(xbTimeRange.schemaType());
+            xbTimeRange.setQualityArray(createQuality(sosTimeRange.getQuality()));
+        }
+        if (sosTimeRange.isSetContstraint()) {
+            createConstraint(xbTimeRange.addNewConstraint(), sosTimeRange.getConstraint());
         }
         return xbTimeRange;
     }
 
+    private AllowedValuesPropertyType createConstraint(AllowedValuesPropertyType avpt,
+            Referenceable<SweAllowedValues> constraint) {
+        if (constraint.isInstance()) {
+            createAllowedValues(avpt.addNewAllowedValues(), constraint.getInstance());
+        } else if (constraint.isReference()) {
+            org.n52.sos.w3c.xlink.Reference ref = constraint.getReference();
+            if (ref.getHref().isPresent()) {
+                avpt.setHref(ref.getHref().get().toString());
+            }
+            if (ref.getTitle().isPresent()) {
+                avpt.setTitle(ref.getTitle().get());
+            }
+            if (ref.getActuate().isPresent()) {
+                avpt.setActuate(ActuateType.Enum.forString(ref.getActuate().get()));
+            }
+            if (ref.getArcrole().isPresent()) {
+                avpt.setArcrole(ref.getArcrole().get());
+            }
+            if (ref.getRole().isPresent()) {
+                avpt.setRole(ref.getRole().get());
+            }
+            if (ref.getShow().isPresent()) {
+                avpt.setShow(ShowType.Enum.forString(ref.getShow().get()));
+            }
+            if (ref.getType().isPresent()) {
+                avpt.setType(TypeType.Enum.forString(ref.getType().get()));
+            }
+        }
+        return avpt;
+    }
+
+    private AllowedValuesType createAllowedValues(AllowedValuesType avt, Nillable<SweAllowedValues> instance) {
+        if (instance.isPresent()) {
+            if (instance.get().isSetGmlID()) {
+                avt.setId(instance.get().getGmlId());
+            }
+            if (instance.get().isSetValue()) {
+                for (Double value : instance.get().getValue()) {
+                    avt.addNewValue().setDoubleValue(value);
+                }          
+            }
+            if (instance.get().isSetInterval()) {
+                for (RangeValue<Double> interval : instance.get().getInterval()) {
+                    avt.addInterval(interval.getRangeAsList());
+                }
+            }
+            if (instance.get().isSetSignificantFigures()) {
+                avt.setSignificantFigures(instance.get().getSignificantFigures());
+            }
+        }
+        return avt;
+    }
+
+    private AllowedTokensPropertyType createConstraint(AllowedTokensPropertyType atpt,
+            Referenceable<SweAllowedTokens> constraint) {
+        if (constraint.isInstance()) {
+            createAllowedTokens(atpt.addNewAllowedTokens(), constraint.getInstance());
+        } else if (constraint.isReference()) {
+            org.n52.sos.w3c.xlink.Reference ref = constraint.getReference();
+            if (ref.getHref().isPresent()) {
+                atpt.setHref(ref.getHref().get().toString());
+            }
+            if (ref.getTitle().isPresent()) {
+                atpt.setTitle(ref.getTitle().get());
+            }
+            if (ref.getActuate().isPresent()) {
+                atpt.setActuate(ActuateType.Enum.forString(ref.getActuate().get()));
+            }
+            if (ref.getArcrole().isPresent()) {
+                atpt.setArcrole(ref.getArcrole().get());
+            }
+            if (ref.getRole().isPresent()) {
+                atpt.setRole(ref.getRole().get());
+            }
+            if (ref.getShow().isPresent()) {
+                atpt.setShow(ShowType.Enum.forString(ref.getShow().get()));
+            }
+            if (ref.getType().isPresent()) {
+                atpt.setType(TypeType.Enum.forString(ref.getType().get()));
+            }
+        }
+        return atpt;
+    }
+
+    private AllowedTokensType createAllowedTokens(AllowedTokensType att, Nillable<SweAllowedTokens> instance) {
+        if (instance.isPresent()) {
+            if (instance.get().isSetGmlID()) {
+                att.setId(instance.get().getGmlId());
+            }
+            if (instance.get().isSetValue()) {
+                for (String value : instance.get().getValue()) {
+                    att.addNewValue().setStringValue(value);
+                }          
+            }
+            if (instance.get().isSetPattern()) {
+                att.setPattern(instance.get().getPattern());
+            }
+        }
+        return att;
+    }
+
+    private AllowedTimesPropertyType createConstraint(AllowedTimesPropertyType atpt,
+            Referenceable<SweAllowedTimes> constraint) {
+        if (constraint.isInstance()) {
+            createAllowedTimes(atpt.addNewAllowedTimes(), constraint.getInstance());
+        } else if (constraint.isReference()) {
+            org.n52.sos.w3c.xlink.Reference ref = constraint.getReference();
+            if (ref.getHref().isPresent()) {
+                atpt.setHref(ref.getHref().get().toString());
+            }
+            if (ref.getTitle().isPresent()) {
+                atpt.setTitle(ref.getTitle().get());
+            }
+            if (ref.getActuate().isPresent()) {
+                atpt.setActuate(ActuateType.Enum.forString(ref.getActuate().get()));
+            }
+            if (ref.getArcrole().isPresent()) {
+                atpt.setArcrole(ref.getArcrole().get());
+            }
+            if (ref.getRole().isPresent()) {
+                atpt.setRole(ref.getRole().get());
+            }
+            if (ref.getShow().isPresent()) {
+                atpt.setShow(ShowType.Enum.forString(ref.getShow().get()));
+            }
+            if (ref.getType().isPresent()) {
+                atpt.setType(TypeType.Enum.forString(ref.getType().get()));
+            }
+        }
+        return atpt;
+    }
+
+    private AllowedTimesType createAllowedTimes(AllowedTimesType att, Nillable<SweAllowedTimes> instance) {
+        if (instance.isPresent()) {
+            if (instance.get().isSetGmlID()) {
+                att.setId(instance.get().getGmlId());
+            }
+            if (instance.get().isSetValue()) {
+                for (DateTime value : instance.get().getValue()) {
+                    att.addNewValue().setStringValue(DateTimeHelper.formatDateTime2IsoString(value));
+                }          
+            }
+            if (instance.get().isSetInterval()) {
+                for (RangeValue<DateTime> interval : instance.get().getInterval()) {
+                    List<String> list = Lists.newArrayListWithCapacity(2);
+                    list.add(DateTimeHelper.formatDateTime2IsoString(interval.getRangeStart()));
+                    if (interval.isSetEndValue()) {
+                        list.add(DateTimeHelper.formatDateTime2IsoString(interval.getRangeEnd()));
+                    }
+                    att.addInterval(list);
+                }
+            }
+            if (instance.get().isSetSignificantFigures()) {
+                att.setSignificantFigures(instance.get().getSignificantFigures());
+            }
+        }
+        return att;
+    }
+    
+    private QualityPropertyType[] createQuality(final Collection<SweQuality> quality) throws OwsExceptionReport {
+        if (!quality.isEmpty()) {
+            final ArrayList<QualityPropertyType> xbQualities = Lists.newArrayListWithCapacity(quality.size());
+            for (final SweQuality sweQuality : quality) {
+                final QualityPropertyType xbQuality = QualityPropertyType.Factory.newInstance();
+                if (sweQuality instanceof SweText) {
+                    xbQuality.addNewText().set(createText((SweText) sweQuality));
+                } else if (sweQuality instanceof SweCategory) {
+                    xbQuality.addNewCategory().set(createCategory((SweCategory) sweQuality));
+                } else if (sweQuality instanceof SweQuantity) {
+                    xbQuality.addNewQuantity().set(createQuantity((SweQuantity) sweQuality));
+                } else if (sweQuality instanceof SweQuantityRange) {
+                    xbQuality.addNewQuantityRange().set(createQuantityRange((SweQuantityRange) sweQuality));
+                }
+                xbQualities.add(xbQuality);
+            }
+            return xbQualities.toArray(new QualityPropertyType[xbQualities.size()]);
+        }
+        final QualityPropertyType[] result = { QualityPropertyType.Factory.newInstance() };
+        return result;
+    }
+
     private VectorType createVector(SweVector sweVector) throws OwsExceptionReport {
-        final VectorType xbVector = VectorType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        final VectorType xbVector = VectorType.Factory.newInstance(getXmlOptions());
         if (sweVector.isSetReferenceFrame()) {
             xbVector.setReferenceFrame(sweVector.getReferenceFrame());
         }
@@ -553,15 +747,13 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     private Coordinate createCoordinate(final SweCoordinate<?> coordinate) throws OwsExceptionReport {
-        final Coordinate xbCoordinate = Coordinate.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        final Coordinate xbCoordinate = Coordinate.Factory.newInstance(getXmlOptions());
         xbCoordinate.setName(coordinate.getName());
         xbCoordinate.setQuantity((QuantityType)createAbstractDataComponent((SweQuantity) coordinate.getValue(), null));
         return xbCoordinate;
     }
 
-    private AbstractEncodingType createAbstractEncoding(final SweAbstractEncoding sosSweAbstractEncoding,
-            Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-
+    private AbstractEncodingType createAbstractEncoding(final SweAbstractEncoding sosSweAbstractEncoding) throws OwsExceptionReport {
         if (sosSweAbstractEncoding instanceof SweTextEncoding) {
             return createTextEncoding((SweTextEncoding) sosSweAbstractEncoding);
         }
@@ -581,7 +773,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
 
     private TextEncodingType createTextEncoding(final SweTextEncoding sosTextEncoding) {
         final TextEncodingType xbTextEncoding =
-                TextEncodingType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                TextEncodingType.Factory.newInstance(getXmlOptions());
         if (sosTextEncoding.getBlockSeparator() != null) {
             xbTextEncoding.setBlockSeparator(sosTextEncoding.getBlockSeparator());
         }
@@ -599,7 +791,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
 
     private UnitReference createUnitReference(final String uom) {
         final UnitReference unitReference =
-                UnitReference.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                UnitReference.Factory.newInstance(getXmlOptions());
         if (uom.startsWith("urn:") || uom.startsWith("http://")) {
             unitReference.setHref(uom);
         } else {
@@ -615,7 +807,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         return unitReference;
     }
 
-    private void logWarnQualityNotSupported(SchemaType schemaType) {
-        LOGGER.warn("Quality encoding is not supported for {}", schemaType);
+    protected static XmlOptions getXmlOptions() {
+        return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 }

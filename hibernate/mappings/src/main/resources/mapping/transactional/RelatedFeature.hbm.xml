@@ -12,7 +12,7 @@
                 <param name="sequence">relatedFeatureId_seq</param>
             </generator>
         </id>
-        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.TFeatureOfInterest" foreign-key="relatedFeatureFeatureFk">
+        <many-to-one name="featureOfInterest" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"  foreign-key="relatedFeatureFeatureFk">
             <column name="featureOfInterestId" not-null="true">
                 <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>

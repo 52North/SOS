@@ -31,6 +31,7 @@ package org.n52.sos.request;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -105,10 +106,42 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
         getExtensions().addSwesExtension(extension);
         return this;
     }
-
+    
     @Override
     public boolean isSetExtensions() {
         return extensions != null && !extensions.isEmpty();
+    }
+    
+    @Override
+    public boolean hasExtension(Enum identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean hasExtension(String identifier) {
+        if (isSetExtensions()) {
+            return getExtensions().containsExtension(identifier);
+        }
+        return false;
+    }
+
+    @Override
+    public SwesExtension<?> getExtension(Enum identifier) throws InvalidParameterValueException {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
+    }
+    
+    @Override
+    public SwesExtension<?> getExtension(String identifier) throws InvalidParameterValueException {
+        if (hasExtension(identifier)) {
+            return getExtensions().getExtension(identifier);
+        }
+        return null;
     }
 
     public String getRequestedLanguage() {

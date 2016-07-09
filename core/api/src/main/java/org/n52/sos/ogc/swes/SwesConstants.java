@@ -30,6 +30,7 @@ package org.n52.sos.ogc.swes;
 
 import javax.xml.namespace.QName;
 
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
@@ -140,6 +141,18 @@ public interface SwesConstants {
      * 
      * @param <T>
      */
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since
+     *
+     * @param <T>
+     */
+    /**
+     * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+     * @since
+     *
+     * @param <T>
+     */
     interface HasSwesExtension<T> {
         /**
          * Get the {@link SwesExtension}s
@@ -183,6 +196,46 @@ public interface SwesConstants {
          *         empty
          */
         public boolean isSetExtensions();
+
+        /**
+         * Check if the extension for the identifier exists
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return <code>true</code>, if the extension exists
+         */
+        @SuppressWarnings("rawtypes")
+        public boolean hasExtension(Enum identifier);
+
+        /**
+         * Check if the extension for the identifier exists
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return <code>true</code>, if the extension exists
+         */
+        public boolean hasExtension(String identifier);
+
+        /**
+         * Get the extension for the identifier
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return The extension or null.
+         * @throws InvalidParameterValueException
+         */
+        @SuppressWarnings("rawtypes")
+        public SwesExtension<?> getExtension(Enum identifier) throws InvalidParameterValueException;
+
+        /**
+         * Get the extension for the identifier
+         * 
+         * @param identifier
+         *            The identifier of the extension
+         * @return The extension or null.
+         * @throws InvalidParameterValueException
+         */
+        public SwesExtension<?> getExtension(String identifier) throws InvalidParameterValueException;
     }
 
 }

@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
 
@@ -73,7 +74,7 @@ public interface ResponseWriter<T> {
      * @throws IOException
      *             If an error occurs during writing
      */
-    void write(T t, OutputStream out, ResponseProxy responseProxy) throws IOException;
+    void write(T t, OutputStream out, ResponseProxy responseProxy) throws IOException, OwsExceptionReport;
 
     /**
      * Check if GZip is supported by this writer

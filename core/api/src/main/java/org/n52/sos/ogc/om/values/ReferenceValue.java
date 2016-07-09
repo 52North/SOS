@@ -29,30 +29,32 @@
 package org.n52.sos.ogc.om.values;
 
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
 public class ReferenceValue implements Value<ReferenceType> {
-    
+
     private static final long serialVersionUID = -4027273330438374298L;
-    
+
     private ReferenceType value;
-    
+
     /**
      * Unit of measure
      */
     private String unit;
 
-    
     public ReferenceValue() {
     }
-    
+
     public ReferenceValue(ReferenceType value) {
         setValue(value);
     }
 
     @Override
     public void setValue(ReferenceType value) {
-       this.value = value;
+        this.value = value;
     }
 
     @Override
@@ -69,7 +71,7 @@ public class ReferenceValue implements Value<ReferenceType> {
     public String getUnit() {
         return unit;
     }
-    
+
     @Override
     public boolean isSetValue() {
         return getValue() != null && getValue().isSetHref();
@@ -79,10 +81,22 @@ public class ReferenceValue implements Value<ReferenceType> {
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
     }
-    
+
     @Override
     public String toString() {
-        return String.format("ReferenceValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("ReferenceValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

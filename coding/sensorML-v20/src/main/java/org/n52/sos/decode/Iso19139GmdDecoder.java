@@ -96,12 +96,29 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
         if (element instanceof CIResponsiblePartyDocument) {
             return decodeCIResponsibleParty(((CIResponsiblePartyDocument) element).getCIResponsibleParty());
         } else if (element instanceof CIResponsiblePartyPropertyType) {
-            return decodeCIResponsibleParty(((CIResponsiblePartyPropertyType) element).getCIResponsibleParty());
+            return decodeCIResponsiblePartyPropertyType((CIResponsiblePartyPropertyType) element);
         } else if (element instanceof CIResponsiblePartyType) {
             return decodeCIResponsibleParty((CIResponsiblePartyType) element);
         } else {
             throw new UnsupportedDecoderInputException(this, element);
         }
+    }
+
+    private Object decodeCIResponsiblePartyPropertyType(CIResponsiblePartyPropertyType element) throws OwsExceptionReport {
+        if (element.isSetCIResponsibleParty()) {
+            return decodeCIResponsibleParty(element.getCIResponsibleParty());
+        } else if (element.isSetHref()) {
+            SmlResponsibleParty responsibleParty = new SmlResponsibleParty();
+            responsibleParty.setHref(element.getHref());
+            if (element.isSetTitle()) {
+                responsibleParty.setTitle(element.getTitle());
+            }
+            if (element.isSetRole()) {
+                responsibleParty.setRole(element.getRole());
+            }
+            return responsibleParty;
+        }
+        throw new UnsupportedDecoderInputException(this, element);
     }
 
     private Object decodeCIResponsibleParty(CIResponsiblePartyType element) throws OwsExceptionReport {

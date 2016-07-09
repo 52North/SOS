@@ -38,9 +38,6 @@ import java.util.Set;
 
 import javax.xml.namespace.QName;
 
-import net.opengis.gml.x32.BaseUnitType;
-import net.opengis.gml.x32.CodeType;
-
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -87,6 +84,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
+import net.opengis.gml.x32.BaseUnitType;
+import net.opengis.gml.x32.CodeType;
 
 /**
  * {@link AbstractXmlEncoder} class to decode ISO TC211 Geographic MetaData
@@ -168,6 +168,18 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<Object> {
 
     private XmlObject encodeResponsibleParty(SmlResponsibleParty responsibleParty,
             Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+        if (responsibleParty.isSetHref()) {
+            CIResponsiblePartyPropertyType cirppt =
+                    CIResponsiblePartyPropertyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+            cirppt.setHref(responsibleParty.getHref());
+            if (responsibleParty.isSetTitle()) {
+                cirppt.setTitle(responsibleParty.getTitle());
+            }
+            if (responsibleParty.isSetRole()) {
+                cirppt.setRole(responsibleParty.getRole());
+            }
+            return cirppt;
+        }
         CIResponsiblePartyType cirpt =
                 CIResponsiblePartyType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         if (responsibleParty.isSetIndividualName()) {

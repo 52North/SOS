@@ -34,6 +34,14 @@ import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since
+ *
+ * @param <T>
+ * @deprecated {@link org.n52.sos.w3c.xlink.Reference}
+ */
+@Deprecated
 public abstract class Referenceable<T> {
 
     public abstract Reference getReference();

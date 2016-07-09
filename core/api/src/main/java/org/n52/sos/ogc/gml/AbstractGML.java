@@ -194,9 +194,9 @@ public abstract class AbstractGML implements Serializable{
     }
 
     /**
-     * Set human readable  identifier
+     * Set human readable identifier
      *
-     * @param identifier
+     * @param humanReadableIdentifier
      *            the human readable identifier to set
      * @return this
      */
@@ -208,7 +208,7 @@ public abstract class AbstractGML implements Serializable{
     /**
      * Set human readable identifier
      *
-     * @param identifier
+     * @param humanReadableIdentifier
      *            the human readable identifier to set
      * @return this
      */
@@ -258,7 +258,7 @@ public abstract class AbstractGML implements Serializable{
 
     public AbstractGML setName(final CodeType name) {
         this.names.clear();
-        this.names.add(name);
+        addName(name);
         return this;
     }
 

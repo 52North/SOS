@@ -37,6 +37,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
+import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
@@ -77,6 +78,13 @@ public abstract class AbstractXmlEncoder<S> implements Encoder<XmlObject, S> {
     @Override
     public Set<String> getConformanceClasses() {
         return Collections.emptySet();
+    }
+    
+    protected XmlObject substitute(XmlObject elementToSubstitute, XmlObject substitutionElement) {
+        XmlObject substituteElement =
+                XmlHelper.substituteElement(elementToSubstitute, substitutionElement);
+        substituteElement.set(substitutionElement);
+        return substituteElement;
     }
 
 }

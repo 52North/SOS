@@ -34,6 +34,8 @@ import java.io.OutputStream;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
+import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.util.http.MediaTypes;
 
@@ -46,11 +48,11 @@ import org.n52.sos.util.http.MediaTypes;
 public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
 
     @Override
-    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException {
+    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
         try {
             t.writeTo(out);
-        } catch (SOAPException ex) {
-            throw new IOException(ex);
+        } catch (SOAPException soapex) {
+        	 throw new NoApplicableCodeException().causedBy(soapex);
         }
     }
 

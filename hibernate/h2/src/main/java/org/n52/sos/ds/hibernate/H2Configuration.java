@@ -51,6 +51,7 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.jdbc.Work;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.h2geodb.GeoDBDialect;
+
 import org.n52.sos.cache.ctrl.ScheduledContentCacheControllerSettings;
 import org.n52.sos.config.sqlite.SQLiteSessionFactory;
 import org.n52.sos.ds.ConnectionProviderException;
@@ -59,6 +60,7 @@ import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.SosContextListener;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,37 +98,45 @@ public class H2Configuration {
 
         private List<String> getResources() {
             List<String> resources = Lists.newLinkedList();
-            // core
-            resources.add("mapping/core/Codespace.hbm.xml");
-            resources.add("mapping/core/FeatureOfInterest.hbm.xml");
-            resources.add("mapping/core/FeatureOfInterestType.hbm.xml");
-            resources.add("mapping/core/ObservableProperty.hbm.xml");
-            resources.add("mapping/core/Offering.hbm.xml");
-            resources.add("mapping/core/Procedure.hbm.xml");
-            resources.add("mapping/core/ProcedureDescriptionFormat.hbm.xml");
-            resources.add("mapping/core/Unit.hbm.xml");
-            resources.add("mapping/core/ObservationConstellation.hbm.xml");
-            resources.add("mapping/core/ObservationType.hbm.xml");
-            // transactional module
-            resources.add("mapping/transactional/RelatedFeature.hbm.xml");
-            resources.add("mapping/transactional/RelatedFeatureRole.hbm.xml");
-            resources.add("mapping/transactional/ResultTemplate.hbm.xml");
-            resources.add("mapping/transactional/ValidProcedureTime.hbm.xml");
-            resources.add("mapping/transactional/TFeatureOfInterest.hbm.xml");
-            resources.add("mapping/transactional/TObservableProperty.hbm.xml");
-            resources.add("mapping/transactional/TOffering.hbm.xml");
-            resources.add("mapping/transactional/TProcedure.hbm.xml");
-            // old observation concept
-            // resources.add("mapping/old/observation/Observation.hbm.xml");
-            // resources.add("mapping/old/observation/ObservationInfo.hbm.xml");
-            // resources.add("mapping/old/spatialFilteringProfile/SpatialFitleringProfile.hbm.xml");
-            // series observation concept, needs changes in tests
-            resources.add("mapping/series/observation/Series.hbm.xml");
-            resources.add("mapping/series/observation/SeriesObservation.hbm.xml");
-            resources.add("mapping/series/observation/SeriesObservationInfo.hbm.xml");
-            resources.add("mapping/series/observation/SeriesObservationTime.hbm.xml");
-            resources.add("mapping/series/observation/SeriesValue.hbm.xml");
-            resources.add("mapping/series/observation/SeriesValueTime.hbm.xml");
+//            resources.add("/mapping/ereporting/ValuedObservation.hbm.xml");
+//            resources.add("/mapping/ereporting/Observation.hbm.xml");
+//            resources.add("/mapping/ereporting/EReportingSeries.hbm.xml");
+//            resources.add("/mapping/ereporting/TemporalReferencedObservation.hbm.xml");
+//            resources.add("/mapping/ereporting/EReportingSamplingPoint.hbm.xml");
+//            resources.add("/mapping/ereporting/ContextualReferencedObservation.hbm.xml");
+//            resources.add("/mapping/ereporting/EReportingAssessmentType.hbm.xml");
+            resources.add("/mapping/core/Codespace.hbm.xml");
+            resources.add("/mapping/core/FeatureOfInterest.hbm.xml");
+            resources.add("/mapping/core/ProcedureDescriptionFormat.hbm.xml");
+            resources.add("/mapping/core/ObservationConstellation.hbm.xml");
+            resources.add("/mapping/core/ObservationType.hbm.xml");
+            resources.add("/mapping/core/FeatureOfInterestType.hbm.xml");
+            resources.add("/mapping/core/Offering.hbm.xml");
+            resources.add("/mapping/core/Parameter.hbm.xml");
+            resources.add("/mapping/core/Procedure.hbm.xml");
+            resources.add("/mapping/core/ObservableProperty.hbm.xml");
+            resources.add("/mapping/core/Unit.hbm.xml");
+//            resources.add("/mapping/i18n/HibernateI18NProcedureMetadata.hbm.xml");
+//            resources.add("/mapping/i18n/HibernateI18NFeatureOfInterestMetadata.hbm.xml");
+//            resources.add("/mapping/i18n/HibernateI18NObservablePropertyMetadata.hbm.xml");
+//            resources.add("/mapping/i18n/HibernateI18NOfferingMetadata.hbm.xml");
+//            resources.add("/mapping/transactional/TObservableProperty.hbm.xml");
+            resources.add("/mapping/transactional/RelatedFeatureRole.hbm.xml");
+            resources.add("/mapping/transactional/RelatedFeature.hbm.xml");
+            resources.add("/mapping/transactional/TOffering.hbm.xml");
+            resources.add("/mapping/transactional/ValidProcedureTime.hbm.xml");
+//            resources.add("/mapping/transactional/TFeatureOfInterest.hbm.xml");
+            resources.add("/mapping/transactional/ResultTemplate.hbm.xml");
+            resources.add("/mapping/transactional/TProcedure.hbm.xml");
+//            resources.add("/mapping/old/observation/ValuedObservation.hbm.xml");
+//            resources.add("/mapping/old/observation/Observation.hbm.xml");
+//            resources.add("/mapping/old/observation/TemporalReferencedObservation.hbm.xml");
+//            resources.add("/mapping/old/observation/ContextualReferencedObservation.hbm.xml");
+            resources.add("/mapping/series/observation/ValuedObservation.hbm.xml");
+            resources.add("/mapping/series/observation/Series.hbm.xml");
+            resources.add("/mapping/series/observation/Observation.hbm.xml");
+            resources.add("/mapping/series/observation/TemporalReferencedObservation.hbm.xml");
+            resources.add("/mapping/series/observation/ContextualReferencedObservation.hbm.xml");
             return resources;
         }
     };
@@ -148,11 +158,9 @@ public class H2Configuration {
             if (instance == null) {
                 try {
                     instance = new H2Configuration();
-                } catch (final IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (final OwsExceptionReport ex) {
-                    throw new RuntimeException(ex);
-                } catch (final ConnectionProviderException ex) {
+                } catch (IOException |
+                         OwsExceptionReport |
+                         ConnectionProviderException ex) {
                     throw new RuntimeException(ex);
                 }
             }
@@ -187,9 +195,7 @@ public class H2Configuration {
                 session.doWork(new Work() {
                     @Override
                     public void execute(final Connection connection) throws SQLException {
-                        Statement stmt = null;
-                        try {
-                            stmt = connection.createStatement();
+                        try (Statement stmt = connection.createStatement()) {
                             for (final String cmd : instance.getDropScript()) {
                                 stmt.addBatch(cmd);
                             }
@@ -197,10 +203,6 @@ public class H2Configuration {
                                 stmt.addBatch(cmd);
                             }
                             stmt.executeBatch();
-                        } finally {
-                            if (stmt != null) {
-                                stmt.close();
-                            }
                         }
                     }
                 });
@@ -222,7 +224,7 @@ public class H2Configuration {
                 throw new IllegalStateException("Database is not initialized");
             }
             final Iterator<Table> tableMappings = instance.getConfiguration().getTableMappings();
-            final List<String> tableNames = new LinkedList<String>();
+            final List<String> tableNames = new LinkedList<>();
             GeoDBDialect dialect = new GeoDBDialect();
             while (tableMappings.hasNext()) {
                 tableNames.add(tableMappings.next().getQuotedName(dialect));
@@ -235,19 +237,13 @@ public class H2Configuration {
                 session.doWork(new Work() {
                     @Override
                     public void execute(final Connection connection) throws SQLException {
-                        Statement stmt = null;
-                        try {
-                            stmt = connection.createStatement();
+                        try (Statement stmt = connection.createStatement()) {
                             stmt.addBatch("SET REFERENTIAL_INTEGRITY FALSE");
                             for (final String table : tableNames) {
                                 stmt.addBatch("DELETE FROM " + table);
                             }
                             stmt.addBatch("SET REFERENTIAL_INTEGRITY TRUE");
                             stmt.executeBatch();
-                        } finally {
-                            if (stmt != null) {
-                                stmt.close();
-                            }
                         }
                     }
                 });
@@ -292,7 +288,7 @@ public class H2Configuration {
                 }
                 FileUtils.forceDelete(directory);
             }
-        } catch (final Exception ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -321,56 +317,40 @@ public class H2Configuration {
     }
 
     private void prepareDatabase() {
-        Connection conn = null;
-        Statement stmt = null;
         try {
             Class.forName(H2_DRIVER);
-            conn = DriverManager.getConnection(H2_CONNECTION_URL);
-            GeoDB.InitGeoDB(conn);
-            stmt = conn.createStatement();
-            configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
-            @SuppressWarnings("unchecked")
-            List<String> resources = (List<String>) properties.get(SessionFactoryProvider.HIBERNATE_RESOURCES);
-            for (String resource : resources) {
-                configuration.addResource(resource);
-            }
-            final GeoDBDialect dialect = new GeoDBDialect();
-            createScript = getCreateSrcipt(configuration.generateSchemaCreationScript(dialect));
-            dropScript = getDropScript(configuration.generateDropSchemaScript(dialect));
-            for (final String s : createScript) {
-                LOG.debug("Executing {}", s);
-                stmt.execute(s);
-            }
-        } catch (final ClassNotFoundException ex) {
-            throw new RuntimeException(ex);
-        } catch (final SQLException ex) {
-            throw new RuntimeException(ex);
-        } catch (MappingException ex) {
-            throw new RuntimeException(ex);
-        } finally {
-            if (stmt != null) {
-                try {
-                    stmt.close();
-                } catch (final SQLException ex) {
+            try (Connection conn = DriverManager.getConnection(H2_CONNECTION_URL)) {
+                GeoDB.InitGeoDB(conn);
+                try (Statement stmt = conn.createStatement()) {
+                    configuration = new Configuration().configure("/sos-hibernate.cfg.xml");
+                    @SuppressWarnings("unchecked")
+                    List<String> resources = (List<String>) properties
+                            .get(SessionFactoryProvider.HIBERNATE_RESOURCES);
+                    for (String resource : resources) {
+                        configuration.addInputStream(getClass().getResourceAsStream(resource));
+                    }
+                    final GeoDBDialect dialect = new GeoDBDialect();
+                    createScript = getCreateSrcipt(configuration.generateSchemaCreationScript(dialect));
+                    dropScript = getDropScript(configuration.generateDropSchemaScript(dialect));
+                    for (final String s : createScript) {
+                        LOG.debug("Executing {}", s);
+                        stmt.execute(s);
+                    }
                 }
             }
-            if (conn != null) {
-                try {
-                    conn.close();
-                } catch (final SQLException ex) {
-                }
-            }
+        } catch (ClassNotFoundException | SQLException | MappingException ex) {
+            throw new RuntimeException(ex);
         }
     }
 
     private String[] getCreateSrcipt(String[] generateSchemaCreationScript) {
-        List<String> finalScript = Lists.newArrayList(); 
+        List<String> finalScript = Lists.newArrayList();
         Set<String> nonDublicates = Sets.newHashSet();
         Set<String> nonDuplicateCreate = Sets.newHashSet();
         for (final String s : generateSchemaCreationScript) {
             if (!nonDublicates.contains(s)) {
                 if (s.toLowerCase().startsWith("create table")) {
-                    String substring = s.substring(0, s.indexOf("("));
+                    String substring = s.substring(0, s.indexOf('('));
                     if (!nonDuplicateCreate.contains(substring)) {
                         nonDuplicateCreate.add(substring);
                         LOG.debug("Executing {}", s);

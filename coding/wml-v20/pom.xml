@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>coding</artifactId>
-        <version>4.3.8-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>coding-wml-v20</artifactId>
@@ -46,6 +46,32 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>${project.groupId}</groupId>
+        	<artifactId>sqlite-config</artifactId>
+        	<scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sqlite-config</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>  
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>xmlunit</groupId>
+        	<artifactId>xmlunit</artifactId>
+        	<scope>test</scope>
         </dependency>
     </dependencies>
 </project>

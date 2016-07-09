@@ -60,6 +60,7 @@ import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
+import org.opengis.parameter.InvalidParameterCardinalityException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -219,8 +220,13 @@ public class SosGetObservationOperatorV100 extends
             Map<String, String> ncOfferings = SosHelper.getNcNameResolvedOfferings(offerings);
             CompositeOwsException exceptions = new CompositeOwsException();
 
-            if (offeringIds.size() != 1) {
+            //SOS 1.0 GetObservation requires exactly one offering
+            if (offeringIds.isEmpty()) {
                 throw new MissingOfferingParameterException();
+            } else if (offeringIds.size() > 1) {
+                throw new InvalidParameterCardinalityException(
+                        "Exactly one offering is required",
+                        SosConstants.GetObservationParams.offering.name());
             }
 
             for (String offeringId : offeringIds) {

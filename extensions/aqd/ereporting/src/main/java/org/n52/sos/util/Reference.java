@@ -38,7 +38,9 @@ import com.google.common.base.Strings;
  * TODO JavaDoc
  *
  * @author Christian Autermann
+ * @deprecated {@link org.n52.sos.w3c.xlink.Reference}
  */
+@Deprecated
 public class Reference {
 
     private URI href;

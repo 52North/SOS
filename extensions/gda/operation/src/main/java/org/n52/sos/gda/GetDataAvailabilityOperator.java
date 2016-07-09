@@ -43,9 +43,9 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * {@code IRequestOperator} to handle {@link GetDataAvailabilityRequest}s.
- * 
+ *
  * @author Christian Autermann
- * 
+ *
  * @since 4.0.0
  */
 public class GetDataAvailabilityOperator
@@ -91,12 +91,16 @@ public class GetDataAvailabilityOperator
 
         try {
             checkObservedProperties(sosRequest.getObservedProperties(),
-                    GetDataAvailabilityParams.observedProperty.name());
+                    GetDataAvailabilityParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            checkQueryableProcedureIDs(sosRequest.getProcedures(), GetDataAvailabilityParams.procedure.name());
+            // add instance and child procedures to request
+            if (sosRequest.isSetProcedure()) {
+                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }

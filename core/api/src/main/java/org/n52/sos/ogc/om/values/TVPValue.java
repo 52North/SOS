@@ -35,14 +35,17 @@ import java.util.List;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.TimeValuePair;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Multi value representing a time value pairs for observations
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
@@ -74,9 +77,9 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
     /**
      * Add time value pair value
-     * 
+     *
      * @param value
-     *            Time value pair value to add
+     *              Time value pair value to add
      */
     public void addValue(TimeValuePair value) {
         this.value.add(value);
@@ -84,9 +87,9 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
 
     /**
      * Add time value pair values
-     * 
+     *
      * @param values
-     *            Time value pair values to add
+     *               Time value pair values to add
      */
     public void addValues(List<TimeValuePair> values) {
         this.value.addAll(values);
@@ -121,5 +124,17 @@ public class TVPValue implements MultiValue<List<TimeValuePair>> {
     @Override
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

@@ -3,7 +3,7 @@
     <parent>
         <artifactId>52n-sos</artifactId>
         <groupId>org.n52.sensorweb.sos</groupId>
-        <version>4.3.8-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>webapp</artifactId>
@@ -290,7 +290,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>binding-exi</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>binding-register</artifactId>
+        </dependency>
         <!-- REST BINDING -->
 
         <dependency>
@@ -377,6 +380,13 @@
             <artifactId>test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>sqlite-config</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
 
 
         <!-- #### Spring dependencies #### -->
@@ -474,6 +484,27 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
         </dependency>
+        <!-- netCDF -->
+		<dependency>
+	        <groupId>com.axiomalaska</groupId>
+	        <artifactId>cf4j</artifactId>
+      	</dependency>
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>api-netcdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>coding-netcdf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>coding-oceansites</artifactId>
+		</dependency>
     </dependencies>
     <profiles>
         <profile>

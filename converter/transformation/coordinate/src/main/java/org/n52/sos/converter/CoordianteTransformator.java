@@ -28,6 +28,7 @@
  */
 package org.n52.sos.converter;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +67,11 @@ import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.swe.CoordinateHelper;
 import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.ogc.swe.SweConstants.AltitudeSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.EastingSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
 import org.n52.sos.ogc.swe.SweConstants.SweCoordinateName;
 import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweEnvelope;
@@ -104,6 +109,7 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.util.SweHelper;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -463,19 +469,30 @@ public class CoordianteTransformator implements
      */
     private void transformPosition(SmlPosition position, int targetCrs) throws OwsExceptionReport {
         int sourceCrs = targetCrs;
-        if (position.isSetReferenceFrame()) {
+        if (position.isSetReferenceFrame() && checkReferenceFrame(position.getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getReferenceFrame());
-        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()) {
+        } else if (position.isSetVector() && position.getVector().isSetReferenceFrame()
+                && checkReferenceFrame(position.getVector().getReferenceFrame())) {
             sourceCrs = getCrsFromString(position.getVector().getReferenceFrame());
         }
-        if (position.isSetPosition()) {
-            position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
-            position.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
-        } else if (position.isSetVector()) {
-            SweVector vector = position.getVector();
-            vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
-            vector.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix() + targetCrs);
+        if (targetCrs != sourceCrs) {
+            if (position.isSetPosition()) {
+                position.setPosition(transformSweCoordinates(position.getPosition(), sourceCrs, targetCrs));
+                position.setReferenceFrame(transformReferenceFrame(position.getReferenceFrame(), sourceCrs, targetCrs));
+            } else if (position.isSetVector()) {
+                SweVector vector = position.getVector();
+                vector.setCoordinates(transformSweCoordinates(vector.getCoordinates(), sourceCrs, targetCrs));
+                vector.setReferenceFrame(transformReferenceFrame(vector.getReferenceFrame(), sourceCrs, targetCrs));
+            }
         }
+    }
+
+    @VisibleForTesting
+    protected String transformReferenceFrame(String referenceFrame, int sourceCrs, int targetCrs) {
+        if (sourceCrs > 0 && targetCrs > 0) {
+            return referenceFrame.replace(Integer.toString(sourceCrs), Integer.toString(targetCrs));
+        }
+        return referenceFrame;
     }
 
     /**
@@ -496,44 +513,55 @@ public class CoordianteTransformator implements
         SweCoordinate<?> altitude = null;
         Object easting = null;
         Object northing = null;
+        String eastingName = SweCoordinateName.easting.name();
+        String northingName = SweCoordinateName.northing.name();
         for (SweCoordinate<?> coordinate : position) {
-            if (SweCoordinateName.altitude.name().equals(coordinate.getName())) {
+            if (checkAltitudeName(coordinate.getName())) {
                 altitude = coordinate;
-            } else if (SweCoordinateName.northing.name().equals(coordinate.getName())) {
+            } else if (checkNorthingName(coordinate.getName())) {
+                northingName = coordinate.getName();
                 northing = coordinate.getValue().getValue();
-            } else if (SweCoordinateName.easting.name().equals(coordinate.getName())) {
+            } else if (checkEastingName(coordinate.getName())) {
+                eastingName = coordinate.getName();
                 easting = coordinate.getValue().getValue();
             }
         }
-        List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
-            coordinates.add(northing);
-            coordinates.add(easting);
-        } else {
-            coordinates.add(easting);
-            coordinates.add(northing);
+        if (easting != null && northing != null) {
+            List<Object> coordinates = Lists.newArrayListWithExpectedSize(Constants.INT_2);
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(sourceCrs)) {
+                coordinates.add(northing);
+                coordinates.add(easting);
+            } else {
+                coordinates.add(easting);
+                coordinates.add(northing);
+            }
+            Geometry geom =
+                    getGeomtryHandler().transform(
+                            JTSHelper.createGeometryFromWKT(JTSHelper.createWKTPointFromCoordinateString(Joiner.on(
+                                    Constants.SPACE_STRING).join(coordinates)), sourceCrs), targetCrs);
+            double x, y;
+            if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
+                x = geom.getCoordinate().y;
+                y = geom.getCoordinate().x;
+            } else {
+                x = geom.getCoordinate().x;
+                y = geom.getCoordinate().y;
+            }
+            SweQuantity yq =
+                    SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            SweQuantity xq =
+                    SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
+                            .getLatLongUom());
+            ArrayList<SweCoordinate<?>> newPosition =
+                    Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(northingName, yq),
+                            new SweCoordinate<Double>(eastingName, xq));
+            if (altitude != null) {
+                newPosition.add(altitude);
+            }
+            return newPosition;
         }
-        Geometry geom =
-                getGeomtryHandler().transform(
-                        JTSHelper.createGeometryFromWKT(
-                                JTSHelper.createWKTPointFromCoordinateString(Joiner.on(Constants.SPACE_STRING).join(
-                                        coordinates)), sourceCrs), targetCrs);
-        double x, y;
-        if (getGeomtryHandler().isNorthingFirstEpsgCode(targetCrs)) {
-            x = geom.getCoordinate().y;
-            y = geom.getCoordinate().x;
-        } else {
-            x = geom.getCoordinate().x;
-            y = geom.getCoordinate().y;
-        }
-        SweQuantity yq =
-                SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        SweQuantity xq =
-                SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
-                        .getLatLongUom());
-        return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
+        return position;
     }
 
     /**
@@ -548,6 +576,45 @@ public class CoordianteTransformator implements
      */
     private void transformLocation(SmlLocation location, int targetCrs) throws OwsExceptionReport {
         location.setPoint((Point) getGeomtryHandler().transform(location.getPoint(), targetCrs));
+    }
+    
+    /**
+     * Check if the name is a defined altitude name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an altitude name
+     */
+    @VisibleForTesting
+    protected boolean checkAltitudeName(String name) {
+        return AltitudeSweCoordinateName.isAltitudeSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasAltitudeName(name);
+    }
+
+    /**
+     * Check if the name is a defined northing name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is a northing name
+     */
+    @VisibleForTesting
+    protected boolean checkNorthingName(String name) {
+        return NorthingSweCoordinateName.isNorthingSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasNorthingName(name);
+    }
+
+    /**
+     * Check if the name is a defined easting name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an easting name
+     */
+    @VisibleForTesting
+    protected boolean checkEastingName(String name) {
+        return EastingSweCoordinateName.isEastingSweCoordinateName(name)
+                || CoordinateHelper.getInstance().hasEastingName(name);
     }
 
     /**
@@ -573,14 +640,14 @@ public class CoordianteTransformator implements
                                     && !Integer.toString(targetCrs).equals(
                                             ((SweEnvelope) field.getElement()).getReferenceFrame())) {
                                 SweEnvelope envelope = (SweEnvelope) field.getElement();
+                                int sourceCrs = getCrsFromString(envelope.getReferenceFrame());
                                 Envelope transformEnvelope =
                                         getGeomtryHandler().transformEnvelope(envelope.toEnvelope(),
-                                                getCrsFromString(envelope.getReferenceFrame()), targetCrs);
+                                        		sourceCrs, targetCrs);
                                 SweEnvelope newEnvelope =
                                         new SweEnvelope(new SosEnvelope(transformEnvelope, targetCrs),
                                                 ProcedureDescriptionSettings.getInstance().getLatLongUom());
-                                newEnvelope.setReferenceFrame(ServiceConfiguration.getInstance().getSrsNamePrefix()
-                                        + targetCrs);
+                                newEnvelope.setReferenceFrame(transformReferenceFrame(envelope.getReferenceFrame(), sourceCrs, targetCrs));
                                 field.setElement(newEnvelope);
                             }
                         }
@@ -678,18 +745,17 @@ public class CoordianteTransformator implements
      * @throws OwsExceptionReport
      *             If an error occurs when parsing
      */
-    private int getCrsFromString(String crs) throws OwsExceptionReport {
+    @VisibleForTesting
+    protected int getCrsFromString(String crs) throws OwsExceptionReport {
         if (StringHelper.isNotEmpty(crs) && !"NOT_SET".equalsIgnoreCase(crs)) {
-            if (crs.startsWith(Constants.URN) || crs.startsWith(Constants.HTTP)) {
-                crs =
-                        crs.replace(getConfiguration().getSrsNamePrefix(), Constants.EMPTY_STRING).replace(
-                                getConfiguration().getSrsNamePrefixSosV2(), Constants.EMPTY_STRING);
-            }
-            crs =
-                    crs.replace(EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, Constants.EMPTY_STRING).replace(
-                            EpsgConstants.EPSG_PREFIX, Constants.EMPTY_STRING);
+        	int lastIndex = 0;
+			if (crs.startsWith(Constants.HTTP)) {
+				lastIndex = crs.lastIndexOf(Constants.SLASH_STRING);
+			} else if (crs.indexOf(Constants.COLON_STRING) != -1) {
+				lastIndex = crs.lastIndexOf(Constants.COLON_STRING);
+			}
             try {
-                return Integer.valueOf(crs);
+                return Integer.valueOf(crs.substring(lastIndex + 1));
             } catch (final NumberFormatException nfe) {
                 String parameter =
                         new StringBuilder().append(SosConstants.GetObservationParams.srsName.name())
@@ -699,13 +765,20 @@ public class CoordianteTransformator implements
                         .causedBy(nfe)
                         .at(parameter)
                         .withMessage(
-                                "Error while parsing '%s' parameter! Parameter has to match "
-                                        + "pattern '%s', '%s', '%s','%s', with appended EPSG code number", parameter,
-                                getConfiguration().getSrsNamePrefix(), getConfiguration().getSrsNamePrefixSosV2(),
-                                EpsgConstants.EPSG_PREFIX_DOUBLE_COLON, EpsgConstants.EPSG_PREFIX);
+                                "Error while parsing '%s' parameter! Parameter has to contain EPSG code number", parameter);
             }
         }
         throw new MissingParameterValueException(OWSConstants.AdditionalRequestParams.crs);
+    }
+
+    private boolean checkReferenceFrame(String referenceFrame) {
+        char[] charArray = referenceFrame.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            if (Character.isDigit(referenceFrame.toCharArray()[i])){
+                return true;
+            }
+        } 
+        return false;
     }
 
     /**

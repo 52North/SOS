@@ -69,7 +69,7 @@ public abstract class AbstractGetObservationDAO extends AbstractOperationDAO {
 
         final Collection<String> featureIDs = SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version);
         addOfferingParameter(opsMeta);
-        addProcedureParameter(opsMeta);
+        addQueryableProcedureParameter(opsMeta);
         opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.responseFormat, CodingRepository
                 .getInstance().getSupportedResponseFormats(SosConstants.SOS, version));
 

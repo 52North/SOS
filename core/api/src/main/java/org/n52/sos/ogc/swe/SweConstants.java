@@ -37,11 +37,10 @@ import com.google.common.base.Joiner;
 
 /**
  * Constants class for SWE
- * 
+ *
  * @since 4.0.0
  */
 public interface SweConstants {
-
     // namespaces and schema locations
     String NS_SWE_101 = "http://www.opengis.net/swe/1.0.1";
 
@@ -56,11 +55,11 @@ public interface SweConstants {
     SchemaLocation SWE_101_SCHEMA_LOCATION = new SchemaLocation(NS_SWE_101, SCHEMA_LOCATION_URL_SWE_101);
 
     SchemaLocation SWE_20_SCHEMA_LOCATION = new SchemaLocation(NS_SWE_20, SCHEMA_LOCATION_URL_SWE_20);
-    
+
     String X_AXIS = "x";
-    
+
     String Y_AXIS = "y";
-    
+
     String Z_AXIS = "z";
 
     String ENCODING_TEXT = "http://www.opengis.net/swe/2.0/TextEncoding";
@@ -82,7 +81,7 @@ public interface SweConstants {
     String EN_DATA_RECORD = "DataRecord";
 
     String EN_ENVELOPE = "Envelope";
-    
+
     String EN_FIELD = "field";
 
     String EN_OBSERVABLE_PROPERTY = "ObservableProperty";
@@ -106,36 +105,38 @@ public interface SweConstants {
     String EN_TIME = "Time";
 
     String EN_TIME_RANGE = "TimeRange";
-    
+
     String EN_UOM = "uom";
 
     String EN_VECTOR = "Vector";
-    
+
     String EN_VALUE = "value";
 
-    String VT_BOOLEAN = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_BOOLEAN);
+    Joiner COLON_JOINER = Joiner.on(Constants.COLON_CHAR);
 
-    String VT_CATEGORY = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_CATEGORY);
+    String VT_BOOLEAN = COLON_JOINER.join(NS_SWE_PREFIX, EN_BOOLEAN);
 
-    String VT_COUNT = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_COUNT);
+    String VT_CATEGORY = COLON_JOINER.join(NS_SWE_PREFIX, EN_CATEGORY);
 
-    String VT_COUNT_RANGE = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_COUNT_RANGE);
+    String VT_COUNT = COLON_JOINER.join(NS_SWE_PREFIX, EN_COUNT);
 
-    String VT_OBSERVABLE_PROPERTY = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_OBSERVABLE_PROPERTY);
+    String VT_COUNT_RANGE = COLON_JOINER.join(NS_SWE_PREFIX, EN_COUNT_RANGE);
 
-    String VT_QUANTITY = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_QUANTITY);
+    String VT_OBSERVABLE_PROPERTY = COLON_JOINER.join(NS_SWE_PREFIX, EN_OBSERVABLE_PROPERTY);
 
-    String VT_QUANTITY_RANGE = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_QUANTITY_RANGE);
+    String VT_QUANTITY = COLON_JOINER.join(NS_SWE_PREFIX, EN_QUANTITY);
 
-    String VT_TEXT = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_TEXT);
+    String VT_QUANTITY_RANGE = COLON_JOINER.join(NS_SWE_PREFIX, EN_QUANTITY_RANGE);
 
-    String VT_TIME = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_TIME);
+    String VT_TEXT = COLON_JOINER.join(NS_SWE_PREFIX, EN_TEXT);
 
-    String VT_TIME_RANGE = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_TIME_RANGE);
+    String VT_TIME = COLON_JOINER.join(NS_SWE_PREFIX, EN_TIME);
 
-    String VT_DATA_ARRAY = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_DATA_ARRAY);
+    String VT_TIME_RANGE = COLON_JOINER.join(NS_SWE_PREFIX, EN_TIME_RANGE);
 
-    String VT_DATA_RECORD = Joiner.on(Constants.COLON_CHAR).join(NS_SWE_PREFIX, EN_DATA_RECORD);
+    String VT_DATA_ARRAY = COLON_JOINER.join(NS_SWE_PREFIX, EN_DATA_ARRAY);
+
+    String VT_DATA_RECORD = COLON_JOINER.join(NS_SWE_PREFIX, EN_DATA_RECORD);
 
     QName QN_BOOLEAN_SWE_101 = new QName(NS_SWE_101, EN_BOOLEAN, NS_SWE_PREFIX);
 
@@ -148,6 +149,8 @@ public interface SweConstants {
     QName QN_COUNT_SWE_101 = new QName(NS_SWE_101, EN_COUNT, NS_SWE_PREFIX);
 
     QName QN_COUNT_SWE_200 = new QName(NS_SWE_20, EN_COUNT, NS_SWE_PREFIX);
+    
+    QName QN_COUNT_RANGE_SWE_200 = new QName(NS_SWE_20, EN_COUNT_RANGE, NS_SWE_PREFIX);
 
     QName QN_DATA_ARRAY_SWE_200 = new QName(NS_SWE_20, EN_DATA_ARRAY, NS_SWE_PREFIX);
 
@@ -184,7 +187,7 @@ public interface SweConstants {
     QName QN_ENVELOPE_SWE_101 = new QName(NS_SWE_101, EN_ENVELOPE, NS_SWE_PREFIX);
 
     QName QN_TIME_SWE_200 = new QName(NS_SWE_20, EN_TIME, NS_SWE_PREFIX);
-    
+
     QName QN_UOM_SWE_200 = new QName(NS_SWE_20, EN_UOM, NS_SWE_PREFIX);
 
     QName QN_VECTOR_SWE_200 = new QName(NS_SWE_20, EN_VECTOR, NS_SWE_PREFIX);
@@ -208,10 +211,59 @@ public interface SweConstants {
     }
 
     /**
-     * Enum for coordinate names
+     * Enum for coordinate names (default)
      */
     enum SweCoordinateName {
         easting, northing, altitude
+    }
+    
+    /**
+     * Enum for coordinate names for easting
+     */
+    enum EastingSweCoordinateName {
+    	easting, westing, longitude;
+    	
+    	public static boolean isEastingSweCoordinateName(String name) {
+			for (EastingSweCoordinateName eastingSweCoordinateName : EastingSweCoordinateName.values()) {
+				if (eastingSweCoordinateName.name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
+    	
+    }
+    
+    /**
+     * Enum for coordinate names for northing
+     */
+    enum NorthingSweCoordinateName {
+    	northing, southing, latitude;
+    	
+    	public static boolean isNorthingSweCoordinateName(String name) {
+			for (NorthingSweCoordinateName northingSweCoordinateName : NorthingSweCoordinateName.values()) {
+				if (northingSweCoordinateName.name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
+    }
+    
+    /**
+     * Enum for coordinate names for altitude
+     */
+    enum AltitudeSweCoordinateName {
+    	altitude, height, depth;
+    	
+    	public static boolean isAltitudeSweCoordinateName(String name) {
+			for (AltitudeSweCoordinateName altitudeSweCoordinateName : AltitudeSweCoordinateName.values()) {
+				if (altitudeSweCoordinateName.name().equalsIgnoreCase(name)) {
+					return true;
+				}
+			}
+			return false;
+		}
     }
 
     /**
@@ -225,6 +277,23 @@ public interface SweConstants {
      * Enum for SWE DataComponent types
      */
     enum SweDataComponentType {
-        DataArray, DataRecord, SimpleDataRecord, Envelope, Field, Vector, Position, Boolean, Category, Count, CountRange, Quantity, QuantityRange, Text, Time, TimeRange, ObservableProperty
+        DataArray,
+        DataRecord,
+        SimpleDataRecord,
+        Envelope,
+        Field,
+        Vector,
+        Position,
+        Boolean,
+        Category,
+        CategoryRange,
+        Count,
+        CountRange,
+        Quantity,
+        QuantityRange,
+        Text,
+        Time,
+        TimeRange,
+        ObservableProperty
     }
 }

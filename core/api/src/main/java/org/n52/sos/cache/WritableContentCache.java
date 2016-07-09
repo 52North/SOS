@@ -34,10 +34,6 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.n52.sos.i18n.MultilingualString;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.sos.SosEnvelope;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Extension of {@code ContentCache} to allow the manipulation of the cache.
@@ -46,7 +42,12 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  * @since 4.0.0
  */
-public interface WritableContentCache extends ContentCache {
+public interface WritableContentCache
+        extends ContentCache,
+                WritableSpatialCache,
+                WriteableTimeCache,
+                WritableCompositePhenomenonCache {
+    
     
     
     /**
@@ -103,32 +104,6 @@ public interface WritableContentCache extends ContentCache {
     void addAllowedFeatureOfInterestTypesForOffering(String offering, Collection<String> allowedFeatureOfInterestTypes);
 
     /**
-     * Associate the specified composite phenomenon with the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     */
-    void addCompositePhenomenonForOffering(String offering, String compositePhenomenon);
-
-    /**
-     * Add the specified epsg code.
-     *
-     * @param epsgCode
-     *            the new epsg code
-     */
-    void addEpsgCode(Integer epsgCode);
-
-    /**
-     * Add the specified epsg codes.
-     *
-     * @param epsgCodes
-     *            the new epsg codes
-     */
-    void addEpsgCodes(Collection<Integer> epsgCodes);
-
-    /**
      * Add the specified feature of interest.
      *
      * @param featureOfInterest
@@ -175,17 +150,6 @@ public interface WritableContentCache extends ContentCache {
      *            the features of interest
      */
     void addFeaturesOfInterestForResultTemplate(String resultTemplate, Collection<String> featuresOfInterest);
-
-    /**
-     * Associate the specified observable property to the specified composite
-     * phenomenon.
-     *
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     * @param observableProperty
-     *            the observable property
-     */
-    void addObservablePropertyForCompositePhenomenon(String compositePhenomenon, String observableProperty);
 
     /**
      * Associate the specified observable property with the specified offering.
@@ -413,13 +377,13 @@ public interface WritableContentCache extends ContentCache {
      *            the role
      */
     void addRoleForRelatedFeature(String relatedFeature, String role);
-    
+
     void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName);
-    
+
     void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName);
-    
+
     void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName);
-    
+
     void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName);
 
     /**
@@ -440,57 +404,6 @@ public interface WritableContentCache extends ContentCache {
      *            the offering
      */
     void removeAllowedObservationTypesForOffering(String offering);
-
-    /**
-     * Dissociate the specified composite phenomenon with the specified
-     * offering.
-     *
-     * @param offering
-     *            the offering
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     */
-    void removeCompositePhenomenonForOffering(String offering, String compositePhenomenon);
-
-    /**
-     * Dissociate all composite phenomenon with the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeCompositePhenomenonsForOffering(String offering);
-
-    /**
-     * Remove the envelope for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeEnvelopeForOffering(String offering);
-
-    /**
-     * Remove the Spatial Filtering Profile envelope for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeSpatialFilteringProfileEnvelopeForOffering(String offering);
-
-    /**
-     * Remove the specified epsg code.
-     *
-     * @param epsgCode
-     *            the epsg code
-     */
-    void removeEpsgCode(Integer epsgCode);
-
-    /**
-     * Remove the specified epsg codes.
-     *
-     * @param epsgCode
-     *            the epsg codes
-     */
-    void removeEpsgCodes(Collection<Integer> epsgCode);
 
     /**
      * Remove the specified feature of interest.
@@ -546,69 +459,12 @@ public interface WritableContentCache extends ContentCache {
     void removeFeaturesOfInterestForResultTemplate(String resultTemplate);
 
     /**
-     * Remove the maximal phenomenon time for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeMaxPhenomenonTimeForOffering(String offering);
-
-    /**
-     * Remove the minimal phenomenon time for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeMinPhenomenonTimeForOffering(String offering);
-
-    /**
-     * Remove the maximal phenomenon time for the specified procedure.
-     *
-     * @param procedure
-     *            the procedure
-     */
-    void removeMaxPhenomenonTimeForProcedure(String procedure);
-
-    /**
-     * Remove the minimal phenomenon time for the specified procedure.
-     *
-     * @param procedure
-     *            the procedure
-     */
-    void removeMinPhenomenonTimeForProcedure(String procedure);
-
-    /**
-     * Remove the maximal result time for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeMaxResultTimeForOffering(String offering);
-
-    /**
-     * Remove the minimal result time for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     */
-    void removeMinResultTimeForOffering(String offering);
-
-    /**
      * Remove the name for the specified offering.
      *
      * @param offering
      *            the offering
      */
     void removeNameForOffering(String offering);
-
-    /**
-     * Dissociate all observable properties with the specified composite
-     * phenomenon.
-     *
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     */
-    void removeObservablePropertiesForCompositePhenomenon(String compositePhenomenon);
 
     /**
      * Dissociate all observable properties with the specified offering.
@@ -633,17 +489,6 @@ public interface WritableContentCache extends ContentCache {
      *            the result template
      */
     void removeObservablePropertiesForResultTemplate(String resultTemplate);
-
-    /**
-     * Dissociate the specified observable property with the specified composite
-     * phenomenon.
-     *
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     * @param observableProperty
-     *            the observable property
-     */
-    void removeObservablePropertyForCompositePhenomenon(String compositePhenomenon, String observableProperty);
 
     /**
      * Dissociate the specified observable property with the specified offering.
@@ -911,19 +756,19 @@ public interface WritableContentCache extends ContentCache {
      *            the related features for which the roles should kept
      */
     void removeRolesForRelatedFeatureNotIn(Collection<String> features);
-    
+
     void removeFeatureOfInterestIdentifierForHumanReadableName(String humanReadableName);
-    
+
     void removeFeatureOfInterestHumanReadableNameForIdentifier(String identifier);
-    
+
     void removeObservablePropertyIdentifierForHumanReadableName(String humanReadableName);
-    
+
     void removeObservablePropertyHumanReadableNameForIdentifier(String identifier);
-    
+
     void removeProcedureIdentifierForHumanReadableName(String humanReadableName);
-    
+
     void removeProcedureHumanReadableNameForIdentifier(String identifier);
-    
+
 	void removeOfferingIdentifierForHumanReadableName(String humanReadableName);
 
 	void removeOfferingHumanReadableNameForIdentifier(String identifier);
@@ -949,116 +794,6 @@ public interface WritableContentCache extends ContentCache {
     void setAllowedFeatureOfInterestTypeForOffering(String offering, Collection<String> allowedFeatureOfInterestTypes);
 
     /**
-     * Sets the composite phenomenon for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param compositePhenomenons
-     *            the composite phenomenons
-     */
-    void setCompositePhenomenonsForOffering(String offering, Collection<String> compositePhenomenons);
-
-    /**
-     * Sets the default EPSG code.
-     *
-     * @param defaultEPSGCode
-     *            the new default ESPG code
-     */
-    void setDefaultEPSGCode(int defaultEPSGCode);
-
-    /**
-     * Sets the specified envelope for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param envelope
-     *            the envelope
-     */
-    void setEnvelopeForOffering(String offering, SosEnvelope envelope);
-
-    /**
-     * Sets the specified envelope for the specified offering.
-     *
-     * @param offering
-     *            the offering
-     * @param envelope
-     *            the envelope
-     */
-    void setSpatialFilteringProfileEnvelopeForOffering(String offering, SosEnvelope envelope);
-
-    /**
-     * Updates the Spatial Filtering Profile envelope for the specified offering
-     * to include the specified envelope.
-     *
-     * @param offering
-     *            the offering
-     * @param envelope
-     *            the envelope to include
-     */
-    void updateEnvelopeForOffering(String offering, Envelope envelope);
-
-    /**
-     * Updates the Spatial Filtering Profile envelope for the specified offering
-     * to include the specified envelope.
-     *
-     * @param offering
-     *            the offering
-     * @param envelope
-     *            the envelope to include
-     */
-    void updateSpatialFilteringProfileEnvelopeForOffering(String offering, Envelope envelope);
-
-    /**
-     * Sets the new global phenomenon envelope.
-     *
-     * @param min
-     *            the minimal phenomenon time
-     * @param max
-     *            the maximal phenomenon time
-     */
-    void setPhenomenonTime(DateTime min, DateTime max);
-
-    /**
-     * Update the global phenomenon time by extending the global envelope to
-     * include the specified {@code ITime}.
-     *
-     * @param eventTime
-     *            the time to include
-     */
-    void updatePhenomenonTime(Time eventTime);
-
-    /**
-     * Recalculates the global phenomenon time envelope based on the current
-     * offering phenomenon time envelopes.
-     */
-    void recalculatePhenomenonTime();
-
-    /**
-     * Sets the new global result envelope.
-     *
-     * @param min
-     *            the minimal result time
-     * @param max
-     *            the maximal result time
-     */
-    void setResultTime(DateTime min, DateTime max);
-
-    /**
-     * Update the global result time by extending the global envelope to include
-     * the specified {@code ITime}.
-     *
-     * @param eventTime
-     *            the time to include
-     */
-    void updateResultTime(Time eventTime);
-
-    /**
-     * Recalculates the global result time envelope based on the current
-     * offering result time envelopes.
-     */
-    void recalculateResultTime();
-
-    /**
      * Sets the features of interest.
      *
      * @param featuresOfInterest
@@ -1075,159 +810,6 @@ public interface WritableContentCache extends ContentCache {
      *            the features of interest.
      */
     void setFeaturesOfInterestForOffering(String offering, Collection<String> featuresOfInterest);
-
-    /**
-     * Sets the global spatial envelope.
-     *
-     * @param globalEnvelope
-     *            the new spatial envelope
-     */
-    void setGlobalEnvelope(SosEnvelope globalEnvelope);
-
-    /**
-     * Updates the global spatial envelope to include the specified envelope.
-     *
-     * @param e
-     *            the envelope
-     */
-    void updateGlobalEnvelope(Envelope e);
-
-    /**
-     * Recalculates the global spatial envelope based on the current offering
-     * spatial envelopes.
-     */
-    void recalculateGlobalEnvelope();
-
-    /**
-     * Sets the global maximal phenomenon time.
-     *
-     * @param maxEventTime
-     *            the max phenomenon time
-     */
-    void setMaxPhenomenonTime(DateTime maxEventTime);
-
-    /**
-     * Sets the maximal phenomenon time for the specified offering to the
-     * specified time.
-     *
-     * @param offering
-     *            the offering
-     * @param maxTime
-     *            the max phenomenon time
-     */
-    void setMaxPhenomenonTimeForOffering(String offering, DateTime maxTime);
-
-    /**
-     * Sets the maximal phenomenon time for the specified procedure to the
-     * specified time.
-     *
-     * @param procedure
-     *            the procedure
-     * @param maxTime
-     *            the max phenomenon time
-     */
-    void setMaxPhenomenonTimeForProcedure(String procedure, DateTime maxTime);
-
-    /**
-     * Sets the global minimal phenomenon time.
-     *
-     * @param minEventTime
-     *            the min phenomenon time
-     */
-    void setMinPhenomenonTime(DateTime minEventTime);
-
-    /**
-     * Sets the minimal phenomenon time for the specified offering to the
-     * specified time.
-     *
-     * @param offering
-     *            the offering
-     * @param minTime
-     *            the min phenomenon time
-     */
-    void setMinPhenomenonTimeForOffering(String offering, DateTime minTime);
-
-    /**
-     * Sets the minimal phenomenon time for the specified procedure to the
-     * specified time.
-     *
-     * @param procedure
-     *            the procedure
-     * @param minTime
-     *            the min phenomenon time
-     */
-    void setMinPhenomenonTimeForProcedure(String procedure, DateTime minTime);
-
-    /**
-     * Updates the phenomenon time envelope of the specified offering to include
-     * the specified event time.
-     *
-     * @param offering
-     *            the offering
-     * @param eventTime
-     *            the time to include
-     */
-    void updatePhenomenonTimeForOffering(String offering, Time eventTime);
-
-    /**
-     * Updates the phenomenon time envelope of the specified procedure to
-     * include the specified event time.
-     *
-     * @param procedure
-     *            the procedure
-     * @param eventTime
-     *            the time to include
-     */
-    void updatePhenomenonTimeForProcedure(String procedure, Time eventTime);
-
-    /**
-     * Sets the global maximal result time.
-     *
-     * @param maxResultTime
-     *            the max result time
-     */
-    void setMaxResultTime(DateTime maxResultTime);
-
-    /**
-     * Sets the maximal result time for the specified offering to the specified
-     * time.
-     *
-     * @param offering
-     *            the offering
-     * @param maxTime
-     *            the max result time
-     */
-    void setMaxResultTimeForOffering(String offering, DateTime maxTime);
-
-    /**
-     * Sets the global minimal result time.
-     *
-     * @param minResultTime
-     *            the min result time
-     */
-    void setMinResultTime(DateTime minResultTime);
-
-    /**
-     * Sets the minimal result time for the specified offering to the specified
-     * time.
-     *
-     * @param offering
-     *            the offering
-     * @param minTime
-     *            the min result time
-     */
-    void setMinResultTimeForOffering(String offering, DateTime minTime);
-
-    /**
-     * Updates the result time envelope of the specified offering to include the
-     * specified result time.
-     *
-     * @param offering
-     *            the offering
-     * @param resultTime
-     *            the time to include
-     */
-    void updateResultTimeForOffering(String offering, Time resultTime);
 
     /**
      * Sets the name of the specified offering.
@@ -1259,17 +841,6 @@ public interface WritableContentCache extends ContentCache {
      *            the description
      */
     void setI18nDescriptionForOffering(String offering, MultilingualString description);
-
-    /**
-     * Sets the observable properties for the specified composite phenomenon.
-     *
-     * @param compositePhenomenon
-     *            the composite phenomenon
-     * @param observableProperties
-     *            the observable properties
-     */
-    void setObservablePropertiesForCompositePhenomenon(String compositePhenomenon,
-            Collection<String> observableProperties);
 
     /**
      * Sets the observable properties for the specified offering.
@@ -1486,49 +1057,9 @@ public interface WritableContentCache extends ContentCache {
     void clearAllowedObservationTypeForOfferings();
 
     /**
-     * Reset the offerings to envelope relation.
-     */
-    void clearEnvelopeForOfferings();
-
-    /**
-     * Reset the offerings to Spatial Filtering Profile envelope relation.
-     */
-    void clearSpatialFilteringProfileEnvelopeForOfferings();
-
-    /**
      * Reset the offering to feature of interest relation.
      */
     void clearFeaturesOfInterestForOfferings();
-
-    /**
-     * Reset the offering to minimal phenomenon time relation.
-     */
-    void clearMinPhenomenonTimeForOfferings();
-
-    /**
-     * Reset the offering to maximal phenomenon time relation.
-     */
-    void clearMaxPhenomenonTimeForOfferings();
-
-    /**
-     * Reset the procedure to minimal phenomenon time relation.
-     */
-    void clearMinPhenomenonTimeForProcedures();
-
-    /**
-     * Reset the procedure to maximal phenomenon time relation.
-     */
-    void clearMaxPhenomenonTimeForProcedures();
-
-    /**
-     * Reset the offering to minimal result time relation.
-     */
-    void clearMinResultTimeForOfferings();
-
-    /**
-     * Reset the offering to maximal result time relation.
-     */
-    void clearMaxResultTimeForOfferings();
 
     /**
      * Add the specified offering.
@@ -1599,7 +1130,7 @@ public interface WritableContentCache extends ContentCache {
      *            the new language to remove
      */
     void removeSupportedLanguage(Locale language);
-    
+
     /**
      * Set the specified requestable procedureDescriptionFormat.
      *
@@ -1609,11 +1140,32 @@ public interface WritableContentCache extends ContentCache {
     void setRequestableProcedureDescriptionFormat(Collection<String> formats);
     
     void clearFeatureOfInterestIdentifierHumanReadableNameMaps();
-    
+
     void clearObservablePropertyIdentifierHumanReadableNameMaps();
-    
+
     void clearProcedureIdentifierHumanReadableNameMaps();
 
-	void clearOfferingIdentifierHumanReadableNameMaps();
+    void clearOfferingIdentifierHumanReadableNameMaps();
+    void addTypeInstanceProcedure(TypeInstance typeInstance, String identifier);
+
+    void removeTypeInstanceProcedure(String identifier);
+
+    void clearTypeInstanceProcedure();
+
+    void addComponentAggregationProcedure(ComponentAggregation componentAggregation, String identifier);
+
+    void removeComponentAggregationProcedure(String identifier);
+
+    void clearComponentAggregationProcedure();
+
+    void addTypeOfProcedure(String type, String instance);
+
+    void addTypeOfProcedure(String type, Set<String> instances);
+
+    void removeTypeOfProcedure(String type);
+
+    void removeTypeOfProcedure(String type, String instance);
+
+    void clearTypeOfProcedure();
     
 }

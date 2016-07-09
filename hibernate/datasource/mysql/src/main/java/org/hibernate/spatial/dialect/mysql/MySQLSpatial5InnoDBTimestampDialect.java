@@ -29,9 +29,16 @@
 package org.hibernate.spatial.dialect.mysql;
 
 import java.sql.Types;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.hibernate.HibernateException;
 import org.hibernate.dialect.Dialect;
+import org.hibernate.internal.util.StringHelper;
+import org.hibernate.mapping.Column;
+import org.hibernate.mapping.Index;
+import org.hibernate.mapping.Table;
+import org.n52.sos.ds.datasource.SpatialIndexDialect;
 
 /**
  * Hibernate Spatial {@link Dialect} for MySQL that registers Types.TIMESTAMP to
@@ -41,7 +48,7 @@ import org.hibernate.dialect.Dialect;
  * @since 4.3.0
  *
  */
-public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDialect {
+public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 4518550802945449263L;
 
@@ -64,6 +71,41 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
             return "timestamp";
         }
         return super.getTypeName(code);
+    }
+    
+    // https://dev.mysql.com/doc/refman/5.0/en/creating-spatial-indexes.html
+    public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {
+        
+       
+        // only for NOT NULL columns and ENGINE=MyISAM
+        // https://dev.mysql.com/doc/refman/5.7/en/creating-spatial-indexes.html
+        
+//        String name = index.getName();
+//        Table table = index.getTable();
+//        Iterator<Column> columns = index.getColumnIterator();
+//        java.util.Map<Column, String> columnOrderMap = new HashMap<Column, String>();
+//        
+//        
+//        StringBuilder buf = new StringBuilder( "create" )
+//                        .append( " spatial index " )
+//                        .append( this.qualifyIndexName() ?
+//                                        name :
+//                                        StringHelper.unqualify( name ) )
+//                        .append( " on " )
+//                        .append( table.getQualifiedName( this, defaultCatalog, defaultSchema ) )
+//                        .append( " (" );
+//        while (columns.hasNext()) {
+//            Column column = columns.next();
+//            buf.append(column.getQuotedName(this));
+//            if (columnOrderMap.containsKey(column)) {
+//                buf.append(" ").append(columnOrderMap.get(column));
+//            }
+//            if (columns.hasNext())
+//                buf.append(", ");
+//        }
+//        buf.append(")");
+//        return buf.toString();
+        return "";
     }
 
 }

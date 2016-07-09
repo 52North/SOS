@@ -48,7 +48,7 @@ import org.n52.sos.util.QNameComparator;
 
 /**
  * Class which represents a ObservationOffering. Used in the SosCapabilities.
- * 
+ *
  * @since 4.0.0
  */
 public class SosObservationOffering extends AbstractSWES implements Comparable<SosObservationOffering> {
@@ -56,14 +56,25 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     private static final long serialVersionUID = -9094472499167970506L;
 
     /**
-     * add collection to sorted set
-     * 
+     * clear and add collection to sorted set
+     *
      * @param set
      * @param coll
      */
     private static <T> void set(SortedSet<T> set, Collection<? extends T> coll) {
         if (set != null) {
             set.clear();
+            add(set, coll);
+        }
+    }
+    /**
+     * add collection to sorted set
+     *
+     * @param set
+     * @param coll
+     */
+    private static <T> void add(SortedSet<T> set, Collection<? extends T> coll) {
+        if (set != null) {
             if (coll != null) {
                 set.addAll(coll);
             }
@@ -72,7 +83,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
 
     /**
      * Add key and value to map
-     * 
+     *
      * @param map
      * @param key
      * @param value
@@ -81,7 +92,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
         if (map != null && key != null && value != null) {
             SortedSet<V> set = map.get(key);
             if (set == null) {
-                set = new TreeSet<V>();
+                set = new TreeSet<>();
                 map.put(key, set);
             }
             set.add(value);
@@ -90,7 +101,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
 
     /**
      * Add key and values to map
-     * 
+     *
      * @param map
      * @param key
      * @param value
@@ -99,7 +110,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
         if (map != null && key != null && value != null) {
             SortedSet<V> set = map.get(key);
             if (set == null) {
-                set = new TreeSet<V>();
+                set = new TreeSet<>();
                 map.put(key, set);
             }
             set.addAll(value);
@@ -108,7 +119,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
 
     /**
      * Add map to sorted map
-     * 
+     *
      * @param sortedMap
      * @param map
      */
@@ -117,7 +128,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
             sortedMap.clear();
             if (map != null) {
                 for (Entry<K, ? extends Collection<V>> e : map.entrySet()) {
-                    sortedMap.put(e.getKey(), e.getValue() != null ? new TreeSet<V>(e.getValue()) : new TreeSet<V>());
+                    sortedMap.put(e.getKey(), e.getValue() != null ? new TreeSet<>(e.getValue()) : new TreeSet<V>());
                 }
             }
         }
@@ -136,17 +147,17 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     /**
      * All observableProperties contained in the offering
      */
-    private SortedSet<String> observableProperties = new TreeSet<String>();
+    private final SortedSet<String> observableProperties = new TreeSet<>();
 
     /**
      * All compositePhenomenon contained in the offering
      */
-    private SortedSet<String> compositePhenomena = new TreeSet<String>();
+    private final SortedSet<String> compositePhenomena = new TreeSet<>();
 
     /**
      * All phenomenon for compositePhenomenon contained in the offering
      */
-    private SortedMap<String, SortedSet<String>> phens4CompPhens = new TreeMap<String, SortedSet<String>>();
+    private final SortedMap<String, SortedSet<String>> phens4CompPhens = new TreeMap<>();
 
     /**
      * TimePeriod of data in the offering
@@ -161,54 +172,53 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     /**
      * All featuresOfinterest contained in the offering
      */
-    private final SortedSet<String> featureOfInterest = new TreeSet<String>();
+    private final SortedSet<String> featureOfInterest = new TreeSet<>();
 
     /**
      * All related features contained in the offering
      */
-    private final SortedMap<String, SortedSet<String>> relatedFeatures = new TreeMap<String, SortedSet<String>>();
+    private final SortedMap<String, SortedSet<String>> relatedFeatures = new TreeMap<>();
 
     /**
      * All procedures contained in the offering
      */
-    private final SortedSet<String> procedures = new TreeSet<String>();
+    private final SortedSet<String> procedures = new TreeSet<>();
 
     /**
      * All resultModels contained in the offering
      */
-    private final SortedSet<QName> resultModels = new TreeSet<QName>(new QNameComparator());
+    private final SortedSet<QName> resultModels = new TreeSet<>(new QNameComparator());
 
     /**
      * All observation types contained in the offering
      */
-    private final SortedSet<String> observationTypes = new TreeSet<String>();
+    private final SortedSet<String> observationTypes = new TreeSet<>();
 
     /**
      * All featureOfInterest types contained in the offering
      */
-    private final SortedSet<String> featureOfInterestTypes = new TreeSet<String>();
+    private final SortedSet<String> featureOfInterestTypes = new TreeSet<>();
 
     /**
      * All observation result types contained in the offering
      */
-    private final SortedMap<String, SortedSet<String>> observationResultTypes =
-            new TreeMap<String, SortedSet<String>>();
+    private final SortedMap<String, SortedSet<String>> observationResultTypes = new TreeMap<>();
 
     /**
      * All response formats contained in the offering
      */
-    private final SortedSet<String> responseFormats = new TreeSet<String>();
+    private final SortedSet<String> responseFormats = new TreeSet<>();
 
     /**
      * All response modes contained in the offering
      */
-    private final SortedSet<String> responseModes = new TreeSet<String>();
+    private final SortedSet<String> responseModes = new TreeSet<>();
 
     /**
      * All procedure description formats contained in the offering
      */
-    private final SortedSet<String> procedureDescriptionFormats = new TreeSet<String>();
-	
+    private final SortedSet<String> procedureDescriptionFormats = new TreeSet<>();
+
     /**
      * @return Offering identifier
      */
@@ -218,7 +228,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     public SosOffering getOffering() {
         return offering;
     }
-    
+
     /**
      * @param offering
      *            Offering identifier
@@ -243,7 +253,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     public void setOffering(String offering) {
         setOffering(new SosOffering(offering, Constants.EMPTY_STRING));
     }
-    
+
     /**
      * @return Sorted observableProperties set
      */
@@ -256,6 +266,10 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
      */
     public void setObservableProperties(Collection<String> observableProperties) {
         set(this.observableProperties, observableProperties);
+    }
+
+    public void addObservatbleProperties(Collection<String> observableProperties) {
+        add(this.observableProperties, observableProperties);
     }
 
     /**
@@ -340,7 +354,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
 
     /**
      * Add a related feature to this offering
-     * 
+     *
      * @param identifier
      *            Related feature identifier
      * @param role
@@ -352,7 +366,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
 
     /**
      * Add a related feature to this offering
-     * 
+     *
      * @param identifier
      *            Related feature identifier
      * @param roles
@@ -581,4 +595,5 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     public String toString() {
         return "SosObservationOffering [offering=" + offering + "]";
     }
+
 }

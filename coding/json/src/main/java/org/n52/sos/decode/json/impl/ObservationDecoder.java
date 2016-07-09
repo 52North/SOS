@@ -38,6 +38,7 @@ import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.decode.json.JSONDecodingException;
+import org.n52.sos.exception.ows.concrete.NotYetSupportedException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
 import org.n52.sos.ogc.gml.ReferenceType;
@@ -73,9 +74,9 @@ import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationDecoder extends JSONDecoder<OmObservation> {
@@ -163,40 +164,58 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
         return parseTime(node.path(JSONConstants.PHENOMENON_TIME));
     }
 
-	protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws OwsExceptionReport {
-    	Set<NamedValue<?>> parameters = Sets.newHashSet();
-    	JsonNode parameter = node.path(JSONConstants.PARAMETER);
-    	if (parameter.isArray()) {
-    		for (JsonNode jsonNode : parameter) {
-    			parameters.add(parseNamedValue(jsonNode));
-			}
-    	} else if (parameter.isObject()) {
-    		parameters.add(parseNamedValue(parameter));
-    	}
-		return parameters;
-	}
+    protected Collection<NamedValue<?>> parseParameter(JsonNode node) throws OwsExceptionReport {
+        Set<NamedValue<?>> parameters = Sets.newTreeSet();
+        JsonNode parameter = node.path(JSONConstants.PARAMETER);
+        if (parameter.isArray()) {
+            for (JsonNode jsonNode : parameter) {
+                parameters.add(parseNamedValue(jsonNode));
+            }
+        } else if (parameter.isObject()) {
+            parameters.add(parseNamedValue(parameter));
+        }
+        return parameters;
+    }
 
     private NamedValue<?> parseNamedValue(JsonNode parameter) throws OwsExceptionReport {
-    	JsonNode namedValue = parameter.path(JSONConstants.NAMED_VALUE);
-    	NamedValue<?> nv = parseNamedValueValue(namedValue);
-    	ReferenceType referenceType = new ReferenceType(namedValue.path(JSONConstants.NAME).asText());
-    	nv.setName(referenceType);
-    	return nv;
-	}
-    
-    private NamedValue<?> parseNamedValueValue(JsonNode namedValue) throws OwsExceptionReport {
-    	JsonNode value = namedValue.path(JSONConstants.VALUE);
-    	if (value.isTextual()) {
-    		NamedValue<W3CHrefAttribute> nv = new NamedValue<W3CHrefAttribute>();
-    		nv.setValue(new HrefAttributeValue(new W3CHrefAttribute(value.asText())));
-            return nv;
-    	} else {
-    		 NamedValue<Geometry> nv = new NamedValue<Geometry>();
-             nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
-             return nv;
-    	}
+        JsonNode namedValue = parameter.path(JSONConstants.NAMED_VALUE);
+        NamedValue<?> nv = parseNamedValueValue(namedValue.path(JSONConstants.VALUE));
+        ReferenceType referenceType = new ReferenceType(namedValue.path(JSONConstants.NAME).asText());
+        nv.setName(referenceType);
+        return nv;
     }
-	
+
+    private NamedValue<?> parseNamedValueValue(JsonNode value) throws OwsExceptionReport {
+        if (value.isTextual()) {
+            NamedValue<W3CHrefAttribute> nv = new NamedValue<>();
+            nv.setValue(new HrefAttributeValue(new W3CHrefAttribute(value.asText())));
+            return nv;
+        } else if (value.isBoolean()) {
+            NamedValue<Boolean> nv = new NamedValue<>();
+            nv.setValue(new BooleanValue(value.asBoolean()));
+            return nv;
+        } else if (value.isInt()) {
+            NamedValue<Integer> nv = new NamedValue<>();
+            nv.setValue(new CountValue(value.asInt()));
+            return nv;
+        } else if (value.isObject()) {
+            if (value.has(JSONConstants.CODESPACE)) {
+                NamedValue<String> nv = new NamedValue<>();
+                nv.setValue(parseCategroyValue(value));
+                return nv;
+            } else if (value.has(JSONConstants.UOM)) {
+                NamedValue<Double> nv = new NamedValue<>();
+                nv.setValue(parseQuantityValue(value));
+                return nv;
+            } else if (value.has(JSONConstants.COORDINATES)) {
+                NamedValue<Geometry> nv = new NamedValue<>();
+                nv.setValue(new GeometryValue(geometryDecoder.decodeJSON(value, false)));
+                return nv;
+            }
+        }
+        throw new NotYetSupportedException(value.toString());
+    }
+
     protected AbstractFeature parseFeatureOfInterest(JsonNode node) throws OwsExceptionReport {
         return featureDecoder.decodeJSON(node.path(JSONConstants.FEATURE_OF_INTEREST), false);
     }
@@ -221,10 +240,14 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     }
 
     protected ObservationValue<?> parseMeasurementValue(JsonNode node) throws OwsExceptionReport {
-        final QuantityValue qv =
-                new QuantityValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).doubleValue(), node
-                        .path(JSONConstants.RESULT).path(JSONConstants.UOM).textValue());
+        final QuantityValue qv = parseQuantityValue(node.path(JSONConstants.RESULT));
+//                new QuantityValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).doubleValue(), node
+//                        .path(JSONConstants.RESULT).path(JSONConstants.UOM).textValue());
         return new SingleObservationValue<Double>(parsePhenomenonTime(node), qv);
+    }
+
+    private QuantityValue parseQuantityValue(JsonNode node) throws OwsExceptionReport {
+       return new QuantityValue(node.path(JSONConstants.VALUE).doubleValue(), node.path(JSONConstants.UOM).textValue());
     }
 
     private ObservationValue<?> parseTextObservationValue(JsonNode node) throws OwsExceptionReport {
@@ -243,15 +266,19 @@ public class ObservationDecoder extends JSONDecoder<OmObservation> {
     }
 
     private ObservationValue<?> parseCategoryObservationValue(JsonNode node) throws OwsExceptionReport {
-        final CategoryValue v =
-                new CategoryValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).textValue(), node
-                        .path(JSONConstants.RESULT).path(JSONConstants.CODESPACE).textValue());
+        final CategoryValue v = parseCategroyValue(node.path(JSONConstants.RESULT));
+//                new CategoryValue(node.path(JSONConstants.RESULT).path(JSONConstants.VALUE).textValue(), node
+//                        .path(JSONConstants.RESULT).path(JSONConstants.CODESPACE).textValue());
         return new SingleObservationValue<String>(parsePhenomenonTime(node), v);
+    }
+
+    private CategoryValue parseCategroyValue(JsonNode node) throws OwsExceptionReport {
+        return new CategoryValue(node.path(JSONConstants.VALUE).textValue(), node.path(JSONConstants.CODESPACE).textValue());
     }
 
     private ObservationValue<?> parseGeometryObservation(JsonNode node) throws OwsExceptionReport {
         GeometryValue v = new GeometryValue(geometryDecoder.decodeJSON(node.path(JSONConstants.RESULT), false));
         return new SingleObservationValue<Geometry>(parsePhenomenonTime(node), v);
     }
-    
+
 }

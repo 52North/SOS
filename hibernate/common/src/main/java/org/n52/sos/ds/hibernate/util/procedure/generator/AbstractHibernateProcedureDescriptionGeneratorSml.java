@@ -36,25 +36,21 @@ import java.util.TreeSet;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.n52.sos.cache.ContentCache;
-import org.n52.sos.ds.I18NDAO;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ds.hibernate.entities.interfaces.BlobObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.BooleanObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CategoryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.CountObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.GeometryObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
-import org.n52.sos.ds.hibernate.entities.interfaces.TextObservation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.om.OmConstants;
@@ -72,6 +68,7 @@ import org.n52.sos.ogc.swe.simpleType.SweCategory;
 import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.sos.request.ProcedureRequestSettings;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
@@ -132,7 +129,7 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         abstractProcess.setIdentifications(createIdentifications(identifier));
 
         // 7 set inputs/outputs --> observableProperties
-        if (getServiceConfig().isAddOutputsToSensorML()
+        if (ProcedureRequestSettings.getInstance().isAddOutputsToSensorML()
                 && !"hydrology".equalsIgnoreCase(Configurator.getInstance().getProfileHandler().getActiveProfile()
                         .getIdentifier())) {
             TreeSet<String> obsProps = Sets.newTreeSet(Arrays.asList(observableProperties));

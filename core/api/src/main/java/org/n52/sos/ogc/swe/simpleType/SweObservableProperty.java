@@ -28,11 +28,14 @@
  */
 package org.n52.sos.ogc.swe.simpleType;
 
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.ogc.swe.SweDataComponentVisitor;
+import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
 
 /**
  * SOS internal representation of SWE simpleType observableProperty
- * 
+ *
  * @since 4.0.0
  */
 public class SweObservableProperty extends SweAbstractSimpleType<String> {
@@ -74,4 +77,23 @@ public class SweObservableProperty extends SweAbstractSimpleType<String> {
         return SweDataComponentType.ObservableProperty;
     }
 
+    @Override
+    public <T> T accept(SweDataComponentVisitor<T> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidSweDataComponentVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
+
+    @Override
+    public SweObservableProperty clone() {
+        SweObservableProperty clone = new SweObservableProperty();
+        copyValueTo(clone);
+        clone.setValue(getValue());
+        return clone;
+    }
 }

@@ -3,13 +3,13 @@
     <parent>
         <groupId>org.n52.sensorweb.sos</groupId>
         <artifactId>hibernate-datasource</artifactId>
-        <version>4.3.8-SNAPSHOT</version>
+        <version>4.4.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>hibernate-datasource-postgres</artifactId>
     <packaging>jar</packaging>
-	<name>52°North SOS - Hibernate Postgres/PostGIS Datasource</name>
-	<description>52°North Sensor Observation Service Hibernate PostgresSQL/PostGIS module</description>
+	  <name>52°North SOS - Hibernate Postgres/PostGIS Datasource</name>
+    <description>52°North Sensor Observation Service Hibernate PostgresSQL/PostGIS module</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -36,13 +36,13 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-spatial</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.postgis</groupId>
-			<artifactId>postgis-jdbc</artifactId>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.postgis</groupId>
+            <artifactId>postgis-jdbc</artifactId>
+        </dependency>
+    </dependencies>
 </project>

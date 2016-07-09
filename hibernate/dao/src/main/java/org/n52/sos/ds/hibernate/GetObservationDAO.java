@@ -41,18 +41,18 @@ import org.hibernate.criterion.Criterion;
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
-import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.ObservationDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
@@ -105,7 +105,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
     public GetObservationDAO() {
         super(SosConstants.SOS);
     }
-    
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
@@ -152,7 +152,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                     // sosResponse.setObservationCollection(queryObservationHydro(sosRequest,
                     // session));
                     // } else {
-                    sosResponse.setObservationCollection(queryObservation(sosRequest, (ObservationDAO)observationDAO, session));
+                    sosResponse.setObservationCollection(queryObservation(sosRequest, (LegacyObservationDAO)observationDAO, session));
                     // }
                 }
 
@@ -182,7 +182,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *
      * @param request
      *            GetObservation request
-     * @param observationDAO 
+     * @param observationDAO
      * @param session
      *            Hibernate session
      * @return List of internal Observation objects
@@ -192,7 +192,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *             If an error occurs during converting
      */
     // TODO move this and associated methods to ObservationDAO
-    protected List<OmObservation> queryObservation(final GetObservationRequest request, ObservationDAO observationDAO, final Session session)
+    protected List<OmObservation> queryObservation(final GetObservationRequest request, LegacyObservationDAO observationDAO, final Session session)
             throws OwsExceptionReport, ConverterException {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
@@ -209,7 +209,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         // final List<OmObservation> result = new LinkedList<OmObservation>();
-        Collection<AbstractObservation> observations = Lists.newArrayList();
+        Collection<Observation<?>> observations = Lists.newArrayList();
         // query with temporal filter
         if (filterCriterion != null) {
             observations = observationDAO.getObservationsFor(request, features, filterCriterion, session);
@@ -276,7 +276,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *
      * @param request
      *            GetObservation request
-     * @param observationDAO 
+     * @param observationDAO
      * @param session
      *            Hibernate session
      * @return List of internal Observations
@@ -295,15 +295,15 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         // get valid featureOfInterest identifier
         final Set<String> features = QueryHelper.getFeatures(request, session);
         if (features != null && features.isEmpty()) {
-            return new ArrayList<OmObservation>();
+            return new LinkedList<>();
         }
         // temporal filters
         final List<SosIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
-        final List<OmObservation> result = new LinkedList<OmObservation>();
-        Collection<SeriesObservation> seriesObservations = Lists.newArrayList();
-        
+        final List<OmObservation> result = new LinkedList<>();
+        Collection<SeriesObservation<?>> seriesObservations = Lists.newArrayList();
+
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
 
         // query with temporal filter
@@ -346,7 +346,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             }
 
             // check observations and remove any series found from the map
-            for (SeriesObservation seriesObs : seriesObservations) {
+            for (SeriesObservation<?> seriesObs : seriesObservations) {
                 long seriesId = seriesObs.getSeries().getSeriesId();
                 if (seriesToCheckMap.containsKey(seriesId)) {
                     seriesToCheckMap.remove(seriesId);
@@ -366,7 +366,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         HibernateGetObservationHelper.checkMaxNumberOfReturnedValues(seriesObservations.size());
 
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
-        Collection<AbstractObservation> abstractObservations = Lists.newArrayList();
+        Collection<Observation<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
         result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, LocaleHelper.fromRequest(request), session));
         return result;
@@ -466,7 +466,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         // query global response values
         
         ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
-        if (timeExtrema.isSetPhenomenonTime()) {
+        if (timeExtrema.isSetPhenomenonTimes()) {
             response.setGlobalValues(response.new GlobalGetObservationValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));

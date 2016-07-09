@@ -38,8 +38,15 @@ import org.n52.sos.config.settings.StringSettingDefinition;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * This {@link SettingDefinitionProvider} is for identifier prefixes which are
+ * dynamically added/removed to/from the identifier in the responses/requests.
+ * 
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.4.0
+ *
+ */
 public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
-    // TODO Add this to org.n52.sos.config.SettingDefinitionProvider
     
     public static final String GLOBAL_PREFIX_KEY = "sos.prefix.global";
     
@@ -51,8 +58,12 @@ public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
     
     public static final String FEATURE_OF_INTEREST_PREFIX_KEY = "sos.prefix.featureOfInterest";
 
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Identifier Prefix")
-                .setOrder(ORDER_10);
+    public static final SettingDefinitionGroup GROUP = 
+            new SettingDefinitionGroup()
+            .setTitle("PrefixIdentifier")
+            .setDescription("Identifier prefixes are added/removed to/from the indetifier in the responses/requests.</br>"
+                    + "The should end with a separator, e.g. '/' for URLs or ':' for URNs or '.'.")
+            .setOrder(ORDER_10);
     
     public static final StringSettingDefinition GLOBAL_PREFIX_DEFINITION =
             new StringSettingDefinition()
@@ -61,9 +72,9 @@ public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
                     .setKey(GLOBAL_PREFIX_KEY)
                     .setOptional(true)
                     .setDefaultValue("")
-                    .setTitle("global prefix")
+                    .setTitle("The global prefix")
                     .setDescription(
-                            "global prefix");
+                            "This prefix is used to add/remove a prefix to/from the each identifier");
     
     public static final StringSettingDefinition OFFERING_PREFIX_DEFINITION =
         new StringSettingDefinition()
@@ -72,9 +83,9 @@ public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
                 .setKey(OFFERING_PREFIX_KEY)
                 .setOptional(true)
                 .setDefaultValue("")
-                .setTitle("offering prefix")
+                .setTitle("The offering prefix")
                 .setDescription(
-                        "offering prefix");
+                        "This prefix is used to add/remove a prefix to/from the offering identifier");
     
     public static final StringSettingDefinition PROCEDURE_PREFIX_DEFINITION =
         new StringSettingDefinition()
@@ -83,9 +94,9 @@ public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
                 .setKey(PROCEDURE_PREFIX_KEY)
                 .setOptional(true)
                 .setDefaultValue("")
-                .setTitle("procedure prefix")
+                .setTitle("The procedure prefix")
                 .setDescription(
-                        "procedure prefix");
+                        "This prefix is used to add/remove a prefix to/from the procedure identifier");
     
     public static final StringSettingDefinition OBSERVABLE_PROPERTY_PREFIX_DEFINITION =
         new StringSettingDefinition()
@@ -94,9 +105,9 @@ public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
                 .setKey(OBSERVABLE_PROPERTY_PREFIX_KEY)
                 .setOptional(true)
                 .setDefaultValue("")
-                .setTitle("obserProp prefix")
+                .setTitle("The obserProp prefix")
                 .setDescription(
-                        "obserProp prefix");
+                        "This prefix is used to add/remove a prefix to/from the observedProperty identifier");
     
     public static final StringSettingDefinition FEATURE_OF_INTEREST_PREFIX_DEFINITION =
         new StringSettingDefinition()
@@ -105,20 +116,20 @@ public class PrefixedIdentifierSetting implements SettingDefinitionProvider {
                 .setKey(FEATURE_OF_INTEREST_PREFIX_KEY)
                 .setOptional(true)
                 .setDefaultValue("")
-                .setTitle("feature prefix")
+                .setTitle("The feature prefix")
                 .setDescription(
-                        "feature prefix");
+                        "This prefix is used to add/remove a prefix to/from the featureOfInterest identifier");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = ImmutableSet
                     .<SettingDefinition<?, ?>> of(
-                                    GLOBAL_PREFIX_DEFINITION,
-                                    OFFERING_PREFIX_DEFINITION, PROCEDURE_PREFIX_DEFINITION,
-                                    OBSERVABLE_PROPERTY_PREFIX_DEFINITION,
-                                    FEATURE_OF_INTEREST_PREFIX_DEFINITION);
+                            GLOBAL_PREFIX_DEFINITION,
+                            OFFERING_PREFIX_DEFINITION, PROCEDURE_PREFIX_DEFINITION,
+                            OBSERVABLE_PROPERTY_PREFIX_DEFINITION,
+                            FEATURE_OF_INTEREST_PREFIX_DEFINITION);
 
     @Override
-        public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
-            return Collections.unmodifiableSet(DEFINITIONS);
-        }
+    public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
+        return Collections.unmodifiableSet(DEFINITIONS);
+    }
 
 }

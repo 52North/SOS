@@ -29,22 +29,41 @@
 package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDisabledFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
+import org.n52.sos.util.Constants;
+
+import com.google.common.collect.Sets;
+
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasParentChilds;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedureDescriptionFormat;
 
 /**
  * @since 4.0.0
- * 
+ *
+ */
+/**
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since
+ *
  */
 public class Procedure extends SpatialEntity implements Serializable, HasDeletedFlag, HasProcedureDescriptionFormat,
-        HasGeometry, HasCoordinate, HasDisabledFlag {
+        HasGeometry, HasCoordinate, HasDisabledFlag, HasParentChilds<Procedure> {
 
     private static final long serialVersionUID = -3115365895730874831L;
 
     public static final String ID = "procedureId";
 
     public static final String DESCRIPTION_URL = "descriptionUrl";
+    
+    public static final String ALIAS = "proc";
+    
+    public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
 
     private long procedureId;
 
@@ -53,11 +72,25 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     private boolean deleted;
 
     private String descriptionFile;
-    
-    private boolean disabled;
-    
-    private boolean reference;
 
+    private boolean disabled;
+
+    private boolean reference;
+    
+    private Procedure typeOf;
+    
+    private boolean isType;
+    
+    private boolean isAggregation;
+    
+    private boolean mobile = false;
+    
+    private boolean insitu = true;
+    
+    private Set<Procedure> childs = Sets.newHashSet();
+
+    private Set<Procedure> parents = Sets.newHashSet();
+    
     public long getProcedureId() {
         return this.procedureId;
     }
@@ -72,9 +105,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     @Override
-    public Procedure setProcedureDescriptionFormat(ProcedureDescriptionFormat procedureDescriptionFormat) {
+    public void setProcedureDescriptionFormat(ProcedureDescriptionFormat procedureDescriptionFormat) {
         this.procedureDescriptionFormat = procedureDescriptionFormat;
-        return this;
     }
 
     @Override
@@ -83,9 +115,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     @Override
-    public Procedure setDeleted(boolean deleted) {
+    public void setDeleted(boolean deleted) {
         this.deleted = deleted;
-        return this;
     }
 
     public String getDescriptionFile() {
@@ -97,9 +128,8 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
     }
 
     @Override
-    public HasDisabledFlag setDisabled(boolean disabled) {
+    public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-        return this;
     }
 
     @Override
@@ -131,4 +161,150 @@ public class Procedure extends SpatialEntity implements Serializable, HasDeleted
         this.reference = reference;
     }
 
+    /**
+     * @return the typeOf
+     */
+    public Procedure getTypeOf() {
+        return typeOf;
+    }
+
+    /**
+     * @param typeOf the typeOf to set
+     */
+    public void setTypeOf(Procedure typeOf) {
+        this.typeOf = typeOf;
+    }
+    
+    /**
+     * @return <code>true</code>, if is not null
+     */
+    public boolean isSetTypeOf() {
+        return getTypeOf() != null;
+    }
+
+    /**
+     * @return the isType
+     */
+    public boolean isType() {
+        return isType;
+    }
+    
+    /**
+     * @return the isType
+     */
+    public boolean getIsType() {
+        return isType;
+    }
+
+    /**
+     * @param isType the isType to set
+     */
+    public void setIsType(boolean isType) {
+        this.isType = isType;
+    }
+
+    /**
+     * @return the isAggregation
+     */
+    public boolean isAggregation() {
+        return isAggregation;
+    }
+    
+    /**
+     * @return the isAggregation
+     */
+    public boolean getIsAggregation() {
+        return isAggregation;
+    }
+
+    /**
+     * @param isAggregation the isAggregation to set
+     */
+    public void setIsAggregation(boolean isAggregation) {
+        this.isAggregation = isAggregation;
+    }
+    
+    /**
+     * @return the mobile
+     */
+    public boolean isMobile() {
+        return mobile;
+    }
+    
+    /**
+     * @return the mobile
+     */
+    public boolean getMobile() {
+        return mobile;
+    }
+
+    /**
+     * @param mobile the mobile to set
+     */
+    public void setMobile(boolean mobile) {
+        this.mobile = mobile;
+    }
+    
+    /**
+     * @return the insitu
+     */
+    public boolean isInsitu() {
+        return insitu;
+    }
+    
+    /**
+     * @return the insitu
+     */
+    public boolean getInsitu() {
+        return insitu;
+    }
+
+    /**
+     * @param insitu the insitu to set
+     */
+    public void setInsitu(boolean insitu) {
+        this.insitu = insitu;
+    }
+    
+    @Override
+    public Set<Procedure> getParents() {
+        return parents;
+    }
+
+    @Override
+    public void setParents(Set<Procedure> parents) {
+        this.parents = parents;
+    }
+
+    @Override
+    public Set<Procedure> getChilds() {
+        return childs;
+    }
+
+    @Override
+    public void setChilds(Set<Procedure> childs) {
+        this.childs = childs;
+    }
+
+    @Override
+    public void addParent(Procedure parent) {
+        if (parent == null) {
+            return;
+        }
+        if (this.parents == null) {
+            this.parents = new HashSet<>();
+        }
+        this.parents.add(parent);
+    }
+
+    @Override
+    public void addChild(Procedure child) {
+        if (child == null) {
+            return;
+        }
+        if (this.childs == null) {
+            this.childs = new HashSet<>();
+        }
+        this.childs.add(child);
+    }
 }

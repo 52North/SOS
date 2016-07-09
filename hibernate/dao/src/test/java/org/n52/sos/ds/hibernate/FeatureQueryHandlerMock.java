@@ -46,9 +46,10 @@ import org.n52.sos.ogc.sos.SosEnvelope;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
+@Deprecated
 public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
@@ -64,6 +65,9 @@ public class FeatureQueryHandlerMock extends AbstractFeatureQueryHandler {
 
     @Override
     public String insertFeature(SamplingFeature samplingFeature, Object connection) throws OwsExceptionReport {
+        if (samplingFeature.isSetIdentifier()) {
+            return samplingFeature.getIdentifier();
+        }
         return UUID.randomUUID().toString();
     }
 

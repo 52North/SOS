@@ -99,5 +99,51 @@
                 <comment>Flag to indicate that this procedure is a reference procedure of another procedure. Not used by the SOS but by the Sensor Web REST-API</comment>
             </column>
         </property>
+        <many-to-one name="typeOf" class="org.n52.sos.ds.hibernate.entities.Procedure" not-null="false"  foreign-key="typeOfFk">
+            <column name="typeOf" not-null="false">
+                <comment>Relation/foreign key to procedure table. Optional, contains procedureId if this procedure is typeOf another procedure</comment>
+            </column>
+        </many-to-one>
+        <property name="isType" type="org.hibernate.type.TrueFalseType">
+            <column name="isType" default="'F'" check="isType in ('T','F')">
+                <comment>Flag to indicate that this procedure is a type description, has no observations.</comment>
+            </column>
+        </property>
+        <property name="isAggregation" type="org.hibernate.type.TrueFalseType">
+            <column name="isAggregation" default="'T'" check="isAggregation in ('T','F')">
+                <comment>Flag to indicate that this procedure is an aggregation (e.g. System, PhysicalSystem).</comment>
+            </column>
+        </property>
+        <property name="mobile" type="org.hibernate.type.TrueFalseType">
+          <column name="mobile" not-null="false" default="'F'" check="mobile in ('T','F')">
+                <comment>Flag to indicate that this procedure is stationary (false) or mobile (true). Optional</comment>
+            </column>
+        </property>
+        <property name="insitu" type="org.hibernate.type.TrueFalseType">
+          <column name="insitu" not-null="false" default="'T'" check="insitu in ('T','F')">
+                <comment>Flag to indicate that this procedure is insitu (true) or remote (false). Optional</comment>
+            </column>
+        </property>
+        <set name="childs" table="sensorSystem" inverse="false">
+        <comment>Relation table to store procedure hierarchies. E.g. define a parent in a query and all childs are also contained in the response.  Mapping file: mapping/transactional/TProcedure.hbm.xml</comment>
+        <key>
+            <column name="parentSensorId" not-null="true">
+                    <comment>Foreign Key (FK) to the related parent procedure. Contains "procedure".procedureid</comment>
+                </column>
+        </key>
+        <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="procedureChildFk">
+            <column name="childSensorId" not-null="true">
+                    <comment>Foreign Key (FK) to the related child procedure. Contains "procedure".procedureid</comment>
+                </column>
+        </many-to-many>
+        </set>
+        <set name="parents" table="sensorSystem" inverse="false">
+            <key>
+                <column name="childSensorId" not-null="true" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Procedure" foreign-key="procedureParenfFk">
+                <column name="parentSensorId" not-null="true" />
+            </many-to-many>
+        </set>
     </class>
 </hibernate-mapping>

@@ -51,6 +51,7 @@ import org.n52.sos.exception.ows.concrete.InvalidServiceOrVersionException;
 import org.n52.sos.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.sos.exception.ows.concrete.NoDecoderForKeyException;
 import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.exception.ows.concrete.VersionNotSupportedException;
 import org.n52.sos.ogc.ows.CompositeOwsException;
@@ -81,7 +82,24 @@ public abstract class SimpleBinding extends Binding {
     private static final Logger LOG = LoggerFactory.getLogger(SimpleBinding.class);
     public static final String QUALITY = "q";
 
-    protected boolean isUseHttpResponseCodes() {
+    public Object handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
+	        OwsExceptionReport oer) throws HTTPException {
+	    try {
+	        SosEventBus.fire(new ExceptionEvent(oer));
+	        MediaType contentType =
+	                chooseResponseContentTypeForExceptionReport(HTTPUtils.getAcceptHeader(request),
+	                        getDefaultContentType());
+	        Object encoded = encodeOwsExceptionReport(oer, contentType);
+	        if (isUseHttpResponseCodes() && oer.hasStatus()) {
+	            response.setStatus(oer.getStatus().getCode());
+	        }
+	        return encoded;
+	    } catch (OwsExceptionReport e) {
+	        throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
+	    }
+	}
+
+	protected boolean isUseHttpResponseCodes() {
         return ServiceConfiguration.getInstance().isUseHttpStatusCodesInKvpAndPoxBinding();
     }
 
@@ -101,8 +119,11 @@ public abstract class SimpleBinding extends Binding {
         return ServiceOperatorRepository.getInstance();
     }
 
-    protected <F, T> Decoder<F, T> getDecoder(DecoderKey key) {
-        return CodingRepository.getInstance().getDecoder(key);
+    protected <F, T> Decoder<F, T> getDecoder(DecoderKey key) throws OwsExceptionReport {
+        if (hasDecoder(key)) {
+            return CodingRepository.getInstance().getDecoder(key);
+        }
+        throw new NoDecoderForKeyException(key).setStatus(HTTPStatus.BAD_REQUEST);
     }
 
     protected <F, T> Encoder<F, T> getEncoder(EncoderKey key) {
@@ -251,9 +272,12 @@ public abstract class SimpleBinding extends Binding {
 
     protected void writeResponse(HttpServletRequest request, HttpServletResponse response,
             AbstractServiceResponse serviceResponse) throws HTTPException, IOException {
-        MediaType contentType =
-                chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request), getDefaultContentType());
-        HTTPUtils.writeObject(request, response, contentType, serviceResponse);
+        MediaType contentType = chooseResponseContentType(serviceResponse, HTTPUtils.getAcceptHeader(request),
+                getDefaultContentType());
+        if (!serviceResponse.isSetContentType()) {
+            serviceResponse.setContentType(contentType);
+        }
+        HTTPUtils.writeObject(request, response, contentType, serviceResponse, this);
     }
 
     protected Object encodeResponse(AbstractServiceResponse response, MediaType contentType) throws OwsExceptionReport {
@@ -268,18 +292,12 @@ public abstract class SimpleBinding extends Binding {
     protected void writeOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
             OwsExceptionReport oer) throws HTTPException {
         try {
-            SosEventBus.fire(new ExceptionEvent(oer));
-            MediaType contentType =
-                    chooseResponseContentTypeForExceptionReport(HTTPUtils.getAcceptHeader(request),
-                            getDefaultContentType());
-            Object encoded = encodeOwsExceptionReport(oer, contentType);
-            if (isUseHttpResponseCodes() && oer.hasStatus()) {
-                response.setStatus(oer.getStatus().getCode());
-            }
+        	MediaType contentType =
+                  chooseResponseContentTypeForExceptionReport(HTTPUtils.getAcceptHeader(request),
+                          getDefaultContentType());
+            Object encoded = handleOwsExceptionReport(request, response, oer);
             HTTPUtils.writeObject(request, response, contentType, encoded);
         } catch (IOException e) {
-            throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
-        } catch (OwsExceptionReport e) {
             throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
         }
     }

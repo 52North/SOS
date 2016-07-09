@@ -28,13 +28,16 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Text measurement representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class TextValue implements Value<String> {
     /**
@@ -54,9 +57,9 @@ public class TextValue implements Value<String> {
 
     /**
      * constructor
-     * 
+     *
      * @param value
-     *            Measurement value
+     *              Measurement value
      */
     public TextValue(String value) {
         this.value = value;
@@ -84,7 +87,8 @@ public class TextValue implements Value<String> {
 
     @Override
     public String toString() {
-        return String.format("TextValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("TextValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
     @Override
@@ -95,5 +99,17 @@ public class TextValue implements Value<String> {
     @Override
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

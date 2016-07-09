@@ -29,19 +29,12 @@
 package org.n52.sos.service;
 
 import static org.n52.sos.service.MiscSettings.CHARACTER_ENCODING;
-import static org.n52.sos.service.MiscSettings.DEFAULT_FEATURE_PREFIX;
-import static org.n52.sos.service.MiscSettings.DEFAULT_OBSERVABLEPROPERTY_PREFIX;
-import static org.n52.sos.service.MiscSettings.DEFAULT_OFFERING_PREFIX;
-import static org.n52.sos.service.MiscSettings.DEFAULT_PROCEDURE_PREFIX;
 import static org.n52.sos.service.MiscSettings.HTTP_STATUS_CODE_USE_IN_KVP_POX_BINDING;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V1;
 import static org.n52.sos.service.MiscSettings.SRS_NAME_PREFIX_SOS_V2;
-import static org.n52.sos.service.ServiceSettings.ADD_OUTPUTS_TO_SENSOR_ML;
-import static org.n52.sos.service.ServiceSettings.ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR;
 import static org.n52.sos.service.ServiceSettings.SENSOR_DIRECTORY;
 import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
 import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
-import static org.n52.sos.service.ServiceSettings.USE_DEFAULT_PREFIXES;
 import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
 
 import java.net.URI;
@@ -52,6 +45,7 @@ import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.config.annotation.Setting;
 import org.n52.sos.exception.ConfigurationException;
 import org.n52.sos.i18n.I18NSettings;
+import org.n52.sos.request.ProcedureRequestSettings;
 import org.n52.sos.util.Validation;
 import org.n52.sos.util.XmlOptionsHelper;
 
@@ -80,10 +74,6 @@ public class ServiceConfiguration {
     private String defaultFeaturePrefix;
 
     private boolean useDefaultPrefixes;
-
-    private boolean encodeFullChildrenInDescribeSensor;
-
-    private boolean addOutputsToSensorML;
 
     private boolean strictSpatialFilteringProfile;
 
@@ -163,6 +153,10 @@ public class ServiceConfiguration {
 
     private boolean streamingEncoding = true;
 
+    private boolean includeChildObservableProperties = false;
+    
+    private boolean updateFeatureGeometry = false;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -215,63 +209,81 @@ public class ServiceConfiguration {
         return defaultOfferingPrefix;
     }
 
-    @Setting(DEFAULT_OFFERING_PREFIX)
+    @Deprecated
     public void setDefaultOfferingPrefix(final String prefix) {
         defaultOfferingPrefix = prefix;
     }
 
+    @Deprecated
     public String getDefaultProcedurePrefix() {
         return defaultProcedurePrefix;
     }
 
-    @Setting(DEFAULT_OBSERVABLEPROPERTY_PREFIX)
+    @Deprecated
     public void setDefaultObservablePropertyPrefix(final String prefix) {
         defaultObservablePropertyPrefix = prefix;
     }
 
+    @Deprecated
     public String getDefaultObservablePropertyPrefix() {
         return defaultObservablePropertyPrefix;
     }
 
-    @Setting(DEFAULT_PROCEDURE_PREFIX)
+    @Deprecated
     public void setDefaultProcedurePrefix(final String prefix) {
         defaultProcedurePrefix = prefix;
     }
 
+    @Deprecated
     public String getDefaultFeaturePrefix() {
         return defaultFeaturePrefix;
     }
 
-    @Setting(DEFAULT_FEATURE_PREFIX)
+    @Deprecated
     public void setDefaultFeaturePrefix(final String prefix) {
         defaultFeaturePrefix = prefix;
     }
 
+    @Deprecated
     public boolean isUseDefaultPrefixes() {
         return useDefaultPrefixes;
     }
-
-    @Setting(USE_DEFAULT_PREFIXES)
+    
+    @Deprecated
     public void setUseDefaultPrefixes(final boolean prefix) {
         useDefaultPrefixes = prefix;
     }
 
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#isEncodeFullChildrenInDescribeSensor()}
+     */
+    @Deprecated
     public boolean isEncodeFullChildrenInDescribeSensor() {
-        return encodeFullChildrenInDescribeSensor;
+        return ProcedureRequestSettings.getInstance().isEncodeFullChildrenInDescribeSensor();
     }
 
-    @Setting(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#setEncodeFullChildrenInDescribeSensor(boolean)}
+     */
+    @Deprecated
     public void setEncodeFullChildrenInDescribeSensor(final boolean encodeFullChildrenInDescribeSensor) {
-        this.encodeFullChildrenInDescribeSensor = encodeFullChildrenInDescribeSensor;
+        ProcedureRequestSettings.getInstance().setEncodeFullChildrenInDescribeSensor(encodeFullChildrenInDescribeSensor);;;
     }
 
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#isAddOutputsToSensorML()}
+     */
+    @Deprecated
     public boolean isAddOutputsToSensorML() {
-        return addOutputsToSensorML;
+        return ProcedureRequestSettings.getInstance().isAddOutputsToSensorML();
     }
 
-    @Setting(ADD_OUTPUTS_TO_SENSOR_ML)
+    /**
+     * @deprecated Use {@link ProcedureRequestSettings#setAddOutputsToSensorML(boolean)}
+     */
+    @Deprecated
     public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
-        this.addOutputsToSensorML = addOutputsToSensorML;
+        ProcedureRequestSettings.getInstance().setAddOutputsToSensorML(addOutputsToSensorML);;;
     }
 
     public boolean isStrictSpatialFilteringProfile() {
@@ -283,10 +295,15 @@ public class ServiceConfiguration {
         this.strictSpatialFilteringProfile = strictSpatialFilteringProfile;
     }
 
+    @Deprecated
     public boolean isValidateResponse() {
         return validateResponse;
     }
 
+    /**
+     * @deprecated Set directly in the class where this setting should be used.
+     */
+    @Deprecated
     @Setting(VALIDATE_RESPONSE)
     public void setValidateResponse(final boolean validateResponse) {
         this.validateResponse = validateResponse;
@@ -448,13 +465,27 @@ public class ServiceConfiguration {
         this.streamingEncoding  = streamingEncoding;
     }
 
-    /**
-     * @return
-     */
     public boolean isForceStreamingEncoding() {
         return streamingEncoding;
     }
 
+    public boolean isIncludeChildObservableProperties() {
+        return includeChildObservableProperties;
+    }
+
+    @Setting(ServiceSettings.EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
+    public void setIncludeChildObservableProperties(boolean include) {
+        this.includeChildObservableProperties = include;
+    }
+    
+    @Setting(ServiceSettings.UPDATE_FEATURE_GEOMETRY)
+    public void setUpdateFeatureGeometry(boolean updateFeatureGeometry) {
+        this.updateFeatureGeometry = updateFeatureGeometry;
+    }
+
+    public boolean isUpdateFeatureGeometry() {
+        return this.updateFeatureGeometry;
+    }
 
     /*
      * Now, we return the list of returned features and not a complex encoded

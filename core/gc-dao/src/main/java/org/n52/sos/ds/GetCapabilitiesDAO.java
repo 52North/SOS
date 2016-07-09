@@ -98,6 +98,8 @@ import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
 import org.n52.sos.i18n.LocaleHelper;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.service.ServiceSettings;
 import org.n52.sos.util.MultiMaps;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SetMultiMap;
@@ -492,7 +494,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
             throws OwsExceptionReport {
         String version = sectionSpecificContentObject.getGetCapabilitiesResponse().getVersion();
         final Collection<String> offerings = getCache().getOfferings();
-        final List<SosObservationOffering> sosOfferings = new ArrayList<SosObservationOffering>(offerings.size());
+        final List<SosObservationOffering> sosOfferings = new ArrayList<>(offerings.size());
         for (final String offering : offerings) {
             final Collection<String> procedures = getProceduresForOffering(offering, version);
             final SosEnvelope envelopeForOffering = getCache().getEnvelopeForOffering(offering);
@@ -522,7 +524,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                 sosObservationOffering
                         .setObservableProperties(getCache().getObservablePropertiesForOffering(offering));
                 sosObservationOffering.setCompositePhenomena(getCache().getCompositePhenomenonsForOffering(offering));
-                final Map<String, Collection<String>> phens4CompPhens = new HashMap<String, Collection<String>>();
+                final Map<String, Collection<String>> phens4CompPhens = new HashMap<>();
                 if (getCache().getCompositePhenomenonsForOffering(offering) != null) {
                     for (final String compositePhenomenon : getCache().getCompositePhenomenonsForOffering(offering)) {
                         phens4CompPhens.put(compositePhenomenon, getCache()
@@ -885,7 +887,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
 
     protected void setUpPhenomenaForOffering(final String offering, final String procedure,
             final SosObservationOffering sosOffering) {
-        final Collection<String> phenomenons = new LinkedList<String>();
+        final Collection<String> phenomenons = new LinkedList<>();
         final Collection<String> observablePropertiesForOffering =
                 getCache().getObservablePropertiesForOffering(offering);
         for (final String observableProperty : observablePropertiesForOffering) {
@@ -903,8 +905,7 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesDAO {
                 getCache().getCompositePhenomenonsForOffering(offering);
 
         if (compositePhenomenonsForOffering != null) {
-            final Map<String, Collection<String>> phens4CompPhens =
-                    new HashMap<String, Collection<String>>(compositePhenomenonsForOffering.size());
+            final Map<String, Collection<String>> phens4CompPhens = new HashMap<>(compositePhenomenonsForOffering.size());
             for (final String compositePhenomenon : compositePhenomenonsForOffering) {
                 final Collection<String> phenomenonsForComposite =
                         getCache().getObservablePropertiesForCompositePhenomenon(compositePhenomenon);

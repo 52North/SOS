@@ -45,7 +45,7 @@ import org.n52.sos.wsdl.WSDLOperation;
 
 /**
  * @since 4.0.0
- * 
+ *
  */
 public class SosGetFeatureOfInterestOperatorV20
         extends
@@ -85,14 +85,15 @@ public class SosGetFeatureOfInterestOperatorV20
         }
         try {
             checkObservedProperties(sosRequest.getObservedProperties(),
-                    Sos2Constants.GetFeatureOfInterestParams.observedProperty.name());
+                    Sos2Constants.GetFeatureOfInterestParams.observedProperty.name(), false);
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
         try {
-            checkProcedureIDs(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            checkQueryableProcedureIDs(sosRequest.getProcedures(), Sos2Constants.GetFeatureOfInterestParams.procedure.name());
+            // add instance and child procedures to request
             if (sosRequest.isSetProcedures()) {
-                sosRequest.setProcedures(addChildProcedures(sosRequest.getProcedures()));
+                sosRequest.setProcedures(addChildProcedures(addInstanceProcedures(sosRequest.getProcedures())));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);

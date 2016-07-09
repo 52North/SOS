@@ -32,8 +32,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -41,34 +39,46 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.mysql.MySQLSpatial5InnoDBTimestampDialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 import org.n52.sos.exception.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 /**
  * TODO JavaDoc
+ * 
  * @author Christian Autermann
  */
 public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDatasource {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMySQLDatasource.class);
+
     protected static final String MYSQL_DRIVER_CLASS = "com.mysql.jdbc.Driver";
-    protected static final Pattern JDBC_URL_PATTERN
-            = Pattern.compile("^jdbc:mysql://([^:]+):([0-9]+)/(.*)$");
-    protected static final String USERNAME_DESCRIPTION
-            = "Your database server user name. The default value for MySQL is \"root\".";
+
+    protected static final Pattern JDBC_URL_PATTERN = Pattern.compile("^jdbc:mysql://([^:]+):([0-9]+)/(.*)$");
+
+    protected static final String USERNAME_DESCRIPTION =
+            "Your database server user name. The default value for MySQL is \"root\".";
+
     protected static final String USERNAME_DEFAULT_VALUE = "root";
-    protected static final String PASSWORD_DESCRIPTION
-            = "Your database server password. The default value is \"mysql\".";
+
+    protected static final String PASSWORD_DESCRIPTION =
+            "Your database server password. The default value is \"mysql\".";
+
     protected static final String PASSWORD_DEFAULT_VALUE = "mysql";
-    protected static final String HOST_DESCRIPTION
-            = "Set this to the IP/net location of MySQL database server. The default value for MySQL is \"localhost\".";
-    protected static final String PORT_DESCRIPTION
-            = "Set this to the port number of your PostgreSQL server. The default value for MySQL is 3306.";
+
+    protected static final String HOST_DESCRIPTION =
+            "Set this to the IP/net location of MySQL database server. The default value for MySQL is \"localhost\".";
+
+    protected static final String PORT_DESCRIPTION =
+            "Set this to the port number of your PostgreSQL server. The default value for MySQL is 3306.";
+
     protected static final int PORT_DEFAULT_VALUE = 3306;
+
     protected static final String SCHEMA_DEFAULT_VALUE = "sos";
 
     AbstractMySQLDatasource(boolean supportsSchema) {
@@ -92,16 +102,12 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
         try {
             conn = openConnection(settings);
             stmt = conn.createStatement();
-            final String schema
-                    = (String) settings.get(createSchemaDefinition().getKey());
+            final String schema = (String) settings.get(createSchemaDefinition().getKey());
             // mysql uses backticks (`) to quote
-            final String schemaPrefix
-                    = schema == null ? "" : "`" + schema + "`.";
+            final String schemaPrefix = schema == null ? "" : "`" + schema + "`.";
             final String testTable = schemaPrefix + "sos_installer_test_table";
-            final String dropTestTable
-                    = String.format("DROP TABLE IF EXISTS %1$s;", testTable);
-            final String createTestTable
-                    = String.format("CREATE TABLE %1$s (id integer NOT NULL);", testTable);
+            final String dropTestTable = String.format("DROP TABLE IF EXISTS %1$s;", testTable);
+            final String createTestTable = String.format("CREATE TABLE %1$s (id integer NOT NULL);", testTable);
             stmt.execute(dropTestTable);
             stmt.execute(createTestTable);
             stmt.execute(dropTestTable);
@@ -117,29 +123,30 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
-        CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                names.add(table.getName());
-            }
-        }
-        if (!names.isEmpty()) {
-            Connection conn = null;
-            Statement stmt = null;
-            try {
-                conn = openConnection(settings);
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            List<String> names = getQuotedSchemaTableNames(settings, conn);
+            if (!names.isEmpty()) {
+                List<String> list = Lists.newArrayList();
+                list.add("SET FOREIGN_KEY_CHECKS=0;");
+                for (String name : names) {
+                    list.add(String.format("truncate %s;", name));
+                }
+                list.add("SET FOREIGN_KEY_CHECKS=1;");
                 stmt = conn.createStatement();
-                stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ")
-                        .join(names)));
-            } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
-            } finally {
-                close(stmt);
-                close(conn);
+                for (String sql : list) {
+                    LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
+                    stmt.execute(sql);
+                }
+
             }
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(stmt);
+            close(conn);
         }
     }
 
@@ -152,14 +159,13 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     protected String[] parseURL(String url) {
         Matcher matcher = JDBC_URL_PATTERN.matcher(url);
         matcher.find();
-        return new String[] { matcher.group(1), matcher.group(2),
-                              matcher.group(3) };
+        return new String[] { matcher.group(1), matcher.group(2), matcher.group(3) };
     }
 
     @Override
     protected String toURL(Map<String, Object> settings) {
-        String url
-                = String.format("jdbc:mysql://%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY), settings.get(DATABASE_KEY));
+        String url = String.format("jdbc:mysql://%s:%d/%s", settings.get(HOST_KEY), settings.get(PORT_KEY),
+                settings.get(DATABASE_KEY));
         return url;
     }
 
@@ -174,15 +180,12 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     }
 
     @Override
-    protected Connection openConnection(Map<String, Object> settings)
-            throws SQLException {
+    protected Connection openConnection(Map<String, Object> settings) throws SQLException {
         try {
             String jdbc = toURL(settings);
             Class.forName(getDriverClass());
-            String pass
-                    = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
-            String user
-                    = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
+            String pass = (String) settings.get(HibernateConstants.CONNECTION_PASSWORD);
+            String user = (String) settings.get(HibernateConstants.CONNECTION_USERNAME);
             precheckDriver(jdbc, user, pass);
             return DriverManager.getConnection(jdbc, user, pass);
         } catch (ClassNotFoundException ex) {
@@ -191,8 +194,33 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
     }
 
     @Override
-    protected void validatePrerequisites(Connection arg0, DatabaseMetadata arg1,
-                                         Map<String, Object> arg2) {
+    protected void validatePrerequisites(Connection arg0, DatabaseMetadata arg1, Map<String, Object> arg2) {
+    }
+
+    @Override
+    protected String[] checkCreateSchema(String[] script) {
+        String[] checkSchema = super.checkCreateSchema(script);
+        for (int i = 0; i < checkSchema.length; i++) {
+            // TODO find better solution. E.g. enhance
+            // MySQLSpatial5InnoDBTimestampDialect to set explicitly "NULL" for
+            // timestamp if defined as NULLable in mappings
+            if (checkSchema[i].startsWith("create table")) {
+                if (checkSchema[i].contains("observation")) {
+                    String createObservationTable = checkSchema[i];
+                    createObservationTable = createObservationTable.replaceAll("validTimeStart timestamp default NULL",
+                            "validTimeStart timestamp NULL default NULL");
+                    createObservationTable = createObservationTable.replaceAll("validTimeEnd timestamp default NULL",
+                            "validTimeEnd timestamp NULL default NULL");
+                    checkSchema[i] = createObservationTable;
+                } else if (checkSchema[i].contains("validProcedureTime")) {
+                    String createObservationTable = checkSchema[i];
+                    createObservationTable = createObservationTable.replaceAll("endTime timestamp default NULL",
+                            "endTime timestamp NULL default NULL");
+                    checkSchema[i] = createObservationTable;
+                }
+            }
+        }
+        return checkSchema;
     }
 
 }

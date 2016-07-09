@@ -34,6 +34,7 @@ import java.util.List;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
@@ -41,18 +42,23 @@ import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.ComplexValue;
 import org.n52.sos.ogc.om.values.CountValue;
 import org.n52.sos.ogc.om.values.GeometryValue;
+import org.n52.sos.ogc.om.values.HrefAttributeValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.om.values.ReferenceValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
+import org.n52.sos.ogc.om.values.UnknownValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.om.values.XmlValue;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
@@ -68,12 +74,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * TODO JavaDoc
- * 
+ *
  * @author Christian Autermann <c.autermann@52north.org>
- * 
+ *
  * @since 4.0.0
  */
 public class ObservationEncoder extends JSONEncoder<OmObservation> {
@@ -105,38 +112,37 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
     }
 
     private void encodeProcedure(OmObservation o, ObjectNode json) {
-        json.put(JSONConstants.PROCEDURE,
-                 o.getObservationConstellation().getProcedure().getIdentifier());
+        json.put(JSONConstants.PROCEDURE, o.getObservationConstellation().getProcedure().getIdentifier());
     }
 
     private void encodeParameter(OmObservation o, ObjectNode json) throws OwsExceptionReport {
-		if (o.isSetParameter()) {
-			if (o.getParameter().size() == 1) {
+        if (o.isSetParameter()) {
+            if (o.getParameter().size() == 1) {
                 json.put(JSONConstants.PARAMETER, encodeNamedValue(o.getParameter().iterator().next()));
             } else {
                 ArrayNode parameters = json.putArray(JSONConstants.PARAMETER);
                 for (NamedValue<?> namedValue : o.getParameter()) {
-                	parameters.add(encodeNamedValue(namedValue));
+                    parameters.add(encodeNamedValue(namedValue));
                 }
             }
-		}
-	}
-
-	private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
-		ObjectNode namedValueObject = nodeFactory().objectNode();
-		namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
-		namedValueObject.put(JSONConstants.VALUE, encodeObjectToJson(namedValue.getValue().getValue()));
-		ObjectNode parameterObject = nodeFactory().objectNode();
-		parameterObject.put(JSONConstants.NAMED_VALUE, namedValueObject);
-		return parameterObject;
-	}
-
-	private void encodeObservableProperty(OmObservation o, ObjectNode json) {
-        json.put(JSONConstants.OBSERVABLE_PROPERTY, o.getObservationConstellation().getObservableProperty()
-                .getIdentifier());
+        }
     }
 
-    private void encodeObservationType(OmObservation o, ObjectNode json) {
+    private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
+        ObjectNode namedValueObject = nodeFactory().objectNode();
+        namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
+        namedValueObject.put(JSONConstants.VALUE, encodeValue(namedValue.getValue()));
+        ObjectNode parameterObject = nodeFactory().objectNode();
+        parameterObject.put(JSONConstants.NAMED_VALUE, namedValueObject);
+        return parameterObject;
+    }
+
+    private void encodeObservableProperty(OmObservation o, ObjectNode json) {
+        json.put(JSONConstants.OBSERVABLE_PROPERTY,
+                o.getObservationConstellation().getObservableProperty().getIdentifier());
+    }
+
+    private void encodeObservationType(OmObservation o, ObjectNode json) throws OwsExceptionReport {
         json.put(JSONConstants.TYPE, getObservationType(o));
     }
 
@@ -180,39 +186,131 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
     }
 
     private JsonNode encodeResult(OmObservation o) throws OwsExceptionReport {
-
         Value<?> value = o.getValue().getValue();
         String type = getObservationType(o);
-        if (value instanceof QuantityValue) {
-            return encodeQualityValue(value);
-        } else if (value instanceof CountValue) {
-            return encodeCountValue(value);
-        } else if (value instanceof TextValue) {
-            return encodeTextValue(value);
-        } else if (value instanceof BooleanValue) {
-            return encodeBooleanValue(value);
-        } else if (value instanceof CategoryValue) {
-            return encodeCategoryValue(value);
-        } else if (value instanceof GeometryValue) {
-            return encodeGeometryValue(value);
-        } else if (value instanceof SweDataArrayValue) {
-            if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
-                return encodeSweDataArrayValue(value);
-            } else if (type.equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)) {
-                return encodeComplexValue(value);
-            }
-        } else if (value instanceof TVPValue) {
+        if (value instanceof TVPValue) {
             if (type.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
                 return encodeTVPValue(o);
             }
+        } else {
+            return encodeValue(value);
         }
         throw new UnsupportedEncoderInputException(this, value);
     }
 
+    private JsonNode encodeValue(Value<?> value)
+            throws OwsExceptionReport {
+        return value.accept(new ValueVisitor<JsonNode>() {
+            @Override
+            public JsonNode visit(BooleanValue value) {
+                return encodeBooleanValue(value);
+            }
+
+            @Override
+            public JsonNode visit(CategoryValue value) {
+                return encodeCategoryValue(value);
+            }
+
+            @Override
+            public JsonNode visit(ComplexValue value)
+                    throws OwsExceptionReport {
+                return encodeComplexValue(value);
+            }
+
+            @Override
+            public JsonNode visit(CountValue value) {
+                return encodeCountValue(value);
+            }
+
+            @Override
+            public JsonNode visit(GeometryValue value)
+                    throws OwsExceptionReport {
+                return encodeGeometryValue(value);
+            }
+
+            @Override
+            public JsonNode visit(HrefAttributeValue value) {
+                return encodeHrefAttributeValue(value);
+            }
+
+            @Override
+            public JsonNode visit(NilTemplateValue value)
+                    throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+
+            }
+
+            @Override
+            public JsonNode visit(QuantityValue value) {
+                return encodeQualityValue(value);
+            }
+
+            @Override
+            public JsonNode visit(ReferenceValue value) {
+                return encodeReferenceValue(value);
+            }
+
+            @Override
+            public JsonNode visit(SweDataArrayValue value)
+                    throws OwsExceptionReport {
+                return encodeSweDataArrayValue(value);
+            }
+
+            @Override
+            public JsonNode visit(TVPValue value) throws OwsExceptionReport {
+                return encodeTVPValue(value);
+            }
+
+            @Override
+            public JsonNode visit(TextValue value) {
+                return encodeTextValue(value);
+            }
+
+            @Override
+            public JsonNode visit(UnknownValue value)
+                    throws OwsExceptionReport {
+                throw new UnsupportedEncoderInputException(ObservationEncoder.this, value);
+            }
+
+            @Override
+            public JsonNode visit(XmlValue value) {
+                return encodeXmlValue(value);
+            }
+        });
+    }
+
+    private JsonNode encodeReferenceValue(ReferenceValue value) {
+        ReferenceType ref = value.getValue();
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.HREF, ref.getHref());
+        node.put(JSONConstants.ROLE, ref.getRole());
+        node.put(JSONConstants.TITLE, ref.getTitle());
+        return node;
+    }
+
+    private JsonNode encodeHrefAttributeValue(HrefAttributeValue value) {
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.HREF, value.getValue().getHref());
+        return node;
+    }
+
+    private JsonNode encodeTVPValue(TVPValue value) throws OwsExceptionReport {
+        ArrayNode arrayNode = nodeFactory().arrayNode();
+        for (TimeValuePair tvp : value.getValue()) {
+            ObjectNode node = nodeFactory().objectNode();
+            node.put(JSONConstants.TIME, encodeObjectToJson(tvp.getTime()));
+            node.put(JSONConstants.VALUE, encodeValue(value));
+            arrayNode.add(node);
+        }
+        return arrayNode;
+    }
+
     private JsonNode encodeQualityValue(Value<?> value) {
         QuantityValue quantityValue = (QuantityValue) value;
-        return nodeFactory().objectNode().put(JSONConstants.UOM, quantityValue.getUnit())
-                .put(JSONConstants.VALUE, quantityValue.getValue());
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.UOM, quantityValue.getUnit());
+        node.put(JSONConstants.VALUE, quantityValue.getValue());
+        return node;
     }
 
     private JsonNode encodeCountValue(Value<?> value) {
@@ -232,8 +330,10 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private JsonNode encodeCategoryValue(Value<?> value) {
         CategoryValue categoryValue = (CategoryValue) value;
-        return nodeFactory().objectNode().put(JSONConstants.CODESPACE, categoryValue.getUnit())
-                .put(JSONConstants.VALUE, categoryValue.getValue());
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.CODESPACE, categoryValue.getUnit());
+        node.put(JSONConstants.VALUE, categoryValue.getValue());
+        return node;
     }
 
     private JsonNode encodeGeometryValue(Value<?> value) throws OwsExceptionReport {
@@ -243,10 +343,9 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
 
     private JsonNode encodeComplexValue(Value<?> value) throws OwsExceptionReport {
         ArrayNode result = nodeFactory().arrayNode();
-        SweDataArrayValue sweDataArrayValue = (SweDataArrayValue) value;
-        SweDataArray sweDataArray = sweDataArrayValue.getValue();
-        SweAbstractDataRecord sweAbstractDataRecord = (SweAbstractDataRecord) sweDataArray.getElementType();
-        for (SweField field : sweAbstractDataRecord.getFields()) {
+        ComplexValue complexValue = (ComplexValue) value;
+        SweAbstractDataRecord sweDataRecord = complexValue.getValue();
+        for (SweField field : sweDataRecord.getFields()) {
             result.add(encodeObjectToJson(field));
         }
         return result;
@@ -280,7 +379,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return result;
     }
 
-    private String getObservationType(OmObservation o) {
+    private String getObservationType(OmObservation o) throws OwsExceptionReport {
         if (o.getObservationConstellation().isSetObservationType()) {
             return o.getObservationConstellation().getObservationType();
         } else {
@@ -367,6 +466,10 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         } else {
             throw new UnsupportedEncoderInputException(this, value);
         }
+    }
+
+    private TextNode encodeXmlValue(XmlValue value) {
+        return nodeFactory().textNode(value.getValue().xmlText());
     }
 
     /**

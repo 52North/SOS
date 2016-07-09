@@ -42,22 +42,20 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
-import org.n52.sos.ds.hibernate.entities.ObservationInfo;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
-import org.n52.sos.ds.hibernate.entities.TFeatureOfInterest;
-import org.n52.sos.ds.hibernate.entities.series.Series;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationInfo;
+import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.NoopTransformerAdapter;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.OGCConstants;
@@ -67,8 +65,16 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Hibernate data access class for featureOfInterest
@@ -132,7 +138,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             Criteria criteria = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
-                Criteria seriesCriteria = criteria.createCriteria(SeriesObservationInfo.SERIES);
+                Criteria seriesCriteria = criteria.createCriteria(ContextualReferencedSeriesObservation.SERIES);
                 seriesCriteria.add(Restrictions.eq(Series.PROCEDURE, observationConstellation.getProcedure())).add(
                         Restrictions.eq(Series.OBSERVABLE_PROPERTY, observationConstellation.getObservableProperty()));
                 seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST).setProjection(
@@ -141,7 +147,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                 criteria.add(Restrictions.eq(ObservationConstellation.PROCEDURE, observationConstellation.getProcedure()))
                         .add(Restrictions.eq(ObservationConstellation.OBSERVABLE_PROPERTY,
                                 observationConstellation.getObservableProperty()));
-                criteria.createCriteria(ObservationInfo.FEATURE_OF_INTEREST).setProjection(
+                criteria.createCriteria(ContextualReferencedLegacyObservation.FEATURE_OF_INTEREST).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
             }
             criteria.createCriteria(AbstractObservation.OFFERINGS).add(
@@ -176,7 +182,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
             Criteria c = observationDAO.getDefaultObservationInfoCriteria(session);
             if (observationDAO instanceof SeriesObservationDAO) {
-                Criteria seriesCriteria = c.createCriteria(SeriesObservationInfo.SERIES);
+                Criteria seriesCriteria = c.createCriteria(ContextualReferencedSeriesObservation.SERIES);
                 seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
 
@@ -205,8 +211,8 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             final Session session) {
         if (identifiers != null && !identifiers.isEmpty()) {
             Criteria criteria =
-                    session.createCriteria(FeatureOfInterest.class).add(
-                            Restrictions.in(FeatureOfInterest.IDENTIFIER, identifiers));
+                    session.createCriteria(FeatureOfInterest.class)
+                    .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObject(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         }
@@ -238,13 +244,8 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         Criteria criteria = session.createCriteria(FeatureOfInterest.class);
         ProjectionList projectionList = Projections.projectionList();
         projectionList.add(Projections.property(FeatureOfInterest.IDENTIFIER));
-
-        //get parents if transactional profile is active
-        boolean tFoiSupported = HibernateHelper.isEntitySupported(TFeatureOfInterest.class);
-        if (tFoiSupported) {
-            criteria.createAlias(TFeatureOfInterest.PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN);
-            projectionList.add(Projections.property("pfoi." + FeatureOfInterest.IDENTIFIER));
-        }
+        criteria.createAlias(FeatureOfInterest.PARENTS, "pfoi", JoinType.LEFT_OUTER_JOIN);
+        projectionList.add(Projections.property("pfoi." + FeatureOfInterest.IDENTIFIER));
         criteria.setProjection(projectionList);
         //return as List<Object[]> even if there's only one column for consistency
         criteria.setResultTransformer(NoopTransformerAdapter.INSTANCE);
@@ -256,9 +257,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         for(Object[] result : results) {
             String featureIdentifier = (String) result[0];
             String parentFeatureIdentifier = null;
-            if (tFoiSupported) {
                 parentFeatureIdentifier = (String) result[1];
-            }
             if (parentFeatureIdentifier != null) {
                 CollectionHelper.addToCollectionMap(featureIdentifier, parentFeatureIdentifier, foiMap);
             } else {
@@ -299,7 +298,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
             final Session session) {
         FeatureOfInterest feature = getFeatureOfInterest(identifier, session);
         if (feature == null) {
-            feature = new TFeatureOfInterest();
+            feature = new FeatureOfInterest();
             feature.setIdentifier(identifier);
             if (url != null && !url.isEmpty()) {
                 feature.setUrl(url);
@@ -326,7 +325,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
      * @param session
      *            Hibernate session
      */
-    public void insertFeatureOfInterestRelationShip(final TFeatureOfInterest parentFeature,
+    public void insertFeatureOfInterestRelationShip(final FeatureOfInterest parentFeature,
             final FeatureOfInterest childFeature, final Session session) {
         parentFeature.getChilds().add(childFeature);
         session.saveOrUpdate(parentFeature);
@@ -351,7 +350,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         if (CollectionHelper.isNotEmpty(relatedFeatures)) {
             for (final RelatedFeature relatedFeature : relatedFeatures) {
             	if (!featureOfInterest.getIdentifier().equals(relatedFeature.getFeatureOfInterest().getIdentifier())) {
-	                insertFeatureOfInterestRelationShip((TFeatureOfInterest) relatedFeature.getFeatureOfInterest(),
+	                insertFeatureOfInterestRelationShip(relatedFeature.getFeatureOfInterest(),
 	                        featureOfInterest, session);
             	}
             }
@@ -383,5 +382,28 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     featureOfInterest != null ? featureOfInterest.getClass().getName() : featureOfInterest).setStatus(
                     BAD_REQUEST);
         }
+    }
+
+    public void updateFeatureOfInterestGeometry(FeatureOfInterest featureOfInterest, Geometry geom, Session session) {
+        if (featureOfInterest.isSetGeometry()) {
+            if (geom instanceof Point) {
+                List<Coordinate> coords = Lists.newArrayList();
+                if (featureOfInterest.getGeom() instanceof Point) {
+                    coords.add(featureOfInterest.getGeom().getCoordinate());
+                } else if (featureOfInterest.getGeom() instanceof LineString) {
+                    coords.addAll(Lists.newArrayList(featureOfInterest.getGeom().getCoordinates()));
+                }
+                if (!coords.isEmpty()) {
+                    coords.add(geom.getCoordinate());
+                    Geometry newGeometry =
+                            new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
+                    newGeometry.setSRID(featureOfInterest.getGeom().getSRID());
+                    featureOfInterest.setGeom(newGeometry);
+                }
+            }
+        } else {
+            featureOfInterest.setGeom(geom);
+        }
+        session.saveOrUpdate(featureOfInterest);
     }
 }

@@ -29,14 +29,18 @@
 package org.n52.sos.ogc.om.values;
 
 import org.n52.sos.ogc.gml.AbstractGeometry;
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Geometry measurement representation for observation
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
     private static final long serialVersionUID = 4634315072352929082L;
@@ -44,7 +48,7 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
      * Unit of measure
      */
     private String unit;
-    
+
     public GeometryValue(AbstractGeometry abstractGeometry) {
         setDescription(abstractGeometry.getDescription());
         setGeometry(abstractGeometry.getGeometry());
@@ -54,6 +58,7 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
 
     /**
      * construcor
+     *
      * @param value Geometry value
      */
     public GeometryValue(Geometry value) {
@@ -82,7 +87,8 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
 
     @Override
     public String toString() {
-        return String.format("GeometryValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("GeometryValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
     @Override
@@ -95,4 +101,15 @@ public class GeometryValue extends AbstractGeometry implements Value<Geometry> {
         return StringHelper.isNotEmpty(getUnit());
     }
 
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
+    }
 }

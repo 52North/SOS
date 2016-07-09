@@ -89,11 +89,9 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
      *
      * @param objectId
      *                 Related object
-     * @return this
      */
-    public AbstractHibernateI18NMetadata setObjectId(AbstractIdentifierNameDescriptionEntity objectId) {
+    public void setObjectId(AbstractIdentifierNameDescriptionEntity objectId) {
         this.objectId = objectId;
-        return this;
     }
 
     @Override
@@ -102,9 +100,8 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     }
 
     @Override
-    public AbstractHibernateI18NMetadata setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return this;
     }
 
     @Override
@@ -118,9 +115,8 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     }
 
     @Override
-    public AbstractHibernateI18NMetadata setDescription(String description) {
+    public void setDescription(String description) {
         this.description = description;
-        return this;
     }
 
     @Override
@@ -140,9 +136,8 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
     }
 
     @Override
-    public AbstractHibernateI18NMetadata setLocale(Locale locale) {
+    public void setLocale(Locale locale) {
         this.locale = locale;
-        return this;
     }
 
 }

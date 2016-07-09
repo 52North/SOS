@@ -57,7 +57,7 @@ import com.google.common.collect.Sets;
 @Configurable
 public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
 
-    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description")
+    public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Procedure Description Enrichment")
             .setDescription("Settings to configure the procedure description generation and enrichment feature.")
             .setOrder(4.2023f);
 
@@ -299,7 +299,7 @@ public class ProcedureDescriptionSettings implements SettingDefinitionProvider {
         }
         return instance;
     }
-
+    
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {
         return Collections.unmodifiableSet(DEFINITIONS);

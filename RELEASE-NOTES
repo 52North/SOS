@@ -6,6 +6,32 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
+    Changes since last release
+==================================
+ 
+  --- New features ---
+  
+  
+  --- Changes ---
+  
+  
+  --- Fixed issues ---
+  
+      * Issue #258: SQL-Server 2012 Express: Can not clean datasource via 
+      				admin/datasource -> clear datasource
+         * https://github.com/52North/SOS/pull/260
+      * Issue #266: Reload CapabilitiesExtensionProvider in CapabilitiesExtensionRepository 
+                   after changing operations status
+      * Issue #267: Capabilities shows procedureDescriptionFormats in transactional 
+                   operations which are not supported
+      * Issue #277: Check for not null/empty coordinates in CoordinateTransformer.transformSweCoordinates() 
+                   before joining
+      * Issue #279: Extend the supported coordinate names
+      * Issue #285: Client problem with feature capabilities in DescribeSensor 
+      				response with SensorML 1.0.1 encoded procedure
+  
+  
+
       Release 52n-sensorweb-sos-4.3.7
 =====================================
 
@@ -51,7 +77,7 @@ RELEASE NOTES
   --- Fixed issues ---
   
   
-     Release 52n-sensorweb-sos-4.3.5
+    Release 52n-sensorweb-sos-4.3.5
 ====================================
 
   --- New features ---
@@ -101,6 +127,7 @@ RELEASE NOTES
   
       * Issue #310: Invalid prefix in om:parameter of .../SamplingPoint
  
+ 
    Release 52n-sensorweb-sos-4.3.2
 ==================================
 
@@ -115,6 +142,7 @@ RELEASE NOTES
   
       * Issue #299: SOS does not start on a system with Turkish language
 
+	  
    Release 52n-sensorweb-sos-4.3.1
 ==================================
 

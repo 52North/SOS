@@ -1,0 +1,148 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation" 
+           table="observation">
+        <comment>Stores the observations. Mapping file: mapping/old/observation/TemporalReferencedObservation.hbm.xml</comment>
+        <id name="observationId" type="long">
+            <column name="observationId" />
+            <generator class="native">
+                <param name="sequence">observationId_seq</param>
+            </generator>
+        </id>
+        <many-to-one name="featureOfInterest"
+                     class="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
+                     foreign-key="observationFeatureFk">
+            <column index="obsFeatureIdx"
+                    name="featureOfInterestId"
+                    not-null="true">
+                   <comment>Relation/foreign key to the associated featureOfInterest table. Contains "featureOfInterest".featureOfInterestId</comment>
+               </column>
+        </many-to-one>
+        <many-to-one name="observableProperty"
+                     class="org.n52.sos.ds.hibernate.entities.ObservableProperty"
+                     foreign-key="observationObPropFk">
+            <column index="obsObsPropIdx"
+                    name="observablePropertyId"
+                    not-null="true">
+                   <comment>Relation/foreign key to the associated observableProperty table. Contains "observableProperty".observablePropertyId</comment>
+               </column>
+        </many-to-one>
+        <many-to-one name="procedure"
+                     class="org.n52.sos.ds.hibernate.entities.Procedure"
+                     foreign-key="observationProcedureFk">
+            <column index="obsProcedureIdx"
+                    name="procedureId"
+                    not-null="true">
+                   <comment>Relation/foreign key to the associated procedure table. Contains "procedure".procedureId</comment>
+               </column>
+        </many-to-one>
+        <property name="phenomenonTimeStart"
+                  type="timestamp" >
+            <column index="obsPhenTimeStartIdx"
+                    name="phenomenonTimeStart"
+                    length="29"
+                    not-null="true">
+                <comment>Time stamp when the observation was started or phenomenon was observed</comment>
+            </column>
+        </property>
+        <property name="phenomenonTimeEnd"
+                  type="timestamp">
+            <column index="obsPhenTimeEndIdx"
+                    name="phenomenonTimeEnd"
+                    length="29"
+                    not-null="true">
+                <comment>Time stamp when the observation was stopped or phenomenon was observed</comment>
+            </column>
+        </property>
+        <property name="resultTime"
+                  type="timestamp" >
+            <column index="obsResultTimeIdx"
+                    name="resultTime"
+                    length="29"
+                    not-null="true">
+                <comment>Time stamp when the observation was published or result was published/available</comment>
+            </column>
+        </property>
+        <property name="deleted"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="deleted"
+                    not-null="true"
+                    default="'F'"
+                    check="deleted in ('T','F')">
+                <comment>Flag to indicate that this observation is deleted or not (OGC SWES 2.0 - DeleteSensor operation or not specified DeleteObservation)</comment>
+            </column>
+        </property>
+        <property name="child"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="child"
+                    not-null="true"
+                    default="'F'"
+                    length="1"
+                    check="child in ('T','F')">
+                <comment>Flag to indicate that this observation is a child observation for complex observation</comment>
+            </column>
+        </property>
+        <property name="parent"
+                  type="org.hibernate.type.TrueFalseType">
+            <column name="parent"
+                    not-null="true"
+                    default="'F'"
+                    length="1"
+                    check="parent in ('T','F')">
+                <comment>Flag to indicate that this observation is a parent observation for complex observation</comment>
+            </column>
+        </property>
+        <property name="validTimeStart"
+                  type="timestamp">
+            <column name="validTimeStart"
+                    length="29"
+                    not-null="false"
+                    default="NULL">
+                <comment>Start time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+            </column>
+        </property>
+        <property name="validTimeEnd"
+                  type="timestamp">
+            <column name="validTimeEnd"
+                    length="29"
+                    not-null="false"
+                    default="NULL">
+                <comment>End time stamp for which the observation/result is valid, e.g. used for forecasting. Optional</comment>
+            </column>
+        </property>
+         <set name="offerings"
+             table="observationHasOffering"
+             inverse="false">
+            <key>
+                <column name="observationId"
+                        not-null="true"
+                        index="obshasoffobservationidx">
+                    <comment>Foreign Key (FK) to the related observation. Contains "observation".observationid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering"
+                          foreign-key="observationOfferingFk">
+                <column name="offeringId"
+                        not-null="true"
+                        index="obshasoffofferingidx">
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
+            </many-to-many>
+        </set>
+        <property name="samplingGeometry"
+                  type="org.hibernate.spatial.GeometryType"
+                  index="samplingGeomIdx" >
+            <column name="samplingGeometry">
+                <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
+            </column>
+        </property>
+        <set name="parameters" table="parameters" inverse="true"  cascade="delete-orphan">
+            <key>
+                <column name="observationId" not-null="true" />
+            </key>
+            <one-to-many class="org.n52.sos.ds.hibernate.entities.parameter.Parameter" />
+        </set>
+    </class>
+</hibernate-mapping>

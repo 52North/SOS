@@ -38,13 +38,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.hibernate.dialect.Dialect;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
+
 import org.n52.sos.config.SettingDefinition;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
+
+import junit.framework.TestCase;
 
 /**
  * @since 4.0.0
@@ -52,6 +53,10 @@ import org.n52.sos.ds.hibernate.util.HibernateConstants;
  */
 public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     private AbstractHibernateFullDBDatasource ds;
+    
+    private static final int CHANGEABLE_COUNT = 10;
+    
+    private static final int MAX_COUNT = 15;
 
     @Override
     protected void setUp() throws Exception {
@@ -79,34 +84,31 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         current.put(HibernateConstants.C3P0_MAX_SIZE, "30");
         current.put(HibernateConstants.JDBC_BATCH_SIZE, "20");
         current.put(HibernateDatasourceConstants.PROVIDED_JDBC, "true");
+        current.put(HibernateDatasourceConstants.HIBERNATE_DIRECTORY, "some-directory-stuff-to-test");
 
         final Map<String, Object> settings = ds.parseDatasourceProperties(current);
-        checkSettingKeysTransactional(settings.keySet());
+        checkSettingKeys(settings.keySet(), false, false);
     }
 
     private void checkSettingDefinitionsTransactional(final Set<SettingDefinition<?, ?>> settings) {
-        checkSettingDefinitions(settings, false);
+        checkSettingDefinitions(settings, false, true);
     }
 
     private void checkSettingDefinitionsChangableSetting(final Set<SettingDefinition<?, ?>> settings) {
-        checkSettingDefinitions(settings, true);
+        checkSettingDefinitions(settings, true, false);
 
     }
 
-    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable) {
-        final List<String> keys = new ArrayList<String>();
+    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions) {
+        final List<String> keys = new ArrayList<>();
         final Iterator<SettingDefinition<?, ?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());
         }
-        checkSettingKeys(keys, changeable);
+        checkSettingKeys(keys, changeable, settingsDefinitions);
     }
 
-    private void checkSettingKeysTransactional(final Collection<String> keys) {
-        checkSettingKeys(keys, false);
-    }
-
-    private void checkSettingKeys(final Collection<String> keys, final boolean changeable) {
+    private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions) {
         boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean multiLanguage = keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY);
@@ -120,19 +122,20 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(keys.contains(AbstractHibernateDatasource.MIN_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.MAX_POOL_SIZE_KEY));
         assertTrue(keys.contains(AbstractHibernateDatasource.BATCH_SIZE_KEY));
+        assertTrue(changeable || settingsDefinitions || keys.contains(HibernateDatasourceConstants.HIBERNATE_DIRECTORY));
         assertTrue(changeable || keys.contains(AbstractHibernateDatasource.PROVIDED_JDBC_DRIVER_KEY));
         assertTrue(!transactional || keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY));
         assertTrue(!concept || keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
 
         if (changeable) {
-            assertEquals(9, keys.size());
+            assertEquals(CHANGEABLE_COUNT, keys.size());
         } else {
-            final int maxCount = 13;
-            int counter = maxCount;
+            int counter = MAX_COUNT;
             if (!transactional) { counter--; }
             if (!concept) { counter--; }
             if (!multiLanguage){ counter--; }
+            if (settingsDefinitions){ counter--; }
             assertEquals(counter, keys.size());
         }
     }
@@ -188,7 +191,6 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
 
         @Override
         protected String[] checkDropSchema(final String[] dropSchema) {
-            // TODO Auto-generated method stub
             return null;
         }
     }

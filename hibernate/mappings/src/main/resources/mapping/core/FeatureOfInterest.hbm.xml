@@ -2,9 +2,11 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" table="featureOfInterest">
+    <class name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest"
+           table="featureOfInterest">
         <comment>Table to store the FeatureOfInterest information. Mapping file: mapping/core/FeatureOfInterest.hbm.xml</comment>
-        <id name="featureOfInterestId" type="long">
+        <id name="featureOfInterestId"
+            type="long">
             <column name="featureOfInterestId">
                 <comment>Table primary key, used for relations</comment>
             </column>
@@ -12,8 +14,6 @@
                 <param name="sequence">featureOfInterestId_seq</param>
             </generator>
         </id>
-        <!-- only needed for internal purposes  -->
-        <discriminator column="hibernateDiscriminator" type="org.hibernate.type.TrueFalseType" />
         <many-to-one name="featureOfInterestType" class="org.n52.sos.ds.hibernate.entities.FeatureOfInterestType" foreign-key="featureFeatureTypeFk">
             <column name="featureOfInterestTypeId" not-null="true">
                 <comment>Relation/foreign key to the featureOfInterestType table. Describes the type of the featureOfInterest. Contains "featureOfInterestType".featureOfInterestTypeId</comment>
@@ -44,7 +44,7 @@
                 <comment>Description of the featureOfInterest, gml:description. Optional</comment>
             </column>
         </property>
-        <property name="geom" type="org.hibernate.spatial.GeometryType">
+        <property name="geom" type="org.hibernate.spatial.GeometryType" index="featureGeomIdx">
             <column name="geom">
                 <comment>The geometry of the featureOfInterest (composed of the “latitude” and “longitude”) . Optional</comment>
             </column>
@@ -82,6 +82,27 @@
             </column>
         </property> 
         -->
+        <set name="childs" table="featureRelation" inverse="false">
+            <comment>Relation table to store feature hierarchies. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TFeatureOfInterest.hbm.xml</comment>
+            <key>
+                <column name="parentFeatureId" not-null="true">
+                    <comment>Foreign Key (FK) to the related parent featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="featureOfInterestChildFk">
+                <column name="childFeatureId" not-null="true">
+                    <comment>Foreign Key (FK) to the related child featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
+                </column>
+            </many-to-many>
+        </set>
+        <set name="parents" table="featureRelation" inverse="false">
+            <key>
+                <column name="childFeatureId" not-null="true" />
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.FeatureOfInterest" foreign-key="featureOfInterestParentFk">
+                <column name="parentFeatureId" not-null="true" />
+            </many-to-many>
+        </set>
     </class>
     
     <sql-query name="getEpsgPostgis">

@@ -28,8 +28,6 @@
  */
 package org.n52.sos.service;
 
-import static org.n52.sos.config.SettingDefinitionProvider.ORDER_0;
-
 import java.util.Collections;
 import java.util.Set;
 
@@ -54,19 +52,17 @@ public class ServiceSettings implements SettingDefinitionProvider {
     // public static final String SUPPORTS_QUALITY = "service.supportsQuality";
     public static final String SENSOR_DIRECTORY = "service.sensorDirectory";
 
-    public static final String USE_DEFAULT_PREFIXES = "service.useDefaultPrefixes";
-
-    public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
-
     public static final String MAX_GET_OBSERVATION_RESULTS = "service.maxGetObservationResults";
 
     public static final String DEREGISTER_JDBC_DRIVER = "service.jdbc.deregister";
 
-    public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
-
     public static final String STRICT_SPATIAL_FILTERING_PROFILE = "service.strictSpatialFilteringProfile";
 
     public static final String  VALIDATE_RESPONSE = "service.response.validate";
+
+    public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
+    
+    public static final String UPDATE_FEATURE_GEOMETRY = "service.updateFeatureGeometry";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -81,27 +77,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
                             + " The path to a specific binding (like <code>/soap</code>) will appended to this URL."
                             + " For detailed information, please read the <a href=\"https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation\">documentation</a>");
 
-//    public static final IntegerSettingDefinition MAX_GET_OBSERVATION_RESULTS_DEFINITION =
-//            new IntegerSettingDefinition()
-//                    .setGroup(GROUP)
-//                    .setOrder(ORDER_4)
-//                    .setKey(MAX_GET_OBSERVATION_RESULTS)
-//                    .setDefaultValue(0)
-//                    .setTitle("Maximum number of observations")
-//                    .setDescription(
-//                            "Maximum number of observation in GetObservation responses. "
-//                                    + "Set to <code>0</code> (zero) for unlimited number of observations.");
-
-    // TODO quality is not yet supported
-    // public static final BooleanSettingDefinition SUPPORTS_QUALITY_DEFINITION
-    // = new BooleanSettingDefinition()
-    // .setGroup(GROUP)
-    // .setOrder(5)
-    // .setKey(SUPPORTS_QUALITY)
-    // .setDefaultValue(true)
-    // .setTitle("Supports quality")
-    // .setDescription("Support quality information in observations.");
-
     public static final StringSettingDefinition SENSOR_DIRECTORY_DEFINITION =
             new StringSettingDefinition()
                     .setGroup(GROUP)
@@ -115,21 +90,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
                                     + "It can be either an absolute path (like <code>/home/user/sosconfig/sensors</code>) "
                                     + "or a path relative to the web application classes directory (e.g. <code>WEB-INF/classes/sensors</code>).");
 
-    public static final BooleanSettingDefinition USE_DEFAULT_PREFIXES_DEFINITION = new BooleanSettingDefinition()
-            .setGroup(GROUP).setOrder(ORDER_11).setKey(USE_DEFAULT_PREFIXES).setDefaultValue(false).setOptional(true)
-            .setTitle("Use default prefixes for offering, procedure, features")
-            .setDescription("Use default prefixes for offering, procedure, features.");
-
-    public static final BooleanSettingDefinition ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_12)
-                    .setKey(ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR)
-                    .setDefaultValue(true)
-                    .setTitle("Encode full for child procedure SensorML in parent DescribeSensor responses")
-                    .setDescription(
-                            "Whether to encode full SensorML for each child procedures in a DescribeSensor response for a parent procedure.");
-
     public static final BooleanSettingDefinition DEREGISTER_JDBC_DRIVER_DEFINITION =
             new BooleanSettingDefinition()
                     .setGroup(GROUP)
@@ -140,15 +100,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setDescription(
                             "Should the service deregister all used JDBC driver (SQLite, PostgreSQL or H2) during shutdown process.");
 
-    public static final BooleanSettingDefinition ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION =
-            new BooleanSettingDefinition()
-                    .setGroup(GROUP)
-                    .setOrder(ORDER_14)
-                    .setKey(ADD_OUTPUTS_TO_SENSOR_ML)
-                    .setDefaultValue(true)
-                    .setTitle("Add outputs to DescribeSensor SensorML responses")
-                    .setDescription(
-                            "Whether to query example observations and dynamically add outputs to DescribeSensor SensorML responses.");
 
     public static final BooleanSettingDefinition STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION =
             new BooleanSettingDefinition()
@@ -168,16 +119,36 @@ public class ServiceSettings implements SettingDefinitionProvider {
                     .setDefaultValue(false)
                     .setTitle("Should this SOS validate the XML response in non debug mode?")
                     .setDescription(
-                            "Whether the SOS should validate the XML response when the debug mode is disables!");
+                            "Whether the SOS should validate the XML response when the debug mode is disabled.");
+
+     public static final BooleanSettingDefinition EXPOSE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION =
+            new BooleanSettingDefinition()
+                    .setGroup(GROUP)
+                    .setOrder(ORDER_17)
+                    .setKey(EXPOSE_CHILD_OBSERVABLE_PROPERTIES)
+                    .setDefaultValue(false)
+                    .setTitle("Should this SOS expose child observable properties?")
+                    .setDescription(
+                            "Whether the SOS should expose the children of composite phenomenons (e.g. in complex observations) instead of their parents.");
+     
+     public static final BooleanSettingDefinition UPDATE_FEATURE_GEOMETRY_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(ORDER_18)
+                     .setKey(UPDATE_FEATURE_GEOMETRY)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS expand the featureOfInterest geometry with the samplingGeometry?")
+                     .setDescription(
+                             "Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation.");
 
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
-//            MAX_GET_OBSERVATION_RESULTS_DEFINITION,
-            // SUPPORTS_QUALITY_DEFINITION,
-            SENSOR_DIRECTORY_DEFINITION, USE_DEFAULT_PREFIXES_DEFINITION,
-            ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR_DEFINITION, DEREGISTER_JDBC_DRIVER_DEFINITION,
-            ADD_OUTPUTS_TO_SENSOR_ML_DEFINITION, STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
-            VALIDATE_RESPONSE_DEFINITION);
+            SENSOR_DIRECTORY_DEFINITION,
+            DEREGISTER_JDBC_DRIVER_DEFINITION,
+            STRICT_SPATIAL_FILTERING_PROFILE_DEFINITION,
+            VALIDATE_RESPONSE_DEFINITION,
+            EXPOSE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION,
+            UPDATE_FEATURE_GEOMETRY_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

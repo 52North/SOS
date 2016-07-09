@@ -28,13 +28,16 @@
  */
 package org.n52.sos.ogc.om.values;
 
+import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
+import org.n52.sos.ogc.om.values.visitor.VoidValueVisitor;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.StringHelper;
 
 /**
  * Quantity measurement representation for observation
- * 
+ *
  * @since 4.0.0
- * 
+ *
  */
 public class QuantityValue implements Value<Double> {
     /**
@@ -54,9 +57,9 @@ public class QuantityValue implements Value<Double> {
 
     /**
      * constructor
-     * 
+     *
      * @param value
-     *            Measurement value
+     *              Measurement value
      */
     public QuantityValue(Double value) {
         this(value, null);
@@ -64,11 +67,11 @@ public class QuantityValue implements Value<Double> {
 
     /**
      * constructor
-     * 
+     *
      * @param value
-     *            Measurement value
+     *              Measurement value
      * @param unit
-     *            Unit of measure
+     *              Unit of measure
      */
     public QuantityValue(Double value, String unit) {
         this.value = value;
@@ -97,7 +100,8 @@ public class QuantityValue implements Value<Double> {
 
     @Override
     public String toString() {
-        return String.format("QuantityValue [value=%s, unit=%s]", getValue(), getUnit());
+        return String
+                .format("QuantityValue [value=%s, unit=%s]", getValue(), getUnit());
     }
 
     @Override
@@ -108,5 +112,17 @@ public class QuantityValue implements Value<Double> {
     @Override
     public boolean isSetUnit() {
         return StringHelper.isNotEmpty(getUnit());
+    }
+
+    @Override
+    public <X> X accept(ValueVisitor<X> visitor)
+            throws OwsExceptionReport {
+        return visitor.visit(this);
+    }
+
+    @Override
+    public void accept(VoidValueVisitor visitor)
+            throws OwsExceptionReport {
+        visitor.visit(this);
     }
 }

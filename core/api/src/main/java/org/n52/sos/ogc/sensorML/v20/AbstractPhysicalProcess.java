@@ -28,8 +28,11 @@
  */
 package org.n52.sos.ogc.sensorML.v20;
 
+import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
+
+import com.google.common.base.Strings;
 
 /**
  * Class that represents SensorML 2.0 PhysicalProcess.
@@ -55,18 +58,34 @@ public class AbstractPhysicalProcess extends DescribedObject {
 
     /**
      * @return the attachedTo
+     * @throws CodedException 
      */
-    public ReferenceType getAttachedTo() {
-        if (attachedTo == null && isSetParentProcedures()) {
-            attachedTo = new ReferenceType(getParentProcedures().iterator().next());
-            attachedTo.setTitle(attachedTo.getHref());
+    public ReferenceType getAttachedTo() throws CodedException {
+        // if parent procedures set
+        if (isSetParentProcedures()) {
+            String parent = null;
+            // if attachedTo is not set, get from parent procedures
+            if (attachedTo == null) {
+                parent = getParentProcedures().iterator().next();
+            } else if (attachedTo != null) {
+                // is attachedTo is set, check with parent procedures
+                if (getParentProcedures().contains(attachedTo.getTitle())) {
+                    parent = attachedTo.getTitle();
+                } else if (getParentProcedures().contains(attachedTo.getHref())) {
+                    parent = attachedTo.getHref();
+                }
+            }
+            // create attachedTo if parent is not null or empty
+            if (!Strings.isNullOrEmpty(parent)) {
+                attachedTo = new ReferenceType(createKvpDescribeSensorOrReturnIdentifier(parent), parent);
+            }
         }
         return attachedTo;
     }
 
     /**
      * Set the attachedTo reference. It is automatically added to
-     * parentProcedure list.
+     * parentProcedure list. If title is set, the title is used, else the href.
      * 
      * @param attachedTo
      *            the attachedTo to set

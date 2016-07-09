@@ -130,7 +130,8 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                     HTTPStatus.INTERNAL_SERVER_ERROR);
         }
-        checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat, getFormat(procedure));
+        checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat,
+                getFormat(procedure));
         SosProcedureDescription desc = create(procedure, requestedDescriptionFormat, null, i18n, session).orNull();
         if (desc != null) {
             addHumanReadableName(desc, procedure);
@@ -162,19 +163,26 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure, String requestedDescriptionFormat,
-            ValidProcedureTime vpt, String version, Locale i18n, Session session) throws OwsExceptionReport {
+    public SosProcedureDescription createSosProcedureDescriptionFromValidProcedureTime(Procedure procedure,
+            String requestedDescriptionFormat, ValidProcedureTime vpt, String version, Locale i18n, Session session)
+            throws OwsExceptionReport {
         if (vpt != null) {
-            checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), vpt, requestedDescriptionFormat, getFormat(vpt));
+            checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), vpt, requestedDescriptionFormat,
+                    getFormat(vpt));
         } else {
-            checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat, getFormat(procedure));
+            checkOutputFormatWithDescriptionFormat(procedure.getIdentifier(), procedure, requestedDescriptionFormat,
+                    getFormat(procedure));
         }
-        Optional<SosProcedureDescription> description = create(procedure, requestedDescriptionFormat, vpt, i18n, session);
+        Optional<SosProcedureDescription> description =
+                create(procedure, requestedDescriptionFormat, vpt, i18n, session);
         if (description.isPresent()) {
             addHumanReadableName(description.get(), procedure);
-            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n, session);
+            enrich(description.get(), procedure, version, requestedDescriptionFormat, getValidTime(vpt), null, i18n,
+                    session);
             if (!requestedDescriptionFormat.equals(description.get().getDescriptionFormat())) {
-                SosProcedureDescription converted = convert(description.get().getDescriptionFormat(), requestedDescriptionFormat, description.get());
+                SosProcedureDescription converted =
+                        convert(description.get().getDescriptionFormat(), requestedDescriptionFormat,
+                                description.get());
                 converted.setDescriptionFormat(requestedDescriptionFormat);
                 return converted;
             }
@@ -189,14 +197,13 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                 i18n, session);
     }
 
-    private void addHumanReadableName(SosProcedureDescription desc,
-			Procedure procedure) {
-    	if (!desc.isSetHumanReadableIdentifier() && procedure.isSetName()) {
-    		desc.setHumanReadableIdentifier(procedure.getName());
-    	}
-	}
+    private void addHumanReadableName(SosProcedureDescription desc, Procedure procedure) {
+        if (!desc.isSetHumanReadableIdentifier() && procedure.isSetName()) {
+            desc.setHumanReadableIdentifier(procedure.getName());
+        }
+    }
 
-	protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
+    protected TimePeriod getValidTime(ValidProcedureTime validProcedureTime) {
         return new TimePeriod(validProcedureTime.getStartTime(), validProcedureTime.getEndTime());
     }
 
@@ -207,7 +214,8 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     /**
      * Checks the requested procedureDescriptionFormat with the datasource
      * procedureDescriptionFormat.
-     * @param identifier 
+     * 
+     * @param identifier
      *
      * @param procedure
      *            the procedure
@@ -220,10 +228,11 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
      *             If procedureDescriptionFormats are invalid
      */
     @VisibleForTesting
-    boolean checkOutputFormatWithDescriptionFormat(String identifier, DescriptionXmlEntity procedure, String requestedFormat, String descriptionFormat)
-            throws OwsExceptionReport {
+    boolean checkOutputFormatWithDescriptionFormat(String identifier, DescriptionXmlEntity procedure,
+            String requestedFormat, String descriptionFormat) throws OwsExceptionReport {
         if (procedure.isSetDescriptionXml()) {
-            if (requestedFormat.equalsIgnoreCase(descriptionFormat) || existConverter(descriptionFormat, requestedFormat)) {
+            if (requestedFormat.equalsIgnoreCase(descriptionFormat)
+                    || existConverter(descriptionFormat, requestedFormat)) {
                 return true;
             }
         } else {
@@ -240,7 +249,7 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
     private boolean existConverter(String from, String to) {
         return ConverterRepository.getInstance().hasConverter(from, to);
     }
-    
+
     private boolean existsGenerator(String descriptionFormat) {
         return HibernateProcedureDescriptionGeneratorRepository.getInstance()
                 .hasHibernateProcedureDescriptionGeneratorFactory(descriptionFormat);
@@ -300,6 +309,10 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                 ProcedureDescriptionEnrichments.create().setIdentifier(procedure.getIdentifier()).setVersion(version)
                         .setDescription(desc).setProcedureDescriptionFormat(format).setSession(session)
                         .setValidTime(validTime).setProcedureCache(cache).setConverter(this).setLanguage(language);
+        if (procedure.isSetTypeOf()) {
+            Procedure typeOf = procedure.getTypeOf();
+            enrichments.setTypeOfIdentifier(typeOf.getIdentifier()).setTypeOfFormat(format);
+        }
         if (desc instanceof SensorML && ((SensorML) desc).isWrapper()) {
             enrichments.setDescription(desc).createValidTimeEnrichment().enrich();
             for (AbstractProcess abstractProcess : ((SensorML) desc).getMembers()) {

@@ -28,60 +28,46 @@
  */
 package org.n52.sos.ds.hibernate.dao;
 
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationDAO;
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingObservationTimeDAO;
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingValueDAO;
-import org.n52.sos.ds.hibernate.dao.ereporting.EReportingValueTimeDAO;
-import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesValueDAO;
-import org.n52.sos.ds.hibernate.dao.series.SeriesValueTimeDAO;
-import org.n52.sos.ds.hibernate.entities.Observation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservation;
-import org.n52.sos.ds.hibernate.entities.ereporting.EReportingObservationTime;
-import org.n52.sos.ds.hibernate.entities.ereporting.values.EReportingValue;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
-import org.n52.sos.ds.hibernate.entities.series.SeriesObservationTime;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValue;
-import org.n52.sos.ds.hibernate.entities.series.values.SeriesValueTime;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingObservationTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.ereporting.EReportingValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationTimeDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueDAO;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.TemporalReferencedEReportingObservation;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 
-/**
- * Hibernate data access factory.
- *
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.0.0
- *
- */
+
 public class DaoFactory {
     /**
      * instance
      */
-    private static DaoFactory instance;
-
-    /**
-     * Get the DaoFactory instance
-     *
-     * @return Returns the instance of the DaoFactory.
-     */
-    public static synchronized DaoFactory getInstance() {
-        if (instance == null) {
-            instance = new DaoFactory();
-        }
-        return instance;
-    }
+    private static final DaoFactory INSTANCE = new DaoFactory();
 
     public AbstractSeriesDAO getSeriesDAO() throws CodedException {
-        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
+        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
             return new EReportingSeriesDAO();
-        } else if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
+        } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
             return new SeriesDAO();
         } else {
             throw new NoApplicableCodeException()
@@ -99,35 +85,35 @@ public class DaoFactory {
      * @throws OwsExceptionReport
      *                        If no Hibernate Observation data access is supported
      */
-    public AbstractObservationDAO getObservationDAO()
-            throws OwsExceptionReport {
-        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
+    public AbstractObservationDAO getObservationDAO() throws OwsExceptionReport {
+        if (HibernateHelper.isEntitySupported(AbstractEReportingObservation.class)) {
             return new EReportingObservationDAO();
-        } else if (HibernateHelper.isEntitySupported(SeriesObservation.class)) {
+        } else if (HibernateHelper.isEntitySupported(AbstractSeriesObservation.class)) {
             return new SeriesObservationDAO();
-        } else if (HibernateHelper.isEntitySupported(Observation.class)) {
-            return new ObservationDAO();
+        } else if (HibernateHelper.isEntitySupported(AbstractLegacyObservation.class)) {
+            return new LegacyObservationDAO();
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("Implemented observation DAO is missing!");
         }
     }
-    
-    public AbstractObservationTimeDAO getObservationTimeDAO() throws CodedException {
-        if (HibernateHelper.isEntitySupported(EReportingObservationTime.class)) {
+
+    public AbstractObservationTimeDAO getObservationTimeDAO()
+            throws CodedException {
+        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
             return new EReportingObservationTimeDAO();
-        } else if (HibernateHelper.isEntitySupported(SeriesObservationTime.class)) {
+        } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
             return new SeriesObservationTimeDAO();
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("Implemented observation time DAO is missing!");
         }
     }
-    
-    public AbstractValueDAO getValueDAO() throws CodedException {
-        if (HibernateHelper.isEntitySupported(EReportingValue.class)) {
+
+    public AbstractSeriesValueDAO getValueDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(AbstractValuedEReportingObservation.class)) {
             return new EReportingValueDAO();
-        } else if (HibernateHelper.isEntitySupported(SeriesValue.class)) {
+        } else if (HibernateHelper.isEntitySupported(AbstractValuedSeriesObservation.class)) {
             return new SeriesValueDAO();
 //        } else if (HibernateHelper.isEntitySupported(ObservationValue.class)) {
 //            return new ObserervationValueDAO();
@@ -136,11 +122,11 @@ public class DaoFactory {
                     .withMessage("Implemented value DAO is missing!");
         }
     }
-    
-    public AbstractValueTimeDAO getValueTimeDAO() throws CodedException {
-        if (HibernateHelper.isEntitySupported(EReportingObservation.class)) {
+
+    public AbstractSeriesValueTimeDAO getValueTimeDAO() throws CodedException {
+        if (HibernateHelper.isEntitySupported(TemporalReferencedEReportingObservation.class)) {
             return new EReportingValueTimeDAO();
-        } else if (HibernateHelper.isEntitySupported(SeriesValueTime.class)) {
+        } else if (HibernateHelper.isEntitySupported(TemporalReferencedSeriesObservation.class)) {
             return new SeriesValueTimeDAO();
 //        } else if (HibernateHelper.isEntitySupported(ObservationValueTime.class)) {
 //            return new ObservationValueTimeDAO();
@@ -148,6 +134,18 @@ public class DaoFactory {
             throw new NoApplicableCodeException()
                     .withMessage("Implemented value time DAO is missing!");
         }
+    }
+
+    private DaoFactory() {
+    }
+
+    /**
+     * Get the DaoFactory instance
+     *
+     * @return Returns the instance of the DaoFactory.
+     */
+    public static DaoFactory getInstance() {
+        return INSTANCE;
     }
 
 }

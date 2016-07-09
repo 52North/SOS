@@ -65,6 +65,8 @@ public class CapabilitiesExtensionRepository extends
      * Implemented {@link CapabilitiesExtensionProvider}
      */
     private final Map<CapabilitiesExtensionKey, List<CapabilitiesExtensionProvider>> providers = Maps.newHashMap();
+    
+    private boolean changed = false;
 
     public static CapabilitiesExtensionRepository getInstance() {
         return LazyHolder.INSTANCE;
@@ -106,6 +108,10 @@ public class CapabilitiesExtensionRepository extends
 
     public List<CapabilitiesExtensionProvider> getCapabilitiesExtensionProvider(
             final CapabilitiesExtensionKey serviceOperatorIdentifier) throws OwsExceptionReport {
+        if (changed) {
+            load(false);
+            changed = false;
+        }
         return getAllValidCapabilitiesExtensionProvider(providers.get(serviceOperatorIdentifier));
     }
 
@@ -180,5 +186,10 @@ public class CapabilitiesExtensionRepository extends
         final CapabilitiesExtensionKey cek = cep.getCapabilitiesExtensionKey();
         final RequestOperatorKey rok = new RequestOperatorKey(cek.getService(), cek.getVersion(), cep.getRelatedOperation());
         return RequestOperatorRepository.getInstance().getActiveRequestOperatorKeys().contains(rok);
+    }
+
+    public void setOperationsChanged() {
+        this.changed = true;
+        
     }
 }

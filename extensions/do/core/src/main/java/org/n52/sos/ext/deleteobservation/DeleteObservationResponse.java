@@ -46,7 +46,7 @@ public class DeleteObservationResponse extends AbstractServiceResponse implement
     private String responseFormat;
 
     public DeleteObservationResponse(String sosDoVersion) {
-        // TODO Auto-generated constructor stub
+        setResponseFormat(sosDoVersion);
     }
 
     public void setObservationId(String observationIdentifier) {

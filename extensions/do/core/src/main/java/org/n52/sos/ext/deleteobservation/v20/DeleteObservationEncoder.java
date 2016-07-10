@@ -30,10 +30,8 @@ package org.n52.sos.ext.deleteobservation.v20;
 
 import java.util.Set;
 
-import net.opengis.sosdo.x20.DeleteObservationResponseDocument;
-
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.encode.AbstractResponseEncoder;
+import org.n52.sos.encode.AbtractVersionedResponseEncoder;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
@@ -47,19 +45,21 @@ import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 
+import net.opengis.sosdo.x20.DeleteObservationResponseDocument;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 1.0.0
  */
-public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObservationResponse> {
+public class DeleteObservationEncoder extends AbtractVersionedResponseEncoder<DeleteObservationResponse> {
     public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(DeleteObservationConstants.NS_SOSDO_2_0,
             DeleteObservationConstants.NS_SOSDO_2_0_SCHEMA_LOCATION);
 
     public DeleteObservationEncoder() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation
                 .name(), DeleteObservationConstants.NS_SOSDO_2_0, DeleteObservationConstants.NS_SOSDO_PREFIX,
-                DeleteObservationResponse.class);
+                DeleteObservationResponse.class, DeleteObservationConstants.NS_SOSDO_2_0);
     }
 
     @Override

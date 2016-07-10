@@ -43,25 +43,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
-
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.n52.sos.config.SettingsManager;
 import org.n52.sos.encode.EncoderKey;
-import org.n52.sos.encode.OperationEncoderKey;
+import org.n52.sos.encode.VersionedOperationEncoderKey;
 import org.n52.sos.encode.XmlEncoderKey;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationResponse;
-import org.n52.sos.ext.deleteobservation.v10.DeleteObservationEncoder;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.util.http.MediaTypes;
 import org.n52.sos.w3c.SchemaLocation;
+
+import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -110,12 +106,14 @@ public class DeleteObservationEncoderTest {
         EncoderKey key = new XmlEncoderKey(NS_SOSDO_1_0, DeleteObservationResponse.class);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
         key =
-                new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                        DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.TEXT_XML);
+                new VersionedOperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                        DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.TEXT_XML, 
+                        DeleteObservationConstants.NS_SOSDO_1_0);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
         key =
-                new OperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                        DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.APPLICATION_XML);
+                new VersionedOperationEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
+                        DeleteObservationConstants.Operations.DeleteObservation, MediaTypes.APPLICATION_XML, 
+                        DeleteObservationConstants.NS_SOSDO_1_0);
         assertTrue("DecoderKeyTypes does NOT contain " + key, instance.getEncoderKeyType().contains(key));
     }
 

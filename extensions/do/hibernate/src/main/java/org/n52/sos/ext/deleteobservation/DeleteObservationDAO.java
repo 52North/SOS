@@ -121,7 +121,6 @@ public class DeleteObservationDAO extends DeleteObservationAbstractDAO {
                         .createSosObservationsFromObservations(Sets.<Observation<?>>newHashSet(observation), getRequest(request),
                                 null, session)
                         .iterator().next();
-                    delete(observation, session);
                 response.setObservationId(request.getObservationIdentifiers().iterator().next());
                 response.setDeletedObservation(so);
             }

@@ -14,5 +14,6 @@
         <module>transformation</module>
         <module>identifier-modifier</module>
         <module>split-and-merge</module>
+        <module>seriestype</module>
     </modules>
 </project>

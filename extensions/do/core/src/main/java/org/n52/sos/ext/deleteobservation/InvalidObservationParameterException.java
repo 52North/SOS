@@ -39,6 +39,6 @@ public class InvalidObservationParameterException extends InvalidParameterValueE
     private static final long serialVersionUID = -4544751541004584729L;
 
     public InvalidObservationParameterException(String value) {
-        super(DeleteObservationConstants.PARAMETER_NAME, value);
+        super(DeleteObservationConstants.PARAM_OBSERVATION, value);
     }
 }

@@ -91,8 +91,8 @@ public class HibernateObservationUtilities {
      *            ObservationConstellation object
      * @param fois
      *            List of featureOfInterest identifiers
-     * @param version
-     *            Service version
+     * @param request
+     *            The request
      * @param session
      *            Hibernate session
      * @return SOS internal observation
@@ -119,8 +119,8 @@ public class HibernateObservationUtilities {
      *
      * @param series
      *            Series object
-     * @param version
-     *            Service version
+     * @param request
+     *            The request
      * @param session
      *            Hibernate session
      * @return SOS internal observation

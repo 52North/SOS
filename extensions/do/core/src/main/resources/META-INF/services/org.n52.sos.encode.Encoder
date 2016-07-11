@@ -1,1 +1,2 @@
-org.n52.sos.ext.deleteobservation.DeleteObservationEncoder
+org.n52.sos.ext.deleteobservation.v10.DeleteObservationEncoder
+org.n52.sos.ext.deleteobservation.v20.DeleteObservationEncoder

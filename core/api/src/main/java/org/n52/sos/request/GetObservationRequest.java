@@ -249,7 +249,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     /**
      * Add result filter(s)
      * 
-     * @param result
+     * @param resultFilter
      *            result filter(s)
      */
     @SuppressWarnings("rawtypes")

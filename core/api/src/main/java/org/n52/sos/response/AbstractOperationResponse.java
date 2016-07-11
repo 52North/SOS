@@ -26,29 +26,28 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.response;
 
-import org.n52.sos.event.events.SosDeletionEvent;
-import org.n52.sos.ogc.om.OmObservation;
+import com.google.common.base.Strings;
 
-/**
- * @author Christian Autermann <c.autermann@52north.org>
- * 
- * @since 1.0.0
- */
-public class DeleteObservationEvent extends SosDeletionEvent<DeleteObservationRequest, DeleteObservationResponse> {
-    private OmObservation deletedObservation;
+public abstract class AbstractOperationResponse extends AbstractServiceResponse {
 
-    public DeleteObservationEvent(DeleteObservationRequest request, DeleteObservationResponse response) {
-        super(request, response);
-        this.deletedObservation = response.getDeletedObservation();
-    }
-
-    public OmObservation getDeletedObservation() {
-        return deletedObservation;
+    private String operationVersion;
+    
+    public AbstractOperationResponse(String operationVersion) {
+        setOperationVersion(operationVersion);
     }
     
-    public boolean isSetDeletedObservation() {
-        return getDeletedObservation() != null;
+    public String getOperationVersion() {
+        return operationVersion;
     }
+
+    public void setOperationVersion(String operationVersion) {
+        this.operationVersion = operationVersion;
+    }
+
+    public boolean isSetOperationVersion() {
+        return !Strings.isNullOrEmpty(getOperationVersion());
+    }
+    
 }

@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.n52.sos.ds.DatasourceCacheUpdate;
+import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -118,8 +119,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * @return {@code true} if the envelopes have to be updated
      */
     protected boolean isCritical(Envelope e1, Envelope e2) {
-        return e1 != null
-                && e2 != null
+        return e1 != null && e2 != null
                 && (e1.getMaxX() - e2.getMaxX() < EPSILON || e1.getMinX() - e2.getMinX() < EPSILON
                         || e1.getMaxY() - e2.getMaxY() < EPSILON || e1.getMinY() - e2.getMinY() < EPSILON);
     }
@@ -141,10 +141,12 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
     /**
      * Disassociates the feature of interest from the procedure and offerings if
      * there are no observations left.
+     * 
      * @throws CodedException
      */
     protected void updateFeatureOfInterest() throws OwsExceptionReport {
-        final String feature = o.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
+        final String feature =
+                o.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority().getValue();
         final String procedure = o.getObservationConstellation().getProcedure().getIdentifier();
         if (isLastForProcedure(feature, procedure)) {
             getCache().removeProcedureForFeatureOfInterest(feature, procedure);
@@ -191,10 +193,8 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
         if (featureOfInterest instanceof SamplingFeature) {
             final SamplingFeature ssf = (SamplingFeature) featureOfInterest;
             if (ssf.getGeometry() != null) {
-                if (!globalSpatialBoundingBoxUpdated
-                        && getCache().getGlobalEnvelope() != null
-                        && isCritical(ssf.getGeometry().getEnvelopeInternal(), getCache().getGlobalEnvelope()
-                                .getEnvelope())) {
+                if (!globalSpatialBoundingBoxUpdated && getCache().getGlobalEnvelope() != null && isCritical(
+                        ssf.getGeometry().getEnvelopeInternal(), getCache().getGlobalEnvelope().getEnvelope())) {
                     log.debug("Updating global spatial bounding box");
                     globalSpatialBoundingBoxUpdated = true;
                     getCache().setGlobalEnvelope(getEnvelope(getCache().getFeaturesOfInterest()));
@@ -226,6 +226,7 @@ public abstract class DeleteObservationCacheFeederDAO extends DatasourceCacheUpd
      * Update the global and offering specific temporal bounding boxes. The
      * updates are conditional: the database is only queried if the observation
      * bounding boxes touch the cached bounding boxes.
+     * 
      * @throws CodedException
      */
     protected void updateTemporalBoundingBoxes() throws OwsExceptionReport {

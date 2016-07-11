@@ -206,6 +206,31 @@
 			"param":{
 				"service":"SOS",
 				"version":"2.0.0",
+				"request":"DeleteObservation",
+				"offering":"http://www.52north.org/test/offering/1",
+				"observedProperty":"http://www.52north.org/test/observableProperty/1",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
+				"namespaces":[
+					"xmlns(sams,http://www.opengis.net/samplingSpatial/2.0)",
+					"xmlns(om,http://www.opengis.net/om/2.0)"
+				],
+				"temporalFilter":"om:phenomenonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/x-kvp",
+			"operation":"DeleteObservation",
+			"title":"DeleteObservation version 2.0",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
 				"request":"DeleteSensor",
 				"procedure":"http://www.52north.org/test/procedure/9"
 			},
@@ -1285,11 +1310,24 @@
 			"method":"POST"
 		},
 		{
-			"request":"static/examples/sos_v20/requests_xml/DeleteObservation.xml",
+			"request":"static/examples/sos_v20/requests_xml/Transactional/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
 			"binding": "application/xml",
 			"operation":"DeleteObservation",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/DeleteObservationV2.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"DeleteObservation",
+			"title":"DeleteObservation version 2.0",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"
@@ -1895,11 +1933,24 @@
 			"method":"POST"
 		},
 		{
-			"request":"static/examples/sos_v20/requests_soap/DeleteObservation.xml",
+			"request":"static/examples/sos_v20/requests_soap/Transactional/DeleteObservation.xml",
 			"service":"SOS",
 			"version":"2.0.0",
 			"binding": "application/soap+xml",
 			"operation":"DeleteObservation",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/DeleteObservationV2.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"DeleteObservation",
+			"title":"DeleteObservation version 2.0",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -2997,6 +3048,54 @@
 
 			}
 
+		},
+		{
+			"service":"SOS",
+			"version":"2.0.0",
+			"method":"POST",
+			"binding": "application/json",
+			"headers":{
+				"Accept":"application/json",
+				"Content-Type":"application/json"
+			},
+			"operation":"DeleteObservation",
+			"request":{
+				"request":"DeleteObservation",
+				"service":"SOS",
+				"version":"2.0.0",
+				"observation":"http://www.52north.org/test/observation/1"
+			}
+
+		},
+		{
+			"service":"SOS",
+			"version":"2.0.0",
+			"method":"POST",
+			"binding": "application/json",
+			"headers":{
+				"Accept":"application/json",
+				"Content-Type":"application/json"
+			},
+			"operation":"DeleteObservation",
+			"title":"DeleteObservation version 2.0",
+			"request":{
+				"request":"DeleteObservation",
+				"service":"SOS",
+				"version":"2.0.0",
+				"offering":"http://www.52north.org/test/offering/1",
+				"observedProperty":"http://www.52north.org/test/observableProperty/1",
+				"procedure":"http://www.52north.org/test/procedure/1",
+				"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1",
+				"temporalFilter":{
+					"during":{
+						"ref":"om:phenomenonTime",
+						"value":[
+							"2012-11-19T14:00:00+01:00",
+							"2012-11-19T15:00:00+01:00"
+						]
+					}
+				}
+			}
 		},
 		{
 			"service":"SOS",

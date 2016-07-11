@@ -1519,11 +1519,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             if (first != null) {
                 observationContext.setObservableProperty(first.getObservableProperty());
                 observationContext.setProcedure(first.getProcedure());
-                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));
             }
             // set value before ObservationContext is added otherwise the first/last value is not updated in series table.
             observation.setValue(value);
-
+            if (sosObservation.isSetSeriesType()) {
+                observationContext.setSeriesType(sosObservation.getSeriesType());
+            } else {
+                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));  
+            }
+            if (childObservation) {
+                observationContext.setHiddenChild(true);
+            }
             observationContext.setFeatureOfInterest(featureOfInterest);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);

@@ -129,7 +129,7 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
     }
 
     @Override
-    public SwesExtension<?> getExtension(Enum identifier) throws InvalidParameterValueException {
+    public SwesExtension<?> getExtension(Enum identifier) {
         if (hasExtension(identifier)) {
             return getExtensions().getExtension(identifier);
         }
@@ -137,7 +137,7 @@ public abstract class AbstractServiceRequest<T extends AbstractServiceResponse> 
     }
     
     @Override
-    public SwesExtension<?> getExtension(String identifier) throws InvalidParameterValueException {
+    public SwesExtension<?> getExtension(String identifier) {
         if (hasExtension(identifier)) {
             return getExtensions().getExtension(identifier);
         }

@@ -480,6 +480,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>seriestype</artifactId>
+        </dependency>
         <!-- netCDF -->
 		<dependency>
 	        <groupId>com.axiomalaska</groupId>

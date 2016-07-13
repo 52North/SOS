@@ -50,7 +50,10 @@ public abstract class SweAbstractUomType<T> extends SweAbstractSimpleType<T> {
      * @return the uom
      */
     public String getUom() {
-        return uom.getUom();
+        if (uom != null) {
+            return uom.getUom();
+        }
+        return "";
     }
     
     /**

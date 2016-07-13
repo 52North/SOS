@@ -135,6 +135,10 @@
 		<td style="padding:3px;width:70%;">The development of this version of the 52&deg;North SOS was supported by the <a target="_blank" href="http://cordis.europa.eu/fp7/home_en.html">European FP7</a> research project <a href="http://www.geoviqua.org/" title="GeoViQua">GeoViQua</a> (co-funded by the European Commission under the grant agreement n&deg;265178)</td>
 	</tr>
 	<tr>
+		<td align="center" style="padding:3px;width:30%;"><a target="_blank" href="http://www.brgm.fr/"><img alt="BRGM - Bureau de Recherches Géologiques et Minières" align="middle" width="172" src="<c:url value="/static/images/funding/173px-Logo_BRGM.svg.png"/>"/></a></td>
+		<td style="padding:3px;width:70%;"><a href="http://www.brgm.fr/" title="BRGM">BRGM</a>, the French geological survey, is France's reference public institution for Earth Science applications in the management of surface and subsurface resources and risks.</td>
+	</tr>
+	<tr>
 		<td align="center" style="padding:3px;width:30%;">
 				<a target="_blank" href="http://inspire.ec.europa.eu"><img alt="INSPIRE" align="middle" width="60" src="static/images/funding/inspire-logo.jpg" /></a>
 				<a target="_blank" href="http://ec.europa.eu/isa/"><img alt="ISA" align="middle" width="60" src="static/images/funding/ISALogo.png" /></a>

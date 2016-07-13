@@ -1554,7 +1554,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     throw new InvalidParameterValueException()
                     .withMessage("The requested observationType (%s) is invalid for procedure = %s, observedProperty = %s and offering = %s! The valid observationType is '%s'!",
                                     observationType,
-                                    observation.getProcedure().getIdentifier(),
+                                    oc.getProcedure().getIdentifier(),
                                     oc.getObservableProperty().getIdentifier(),
                                     oc.getOffering().getIdentifier(),
                                     oc.getObservationType().getObservationType());

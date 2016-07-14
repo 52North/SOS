@@ -77,13 +77,13 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.1.0</n52.common.xml.version>
+        <n52.common.xml.version>2.1.1-SNAPSHOT</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M6</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -401,6 +401,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>seriestype</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>3.0.1</version>
@@ -693,6 +698,16 @@
                 <version>${n52.common.xml.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v10</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.sensorweb</groupId>
+                <artifactId>52n-xml-sosdo-v20</artifactId>
+                <version>${n52.common.xml.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans-xpath</artifactId>
                 <version>2.6.0</version>
@@ -945,11 +960,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-            <dependency>
+            <!-- <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-xml</artifactId>
                 <version>${project.version}</version>
-            </dependency>
+            </dependency> -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>do-core</artifactId>

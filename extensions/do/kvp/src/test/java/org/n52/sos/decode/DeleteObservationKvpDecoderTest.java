@@ -33,7 +33,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
+import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.*;
 import static org.n52.sos.ogc.sos.SosConstants.SOS;
 
 import java.util.Collections;
@@ -107,16 +107,6 @@ public class DeleteObservationKvpDecoderTest {
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void should_throw_OwsExceptionReport_in_case_of_missing_parameters4() throws OwsExceptionReport {
-        HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
-        evolvingMap.put("service", SOS);
-        evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
-        evolvingMap.put("request", OPERATION_NAME);
-
-        instance.decode(evolvingMap);
-    }
-
-    @Test(expected = OwsExceptionReport.class)
     public void should_throw_OwsExceptionReport_in_case_of_missing_parameters5() throws OwsExceptionReport {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(2);
         evolvingMap.put("service", SOS);
@@ -130,7 +120,7 @@ public class DeleteObservationKvpDecoderTest {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("service", SOS);
         evolvingMap.put("request", OPERATION_NAME);
-        evolvingMap.put(PARAMETER_NAME, "something");
+        evolvingMap.put(PARAM_OBSERVATION, "something");
 
         instance.decode(evolvingMap);
     }
@@ -140,7 +130,7 @@ public class DeleteObservationKvpDecoderTest {
         HashMap<String, String> evolvingMap = new HashMap<String, String>(3);
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
         evolvingMap.put("request", OPERATION_NAME);
-        evolvingMap.put(PARAMETER_NAME, "something");
+        evolvingMap.put(PARAM_OBSERVATION, "something");
 
         instance.decode(evolvingMap);
     }
@@ -151,7 +141,7 @@ public class DeleteObservationKvpDecoderTest {
         evolvingMap.put("version", Sos2Constants.SERVICEVERSION);
         evolvingMap.put("request", OPERATION_NAME);
         evolvingMap.put("request", OPERATION_NAME + "2");
-        evolvingMap.put(PARAMETER_NAME, "something");
+        evolvingMap.put(PARAM_OBSERVATION, "something");
 
         instance.decode(evolvingMap);
     }
@@ -163,7 +153,7 @@ public class DeleteObservationKvpDecoderTest {
         parameters.put("service", SOS);
         parameters.put("version", Sos2Constants.SERVICEVERSION);
         parameters.put("request", OPERATION_NAME);
-        parameters.put(PARAMETER_NAME, observationIdentifier);
+        parameters.put(PARAM_OBSERVATION, observationIdentifier);
 
         DeleteObservationRequest decodedRequest = instance.decode(parameters);
 
@@ -171,7 +161,31 @@ public class DeleteObservationKvpDecoderTest {
         assertThat(decodedRequest.getVersion(), is(Sos2Constants.SERVICEVERSION));
         assertThat(decodedRequest.getService(), is(SOS));
         assertThat(decodedRequest.getOperationName(), is(OPERATION_NAME));
-        assertThat(decodedRequest.getObservationIdentifier(), is(observationIdentifier));
+        assertThat(decodedRequest.getObservationIdentifiers().iterator().next(), is(observationIdentifier));
+    }
+    
+    @Test
+    public void should_decode_valid_request_2() throws OwsExceptionReport {
+        HashMap<String, String> parameters = new HashMap<String, String>(4);
+        parameters.put("service", SOS);
+        parameters.put("version", Sos2Constants.SERVICEVERSION);
+        parameters.put("request", OPERATION_NAME);
+        parameters.put(PARAM_PROCEDURE, "procedure");
+        parameters.put(PARAM_FEATURE_OF_INTEREST, "feature");
+        parameters.put(PARAM_OBSERVED_PROPERTY, "observedProperty");
+        parameters.put(PARAM_OFFERING, "offering");
+        parameters.put(PARAM_TEMPORAL_FILTER, "om:phenomeonTime,2012-11-19T14:00:00+01:00/2012-11-19T14:15:00+01:00");
+
+        DeleteObservationRequest decodedRequest = instance.decode(parameters);
+
+        assertThat(decodedRequest, is(not(nullValue())));
+        assertThat(decodedRequest.getVersion(), is(Sos2Constants.SERVICEVERSION));
+        assertThat(decodedRequest.getService(), is(SOS));
+        assertThat(decodedRequest.getOperationName(), is(OPERATION_NAME));
+        assertThat(decodedRequest.getProcedures().iterator().next(), is("procedure"));
+        assertThat(decodedRequest.getFeatureIdentifiers().iterator().next(), is("feature"));
+        assertThat(decodedRequest.getObservedProperties().iterator().next(), is("observedProperty"));
+        assertThat(decodedRequest.getOfferings().iterator().next(), is("offering"));
     }
 
 }

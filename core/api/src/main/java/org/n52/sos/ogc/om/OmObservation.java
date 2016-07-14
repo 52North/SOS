@@ -32,7 +32,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.time.Time;
@@ -109,6 +108,8 @@ public class OmObservation extends AbstractFeature implements Serializable {
     private Set<OmResultQuality> qualityList = Sets.newHashSet();
 
     private String additionalMergeIndicator;
+    
+    private String seriesType;
 
     /**
      * constructor
@@ -339,7 +340,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
     /**
      * Merge this observation with passed observation
      * 
-     * @param sosObservation
+     * @param observationValue
      *            Observation to merge
      */
     public void mergeWithObservation(ObservationValue<?> observationValue) {
@@ -685,6 +686,7 @@ public class OmObservation extends AbstractFeature implements Serializable {
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());
         clone.setDecimalSeparator(this.getDecimalSeparator());
+        clone.setSeriesType(this.getSeriesType());
         return clone;
     }
 
@@ -753,5 +755,22 @@ public class OmObservation extends AbstractFeature implements Serializable {
         }
         return getObservationConstellation().equals(observation.getObservationConstellation()) && merge && getObservationConstellation().checkObservationTypeForMerging();
     }
+
+    /**
+     * @return the seriesType
+     */
+    public String getSeriesType() {
+        return seriesType;
+    }
+
+    /**
+     * @param seriesType the seriesType to set
+     */
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
     
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
+    }
 }

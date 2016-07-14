@@ -39,6 +39,6 @@ public class MissingObservationParameterException extends MissingParameterValueE
     private static final long serialVersionUID = 3719949467011196228L;
 
     public MissingObservationParameterException() {
-        super(DeleteObservationConstants.PARAMETER_NAME);
+        super(DeleteObservationConstants.PARAM_OBSERVATION);
     }
 }

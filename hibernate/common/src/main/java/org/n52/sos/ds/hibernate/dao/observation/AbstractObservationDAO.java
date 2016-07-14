@@ -38,8 +38,10 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -104,7 +106,6 @@ import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.values.BooleanValue;
@@ -269,6 +270,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
 
+    public abstract ScrollableResults getObservations(Set<String> procedure, Set<String> observableProperty,
+            Set<String> featureOfInterest, Set<String> offering, Criterion filterCriterion, Session session);
+
     /**
      * Get Hibernate Criteria for {@link TemporalReferencedObservation}  with restrictions observation identifiers
      *
@@ -293,6 +297,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = getDefaultObservationCriteria(session);
         addObservationIdentifierToCriteria(criteria, identifier, session);
         return (Observation<?>) criteria.uniqueResult();
+    }
+    
+    /**
+     * Query observation by identifiers
+     *
+     * @param identifiers
+     *            Observation identifiers (gml:identifier)
+     * @param session
+     *            Hiberante session
+     * @return Observation
+     */
+    @SuppressWarnings("unchecked")
+    public List<Observation<?>> getObservationByIdentifiers(Set<String> identifiers, Session session) {
+        Criteria criteria = getDefaultObservationCriteria(session);
+        addObservationIdentifierToCriteria(criteria, identifiers, session);
+        return criteria.list();
     }
 
     /**
@@ -621,6 +641,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     protected void addObservationIdentifierToCriteria(Criteria criteria, String identifier, Session session) {
         criteria.add(Restrictions.eq(Observation.IDENTIFIER, identifier));
+    }
+    
+    /**
+     * Add observation identifiers (gml:identifier) to Hibernate Criteria
+     *
+     * @param criteria
+     *            Hibernate Criteria
+     * @param identifiers
+     *            Observation identifiers (gml:identifier)
+     * @param session
+     *            Hibernate session
+     */
+    protected void addObservationIdentifierToCriteria(Criteria criteria, Set<String> identifiers, Session session) {
+        criteria.add(Restrictions.in(AbstractObservation.IDENTIFIER, identifiers));
     }
 
     // /**
@@ -1519,11 +1553,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             if (first != null) {
                 observationContext.setObservableProperty(first.getObservableProperty());
                 observationContext.setProcedure(first.getProcedure());
-                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));
             }
             // set value before ObservationContext is added otherwise the first/last value is not updated in series table.
             observation.setValue(value);
-
+            if (sosObservation.isSetSeriesType()) {
+                observationContext.setSeriesType(sosObservation.getSeriesType());
+            } else {
+                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));  
+            }
+            if (childObservation) {
+                observationContext.setHiddenChild(true);
+            }
             observationContext.setFeatureOfInterest(featureOfInterest);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);

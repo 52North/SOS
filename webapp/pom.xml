@@ -319,8 +319,12 @@
         <!-- DELETE OBSERVATION -->
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>do-xml</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v10</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sosdo-v20</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -479,6 +483,10 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>split-and-merge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>seriestype</artifactId>
         </dependency>
         <!-- netCDF -->
 		<dependency>

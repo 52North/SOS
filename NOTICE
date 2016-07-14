@@ -32,7 +32,6 @@ This project includes:
   52°North SOS - Extension Delete Observation - JSON under GPLv2
   52°North SOS - Extension Delete Observation - KVP under GPLv2
   52°North SOS - Extension Delete Observation - Operation under GPLv2
-  52°North SOS - Extension Delete Observation - XML under GPLv2
   52°North SOS - Extension for AQD under GPLv2
   52°North SOS - Extension for AQD coding under GPLv2
   52°North SOS - Extension for Inspire - Code Module under GPLv2
@@ -77,6 +76,7 @@ This project includes:
   52°North SOS - Profile XmlBeans Module under GPLv2
   52°North SOS - SensorML 101 Request Coding under GPLv2
   52°North SOS - SensorML 20 Request Coding under GPLv2
+  52°North SOS - Series type checker module under GPLv2
   52°North SOS - SOAP Binding under GPLv2
   52°North SOS - SOS 1.0.0 Core Profile Operator under GPLv2
   52°North SOS - SOS 1.0.0 XML Request Coding under GPLv2
@@ -214,6 +214,8 @@ This project includes:
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
+  OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
+  OGC SOS DeleteObservation schema 2.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
@@ -222,7 +224,6 @@ This project includes:
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
-  OGC XML schemas under The Apache Software License, Version 2.0
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Postgis JDBC Driver under GNU Lesser General Public License

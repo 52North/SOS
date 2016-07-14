@@ -217,7 +217,7 @@ public class QueryHelper {
     }
     
     /**
-     * Creates a criterion for GRDC ids, considers if size is > 1000 (expression
+     * Creates a criterion for identifiers, considers if size is > 1000 (Oracle expression
      * limit).
      * 
      * @param propertyName
@@ -226,22 +226,56 @@ public class QueryHelper {
      *            Identifiers list
      * @return Criterion.
      */
-    public static Criterion getCriterionForFoiIds(String propertyName, Collection<String> identifiers) {
+    public static Criterion getCriterionForIdentifiers(String propertyName, Collection<String> identifiers) {
         if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
-            List<String> fois = new ArrayList<String>(identifiers);
+            List<String> identifiersList = Lists.newArrayList(identifiers);
             Criterion criterion = null;
             List<String> ids = null;
-            for (int i = 0; i < fois.size(); i++) {
+            for (int i = 0; i < identifiersList.size(); i++) {
                 if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
                     if (criterion == null && i != 0) {
                         criterion = Restrictions.in(propertyName, ids);
                     } else if (criterion != null) {
                         criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
                     }
-                    ids = new ArrayList<String>();
-                    ids.add(fois.get(i));
+                    ids = Lists.newArrayList();
+                    ids.add(identifiersList.get(i));
                 } else {
-                    ids.add(fois.get(i));
+                    ids.add(identifiersList.get(i));
+                }
+            }
+            return criterion;
+        } else {
+            return Restrictions.in(propertyName, identifiers);
+        }
+    }
+    
+    /**
+     * Creates a criterion for objects, considers if size is > 1000 (Oracle expression
+     * limit).
+     * 
+     * @param propertyName
+     *            Column name.
+     * @param identifiers
+     *            Objects list
+     * @return Criterion.
+     */
+    public static Criterion getCriterionForObjects(String propertyName, Collection<?> identifiers) {
+        if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
+            List<?> identifiersList = Lists.newArrayList(identifiers);
+            Criterion criterion = null;
+            List<Object> ids = null;
+            for (int i = 0; i < identifiersList.size(); i++) {
+                if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
+                    if (criterion == null && i != 0) {
+                        criterion = Restrictions.in(propertyName, ids);
+                    } else if (criterion != null) {
+                        criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
+                    }
+                    ids = Lists.newArrayList();
+                    ids.add(identifiersList.get(i));
+                } else {
+                    ids.add(identifiersList.get(i));
                 }
             }
             return criterion;

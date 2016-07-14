@@ -212,7 +212,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         if (identifiers != null && !identifiers.isEmpty()) {
             Criteria criteria =
                     session.createCriteria(FeatureOfInterest.class)
-                    .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
+                    .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObject(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         }

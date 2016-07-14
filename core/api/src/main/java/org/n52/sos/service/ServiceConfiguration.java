@@ -37,6 +37,7 @@ import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
 import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
 import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Locale;
 
@@ -156,6 +157,8 @@ public class ServiceConfiguration {
     private boolean includeChildObservableProperties = false;
     
     private boolean updateFeatureGeometry = false;
+
+    private File cacheFileFolder;
 
     /**
      * Returns the default token seperator for results.
@@ -485,6 +488,21 @@ public class ServiceConfiguration {
 
     public boolean isUpdateFeatureGeometry() {
         return this.updateFeatureGeometry;
+    }
+
+    /**
+     * @return the cacheFileFolder
+     */
+    public File getCacheFileFolder() {
+        return cacheFileFolder;
+    }
+
+    /**
+     * @param cacheFileFolder the cacheFileFolder to set
+     */
+    @Setting(ServiceSettings.CACHE_FILE_FOLDER)
+    public void setCacheFileFolder(File cacheFileFolder) {
+        this.cacheFileFolder = cacheFileFolder;
     }
 
     /*

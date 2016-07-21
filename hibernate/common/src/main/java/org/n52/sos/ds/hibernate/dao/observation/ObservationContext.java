@@ -51,6 +51,7 @@ public class ObservationContext {
     private ObservableProperty observableProperty;
     private Procedure procedure;
     private String seriesType;
+    private boolean hiddenChild = false; 
 
     /**
      * @return the featureOfInterest
@@ -152,6 +153,14 @@ public class ObservationContext {
     
     public boolean isSetSeriesType() {
         return !Strings.isNullOrEmpty(getSeriesType());
+    }
+    
+    public void setHiddenChild(boolean hiddenChild) {
+        this.hiddenChild = hiddenChild;
+    }
+
+    public boolean isHiddenChild() {
+        return this.hiddenChild;
     }
 
 }

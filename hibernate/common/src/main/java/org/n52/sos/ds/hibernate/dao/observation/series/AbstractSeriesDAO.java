@@ -57,6 +57,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.StringHelper;
@@ -186,6 +187,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             identifiers.addValuesToSeries(series);
             series.setDeleted(false);
             series.setPublished(true);
+            series.setHiddenChild(identifiers.isHiddenChild());
             session.save(series);
             session.flush();
             session.refresh(series);
@@ -416,8 +418,12 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @return Default criteria
      */
     public Criteria getDefaultSeriesCriteria(Session session) {
-        return session.createCriteria(getSeriesClass()).add(Restrictions.eq(Series.DELETED, false))
+        Criteria c = session.createCriteria(getSeriesClass()).add(Restrictions.eq(Series.DELETED, false))
                 .add(Restrictions.eq(Series.PUBLISHED, true)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        if (!isIncludeChildObservableProperties()) {
+            c.add(Restrictions.eq(Series.HIDDEN_CHILD, false));
+        }
+        return c;
     }
 
     /**
@@ -619,5 +625,9 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             addProcedureToCriteria(c, procedure);
         }
         return c;
+    }
+    
+    protected boolean isIncludeChildObservableProperties() {
+        return ServiceConfiguration.getInstance().isIncludeChildObservableProperties();
     }
 }

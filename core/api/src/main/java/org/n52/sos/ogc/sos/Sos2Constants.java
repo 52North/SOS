@@ -238,7 +238,7 @@ public interface Sos2Constants extends SosConstants{
      * The names of the extensions that we know off and might support
      */
     enum Extensions {
-        SplitDataArrayIntoObservations, MergeObservationsIntoDataArray, Language;
+        SplitDataArrayIntoObservations, MergeObservationsIntoDataArray, Language, SeriesType;
     }
 
     /** Constant for actual implementing version */

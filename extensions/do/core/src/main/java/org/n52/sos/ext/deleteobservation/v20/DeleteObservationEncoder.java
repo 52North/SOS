@@ -26,19 +26,17 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.ext.deleteobservation.v20;
 
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
-import net.opengis.sosdo.x10.DeleteObservationResponseType;
-
 import org.apache.xmlbeans.XmlObject;
-import org.n52.sos.encode.AbstractResponseEncoder;
-import org.n52.sos.exception.ows.MissingParameterValueException;
+import org.n52.sos.encode.AbtractVersionedResponseEncoder;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
+import org.n52.sos.ext.deleteobservation.DeleteObservationResponse;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
@@ -47,19 +45,21 @@ import org.n52.sos.w3c.SchemaLocation;
 
 import com.google.common.collect.Sets;
 
+import net.opengis.sosdo.x20.DeleteObservationResponseDocument;
+
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
  *         J&uuml;rrens</a>
  * @since 1.0.0
  */
-public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObservationResponse> {
-    public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(DeleteObservationConstants.NS_SOSDO_1_0,
-            DeleteObservationConstants.NS_SOSDO_1_0_SCHEMA_LOCATION);
+public class DeleteObservationEncoder extends AbtractVersionedResponseEncoder<DeleteObservationResponse> {
+    public static final SchemaLocation SCHEMA_LOCATION = new SchemaLocation(DeleteObservationConstants.NS_SOSDO_2_0,
+            DeleteObservationConstants.NS_SOSDO_2_0_SCHEMA_LOCATION);
 
     public DeleteObservationEncoder() {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, DeleteObservationConstants.Operations.DeleteObservation
-                .name(), DeleteObservationConstants.NS_SOSDO_1_0, DeleteObservationConstants.NS_SOSDO_1_0_PREFIX,
-                DeleteObservationResponse.class);
+                .name(), DeleteObservationConstants.NS_SOSDO_2_0, DeleteObservationConstants.NS_SOSDO_PREFIX,
+                DeleteObservationResponse.class, DeleteObservationConstants.NS_SOSDO_2_0);
     }
 
     @Override
@@ -79,16 +79,11 @@ public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObse
         if (dor.getVersion() == null) {
             exceptions.add(new MissingVersionParameterException());
         }
-        if (dor.getObservationId() == null || dor.getObservationId().isEmpty()) {
-            exceptions.add(new MissingParameterValueException(DeleteObservationConstants.PARAMETER_NAME));
-        }
         exceptions.throwIfNotEmpty();
-
-        String observationId = dor.getObservationId();
+        
         DeleteObservationResponseDocument xbDeleteObsDoc =
                 DeleteObservationResponseDocument.Factory.newInstance(getXmlOptions());
-        DeleteObservationResponseType xbDeleteObservationResponse = xbDeleteObsDoc.addNewDeleteObservationResponse();
-        xbDeleteObservationResponse.setDeletedObservation(observationId);
+        xbDeleteObsDoc.addNewDeleteObservationResponse();
         return xbDeleteObsDoc;
     }
 

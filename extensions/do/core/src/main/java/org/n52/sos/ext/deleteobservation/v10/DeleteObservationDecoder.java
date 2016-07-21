@@ -26,7 +26,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.ext.deleteobservation.v10;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
@@ -41,14 +41,13 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationDocument;
-import net.opengis.sosdo.x10.DeleteObservationType;
-
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.decode.Decoder;
 import org.n52.sos.decode.DecoderKey;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderInputException;
+import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
+import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
@@ -56,6 +55,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+
+import net.opengis.sosdo.x10.DeleteObservationDocument;
+import net.opengis.sosdo.x10.DeleteObservationType;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -101,10 +103,10 @@ public class DeleteObservationDecoder implements Decoder<DeleteObservationReques
         DeleteObservationType xbDelObsType = xbDelObsDoc.getDeleteObservation();
 
         if (xbDelObsType != null) {
-            delObsRequest = new DeleteObservationRequest();
+            delObsRequest = new DeleteObservationRequest(NS_SOSDO_1_0);
             delObsRequest.setVersion(xbDelObsType.getVersion());
             delObsRequest.setService(xbDelObsType.getService());
-            delObsRequest.setObservationIdentifier(xbDelObsType.getObservation());
+            delObsRequest.addObservationIdentifier(xbDelObsType.getObservation());
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("Received XML document is not valid. Set log level to debug to get more details");

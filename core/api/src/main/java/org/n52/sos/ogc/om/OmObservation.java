@@ -113,6 +113,8 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     private Set<OmObservationContext> relatedObservations = Sets.newHashSet();
     
     private String additionalMergeIndicator;
+    
+    private String seriesType;
 
     /**
      * constructor
@@ -740,6 +742,7 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
         clone.setTokenSeparator(this.getTokenSeparator());
         clone.setTupleSeparator(this.getTupleSeparator());
         clone.setDecimalSeparator(this.getDecimalSeparator());
+        clone.setSeriesType(this.getSeriesType());
         return clone;
     }
     
@@ -876,5 +879,22 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
         }
         return getObservationConstellation().equals(observation.getObservationConstellation()) && merge && getObservationConstellation().checkObservationTypeForMerging();
     }
+
+    /**
+     * @return the seriesType
+     */
+    public String getSeriesType() {
+        return seriesType;
+    }
+
+    /**
+     * @param seriesType the seriesType to set
+     */
+    public void setSeriesType(String seriesType) {
+        this.seriesType = seriesType;
+    }
     
+    public boolean isSetSeriesType() {
+        return !Strings.isNullOrEmpty(getSeriesType());
+    }
 }

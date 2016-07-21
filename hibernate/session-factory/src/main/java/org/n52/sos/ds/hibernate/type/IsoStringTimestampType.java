@@ -26,64 +26,51 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.config.sqlite;
+package org.n52.sos.ds.hibernate.type;
 
-import java.io.Serializable;
+import java.io.File;
+import java.util.Date;
 
 import org.hibernate.HibernateException;
-import org.hibernate.usertype.UserType;
+import org.hibernate.TypeMismatchException;
+import org.joda.time.DateTime;
+import org.n52.sos.exception.ows.concrete.DateTimeParseException;
+import org.n52.sos.util.Constants;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.StringHelper;
 
-/**
- * TODO JavaDoc
- *
- * @author Christian Autermann <c.autermann@52north.org>
- */
-public abstract class AbstractHibernateUserType implements UserType {
+public class IsoStringTimestampType extends AbstractStringBasedHibernateUserType<Date> {
 
-    private Class<?> clazz;
-
-    public AbstractHibernateUserType(Class<?> clazz) {
-        this.clazz = clazz;
+    public IsoStringTimestampType() {
+        super(Date.class);
     }
 
     @Override
-    public Class<?> returnedClass() {
-        return this.clazz;
-    }
-
-    @Override
-    public Object assemble(Serializable cached, Object owner) throws HibernateException {
-        return (Serializable) deepCopy(cached);
-    }
-
-    @Override
-    public Serializable disassemble(Object value) throws HibernateException {
-        return (Serializable) deepCopy(value);
-    }
-
-    @Override
-    public boolean equals(Object x, Object y) throws HibernateException {
-        if (x == y) {
-            return true;
-        } else if (x == null || y == null) {
-            return false;
-        } else {
-            return x.equals(y);
+    protected Date decode(String s) throws HibernateException {
+        try {
+            return decodeIsoString(s);
+        } catch (DateTimeParseException e) {
+            throw new TypeMismatchException(String.format("Error while creating Time from %s", s));
         }
     }
 
     @Override
-    public int hashCode(Object x) throws HibernateException {
-        return (x != null) ? x.hashCode() : 0;
+    protected String encode(Date d) throws HibernateException {
+        if (d != null) {
+            return DateTimeHelper.formatDateTime2IsoString(new DateTime(d));
+        }
+        return Constants.EMPTY_STRING;
+    }
+    
+    private Date decodeIsoString(String s) throws DateTimeParseException {
+        if (StringHelper.isNotEmpty(s)) {
+            return DateTimeHelper.parseIsoString2DateTime(s).toDate();
+        }
+        return null;
+    }
+    
+    public static String[] getKeys() {
+        return new String[] { "iso_string" };
     }
 
-    @Override
-    public boolean isMutable() {
-        return false;
-    }
-
-    @Override
-    public Object replace(Object original, Object target, Object owner) throws HibernateException {
-        return original;
-    }
 }

@@ -417,19 +417,16 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      */
     @SuppressWarnings("unchecked")
     protected void writeParameter(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
-        if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof ObservationEncoder) {
-            for (NamedValue<?> namedValue : observation.getParameter()) {
-                start(OmConstants.QN_OM_20_PARAMETER);
-                writeNewLine();
-                XmlObject xmlObject =
-                        ((ObservationEncoder<XmlObject, Object>) encodingValues.getEncoder()).encode(namedValue);
-                writeXmlObject(xmlObject, OmConstants.QN_OM_20_NAMED_VALUE);
-                writeNewLine();
-                indent--;
-                end(OmConstants.QN_OM_20_PARAMETER);
-                writeNewLine();
-                indent++;
-            }
+        for (NamedValue<?> namedValue : observation.getParameter()) {
+            start(OmConstants.QN_OM_20_PARAMETER);
+            writeNewLine();
+            XmlObject xmlObject = CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, namedValue);
+            writeXmlObject(xmlObject, OmConstants.QN_OM_20_NAMED_VALUE);
+            writeNewLine();
+            indent--;
+            end(OmConstants.QN_OM_20_PARAMETER);
+            writeNewLine();
+            indent++;
         }
     }
 

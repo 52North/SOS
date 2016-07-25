@@ -41,7 +41,6 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -94,7 +93,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
 
 
 @Configurable
@@ -555,43 +553,45 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             // getGeometryHandler().switchCoordinateAxisOrderIfNeeded(geom);
         } else {
             if (session != null) {
-                int srid = getGeometryHandler().getStorageEPSG();
-                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() > 100) {
-                    Envelope envelope = DaoFactory.getInstance().getObservationDAO().getBboxFromSamplingGeometries(feature.getIdentifier(), session);
-                    if (envelope != null) {
-                        Geometry geometry = new GeometryFactory().toGeometry(envelope);
-                        geometry.setSRID(srid);
-                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-                    }
-                } else {
-                    List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
-                    if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
-                        List<Coordinate> coordinates = Lists.newLinkedList();
-                        Geometry lastGeoemtry = null;
-                        for (Geometry geometry : geometries) {
-                            if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                                lastGeoemtry = geometry;
+                if (createFeatureGeometryFromSamplingGeometries()) {
+                    int srid = getGeometryHandler().getStorageEPSG();
+                    if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() > 100) {
+                        Envelope envelope = DaoFactory.getInstance().getObservationDAO().getBboxFromSamplingGeometries(feature.getIdentifier(), session);
+                        if (envelope != null) {
+                            Geometry geometry = new GeometryFactory().toGeometry(envelope);
+                            geometry.setSRID(srid);
+                            geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+                        }
+                    } else {
+                        List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+                        if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
+                            List<Coordinate> coordinates = Lists.newLinkedList();
+                            Geometry lastGeoemtry = null;
+                            for (Geometry geometry : geometries) {
+                                if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
+                                        coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                    lastGeoemtry = geometry;
+                                    if (geometry.getSRID() != srid) {
+                                        srid = geometry.getSRID();
+                                     }
+                                }
                                 if (geometry.getSRID() != srid) {
-                                    srid = geometry.getSRID();
-                                 }
+                                   srid = geometry.getSRID();
+                                }
+                                if (!geometry.equalsTopo(lastGeoemtry)) {
+                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                    lastGeoemtry = geometry;
+                                }
                             }
-                            if (geometry.getSRID() != srid) {
-                               srid = geometry.getSRID();
+                            Geometry geom = null;
+                            if (coordinates.size() == 1) {
+                                geom = new GeometryFactory().createPoint(coordinates.iterator().next());
+                            } else {
+                                geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                             }
-                            if (!geometry.equalsTopo(lastGeoemtry)) {
-                                coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                                lastGeoemtry = geometry;
-                            }
+                            geom.setSRID(srid);
+                            return geom;
                         }
-                        Geometry geom = null;
-                        if (coordinates.size() == 1) {
-                            geom = new GeometryFactory().createPoint(coordinates.iterator().next());
-                        } else {
-                            geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
-                        }
-                        geom.setSRID(srid);
-                        return geom;
                     }
                 }
             }
@@ -653,6 +653,10 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         } else {
             return Collections.emptyMap();
         }
+    }
+
+    private boolean createFeatureGeometryFromSamplingGeometries() {
+        return false;
     }
 
     @Override

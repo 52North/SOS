@@ -160,6 +160,8 @@ public class ServiceConfiguration {
 
     private File cacheFileFolder;
 
+    private boolean createFeatureGeometryFromSamplingGeometries = false;
+
     /**
      * Returns the default token seperator for results.
      * <p/>
@@ -503,6 +505,15 @@ public class ServiceConfiguration {
     @Setting(ServiceSettings.CACHE_FILE_FOLDER)
     public void setCacheFileFolder(File cacheFileFolder) {
         this.cacheFileFolder = cacheFileFolder;
+    }
+    
+    @Setting(ServiceSettings.CACHE_FILE_FOLDER)
+    public void setCreateFeatureGeometryFromSamplingGeometries(boolean createFeatureGeometryFromSamplingGeometries) {
+        this.createFeatureGeometryFromSamplingGeometries  = createFeatureGeometryFromSamplingGeometries;
+    }
+
+    public boolean isCreateFeatureGeometryFromSamplingGeometries() {
+        return createFeatureGeometryFromSamplingGeometries;
     }
 
     /*

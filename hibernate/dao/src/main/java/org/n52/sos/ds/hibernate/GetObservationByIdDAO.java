@@ -40,6 +40,7 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
+import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -125,7 +126,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
         if (HibernateStreamingConfiguration.getInstance().isForceDatasourceStreaming()) {
             observations.addAll(querySeriesObservationForStreaming(request, session));
         } else {
-            // TODO
+            observations.addAll(querySeriesObservationForNonStreaming(request, session));
         }
         return observations;
     }
@@ -183,6 +184,22 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
             observationTemplate.setValue(streamingValue);
             result.add(observationTemplate);
         }
+        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        return result;
+    }
+
+    protected List<OmObservation> querySeriesObservationForNonStreaming(
+            GetObservationByIdRequest request, Session session) throws OwsExceptionReport, ConverterException {
+        final long start = System.currentTimeMillis();
+        Collection<Observation<?>> seriesObservations = Lists.newArrayList();
+        List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, session);
+        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
+        SeriesObservationDAO observationDAO = (SeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();
+        for (Series series : serieses) {
+           seriesObservations.addAll(observationDAO.getSeriesObservationFor(series, null, session));
+        }
+        final List<OmObservation> result = new LinkedList<OmObservation>();
+        result.addAll(HibernateGetObservationHelper.toSosObservation(seriesObservations, request, session));
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;
     }

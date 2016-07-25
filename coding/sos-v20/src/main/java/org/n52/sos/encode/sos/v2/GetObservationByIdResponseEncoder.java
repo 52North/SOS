@@ -75,7 +75,7 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         GetObservationByIdResponseDocument doc =
                 GetObservationByIdResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         GetObservationByIdResponseType xbResponse = doc.addNewGetObservationByIdResponse();
-        List<OmObservation> oc = getObservationsAndCheckForStreaming(response);
+        List<OmObservation> oc = getObservationsAndCheckForStreaming(response, encoder);
         HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<CodeWithAuthority, String>(oc.size());
         for (OmObservation observation : oc) {
             Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
@@ -96,15 +96,20 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
         return doc;
     }
 
-    private List<OmObservation> getObservationsAndCheckForStreaming(GetObservationByIdResponse response) throws OwsExceptionReport {
+    private List<OmObservation> getObservationsAndCheckForStreaming(GetObservationByIdResponse response, ObservationEncoder<XmlObject, OmObservation> encoder) throws OwsExceptionReport {
        if (response.hasStreamingData()) {
-           List<OmObservation> observations = Lists.newArrayList();
-           for (OmObservation observation : response.getObservationCollection()) {
-               if (observation.getValue() instanceof StreamingValue<?>) {
-                   observations.addAll(((AbstractStreaming)observation.getValue()).getObservation());
-               } else {
-                   observations.add(observation);
+           if (encoder.shouldObservationsWithSameXBeMerged()) {
+               response.mergeStreamingData();
+           } else { 
+               List<OmObservation> observations = Lists.newArrayList();
+               for (OmObservation observation : response.getObservationCollection()) {
+                   if (observation.getValue() instanceof StreamingValue<?>) {
+                       observations.addAll(((AbstractStreaming)observation.getValue()).getObservation());
+                   } else {
+                       observations.add(observation);
+                   }
                }
+               return observations;
            }
        }
        return response.getObservationCollection();

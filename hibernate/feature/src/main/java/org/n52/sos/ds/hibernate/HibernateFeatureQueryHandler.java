@@ -656,7 +656,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     }
 
     private boolean createFeatureGeometryFromSamplingGeometries() {
-        return false;
+        return ServiceConfiguration.getInstance().isCreateFeatureGeometryFromSamplingGeometries();
     }
 
     @Override

@@ -58,4 +58,9 @@ public class PointTimeSeriesObservationXmlStreamWriter extends WmlTVPEncoderv20X
     protected QName getDocumentName() {
         return InspireOMSOConstants.QN_POINT_TIMESERES_OBSERVATION;
     }
+    
+    protected void writeAddtitionalNamespaces() throws javax.xml.stream.XMLStreamException {
+        super.writeAddtitionalNamespaces();
+        namespace(InspireOMSOConstants.NS_OMSO_PREFIX, InspireOMSOConstants.NS_OMSO_30);
+    }
 }

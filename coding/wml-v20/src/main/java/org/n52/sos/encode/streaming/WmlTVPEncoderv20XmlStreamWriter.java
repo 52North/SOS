@@ -124,6 +124,11 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
         }
     }
 
+    @Override
+    protected void writeAddtitionalNamespaces() throws XMLStreamException {
+        namespace(WaterMLConstants.NS_WML_20_PREFIX, WaterMLConstants.NS_WML_20);
+    }
+
     /**
      * Close written wml:MeasurementTimeseries and om:result tags
      * 

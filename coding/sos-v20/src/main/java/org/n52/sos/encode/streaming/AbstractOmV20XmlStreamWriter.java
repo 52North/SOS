@@ -124,6 +124,8 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     public void write(OmObservation response, OutputStream out) throws XMLStreamException, OwsExceptionReport {
         write(response, out, new EncodingValues());
     }
+    
+    protected abstract void writeAddtitionalNamespaces() throws XMLStreamException;
 
     @Override
     public void write(OmObservation observation, OutputStream out, EncodingValues encodingValues)
@@ -157,6 +159,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
         namespace(GmlConstants.NS_GML_PREFIX, GmlConstants.NS_GML_32);
+        writeAddtitionalNamespaces();
         String observationID = addGmlId(observation);
         writeNewLine();
         if (observation.isSetIdentifier()) {

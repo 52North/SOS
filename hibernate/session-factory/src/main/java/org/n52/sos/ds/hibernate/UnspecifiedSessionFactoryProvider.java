@@ -138,7 +138,6 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
              * queried in defined time zone
              */
             registerTimestampMapping(configuration, properties);
-            configuration.registerTypeOverride(new IsoStringTimestampType(), IsoStringTimestampType.getKeys());
             ServiceRegistry serviceRegistry =
                     new StandardServiceRegistryBuilder().applySettings(configuration.getProperties()).build();
             this.sessionFactory = configuration.buildSessionFactory(serviceRegistry);
@@ -167,8 +166,10 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
                 && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE).isEmpty()) {
             configuration.registerTypeOverride(
                     new ConfigurableTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
+            configuration.registerTypeOverride(new IsoStringTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)), IsoStringTimestampType.getKeys());
         } else {
             configuration.registerTypeOverride(new UtcTimestampType());
+            configuration.registerTypeOverride(new IsoStringTimestampType(), IsoStringTimestampType.getKeys());
         }
     }
 

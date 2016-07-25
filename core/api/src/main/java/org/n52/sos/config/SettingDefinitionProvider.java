@@ -88,6 +88,8 @@ public interface SettingDefinitionProvider {
     float ORDER_18 = 18;
 
     float ORDER_19 = 19;
+    
+    float ORDER_20 = 20;
 
     /**
      * @return the declared setting definitons of this provider

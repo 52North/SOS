@@ -124,36 +124,38 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
                     new HibernateGeometryCreator(storageEPSG, storage3DEPSG).createGeometry(feature));
         } else {
             if (!feature.isSetUrl() && session != null) {
-                int srid = getGeometryHandler().getStorageEPSG();
-                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() < 100) {
-                    List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
-                    if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
-                        List<Coordinate> coordinates = Lists.newLinkedList();
-                        Geometry lastGeoemtry = null;
-                        for (Geometry geometry : geometries) {
-                            if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                                lastGeoemtry = geometry;
+                if (createFeatureGeometryFromSamplingGeometries()) {
+                    int srid = getGeometryHandler().getStorageEPSG();
+                    if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() < 100) {
+                        List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
+                        if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
+                            List<Coordinate> coordinates = Lists.newLinkedList();
+                            Geometry lastGeoemtry = null;
+                            for (Geometry geometry : geometries) {
+                                if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
+                                        coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                    lastGeoemtry = geometry;
+                                    if (geometry.getSRID() != srid) {
+                                        srid = geometry.getSRID();
+                                     }
+                                }
                                 if (geometry.getSRID() != srid) {
-                                    srid = geometry.getSRID();
-                                 }
+                                   srid = geometry.getSRID();
+                                }
+                                if (!geometry.equalsTopo(lastGeoemtry)) {
+                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
+                                    lastGeoemtry = geometry;
+                                }
                             }
-                            if (geometry.getSRID() != srid) {
-                               srid = geometry.getSRID();
+                            Geometry geom = null;
+                            if (coordinates.size() == 1) {
+                                geom = new GeometryFactory().createPoint(coordinates.iterator().next());
+                            } else {
+                                geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
                             }
-                            if (!geometry.equalsTopo(lastGeoemtry)) {
-                                coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-                                lastGeoemtry = geometry;
-                            }
+                            geom.setSRID(srid);
+                            return geom;
                         }
-                        Geometry geom = null;
-                        if (coordinates.size() == 1) {
-                            geom = new GeometryFactory().createPoint(coordinates.iterator().next());
-                        } else {
-                            geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
-                        }
-                        geom.setSRID(srid);
-                        return geom;
                     }
                 }
             }
@@ -179,6 +181,10 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
 
     protected int getStorage3DEPSG() {
         return storage3DEPSG;
+    }
+    
+    private boolean createFeatureGeometryFromSamplingGeometries() {
+        return ServiceConfiguration.getInstance().isCreateFeatureGeometryFromSamplingGeometries();
     }
     
 }

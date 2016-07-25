@@ -507,7 +507,7 @@ public class ServiceConfiguration {
         this.cacheFileFolder = cacheFileFolder;
     }
     
-    @Setting(ServiceSettings.CACHE_FILE_FOLDER)
+    @Setting(ServiceSettings.CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS)
     public void setCreateFeatureGeometryFromSamplingGeometries(boolean createFeatureGeometryFromSamplingGeometries) {
         this.createFeatureGeometryFromSamplingGeometries  = createFeatureGeometryFromSamplingGeometries;
     }

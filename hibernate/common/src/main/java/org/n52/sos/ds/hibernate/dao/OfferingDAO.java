@@ -619,18 +619,6 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
     }
 
     /**
-     * Add offering identifier restriction to Hibernate Criteria
-     * 
-     * @param criteria
-     *            Hibernate Criteria to add restriction
-     * @param offering
-     *            Offering identifier
-     */
-    public void addOfferingRestricionForObservation(Criteria criteria, String offering) {
-        criteria.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
-    }
-
-    /**
      * Offering time extrema {@link ResultTransformer}
      * 
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -694,5 +682,21 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
             }
         }
         return map;
+    }
+
+    /**
+     * Add offering identifier restriction to Hibernate Criteria
+     * 
+     * @param criteria
+     *            Hibernate Criteria to add restriction
+     * @param offering
+     *            Offering identifier
+     */
+    public void addOfferingRestricionForObservation(Criteria criteria, String offering) {
+        criteria.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+    }
+
+    public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {
+        dc.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
 }

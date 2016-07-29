@@ -1,0 +1,7 @@
+<div class="favorite-body-entry">
+    <div>{{favorite.timeseries.parameters.service.label}}</div>
+    <div>
+        <span translate='favorite.lastValueAt'></span>
+        <span>{{favorite.timeseries.lastValue.value}} {{favorite.timeseries.uom}} ({{favorite.timeseries.lastValue.timestamp | date: 'dd.MM.yy HH:mm'}})</span>
+    </div>
+</div>

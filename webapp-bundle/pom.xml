@@ -49,7 +49,7 @@
           <webResources>
             <resource>
                 <directory>src/main/webapp</directory>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>

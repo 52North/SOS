@@ -80,14 +80,21 @@
                                                 <span class="menu-title">Client</span>
                                             </a>
                                             <ul>
+                                              <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/helgoland/index.html')}">
+                                                <li>
+                                                    <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/helgoland/index.html" />">
+                                                        <span class="menu-title">Sensor Web Thin Client (Helgoland)</span>
+                                                    </a>
+                                                </li>
+                                              </c:if>
                                              	<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
-			                                        <li>
-			                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient/index.html" />">
-			                                                <span class="menu-title">Sensor Web JS Client</span>
-			                                            </a>
-			                                        </li>
-		                                    	</c:if>
-                                   			 </ul>
+				                                        <li>
+				                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient/index.html" />">
+				                                                <span class="menu-title">Sensor Web JS Client (old)</span>
+				                                            </a>
+				                                        </li>
+		                                    	    </c:if>
+                                            </ul>
                                         </li>
                                     </c:if>
                                         <li>
@@ -164,11 +171,6 @@
                                                                     <span class="menu-title">Observable Properties</span>
                                                                 </a>
                                                             </li>
-                                                            <li>
-                                                                <a href="<c:url value="/admin/profiles" />">
-                                                                    <span class="menu-title">Profiles</span>
-                                                                </a>
-                                                            </li>
                                                             <c:if test="${sos:supportsI18N()}">
 	                                                            <li>
 	                                                                <a href="<c:url value="/admin/i18n" />">
@@ -210,7 +212,7 @@
                                     </c:if>
                                     <sec:authorize access="hasRole('ROLE_ADMIN')">
 										<li style="float: right;">
-											<a id="logout-menuitem" class="menu-item4" href="<c:url value="/j_spring_security_logout" />">
+											<a id="logout-menuitem" class="menu-item4" href="<c:url value="/logout" />">
 												<span class="menu-title">Logout</span>
 											</a>
 										</li>

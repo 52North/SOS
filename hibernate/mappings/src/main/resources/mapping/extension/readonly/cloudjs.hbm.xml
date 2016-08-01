@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 10.07.2012 15:18:27 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.CloudjsEntity" 
+           table="patches_cloudjs">
+        <comment>Table to store the gml:identifier and gml:name codespace information. Mapping file: mapping/core/Codespace.hbm.xml</comment>
+        <id name="offering"
+            type="string">
+            <column name="offering_id">
+                <comment>Table primary key, used for relations</comment>
+            </column>
+        </id>
+        <property name="cloudjs"
+                  type="string">
+            <column name="cloudjs"
+                    not-null="true">
+                <comment>The codespace value</comment>
+            </column>
+        </property>
+    </class>
+</hibernate-mapping>

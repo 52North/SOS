@@ -39,10 +39,23 @@ import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 
 import com.google.common.collect.Sets;
+import java.sql.SQLException;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.internal.SessionFactoryImpl;
+import org.n52.lidar.importer.core.db.LidarPostgreDB;
+import org.n52.lidar.importer.core.db.PostgresSettings;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class CloudJsOfferingExtensionProvider implements OfferingExtensionProvider {
-    
+
     Set<OfferingExtensionKey> providerKeys = Sets.newHashSet(new OfferingExtensionKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, "CloudJS"));
+
+    private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
 
     public CloudJsOfferingExtensionProvider() {
     }
@@ -61,35 +74,33 @@ public class CloudJsOfferingExtensionProvider implements OfferingExtensionProvid
     }
 
     private String getCloudJsForOffering(String identifier) {
-        // TODO get cloud.js for offering 
-        return "{\n"
-                + "	\"version\": \"1.6\",\n"
-                + "	\"octreeDir\": \"data\",\n"
-                + "	\"boundingBox\": {\n"
-                + "		\"lx\": 635577.79,\n"
-                + "		\"ly\": 848882.15,\n"
-                + "		\"lz\": 406.14,\n"
-                + "		\"ux\": 640233.3,\n"
-                + "		\"uy\": 853537.66,\n"
-                + "		\"uz\": 5061.65000000001\n"
-                + "	},\n"
-                + "	\"tightBoundingBox\": {\n"
-                + "		\"lx\": 635597.86,\n"
-                + "		\"ly\": 848885.46,\n"
-                + "		\"lz\": 406.92,\n"
-                + "		\"ux\": 638995.8,\n"
-                + "		\"uy\": 853537.66,\n"
-                + "		\"uz\": 589.96\n"
-                + "	},\n"
-                + "	\"pointAttributes\": \"LAZ\",\n"
-                + "	\"spacing\": 500,\n"
-                + "	\"scale\": 0.01,\n"
-                + "	\"hierarchyStepSize\": 6\n"
-                + "}";
+        try {
+            Session session = sessionHolder.getSession();
+            Properties properties = ((SessionFactoryImpl) session.getSessionFactory()).getProperties();
+            String password = properties.getProperty("hibernate.connection.password");
+            String username = properties.getProperty("hibernate.connection.username");
+            String url = properties.getProperty("hibernate.connection.url");
+            
+            CloudjsEntity uniqueResult = (CloudjsEntity) session.createCriteria(CloudjsEntity.class)
+                    .add(Restrictions.eq("offering", identifier))
+                    .uniqueResult();
+            
+            //LidarPostgreDB db = new LidarPostgreDB(
+            //      new PostgresSettings(url, "192.168.99.1", username, password));
+            // TODO get cloud.js for offering
+            //return db.getCloudJS(identifier);
+
+            return uniqueResult.getCloudjs();
+        } catch (OwsExceptionReport ex) {
+            Logger.getLogger(CloudJsOfferingExtensionProvider.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
     @Override
     public boolean hasExtendedOfferingFor(String identifier) {
         return true;
     }
+
+
 }

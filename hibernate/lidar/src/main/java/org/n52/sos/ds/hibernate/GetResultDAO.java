@@ -53,10 +53,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.n52.lidar.importer.core.DockerAppContext;
+import org.n52.lidar.importer.core.SosLidarImportSettings;
 import org.n52.lidar.importer.core.db.PostgresSettings;
-import org.n52.lidar.importer.pdal.PdalContainerHandler;
+import org.n52.lidar.importer.pdal.PdalContainer;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.util.http.HTTPStatus;
 
@@ -102,7 +105,9 @@ public class GetResultDAO extends AbstractGetResultDAO {
             }
 
             File exportFeature = exportFeature(request);
-            String content = IOUtils.toString(new FileInputStream(exportFeature));
+            byte[] bytes = loadFile(exportFeature);
+            String content = Base64.encodeBase64String(bytes);
+//            String content = IOUtils.toString(new FileInputStream(exportFeature));
 
             response.setResultValues(content);
             return response;
@@ -126,6 +131,24 @@ public class GetResultDAO extends AbstractGetResultDAO {
         }
     }
 
+    private byte[] loadFile(File file) throws IOException {
+        byte[] bytes;
+        try (InputStream is = new FileInputStream(file)) {
+            long length = file.length();
+            bytes = new byte[(int) length];
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                    && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file " + file.getName());
+            }
+        }
+        return bytes;
+    }
+
     private File exportFeature(GetResultRequest request) throws OwsExceptionReport {
         String feature = request.getFeatureIdentifiers().iterator().next();
         String offering = request.getOffering();
@@ -136,12 +159,22 @@ public class GetResultDAO extends AbstractGetResultDAO {
         Properties properties = ((SessionFactoryImpl) session.getSessionFactory()).getProperties();
         String password = properties.getProperty("hibernate.connection.password");
         String username = properties.getProperty("hibernate.connection.username");
-        String url = properties.getProperty("hibernate.connection.url");
+        String jdbcUrl = properties.getProperty("hibernate.connection.url");
+
+        // Lidar import settings with focus on SOS attributes
+        String observedProperty = "http://www.52north.org/test/observableProperty/9_3";
+        String procedure = "http://www.52north.org/test/procedure/9";
+        String sosUrl = "http://localhost:8080//webapp/service";
+        String pcPatchesTable = "patches_new";
+        String cloudjsTable = "patches_cloudjs";
+        SosLidarImportSettings importSettings = new SosLidarImportSettings(
+                offering, procedure, observedProperty, sosUrl, pcPatchesTable, cloudjsTable);
 
         // Instantiate a new PDAL Container handler
-        PdalContainerHandler pdal = new PdalContainerHandler(
+        PdalContainer pdal = new PdalContainer(
                 DockerAppContext.createDefaultAppConfigBuilder().build(),
-                new PostgresSettings(url, username, password, "test", "patches_new")
+                importSettings,
+                new PostgresSettings(jdbcUrl, "192.168.99.1", username, password)
         );
 
         // Export the feature to the file;
@@ -152,7 +185,8 @@ public class GetResultDAO extends AbstractGetResultDAO {
     }
 
     private File getExportedFile(String feature) {
-        return new File(BASE_OUTPUT_DIR + feature + ".laz");
+        String folder = feature.substring(0, feature.lastIndexOf("-"));
+        return new File(BASE_OUTPUT_DIR + folder + "/" + feature + ".laz");
     }
 
     @Override

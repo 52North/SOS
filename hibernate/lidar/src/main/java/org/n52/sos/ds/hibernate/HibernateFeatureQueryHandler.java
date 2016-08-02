@@ -207,7 +207,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 Geometry geom =
                         (Geometry) session
                                 .createCriteria(PatchEntity.class)
-                                .add(QueryHelper.getCriterionForFoiIds(PATCH_FEATURE_ID,
+                                .add(QueryHelper.getCriterionForIdentifiers(PATCH_FEATURE_ID,
                                         queryObject.getFeatureIdentifiers()))
                                 .setProjection(SpatialProjections.extent(PATCH_GEOM))
                                 .uniqueResult();
@@ -546,7 +546,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                 session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         boolean filtered = false;
         if (queryObject.isSetFeatureIdentifiers()) {
-            c.add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifiers()));
+            c.add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, queryObject.getFeatureIdentifiers()));
             filtered = true;
         }
         if (queryObject.isSetSpatialFilters()) {
@@ -576,7 +576,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
         Criteria c = session
         .createCriteria(PatchEntity.class);
-        c.add(QueryHelper.getCriterionForFoiIds(PATCH_FEATURE_ID,
+        c.add(QueryHelper.getCriterionForIdentifiers(PATCH_FEATURE_ID,
                 queryObject.getFeatureIdentifiers()))
         .setProjection(Projections.projectionList()
                 .add(Projections.min(PATCH_MIN_Z))

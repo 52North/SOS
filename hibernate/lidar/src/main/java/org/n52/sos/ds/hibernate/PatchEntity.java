@@ -36,6 +36,8 @@ public class PatchEntity {
     private Geometry pa;
     private String feature_id;
     private int pcid;
+    private double minz;
+    private double maxz;
 
     public PatchEntity() {
 
@@ -98,6 +100,34 @@ public class PatchEntity {
      */
     public void setPcid(int pcid) {
         this.pcid = pcid;
+    }
+
+    /**
+     * @return the minz
+     */
+    public double getMinz() {
+        return minz;
+    }
+
+    /**
+     * @param minz the minz to set
+     */
+    public void setMinz(double minz) {
+        this.minz = minz;
+    }
+
+    /**
+     * @return the maxz
+     */
+    public double getMaxz() {
+        return maxz;
+    }
+
+    /**
+     * @param maxz the maxz to set
+     */
+    public void setMaxz(double maxz) {
+        this.maxz = maxz;
     }
 
 }

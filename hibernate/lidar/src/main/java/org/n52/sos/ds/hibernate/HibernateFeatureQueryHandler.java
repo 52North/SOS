@@ -47,6 +47,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.spatial.criterion.SpatialProjections;
+import org.hibernate.transform.ResultTransformer;
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
@@ -91,6 +92,10 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     private static final String SQL_QUERY_GET_ENVELOP = "getEnvelope";
     private static final String PATCH_FEATURE_ID = "feature_id";
     private static final String PATCH_GEOM = "pa";
+    private static final String PATCH_MIN_Z = "minz";
+    private static final String PATCH_MAX_Z = "maxz";
+    private final MinMaxZTransformer transformer = new MinMaxZTransformer();
+    
     @Deprecated
     @Override
     public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
@@ -206,12 +211,15 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
                                         queryObject.getFeatureIdentifiers()))
                                 .setProjection(SpatialProjections.extent(PATCH_GEOM))
                                 .uniqueResult();
-         
+                
                 if (geom != null) {
                     int srid = geom.getSRID() > 0 ? geom.getSRID() : getStorageEPSG();
                     geom.setSRID(srid);
                     geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
-                    return new SosEnvelope(geom.getEnvelopeInternal(), srid);
+                    SosEnvelope sosEnvelope = new SosEnvelope(geom.getEnvelopeInternal(), srid);
+                    MinMaxZ queryMinMaxZ = queryMinMaxZ(queryObject);
+                    sosEnvelope.setMinZ(queryMinMaxZ.getMinZ()).setMaxZ(queryMinMaxZ.getMaxZ());
+                    return sosEnvelope;
                 }
             } catch (final HibernateException he) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(
@@ -564,8 +572,73 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         }
     }
 
+    private MinMaxZ queryMinMaxZ(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport {
+        final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
+        Criteria c = session
+        .createCriteria(PatchEntity.class);
+        c.add(QueryHelper.getCriterionForFoiIds(PATCH_FEATURE_ID,
+                queryObject.getFeatureIdentifiers()))
+        .setProjection(Projections.projectionList()
+                .add(Projections.min(PATCH_MIN_Z))
+                .add(Projections.max(PATCH_MAX_Z)));
+        LOGGER.debug("QUERY queryMinMaxZ(): {}", HibernateHelper.getSqlString(c));
+        c.setResultTransformer(transformer);
+        return (MinMaxZ)c.uniqueResult();
+    }
+
     @Override
     public String getDatasourceDaoIdentifier() {
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
+    }
+    
+    public class MinMaxZ {
+
+        private Double minZ;
+        private Double maxZ;
+       /**
+         * @return the minZ
+         */
+        public Double getMinZ() {
+            return minZ;
+        }
+        /**
+         * @param minZ the minZ to set
+         */
+        public void setMinZ(Double minZ) {
+            this.minZ = minZ;
+        }
+        /**
+         * @return the maxZ
+         */
+        public Double getMaxZ() {
+            return maxZ;
+        }
+        /**
+         * @param maxZ the maxZ to set
+         */
+        public void setMaxZ(Double maxZ) {
+            this.maxZ = maxZ;
+        }
+    }
+    
+    private class MinMaxZTransformer implements ResultTransformer {
+        private static final long serialVersionUID = -373512929481519459L;
+
+        @Override
+        public MinMaxZ transformTuple(Object[] tuple, String[] aliases) {
+            MinMaxZ minMaxZ = new MinMaxZ();
+            if (tuple != null) {
+                minMaxZ.setMinZ(Double.parseDouble(tuple[0].toString()));
+                minMaxZ.setMaxZ(Double.parseDouble(tuple[1].toString()));
+                
+            }
+            return minMaxZ;
+        }
+
+        @Override
+        @SuppressWarnings({ "rawtypes" })
+        public List transformList(List collection) {
+            return collection;
+        }
     }
 }

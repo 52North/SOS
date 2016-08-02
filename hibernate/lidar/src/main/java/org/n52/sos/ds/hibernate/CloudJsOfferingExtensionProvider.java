@@ -32,14 +32,25 @@ import java.util.Set;
 
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.simpleType.SweCount;
+import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.ogc.swes.OfferingExtensionKey;
 import org.n52.sos.ogc.swes.OfferingExtensionProvider;
+import org.n52.sos.ogc.swes.SwesExtension;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Envelope;
+
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +58,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionFactoryImpl;
+import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class CloudJsOfferingExtensionProvider implements OfferingExtensionProvider {
@@ -65,34 +77,45 @@ public class CloudJsOfferingExtensionProvider implements OfferingExtensionProvid
 
     @Override
     public SwesExtensions getOfferingExtensions(String identifier) {
-        SwesExtensions extensions = new SwesExtensions();
-        extensions.addSwesExtension(new SwesExtensionImpl<SweText>().setValue(
-                new SweText().setValue(getCloudJsForOffering(identifier))));
-        return extensions;
+        return getCloudJsForOffering(identifier);
     }
 
-    private String getCloudJsForOffering(String identifier) {
+    private SwesExtensions getCloudJsForOffering(String identifier) {
+        SwesExtensions extensions = new SwesExtensions();
+        
+//        extensions.addSwesExtension(new SwesExtensionImpl<SweText>().setValue(
+//                new SweText().setValue(getCloudJsForOffering(identifier))));
         try {
             Session session = sessionHolder.getSession();
-            Properties properties = ((SessionFactoryImpl) session.getSessionFactory()).getProperties();
-            String password = properties.getProperty("hibernate.connection.password");
-            String username = properties.getProperty("hibernate.connection.username");
-            String url = properties.getProperty("hibernate.connection.url");
             
-            CloudjsEntity uniqueResult = (CloudjsEntity) session.createCriteria(CloudjsEntity.class)
+            CloudjsEntity entity = (CloudjsEntity) session.createCriteria(CloudjsEntity.class)
                     .add(Restrictions.eq("offering", identifier))
                     .uniqueResult();
             
-            //LidarPostgreDB db = new LidarPostgreDB(
-            //      new PostgresSettings(url, "192.168.99.1", username, password));
-            // TODO get cloud.js for offering
-            //return db.getCloudJS(identifier);
-
-            return uniqueResult.getCloudjs();
+            extensions.addSwesExtension(createCubicBox(entity));
+            extensions.addSwesExtension(createScaleSpacingHierarchy(entity));
+            return extensions;
         } catch (OwsExceptionReport ex) {
             Logger.getLogger(CloudJsOfferingExtensionProvider.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    private SwesExtension<SosEnvelope> createCubicBox(CloudjsEntity entity) {
+        SosEnvelope envelope = new SosEnvelope();
+        envelope.setEnvelope(new Envelope(entity.getLx(), entity.getUx(), entity.getLy(), entity.getUy()));
+        envelope.setMinZ(entity.getLz()).setMaxZ(entity.getUz());
+        envelope.setSrid(GeometryHandler.getInstance().getStorageEPSG());
+        return new SwesExtensionImpl<SosEnvelope>().setValue(envelope).setNamespace(GmlConstants.NS_GML_32);
+    }
+
+    private SwesExtension<SweDataRecord> createScaleSpacingHierarchy(CloudjsEntity entity) {
+        SweDataRecord record = new SweDataRecord();
+        record.setDefinition("spacingScaleHierarchy");
+        record.addField(new SweField("spacing", new SweCount().setValue(entity.getSpacing()).setDefinition("spacing")));
+        record.addField(new SweField("scale", new SweQuantity().setValue(entity.getScale()).setDefinition("scale")));
+        record.addField(new SweField("hierarchyStepSize", new SweCount().setValue(entity.getHierarchystepsize()).setDefinition("hierarchyStepSize")));
+        return new SwesExtensionImpl<SweDataRecord>().setValue(record);
     }
 
     @Override

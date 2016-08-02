@@ -5,19 +5,38 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.CloudjsEntity" 
            table="patches_cloudjs">
-        <comment>Table to store the gml:identifier and gml:name codespace information. Mapping file: mapping/core/Codespace.hbm.xml</comment>
-        <id name="offering"
-            type="string">
-            <column name="offering_id">
-                <comment>Table primary key, used for relations</comment>
-            </column>
+        <id name="offering"  type="string">
+            <column name="offering_id" />
         </id>
-        <property name="cloudjs"
-                  type="string">
-            <column name="cloudjs"
-                    not-null="true">
-                <comment>The codespace value</comment>
-            </column>
+        <property name="cloudjs" type="string" >
+            <column name="cloudjs" not-null="true" />
+        </property>
+        <property name="lx" type="double" >
+            <column name="lx" not-null="true" />
+        </property>
+        <property name="ly" type="double" >
+            <column name="ly" not-null="true" />
+        </property>
+        <property name="lz" type="double" >
+            <column name="lz" not-null="true" />
+        </property>
+        <property name="ux" type="double" >
+            <column name="ux" not-null="true" />
+        </property>
+        <property name="uy" type="double" >
+            <column name="uy" not-null="true" />
+        </property>
+        <property name="uz" type="double" >
+            <column name="uz" not-null="true" />
+        </property>
+        <property name="spacing" type="int" >
+            <column name="spacing" not-null="true" />
+        </property>
+        <property name="scale" type="double" >
+            <column name="scale" not-null="true" />
+        </property>
+        <property name="hierarchystepsize" type="int" >
+            <column name="hierarchystepsize" not-null="true" />
         </property>
     </class>
 </hibernate-mapping>

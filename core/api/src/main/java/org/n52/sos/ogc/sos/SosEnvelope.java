@@ -49,6 +49,10 @@ public class SosEnvelope implements Serializable {
      */
     private Envelope envelope;
 
+    private Double minZ;
+
+    private Double maxZ;
+
     /**
      * SRID
      */
@@ -82,7 +86,8 @@ public class SosEnvelope implements Serializable {
     /**
      * Expand this envelope to include the given envelope.
      *
-     * @param e the envelope (may be <code>null</code>)
+     * @param e
+     *            the envelope (may be <code>null</code>)
      */
     public void expandToInclude(final Envelope e) {
         if (e != null) {
@@ -97,7 +102,8 @@ public class SosEnvelope implements Serializable {
     /**
      * Expand this envelope to include the given envelope.
      *
-     * @param e the envelope (may be <code>null</code>)
+     * @param e
+     *            the envelope (may be <code>null</code>)
      */
     public void expandToInclude(final SosEnvelope e) {
         if (e != null && e.isSetEnvelope()) {
@@ -140,43 +146,79 @@ public class SosEnvelope implements Serializable {
         return this;
     }
 
+    /**
+     * @return the minZ
+     */
+    public Double getMinZ() {
+        return minZ;
+    }
+
+    /**
+     * @param minZ
+     *            the minZ to set
+     */
+    public SosEnvelope setMinZ(Double minZ) {
+        this.minZ = minZ;
+        return this;
+    }
+
+    /**
+     * @return the maxZ
+     */
+    public Double getMaxZ() {
+        return maxZ;
+    }
+
+    /**
+     * @param maxZ
+     *            the maxZ to set
+     */
+    public SosEnvelope setMaxZ(Double maxZ) {
+        this.maxZ = maxZ;
+        return this;
+    }
+
+    public boolean isSetMinMaxZ() {
+        return getMinZ() != null && getMaxZ() != null;
+    }
+
     public boolean isSetEnvelope() {
         return getEnvelope() != null && !getEnvelope().isNull();
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((getEnvelope() == null) ? 0 : getEnvelope().hashCode());
-		result = prime * result + getSrid();
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getEnvelope() == null) ? 0 : getEnvelope().hashCode());
+        result = prime * result + getSrid();
+        return result;
+    }
 
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof SosEnvelope)) {
-			return false;
-		}
-		final SosEnvelope other = (SosEnvelope) obj;
-		if (getEnvelope() == null) {
-			if (other.getEnvelope() != null) {
-				return false;
-			}
-		} else if (!getEnvelope().equals(other.getEnvelope())) {
-			return false;
-		}
-		if (getSrid() != other.getSrid()) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof SosEnvelope)) {
+            return false;
+        }
+        final SosEnvelope other = (SosEnvelope) obj;
+        if (getEnvelope() == null) {
+            if (other.getEnvelope() != null) {
+                return false;
+            }
+        } else if (!getEnvelope().equals(other.getEnvelope())) {
+            return false;
+        }
+        if (getSrid() != other.getSrid()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
@@ -197,7 +239,8 @@ public class SosEnvelope implements Serializable {
     /**
      * Switches the coordinates of this Envelope if needed.
      *
-     * @param srid SRID to check axis order for
+     * @param srid
+     *            SRID to check axis order for
      * @return this
      *
      * @see GeometryHandler#isNorthingFirstEpsgCode(int)
@@ -205,16 +248,21 @@ public class SosEnvelope implements Serializable {
     @Deprecated
     public SosEnvelope switchCoordinatesIfNeeded() {
         if (isSetEnvelope() && getGeometryHandler().isNorthingFirstEpsgCode(getSrid())) {
-            this.envelope = new Envelope(getEnvelope().getMinY(),
-                    getEnvelope().getMaxY(),
-                    getEnvelope().getMinX(),
+            this.envelope = new Envelope(getEnvelope().getMinY(), getEnvelope().getMaxY(), getEnvelope().getMinX(),
                     getEnvelope().getMaxX());
-                }
+        }
         return this;
     }
+    
+    public SosEnvelope clone() {
+        if (isSetEnvelope()) {
+            return new SosEnvelope(new Envelope(getEnvelope()), getSrid()).setMinZ(getMinZ()).setMaxZ(getMaxZ());
+        }
+        return new SosEnvelope(null, getSrid()).setMinZ(getMinZ()).setMaxZ(getMaxZ());
+    }
 
-	protected GeometryHandler getGeometryHandler() {
-		return GeometryHandler.getInstance();
-	}
+    protected GeometryHandler getGeometryHandler() {
+        return GeometryHandler.getInstance();
+    }
 
 }

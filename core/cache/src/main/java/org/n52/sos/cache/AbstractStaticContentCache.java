@@ -198,7 +198,7 @@ public abstract class AbstractStaticContentCache implements ContentCache {
             return null;
         } else {
             return new SosEnvelope(e.getEnvelope() == null ? null
-                                   : new Envelope(e.getEnvelope()), e.getSrid());
+                                   : new Envelope(e.getEnvelope()), e.getSrid()).setMinZ(e.getMinZ()).setMaxZ(e.getMaxZ());
         }
     }
 

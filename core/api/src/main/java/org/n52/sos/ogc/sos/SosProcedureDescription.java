@@ -393,4 +393,20 @@ public abstract class SosProcedureDescription extends AbstractFeature {
     public String getObservablePropertyNameFor(String observableProperty) {
         return null;
     }
+
+    public boolean isSetMobile() {
+        return false;
+    }
+
+    public boolean getMobile() {
+        return false;
+    }
+
+    public boolean isSetInsitu() {
+        return false;
+    }
+
+    public boolean getInsitu() {
+        return true;
+    }
 }

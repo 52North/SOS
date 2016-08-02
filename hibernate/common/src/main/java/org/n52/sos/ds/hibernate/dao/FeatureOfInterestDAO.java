@@ -68,7 +68,13 @@ import org.n52.sos.util.http.HTTPStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
 
 /**
  * Hibernate data access class for featureOfInterest
@@ -206,7 +212,7 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
         if (identifiers != null && !identifiers.isEmpty()) {
             Criteria criteria =
                     session.createCriteria(FeatureOfInterest.class)
-                    .add(QueryHelper.getCriterionForFoiIds(FeatureOfInterest.IDENTIFIER, identifiers));
+                    .add(QueryHelper.getCriterionForIdentifiers(FeatureOfInterest.IDENTIFIER, identifiers));
             LOGGER.debug("QUERY getFeatureOfInterestObject(identifiers): {}", HibernateHelper.getSqlString(criteria));
             return criteria.list();
         }
@@ -376,5 +382,28 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     featureOfInterest != null ? featureOfInterest.getClass().getName() : featureOfInterest).setStatus(
                     BAD_REQUEST);
         }
+    }
+
+    public void updateFeatureOfInterestGeometry(FeatureOfInterest featureOfInterest, Geometry geom, Session session) {
+        if (featureOfInterest.isSetGeometry()) {
+            if (geom instanceof Point) {
+                List<Coordinate> coords = Lists.newArrayList();
+                if (featureOfInterest.getGeom() instanceof Point) {
+                    coords.add(featureOfInterest.getGeom().getCoordinate());
+                } else if (featureOfInterest.getGeom() instanceof LineString) {
+                    coords.addAll(Lists.newArrayList(featureOfInterest.getGeom().getCoordinates()));
+                }
+                if (!coords.isEmpty()) {
+                    coords.add(geom.getCoordinate());
+                    Geometry newGeometry =
+                            new GeometryFactory().createLineString(coords.toArray(new Coordinate[coords.size()]));
+                    newGeometry.setSRID(featureOfInterest.getGeom().getSRID());
+                    featureOfInterest.setGeom(newGeometry);
+                }
+            }
+        } else {
+            featureOfInterest.setGeom(geom);
+        }
+        session.saveOrUpdate(featureOfInterest);
     }
 }

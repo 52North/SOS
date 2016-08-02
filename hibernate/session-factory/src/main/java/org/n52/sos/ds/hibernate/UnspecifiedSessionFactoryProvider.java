@@ -45,6 +45,7 @@ import org.n52.sos.ds.Datasource;
 import org.n52.sos.ds.DatasourceCallback;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.type.ConfigurableTimestampType;
+import org.n52.sos.ds.hibernate.type.IsoStringTimestampType;
 import org.n52.sos.ds.hibernate.type.UtcTimestampType;
 import org.n52.sos.ds.hibernate.util.HibernateMetadataCache;
 import org.n52.sos.exception.ConfigurationException;
@@ -165,8 +166,10 @@ public abstract class UnspecifiedSessionFactoryProvider extends AbstractSessionF
                 && !properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE).isEmpty()) {
             configuration.registerTypeOverride(
                     new ConfigurableTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)));
+            configuration.registerTypeOverride(new IsoStringTimestampType(properties.getProperty(HIBERNATE_DATASOURCE_TIMEZONE)), IsoStringTimestampType.getKeys());
         } else {
             configuration.registerTypeOverride(new UtcTimestampType());
+            configuration.registerTypeOverride(new IsoStringTimestampType(), IsoStringTimestampType.getKeys());
         }
     }
 

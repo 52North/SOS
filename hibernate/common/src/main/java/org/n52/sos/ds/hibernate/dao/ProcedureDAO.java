@@ -889,6 +889,12 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             }
             tProcedure.setIsType(isType);
             tProcedure.setIsAggregation(procedureDescription.isAggragation());
+            if (procedureDescription.isSetMobile()) {
+                tProcedure.setMobile(procedureDescription.getMobile());
+            }
+            if (procedureDescription.isSetInsitu()) {
+                tProcedure.setInsitu(procedureDescription.getInsitu());
+            }
             procedure = tProcedure;
         }
         procedure.setDeleted(false);

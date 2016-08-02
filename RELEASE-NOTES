@@ -43,6 +43,7 @@ RELEASE NOTES
  
     * Issue #427: Check and remove lazy and fetch attributes from Hibernate mapping files
     * Change XML validation to validate encoded objects only if debug log level is enabled.
+    * Update REST-API version of bundle to 1.8.0
   
   --- Fixed issues ---
   
@@ -59,6 +60,7 @@ RELEASE NOTES
     * Issue #416: Test Client - wrong type of the wml2:metadata element?
     * Issue #417: REST InsertObservation does not permit resultTime specified as xlink
     * Issue #418: REST binding does not work with enabled transactional security
+    * Issue #424: AQD GetObservation executes a query for each series to get min/max phenomenonTime
     * Issue #426: Add OGC-SOS 1.0.0 GetObservation resultModel support
     
 

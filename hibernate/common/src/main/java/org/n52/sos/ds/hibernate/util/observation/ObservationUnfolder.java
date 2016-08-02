@@ -262,6 +262,7 @@ public class ObservationUnfolder {
         		newObservation.setResultTime(new TimeInstant(((TimePeriod)phenomenonTime).getEnd()));
         	}
         }
+        newObservation.setSeriesType(multiObservation.getSeriesType());
         newObservation.setTokenSeparator(multiObservation.getTokenSeparator());
         newObservation.setTupleSeparator(multiObservation.getTupleSeparator());
         newObservation.setDecimalSeparator(multiObservation.getDecimalSeparator());

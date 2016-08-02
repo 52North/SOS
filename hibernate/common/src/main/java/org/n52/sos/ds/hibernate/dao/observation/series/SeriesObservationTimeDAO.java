@@ -49,56 +49,52 @@ import org.n52.sos.util.CollectionHelper;
  */
 public class SeriesObservationTimeDAO extends AbstractObservationTimeDAO {
 
-	/**
-	 * Create criteria for series
-	 *
-	 * @param clazz
-	 *            Class to query
-	 * @param series
-	 *            Series to get values for
-	 * @param session
-	 *            Hibernate session
-	 * @return Criteria for series
-	 */
-	private Criteria createCriteriaFor(Class<?> clazz, Series series,
-			Session session) {
-		final Criteria criteria = session.createCriteria(clazz)
-				.add(Restrictions.eq(TemporalReferencedLegacyObservation.DELETED, false))
-				.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-		criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
-		return criteria;
-	}
+    /**
+     * Create criteria for series
+     *
+     * @param clazz
+     *            Class to query
+     * @param series
+     *            Series to get values for
+     * @param session
+     *            Hibernate session
+     * @return Criteria for series
+     */
+    private Criteria createCriteriaFor(Class<?> clazz, Series series, Session session) {
+        final Criteria criteria =
+                session.createCriteria(clazz).add(Restrictions.eq(TemporalReferencedLegacyObservation.DELETED, false))
+                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+        criteria.add(Restrictions.eq(TemporalReferencedSeriesObservation.SERIES, series));
+        return criteria;
+    }
 
-	/**
-	 * Create criteria to get min/max time values for a series
-	 *
-	 * @param series
-	 *            Series to get time values for
+    /**
+     * Create criteria to get min/max time values for a series
+     *
+     * @param series
+     *            Series to get time values for
      * @param offerings
      *            the offerings
-	 * @param session
-	 *            Hibernate session
-	 * @return Criteria for time values
-	 */
-	public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(
-			Series series, Collection<String> offerings, Session session) {
-		Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class,
-				series, session);
-		if (CollectionHelper.isNotEmpty(offerings)) {
-			criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS).add(
-					Restrictions.in(Offering.IDENTIFIER, offerings));
-		}
-		criteria.setProjection(Projections
-				.projectionList()
-				.add(Projections
-						.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
-				.add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
-		return criteria;
-	}
+     * @param session
+     *            Hibernate session
+     * @return Criteria for time values
+     */
+    public Criteria getMinMaxTimeCriteriaForSeriesGetDataAvailabilityDAO(Series series, Collection<String> offerings,
+            Session session) {
+        Criteria criteria = createCriteriaFor(TemporalReferencedSeriesObservation.class, series, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            criteria.createCriteria(TemporalReferencedSeriesObservation.OFFERINGS)
+                    .add(Restrictions.in(Offering.IDENTIFIER, offerings));
+        }
+        criteria.setProjection(Projections.projectionList()
+                .add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START))
+                .add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END)));
+        return criteria;
+    }
 
-	@Override
-	protected Class<?> getObservationTimeClass() {
-		return TemporalReferencedSeriesObservation.class;
-	}
+    @Override
+    protected Class<?> getObservationTimeClass() {
+        return TemporalReferencedSeriesObservation.class;
+    }
 
 }

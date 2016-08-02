@@ -37,6 +37,7 @@ import static org.n52.sos.service.ServiceSettings.SERVICE_URL;
 import static org.n52.sos.service.ServiceSettings.STRICT_SPATIAL_FILTERING_PROFILE;
 import static org.n52.sos.service.ServiceSettings.VALIDATE_RESPONSE;
 
+import java.io.File;
 import java.net.URI;
 import java.util.Locale;
 
@@ -154,6 +155,12 @@ public class ServiceConfiguration {
     private boolean streamingEncoding = true;
 
     private boolean includeChildObservableProperties = false;
+    
+    private boolean updateFeatureGeometry = false;
+
+    private File cacheFileFolder;
+
+    private boolean createFeatureGeometryFromSamplingGeometries = false;
 
     /**
      * Returns the default token seperator for results.
@@ -475,7 +482,39 @@ public class ServiceConfiguration {
     public void setIncludeChildObservableProperties(boolean include) {
         this.includeChildObservableProperties = include;
     }
+    
+    @Setting(ServiceSettings.UPDATE_FEATURE_GEOMETRY)
+    public void setUpdateFeatureGeometry(boolean updateFeatureGeometry) {
+        this.updateFeatureGeometry = updateFeatureGeometry;
+    }
 
+    public boolean isUpdateFeatureGeometry() {
+        return this.updateFeatureGeometry;
+    }
+
+    /**
+     * @return the cacheFileFolder
+     */
+    public File getCacheFileFolder() {
+        return cacheFileFolder;
+    }
+
+    /**
+     * @param cacheFileFolder the cacheFileFolder to set
+     */
+    @Setting(ServiceSettings.CACHE_FILE_FOLDER)
+    public void setCacheFileFolder(File cacheFileFolder) {
+        this.cacheFileFolder = cacheFileFolder;
+    }
+    
+    @Setting(ServiceSettings.CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS)
+    public void setCreateFeatureGeometryFromSamplingGeometries(boolean createFeatureGeometryFromSamplingGeometries) {
+        this.createFeatureGeometryFromSamplingGeometries  = createFeatureGeometryFromSamplingGeometries;
+    }
+
+    public boolean isCreateFeatureGeometryFromSamplingGeometries() {
+        return createFeatureGeometryFromSamplingGeometries;
+    }
 
     /*
      * Now, we return the list of returned features and not a complex encoded

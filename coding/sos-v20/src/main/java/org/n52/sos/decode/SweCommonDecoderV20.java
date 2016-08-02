@@ -39,7 +39,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.n52.sos.exception.CodedException;
@@ -85,6 +84,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import net.opengis.swe.x20.AbstractDataComponentDocument;
 import net.opengis.swe.x20.AbstractDataComponentType;
@@ -111,6 +111,7 @@ import net.opengis.swe.x20.DataRecordPropertyType;
 import net.opengis.swe.x20.DataRecordType;
 import net.opengis.swe.x20.DataRecordType.Field;
 import net.opengis.swe.x20.EncodedValuesPropertyType;
+import net.opengis.swe.x20.QualityPropertyType;
 import net.opengis.swe.x20.QuantityPropertyType;
 import net.opengis.swe.x20.QuantityRangeType;
 import net.opengis.swe.x20.QuantityType;
@@ -385,6 +386,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         if (xbBoolean.isSetValue()) {
             sosBoolean.setValue(xbBoolean.getValue());
         }
+        if (xbBoolean.getQualityArray() != null) {
+            sosBoolean.setQuality(parseQuality(xbBoolean.getQualityArray()));
+        }
         return sosBoolean;
     }
 
@@ -398,6 +402,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         if (xbCategory.isSetConstraint()) {
             sosSweCategory.setConstraint(parseConstraint(xbCategory.getConstraint()));
+        }
+        if (xbCategory.getQualityArray() != null) {
+            sosSweCategory.setQuality(parseQuality(xbCategory.getQualityArray()));
         }
         return sosSweCategory;
     }
@@ -464,6 +471,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
     	if (quantityRange.isSetConstraint()) {
     	    sweQuantityRange.setConstraint(parseConstraint(quantityRange.getConstraint()));
         }
+    	if (quantityRange.getQualityArray() != null) {
+    	    sweQuantityRange.setQuality(parseQuality(quantityRange.getQualityArray()));
+        }
         return sweQuantityRange;
     }
 
@@ -498,6 +508,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         if (xbTime.isSetConstraint()) {
             sosTime.setConstraint(parseConstraint(xbTime.getConstraint()));
         }
+        if (xbTime.getQualityArray() != null) {
+            sosTime.setQuality(parseQuality(xbTime.getQualityArray()));
+        }
         return sosTime;
     }
 
@@ -523,6 +536,9 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         }
         if (xbTime.isSetConstraint()) {
             sosTimeRange.setConstraint(parseConstraint(xbTime.getConstraint()));
+        }
+        if (xbTime.getQualityArray() != null) {
+            sosTimeRange.setQuality(parseQuality(xbTime.getQualityArray()));
         }
         return sosTimeRange;
     }
@@ -691,11 +707,23 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
         return allowedTimes;
     }
 
-    private Collection<SweQuality> parseQuality(final XmlObject[] qualityArray) throws OwsExceptionReport {
+    private Collection<SweQuality> parseQuality(final QualityPropertyType... qualityArray) throws OwsExceptionReport {
         if (qualityArray == null || qualityArray.length == 0) {
-            return null;
+            final ArrayList<SweQuality> sosQualities = Lists.newArrayListWithCapacity(qualityArray.length);
+            for (final QualityPropertyType quality : qualityArray) {
+                if (quality.isSetQuantity()) {
+                    sosQualities.add((SweQuality) parseQuantity(quality.getQuantity()));
+                } else if (quality.isSetQuantityRange()) {
+                    sosQualities.add((SweQuality) parseQuantityRange(quality.getQuantityRange()));
+                } else if (quality.isSetCategory()) {
+                    sosQualities.add((SweQuality) parseCategory(quality.getCategory()));
+                } else if (quality.isSetText()) {
+                    sosQualities.add((SweQuality) parseText(quality.getText()));
+                }
+            }
+            return sosQualities;
         }
-        throw new NotYetSupportedException(SweConstants.EN_QUALITY);
+        return Collections.emptyList();
     }
 
     private SweAbstractDataComponent parseVector(final VectorType vector) throws OwsExceptionReport {

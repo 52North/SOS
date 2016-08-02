@@ -54,6 +54,7 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
+import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ds.hibernate.values.HibernateChunkStreamingValue;
@@ -132,7 +133,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
                     && CollectionHelper.isEmpty(sosRequest.getFirstLatestTemporalFilter())) {
                 // TODO
                 if (EntitiyHelper.getInstance().isSeriesSupported()) {
-                    sosResponse.setObservationCollection(querySeriesObservationForStreaming(sosRequest, session));
+                    sosResponse.setObservationCollection(querySeriesObservationForStreaming(sosRequest, sosResponse, session));
                 } else {
                     sosResponse.setObservationCollection(queryObservationForStreaming(sosRequest, session));
                 }
@@ -427,6 +428,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *
      * @param request
      *            The GetObservation request
+     * @param sosResponse 
      * @param session
      *            Hibernate Session
      * @return List of internal observations
@@ -436,7 +438,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
      *             If an error occurs during sensor description creation.
      */
     protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request,
-            final Session session) throws OwsExceptionReport, ConverterException {
+            GetObservationResponse response, final Session session) throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
         // get valid featureOfInterest identifier
@@ -460,6 +462,12 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
             observationTemplate.setValue(streamingValue);
             result.add(observationTemplate);
+        }
+        // query global response values
+        
+        ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
+        if (timeExtrema.isSetPhenomenonTimes()) {
+            response.setGlobalValues(response.new GlobalGetObservationValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;

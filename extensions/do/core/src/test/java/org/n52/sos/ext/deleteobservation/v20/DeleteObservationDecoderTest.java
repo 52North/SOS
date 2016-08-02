@@ -26,13 +26,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ext.deleteobservation;
+package org.n52.sos.ext.deleteobservation.v20;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
-import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
+import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_2_0;
 import static org.n52.sos.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
 import static org.n52.sos.util.CodingHelper.xmlDecoderKeysForOperation;
@@ -40,16 +40,15 @@ import static org.n52.sos.util.CollectionHelper.union;
 
 import java.util.Set;
 
-import net.opengis.sosdo.x10.DeleteObservationDocument;
+import net.opengis.sosdo.x20.DeleteObservationDocument;
 
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.n52.sos.config.SettingsManager;
 import org.n52.sos.decode.DecoderKey;
+import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
+import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos2Constants;
 
@@ -75,14 +74,12 @@ public class DeleteObservationDecoderTest {
      */
     private static DeleteObservationDocument correctXmlObject;
 
-    private static String observationId = "test_obs_id";
-
     @SuppressWarnings("unchecked")
     @BeforeClass
     public static void initFixtures() {
         incorrectXmlObject = XmlObject.Factory.newInstance();
         dkt =
-                union(decoderKeysForElements(NS_SOSDO_1_0, DeleteObservationDocument.class),
+                union(decoderKeysForElements(NS_SOSDO_2_0, DeleteObservationDocument.class),
                         xmlDecoderKeysForOperation(SOS, Sos2Constants.SERVICEVERSION,
                                 DeleteObservationConstants.Operations.DeleteObservation));
     }
@@ -91,7 +88,7 @@ public class DeleteObservationDecoderTest {
     public void initInstance() {
         instance = new DeleteObservationDecoder();
         correctXmlObject = DeleteObservationDocument.Factory.newInstance();
-        correctXmlObject.addNewDeleteObservation().setObservation(observationId);
+        correctXmlObject.addNewDeleteObservation();
     }
 
     @Test
@@ -136,8 +133,6 @@ public class DeleteObservationDecoderTest {
         String className = DeleteObservationRequest.class.getName();
         assertNotNull("Decoding of correct XmlObject returned null", instance.decode(correctXmlObject));
         assertEquals("Class of Result ", className, instance.decode(correctXmlObject).getClass().getName());
-        assertEquals("Id of observation to delete", observationId, instance.decode(correctXmlObject)
-                .getObservationIdentifier());
     }
 
     @Test(expected = OwsExceptionReport.class)

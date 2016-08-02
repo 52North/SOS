@@ -38,8 +38,10 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -57,6 +59,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.sos.ds.hibernate.dao.AbstractIdentifierNameDescriptionDAO;
 import org.n52.sos.ds.hibernate.dao.CodespaceDAO;
+import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationTypeDAO;
@@ -72,8 +75,17 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
+import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CategoryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.ComplexObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.CountObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
+import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ParameterFactory;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -258,6 +270,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     public abstract Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session);
 
+    public abstract ScrollableResults getObservations(Set<String> procedure, Set<String> observableProperty,
+            Set<String> featureOfInterest, Set<String> offering, Criterion filterCriterion, Session session);
+
     /**
      * Get Hibernate Criteria for {@link TemporalReferencedObservation}  with restrictions observation identifiers
      *
@@ -282,6 +297,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         Criteria criteria = getDefaultObservationCriteria(session);
         addObservationIdentifierToCriteria(criteria, identifier, session);
         return (Observation<?>) criteria.uniqueResult();
+    }
+    
+    /**
+     * Query observation by identifiers
+     *
+     * @param identifiers
+     *            Observation identifiers (gml:identifier)
+     * @param session
+     *            Hiberante session
+     * @return Observation
+     */
+    @SuppressWarnings("unchecked")
+    public List<Observation<?>> getObservationByIdentifiers(Set<String> identifiers, Session session) {
+        Criteria criteria = getDefaultObservationCriteria(session);
+        addObservationIdentifierToCriteria(criteria, identifiers, session);
+        return criteria.list();
     }
 
     /**
@@ -610,6 +641,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      */
     protected void addObservationIdentifierToCriteria(Criteria criteria, String identifier, Session session) {
         criteria.add(Restrictions.eq(Observation.IDENTIFIER, identifier));
+    }
+    
+    /**
+     * Add observation identifiers (gml:identifier) to Hibernate Criteria
+     *
+     * @param criteria
+     *            Hibernate Criteria
+     * @param identifiers
+     *            Observation identifiers (gml:identifier)
+     * @param session
+     *            Hibernate session
+     */
+    protected void addObservationIdentifierToCriteria(Criteria criteria, Set<String> identifiers, Session session) {
+        criteria.add(Restrictions.in(AbstractObservation.IDENTIFIER, identifiers));
     }
 
     // /**
@@ -1265,6 +1310,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     private static class ObservationPersister
             implements ValueVisitor<Observation<?>> {
+        private static final ObservationVisitor<String> SERIES_TYPE_VISITOR = new SeriesTypeVisitor();
         private final Set<ObservationConstellation> observationConstellations;
         private final FeatureOfInterest featureOfInterest;
         private final Caches caches;
@@ -1483,6 +1529,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             daos.observation().addTime(sosObservation, observation);
 
             observation.setSamplingGeometry(samplingGeometry);
+            checkUpdateFeatureOfInterestGeometry();
 
             ObservationContext observationContext = daos.observation().createObservationContext();
             Set<Offering> offerings = observation.getOfferings();
@@ -1509,7 +1556,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             }
             // set value before ObservationContext is added otherwise the first/last value is not updated in series table.
             observation.setValue(value);
-
+            if (sosObservation.isSetSeriesType()) {
+                observationContext.setSeriesType(sosObservation.getSeriesType());
+            } else {
+                observationContext.setSeriesType(observation.accept(SERIES_TYPE_VISITOR));  
+            }
+            if (childObservation) {
+                observationContext.setHiddenChild(true);
+            }
             observationContext.setFeatureOfInterest(featureOfInterest);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
@@ -1529,6 +1583,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             NamedValue<Geometry> spatialFilteringProfileParameter = sosObservation.getSpatialFilteringProfileParameter();
             Geometry geometry = spatialFilteringProfileParameter.getValue().getValue();
             return GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
+        }
+
+        private void checkUpdateFeatureOfInterestGeometry() {
+            if (samplingGeometry != null && ServiceConfiguration.getInstance().isUpdateFeatureGeometry()) {
+                new FeatureOfInterestDAO().updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
+            }
+            
         }
 
         private static class Caches {
@@ -1582,6 +1643,54 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
             public ParameterDAO parameter() {
                 return this.parameter;
+            }
+        }
+        
+        private static class SeriesTypeVisitor implements ObservationVisitor<String> {
+
+            @Override
+            public String visit(NumericObservation o) throws OwsExceptionReport {
+                return "measurement";
+            }
+
+            @Override
+            public String visit(BlobObservation o) throws OwsExceptionReport {
+                return "blob";
+            }
+
+            @Override
+            public String visit(BooleanObservation o) throws OwsExceptionReport {
+                return "boolean";
+            }
+
+            @Override
+            public String visit(CategoryObservation o) throws OwsExceptionReport {
+                return "category";
+            }
+
+            @Override
+            public String visit(ComplexObservation o) throws OwsExceptionReport {
+                return "complex";
+            }
+
+            @Override
+            public String visit(CountObservation o) throws OwsExceptionReport {
+                return "count";
+            }
+
+            @Override
+            public String visit(GeometryObservation o) throws OwsExceptionReport {
+                return "geometry";
+            }
+
+            @Override
+            public String visit(TextObservation o) throws OwsExceptionReport {
+                return "text";
+            }
+
+            @Override
+            public String visit(SweDataArrayObservation o) throws OwsExceptionReport {
+                return "swedataarray";
             }
         }
     }

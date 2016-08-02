@@ -47,8 +47,6 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.internal.SessionFactoryImpl;
-import org.n52.lidar.importer.core.db.LidarPostgreDB;
-import org.n52.lidar.importer.core.db.PostgresSettings;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
 public class CloudJsOfferingExtensionProvider implements OfferingExtensionProvider {

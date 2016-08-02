@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 10.07.2012 15:18:27 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="org.n52.sos.ds.hibernate.PatchEntity" table="patches_new">
+        <id name="id" type="long">
+            <column name="id" not-null="true" />
+            <generator class="assigned" />
+        </id>
+        <property name="pa" type="org.hibernate.spatial.GeometryType" >
+            <column name="pa" not-null="true" read="Geometry(pa)" />
+        </property>
+        <property name="feature_id" type="string">
+            <column name="feature_id" not-null="true" />
+        </property>
+        <property name="pcid" type="integer">
+            <column name="pa" read="PC_PCId"/>
+        </property>
+    </class>
+</hibernate-mapping>

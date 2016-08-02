@@ -40,28 +40,22 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.spatial.criterion.SpatialProjections;
-
 import org.n52.sos.config.annotation.Configurable;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.I18NDAO;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
-import org.n52.sos.ds.hibernate.util.HibernateConstants;
-import org.n52.sos.ds.hibernate.util.HibernateGeometryCreator;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
@@ -79,32 +73,24 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosEnvelope;
 import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.io.ParseException;
-import com.vividsolutions.jts.io.WKBReader;
 
 
 @Configurable
 public class HibernateFeatureQueryHandler implements FeatureQueryHandler, HibernateSqlQueryConstants {
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateFeatureQueryHandler.class);
     private static final String SQL_QUERY_GET_ENVELOP = "getEnvelope";
-
+    private static final String PATCH_FEATURE_ID = "feature_id";
+    private static final String PATCH_GEOM = "pa";
     @Deprecated
     @Override
     public AbstractFeature getFeatureByID(String featureID, Object connection, String version)
@@ -213,27 +199,22 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
         if (queryObject.isSetFeatureIdentifiers()) {
             try {
-                Object uniqueResult = null;
-                if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_GET_ENVELOP, session)) {
-                    Query namedQuery = session.getNamedQuery(SQL_QUERY_GET_ENVELOP);
-                    namedQuery.setParameterList(HibernateSqlQueryConstants.FEATURES, queryObject.getFeatureIdentifiers());
-                    LOGGER.debug("QUERY getEnvelope(features) with NamedQuery: {}", namedQuery);
-                    uniqueResult = namedQuery.uniqueResult();
-                } else {
-                    // PC_Envelope(column) FROM table WHERE feaure_id IN (...);
-                    uniqueResult = session.createSQLQuery("SELECT PC_Envelope(pa) FROM patches_new WHERE feaure_id IN (" + getFeatureList(queryObject.getFeatureIdentifiers()) + ")").uniqueResult();
-                }
-                if (uniqueResult != null) {
-                    WKBReader reader = new WKBReader();
-                    Geometry geom = reader.read(uniqueResult.toString().getBytes());
-                    
-                    return new SosEnvelope(geom.getEnvelopeInternal(), geom.getSRID());
+                Geometry geom =
+                        (Geometry) session
+                                .createCriteria(PatchEntity.class)
+                                .add(QueryHelper.getCriterionForFoiIds(PATCH_FEATURE_ID,
+                                        queryObject.getFeatureIdentifiers()))
+                                .setProjection(SpatialProjections.extent(PATCH_GEOM))
+                                .uniqueResult();
+         
+                if (geom != null) {
+                    int srid = geom.getSRID() > 0 ? geom.getSRID() : getStorageEPSG();
+                    geom.setSRID(srid);
+                    geom = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geom);
+                    return new SosEnvelope(geom.getEnvelopeInternal(), srid);
                 }
             } catch (final HibernateException he) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(
-                        "Exception thrown while requesting global feature envelope");
-            } catch (ParseException e) {
-                throw new NoApplicableCodeException().causedBy(e).withMessage(
                         "Exception thrown while requesting global feature envelope");
             }
         }
@@ -510,70 +491,12 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
      * @throws OwsExceptionReport
      */
     protected Geometry getGeomtery(final FeatureOfInterest feature, Session session) throws OwsExceptionReport {
-//        if (feature.isSetGeometry()) {
-//            return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(feature.getGeom());
-//        } else if (feature.isSetLongLat()) {
-//            return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(
-//                    new HibernateGeometryCreator(getStorageEPSG(), getStorage3DEPSG()).createGeometry(feature));
-////            int epsg = getStorageEPSG();
-////            if (feature.isSetSrid()) {
-////                epsg = feature.getSrid();
-////            }
-////            final String wktString =
-////                    getGeometryHandler().getWktString(feature.getLongitude(), feature.getLatitude(), epsg);
-////            final Geometry geom = JTSHelper.createGeometryFromWKT(wktString, epsg);
-////            if (feature.isSetAltitude()) {
-////                geom.getCoordinate().z = JavaHelper.asDouble(feature.getAltitude());
-////                if (geom.getSRID() == getStorage3DEPSG()) {
-////                    geom.setSRID(getStorage3DEPSG());
-////                }
-////            }
-////            return geom;
-//            // return
-//            // getGeometryHandler().switchCoordinateAxisOrderIfNeeded(geom);
-//        } else {
-//            if (session != null) {
-//                int srid = getGeometryHandler().getStorageEPSG();
-//                if (DaoFactory.getInstance().getObservationDAO().getSamplingGeometriesCount(feature.getIdentifier(), session).longValue() > 100) {
-//                    Envelope envelope = DaoFactory.getInstance().getObservationDAO().getBboxFromSamplingGeometries(feature.getIdentifier(), session);
-//                    if (envelope != null) {
-//                        Geometry geometry = new GeometryFactory().toGeometry(envelope);
-//                        geometry.setSRID(srid);
-//                        geometry = getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry);
-//                    }
-//                } else {
-//                    List<Geometry> geometries = DaoFactory.getInstance().getObservationDAO().getSamplingGeometries(feature.getIdentifier(), session);
-//                    if (!CollectionHelper.nullEmptyOrContainsOnlyNulls(geometries)) {
-//                        List<Coordinate> coordinates = Lists.newLinkedList();
-//                        Geometry lastGeoemtry = null;
-//                        for (Geometry geometry : geometries) {
-//                            if (geometry != null && (lastGeoemtry == null || !geometry.equalsTopo(lastGeoemtry))) {
-//                                    coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-//                                lastGeoemtry = geometry;
-//                                if (geometry.getSRID() != srid) {
-//                                    srid = geometry.getSRID();
-//                                 }
-//                            }
-//                            if (geometry.getSRID() != srid) {
-//                               srid = geometry.getSRID();
-//                            }
-//                            if (!geometry.equalsTopo(lastGeoemtry)) {
-//                                coordinates.add(getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(geometry).getCoordinate());
-//                                lastGeoemtry = geometry;
-//                            }
-//                        }
-//                        Geometry geom = null;
-//                        if (coordinates.size() == 1) {
-//                            geom = new GeometryFactory().createPoint(coordinates.iterator().next());
-//                        } else {
-//                            geom = new GeometryFactory().createLineString(coordinates.toArray(new Coordinate[coordinates.size()]));
-//                        }
-//                        geom.setSRID(srid);
-//                        return geom;
-//                    }
-//                }
-//            }
-//        }
+        if (feature.isSetIdentifier()) {
+            Criteria c = session.createCriteria(PatchEntity.class);
+            c.add(Restrictions.eq(PATCH_FEATURE_ID, feature.getIdentifier()));
+            PatchEntity patchEntity = (PatchEntity)c.uniqueResult();
+            return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(patchEntity.getPa());
+        }
         return null;
     }
 
@@ -610,6 +533,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
     protected Map<String, AbstractFeature> getFeaturesForSpatialDatasource(FeatureQueryHandlerQueryObject queryObject)
             throws OwsExceptionReport {
         final Session session = HibernateSessionHolder.getSession(queryObject.getConnection());
+        DetachedCriteria geomFilter = null;
         final Criteria c =
                 session.createCriteria(FeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         boolean filtered = false;
@@ -618,15 +542,22 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             filtered = true;
         }
         if (queryObject.isSetSpatialFilters()) {
+            geomFilter = DetachedCriteria.forClass(PatchEntity.class);
             final Disjunction disjunction = Restrictions.disjunction();
             for (final SpatialFilter filter : queryObject.getSpatialFilters()) {
-                disjunction.add(SpatialRestrictions.filter(FeatureOfInterest.GEOMETRY, filter.getOperator(),
+                disjunction.add(SpatialRestrictions.filter(PATCH_GEOM, filter.getOperator(),
                         getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(filter.getGeometry())));
             }
-            c.add(disjunction);
+            geomFilter.add(disjunction);
+            geomFilter.setProjection(Projections.property(PATCH_FEATURE_ID));
             filtered = true;
         }
+        if (geomFilter != null) {
+            c.add(Subqueries.propertyIn(FeatureOfInterest.IDENTIFIER, geomFilter));
+        }
         if (filtered) {
+            LOGGER.debug(
+                    "QUERY getFeaturesForSpatialDatasource(): {}", HibernateHelper.getSqlString(c));
             return createSosFeatures(c.list(), queryObject, session);
         } else {
             return Collections.emptyMap();

@@ -14,9 +14,6 @@
         <property name="feature_id" type="string">
             <column name="feature_id" not-null="true" />
         </property>
-        <property name="pcid" type="integer" insert="false" update="false">
-            <column name="pa" read="PC_PCId"/>
-        </property>
         <property name="minz" type="double" insert="false" update="false">
             <column name="pa" read="PC_PatchMin(pa, 'Z')"/>
         </property>

@@ -35,7 +35,6 @@ public class PatchEntity {
     private long id;
     private Geometry pa;
     private String feature_id;
-    private int pcid;
     private double minz;
     private double maxz;
 
@@ -86,20 +85,6 @@ public class PatchEntity {
      */
     public void setFeature_id(String feature_id) {
         this.feature_id = feature_id;
-    }
-
-    /**
-     * @return the pcid
-     */
-    public int getPcid() {
-        return pcid;
-    }
-
-    /**
-     * @param pcid the pcid to set
-     */
-    public void setPcid(int pcid) {
-        this.pcid = pcid;
     }
 
     /**

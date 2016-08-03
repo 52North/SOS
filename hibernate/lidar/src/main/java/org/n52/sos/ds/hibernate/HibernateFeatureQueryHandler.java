@@ -503,7 +503,7 @@ public class HibernateFeatureQueryHandler implements FeatureQueryHandler, Hibern
             Criteria c = session.createCriteria(PatchEntity.class);
             c.add(Restrictions.eq(PATCH_FEATURE_ID, feature.getIdentifier()));
             LOGGER.debug(
-                    "QUERY getGeomtery(feature): {}", HibernateHelper.getSqlString(c));
+                    "QUERY getGeometry(feature): {}", HibernateHelper.getSqlString(c));
             PatchEntity patchEntity = (PatchEntity)c.uniqueResult();
             if (patchEntity.getPa() != null) {
                 return getGeometryHandler().switchCoordinateAxisFromToDatasourceIfNeeded(patchEntity.getPa());

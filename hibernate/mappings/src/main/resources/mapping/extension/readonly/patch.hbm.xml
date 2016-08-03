@@ -8,17 +8,17 @@
             <column name="id" not-null="true" />
             <generator class="assigned" />
         </id>
-        <property name="pa" type="org.hibernate.spatial.GeometryType" insert="false" update="false">
+        <property name="pa" type="org.hibernate.spatial.GeometryType">
             <column name="pa" not-null="true" read="Geometry(pa)" />
         </property>
         <property name="feature_id" type="string">
             <column name="feature_id" not-null="true" />
         </property>
         <property name="minz" type="double" insert="false" update="false">
-            <column name="pa" read="PC_PatchMin(pa, 'Z')"/>
+            <column name="minz" read="PC_PatchMin(pa, 'Z')" />
         </property>
         <property name="maxz" type="double" insert="false" update="false">
-            <column name="pa" read="PC_PatchMax(pa, 'Z')" />
+            <column name="maxz" read="PC_PatchMax(pa, 'Z')" />
         </property>
     </class>
 </hibernate-mapping>

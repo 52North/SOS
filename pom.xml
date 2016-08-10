@@ -72,7 +72,7 @@
         <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
         <geotools.version>14.0</geotools.version>
-        <jackson.version>2.3.3</jackson.version>
+        <jackson.version>2.7.3</jackson.version>
         <ojdbc6.version>11.2.0</ojdbc6.version>
         <sqljdbc4.version>4.0</sqljdbc4.version>
 

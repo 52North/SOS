@@ -51,7 +51,7 @@ import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
  */
 public class CoordianteTransformatorTest {
 
-	private final CoordianteTransformator transformer = new CoordianteTransformator();
+	private final CoordinateTransformator transformer = new CoordinateTransformator();
 
 	private final int EPSG = 4326;
 

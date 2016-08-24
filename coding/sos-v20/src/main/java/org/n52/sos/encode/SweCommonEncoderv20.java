@@ -258,7 +258,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
             return dataArrayProperty;
         }
         if ((abstractDataComponentType instanceof DataRecordType)) {
-            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION)) {
+            if (additionalValues.containsKey(HelperValues.FOR_OBSERVATION) || additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
                 final DataRecordPropertyType dataRecordProperty = DataRecordPropertyType.Factory.newInstance(getXmlOptions());
                 dataRecordProperty.setDataRecord((DataRecordType) abstractDataComponentType);
                 return dataRecordProperty;

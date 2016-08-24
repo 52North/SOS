@@ -33,13 +33,18 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.security.auth.login.CredentialException;
+
 import org.hibernate.dialect.Dialect;
+import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.postgis.PostgisDialectSpatialIndex;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -56,7 +61,7 @@ import com.google.common.collect.Lists;
  */
 public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDBDatasource {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPostgresDatasource.class);
 
     protected static final String POSTGRES_DRIVER_CLASS = "org.postgresql.Driver";
 
@@ -209,23 +214,31 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     @Override
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
+        CustomConfiguration config = getConfig(settings);
         Connection conn = null;
         Statement stmt = null;
-		try {
-			conn = openConnection(settings);
-			List<String> names = getQuotedSchemaTableNames(settings, conn);
-			if (!names.isEmpty()) {
-				stmt = conn.createStatement();
-				String sql = String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names));
-				LOGGER.debug("Executed clear datasource SQL statement: {}", sql);
-				stmt.execute(sql);
-			}
-		} catch (SQLException ex) {
-			throw new ConfigurationException(ex);
-		} finally {
-			close(stmt);
-			close(conn);
-		}
+        try {
+            conn = openConnection(settings);
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Iterator<Table> tables = config.getTableMappings();
+            List<String> names = new LinkedList<String>();
+            while (tables.hasNext()) {
+                Table table = tables.next();
+                if (table.isPhysicalTable()) {
+                    names.add(table.getQualifiedName(createDialect(), null, schema));
+                }
+            }
+            if (!names.isEmpty()) {
+                stmt = conn.createStatement();
+                stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
+            }
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(stmt);
+            close(conn);
+        }
     }
 
     @Override

@@ -91,6 +91,7 @@ import net.opengis.gml.x32.CodeType;
 import net.opengis.gml.x32.CodeWithAuthorityType;
 import net.opengis.gml.x32.DirectPositionListType;
 import net.opengis.gml.x32.DirectPositionType;
+import net.opengis.gml.x32.EnvelopeDocument;
 import net.opengis.gml.x32.EnvelopeType;
 import net.opengis.gml.x32.FeatureCollectionDocument;
 import net.opengis.gml.x32.FeatureCollectionType;
@@ -176,7 +177,7 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         } else if (element instanceof AbstractGeometry) {
             encodedObject = createGeomteryPropertyType((AbstractGeometry) element, additionalValues);
         } else if (element instanceof SosEnvelope) {
-            encodedObject = createEnvelope((SosEnvelope) element);
+            encodedObject = createEnvelope((SosEnvelope) element, additionalValues);
         } else if (element instanceof GenericMetaData) {
             encodedObject = createGenericMetaData((GenericMetaData) element, additionalValues);
         } else {
@@ -321,14 +322,18 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         return !(feature instanceof SamplingFeature);
     }
 
-    private XmlObject createEnvelope(final SosEnvelope sosEnvelope) {
-        final Envelope envelope = sosEnvelope.getEnvelope();
+    private XmlObject createEnvelope(final SosEnvelope sosEnvelope, Map<HelperValues, String> additionalValues) {
         final int srid = sosEnvelope.getSrid();
         final EnvelopeType envelopeType = EnvelopeType.Factory.newInstance();
-        final MinMax<String> minmax = SosHelper.getMinMaxFromEnvelope(envelope);
+        final MinMax<String> minmax = SosHelper.getMinMaxFromEnvelope(sosEnvelope);
         envelopeType.addNewLowerCorner().setStringValue(minmax.getMinimum());
         envelopeType.addNewUpperCorner().setStringValue(minmax.getMaximum());
         envelopeType.setSrsName(getSrsName(srid));
+        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE) || additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            EnvelopeDocument doc = EnvelopeDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+            doc.setEnvelope(envelopeType);
+            return doc;
+        }
         return envelopeType;
     }
 

@@ -128,7 +128,7 @@ import com.vividsolutions.jts.geom.Point;
  * @since 4.1.0
  * 
  */
-public class CoordianteTransformator implements
+public class CoordinateTransformator implements
         RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();

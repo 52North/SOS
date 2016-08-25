@@ -11,7 +11,7 @@
 	<name>52°North SOS - Webapp with Sensor Web REST API</name>
 	<description>52°North SOS webapp with Sensor Web REST API</description>
 	<properties>
-		<series.api.version>2.0.0-SNAPSHOT</series.api.version>
+		<series.api.version>2.0.0-alpha.1</series.api.version>
 	</properties>
 	<build>
 		<finalName>${conf.sos.name}##${project.version}</finalName>

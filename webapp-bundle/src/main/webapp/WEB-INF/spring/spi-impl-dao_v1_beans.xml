@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:ctx="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:ctx="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
         http://www.springframework.org/schema/mvc
@@ -14,39 +12,42 @@
     <mvc:annotation-driven />
     <ctx:annotation-config />
 
-    <bean id="categoryRepository" class="org.n52.series.db.da.v1.CategoryRepository" />
-    <bean id="featureRepository" class="org.n52.series.db.da.v1.FeatureRepository" />
-    <bean id="phenomenonRepository" class="org.n52.series.db.da.v1.PhenomenonRepository" />
-    <bean id="procedureRepository" class="org.n52.series.db.da.v1.ProcedureRepository" />
-    <bean id="stationRepository" class="org.n52.series.db.da.v1.StationRepository">
+    <bean name="serviceRepository" class="org.n52.series.db.da.ServiceRepository" />
+    <bean name="categoryRepository" class="org.n52.series.db.da.CategoryRepository" />
+    <bean name="featureRepository" class="org.n52.series.db.da.FeatureRepository" />
+    <bean name="phenomenonRepository" class="org.n52.series.db.da.PhenomenonRepository" />
+    <bean name="procedureRepository" class="org.n52.series.db.da.ProcedureRepository" />
+    <bean name="platformRepository" class="org.n52.series.db.da.PlatformRepository" />
+    <bean name="datasetRepository" class="org.n52.series.db.da.DatasetRepository" />
+    <bean name="geometriesRepository" class="org.n52.series.db.da.GeometriesRepository">
         <property name="databaseSrid" value="EPSG:4326" />
     </bean>
-    <bean id="timeseriesRepository" class="org.n52.series.db.da.v1.TimeseriesRepository" />
-    <bean id="serviceRepository" class="org.n52.series.db.da.v1.ServiceRepository" />
 
-    <bean id="serviceParameterService" class="org.n52.series.db.srv.v1.ServiceAccessService">
+    <bean id="serviceParameterService" class="org.n52.series.srv.ServiceAccessService">
         <constructor-arg index="0" ref="serviceRepository" />
-        <constructor-arg index="1" ref="timeseriesRepository" />
     </bean>
-    <bean id="offeringParameterService" class="org.n52.series.db.srv.v1.AccessService">
+    <bean id="platformParameterService" class="org.n52.series.srv.AccessService">
+        <constructor-arg index="0" ref="platformRepository" />
+    </bean>
+    <bean id="datasetService" class="org.n52.series.srv.DatasetAccessService">
+        <constructor-arg index="0" ref="datasetRepository" />
+    </bean>
+    <bean id="geometriesService" class="org.n52.series.srv.AccessService">
+        <constructor-arg index="0" ref="geometriesRepository" />
+    </bean>
+    <bean id="offeringParameterService" class="org.n52.series.srv.AccessService">
         <constructor-arg index="0" ref="procedureRepository" />
     </bean>
-    <bean id="categoryParameterService" class="org.n52.series.db.srv.v1.AccessService">
+    <bean id="categoryParameterService" class="org.n52.series.srv.AccessService">
         <constructor-arg index="0" ref="categoryRepository" />
     </bean>
-    <bean id="featureParameterService" class="org.n52.series.db.srv.v1.AccessService">
+    <bean id="featureParameterService" class="org.n52.series.srv.AccessService">
         <constructor-arg index="0" ref="featureRepository" />
     </bean>
-    <bean id="procedureParameterService" class="org.n52.series.db.srv.v1.AccessService">
+    <bean id="procedureParameterService" class="org.n52.series.srv.AccessService">
         <constructor-arg index="0" ref="procedureRepository" />
     </bean>
-    <bean id="phenomenonParameterService" class="org.n52.series.db.srv.v1.AccessService">
+    <bean id="phenomenonParameterService" class="org.n52.series.srv.AccessService">
         <constructor-arg index="0" ref="phenomenonRepository" />
-    </bean>
-    <bean id="stationParameterService" class="org.n52.series.db.srv.v1.AccessService">
-        <constructor-arg index="0" ref="stationRepository" />
-    </bean>
-    <bean id="timeseriesService" class="org.n52.series.db.srv.v1.TimeseriesAccessService">
-        <constructor-arg index="0" ref="timeseriesRepository" />
     </bean>
 </beans>

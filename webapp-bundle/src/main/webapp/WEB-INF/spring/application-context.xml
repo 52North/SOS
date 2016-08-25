@@ -9,21 +9,28 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 
+	<!-- 
+    <bean id="propertyPlaceholderConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:config-database.properties</value>
+            </list>
+        </property>
+    </bean>
+     -->
+
     <import resource="spi-impl-dao_common.xml"/>
 
-    <ctx:component-scan base-package="org.n52.series.db">
-        <!-- exclude V2 beans from autowiring -->
-        <ctx:exclude-filter type="regex" expression="org\.n52\.series\.db\.*\.v2\.*" />
-    </ctx:component-scan>
-
-    <!-- timeseries api web controller bindings -->
+    <!-- api controller bindings -->
     <import resource="spi-impl-dao_v1_beans.xml"/>
-    <import resource="spi-impl-dao_v1_beans_ext.xml"/>
+    <import resource="spi-impl-dao_v1_beans_legacy.xml"/>
 
 
     <!--<import resource="spi-impl-dao_tasks.xml" />-->
 
     <!-- For SOS Bundles (instead of extra database config) -->
     <bean class="org.n52.series.db.da.sos.SOSHibernateSessionHolder" destroy-method="shutdown" />
+    <!--<import resource="series-database-config.xml" />-->
 
 </beans>

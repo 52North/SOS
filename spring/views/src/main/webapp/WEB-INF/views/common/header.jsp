@@ -82,14 +82,14 @@
                                             <ul>
                                               <c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/helgoland/index.html')}">
                                                 <li>
-                                                    <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/helgoland" />">
+                                                    <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/helgoland/index.html" />">
                                                         <span class="menu-title">Sensor Web Thin Client (Helgoland)</span>
                                                     </a>
                                                 </li>
                                               </c:if>
                                              	<c:if test="${sos:staticExtensionExists(pageContext.servletContext, 'client/jsClient/index.html')}">
 				                                        <li>
-				                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient" />">
+				                                            <a id="jsclient-menuitem" target="_blank" href="<c:url value="/static/client/jsClient/index.html" />">
 				                                                <span class="menu-title">Sensor Web JS Client (old)</span>
 				                                            </a>
 				                                        </li>
@@ -104,7 +104,7 @@
                                             <ul>
                                             	<c:if test="${sos:documentExtensionExists(pageContext.servletContext, 'api-doc/index.html')}">
 			                                        <li>
-			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc" />">
+			                                            <a id="rest-menuitem" target="_blank" href="<c:url value="/static/doc/api-doc/index.html" />">
 			                                                <span class="menu-title">Sensor Web Client REST-API</span>
 			                                            </a>
 			                                        </li>

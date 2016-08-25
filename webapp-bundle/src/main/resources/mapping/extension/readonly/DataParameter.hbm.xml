@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.db.beans">
+    <class name="DataParameter" table="parameter">
+        <id name="parameterId" type="long">
+            <column name="parameterid"/>
+            <generator class="assigned"/>
+        </id>
+
+        <property name="observationId" column="observationid" type="long" not-null="true" />
+        <property name="name" column="name" type="string" not-null="true" />
+
+        <joined-subclass extends="DataParameter" name="DataParameterBoolean" table="booleanParameterValue">
+            <key column="parameterid"/>
+            <property column="value" name="value" type="org.hibernate.type.TrueFalseType"/>
+        </joined-subclass>
+
+        <joined-subclass extends="DataParameter" name="DataParameterCategory" table="categoryParameterValue">
+            <key column="parameterid"/>
+            <property column="value" name="value" type="string"/>
+            <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false"/>
+        </joined-subclass>
+
+        <joined-subclass extends="DataParameter" name="DataParameterCount" table="countParameterValue">
+            <key column="parameterid"/>
+            <property column="value" name="value" type="integer"/>
+        </joined-subclass>
+
+        <joined-subclass extends="DataParameter" name="DataParameterQuantity" table="numericParameterValue">
+            <key column="parameterid"/>
+            <property column="value" name="value" type="double"/>
+            <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false"/>
+        </joined-subclass>
+
+        <joined-subclass extends="DataParameter" name="DataParameterText" table="textParameterValue">
+            <key column="parameterid"/>
+            <property column="value" name="value" type="string"/>
+        </joined-subclass>
+    </class>
+</hibernate-mapping>

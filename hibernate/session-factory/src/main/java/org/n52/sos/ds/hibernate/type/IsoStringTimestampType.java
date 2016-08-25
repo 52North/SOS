@@ -28,21 +28,29 @@
  */
 package org.n52.sos.ds.hibernate.type;
 
-import java.io.File;
 import java.util.Date;
+import java.util.TimeZone;
 
 import org.hibernate.HibernateException;
 import org.hibernate.TypeMismatchException;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
 import org.n52.sos.util.Constants;
 import org.n52.sos.util.DateTimeHelper;
 import org.n52.sos.util.StringHelper;
 
 public class IsoStringTimestampType extends AbstractStringBasedHibernateUserType<Date> {
+    
+    private DateTimeZone timeZone = DateTimeZone.UTC;
 
     public IsoStringTimestampType() {
         super(Date.class);
+    }
+    
+    public IsoStringTimestampType(String timeZone) {
+        this();
+        this.timeZone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(timeZone.trim()));
     }
 
     @Override
@@ -57,7 +65,7 @@ public class IsoStringTimestampType extends AbstractStringBasedHibernateUserType
     @Override
     protected String encode(Date d) throws HibernateException {
         if (d != null) {
-            return DateTimeHelper.formatDateTime2IsoString(new DateTime(d));
+            return DateTimeHelper.formatDateTime2IsoString(new DateTime(d, timeZone));
         }
         return Constants.EMPTY_STRING;
     }

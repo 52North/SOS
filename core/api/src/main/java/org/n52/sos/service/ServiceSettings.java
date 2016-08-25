@@ -66,6 +66,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
     public static final String UPDATE_FEATURE_GEOMETRY = "service.updateFeatureGeometry";
     
     public static final String CACHE_FILE_FOLDER = "service.cacheFileFolder";
+    
+    public static final String CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS = "service.createFeatureGeometryFromSamplingGeometries";
 
     public static final SettingDefinitionGroup GROUP = new SettingDefinitionGroup().setTitle("Service").setOrder(2);
 
@@ -153,6 +155,16 @@ public class ServiceSettings implements SettingDefinitionProvider {
              .setDescription(
                      "The path to a folder where the cache file should be stored. Default is the webapp folder. If you define a path, then grant the necessary rights to write to the tomcat user!!!");
 
+     public static final BooleanSettingDefinition CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(ORDER_20)
+                     .setKey(CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS create the featureOfInterest geometry from samplingGeometries?")
+                     .setDescription(
+                             "Whether the SOS should create the featureOfInterest geometry from samplingGeometries.");
+     
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,
             SENSOR_DIRECTORY_DEFINITION,
@@ -161,7 +173,8 @@ public class ServiceSettings implements SettingDefinitionProvider {
             VALIDATE_RESPONSE_DEFINITION,
             EXPOSE_CHILD_OBSERVABLE_PROPERTIES_DEFINITION,
             UPDATE_FEATURE_GEOMETRY_DEFINITION,
-            CACHE_FILE_FOLDER_DEFILINION);
+            CACHE_FILE_FOLDER_DEFILINION,
+            CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION);
 
     @Override
     public Set<SettingDefinition<?, ?>> getSettingDefinitions() {

@@ -84,6 +84,8 @@ public class SOS40ComplianceTestSuite
 
             org.n52.sos.service.it.functional.ComplexObservationTest.class,
             org.n52.sos.service.it.functional.ContentNegotiationEndpointTest.class,
+            org.n52.sos.service.it.functional.DescribeSensorProcedureDescriptionFormatTest.class,
+            org.n52.sos.service.it.functional.ObservationEncodingsTest.class,
 
             org.n52.sos.service.it.v2.kvp.DeleteObservationTest.class,
             org.n52.sos.service.it.v2.kvp.DeleteSensorTest.class,

@@ -78,7 +78,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     }
 
     @Override
-    public boolean supportsGZip(AbstractServiceResponse asr) {
+    public boolean supportsGZip(AbstractServiceResponse asr) throws NoEncoderForKeyException {
         if (isStreaming(asr)) {
             return false;
         }
@@ -92,13 +92,14 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @param asr
      *            {@link AbstractServiceResponse} to get {@link Encoder} for
      * @return {@link Encoder} for the {@link AbstractServiceResponse}
+     * @throws NoEncoderForKeyException
      */
-    private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
+    private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) throws NoEncoderForKeyException {
         OperationEncoderKey key = getEncoderKey(asr); 
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
-                    getContentType())));
+            throw new NoEncoderForKeyException(new OperationEncoderKey(asr.getOperationKey(),
+                    getContentType()));
         }
         return encoder;
     }
@@ -128,8 +129,9 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      * @return <code>true</code>, if streaming encoding is forced and the
      *         {@link Encoder} for the {@link AbstractServiceResponse} is a
      *         {@link StreamingEncoder}
+     * @throws NoEncoderForKeyException 
      */
-    private boolean isStreaming(AbstractServiceResponse asr) {
+    private boolean isStreaming(AbstractServiceResponse asr) throws NoEncoderForKeyException {
         return isStreaming(asr, getEncoder(asr));
     }
 
@@ -146,9 +148,14 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
      *         {@link StreamingEncoder}
      */
     private boolean isStreaming(AbstractServiceResponse asr, Encoder<Object, AbstractServiceResponse> encoder) {
-        if (encoder instanceof StreamingEncoder) {
-            return ServiceConfiguration.getInstance().isForceStreamingEncoding()
-                    || ((StreamingEncoder<?, ?>) encoder).forceStreaming();
+        try {
+            if (getEncoder(asr) instanceof StreamingEncoder) {
+                return ServiceConfiguration.getInstance().isForceStreamingEncoding()
+                        || ((StreamingEncoder<?, ?>) getEncoder(asr)).forceStreaming();
+            }
+        } catch (NoEncoderForKeyException e) {
+            // no encoder was found, return false
+            return false;
         }
         return false;
     }

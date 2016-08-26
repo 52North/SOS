@@ -47,6 +47,7 @@ import org.n52.sos.encode.ResponseProxy;
 import org.n52.sos.encode.ResponseWriter;
 import org.n52.sos.encode.ResponseWriterRepository;
 import org.n52.sos.exception.HTTPException;
+import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.response.ServiceResponse;
@@ -220,7 +221,7 @@ public class HTTPUtils {
         }
 
         @Override
-        public boolean supportsGZip() {
+        public boolean supportsGZip() throws NoEncoderForKeyException {
             return writer.supportsGZip(o);
         }
 
@@ -267,7 +268,7 @@ public class HTTPUtils {
     public interface Writable {
         void write(OutputStream out, ResponseProxy responseProxy) throws IOException, OwsExceptionReport;
 
-        boolean supportsGZip();        
+        boolean supportsGZip() throws NoEncoderForKeyException;        
         
         MediaType getEncodedContentType();
     }

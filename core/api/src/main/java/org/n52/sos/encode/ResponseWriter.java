@@ -31,6 +31,7 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.n52.sos.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.request.ResponseFormat;
 import org.n52.sos.util.http.MediaType;
@@ -82,6 +83,7 @@ public interface ResponseWriter<T> {
      * @param t
      *            Object to write
      * @return <code>true</code>, if GZip is supported
+     * @throws NoEncoderForKeyException 
      */
-    boolean supportsGZip(T t);  
+    boolean supportsGZip(T t) throws NoEncoderForKeyException;  
 }

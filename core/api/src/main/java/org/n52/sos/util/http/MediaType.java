@@ -256,6 +256,15 @@ public class MediaType implements Comparable<MediaType> {
         
     }
 
+    public static boolean isMediaType(String string) {
+        try {
+            parse(string);
+        } catch (IllegalArgumentException e){
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Normalize mime type string by processing it through the MediaType parser.
      * Handles differing spaces between type and subtype, etc.

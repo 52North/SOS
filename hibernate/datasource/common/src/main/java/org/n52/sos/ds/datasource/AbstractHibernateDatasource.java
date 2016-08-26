@@ -543,7 +543,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return null;
     }
 
-    private String checkCatalog(Connection conn) throws SQLException {
+    protected String checkCatalog(Connection conn) throws SQLException {
         return conn.getCatalog();
     }
 

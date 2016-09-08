@@ -80,8 +80,8 @@
         <n52.common.xml.version>2.1.1-SNAPSHOT</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
-        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
         <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
@@ -448,8 +448,8 @@
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -457,6 +457,12 @@
                 <artifactId>jsp-api</artifactId>
                 <version>2.0</version>
                 <scope>provided</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.servlet</groupId>
+                        <artifactId>javax.servlet-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -947,6 +953,42 @@
                 </exclusions>
             </dependency>
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-oxm</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${org.springframework.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>test-suite-common</artifactId>
                 <version>${sos.test.suite.version}</version>
@@ -1104,6 +1146,12 @@
                 <groupId>se.jiderhamn</groupId>
                 <artifactId>classloader-leak-prevention</artifactId>
                 <version>1.13.0</version>
+                <exclusions>
+                	<exclusion>
+                		<groupId>javax.servlet</groupId>
+                		<artifactId>servlet-api</artifactId>
+                	</exclusion>
+                </exclusions>
             </dependency>
             <!-- third party dialects -->
             <!-- Remove third party ncname resolver from SOS and use OXF 
@@ -1470,7 +1518,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>2.6</version>
+                    <version>2.8</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -1684,7 +1732,7 @@
                                 <id>check-license</id>
                                 <phase>initialize</phase>
                                 <goals>
-                                    <goal>check</goal>
+                                    <goal>generate</goal>
                                 </goals>
                             </execution>
                         </executions>

@@ -19,6 +19,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
 		<!-- XML Beans Generated Classes -->
 		<dependency>
 			<groupId>org.n52.sensorweb</groupId>
@@ -70,7 +74,7 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
+			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

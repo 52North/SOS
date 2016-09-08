@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="org.n52.series.db.beans">
+    <class name="DataEntity" table="observation">
+        <id name="pkid" type="long">
+            <column name="observationid"/>
+            <generator class="assigned"/>
+        </id>
+        <property column="seriesid" name="seriesPkid" type="long"/>
+        <property column="phenomenonTimeStart" name="timestamp" type="timestamp"/>
+        <property column="deleted" name="deleted" type="org.hibernate.type.TrueFalseType"/>
+        <property column="validTimeStart" name="validTimeStart" not-null="false" type="timestamp"/>
+        <property column="validTimeEnd" name="validTimeEnd" not-null="false" type="timestamp"/>
+        <component class="org.n52.series.db.beans.GeometryEntity" name="geometry">
+            <!--
+           <property column="lat" name="lat" type="double" />
+           <property column="lon" name="lon" type="double" />
+            -->
+            <property column="samplingGeometry" name="geometry" type="org.hibernate.spatial.GeometryType"/>
+        </component>
+        <!-- Or add only to specific joined-subclasses -->
+        <set inverse="true" name="parameters" table="parameters">
+            <key column="observationid" not-null="true"/>
+            <one-to-many class="DataParameter"/>
+        </set>
+
+        <joined-subclass extends="DataEntity" name="MeasurementDataEntity" table="numericValue">
+            <key column="observationid"/>
+            <property column="value" name="value" type="double"/>
+        </joined-subclass>
+
+        <joined-subclass extends="DataEntity" name="TextDataEntity" table="textValue">
+            <key column="observationid"/>
+            <property column="value" name="value" type="string"/>
+        </joined-subclass>
+
+        <joined-subclass extends="DataEntity" name="CountDataEntity" table="countValue">
+            <key column="observationid"/>
+            <property column="value" name="value" type="integer"/>
+        </joined-subclass>
+    </class>
+</hibernate-mapping>

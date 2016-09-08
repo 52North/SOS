@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+    <mvc:annotation-driven />
+    <ctx:annotation-config />
+
+    <!--
+        This bean description file injects old components to stay
+        backwards compatible with older versions
+    -->
+
+    <bean class="org.n52.web.ctrl.StationsParameterController">
+        <property name="parameterService" ref="stationParameterService" />
+    </bean>
+
+    <bean class="org.n52.web.ctrl.TimeseriesMetadataController" parent="parameterController">
+        <property name="parameterService" ref="timeseriesService" />
+        <property name="metadataExtensions">
+            <list merge="true">
+                <bean class="org.n52.io.extension.RenderingHintsExtension" />
+                <bean class="org.n52.io.extension.StatusIntervalsExtension" />
+                <!-- Using DatabaseMetadataExtension requires some preparation work. -->
+                <!-- Have a look at the README.md at TBD -->
+                <!--<bean class="org.n52.io.extension.DatabaseMetadataExtension" />-->
+            </list>
+        </property>
+    </bean>
+
+    <bean class="org.n52.web.ctrl.TimeseriesDataController">
+        <property name="timeseriesMetadataService" ref="timeseriesService" />
+        <property name="timeseriesDataService" ref="timeseriesService" />
+        <!--<property name="preRenderingTask" ref="preRenderingJobV1" />-->
+        <property name="requestIntervalRestriction" value="P1Y1D" />
+    </bean>
+
+</beans>

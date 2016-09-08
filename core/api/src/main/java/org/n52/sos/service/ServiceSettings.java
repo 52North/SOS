@@ -165,7 +165,7 @@ public class ServiceSettings implements SettingDefinitionProvider {
              .setTitle("Cache file folder")
              .setOptional(true)
              .setDescription(
-                     "The path to a folder where the cache file should be stored. The default is the webapp folder. If you define a path, then grant the necessary rights to write to the tomcat user!!!");
+                     "The path to a folder where the cache file should be stored. Default is the webapp folder. If you define a path, then grant the necessary rights to write to the tomcat user!!!");
 
      public static final BooleanSettingDefinition CREATE_FOI_GEOM_FROM_SAMPLING_GEOMS_DEFINITION =
              new BooleanSettingDefinition()

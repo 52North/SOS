@@ -4,6 +4,7 @@
   "undefinedUomString": "-",
   "aggregateServices": true,
   "saveStatus": true,
+<<<<<<< HEAD
   "providerBlackList": [
     {
       "serviceID": "srv_6d9ccea8d609ecb74d4a512922bb7cee",
@@ -38,6 +39,15 @@
     "serviceID": "srv_3dec8ce040d9506c5aba685c9d134156",
     "url": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
   },
+=======
+  "restApiUrls": {
+        "http://localhost:8080/52n-sos-webapp/api/v1/": "localhost"
+    },
+    "defaultProvider": {
+        "serviceID": "1",
+        "apiUrl": "http://localhost:8080/52n-sos-webapp/api/v1/"
+    },
+>>>>>>> feature/add-extended-rest-api-and-helgoland
   "chartOptions": {
     "yaxis": {
       "tickDecimals": 2
@@ -79,6 +89,17 @@
     "#A1BE9D"
   ],
   "baselayer": {
+<<<<<<< HEAD
+=======
+    "mapbox": {
+      "name": "Mapbox",
+      "type": "xyz",
+      "url": "http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg",
+      "layerOptions": {
+        "attribution": "&copy; <a href='http://www.mapquest.com/' target='_blank'>MapQuest</a> <img src='http://developer.mapquest.com/content/osm/mq_logo.png'/>"
+      }
+    },
+>>>>>>> feature/add-extended-rest-api-and-helgoland
     "osm": {
       "name": "Open Street Map",
       "type": "xyz",

@@ -226,7 +226,7 @@ This project includes:
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver - JDBC 4.2 under The PostgreSQL License
+  PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
   Quartz Enterprise Job Scheduler under Apache 2.0
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1

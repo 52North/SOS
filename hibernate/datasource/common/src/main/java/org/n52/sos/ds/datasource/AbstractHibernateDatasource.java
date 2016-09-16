@@ -856,33 +856,33 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         return HibernateDatasourceConstants.ORM_DATASOURCE_DAO_IDENTIFIER;
     }
     
-	/**
-	 * Workaround for Java {@link DriverManager} issue with more than one registered
-	 * drivers. Only the first {@link SQLException} is catched and thrown
-	 * instead of the {@link SQLException} related to the driver which is valid for
-	 * the URL.
-	 * 
-	 * @param url
-	 *            DB connection URL
-	 * @param user
-	 *            User name
-	 * @param password
-	 *            Password
-	 * @throws SQLException
-	 */
-	protected void precheckDriver(String url, String user, String password) throws SQLException {
-		Driver driver = DriverManager.getDriver(url);
-		if (driver != null) {
-			java.util.Properties info = new java.util.Properties();
-			if (user != null) {
-				info.put("user", user);
-			}
-			if (password != null) {
-				info.put("password", password);
-			}
-			driver.connect(url, info).close();
-		}
-	}
+    /**
+     * Workaround for Java {@link DriverManager} issue with more than one
+     * registered drivers. Only the first {@link SQLException} is catched and
+     * thrown instead of the {@link SQLException} related to the driver which is
+     * valid for the URL.
+     * 
+     * @param url
+     *            DB connection URL
+     * @param user
+     *            User name
+     * @param password
+     *            Password
+     * @throws SQLException
+     */
+    protected void precheckDriver(String url, String user, String password) throws SQLException {
+        Driver driver = DriverManager.getDriver(url);
+        if (driver != null) {
+            java.util.Properties info = new java.util.Properties();
+            if (user != null) {
+                info.put("user", user);
+            }
+            if (password != null) {
+                info.put("password", password);
+            }
+            driver.connect(url, info).close();
+        }
+    }
 
     /**
      * Gets the qualified name of the driver class.

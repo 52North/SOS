@@ -69,7 +69,7 @@
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.2</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
+        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
         <geotools.version>14.0</geotools.version>
         <jackson.version>2.7.3</jackson.version>

@@ -29,11 +29,59 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
+
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlRuntimeException;
+import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
+import org.n52.sos.exception.ows.NoApplicableCodeException;
+import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
+import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.DefaultEncoding;
+import org.n52.sos.ogc.gml.GenericMetaData;
+import org.n52.sos.ogc.gml.GmlConstants;
+import org.n52.sos.ogc.gml.time.Time;
+import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
+import org.n52.sos.ogc.gml.time.TimeInstant;
+import org.n52.sos.ogc.gml.time.TimePeriod;
+import org.n52.sos.ogc.gml.time.TimePosition;
+import org.n52.sos.ogc.om.features.FeatureCollection;
+import org.n52.sos.ogc.om.features.SfConstants;
+import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.sos.ogc.om.values.CategoryValue;
+import org.n52.sos.ogc.om.values.QuantityValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.swe.SweConstants;
+import org.n52.sos.service.ServiceConfiguration;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.DateTimeHelper;
+import org.n52.sos.util.JTSHelper;
+import org.n52.sos.util.JavaHelper;
+import org.n52.sos.util.MinMax;
+import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.SchemaLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.util.PolygonExtracter;
 
 import net.opengis.gml.AbstractFeatureCollectionType;
 import net.opengis.gml.AbstractRingPropertyType;
@@ -57,50 +105,6 @@ import net.opengis.gml.TimePeriodDocument;
 import net.opengis.gml.TimePeriodType;
 import net.opengis.gml.TimePositionType;
 
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlRuntimeException;
-import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
-import org.n52.sos.exception.ows.NoApplicableCodeException;
-import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
-import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.gml.CodeWithAuthority;
-import org.n52.sos.ogc.gml.GmlConstants;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
-import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.gml.time.TimePosition;
-import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sos.SosConstants.HelperValues;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.service.ServiceConfiguration;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.DateTimeHelper;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.JavaHelper;
-import org.n52.sos.util.MinMax;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.sos.w3c.SchemaLocation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.util.PolygonExtracter;
-
 /**
  * @since 4.0.0
  * 
@@ -113,7 +117,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             org.n52.sos.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
             org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.sos.ogc.gml.CodeWithAuthority.class,
-            org.n52.sos.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class);
+            org.n52.sos.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class, GenericMetaData.class);
 
     public GmlEncoderv311() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -156,6 +160,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             encodedObject = createFeature((AbstractFeature) element);
         } else if (element instanceof SosEnvelope) {
             encodedObject = createEnvelope((SosEnvelope) element);
+        } else if (element instanceof GenericMetaData) {
+            encodedObject = createGenericMetaData((GenericMetaData) element, additionalValues);
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -557,5 +563,25 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     protected String getSrsName(Geometry geom) {
         return ServiceConfiguration.getInstance().getSrsNamePrefix() + geom.getSRID();
+    }
+    
+    private XmlObject createGenericMetaData(GenericMetaData element, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        if (element.getContent() instanceof DefaultEncoding && ((DefaultEncoding)element.getContent()).isSetDefaultElementEncoding()) {
+            Map<HelperValues, String> helperValues = new EnumMap<HelperValues, String>(HelperValues.class);
+            // TODO check
+            helperValues.put(HelperValues.DOCUMENT, "true");
+            if (SweConstants.NS_SWE_20.equals(((DefaultEncoding) element.getContent()).getDefaultElementEncoding())) {
+                return CodingHelper.encodeObjectToXml(
+                        SweConstants.NS_SWE_101, element.getContent(),
+                        helperValues);
+            } else {
+                return CodingHelper.encodeObjectToXml(
+                        ((DefaultEncoding) element.getContent()).getDefaultElementEncoding(), element.getContent(),
+                        helperValues);
+            }
+
+        }
+        return null;
     }
 }

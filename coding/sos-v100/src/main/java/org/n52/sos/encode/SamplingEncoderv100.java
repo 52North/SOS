@@ -52,6 +52,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractMetaData;
 import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.features.FeatureCollection;
@@ -225,6 +226,18 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
             }
         } else {
             xbSamplingFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
+        }
+    }
+    
+    private void setMetaDataProperty(SamplingFeatureType sft, SamplingFeature sampFeat) throws OwsExceptionReport {
+        if (sampFeat.isSetMetaDataProperty()) {
+            for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
+                XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, abstractMetaData);
+                sft.addNewMetaDataProperty().set(encodeObject);
+//                XmlObject substituteElement = XmlHelper.substituteElement(
+//                        sft.addNewMetaDataProperty().addNewAbstractMetaData(), encodeObject);
+//                substituteElement.set(encodeObject);
+            }
         }
     }
 

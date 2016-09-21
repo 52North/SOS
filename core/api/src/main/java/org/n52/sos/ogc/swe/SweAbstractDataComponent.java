@@ -32,18 +32,20 @@ import java.util.Collection;
 import java.util.List;
 
 import org.n52.sos.ogc.gml.CodeType;
+import org.n52.sos.ogc.gml.DefaultEncoding;
 import org.n52.sos.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
  * 
  */
-public abstract class SweAbstractDataComponent {
+public abstract class SweAbstractDataComponent implements DefaultEncoding<SweAbstractDataComponent> {
 
     private String definition;
 
@@ -71,6 +73,8 @@ public abstract class SweAbstractDataComponent {
      * pre-set XML representation
      */
     private String xml;
+    
+    private String defaultEncoding = SweConstants.NS_SWE_20;
 
     public String getDefinition() {
         return definition;
@@ -194,6 +198,22 @@ public abstract class SweAbstractDataComponent {
 
     public boolean isSetXml() {
         return xml != null && !xml.isEmpty();
+    }
+    
+    @Override
+    public String getDefaultElementEncoding() {
+        return defaultEncoding;
+    }
+    
+    @Override
+    public SweAbstractDataComponent setDefaultElementEncoding(String defaultEncoding) {
+        this.defaultEncoding = defaultEncoding;
+        return this;
+    }
+    
+    @Override
+    public boolean isSetDefaultElementEncoding() {
+        return !Strings.isNullOrEmpty(getDefaultElementEncoding());
     }
 
     @Override

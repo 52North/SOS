@@ -44,6 +44,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
@@ -158,11 +159,13 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
                         xbSampFeatDoc.setSFSpatialSamplingFeature((SFSpatialSamplingFeatureType) feature);
                         encodeShape(xbSampFeatDoc.getSFSpatialSamplingFeature().getShape(), sampFeat);
                         addNameDescription(xbSampFeatDoc.getSFSpatialSamplingFeature(), sampFeat);
+                        setMetaDataProperty(xbSampFeatDoc.getSFSpatialSamplingFeature(), sampFeat);
                         return xbSampFeatDoc;
                     }
                     encodeShape(((SFSpatialSamplingFeatureDocument) feature).getSFSpatialSamplingFeature().getShape(),
                             sampFeat);
                     addNameDescription(((SFSpatialSamplingFeatureDocument) feature).getSFSpatialSamplingFeature(), sampFeat);
+                    setMetaDataProperty(((SFSpatialSamplingFeatureDocument) feature).getSFSpatialSamplingFeature(), sampFeat);
                     return feature;
                 } catch (final XmlException xmle) {
                     throw new NoApplicableCodeException()
@@ -192,7 +195,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
             }
             
             addNameDescription(xbSampFeature, sampFeat);
-
+            setMetaDataProperty(xbSampFeature, sampFeat);
             // set sampledFeatures
             // TODO: CHECK
             if (sampFeat.isSetSampledFeatures()) {
@@ -293,6 +296,17 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<AbstractFeature> {
         }
     }
     
+    private void setMetaDataProperty(SFSpatialSamplingFeatureType sfssft, SamplingFeature sampFeat) throws OwsExceptionReport {
+        if (sampFeat.isSetMetaDataProperty()) {
+            for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
+                XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, abstractMetaData);
+                XmlObject substituteElement = XmlHelper.substituteElement(
+                        sfssft.addNewMetaDataProperty().addNewAbstractMetaData(), encodeObject);
+                substituteElement.set(encodeObject);
+            }
+        }
+    }
+
     private void removeExitingNames(SFSpatialSamplingFeatureType xbSamplingFeature) {
         if (CollectionHelper.isNotNullOrEmpty(xbSamplingFeature.getNameArray())) {
             for (int i = 0; i < xbSamplingFeature.getNameArray().length; i++) {

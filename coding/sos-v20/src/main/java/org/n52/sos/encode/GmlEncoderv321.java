@@ -29,6 +29,7 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,6 +46,8 @@ import net.opengis.gml.x32.EnvelopeType;
 import net.opengis.gml.x32.FeatureCollectionDocument;
 import net.opengis.gml.x32.FeatureCollectionType;
 import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.gml.x32.GenericMetaDataDocument;
+import net.opengis.gml.x32.GenericMetaDataType;
 import net.opengis.gml.x32.GeometryPropertyType;
 import net.opengis.gml.x32.LineStringDocument;
 import net.opengis.gml.x32.LineStringType;
@@ -74,6 +77,8 @@ import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.DefaultEncoding;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
@@ -124,7 +129,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.sos.ogc.gml.CodeWithAuthority.class,
             org.n52.sos.ogc.gml.CodeType.class, SamplingFeature.class, SosEnvelope.class, FeatureCollection.class,
-            AbstractGeometry.class);
+            AbstractGeometry.class, GenericMetaData.class);
 
     public GmlEncoderv321() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -170,6 +175,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             encodedObject = createGeomteryPropertyType((AbstractGeometry) element, additionalValues);
         } else if (element instanceof SosEnvelope) {
             encodedObject = createEnvelope((SosEnvelope) element, additionalValues);
+        } else if (element instanceof GenericMetaData) {
+            encodedObject = createGenericMetaData((GenericMetaData) element, additionalValues);
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -716,6 +723,24 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<Object> {
             codeType.setCodeSpace(OGCConstants.UNKNOWN);
         }
         return codeType;
+    }
+    
+    private XmlObject createGenericMetaData(GenericMetaData element, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        GenericMetaDataDocument gmdd = GenericMetaDataDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        GenericMetaDataType gmdt = gmdd.addNewGenericMetaData();
+        if (element.getContent() instanceof DefaultEncoding && ((DefaultEncoding)element.getContent()).isSetDefaultElementEncoding()) {
+            Map<HelperValues, String> helperValues = new EnumMap<HelperValues, String>(HelperValues.class);
+            // TODO check
+            helperValues.put(HelperValues.PROPERTY_TYPE, "true");
+            gmdt.set(CodingHelper.encodeObjectToXml(
+                    ((DefaultEncoding) element.getContent()).getDefaultElementEncoding(), element.getContent(),
+                    helperValues));
+        }
+        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            return gmdd;
+        }
+        return gmdt;
     }
 
     protected MeasureType createMeasureType(final QuantityValue quantityValue) throws OwsExceptionReport {

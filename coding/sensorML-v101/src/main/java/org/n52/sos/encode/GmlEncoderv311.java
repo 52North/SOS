@@ -29,6 +29,7 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +45,8 @@ import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.DefaultEncoding;
+import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.Time.TimeIndeterminateValue;
@@ -58,6 +61,7 @@ import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.service.ServiceConfiguration;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.DateTimeHelper;
@@ -113,7 +117,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             org.n52.sos.ogc.gml.time.Time.class, com.vividsolutions.jts.geom.Geometry.class,
             org.n52.sos.ogc.om.values.CategoryValue.class, org.n52.sos.ogc.gml.ReferenceType.class,
             org.n52.sos.ogc.om.values.QuantityValue.class, org.n52.sos.ogc.gml.CodeWithAuthority.class,
-            org.n52.sos.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class);
+            org.n52.sos.ogc.gml.CodeType.class, AbstractFeature.class, SosEnvelope.class, GenericMetaData.class);
 
     public GmlEncoderv311() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -156,6 +160,8 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
             encodedObject = createFeature((AbstractFeature) element);
         } else if (element instanceof SosEnvelope) {
             encodedObject = createEnvelope((SosEnvelope) element);
+        } else if (element instanceof GenericMetaData) {
+            encodedObject = createGenericMetaData((GenericMetaData) element, additionalValues);
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
@@ -553,5 +559,25 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<Object> {
 
     protected String getSrsName(Geometry geom) {
         return ServiceConfiguration.getInstance().getSrsNamePrefix() + geom.getSRID();
+    }
+    
+    private XmlObject createGenericMetaData(GenericMetaData element, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        if (element.getContent() instanceof DefaultEncoding && ((DefaultEncoding)element.getContent()).isSetDefaultElementEncoding()) {
+            Map<HelperValues, String> helperValues = new EnumMap<HelperValues, String>(HelperValues.class);
+            // TODO check
+            helperValues.put(HelperValues.DOCUMENT, "true");
+            if (SweConstants.NS_SWE_20.equals(((DefaultEncoding) element.getContent()).getDefaultElementEncoding())) {
+                return CodingHelper.encodeObjectToXml(
+                        SweConstants.NS_SWE_101, element.getContent(),
+                        helperValues);
+            } else {
+                return CodingHelper.encodeObjectToXml(
+                        ((DefaultEncoding) element.getContent()).getDefaultElementEncoding(), element.getContent(),
+                        helperValues);
+            }
+
+        }
+        return null;
     }
 }

@@ -40,11 +40,11 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.DefaultEncoding;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
 import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.CodeWithAuthority;
+import org.n52.sos.ogc.gml.DefaultEncoding;
 import org.n52.sos.ogc.gml.GenericMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
@@ -76,7 +76,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -789,15 +788,17 @@ public class GmlEncoderv321 extends AbstractGmlEncoderv321<Object> {
         return codeType;
     }
     
-    private XmlObject createGenericMetaData(GenericMetaData element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        GenericMetaDataDocument gmdd = GenericMetaDataDocument.Factory.newInstance(getXmlOptions());
+    private XmlObject createGenericMetaData(GenericMetaData element, Map<HelperValues, String> additionalValues)
+            throws OwsExceptionReport {
+        GenericMetaDataDocument gmdd = GenericMetaDataDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         GenericMetaDataType gmdt = gmdd.addNewGenericMetaData();
-        if (element.getContent() instanceof DefaultEncoding) {
+        if (element.getContent() instanceof DefaultEncoding && ((DefaultEncoding)element.getContent()).isSetDefaultElementEncoding()) {
             Map<HelperValues, String> helperValues = new EnumMap<HelperValues, String>(HelperValues.class);
             // TODO check
             helperValues.put(HelperValues.PROPERTY_TYPE, "true");
-            gmdt.set(CodingHelper.encodeObjectToXml(((DefaultEncoding) element.getContent()).getDefaultElementEncoding(), element.getContent(), helperValues));
-            
+            gmdt.set(CodingHelper.encodeObjectToXml(
+                    ((DefaultEncoding) element.getContent()).getDefaultElementEncoding(), element.getContent(),
+                    helperValues));
         }
         if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
             return gmdd;

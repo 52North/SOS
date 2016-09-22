@@ -117,6 +117,7 @@ import net.opengis.swe.x101.CountRangeDocument.CountRange;
 import net.opengis.swe.x101.DataArrayDocument;
 import net.opengis.swe.x101.DataArrayType;
 import net.opengis.swe.x101.DataComponentPropertyType;
+import net.opengis.swe.x101.DataRecordDocument;
 import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.EnvelopeType;
 import net.opengis.swe.x101.ObservablePropertyDocument.ObservableProperty;
@@ -199,7 +200,15 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
         } else if (element instanceof SweDataArray) {
             encodedObject = createDataArray((SweDataArray) element);
         } else if (element instanceof SweDataRecord) {
-            encodedObject = createDataRecord((SweDataRecord) element);
+            DataRecordType drt = createDataRecord((SweDataRecord) element);
+            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                DataRecordDocument drd =
+                        DataRecordDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                drd.setDataRecord(drt);
+                encodedObject = drd;
+            } else {
+                encodedObject = drt;
+            }
         } else if (element instanceof SweEnvelope) {
             encodedObject = createEnvelope((SweEnvelope) element);
         } else if (element instanceof SweSimpleDataRecord) {
@@ -343,13 +352,13 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<Object> {
                     .substitute(SweConstants.QN_ENVELOPE_SWE_101, EnvelopeType.type);
             xbEnvelope.set(createEnvelope((SweEnvelope) sosElement));
         } else if (sosElement instanceof SweDataRecord) {
-            final DataRecordType xbEnvelope = (DataRecordType) xbField.addNewAbstractDataRecord()
+            final DataRecordType drt = (DataRecordType) xbField.addNewAbstractDataRecord()
                     .substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataRecordType.type);
-            xbEnvelope.set(createDataRecord((SweDataRecord) sosElement));
+            drt.set(createDataRecord((SweDataRecord) sosElement));
         } else if (sosElement instanceof SweDataArray) {
-            final DataArrayType xbEnvelope = (DataArrayType) xbField.addNewAbstractDataRecord()
+            final DataArrayType dat = (DataArrayType) xbField.addNewAbstractDataRecord()
                     .substitute(SweConstants.QN_DATA_RECORD_SWE_101, DataArrayType.type);
-            xbEnvelope.set(createDataArray((SweDataArray) sosElement).getDataArray1());
+            dat.set(createDataArray((SweDataArray) sosElement).getDataArray1());
         } else {
             throw new NoApplicableCodeException()
                     .withMessage("The element type '%s' of the received '%s' is not supported by this encoder '%s'.",

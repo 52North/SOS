@@ -38,14 +38,12 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.OwsExceptionCode;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractGeometry;
 import org.n52.sos.ogc.gml.GmlMeasureType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
@@ -69,7 +67,6 @@ import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.ConformanceClasses;
@@ -80,6 +77,8 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -362,6 +361,8 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
                 return new SingleObservationValue<>(new CategoryValue(((ReferenceType) decodedObject).getHref()));
             } else if (decodedObject instanceof Geometry) {
                 return new SingleObservationValue<>(new GeometryValue((Geometry) decodedObject));
+            } else if (decodedObject instanceof AbstractGeometry) {
+                return new SingleObservationValue<>(new GeometryValue(((AbstractGeometry) decodedObject).getGeometry()));
             } else if (decodedObject instanceof SweDataArray) {
                 return new SingleObservationValue<>(new SweDataArrayValue((SweDataArray) decodedObject));
             } else if (decodedObject instanceof SweDataRecord) {

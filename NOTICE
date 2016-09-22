@@ -255,7 +255,8 @@ This project includes:
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver - JDBC 4.2 under The PostgreSQL License
+  PostgreSQL JDBC Driver under BSD License
+  PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
   Quartz Enterprise Job Scheduler under Apache 2.0
   Referencing services under GNU Lesser General Public License (LGPL) version 2.1

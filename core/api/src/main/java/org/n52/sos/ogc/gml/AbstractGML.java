@@ -60,7 +60,7 @@ public abstract class AbstractGML implements Serializable{
      * Feature description
      */
     private String description;
-
+    
     private List<AbstractMetaData> metaDataProperty = Lists.newArrayList();
 
     /**
@@ -352,7 +352,7 @@ public abstract class AbstractGML implements Serializable{
     public boolean isSetDescription() {
         return StringHelper.isNotEmpty(getDescription());
     }
-
+    
     /**
      * @return the metaDataProperty
      */
@@ -381,7 +381,6 @@ public abstract class AbstractGML implements Serializable{
     public void addMetaDataProperty(AbstractMetaData metaDataProperty) {
         this.metaDataProperty.add(metaDataProperty);
     }
-    
     
     public boolean isSetMetaDataProperty() {
         return CollectionHelper.isNotEmpty(getMetaDataProperty());

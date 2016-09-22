@@ -64,12 +64,12 @@
         <config.logger.history.max>30</config.logger.history.max>
         <config.logger.maxFileSize>10MB</config.logger.maxFileSize>
 
-        <postgresql.version>9.4.1208</postgresql.version>
+        <postgresql.version>9.4.1208.jre7</postgresql.version>
         <postgis.version>2.2.0</postgis.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.2</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
+        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
         <sqlite.version>3.7.2</sqlite.version>
         <geotools.version>14.0</geotools.version>
         <jackson.version>2.7.3</jackson.version>

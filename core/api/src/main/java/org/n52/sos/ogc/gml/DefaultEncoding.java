@@ -28,27 +28,12 @@
  */
 package org.n52.sos.ogc.gml;
 
-public class GenericMetaData extends AbstractMetaData {
+public interface DefaultEncoding<T> {
 
-    private Object content;
+    public T setDefaultElementEncoding(String defaultEncoding);
 
-    public GenericMetaData(Object content) {
-        this.content = content;
-    }
+    public String getDefaultElementEncoding();
 
-    /**
-     * @return the content
-     */
-    public Object getContent() {
-        return content;
-    }
-
-    /**
-     * @param content
-     *            the content to set
-     */
-    public void setContent(Object content) {
-        this.content = content;
-    }
+    public boolean isSetDefaultElementEncoding();
 
 }

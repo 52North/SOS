@@ -40,6 +40,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.OGCConstants;
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.AbstractMetaData;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.om.NamedValue;
 import org.n52.sos.ogc.om.OmConstants;
@@ -176,7 +177,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
             addFeatureType(xbSampFeature, sampFeat);
             // set type
             addNameDescription(xbSampFeature, sampFeat);
-
+            setMetaDataProperty(xbSampFeature, sampFeat);
             // set sampledFeatures
             // TODO: CHECK
             addSampledFeatures(xbSampFeature, sampFeat);
@@ -298,5 +299,24 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
             }
         }
         return featurePropertyType;
+    }
+
+    private void setMetaDataProperty(SFSpatialSamplingFeatureType sfssft, SamplingFeature sampFeat) throws OwsExceptionReport {
+        if (sampFeat.isSetMetaDataProperty()) {
+            for (AbstractMetaData abstractMetaData : sampFeat.getMetaDataProperty()) {
+                XmlObject encodeObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, abstractMetaData);
+                XmlObject substituteElement = XmlHelper.substituteElement(
+                        sfssft.addNewMetaDataProperty().addNewAbstractMetaData(), encodeObject);
+                substituteElement.set(encodeObject);
+            }
+        }
+    }
+
+    private void removeExitingNames(SFSpatialSamplingFeatureType xbSamplingFeature) {
+        if (CollectionHelper.isNotNullOrEmpty(xbSamplingFeature.getNameArray())) {
+            for (int i = 0; i < xbSamplingFeature.getNameArray().length; i++) {
+                xbSamplingFeature.removeName(i);
+            }
+        }
     }
 }

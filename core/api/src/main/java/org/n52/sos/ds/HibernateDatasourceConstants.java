@@ -80,6 +80,10 @@ public interface HibernateDatasourceConstants {
     
     String HIBERNATE_DATASOURCE_TIMEZONE = "hibernate.datasource.timezone";
     
+    String HIBERNATE_DATASOURCE_TIME_STRING_FORMAT = "hibernate.datasource.timeStringFormat";
+    
+    String HIBERNATE_DATASOURCE_TIME_STRING_Z  = "hibernate.datasource.timeStringZ";
+    
     public enum DatabaseConcept {
         OLD_CONCEPT("Old concept"),
         SERIES_CONCEPT("Series concept"),

@@ -55,6 +55,7 @@ public class MySQLSpatial5InnoDBTimestampDialect extends MySQLSpatial5InnoDBDial
     public MySQLSpatial5InnoDBTimestampDialect() {
         super();
         registerColumnType( Types.TIMESTAMP, "timestamp" );
+        registerColumnType(Types.VARCHAR, "iso_string");
     }
     
     @Override

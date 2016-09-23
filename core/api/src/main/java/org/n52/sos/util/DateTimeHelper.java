@@ -36,9 +36,9 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.format.ISOPeriodFormat;
-import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.concrete.DateTimeException;
 import org.n52.sos.exception.ows.concrete.DateTimeFormatException;
 import org.n52.sos.exception.ows.concrete.DateTimeParseException;
@@ -90,8 +90,8 @@ public final class DateTimeHelper {
     private static final String Z = "Z";
 
     private static final String UTC_OFFSET = "+00:00";
-    
-    private static final double SECONDS_OF_DAY = 86400; 
+
+    private static final double SECONDS_OF_DAY = 86400;
 
     /**
      * lease value
@@ -108,13 +108,41 @@ public final class DateTimeHelper {
      *             If an error occurs.
      */
     public static DateTime parseIsoString2DateTime(final String timeString) throws DateTimeParseException {
+        return parseString2DateTime(timeString, null);
+        // checkForValidity(timeString);
+        // if (Strings.isNullOrEmpty(timeString)) {
+        // return null;
+        // }
+        // try {
+        // if (timeString.contains("+") || Pattern.matches("-\\d", timeString)
+        // || timeString.contains(Z)
+        // || timeString.contains("z")) {
+        // return
+        // ISODateTimeFormat.dateOptionalTimeParser().withOffsetParsed().parseDateTime(timeString);
+        // } else {
+        // return
+        // ISODateTimeFormat.dateOptionalTimeParser().withZone(DateTimeZone.UTC).parseDateTime(timeString);
+        // }
+        // } catch (final RuntimeException uoe) {
+        // throw new DateTimeParseException(timeString, uoe);
+        // }
+    }
+
+    public static DateTime parseString2DateTime(final String timeString, final String dateFormat)
+            throws DateTimeParseException {
         checkForValidity(timeString);
         if (Strings.isNullOrEmpty(timeString)) {
             return null;
         }
         try {
-            if (timeString.contains("+") || Pattern.matches("-\\d", timeString) || timeString.contains(Z)
-                    || timeString.contains("z")) {
+            if (!Strings.isNullOrEmpty(dateFormat)) {
+                if (checkOffset(timeString)) {
+                    return DateTimeFormat.forPattern(dateFormat).withOffsetParsed().parseDateTime(timeString);
+                } else {
+                    return DateTimeFormat.forPattern(dateFormat).withZone(DateTimeZone.UTC).parseDateTime(timeString);
+                }
+            }
+            if (checkOffset(timeString)) {
                 return ISODateTimeFormat.dateOptionalTimeParser().withOffsetParsed().parseDateTime(timeString);
             } else {
                 return ISODateTimeFormat.dateOptionalTimeParser().withZone(DateTimeZone.UTC).parseDateTime(timeString);
@@ -144,9 +172,15 @@ public final class DateTimeHelper {
     }
 
     private static void checkForValidity(final String timeString) throws DateTimeParseException {
-        if (!(timeString.length() == YEAR || timeString.length() == YEAR_MONTH || timeString.length() >= YEAR_MONTH_DAY)) {
+        if (!(timeString.length() == YEAR || timeString.length() == YEAR_MONTH
+                || timeString.length() >= YEAR_MONTH_DAY)) {
             throw new DateTimeParseException(timeString);
         }
+    }
+
+    private static boolean checkOffset(String timeString) {
+        return timeString.contains("+") || Pattern.matches("-\\d", timeString) || timeString.contains(Z)
+                || timeString.contains("z");
     }
 
     /**
@@ -168,7 +202,8 @@ public final class DateTimeHelper {
                 } catch (DateTimeFormatException e) {
                     throw new IllegalArgumentException(e);
                 }
-//                return formatDateTime2IsoString(((TimeInstant) time).getValue());
+                // return formatDateTime2IsoString(((TimeInstant)
+                // time).getValue());
             } else if (time instanceof TimePeriod) {
                 return String.format("%s/%s", formatDateTime2IsoString(((TimePeriod) time).getStart()),
                         formatDateTime2IsoString(((TimePeriod) time).getEnd()));
@@ -241,8 +276,7 @@ public final class DateTimeHelper {
      * @throws DateTimeFormatException
      *             If an error occurs when formatting the {@link TimePosition}
      */
-    public static String formatDateTime2String(final TimePosition timePosition)
-            throws DateTimeFormatException {
+    public static String formatDateTime2String(final TimePosition timePosition) throws DateTimeFormatException {
         switch (timePosition.getTimeFormat()) {
         case Y:
             return formatDateTime2YearDateString(timePosition.getTime());
@@ -277,7 +311,38 @@ public final class DateTimeHelper {
                 if (dateTime == null) {
                     return getZeroUtcDateTime().toString(DateTimeFormat.forPattern(dateFormat));
                 }
-                return dateTime.toString(DateTimeFormat.forPattern(dateFormat)).replace(Z, UTC_OFFSET);
+                return formatDateTime2Formatter(dateTime, DateTimeFormat.forPattern(dateFormat)).replace(Z,
+                        UTC_OFFSET);
+            }
+        } catch (final IllegalArgumentException iae) {
+            throw new DateTimeFormatException(dateTime, iae);
+        }
+    }
+
+    /**
+     * Formats a DateTime to a String using specified format
+     *
+     * @param dateTime
+     *            Time object
+     * @param dateFormat
+     *            the date time format
+     *
+     * @return Specified formatted time String
+     *
+     * @throws DateTimeFormatException
+     *             If an error occurs.
+     */
+    public static String formatDateTime2Formatter(final DateTime dateTime, final DateTimeFormatter dateTimeFormatter)
+            throws DateTimeFormatException {
+        try {
+            if (dateTimeFormatter == null) {
+                return formatDateTime2IsoString(dateTime);
+            } else {
+                if (dateTime == null) {
+                    return getZeroUtcDateTime().toString(dateTimeFormatter);
+                }
+
+                return dateTime.toString(dateTimeFormatter);
             }
         } catch (final IllegalArgumentException iae) {
             throw new DateTimeFormatException(dateTime, iae);
@@ -380,19 +445,19 @@ public final class DateTimeHelper {
         // year
         case YEAR:
             return dateTime.plusYears(ONE_VALUE).minusMillis(ONE_VALUE);
-            // year, month
+        // year, month
         case YEAR_MONTH:
             return dateTime.plusMonths(ONE_VALUE).minusMillis(ONE_VALUE);
-            // year, month, day
+        // year, month, day
         case YEAR_MONTH_DAY:
             return dateTime.plusDays(ONE_VALUE).minusMillis(ONE_VALUE);
-            // year, month, day, hour
+        // year, month, day, hour
         case YEAR_MONTH_DAY_HOUR:
             return dateTime.plusHours(ONE_VALUE).minusMillis(ONE_VALUE);
-            // year, month, day, hour, minute
+        // year, month, day, hour, minute
         case YEAR_MONTH_DAY_HOUR_MINUTE:
             return dateTime.plusMinutes(ONE_VALUE).minusMillis(ONE_VALUE);
-            // year, month, day, hour, minute, second
+        // year, month, day, hour, minute, second
         case YEAR_MONTH_DAY_HOUR_MINUTE_SECOND:
             return dateTime.plusSeconds(ONE_VALUE).minusMillis(ONE_VALUE);
         default:
@@ -454,7 +519,9 @@ public final class DateTimeHelper {
 
     /**
      * Transforms the supplied {@code DateTime} to UTC.
-     * @param datetime the date time (may be {@code null})
+     * 
+     * @param datetime
+     *            the date time (may be {@code null})
      * @return the UTC time (or {@code null}
      */
     public static DateTime toUTC(DateTime datetime) {

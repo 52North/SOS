@@ -28,6 +28,7 @@
  */
 package org.hibernate.spatial.dialect.sqlserver;
 
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -40,6 +41,11 @@ import org.n52.sos.ds.datasource.SpatialIndexDialect;
 public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008SpatialDialect implements SpatialIndexDialect {
 
     private static final long serialVersionUID = 1L;
+    
+    public SqlServer2008SpatialDialectSpatialIndex() {
+        super();
+        registerColumnType(Types.VARCHAR, "iso_string");
+    }
 
     // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {

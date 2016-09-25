@@ -303,7 +303,7 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
             criteria.add(Restrictions.isNotNull(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
             Dialect dialect = ((SessionFactoryImplementor) session.getSessionFactory()).getDialect();
             if (HibernateHelper.supportsFunction(dialect, HibernateConstants.FUNC_EXTENT)) {
-                criteria.setProjection(SpatialProjections.extent(FeatureOfInterest.GEOMETRY));
+                criteria.setProjection(SpatialProjections.extent(AbstractTemporalReferencedObservation.SAMPLING_GEOMETRY));
                 LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
                         HibernateHelper.getSqlString(criteria));
                 return (Envelope) criteria.uniqueResult();

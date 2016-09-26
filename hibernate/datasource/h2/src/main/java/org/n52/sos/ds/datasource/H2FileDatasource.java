@@ -34,7 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -121,9 +123,46 @@ public class H2FileDatasource extends AbstractH2Datasource {
     public boolean checkSchemaCreation(Map<String, Object> settings) {
         String path = (String) settings.get(h2Database.getKey());
         File f = new File(path + ".h2.db");
-        return f.exists();
+        if (f.exists()) {
+            return checkTableSize(settings);
+        } else {
+            File parent = f.getParentFile();
+            if (parent != null && !parent.exists()) {
+                boolean mkdirs = parent.mkdirs();
+                if (!mkdirs) {
+                    return false;
+                }
+            }
+            try {
+                boolean created = f.createNewFile();
+                if (created) {
+                    f.delete();
+                }
+                return created;
+            } catch (IOException ex) {
+                throw new ConfigurationException(ex);
+            }
+        }
     }
-
+    
+    private boolean checkTableSize(Map<String, Object> settings) {
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            stmt = conn.createStatement();
+            stmt.execute("show tables");
+            ResultSet resultSet = stmt.getResultSet();
+            resultSet.last();
+            return resultSet.getRow() <= 1;
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(conn);
+            close(stmt);
+        }
+    }
+    
     @Override
     protected void validatePrerequisites(Connection con, DatabaseMetadata metadata, Map<String, Object> settings) {
     }

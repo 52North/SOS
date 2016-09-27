@@ -56,7 +56,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
     
     private static final int CHANGEABLE_COUNT = 10;
     
-    private static final int MAX_COUNT = 17;
+    private static final int MAX_COUNT = 19;
 
     @Override
     protected void setUp() throws Exception {

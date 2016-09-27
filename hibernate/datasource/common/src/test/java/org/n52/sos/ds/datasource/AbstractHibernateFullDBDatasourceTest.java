@@ -87,28 +87,28 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         current.put(HibernateDatasourceConstants.HIBERNATE_DIRECTORY, "some-directory-stuff-to-test");
 
         final Map<String, Object> settings = ds.parseDatasourceProperties(current);
-        checkSettingKeys(settings.keySet(), false, false);
+        checkSettingKeys(settings.keySet(), false, false, false);
     }
 
     private void checkSettingDefinitionsTransactional(final Set<SettingDefinition<?, ?>> settings) {
-        checkSettingDefinitions(settings, false, true);
+        checkSettingDefinitions(settings, false, true, true);
     }
 
     private void checkSettingDefinitionsChangableSetting(final Set<SettingDefinition<?, ?>> settings) {
-        checkSettingDefinitions(settings, true, false);
+        checkSettingDefinitions(settings, true, false, false);
 
     }
 
-    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions) {
+    private void checkSettingDefinitions(final Set<SettingDefinition<?, ?>> settings, final boolean changeable, final boolean settingsDefinitions, final boolean timeFormat) {
         final List<String> keys = new ArrayList<>();
         final Iterator<SettingDefinition<?, ?>> iterator = settings.iterator();
         while (iterator.hasNext()) {
             keys.add(iterator.next().getKey());
         }
-        checkSettingKeys(keys, changeable, settingsDefinitions);
+        checkSettingKeys(keys, changeable, settingsDefinitions, timeFormat);
     }
 
-    private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions) {
+    private void checkSettingKeys(final Collection<String> keys, final boolean changeable, final boolean settingsDefinitions, final boolean timeFormat) {
         boolean transactional = keys.contains(AbstractHibernateDatasource.TRANSACTIONAL_KEY);
         boolean concept = keys.contains(AbstractHibernateDatasource.DATABASE_CONCEPT_KEY);
         boolean featureConcept = keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY);
@@ -131,6 +131,9 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
         assertTrue(!featureConcept || keys.contains(AbstractHibernateDatasource.FEATURE_CONCEPT_KEY));
         assertTrue(!multiLanguage || keys.contains(AbstractHibernateDatasource.MULTILINGUALISM_KEY));
         assertTrue(!seriesMetadata || keys.contains(AbstractHibernateDatasource.SERIES_METADATA_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIMEZONE_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_FORMAT_KEY));
+        assertTrue(!timeFormat || keys.contains(AbstractHibernateDatasource.TIME_STRING_Z_KEY));
 
         if (changeable) {
             assertEquals(CHANGEABLE_COUNT, keys.size());
@@ -142,6 +145,7 @@ public class AbstractHibernateFullDBDatasourceTest extends TestCase {
             if (!multiLanguage){ counter--; }
             if (!seriesMetadata){ counter--; }
             if (settingsDefinitions){ counter--; }
+            if (!timeFormat){ counter-= 3; }
             assertEquals(counter, keys.size());
         }
     }

@@ -450,6 +450,7 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
         List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
+        checkSeriesOfferings(serieses, request);
         for (Series series : serieses) {
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
@@ -510,6 +511,16 @@ public class GetObservationDAO extends AbstractGetObservationDAO {
             return new HibernateChunkStreamingValue(request, procedure, observableProperty, feature);
         } else {
             return new HibernateScrollableStreamingValue(request, procedure, observableProperty, feature);
+        }
+    }
+
+    private void checkSeriesOfferings(List<Series> serieses, GetObservationRequest request) {
+        boolean allSeriesWithOfferings = true;
+        for (Series series : serieses) {
+            allSeriesWithOfferings = !series.hasOffering() ?  false : allSeriesWithOfferings;
+        }
+        if (allSeriesWithOfferings) {
+            request.setOfferings(Lists.<String>newArrayList());
         }
     }
 

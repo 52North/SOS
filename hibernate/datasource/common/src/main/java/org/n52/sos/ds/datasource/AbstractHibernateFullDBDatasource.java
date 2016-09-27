@@ -139,7 +139,7 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         if (settings.containsKey(TIMEZONE_KEY)) {
             p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
         }
-        if (settings.containsKey(TIME_STRING_FORMAT_KEY)) {
+        if (settings.containsKey(TIME_STRING_FORMAT_KEY) && settings.get(TIME_STRING_FORMAT_KEY) != null) {
             p.put(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT, settings.get(TIME_STRING_FORMAT_KEY));
         }
         if (settings.containsKey(TIME_STRING_Z_KEY)) {

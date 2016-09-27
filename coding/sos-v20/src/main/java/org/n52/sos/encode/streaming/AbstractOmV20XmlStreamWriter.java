@@ -468,13 +468,27 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             if (StringHelper.isNotEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
                 additionalValues.put(HelperValues.ENCODE_NAMESPACE,
                         activeProfile.getEncodingNamespaceForFeatureOfInterest());
-            } else {
+            } else if (!Strings.isNullOrEmpty(encoder.getDefaultFeatureEncodingNamespace())) {
                 additionalValues.put(HelperValues.ENCODE_NAMESPACE, encoder.getDefaultFeatureEncodingNamespace());
+            } else {
+                additionalValues.put(HelperValues.ENCODE_NAMESPACE, observation.getObservationConstellation()
+                        .getFeatureOfInterest().getDefaultElementEncoding());
             }
+            additionalValues.put(HelperValues.PROPERTY_TYPE, "true");
             XmlObject xmlObject =
                     CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, observation.getObservationConstellation()
                             .getFeatureOfInterest(), additionalValues);
-            writeXmlObject(xmlObject, OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
+            if (xmlObject.xmlText().contains(XML_FRAGMENT)) {
+                writeXmlObject(xmlObject, OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
+            } else {
+                start(OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
+                writeNewLine();
+                writeXmlObject(xmlObject, OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
+                writeNewLine();
+                indent--;
+                end(OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
+                indent++;
+            }
         } else {
             empty(OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
             addXlinkHrefAttr(observation.getObservationConstellation().getFeatureOfInterest().getIdentifier());

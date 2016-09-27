@@ -136,9 +136,15 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.CONNECTION_TEST_ON_BORROW, "true");
         p.put(PROVIDED_JDBC, settings.get(PROVIDED_JDBC_DRIVER_KEY).toString());
         p.put(DATABASE_CONCEPT_KEY, settings.get(DATABASE_CONCEPT_KEY));
-        p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
-        p.put(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT, settings.get(TIME_STRING_FORMAT_KEY));
-        p.put(HIBERNATE_DATASOURCE_TIME_STRING_Z, settings.get(TIME_STRING_Z_KEY).toString());
+        if (settings.containsKey(TIMEZONE_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIMEZONE, settings.get(TIMEZONE_KEY));
+        }
+        if (settings.containsKey(TIME_STRING_FORMAT_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT, settings.get(TIME_STRING_FORMAT_KEY));
+        }
+        if (settings.containsKey(TIME_STRING_Z_KEY)) {
+            p.put(HIBERNATE_DATASOURCE_TIME_STRING_Z, settings.get(TIME_STRING_Z_KEY).toString());
+        }
         addMappingFileDirectories(settings, p);
 
         return p;
@@ -161,10 +167,15 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         settings.put(DATABASE_CONCEPT_KEY,  current.getProperty(DATABASE_CONCEPT_KEY));
         settings.put(PROVIDED_JDBC_DRIVER_KEY,
                 current.getProperty(PROVIDED_JDBC, PROVIDED_JDBC_DRIVER_DEFAULT_VALUE.toString()));
-        
-        settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
-        settings.put(TIME_STRING_FORMAT_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT));
-        settings.put(TIME_STRING_Z_KEY, Boolean.valueOf(current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z)));
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIMEZONE)) {
+            settings.put(TIMEZONE_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIMEZONE));
+        }
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT)) {
+            settings.put(TIME_STRING_FORMAT_KEY, current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_FORMAT));
+        }
+        if (current.containsKey(HIBERNATE_DATASOURCE_TIME_STRING_Z)) {
+            settings.put(TIME_STRING_Z_KEY, Boolean.valueOf(current.getProperty(HIBERNATE_DATASOURCE_TIME_STRING_Z)));
+        }
         final String url = current.getProperty(HibernateConstants.CONNECTION_URL);
 
         final String[] parsed = parseURL(url);

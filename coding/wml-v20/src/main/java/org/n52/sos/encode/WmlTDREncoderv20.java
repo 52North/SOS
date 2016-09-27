@@ -164,7 +164,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(WaterMLConstants.WML_20_SCHEMA_LOCATION, WaterMLConstants.WML_20_DR_SCHEMA_LOCATION,
-                GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION);
+                GmlCoverageConstants.GML_COVERAGE_10_SCHEMA_LOCATION, WaterMLConstants.WML_20_MP_SCHEMA_LOCATION);
     }
 
     @Override

@@ -171,6 +171,11 @@
                                                                     <span class="menu-title">Observable Properties</span>
                                                                 </a>
                                                             </li>
+                                                            <li>
+                                                                <a href="<c:url value="/admin/profiles" />">
+                                                                    <span class="menu-title">Profiles</span>
+                                                                </a>
+                                                            </li>
                                                             <c:if test="${sos:supportsI18N()}">
 	                                                            <li>
 	                                                                <a href="<c:url value="/admin/i18n" />">

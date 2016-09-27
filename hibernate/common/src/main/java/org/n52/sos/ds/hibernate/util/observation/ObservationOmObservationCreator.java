@@ -324,11 +324,15 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             int hashCode = obsConst.hashCode();
             /* sfp the offerings to find the templates */
             if (obsConst.getOfferings() == null) {
-                final Set<String> offerings =
-                        Sets.newHashSet(getCache().getOfferingsForObservableProperty(
-                                obsConst.getObservableProperty().getIdentifier()));
-                offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
-                obsConst.setOfferings(offerings);
+                if (hObservation instanceof AbstractSeriesObservation && ((AbstractSeriesObservation) hObservation).getSeries().hasOffering()) {
+                    obsConst.setOfferings(Sets.newHashSet(((AbstractSeriesObservation) hObservation).getSeries().getOffering().getIdentifier()));
+                } else {
+                    final Set<String> offerings =
+                            Sets.newHashSet(getCache().getOfferingsForObservableProperty(
+                                    obsConst.getObservableProperty().getIdentifier()));
+                    offerings.retainAll(getCache().getOfferingsForProcedure(obsConst.getProcedure().getIdentifier()));
+                    obsConst.setOfferings(offerings);
+                }
             }
             if (StringHelper.isNotEmpty(getResultModel())) {
                 obsConst.setObservationType(getResultModel());

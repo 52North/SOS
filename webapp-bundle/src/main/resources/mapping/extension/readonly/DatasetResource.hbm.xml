@@ -15,6 +15,7 @@
     <property column="published" insert="false" name="published" type="org.hibernate.type.TrueFalseType" update="false"/>
     <property column="seriesType" insert="false" name="datasetType" type="string" update="false"/>
 
+    <property column="identifier" insert="false" name="domainId" type="string" update="false"/>
     <property column="firsttimestamp" name="firstValueAt" type="timestamp"/>
     <property column="lasttimestamp" name="lastValueAt" type="timestamp"/>
 

@@ -160,6 +160,7 @@ public class SamplingEncoderv20 extends AbstractGmlEncoderv321<AbstractFeature> 
                                 sampFeat);
                         addNameDescription(((SFSpatialSamplingFeatureDocument) feature).getSFSpatialSamplingFeature(),
                                 sampFeat);
+                        sampFeat.wasEncoded();
                         return feature;
                     } else {
                         return CodingHelper.encodeObjectToXml(XmlHelper.getNamespace(feature), absFeature);

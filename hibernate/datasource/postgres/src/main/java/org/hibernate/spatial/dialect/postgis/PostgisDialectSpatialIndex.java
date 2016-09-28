@@ -43,7 +43,6 @@ public class PostgisDialectSpatialIndex extends PostgisDialect implements Spatia
     
     public PostgisDialectSpatialIndex() {
         super();
-        registerColumnType(java.sql.Types.VARCHAR, "iso_string");
     }
 
     public String buildSqlCreateSpatialIndexString(Index index, String defaultCatalog, String defaultSchema) {

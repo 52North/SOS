@@ -44,7 +44,6 @@ public class SqlServer2008SpatialDialectSpatialIndex extends SqlServer2008Spatia
     
     public SqlServer2008SpatialDialectSpatialIndex() {
         super();
-        registerColumnType(Types.VARCHAR, "iso_string");
     }
 
     // https://msdn.microsoft.com/de-de/library/bb934196%28v=sql.120%29.aspx

@@ -46,7 +46,6 @@ public class OracleSpatial10gDoubleFloatDialect extends OracleSpatial10gDialect 
     public OracleSpatial10gDoubleFloatDialect() {
         super();
         registerColumnType(Types.DOUBLE, "float");
-        registerColumnType(Types.VARCHAR, "iso_string");
     }
     
 

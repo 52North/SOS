@@ -61,9 +61,9 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     private int currentRow;
 
     private boolean noChunk = false;
-
-    private int currentResultSize = 0;
     
+    private int valueCounter = 0;
+
     /**
      * constructor
      *
@@ -84,13 +84,16 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (seriesValuesResult == null || !seriesValuesResult.hasNext()) {
             if (!noChunk) {
                 getNextResults();
-                if (chunkSize <= 0 || currentResultSize < chunkSize) {
+                if (chunkSize <= 0 || (valueCounter != 0 && valueCounter < chunkSize)) {
                     noChunk = true;
+                } else {
+                    valueCounter = 0;
                 }
             }
         }
         if (seriesValuesResult != null) {
             next = seriesValuesResult.hasNext();
+            valueCounter++;
         }
         if (!next) {
             sessionHolder.returnSession(session);
@@ -183,10 +186,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      */
     private void setSeriesValuesResult(Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult) {
         if (CollectionHelper.isNotEmpty(seriesValuesResult)) {
-            this.currentResultSize = seriesValuesResult.size();
             this.seriesValuesResult = seriesValuesResult.iterator();
         }
-
     }
 
 }

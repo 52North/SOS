@@ -60,6 +60,8 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
     private int currentRow;
 
     private boolean noChunk = false;
+    
+    private int valueCounter = 0;
 
     /**
      * constructor
@@ -85,13 +87,16 @@ public class HibernateChunkStreamingValue extends HibernateStreamingValue {
         if (valuesResult == null || !valuesResult.hasNext()) {
             if (!noChunk) {
                 getNextResults();
-                if (chunkSize <= 0) {
+                if (chunkSize <= 0 || (valueCounter != 0 && valueCounter < chunkSize)) {
                     noChunk = true;
+                } else {
+                    valueCounter = 0;
                 }
             }
         }
         if (valuesResult != null) {
             next = valuesResult.hasNext();
+            valueCounter++;
         }
         if (!next) {
             sessionHolder.returnSession(session);

@@ -31,7 +31,6 @@ package org.n52.sos.ogc.sensorML.v20;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.ldap.HasControls;
 
 import org.n52.sos.ogc.sensorML.HasComponents;
 import org.n52.sos.ogc.sensorML.HasConnections;
@@ -54,7 +53,7 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
     
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
     
-    private PhysicalSystem connections;
+    private SmlConnection connections;
     
     public PhysicalSystem() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));

@@ -543,6 +543,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         // set connections
+        if (abstractPhysicalProcess.isSetConnections() && !pst.isSetConnections()){
+            pst.setConnections(createConnections(abstractPhysicalProcess.getConnections()));
+        }
     }
 
     private void addDescribedObjectValues(DescribedObjectType dot, DescribedObject describedObject)
@@ -872,6 +875,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
             if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                 Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
+                if (sosSMLCharacteristics.isSetName()) {
+                    xbCharacteristics.setName(sosSMLCharacteristics.getName());
+                } else {
+                    xbCharacteristics.setName("characteristics_" + smlCharacteristics.lastIndexOf(sosSMLCharacteristics));
+                }
                 CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
                 if (sosSMLCharacteristics.isSetCharacteristics()) {
                     for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {

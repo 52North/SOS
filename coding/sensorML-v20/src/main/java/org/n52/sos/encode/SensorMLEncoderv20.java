@@ -1115,7 +1115,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (final SmlComponent sosSMLComponent : sosComponents) {
             final Component component = clt.addNewComponent();
             if (sosSMLComponent.getName() != null) {
-                component.setName(sosSMLComponent.getName());
+                component.setName(NcNameResolver.fixNcName(sosSMLComponent.getName()));
             }
             if (sosSMLComponent.getTitle() != null) {
                 component.setTitle(sosSMLComponent.getTitle());

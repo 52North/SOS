@@ -80,7 +80,7 @@ public class ProcessChain extends AbstractProcess implements HasComponents<Proce
     }
     
     public boolean isSetConnections() {
-        return getConnections() != null && !getConnections().isSetConnections();
+        return getConnections() != null && getConnections().isSetConnections();
     }
 
 }

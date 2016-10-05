@@ -97,6 +97,6 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
     }
     
     public boolean isSetConnections() {
-        return getConnections() != null && !getConnections().isSetConnections();
+        return getConnections() != null && getConnections().isSetConnections();
     }
 }

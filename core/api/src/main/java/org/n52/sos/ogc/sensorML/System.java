@@ -87,7 +87,7 @@ public class System extends AbstractComponent implements HasComponents<System>, 
    }
    
    public boolean isSetConnections() {
-       return getConnections() != null && !getConnections().isSetConnections();
+       return getConnections() != null && getConnections().isSetConnections();
    }
 
 }

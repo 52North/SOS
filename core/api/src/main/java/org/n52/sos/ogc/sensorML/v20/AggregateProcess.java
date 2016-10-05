@@ -96,7 +96,7 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
     }
     
     public boolean isSetConnections() {
-        return getConnections() != null && !getConnections().isSetConnections();
+        return getConnections() != null && getConnections().isSetConnections();
     }
 
 }

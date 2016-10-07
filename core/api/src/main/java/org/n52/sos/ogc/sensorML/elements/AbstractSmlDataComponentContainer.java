@@ -142,7 +142,7 @@ public class AbstractSmlDataComponentContainer<T> extends AbstractReferenceType 
     }
 
     public Set<SweAbstractDataComponent> getAbstractDataComponents() {
-        if (!isSetDataComponents() && isSetAbstractDataRecord()) {
+        if (!isSetDataComponents() && isSetDataRecord()) {
             Set<SweAbstractDataComponent> components = Sets.newHashSet();
             for (SweField field : getDataRecord().getFields()) {
                 components.add(field.getElement());

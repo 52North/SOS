@@ -70,11 +70,13 @@ import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sensorML.elements.SmlLink;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sos.Sos1Constants;
@@ -120,6 +122,8 @@ import net.opengis.sensorML.x101.ComponentType;
 import net.opengis.sensorML.x101.ComponentsDocument.Components;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList;
 import net.opengis.sensorML.x101.ComponentsDocument.Components.ComponentList.Component;
+import net.opengis.sensorML.x101.ConnectionsDocument.Connections;
+import net.opengis.sensorML.x101.ConnectionsDocument.Connections.ConnectionList;
 import net.opengis.sensorML.x101.ContactDocument.Contact;
 import net.opengis.sensorML.x101.ContactInfoDocument.ContactInfo;
 import net.opengis.sensorML.x101.ContactInfoDocument.ContactInfo.Address;
@@ -134,6 +138,7 @@ import net.opengis.sensorML.x101.IdentificationDocument.Identification.Identifie
 import net.opengis.sensorML.x101.InputsDocument.Inputs;
 import net.opengis.sensorML.x101.InputsDocument.Inputs.InputList;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
+import net.opengis.sensorML.x101.LinkDocument.Link;
 import net.opengis.sensorML.x101.MethodPropertyType;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs;
 import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
@@ -770,6 +775,10 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             extendOutputs(system);
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
         }
+        // set connections
+        if (system.isSetConnections() && !xbSystem.isSetConnections()){
+            xbSystem.setConnections(createConnections(system.getConnections()));
+        }
     }
     
     private void addComponentValues(final ComponentType ct, final org.n52.sos.ogc.sensorML.Component component) throws OwsExceptionReport {
@@ -1178,6 +1187,17 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
             }
         }
         return components;
+    }
+
+    private Connections createConnections(SmlConnection connections) {
+        Connections c = Connections.Factory.newInstance();
+        ConnectionList cl = c.addNewConnectionList();
+        for (SmlLink link : connections.getConnections()) {
+            Link l = cl.addNewConnection().addNewLink();
+            l.addNewDestination().setRef(link.getDestination());
+            l.addNewSource().setRef(link.getSource());
+        }
+        return c;
     }
 
     /**

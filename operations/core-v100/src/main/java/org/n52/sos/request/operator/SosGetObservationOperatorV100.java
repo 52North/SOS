@@ -54,6 +54,9 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
@@ -167,6 +170,19 @@ public class SosGetObservationOperatorV100 extends
             checkResultModel(sosRequest, exceptions);
         }
 
+        if (Configurator.getInstance().getProfileHandler().getActiveProfile().isMergeValues()) {
+            if (sosRequest.isSetExtensions() && !sosRequest.getExtensions()
+                    .containsExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray)) {
+                SwesExtensions extensions = new SwesExtensions();
+                extensions.addSwesExtension(new SwesExtensionImpl<SweBoolean>()
+                        .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())
+                        .setValue((SweBoolean) new SweBoolean()
+                                .setValue(Configurator.getInstance().getProfileHandler().getActiveProfile()
+                                        .isMergeValues())
+                                .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())));
+                sosRequest.setExtensions(extensions);
+            }
+        }
         exceptions.throwIfNotEmpty();
     }
 

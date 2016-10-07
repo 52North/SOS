@@ -33,18 +33,21 @@ import java.util.List;
 
 import org.n52.sos.ogc.gml.EngineeringCRS;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 
 /**
  * @since 4.0.0
  * 
  */
-public class System extends AbstractComponent implements HasComponents<System> {
+public class System extends AbstractComponent implements HasComponents<System>, HasConnections<System> {
 
     private static final long serialVersionUID = -7628087158818024900L;
 
     private EngineeringCRS spatialReferenceFrame;
 
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
+    
+    private SmlConnection connections;
 
     @Override
     public List<SmlComponent> getComponents() {
@@ -78,5 +81,18 @@ public class System extends AbstractComponent implements HasComponents<System> {
     public boolean isAggragation() {
         return true;
     }
+
+    public SmlConnection getConnections() {
+        return connections;
+    }
+
+   public System setConnections(SmlConnection connections) {
+       this.connections = connections;
+       return this;
+   }
+   
+   public boolean isSetConnections() {
+       return getConnections() != null && getConnections().isSetConnections();
+   }
 
 }

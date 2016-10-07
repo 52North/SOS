@@ -31,8 +31,11 @@ package org.n52.sos.ogc.sensorML.v20;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.n52.sos.ogc.sensorML.HasComponents;
+import org.n52.sos.ogc.sensorML.HasConnections;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 import org.n52.sos.util.JavaHelper;
 
 /**
@@ -42,7 +45,7 @@ import org.n52.sos.util.JavaHelper;
  * @since 4.2.0
  *
  */
-public class PhysicalSystem extends AbstractPhysicalProcess implements HasComponents<PhysicalSystem> {
+public class PhysicalSystem extends AbstractPhysicalProcess implements HasComponents<PhysicalSystem>, HasConnections<PhysicalSystem> {
 
     private static final long serialVersionUID = 2985786628770187177L;
     
@@ -50,7 +53,7 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
     
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
     
-    private Object connections;
+    private SmlConnection connections;
     
     public PhysicalSystem() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));
@@ -60,7 +63,7 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
     public List<SmlComponent> getComponents() {
         return components;
     }
-    
+
     @Override
     public PhysicalSystem addComponents(final List<SmlComponent> components) {
         if (components != null) {
@@ -69,7 +72,7 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
         }
         return this;
     }
-    
+
     @Override
     public PhysicalSystem addComponent(final SmlComponent component) {
         if (component != null) {
@@ -78,7 +81,7 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
         }
         return this;
     }
-    
+
     @Override
     public boolean isSetComponents() {
         return components != null && !components.isEmpty();
@@ -89,4 +92,16 @@ public class PhysicalSystem extends AbstractPhysicalProcess implements HasCompon
         return true;
     }
 
+    public SmlConnection getConnections() {
+        return connections;
+    }
+
+    public PhysicalSystem setConnections(SmlConnection connections) {
+        this.connections = connections;
+        return this;
+    }
+    
+    public boolean isSetConnections() {
+        return getConnections() != null && getConnections().isSetConnections();
+    }
 }

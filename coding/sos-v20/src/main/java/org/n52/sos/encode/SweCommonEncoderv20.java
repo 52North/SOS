@@ -519,7 +519,7 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
     private TimeType createTime(final SweTime sosTime) throws OwsExceptionReport {
         final TimeType xbTime = TimeType.Factory.newInstance(getXmlOptions());
         if (sosTime.isSetValue()) {
-            xbTime.setValue(sosTime.getValue());
+            xbTime.setValue(DateTimeHelper.formatDateTime2IsoString(sosTime.getValue()));
         }
         if (sosTime.isSetUom()) {
             xbTime.setUom(createUnitReference(sosTime.getUomObject()));

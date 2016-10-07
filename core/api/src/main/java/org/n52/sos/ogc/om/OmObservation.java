@@ -736,7 +736,9 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
     protected OmObservation cloneTemplate(OmObservation clone) {
         clone.setObservationConstellation(this.getObservationConstellation());
         clone.setMetaDataProperty(this.getMetaDataProperty());
-        clone.setParameter(Sets.newTreeSet(this.getParameter()));
+        if (this.getParameter() != null) {
+            clone.setParameter(Sets.newTreeSet(this.getParameter()));
+        }
         clone.setRelatedObservations(this.getRelatedObservations());
         clone.setResultType(this.getResultType());
         clone.setTokenSeparator(this.getTokenSeparator());

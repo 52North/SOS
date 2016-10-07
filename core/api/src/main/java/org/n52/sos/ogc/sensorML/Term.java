@@ -38,25 +38,24 @@ import org.n52.sos.util.StringHelper;
  *
  */
 public abstract class Term {
-	
-	
-	private String name;
+
+    private String name;
 
     private String label;
 
-	private String definition;
+    private String definition;
 
     /**
      * Classifier codeSpace href
      */
     private String codeSpace;
-    
+
     private String value;
-    
+
     public Term() {
-    	
+
     }
-    
+
     /**
      * @return the name
      */
@@ -71,7 +70,7 @@ public abstract class Term {
     public void setName(final String name) {
         this.name = name;
     }
-    
+
     /**
      * @return the Identifier label
      */
@@ -102,7 +101,7 @@ public abstract class Term {
     public void setDefinition(final String definition) {
         this.definition = definition;
     }
-    
+
     /**
      * @return the Classifier codeSpace href
      */
@@ -111,8 +110,8 @@ public abstract class Term {
     }
 
     /**
-     * @param codeSpace href
-     *            Classifier codeSpace href
+     * @param codeSpace
+     *            href Classifier codeSpace href
      */
     public void setCodeSpace(final String codeSpace) {
         this.codeSpace = codeSpace;
@@ -132,40 +131,40 @@ public abstract class Term {
     public void setValue(final String value) {
         this.value = value;
     }
-    
-	/**
-	 * @return <code>true</code>, if the name is set AND not empty
-	 */
+
+    /**
+     * @return <code>true</code>, if the name is set AND not empty
+     */
     public boolean isSetName() {
         return StringHelper.isNotEmpty(name);
     }
-    
-	/**
-	 * @return <code>true</code>, if the label is set AND not empty
-	 */
+
+    /**
+     * @return <code>true</code>, if the label is set AND not empty
+     */
     public boolean isSetLabel() {
         return StringHelper.isNotEmpty(label);
     }
 
-	/**
-	 * @return <code>true</code>, if the codeSpace is set AND not empty
-	 */
-	public boolean isSetCodeSpace()	{
-		return StringHelper.isNotEmpty(codeSpace);
-	}
-	
-	/**
-	 * @return <code>true</code>, if the codeSpace is set AND not empty
-	 */
-	public boolean isSetDefinition() {
-		return StringHelper.isNotEmpty(definition);
-	}
-	
-	/**
-	 * @return <code>true</code>, if the value is set AND not empty
-	 */
-	public boolean isSetValue() {
-		return StringHelper.isNotEmpty(value);
-}
+    /**
+     * @return <code>true</code>, if the codeSpace is set AND not empty
+     */
+    public boolean isSetCodeSpace() {
+        return StringHelper.isNotEmpty(codeSpace);
+    }
+
+    /**
+     * @return <code>true</code>, if the codeSpace is set AND not empty
+     */
+    public boolean isSetDefinition() {
+        return StringHelper.isNotEmpty(definition);
+    }
+
+    /**
+     * @return <code>true</code>, if the value is set AND not empty
+     */
+    public boolean isSetValue() {
+        return StringHelper.isNotEmpty(value);
+    }
 
 }

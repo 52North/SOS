@@ -32,7 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.n52.sos.ogc.sensorML.HasComponents;
+import org.n52.sos.ogc.sensorML.HasConnections;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 import org.n52.sos.util.JavaHelper;
 
 /**
@@ -42,7 +44,7 @@ import org.n52.sos.util.JavaHelper;
  * @since 4.2.0
  *
  */
-public class AggregateProcess extends DescribedObject implements HasComponents<AggregateProcess> {
+public class AggregateProcess extends DescribedObject implements HasComponents<AggregateProcess>, HasConnections<AggregateProcess> {
 
     private static final long serialVersionUID = 2502657552214755614L;
 
@@ -50,7 +52,7 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
 
     private final List<SmlComponent> components = new ArrayList<SmlComponent>(0);
 
-    private Object connections;
+    private SmlConnection connections;
 
     public AggregateProcess() {
         setGmlId(ID_PREFIX + JavaHelper.generateID(ID_PREFIX));
@@ -87,6 +89,19 @@ public class AggregateProcess extends DescribedObject implements HasComponents<A
     @Override
     public boolean isAggragation() {
         return true;
+    }
+
+    public SmlConnection getConnections() {
+        return connections;
+    }
+
+    public AggregateProcess setConnections(SmlConnection connections) {
+        this.connections = connections;
+        return this;
+    }
+    
+    public boolean isSetConnections() {
+        return getConnections() != null && getConnections().isSetConnections();
     }
 
 }

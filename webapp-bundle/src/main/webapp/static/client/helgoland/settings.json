@@ -4,42 +4,6 @@
   "undefinedUomString": "-",
   "aggregateServices": true,
   "saveStatus": true,
-<<<<<<< HEAD
-  "providerBlackList": [
-    {
-      "serviceID": "srv_6d9ccea8d609ecb74d4a512922bb7cee",
-      "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-    },
-    {
-      "serviceID": "srv_98727b23c202a50f15d4681bb4b961bd",
-      "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-    },
-    {
-      "serviceID": "srv_5174ab6feff1caf74f92a4f12d2b773e",
-      "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-    },
-    {
-      "serviceID": "srv_738111ed219f738cfc85be0c8d87843c",
-      "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-    },
-    {
-      "serviceID": "srv_9d58c5df42e02e2a533ca2ce3c0096f5",
-      "apiUrl": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-    }
-  ],
-  "restApiUrls": {
-    "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/": "52nSensorweb",
-    "http://geo.irceline.be/sos/api/v1/": "irceline",
-    "http://www.fluggs.de/sos2/api/v1/": "fluggs",
-    "http://sensors.geonovum.nl/sos/api/v1/": "geonovum",
-    "http://sensorweb.demo.52north.org/sensorwebtestbed/api/v1/": "52nSensorwebTestbed",
-    "http://insitu.webservice-energy.org/52n-sos-webapp/api/v1/": "minesParistech"
-  },
-  "defaultProvider": {
-    "serviceID": "srv_3dec8ce040d9506c5aba685c9d134156",
-    "url": "http://sensorweb.demo.52north.org/sensorwebclient-webapp-stable/api/v1/"
-  },
-=======
   "restApiUrls": {
         "http://localhost:8080/52n-sos-webapp/api/v1/": "localhost"
     },
@@ -47,7 +11,6 @@
         "serviceID": "1",
         "apiUrl": "http://localhost:8080/52n-sos-webapp/api/v1/"
     },
->>>>>>> feature/add-extended-rest-api-and-helgoland
   "chartOptions": {
     "yaxis": {
       "tickDecimals": 2
@@ -89,17 +52,6 @@
     "#A1BE9D"
   ],
   "baselayer": {
-<<<<<<< HEAD
-=======
-    "mapbox": {
-      "name": "Mapbox",
-      "type": "xyz",
-      "url": "http://otile1.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.jpg",
-      "layerOptions": {
-        "attribution": "&copy; <a href='http://www.mapquest.com/' target='_blank'>MapQuest</a> <img src='http://developer.mapquest.com/content/osm/mq_logo.png'/>"
-      }
-    },
->>>>>>> feature/add-extended-rest-api-and-helgoland
     "osm": {
       "name": "Open Street Map",
       "type": "xyz",

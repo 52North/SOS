@@ -188,8 +188,8 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateDAO imp
                     .withMessage(
                             "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition %s, "
                             + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
-                            + "with element definition %s",
-                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty);
+                            + "with element definition %s or swe:Vector with element defintion %s",
+                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty, OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);
         }
     }
 

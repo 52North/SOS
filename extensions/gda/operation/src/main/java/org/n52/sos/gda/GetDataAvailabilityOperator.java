@@ -110,8 +110,8 @@ public class GetDataAvailabilityOperator
         try {
             checkFeatureOfInterestIdentifiers(request.getFeaturesOfInterest(),
                     GetDataAvailabilityParams.featureOfInterest.name());
-            if (sosRequest.isSetFeaturesOfInterest()) {
-                sosRequest.setFeatureOfInterest(addChildFeatures(sosRequest.getFeaturesOfInterest()));
+            if (request.isSetFeaturesOfInterest()) {
+                request.setFeatureOfInterest(addChildFeatures(request.getFeaturesOfInterest()));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);

@@ -1689,6 +1689,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResult",
+			"title":"for SamplingGeometry",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1707,6 +1720,19 @@
 			"binding": "application/xml",
 			"operation":"InsertResultTemplate",
 			"title":"for ComplexObservation",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResultTemplate",
+			"title":"for SamplingGeometry",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"
@@ -2312,6 +2338,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResult",
+			"title":"with SamplingGeometry",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2330,6 +2369,19 @@
 			"binding": "application/soap+xml",
 			"operation":"InsertResultTemplate",
 			"title":"with ComplexObservation",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResultTemplate",
+			"title":"with SamplingGeometry",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"

@@ -34,11 +34,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.coding.CodingRepository;
 import org.n52.sos.ds.AbstractGetObservationDAO;
-import org.n52.sos.encode.Encoder;
-import org.n52.sos.encode.ObservationEncoder;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -47,20 +44,23 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
+import org.n52.sos.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.om.OmConstants;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.ogc.swe.simpleType.SweBoolean;
 import org.n52.sos.ogc.swes.SwesExtensionImpl;
 import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
-import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
 import org.opengis.parameter.InvalidParameterCardinalityException;
@@ -81,6 +81,9 @@ public class SosGetObservationOperatorV100 extends
 
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
+    
+    private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
+            new TimeInstant(SosIndeterminateTime.latest), "phenomenonTime");
 
     public SosGetObservationOperatorV100() {
         super(OPERATION_NAME, GetObservationRequest.class);
@@ -143,25 +146,27 @@ public class SosGetObservationOperatorV100 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        // TODO check foi param is ID
         try {
             checkFeatureOfInterestIdentifiers(sosRequest.getFeatureIdentifiers(),
                     SosConstants.GetObservationParams.featureOfInterest.name());
+            if (sosRequest.isSetFeatureOfInterest()) {
+                sosRequest.setFeatureIdentifiers(addChildFeatures(sosRequest.getFeatureIdentifiers()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        // TODO spatial filter BBOX?
         try {
             checkSpatialFilter(sosRequest.getSpatialFilter(),
                     SosConstants.GetObservationParams.featureOfInterest.name());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        // TODO check for SOS 1.0.0 EventTime
         try {
             if (sosRequest.getTemporalFilters() != null && !sosRequest.getTemporalFilters().isEmpty()) {
                 checkTemporalFilter(sosRequest.getTemporalFilters(),
-                        Sos2Constants.GetObservationParams.temporalFilter.name());
+                        Sos1Constants.GetObservationParams.eventTime.name());
+            } else if (getActiveProfile().isReturnLatestValueIfTemporalFilterIsMissingInGetObservation()) {
+                sosRequest.setTemporalFilters(CollectionHelper.list(TEMPORAL_FILTER_LATEST));
             }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
@@ -262,16 +267,6 @@ public class SosGetObservationOperatorV100 extends
         return validOfferings;
     }
 
-    // TODO check for SOS 1.0.0
-    @SuppressWarnings("rawtypes")
-    private boolean checkForObservationAndMeasurementV20Type(String responseFormat) throws OwsExceptionReport {
-        Encoder<XmlObject, OmObservation> encoder = CodingHelper.getEncoder(responseFormat, new OmObservation());
-        if (encoder instanceof ObservationEncoder) {
-            return ((ObservationEncoder) encoder).isObservationAndMeasurmentV20Type();
-        }
-        return false;
-    }
-
     // TODO check for SOS 1.0.0 one / mandatory
     private boolean checkResponseFormat(GetObservationRequest request) throws OwsExceptionReport {
         boolean zipCompression = false;
@@ -313,6 +308,5 @@ public class SosGetObservationOperatorV100 extends
                 }
             }
         }
-        
     }
 }

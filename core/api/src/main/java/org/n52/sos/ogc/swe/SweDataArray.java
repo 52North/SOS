@@ -149,7 +149,7 @@ public class SweDataArray extends SweAbstractDataComponent {
     
     public boolean addAll(List<List<String>> newValues) {
         if (values == null) {
-            values = newValues;
+            values = new LinkedList<List<String>>();
         }
         return values.addAll(newValues);
     }

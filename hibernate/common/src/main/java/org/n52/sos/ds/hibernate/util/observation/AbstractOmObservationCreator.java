@@ -152,6 +152,7 @@ public abstract class AbstractOmObservationCreator {
         return i18n;
     }
 
+    @Deprecated
     protected NamedValue<?> createSpatialFilteringProfileParameter(Geometry samplingGeometry) throws OwsExceptionReport {
         final NamedValue<Geometry> namedValue = new NamedValue<>();
         final ReferenceType referenceType = new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY);

@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.sos.ogc.gml.AbstractFeature;
+import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
@@ -42,6 +43,7 @@ import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.om.values.NilTemplateValue;
 import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.om.values.TVPValue;
+import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.StringHelper;
 import org.n52.sos.w3c.xlink.AttributeSimpleAttrs;
@@ -584,6 +586,21 @@ public class OmObservation extends AbstractFeature implements Serializable, Attr
      */
     public void removeParameter(NamedValue<?> parameter) {
         getParameter().remove(parameter);
+    }
+    
+    /**
+     * Add sampling geometry to observation
+     * 
+     * @param samplingGeometry
+     *            The sampling geometry to set
+     * @return this
+     */
+    public OmObservation addSpatialFilteringProfileParameter(Geometry samplingGeometry) {
+        final NamedValue<Geometry> namedValue = new NamedValue<>();
+        namedValue.setName(new ReferenceType(OmConstants.PARAM_NAME_SAMPLING_GEOMETRY));
+        namedValue.setValue(new GeometryValue(samplingGeometry));
+        addParameter(namedValue);
+        return this;
     }
 
     /**

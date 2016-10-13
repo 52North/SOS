@@ -372,7 +372,7 @@
             <set name="value"
                  table="compositeObservation"
                  inverse="false"
-                
+                 sort="natural"
                  cascade="delete-orphan">
                 <comment>Relation table for complex parent/child observations</comment>
                 <key foreign-key="observationParentFK" >
@@ -424,6 +424,7 @@
             <set name="value"
                  table="profileObservation"
                  inverse="false"
+                 sort="natural"
                  cascade="delete-orphan">
                 <comment>Relation table for complex parent/child observations</comment>
                 <key foreign-key="profileObsParentFK" >

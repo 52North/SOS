@@ -184,7 +184,7 @@ public abstract class AbstractFeatureCreator<T extends FeatureOfInterest> implem
     }
     
     private boolean createFeatureGeometryFromSamplingGeometries() {
-        return ServiceConfiguration.getInstance().isCreateFeatureGeometryFromSamplingGeometries();
+        return ServiceConfiguration.getInstance().isCreateFeatureGeometryFromSamplingGeometries() && !ServiceConfiguration.getInstance().isUpdateFeatureGeometry();
     }
     
 }

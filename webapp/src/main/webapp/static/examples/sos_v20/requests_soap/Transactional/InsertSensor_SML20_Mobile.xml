@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.w3.org/2003/05/soap-envelope http://www.w3.org/2003/05/soap-envelope/soap-envelope.xsd http://www.opengis.net/sos/2.0 http://schemas.opengis.net/sos/2.0/sosInsertSensor.xsd 
+			http://www.opengis.net/swes/2.0 http://schemas.opengis.net/swes/2.0/swes.xsd">
+	<env:Body>
+		<swes:InsertSensor service="SOS" version="2.0.0"
+			xmlns:swes="http://www.opengis.net/swes/2.0" xmlns:sos="http://www.opengis.net/sos/2.0"
+			xmlns:swe="http://www.opengis.net/swe/2.0" xmlns:sml="http://www.opengis.net/sensorml/2.0"
+			xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:xlink="http://www.w3.org/1999/xlink"
+			xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gco="http://www.isotc211.org/2005/gco"
+			xmlns:gmd="http://www.isotc211.org/2005/gmd">
+			<swes:procedureDescriptionFormat>http://www.opengis.net/sensorml/2.0</swes:procedureDescriptionFormat>
+			<swes:procedureDescription>
+				<sml:PhysicalSystem gml:id="sensor10">
+					<!--Unique identifier -->
+					<gml:identifier codeSpace="uniqueID">http://www.52north.org/test/procedure/10</gml:identifier>
+					<sml:identification>
+						<sml:IdentifierList>
+							<sml:identifier>
+								<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:longName">
+		              				<sml:label>longName</sml:label>
+									<sml:value>52°North Initiative for Geospatial Open Source
+										Software GmbH (http://52north.org)
+									</sml:value>
+								</sml:Term>
+							</sml:identifier>
+							<sml:identifier>
+								<sml:Term definition="urn:ogc:def:identifier:OGC:1.0:shortName">
+		              				<sml:label>shortName</sml:label>
+									<sml:value>52°North GmbH</sml:value>
+								</sml:Term>
+							</sml:identifier>
+						</sml:IdentifierList>
+					</sml:identification>
+			        <sml:capabilities name="offerings">
+		              <sml:CapabilityList>
+				         <!-- Special capabilities used to specify offerings. -->
+				         <!-- Parsed and removed during InsertSensor/UpdateSensorDescription, 
+					         added during DescribeSensor. -->
+				         <!-- Offering is generated if not specified. -->
+		                 <sml:capability name="offeringID">
+		                    <swe:Text definition="urn:ogc:def:identifier:OGC:offeringID">
+		                       <swe:label>offeringID</swe:label>
+		                       <swe:value>http://www.52north.org/test/offering/10</swe:value>
+		                    </swe:Text>
+		                 </sml:capability>
+		              </sml:CapabilityList>
+		            </sml:capabilities>
+                    <sml:capabilities name="metadata">
+                        <sml:CapabilityList>
+                            <!-- status indicates, whether sensor is insitu (true) 
+                                or remote (false) -->
+                            <sml:capability name="insitu">
+                                <swe:Boolean definition="insitu">
+                                    <swe:value>true</swe:value>
+                                </swe:Boolean>
+                            </sml:capability>
+                            <!-- status indicates, whether sensor is mobile (true) 
+                                or fixed/stationary (false) -->
+                            <sml:capability name="mobile">
+                                <swe:Boolean definition="mobile">
+                                    <swe:value>true</swe:value>
+                                </swe:Boolean>
+                            </sml:capability>
+                        </sml:CapabilityList>
+                    </sml:capabilities>
+                    <sml:featuresOfInterest>
+                        <sml:FeatureList definition="http://www.opengis.net/def/featureOfInterest/identifier">
+                          <swe:label>featuresOfInterest</swe:label>
+                          <sml:feature xlink:href="http://www.52north.org/test/featureOfInterest/10"/>
+                        </sml:FeatureList>
+                    </sml:featuresOfInterest>
+					<sml:inputs>
+						<sml:InputList>
+							<sml:input name="test_observable_property_10">
+								<sml:ObservableProperty
+									definition="http://www.52north.org/test/observableProperty/10" />
+							</sml:input>
+						</sml:InputList>
+					</sml:inputs>
+					<sml:outputs>
+						<sml:OutputList>
+							<sml:output name="test_observable_property_10_1">
+								<swe:Quantity
+									definition="http://www.52north.org/test/observableProperty/10_1">
+									<swe:uom code="NOT_DEFINED" />
+								</swe:Quantity>
+							</sml:output>
+							<sml:output name="test_observable_property_10_8">
+								<swe:DataRecord>
+									<swe:field name="test_observable_property_10_8_1">
+										<swe:Quantity definition="http://www.52north.org/test/observableProperty/10_8_1">
+											<swe:uom code="test_unit_10_8_1"/>
+										</swe:Quantity>
+									</swe:field>
+									<swe:field name="test_observable_property_10_8_2">
+										<swe:Category definition="http://www.52north.org/test/observableProperty/10_8_2">
+											<swe:codeSpace xlink:href="NOT_DEFINED" />
+										</swe:Category>
+									</swe:field>
+									<swe:field name="test_observable_property_10_8_3">
+										<swe:Count definition="http://www.52north.org/test/observableProperty/10_8_3">
+										</swe:Count>
+									</swe:field>
+									<swe:field name="test_observable_property_10_8_4">
+										<swe:Text definition="http://www.52north.org/test/observableProperty/10_8_4">
+										</swe:Text>
+									</swe:field>
+									<swe:field name="test_observable_property_10_8_5">
+										<swe:Boolean definition="http://www.52north.org/test/observableProperty/10_8_5">
+										</swe:Boolean>
+									</swe:field>
+								</swe:DataRecord>
+							</sml:output>
+						</sml:OutputList>
+					</sml:outputs>
+				</sml:PhysicalSystem>
+			</swes:procedureDescription>
+			<!-- multiple values possible -->
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/10_1</swes:observableProperty>
+			<swes:observableProperty>http://www.52north.org/test/observableProperty/10_8</swes:observableProperty>
+			<swes:metadata>
+				<sos:SosInsertionMetadata>
+        			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_Measurement</sos:observationType>
+        			<sos:observationType>http://www.opengis.net/def/observationType/OGC-OM/2.0/OM_ComplexObservation</sos:observationType>
+                    <sos:observationType>http://inspire.ec.europa.eu/featureconcept/TrajectoryObservation</sos:observationType>
+        			<!-- multiple values possible -->
+        			<sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingPoint</sos:featureOfInterestType>
+                    <sos:featureOfInterestType>http://www.opengis.net/def/samplingFeatureType/OGC-OM/2.0/SF_SamplingCurve</sos:featureOfInterestType>
+        		</sos:SosInsertionMetadata>
+			</swes:metadata>
+		</swes:InsertSensor>
+	</env:Body>
+</env:Envelope>
+		

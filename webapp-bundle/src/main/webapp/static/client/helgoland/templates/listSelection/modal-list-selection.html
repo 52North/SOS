@@ -3,8 +3,7 @@
         <button type="button" class="close" ng-click="close()">&times;</button>
         <div class="modal-title" translate="listSelection.header"></div>
     </div>
-    <div class="modal-body"
-         ng-controller="SwcListSelectionParametersCtrl">
+    <div class="modal-body" ng-controller="SwcListSelectionParametersCtrl">
         <uib-tabset class="selectionListContent">
             <uib-tab>
                 <uib-tab-heading>
@@ -23,6 +22,12 @@
                     <span translate="listSelection.headers.phenomenon"></span>
                 </uib-tab-heading>
                 <swc-modal-list-selection parameters="phenomenonParams" listselectionid="'phenomenon'"></swc-modal-list-selection>
+            </uib-tab>
+            <uib-tab>
+                <uib-tab-heading>
+                    <span translate="listSelection.headers.procedure"></span>
+                </uib-tab-heading>
+                <swc-modal-list-selection parameters="procedureParams" listselectionid="'procedure'"></swc-modal-list-selection>
             </uib-tab>
         </uib-tabset>
     </div>

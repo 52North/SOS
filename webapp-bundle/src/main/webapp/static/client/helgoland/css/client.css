@@ -1932,6 +1932,75 @@ footer {
   text-align: center;
 }
 
+/* colors */
+/* mobile */
+.combi-mobile {
+  height: 100%;
+  position: relative;
+}
+.combi-mobile .combi-header {
+  height: 50px;
+  text-align: center;
+}
+.combi-mobile .combi-body {
+  position: absolute;
+  width: 100%;
+  top: 50px;
+  bottom: 0px;
+}
+.combi-mobile .combi-body .map,
+.combi-mobile .combi-body .chart {
+  position: relative;
+  height: 50%;
+}
+.combi-mobile .combi-body .map .axis text,
+.combi-mobile .combi-body .chart .axis text {
+  font-size: 12px;
+}
+.combi-mobile .combi-body .map .axis path,
+.combi-mobile .combi-body .chart .axis path,
+.combi-mobile .combi-body .map .axis line,
+.combi-mobile .combi-body .chart .axis line {
+  fill: none;
+  stroke: black;
+}
+.combi-mobile .combi-body .map .graphArea,
+.combi-mobile .combi-body .chart .graphArea {
+  fill: lightsteelblue;
+  fill-opacity: 0.7;
+}
+.combi-mobile .combi-body .map .grid .tick,
+.combi-mobile .combi-body .chart .grid .tick {
+  stroke: lightgrey;
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+}
+.combi-mobile .combi-body .map .map-highlight-label,
+.combi-mobile .combi-body .chart .map-highlight-label {
+  fill: white;
+  fill-opacity: 0.7;
+}
+.combi-mobile .combi-body .map .mouse-focus-line,
+.combi-mobile .combi-body .chart .mouse-focus-line {
+  pointer-events: none;
+  stroke-width: 1px;
+  stroke: black;
+}
+.combi-mobile .combi-body .map .mouse-drag,
+.combi-mobile .combi-body .chart .mouse-drag {
+  fill: rgba(0, 0, 255, 0.4);
+  pointer-events: all;
+  cursor: move;
+}
+.map-buttons {
+  position: absolute;
+  z-index: 11;
+  bottom: 0;
+  width: 50%;
+  margin: 0 25% 17px;
+  text-align: center;
+}
+
 .selectionListContent .panel-body {
   overflow: auto;
   max-height: 200px;

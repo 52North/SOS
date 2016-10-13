@@ -131,6 +131,7 @@ import com.vividsolutions.jts.geom.Point;
 public class CoordinateTransformator implements
         RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
 
+    private final SweHelper helper = new SweHelper();
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
     /**
@@ -548,10 +549,10 @@ public class CoordinateTransformator implements
                 y = geom.getCoordinate().y;
             }
             SweQuantity yq =
-                    SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
+                    helper.createSweQuantity(y, SweConstants.Y_AXIS, ProcedureDescriptionSettings.getInstance()
                             .getLatLongUom());
             SweQuantity xq =
-                    SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
+                    helper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
                             .getLatLongUom());
             ArrayList<SweCoordinate<?>> newPosition =
                     Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(northingName, yq),

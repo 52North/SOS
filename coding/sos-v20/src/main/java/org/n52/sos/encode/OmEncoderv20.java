@@ -52,7 +52,6 @@ import org.n52.sos.ogc.om.ObservationValue;
 import org.n52.sos.ogc.om.OmConstants;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.SfConstants;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.om.values.CategoryValue;
 import org.n52.sos.ogc.om.values.ComplexValue;
@@ -123,7 +122,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     private static final Map<String, Map<String, Set<String>>> SUPPORTED_RESPONSE_FORMATS = Collections.singletonMap(
             SosConstants.SOS,
             Collections.singletonMap(Sos2Constants.SERVICEVERSION, Collections.singleton(OmConstants.NS_OM_2)));
-
+    private final SweHelper helper = new SweHelper();
+    
     public OmEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
@@ -272,7 +272,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
             observationType = OMHelper.getObservationTypeFor(observationValue.getValue());
         }
         if (observationType.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
-            SweDataArray dataArray = SweHelper.createSosSweDataArray(observationValue);
+            SweDataArray dataArray = helper.createSosSweDataArray(observationValue);
             Map<HelperValues, String> additionalValues = new EnumMap<>(SosConstants.HelperValues.class);
             additionalValues.put(HelperValues.FOR_OBSERVATION, null);
             return encodeSWE(dataArray, additionalValues);
@@ -283,7 +283,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
     private XmlObject createMultiObservationValueToResult(MultiObservationValues<?> observationValue) throws OwsExceptionReport {
         // TODO create SosSweDataArray
-        SweDataArray dataArray = SweHelper.createSosSweDataArray(observationValue);
+        SweDataArray dataArray = helper.createSosSweDataArray(observationValue);
         Map<HelperValues, String> additionalValues = new EnumMap<>(SosConstants.HelperValues.class);
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
         Object encodedObj = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, additionalValues);

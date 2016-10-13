@@ -89,8 +89,8 @@ import com.google.common.collect.Sets;
 public class GetResultDAO extends AbstractGetResultDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetResultDAO.class);
-
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private ResultHandlingHelper helper = new ResultHandlingHelper();
 
     /**
      * constructor
@@ -126,7 +126,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
                     observations = queryObservation(request, featureIdentifier, session);
                 }
 
-                response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations,
+                response.setResultValues(helper.createResultValuesFromObservations(observations,
                         sosResultEncoding, sosResultStructure));
             }
             return response;

@@ -86,6 +86,7 @@ import org.n52.sos.ogc.swe.SweConstants;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweVector;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
@@ -109,10 +110,9 @@ import com.google.common.collect.Sets;
 public class InsertResultDAO extends AbstractInsertResultDAO implements CapabilitiesExtensionProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertResultDAO.class);
-
     private static final int FLUSH_THRESHOLD = 50;
-
     private final HibernateSessionHolder sessionHolder = new HibernateSessionHolder();
+    private ResultHandlingHelper helper = new  ResultHandlingHelper();
 
     /**
      * constructor
@@ -323,8 +323,8 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
     private OmObservation getObservation(final ResultTemplate resultTemplate, final String[] blockValues,
             final SweAbstractDataComponent resultStructure, final SweAbstractEncoding encoding, final Session session)
             throws OwsExceptionReport {
-        final int resultTimeIndex = ResultHandlingHelper.hasResultTime(resultStructure);
-        final int phenomenonTimeIndex = ResultHandlingHelper.hasPhenomenonTime(resultStructure);
+        final int resultTimeIndex = helper.hasResultTime(resultStructure);
+        final int phenomenonTimeIndex = helper.hasPhenomenonTime(resultStructure);
 
         final SweDataRecord record = setRecordFrom(resultStructure);
 
@@ -361,9 +361,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
                 } else if (swefield.getElement() instanceof SweDataRecord) {
                     getIndexForObservedPropertyAndUnit((SweDataRecord) swefield.getElement(), j, observedProperties,
                             units, reserved);
+                } else if (swefield.getElement() instanceof SweVector) {
+                    helper.checkVectorForSamplingGeometry(swefield);
                 } else {
                     throw new NoApplicableCodeException().withMessage(
-                            "The swe:Field element of type {} is not yet supported!",
+                            "The swe:Field element of type %s is not yet supported!",
                             swefield.getElement().getClass().getName());
                 }
             }

@@ -148,16 +148,6 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setDescription(
                              "Should the service list only parent offerings in Capabilities. Lower level offerings would be referenced in extension element of related ObservationOffering.");
      
-     public static final BooleanSettingDefinition UPDATE_FEATURE_GEOMETRY_DEFINITION =
-             new BooleanSettingDefinition()
-                     .setGroup(GROUP)
-                     .setOrder(ORDER_18)
-                     .setKey(UPDATE_FEATURE_GEOMETRY)
-                     .setDefaultValue(false)
-                     .setTitle("Should this SOS expand the featureOfInterest geometry with the samplingGeometry?")
-                     .setDescription(
-                             "Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation.");
-     
      public static final FileSettingDefinition CACHE_FILE_FOLDER_DEFILINION = new FileSettingDefinition()
              .setGroup(GROUP)
              .setOrder(ORDER_19)
@@ -176,6 +166,16 @@ public class ServiceSettings implements SettingDefinitionProvider {
                      .setTitle("Should this SOS create the featureOfInterest geometry from samplingGeometries?")
                      .setDescription(
                              "Whether the SOS should create the featureOfInterest geometry from samplingGeometries.");
+     
+     public static final BooleanSettingDefinition UPDATE_FEATURE_GEOMETRY_DEFINITION =
+             new BooleanSettingDefinition()
+                     .setGroup(GROUP)
+                     .setOrder(21)
+                     .setKey(UPDATE_FEATURE_GEOMETRY)
+                     .setDefaultValue(false)
+                     .setTitle("Should this SOS expand the featureOfInterest geometry with the samplingGeometry?")
+                     .setDescription(
+                            "Whether the SOS should expand the featureOfInterest geometry with the samplingGeometry from the inserted observation. Note: The geometries are added to the end of the LineString! Also if the new observation is between existing observations!");
      
     private static final Set<SettingDefinition<?, ?>> DEFINITIONS = Sets.<SettingDefinition<?, ?>> newHashSet(
             SERVICE_URL_DEFINITION,

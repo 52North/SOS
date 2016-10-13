@@ -46,9 +46,6 @@ import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -56,7 +53,6 @@ import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.gml.time.Time;
 import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
 import org.n52.sos.ogc.om.MultiObservationValues;
 import org.n52.sos.ogc.om.OmCompositePhenomenon;
 import org.n52.sos.ogc.om.OmConstants;
@@ -95,6 +91,8 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -162,6 +160,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
     }
+    private final SweHelper helper = new SweHelper();
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -546,7 +545,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
             }
         } else if (OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION.equals(observationType)
                 || OmConstants.RESULT_MODEL_OBSERVATION.getLocalPart().equals(observationType)) {
-            SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
+            SweDataArray dataArray = helper.createSosSweDataArray(sosObservation);
             Map<HelperValues, String> additionalValues =
                     new EnumMap<>(SosConstants.HelperValues.class);
             additionalValues.put(HelperValues.FOR_OBSERVATION, null);
@@ -559,7 +558,7 @@ public class OmEncoderv100 extends AbstractXmlEncoder<Object> implements Observa
         Map<HelperValues, String> additionalValues =
                 new EnumMap<>(SosConstants.HelperValues.class);
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        SweDataArray dataArray = SweHelper.createSosSweDataArray(sosObservation);
+        SweDataArray dataArray = helper.createSosSweDataArray(sosObservation);
         xbResult.set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, dataArray, additionalValues));
     }
 

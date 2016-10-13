@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
  * Software GmbH
  *
@@ -26,5 +26,29 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-/*! client 2016-10-07 14:27 */
-mainApp.requires.push("n52.core.favoriteIE9ImExport"),angular.module("n52.core.favoriteIE9ImExport",[]).service("imExportFavoriteModalOpener",["$uibModal",function(a){return function(b){a.open({animation:!0,templateUrl:"templates/ie9/import-export.html",resolve:{data:function(){return b}},controller:["$scope","$uibModalInstance","data",function(a,b,c){a.header=c.header,a.text=c.text,a.content=c.content,a.close=function(){b.close()},a.submit=function(){c.submit&&c.submit(a.content),b.close()}}]})}}]).factory("favoriteImExportService",["favoriteService","$translate","imExportFavoriteModalOpener",function(a,b,c){function d(){var d={header:b.instant("favorite.export.header"),text:b.instant("favorite.export.text"),content:angular.toJson(a.favorites,2)};c(d)}function e(){var d=!0;if(a.hasFavorites()&&(d=confirm(b.instant("favorite.import.override"))),d){var e={header:b.instant("favorite.import.header"),text:b.instant("favorite.import.text"),content:"",submit:function(b){a.setFavorites(angular.fromJson(b))}};c(e)}}return{importFavorites:e,exportFavorites:d}}]);
+package org.n52.sos.util;
+
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+
+public class IncDecIntegerTest {
+    
+    private IncDecInteger integer = new IncDecInteger();
+
+    @Test
+    public void test() {
+        assertThat(integer.get(), is(0));
+        integer.increment();
+        assertThat(integer.get(), is(1));
+        integer.decrement();
+        assertThat(integer.get(), is(0));
+        assertThat(integer.incrementAndGet(), is(1));
+        assertThat(integer.getAndIncrement(), is(1));
+        assertThat(integer.getAndDecrement(), is(2));
+        assertThat(integer.decrementAndGet(), is(0));
+        assertThat(integer.get(), is(0));
+    }
+
+}

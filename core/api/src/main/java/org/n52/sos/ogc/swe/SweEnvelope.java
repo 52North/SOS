@@ -48,12 +48,10 @@ import com.vividsolutions.jts.geom.Envelope;
  *
  */
 public class SweEnvelope extends SweAbstractDataComponent {
+    private static final SweHelper helper = new SweHelper();
     private String referenceFrame;
-
     private SweVector upperCorner;
-
     private SweVector lowerCorner;
-
     private SweTimeRange time;
 
     public SweEnvelope() {
@@ -234,8 +232,8 @@ public class SweEnvelope extends SweAbstractDataComponent {
     }
 
     private static SweVector createSweVector(double x, double y, String uom) {
-        SweQuantity xCoord = SweHelper.createSweQuantity(x, SweConstants.X_AXIS, uom);
-        SweQuantity yCoord = SweHelper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
+        SweQuantity xCoord = helper.createSweQuantity(x, SweConstants.X_AXIS, uom);
+        SweQuantity yCoord = helper.createSweQuantity(y, SweConstants.Y_AXIS, uom);
         return new SweVector(new SweCoordinate<>(SweCoordinateName.easting.name(), xCoord),
                              new SweCoordinate<>(SweCoordinateName.northing.name(), yCoord));
     }

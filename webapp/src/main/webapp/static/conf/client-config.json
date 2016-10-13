@@ -542,6 +542,23 @@
 			"param":{
 				"service":"SOS",
 				"version":"2.0.0",
+				"request":"GetDataAvailability",
+				"responseFormat":"http://www.opengis.net/sosgda/2.0"
+			},
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/x-kvp",
+			"operation":"GetDataAvailability",
+			"title":"version 2.0",
+			"headers":{
+				"Accept":"application/xml"
+			},
+			"method":"GET"
+		},
+		{
+			"param":{
+				"service":"SOS",
+				"version":"2.0.0",
 				"request":"GetFeatureOfInterest",
 				"featureOfInterest":"http://www.52north.org/test/featureOfInterest/1"
 			},
@@ -1409,6 +1426,19 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/GetDataAvailability_20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"GetDataAvailability",
+			"title":"version 2.0",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/GetFeatureOfInterest.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1689,6 +1719,32 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResult",
+			"title":"for SamplingGeometry",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResult_ComplexObservation_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResult",
+			"title":"for ComplexObservation with SamplingGeometry",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -1707,6 +1763,32 @@
 			"binding": "application/xml",
 			"operation":"InsertResultTemplate",
 			"title":"for ComplexObservation",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResultTemplate",
+			"title":"for SamplingGeometry",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/ResultHandling/InsertResultTemplate_ComplexObservation_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertResultTemplate",
+			"title":"for ComplecObservation with SamplingGeometry",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"
@@ -1758,6 +1840,19 @@
 			"binding": "application/xml",
 			"operation":"InsertSensor",
 			"title":"with SensorML 2.0 description",
+			"headers":{
+				"Accept":"application/xml",
+				"Content-Type":"application/xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_xml/Transactional/InsertSensor_SML20_Mobile.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 description for mobile Sensor",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"
@@ -2025,6 +2120,19 @@
 			"version":"2.0.0",
 			"binding": "application/soap+xml",
 			"operation":"GetDataAvailability",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/GetDataAvailability_20.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"GetDataAvailability",
+			"title":"version 2.0",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -2312,6 +2420,32 @@
 			"method":"POST"
 		},
 		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResult",
+			"title":"with SamplingGeometry",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResult_ComplexObservation_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResult",
+			"title":"with ComplexObservation and SamplingGeometry",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
 			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate.xml",
 			"service":"SOS",
 			"version":"2.0.0",
@@ -2330,6 +2464,32 @@
 			"binding": "application/soap+xml",
 			"operation":"InsertResultTemplate",
 			"title":"with ComplexObservation",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResultTemplate",
+			"title":"with SamplingGeometry",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/ResultHandling/InsertResultTemplate_ComplexObservation_SamplingGeometry.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertResultTemplate",
+			"title":"with ComplexObservation and SamplingGeometry",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -2381,6 +2541,19 @@
 			"binding": "application/soap+xml",
 			"operation":"InsertSensor",
 			"title":"with SensorML 2.0",
+			"headers":{
+				"Accept":"application/soap+xml",
+				"Content-Type":"application/soap+xml"
+			},
+			"method":"POST"
+		},
+		{
+			"request":"static/examples/sos_v20/requests_soap/Transactional/InsertSensor_SML20_Mobile.xml",
+			"service":"SOS",
+			"version":"2.0.0",
+			"binding": "application/soap+xml",
+			"operation":"InsertSensor",
+			"title":"with SensorML 2.0 for mobile Sensor",
 			"headers":{
 				"Accept":"application/soap+xml",
 				"Content-Type":"application/soap+xml"
@@ -2957,6 +3130,25 @@
 					"http://www.52north.org/test/featureOfInterest/5"
 				]
 
+			}
+
+		},
+		{
+			"service":"SOS",
+			"version":"2.0.0",
+			"method":"POST",
+			"binding": "application/json",
+			"headers":{
+				"Accept":"application/json",
+				"Content-Type":"application/json"
+			},
+			"operation":"GetDataAvailability",
+			"title":"version 2.0",
+			"request":{
+				"request":"GetDataAvailability",
+				"service":"SOS",
+				"version":"2.0.0",
+				"responseFormat":"http://www.opengis.net/sosgda/2.0"
 			}
 
 		},

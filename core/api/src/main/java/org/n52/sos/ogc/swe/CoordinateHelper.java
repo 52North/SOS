@@ -48,116 +48,121 @@ import com.google.common.base.Strings;
 @Configurable
 public class CoordinateHelper {
 
-	private static CoordinateHelper instance = null;
-	
-	private Set<String> northingNames = Collections.emptySet();
-	
-	private Set<String> eastingNames = Collections.emptySet();
-	
-	private Set<String> altitudeNames = Collections.emptySet();
+    private static CoordinateHelper instance = null;
 
-	private CoordinateHelper() {
-	}
+    private Set<String> northingNames = Collections.emptySet();
 
-	public static synchronized CoordinateHelper getInstance() {
-		if (instance == null) {
-			instance = new CoordinateHelper();
-			SettingsManager.getInstance().configure(instance);
-		}
-		return instance;
-	}
+    private Set<String> eastingNames = Collections.emptySet();
 
-	/**
-	 * @return the northingNames
-	 */
-	public Set<String> getNorthingNames() {
-		return northingNames;
-	}
+    private Set<String> altitudeNames = Collections.emptySet();
 
-	/**
-	 * @param northingNames the northingNames to set
-	 */
-	@Setting(CoordinateSettings.NORTHING_COORDINATE_NAME)
-	public void setNorthingNames(String northingNames) {
-		if (!Strings.isNullOrEmpty(northingNames)) {
-			this.northingNames = CollectionHelper.csvStringToSet(northingNames);
-		}
-	}
-	
-	/**
-	 * Check if northing names contains name
-	 * 
-	 * @param name
-	 *            Name to check
-	 * @return <code>true</code>, if the name is defined.
-	 */
-	public boolean hasNorthingName(String name) {
-		return check(getNorthingNames(), name);
-	}
+    private CoordinateHelper() {
+    }
 
-	/**
-	 * @return the eastingNames
-	 */
-	public Set<String> getEastingNames() {
-		return eastingNames;
-	}
+    public static synchronized CoordinateHelper getInstance() {
+        if (instance == null) {
+            instance = new CoordinateHelper();
+            SettingsManager.getInstance().configure(instance);
+        }
+        return instance;
+    }
 
-	/**
-	 * @param eastingNames the eastingNames to set
-	 */
-	@Setting(CoordinateSettings.EASTING_COORDINATE_NAME)
-	public void setEastingNames(String eastingNames) {
-		if (!Strings.isNullOrEmpty(eastingNames)) {
-			this.eastingNames = CollectionHelper.csvStringToSet(eastingNames);
-		}
-	}
-	
-	/**
-	 * Check if easting names contains name
-	 * 
-	 * @param name
-	 *            Name to check
-	 * @return <code>true</code>, if the name is defined.
-	 */
-	public boolean hasEastingName(String name) {
-		return check(getEastingNames(), name);
-	}
+    /**
+     * @return the northingNames
+     */
+    public Set<String> getNorthingNames() {
+        return northingNames;
+    }
 
-	/**
-	 * @return the altitudeNames
-	 */
-	public Set<String> getAltitudeNames() {
-		return altitudeNames;
-	}
+    /**
+     * @param northingNames
+     *            the northingNames to set
+     */
+    @Setting(CoordinateSettings.NORTHING_COORDINATE_NAME)
+    public void setNorthingNames(String northingNames) {
+        if (!Strings.isNullOrEmpty(northingNames)) {
+            this.northingNames = CollectionHelper.csvStringToSet(northingNames);
+        }
+    }
 
-	/**
-	 * @param altitudeNames the altitudeNames to set
-	 */
-	@Setting(CoordinateSettings.ALTITUDE_COORDINATE_NAME)
-	public void setAltitudeNames(String altitudeNames) {
-		if (!Strings.isNullOrEmpty(altitudeNames)) {
-			this.altitudeNames = CollectionHelper.csvStringToSet(altitudeNames);
-		}
-	}
-	
-	/**
-	 * Check if altitude names contains name
-	 * 
-	 * @param name
-	 *            Name to check
-	 * @return <code>true</code>, if the name is defined.
-	 */
-	public boolean hasAltitudeName(String name) {
-		return check(getAltitudeNames(), name);
-	}
-	
-	private boolean check(Set<String> set, String name) {
-		for (String string : set) {
-			if (string.equalsIgnoreCase(name)){
-				return true;
-			}
-		}
-		return false;
-	}
+    /**
+     * Check if northing names contains name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is defined.
+     */
+    public boolean hasNorthingName(String...names) {
+        return check(getNorthingNames(), names);
+    }
+
+    /**
+     * @return the eastingNames
+     */
+    public Set<String> getEastingNames() {
+        return eastingNames;
+    }
+
+    /**
+     * @param eastingNames
+     *            the eastingNames to set
+     */
+    @Setting(CoordinateSettings.EASTING_COORDINATE_NAME)
+    public void setEastingNames(String eastingNames) {
+        if (!Strings.isNullOrEmpty(eastingNames)) {
+            this.eastingNames = CollectionHelper.csvStringToSet(eastingNames);
+        }
+    }
+
+    /**
+     * Check if easting names contains name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is defined.
+     */
+    public boolean hasEastingName(String... names) {
+        return check(getEastingNames(), names);
+    }
+
+    /**
+     * @return the altitudeNames
+     */
+    public Set<String> getAltitudeNames() {
+        return altitudeNames;
+    }
+
+    /**
+     * @param altitudeNames
+     *            the altitudeNames to set
+     */
+    @Setting(CoordinateSettings.ALTITUDE_COORDINATE_NAME)
+    public void setAltitudeNames(String altitudeNames) {
+        if (!Strings.isNullOrEmpty(altitudeNames)) {
+            this.altitudeNames = CollectionHelper.csvStringToSet(altitudeNames);
+        }
+    }
+
+    /**
+     * Check if altitude names contains name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is defined.
+     */
+    public boolean hasAltitudeName(String...names) {
+        return check(getAltitudeNames(), names);
+    }
+
+    private boolean check(Set<String> set, String...names) {
+        for (String string : set) {
+            for (String name : names) {
+                if (string.equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }

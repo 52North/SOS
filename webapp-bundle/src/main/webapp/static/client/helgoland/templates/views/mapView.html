@@ -13,12 +13,12 @@
                             ng-show="status.showPhenomena"
                             ng-click="$event.stopPropagation(); togglePhenomena()">X</button>
                 </div>
-                <div id ="map" ng-controller="SwcBasicMapCtrl as mapCtrl">
+                <div id="map" ng-controller="SwcBasicMapCtrl as mapCtrl">
                     <leaflet id="stationMap"
-                             bounds="map.bounds"
-                             markers="map.markers"
-                             layers="map.layers"
-                             paths="map.paths"
+                             bounds="map.bounds" 
+                             markers="map.markers" 
+                             layers="map.layers" 
+                             paths="map.paths" 
                              center="map.center"
                              controls="map.controls"
                              width="100%" height="100%">

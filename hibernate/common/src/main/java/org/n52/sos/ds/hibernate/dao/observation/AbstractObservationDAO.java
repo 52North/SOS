@@ -35,6 +35,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -1556,7 +1558,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
         private Set<Observation<?>> persistChildren(SweAbstractDataRecord dataRecord)
                 throws HibernateException, OwsExceptionReport {
-            Set<Observation<?>> children = new HashSet<>(dataRecord.getFields().size());
+            Set<Observation<?>> children = new TreeSet<>();
             for (SweField field : dataRecord.getFields()) {
                 ObservableProperty observableProperty = getObservablePropertyForField(field);
                 ObservationPersister childPersister = createChildPersister(observableProperty);
@@ -1682,10 +1684,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
 
         private void checkUpdateFeatureOfInterestGeometry() {
-            if (samplingGeometry != null && ServiceConfiguration.getInstance().isUpdateFeatureGeometry()) {
+            // check if flag is set and if this observation is not a child observation
+            if (samplingGeometry != null && ServiceConfiguration.getInstance().isUpdateFeatureGeometry() && !childObservation) {
                 new FeatureOfInterestDAO().updateFeatureOfInterestGeometry(featureOfInterest, samplingGeometry, session);
             }
-            
         }
 
         private static class Caches {

@@ -149,7 +149,7 @@ public interface SweConstants {
     QName QN_COUNT_SWE_101 = new QName(NS_SWE_101, EN_COUNT, NS_SWE_PREFIX);
 
     QName QN_COUNT_SWE_200 = new QName(NS_SWE_20, EN_COUNT, NS_SWE_PREFIX);
-    
+
     QName QN_COUNT_RANGE_SWE_200 = new QName(NS_SWE_20, EN_COUNT_RANGE, NS_SWE_PREFIX);
 
     QName QN_DATA_ARRAY_SWE_200 = new QName(NS_SWE_20, EN_DATA_ARRAY, NS_SWE_PREFIX);
@@ -194,7 +194,7 @@ public interface SweConstants {
 
     QName QN_VALUE_SWE_200 = new QName(NS_SWE_20, EN_VALUE, NS_SWE_PREFIX);
 
-	QName QN_DATA_ARRAY_SWE_101 = new QName(NS_SWE_101, EN_DATA_ARRAY, NS_SWE_PREFIX);
+    QName QN_DATA_ARRAY_SWE_101 = new QName(NS_SWE_101, EN_DATA_ARRAY, NS_SWE_PREFIX);
 
     /**
      * Enum for SensorML types
@@ -216,54 +216,60 @@ public interface SweConstants {
     enum SweCoordinateName {
         easting, northing, altitude
     }
-    
+
     /**
      * Enum for coordinate names for easting
      */
     enum EastingSweCoordinateName {
-    	easting, westing, longitude;
-    	
-    	public static boolean isEastingSweCoordinateName(String name) {
-			for (EastingSweCoordinateName eastingSweCoordinateName : EastingSweCoordinateName.values()) {
-				if (eastingSweCoordinateName.name().equalsIgnoreCase(name)) {
-					return true;
-				}
-			}
-			return false;
-		}
-    	
+        easting, westing, longitude;
+
+        public static boolean isEastingSweCoordinateName(String... names) {
+            for (EastingSweCoordinateName eastingSweCoordinateName : EastingSweCoordinateName.values()) {
+                for (String name : names) {
+                    if (eastingSweCoordinateName.name().equalsIgnoreCase(name)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
     }
-    
+
     /**
      * Enum for coordinate names for northing
      */
     enum NorthingSweCoordinateName {
-    	northing, southing, latitude;
-    	
-    	public static boolean isNorthingSweCoordinateName(String name) {
-			for (NorthingSweCoordinateName northingSweCoordinateName : NorthingSweCoordinateName.values()) {
-				if (northingSweCoordinateName.name().equalsIgnoreCase(name)) {
-					return true;
-				}
-			}
-			return false;
-		}
+        northing, southing, latitude;
+
+        public static boolean isNorthingSweCoordinateName(String... names) {
+            for (NorthingSweCoordinateName northingSweCoordinateName : NorthingSweCoordinateName.values()) {
+                for (String name : names) {
+                    if (northingSweCoordinateName.name().equalsIgnoreCase(name)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
-    
+
     /**
      * Enum for coordinate names for altitude
      */
     enum AltitudeSweCoordinateName {
-    	altitude, height, depth;
-    	
-    	public static boolean isAltitudeSweCoordinateName(String name) {
-			for (AltitudeSweCoordinateName altitudeSweCoordinateName : AltitudeSweCoordinateName.values()) {
-				if (altitudeSweCoordinateName.name().equalsIgnoreCase(name)) {
-					return true;
-				}
-			}
-			return false;
-		}
+        altitude, height, depth;
+
+        public static boolean isAltitudeSweCoordinateName(String... names) {
+            for (AltitudeSweCoordinateName altitudeSweCoordinateName : AltitudeSweCoordinateName.values()) {
+                for (String name : names) {
+                    if (altitudeSweCoordinateName.name().equalsIgnoreCase(name)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     /**

@@ -54,10 +54,15 @@ import org.n52.sos.ogc.om.values.SweDataArrayValue;
 import org.n52.sos.ogc.om.values.TVPValue;
 import org.n52.sos.ogc.om.values.TextValue;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.ogc.swe.CoordinateHelper;
 import org.n52.sos.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.ogc.swe.SweCoordinate;
 import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
+import org.n52.sos.ogc.swe.SweConstants.AltitudeSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.EastingSweCoordinateName;
+import org.n52.sos.ogc.swe.SweConstants.NorthingSweCoordinateName;
 import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
@@ -79,7 +84,10 @@ import org.n52.sos.service.ServiceConfiguration;
  */
 public final class SweHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SweHelper.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(SweHelper.class);
+
+    public SweHelper() {
+    }
 
     /**
      * Create {@link SweDataArray} from {@link OmObservation}
@@ -92,7 +100,7 @@ public final class SweHelper {
      *             If the service does not support the {@link SweDataArray}
      *             creation from value of {@link OmObservation}
      */
-    public static SweDataArray createSosSweDataArray(OmObservation sosObservation) throws CodedException {
+    public SweDataArray createSosSweDataArray(OmObservation sosObservation) throws CodedException {
         String observablePropertyIdentifier =
                 sosObservation.getObservationConstellation().getObservableProperty().getIdentifier();
         SweDataArrayValue dataArrayValue = new SweDataArrayValue();
@@ -140,7 +148,7 @@ public final class SweHelper {
      *             If the service does not support the {@link SweDataArray}
      *             creation from {@link AbstractObservationValue}
      */
-    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) throws CodedException {
+    public SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) throws CodedException {
         String observablePropertyIdentifier = observationValue.getObservableProperty();
         SweDataArrayValue dataArrayValue = new SweDataArrayValue();
         SweDataArray dataArray = new SweDataArray();
@@ -176,21 +184,21 @@ public final class SweHelper {
         return dataArray;
     }
 
-    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) throws CodedException {
+    private SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) throws CodedException {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField(tvp.getTime()));
         dataRecord.addField(getFieldForValue(tvp.getValue(), name));
         return dataRecord;
     }
 
-    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) throws CodedException {
+    private SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) throws CodedException {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField(sov.getPhenomenonTime()));
         dataRecord.addField(getFieldForValue(sov.getValue(), name));
         return dataRecord;
     }
 
-    private static SweField getPhenomenonTimeField(Time sosTime) {
+    private SweField getPhenomenonTimeField(Time sosTime) {
         SweAbstractUomType<?> time = null;
         if (sosTime instanceof TimePeriod) {
             time = new SweTimeRange();
@@ -202,13 +210,13 @@ public final class SweHelper {
         return new SweField(OmConstants.PHENOMENON_TIME_NAME, time);
     }
 
-    private static SweField getFieldForValue(Value<?> iValue, String name) throws CodedException {
+    private SweField getFieldForValue(Value<?> iValue, String name) throws CodedException {
         SweAbstractDataComponent value = getValue(iValue);
         value.setDefinition(name);
         return new SweField(name, value);
     }
 
-    private static SweAbstractDataComponent getValue(Value<?> iValue) throws CodedException {
+    private SweAbstractDataComponent getValue(Value<?> iValue) throws CodedException {
         if (iValue instanceof BooleanValue) {
             return new SweBoolean();
         } else if (iValue instanceof CategoryValue) {
@@ -242,7 +250,7 @@ public final class SweHelper {
      *            SosObservation with token and tuple separator
      * @return TextEncoding
      */
-    public static SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
+    public SweAbstractEncoding createTextEncoding(OmObservation sosObservation) {
         String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
         String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
         String decimalSeparator = null;
@@ -267,7 +275,7 @@ public final class SweHelper {
      *            AbstractObservationValue with token and tuple separator
      * @return TextEncoding
      */
-    private static SweAbstractEncoding createTextEncoding(AbstractObservationValue<?> observationValue) {
+    private SweAbstractEncoding createTextEncoding(AbstractObservationValue<?> observationValue) {
         String tupleSeparator = ServiceConfiguration.getInstance().getTupleSeparator();
         String tokenSeparator = ServiceConfiguration.getInstance().getTokenSeparator();
         String decimalSeparator = null;
@@ -294,7 +302,7 @@ public final class SweHelper {
      *            Decimal separator
      * @return TextEncoding
      */
-    private static SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
+    private SweAbstractEncoding createTextEncoding(String tupleSeparator, String tokenSeparator, String decimalSeparator) {
         SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(tupleSeparator);
         sosTextEncoding.setTokenSeparator(tokenSeparator);
@@ -304,7 +312,7 @@ public final class SweHelper {
         return sosTextEncoding;
     }
 
-    private static List<String> createBlock(SweAbstractDataComponent elementType, Time phenomenonTime, String phenID,
+    private List<String> createBlock(SweAbstractDataComponent elementType, Time phenomenonTime, String phenID,
             Value<?> value) {
         if (elementType instanceof SweDataRecord) {
             SweDataRecord elementTypeRecord = (SweDataRecord) elementType;
@@ -341,7 +349,7 @@ public final class SweHelper {
      *            the {@link SweQuantity} unit of measure
      * @return the {@link SweQuantity} from parameter
      */
-    public static SweQuantity createSweQuantity(Object value, String axis, String uom) {
+    public SweQuantity createSweQuantity(Object value, String axis, String uom) {
         return createSweQuantity(value, uom).setAxisID(axis);
     }
     
@@ -354,7 +362,7 @@ public final class SweHelper {
      *            the {@link SweQuantity} unit of measure
      * @return the {@link SweQuantity} from parameter
      */
-    public static SweQuantity createSweQuantity(Object value, String uom) {
+    public SweQuantity createSweQuantity(Object value, String uom) {
         return new SweQuantity().setUom(uom).setValue(JavaHelper.asDouble(value));
     }
     
@@ -367,11 +375,56 @@ public final class SweHelper {
      *            the {@link SweQuantity} unit of measure
      * @return the {@link SweQuantity} from parameter
      */
-    public static SweQuantity createSweQuantity(Object value, UoM uom) {
+    public SweQuantity createSweQuantity(Object value, UoM uom) {
         return (SweQuantity)new SweQuantity().setValue(JavaHelper.asDouble(value)).setUom(uom);
     }
+    
+    /**
+     * Check if the name is a defined altitude name
+     * 
+     * @param coordinate
+     *            Name to check
+     * @return <code>true</code>, if the name is an altitude name
+     */
+    public boolean checkAltitudeNameDefinition(SweCoordinate<?> coordinate) {
+        return checkAltitudeNameDefinition(coordinate.getName(), coordinate.getValue().getDefinition());
+    }
+    
+    public boolean checkAltitudeNameDefinition(String...names) {
+        return AltitudeSweCoordinateName.isAltitudeSweCoordinateName(names)
+                || CoordinateHelper.getInstance().hasAltitudeName(names);
+    }
+    
+    /**
+     * Check if the name is a defined northing name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is a northing name
+     */
+    public boolean checkNorthingNameDefinition(SweCoordinate<?> coordinate) {
+        return checkNorthingNameDefinition(coordinate.getName(), coordinate.getValue().getDefinition());
+    }
+    
+    public boolean checkNorthingNameDefinition(String...names) {
+        return NorthingSweCoordinateName.isNorthingSweCoordinateName(names)
+                || CoordinateHelper.getInstance().hasNorthingName(names);
+    }
 
-    private SweHelper() {
+    /**
+     * Check if the name is a defined easting name
+     * 
+     * @param name
+     *            Name to check
+     * @return <code>true</code>, if the name is an easting name
+     */
+    public boolean checkEastingNameDefinition(SweCoordinate<?> coordinate) {
+        return checkEastingNameDefinition(coordinate.getName(), coordinate.getValue().getDefinition());
+    }
+    
+    public boolean checkEastingNameDefinition(String...names) {
+        return EastingSweCoordinateName.isEastingSweCoordinateName(names)
+                || CoordinateHelper.getInstance().hasEastingName(names);
     }
 
 }

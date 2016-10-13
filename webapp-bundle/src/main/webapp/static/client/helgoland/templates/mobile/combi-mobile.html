@@ -1,41 +1,30 @@
 <div class="combi-mobile">
-  <div class="combi-header" ng-hide="series.label === undefined">
-    <div>
-      <span>{{series.label}}</span>
-    </div>
-    <div>
-      <span>{{series.seriesParameters.phenomenon.label}} ({{series.uom}})</span>
-    </div>
-  </div>
-  <div class="combi-body">
-    <div class="map">
-      <leaflet id="mobileCombiMap"
-               paths="paths"
-               geojson="geometry"
-               series="series"
-               event-broadcast="events"
-               width="100%" height="100%">
-      </leaflet>
-      <div class="loadingNotifier"
-           ng-if="series.loading">
+    <div class="combi-header" ng-hide="series.label === undefined">
         <div>
-          <div class="glyphicon glyphicon-refresh icon-spin"></div>
-          <div translate="trajectories.map.loading"></div>
+            <span>{{series.label}}</span>
         </div>
-      </div>
-      <div class="map-buttons">
-        <a class="btn btn-default" ng-controller="ListSelectionMobileButtonCtrl" ng-click="openListSelectionMobile()">
-          <span class="glyphicon glyphicon-list-alt"></span>
-          <span ng-if="series.label === undefined" ng-init="openListSelectionMobile()"></span>
-        </a>
-      </div>
+        <div>
+            <span>{{series.seriesParameters.phenomenon.label}}</span>
+            <span>({{series.uom}})</span>
+        </div>
     </div>
-    <div class="chart">
-      <d3-linear-chart 
-        chart-data="data"
-        series="series"
-        highlight-data="highlight">
-      </d3-linear-chart>
+    <div class="combi-body">
+        <div class="map">
+            <leaflet id="mobileCombiMap" paths="paths" geojson="geometry" series="series" event-broadcast="events" width="100%" height="100%"></leaflet>
+            <div class="loadingNotifier" ng-if="series.loading">
+                <div>
+                    <div class="glyphicon glyphicon-refresh icon-spin"></div>
+                    <div translate="trajectories.map.loading"></div>
+                </div>
+            </div>
+            <div class="map-buttons">
+                <a class="btn btn-default" ng-controller="ListSelectionMobileButtonCtrl" ng-click="openListSelectionMobile()">
+                    <span class="glyphicon glyphicon-list-alt"></span>
+                </a>
+            </div>
+        </div>
+        <div class="chart">
+            <d3-linear-chart chart-data="data" series="series" highlight-data="highlight"></d3-linear-chart>
+        </div>
     </div>
-  </div>
 </div>

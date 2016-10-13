@@ -1,15 +1,17 @@
 <div>
     <uib-accordion close-others="true">
-        <uib-accordion-group ng-repeat="param in parameters" 
-                         is-open="param.isOpen" 
-                         is-disabled="param.isDisabled">
+        <uib-accordion-group ng-repeat="param in parameters" is-open="param.isOpen" is-disabled="param.isDisabled">
             <uib-accordion-heading>
                 <span ng-class="{'text-muted' : param.isDisabled}">
                     <span ng-bind-html="param.header | translate"></span>
-                    <span ng-show=param.headerAddition> - </span>
+                    <span ng-show=param.headerAddition>-</span>
                     <span>{{param.headerAddition}}</span>
                 </span>
             </uib-accordion-heading>
+            <div style="text-align: center;" ng-if="param.loading > 0">
+                <span class="glyphicon glyphicon-refresh icon-spin"></span>
+                <span translate="listSelection.loading" translate-values="{ countProvider: param.loading }"></span>
+            </div>
             <div ng-repeat="item in param.items | orderBy:'+label'" ng-click="openItem(item)">
                 <span>{{item.label}}</span>
             </div>

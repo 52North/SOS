@@ -109,9 +109,7 @@ public class GmlDecoderv321 extends AbstractGmlDecoderv321<Object, XmlObject> {
             TimeInstantDocument.class, TimePeriodDocument.class, ReferenceType.class, MeasureType.class,
             PointType.class, PointDocument.class, LineStringType.class, PolygonType.class, CompositeSurfaceType.class,
             CodeWithAuthorityType.class, CodeType.class, FeaturePropertyType.class, GeometryPropertyType.class,
-            VerticalDatumPropertyType.class
-
-    ), CodingHelper.decoderKeysForElements(MeasureType.type.toString(), MeasureType.class));
+            VerticalDatumPropertyType.class), CodingHelper.decoderKeysForElements(MeasureType.type.toString(), MeasureType.class));
 
     private static final String CS = ",";
 

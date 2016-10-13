@@ -65,6 +65,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
@@ -175,9 +176,9 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             sosObservation = createNewObservation(obsConst, hObservation, value);
             // add SpatialFilteringProfile
             if (hObservation.hasSamplingGeometry()) {
-                sosObservation.addParameter(createSpatialFilteringProfileParameter(hObservation.getSamplingGeometry()));
+                sosObservation.addSpatialFilteringProfileParameter(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(hObservation.getSamplingGeometry()));
             } else if (hObservation.isSetLongLat()) {
-                sosObservation.addParameter(createSpatialFilteringProfileParameter(new HibernateGeometryCreator().createGeometry(hObservation)));
+                sosObservation.addSpatialFilteringProfileParameter(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(new HibernateGeometryCreator().createGeometry(hObservation)));
             }
             addRelatedObservations(sosObservation, hObservation);
             addParameter(sosObservation, hObservation);

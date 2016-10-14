@@ -38,15 +38,15 @@ import java.util.Map;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -67,6 +67,8 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.http.HTTPStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
@@ -173,22 +175,31 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            Criteria c = observationDAO.getDefaultObservationInfoCriteria(session);
-            if (observationDAO instanceof SeriesObservationDAO) {
-                Criteria seriesCriteria = c.createCriteria(SeriesObservationInfo.SERIES);
-                seriesCriteria.createCriteria(Series.FEATURE_OF_INTEREST).setProjection(
+            Criteria c  = null;
+            if (EntitiyHelper.getInstance().isSeriesSupported()) {
+                c = session.createCriteria(FeatureOfInterest.class).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-
+                c.add(Subqueries.propertyIn(
+                        FeatureOfInterest.ID,
+                        getDetachedCriteriaSeriesForOffering(offeringIdentifiers, session)));
             } else {
+                c = DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
                 c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).setProjection(
                         Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
+                new OfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifiers);
             }
-            new OfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifiers);
             LOGGER.debug("QUERY getFeatureOfInterestIdentifiersForOffering(offeringIdentifiers): {}",
                     HibernateHelper.getSqlString(c));
             return c.list();
         }
+    }
+
+    private DetachedCriteria getDetachedCriteriaSeriesForOffering(String offering, Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
+        detachedCriteria.createCriteria(Series.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+        return detachedCriteria;
     }
 
     /**

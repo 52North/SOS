@@ -27,14 +27,17 @@
 -- Public License for more details.
 --
 
-ALTER TABLE sos.series ADD COLUMN firstTimeStamp datetime;
-ALTER TABLE sos.series ADD COLUMN lastTimeStamp datetime;
-ALTER TABLE sos.series ADD COLUMN firstNumericValue DOUBLE PRECISION;
-ALTER TABLE sos.series ADD COLUMN lastNumericValue DOUBLE PRECISION;
-ALTER TABLE sos.series ADD COLUMN unitId bigint;
+-- create table
+create table public.seriesHasOffering (seriesId number(19) not null, offeringId number(19) not null, primary key (seriesId, offeringId));
 
-alter table sos.series add constraint seriesUnitFk foreign key (unitId) references sos.unit (unitId);
+-- create indices
+create index serieshasoffseSriesidx on public.seriesHasOffering (seriesId);
+create index serieshasoffofferingidx on public.seriesHasOffering (offeringId);
 
-ALTER TABLE sos.`procedure` ADD COLUMN referenceFlag char(1) default 'F';
+-- create foreign keys
+alter table public.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
+alter table public.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references public.series;
 
-ALTER TABLE sos.observation ADD COLUMN samplingGeometry GEOMETRY;
+-- Update table with values
+-- Run only this statement if you have update the database during the installation process!
+INSERT INTO public.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM public.observation o JOIN public.observationhasoffering oho ON o.observationid = oho.observationid);

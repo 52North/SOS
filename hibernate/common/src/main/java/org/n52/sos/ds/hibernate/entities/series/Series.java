@@ -30,10 +30,13 @@ package org.n52.sos.ds.hibernate.entities.series;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 /**
@@ -42,38 +45,34 @@ import org.n52.sos.ds.hibernate.entities.Unit;
  * @since 4.0.0
  * 
  */
-public class Series implements Serializable, HasProcedure, HasObservableProperty, HasFeatureOfInterest, HasDeletedFlag, HasPublishedFlag, HasUnit {
+public class Series 
+        implements Serializable,
+                    HasProcedure,
+                    HasObservableProperty,
+                    HasFeatureOfInterest,
+                    HasDeletedFlag, 
+                    HasPublishedFlag,
+                    HasUnit,
+                    HasOfferings {
 
     private static final long serialVersionUID = 7838379468605356753L;
     
     public static String ID = "seriesId";
-    
     public static String FIRST_TIME_STAMP = "firstTimeStamp";
-    
     public static String LAST_TIME_STAMP = "lastTimeStamp";
-
     private long seriesId;
-
     private FeatureOfInterest featureOfInterest;
-
     private ObservableProperty observableProperty;
-
     private Procedure procedure;
-
     private Boolean deleted = false;
-    
     private Boolean published = true;
-
-    // the following values are used by the timeseries api
+    // the following values are used by the rest api
     private Date firstTimeStamp;
-    
     private Date lastTimeStamp;
-    
     private Double firstNumericValue;
-    
     private Double lastNumericValue;
-    
     private Unit unit;
+    private Set<Offering> offerings = new HashSet<Offering>(0);
     
     /**
      * Get series id
@@ -239,5 +238,32 @@ public class Series implements Serializable, HasProcedure, HasObservableProperty
 
     public boolean isSetFirstLastTime() {
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
+    }
+
+    @Override
+    public Set<Offering> getOfferings() {
+        return offerings;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void setOfferings(final Object offerings) {
+        if (offerings instanceof Set<?>) {
+            this.offerings = (Set<Offering>) offerings;
+        } else {
+            getOfferings().add((Offering) offerings);
+        }
+    }
+
+    public boolean hasOfferings(Set<Offering> offerings) {
+        if (getOfferings() != null && !getOfferings().isEmpty()) {
+            for (Offering offering : offerings) {
+                if (!getOfferings().contains(offering)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 }

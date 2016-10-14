@@ -44,7 +44,6 @@ import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.ResultTransformer;
-import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.AbstractObservationDAO;
@@ -52,8 +51,8 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.series.SeriesObservationTimeDAO;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationInfo;
@@ -285,7 +284,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 .getInstance()
                 .getSeriesDAO()
                 .getSeries(request.getProcedures(), request.getObservedProperties(), request.getFeaturesOfInterest(),
-                        session)) {
+                        request.getOfferings(), session)) {
             TimePeriod timePeriod = null;
             if (!request.isSetOfferings()) {
                 // get time information from series object

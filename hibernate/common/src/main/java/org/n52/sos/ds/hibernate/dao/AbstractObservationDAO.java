@@ -104,6 +104,7 @@ import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -126,12 +127,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation identifiers
      * @param observation
      *            Observation to add identifiers
+     * @param offerings 
      * @param session
      *            Hibernate session
      * @throws CodedException
      */
     protected abstract void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            AbstractObservation observation, Session session) throws CodedException;
+            AbstractObservation observation, Set<Offering> offerings, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for querying observations with parameters
@@ -571,7 +573,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
         addFeatureOfInterestToObservationIdentifiers(hFeature, observationIdentifiers);
         addAdditionalObjectsToObservationIdentifiers(observationIdentifiers, sosObservation, session);
-        addObservationIdentifiersToObservation(observationIdentifiers, hObservation, session);
+        addObservationIdentifiersToObservation(observationIdentifiers, hObservation, getOfferings(hObservationConstellations), session);
         if (sosObservation.isSetSpatialFilteringProfileParameter()) {
             hObservation
                     .setSamplingGeometry(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
@@ -586,11 +588,17 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
+    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
+        Set<Offering> offerings = Sets.newHashSet();
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            offerings.add(observationConstellation.getOffering());
+        }
+        return offerings;
+    }
+
     protected void addOfferingsToObservation(AbstractObservation hObservation,
             Set<ObservationConstellation> hObservationConstellations) {
-        for (ObservationConstellation observationConstellation : hObservationConstellations) {
-            hObservation.getOfferings().add(observationConstellation.getOffering());
-        }
+        hObservation.getOfferings().addAll(getOfferings(hObservationConstellations));
     }
 
     protected ObservationIdentifiers createObservationIdentifiers(

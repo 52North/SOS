@@ -39,6 +39,7 @@ import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.interfaces.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.series.Series;
@@ -60,7 +61,7 @@ public abstract class AbstractSeriesDAO {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSeriesDAO.class);
 
-    protected abstract Class<?> getSeriesClass();
+    public abstract Class<?> getSeriesClass();
     
     /**
      * Get series for GetObservation request and featuresOfInterest
@@ -105,6 +106,9 @@ public abstract class AbstractSeriesDAO {
     public abstract List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session);
     
+    public abstract List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties, Collection<String> featuresOfInterest,
+            Collection<String> offerings, Session session);
+
     /**
      * Get series for procedure, observableProperty and featureOfInterest
      * 
@@ -155,6 +159,12 @@ public abstract class AbstractSeriesDAO {
             session.refresh(series);
         } else if (series.isDeleted()) {
             series.setDeleted(false);
+            series.setOfferings(identifiers.getOfferings());
+            session.update(series);
+            session.flush();
+            session.refresh(series);
+        } else if (!series.hasOfferings(identifiers.getOfferings())) {
+            series.setOfferings(identifiers.getOfferings());
             session.update(series);
             session.flush();
             session.refresh(series);
@@ -173,7 +183,7 @@ public abstract class AbstractSeriesDAO {
 
     public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
         final Criteria c =
-                createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
+                createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, request.getOfferings(), session);
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
@@ -182,6 +192,14 @@ public abstract class AbstractSeriesDAO {
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
+        LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features): {}",
+                HibernateHelper.getSqlString(c));
+        return c;
+    }
+    
+    public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
+            Collection<String> features, Collection<String> offerings, Session session) {
+        final Criteria c = createCriteriaFor(procedures, observedProperties, features, offerings, session);
         LOGGER.debug("QUERY getSeries(proceedures, observableProperteies, features): {}",
                 HibernateHelper.getSqlString(c));
         return c;
@@ -318,6 +336,10 @@ public abstract class AbstractSeriesDAO {
     public void addProcedureToCriteria(Criteria c, Collection<String> procedures) {
         c.createCriteria(Series.PROCEDURE).add(Restrictions.in(Procedure.IDENTIFIER, procedures));
     
+    }
+
+    public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
+        c.createCriteria(Series.OFFERINGS).add(Restrictions.in(Offering.IDENTIFIER, offerings));
     }
 
     /**
@@ -479,6 +501,15 @@ public abstract class AbstractSeriesDAO {
         }
         if (CollectionHelper.isNotEmpty(procedures)) {
             addProcedureToCriteria(c, procedures);
+        }
+        return c;
+    }
+
+    private Criteria createCriteriaFor(Collection<String> procedures, Collection<String> observedProperties,
+            Collection<String> features, Collection<String> offerings, Session session) {
+        final Criteria c = createCriteriaFor(procedures, observedProperties, features, session);
+        if (CollectionHelper.isNotEmpty(offerings)) {
+            addOfferingToCriteria(c, offerings);
         }
         return c;
     }

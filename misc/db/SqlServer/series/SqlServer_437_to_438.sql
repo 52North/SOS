@@ -27,17 +27,19 @@
 -- Public License for more details.
 --
 
+use sos
+
 -- create table
-create table public.seriesHasOffering (seriesId bigint not null, offeringId bigint not null, primary key (seriesId, offeringId));
+create table dbo.seriesHasOffering (seriesId bigint not null, offeringId bigint not null, primary key (seriesId, offeringId));
 
 -- create indices
-create index serieshasoffseriesidx on public.seriesHasOffering (seriesId);
-create index serieshasoffofferingidx on public.seriesHasOffering (offeringId);
+create index serieshasoffseriesidx on dbo.seriesHasOffering (seriesId);
+create index serieshasoffofferingidx on dbo.seriesHasOffering (offeringId);
 
 -- create foreign keys
-alter table public.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
-alter table public.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references public.series;
+alter table dbo.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references dbo.offering;
+alter table dbo.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references dbo.series;
 
 -- Update table with values
 -- Run only this statement if you have update the database during the installation process!
-INSERT INTO public.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM public.observation o JOIN public.observationhasoffering oho ON o.observationid = oho.observationid);
+INSERT INTO dbo.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM dbo.observation o JOIN dbo.observationhasoffering oho ON o.observationid = oho.observationid);

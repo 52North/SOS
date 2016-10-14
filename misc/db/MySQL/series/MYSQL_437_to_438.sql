@@ -28,16 +28,18 @@
 -- 
 
 -- create table
-create table public.seriesHasOffering (seriesId int8 not null, offeringId int8 not null, primary key (seriesId, offeringId));
+create table sos.seriesHasOffering (seriesId int8 not null, offeringId int8 not null, primary key (seriesId, offeringId));
 
 -- create indices
-create index serieshasoffseriesidx on public.seriesHasOffering (seriesId);
-create index serieshasoffofferingidx on public.seriesHasOffering (offeringId);
+create index serieshasoffseriesidx on sos.seriesHasOffering (seriesId);
+create index serieshasoffofferingidx on sos.seriesHasOffering (offeringId);
 
 -- create foreign keys
-alter table public.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
-alter table public.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references public.series;
+alter table sos.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references sos.offering;
+alter table sos.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references sos.series;
 
 -- Update table with values
 -- Run only this statement if you have update the database during the installation process!
-INSERT INTO public.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM public.observation o JOIN public.observationhasoffering oho ON o.observationid = oho.observationid);
+SET SQL_SAFE_UPDATES=0;
+INSERT INTO sos.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM sos.observation o JOIN sos.observationhasoffering oho ON o.observationid = oho.observationid);
+SET SQL_SAFE_UPDATES=1;

@@ -182,10 +182,6 @@ public class FeatureOfInterestDAO extends AbstractIdentifierNameDescriptionDAO i
                 c.add(Subqueries.propertyIn(
                         FeatureOfInterest.ID,
                         getDetachedCriteriaSeriesForOffering(offeringIdentifiers, session)));
-//                c = DaoFactory.getInstance().getSeriesDAO().getDefaultSeriesCriteria(session);
-//                c.createCriteria(Series.FEATURE_OF_INTEREST).setProjection(
-//                        Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
-//                new OfferingDAO().addOfferingRestricionForSeries(c, offeringIdentifiers);
             } else {
                 c = DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
                 c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST).setProjection(

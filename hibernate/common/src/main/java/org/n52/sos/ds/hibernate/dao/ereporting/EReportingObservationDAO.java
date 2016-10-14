@@ -50,6 +50,7 @@ import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBlobObservation;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingBooleanObservation;
@@ -173,11 +174,12 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
 
     @Override
     protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            AbstractObservation observation, Session session) throws CodedException {
+            AbstractObservation observation, Set<Offering> offerings, Session session) throws CodedException {
         EReportingSeriesIdentifiers identifiers = new EReportingSeriesIdentifiers();
         identifiers.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
         identifiers.setObservableProperty(observationIdentifiers.getObservableProperty());
         identifiers.setProcedure(observationIdentifiers.getProcedure());
+        identifiers.setOfferings(offerings);
         if (observationIdentifiers instanceof EReportingObservationIdentifiers) {
             identifiers.setSamplingPoint(((EReportingObservationIdentifiers) observationIdentifiers)
                     .getSamplingPoint());

@@ -34,10 +34,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCoordinate;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasGeometry;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOfferings;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPhenomenonTime;

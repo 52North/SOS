@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.dao;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -38,6 +39,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.n52.sos.ds.hibernate.entities.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.Observation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -167,7 +169,7 @@ public class AbstractObservationDAOTest {
 
         @Override
         protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-                AbstractObservation observation, Session session) throws CodedException {
+                AbstractObservation observation, Set<Offering> offerings, Session session) throws CodedException {
             // TODO Auto-generated method stub
         }
 

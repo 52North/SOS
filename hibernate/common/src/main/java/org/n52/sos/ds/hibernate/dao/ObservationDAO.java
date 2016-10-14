@@ -96,7 +96,7 @@ public class ObservationDAO extends AbstractObservationDAO {
 
     @Override
     protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            AbstractObservation observation, Session session) {
+            AbstractObservation observation, Set<Offering> offerings, Session session) {
         Observation hObservation = (Observation) observation;
         hObservation.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
         hObservation.setObservableProperty(observationIdentifiers.getObservableProperty());

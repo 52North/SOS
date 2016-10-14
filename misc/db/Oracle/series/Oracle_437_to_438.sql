@@ -38,5 +38,6 @@ create index serieshasoffofferingidx on public.seriesHasOffering (offeringId);
 alter table public.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
 alter table public.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references public.series;
 
--- update table with values
+-- Update table with values
+-- Run only this statement if you have update the database during the installation process!
 INSERT INTO public.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM public.observation o JOIN public.observationhasoffering oho ON o.observationid = oho.observationid);

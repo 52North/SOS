@@ -28,10 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.dao.series;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 
@@ -42,6 +45,8 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
     private ObservableProperty observableProperty;
 
     private Procedure procedure;
+    
+    private Set<Offering> offerings;
     
     public SeriesIdentifiers() {
         
@@ -104,6 +109,24 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
         return getProcedure() != null;
     }
     
+    /**
+     * @return the offerings
+     */
+    public Set<Offering> getOfferings() {
+        return offerings;
+    }
+
+    /**
+     * @param offerings the offerings to set
+     */
+    public void setOfferings(Set<Offering> offerings) {
+        this.offerings = offerings;
+    }
+    
+    public boolean isSetOfferings() {
+        return getOfferings() != null && !getOfferings().isEmpty();
+    }
+
     public void addIdentifierRestrictionsToCritera(Criteria c) {
         if (isSetFeatureOfInterest()) {
             addFeatureOfInterestToCriteria(c, getFeatureOfInterest());
@@ -125,6 +148,9 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
         }
         if (isSetProcedure()) {
             series.setProcedure(getProcedure());
+        }
+        if (isSetOfferings()) {
+            series.setOfferings(getOfferings());
         }
     }
     

@@ -148,6 +148,11 @@ public abstract class AbstractFeatureOfInterestDAO extends AbstractIdentifierNam
             return null;
         }
     }
+    
+    public void updateFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest, AbstractFeature abstractFeature, Session session) {
+        addName(abstractFeature, featureOfInterest, session);
+        session.saveOrUpdate(featureOfInterest);
+    }
 
     protected Criteria getDefaultCriteria(Session session) {
         return session.createCriteria(AbstractFeatureOfInterest.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

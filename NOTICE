@@ -210,7 +210,7 @@ This project includes:
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver under BSD License
+  PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0

@@ -313,6 +313,9 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             hFeature = featureOfInterestDAO.checkOrInsertFeatureOfInterest(abstractFeature, session);
             cache.putFeature(abstractFeature, hFeature);
         }
+        if (!hFeature.isSetName() && abstractFeature.isSetName()) {
+            featureOfInterestDAO.updateFeatureOfInterest(hFeature, abstractFeature, session);
+        }
         return hFeature;
     }
 

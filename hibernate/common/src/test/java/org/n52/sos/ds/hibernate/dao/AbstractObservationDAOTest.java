@@ -44,6 +44,7 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.full.SeriesNumericObservation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
@@ -173,6 +174,12 @@ public class AbstractObservationDAOTest {
     public class TestObservationDAO extends AbstractObservationDAO {
 
         @Override
+        protected void addObservationContextToObservation(ObservationContext ctx,
+                Observation<?> observation, Session session) throws CodedException {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
         public Criteria getObservationInfoCriteriaForFeatureOfInterestAndProcedure(String feature, String procedure,
                 Session session) {
             // TODO Auto-generated method stub
@@ -242,13 +249,6 @@ public class AbstractObservationDAOTest {
         public Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport {
             // TODO Auto-generated method stub
             return null;
-        }
-
-        @Override
-        protected void addObservationContextToObservation(ObservationContext observationIdentifiers,
-                Observation<?> observation, Session session) throws CodedException {
-            // TODO Auto-generated method stub
-            
         }
 
         @Override

@@ -27,14 +27,17 @@
 -- Public License for more details.
 --
 
-ALTER TABLE series ADD firstTimeStamp timestamp;
-ALTER TABLE series ADD lastTimeStamp timestamp;
-ALTER TABLE series ADD firstNumericValue DOUBLE PRECISION;
-ALTER TABLE series ADD lastNumericValue DOUBLE PRECISION;
-ALTER TABLE series ADD unitId number(19,0);
+-- create table
+create table seriesHasOffering (seriesId number(19) not null, offeringId number(19) not null, primary key (seriesId, offeringId));
 
-alter table series add constraint seriesUnitFk foreign key (unitId) references unit;
+-- create indices
+create index serieshasoffseSriesidx on seriesHasOffering (seriesId);
+create index serieshasoffofferingidx on seriesHasOffering (offeringId);
 
-ALTER TABLE procedure ADD referenceFlag char(1 char) default 'F' check (referenceFlag in ('T','F'));
+-- create foreign keys
+alter table seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references offering;
+alter table seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references series;
 
-ALTER TABLE observation ADD samplingGeometry GEOMETRY;
+-- Update table with values
+-- Run only this statement if you have update the database during the installation process!
+INSERT INTO serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM observation o JOIN observationhasoffering oho ON o.observationid = oho.observationid);

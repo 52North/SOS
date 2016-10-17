@@ -35,13 +35,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.ScrollableResults;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
@@ -149,6 +148,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -167,6 +167,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation identifiers
      * @param observation
      *            Observation to add identifiers
+     * @param offerings 
      * @param session
      *            Hibernate session
      * @throws CodedException
@@ -586,6 +587,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     protected ObservationContext createObservationContext() {
         return new ObservationContext();
+    }
+    
+    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
+        Set<Offering> offerings = Sets.newHashSet();
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            offerings.add(observationConstellation.getOffering());
+        }
+        return offerings;
     }
 
     protected ObservationContext fillObservationContext(ObservationContext ctx, OmObservation sosObservation, Session session) {
@@ -1663,6 +1672,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 observationContext.setHiddenChild(true);
             }
             observationContext.setFeatureOfInterest(featureOfInterest);
+            observationContext.setOfferings(offerings);
             daos.observation().fillObservationContext(observationContext, sosObservation, session);
             daos.observation().addObservationContextToObservation(observationContext, observation, session);
 

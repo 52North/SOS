@@ -70,7 +70,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Collection<String>offerings, Session session) throws OwsExceptionReport {
+            Collection<String> features, Collection<String> offerings, Session session) {
         return getSeriesCriteria(procedures, observedProperties, features, offerings, session).list();
     }
 
@@ -91,7 +91,7 @@ public class SeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    protected Class <?>getSeriesClass() {
+    public Class <?>getSeriesClass() {
         return Series.class;
     }
 

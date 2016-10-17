@@ -169,7 +169,8 @@ public interface HibernateRelations {
             extends HasReadableObservationContext,
                     HasObservableProperty,
                     HasProcedure,
-                    HasFeatureOfInterest {
+                    HasFeatureOfInterest,
+                    HasOfferings {
     }
 
     interface HasDescriptionXml {

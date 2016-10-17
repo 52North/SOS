@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,6 +43,7 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -87,6 +89,8 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
     private final Map<Integer, OmObservationConstellation> observationConstellations = Maps.newHashMap();
     private final Map<Long, List<Parameter>> seriesParameter = Maps.newHashMap();
     private List<OmObservation> observationCollection;
+
+    private HashSet<Object> set;
 
 
     public ObservationOmObservationCreator(Collection<? extends Observation<?>> observations,
@@ -325,8 +329,16 @@ public class ObservationOmObservationCreator extends AbstractOmObservationCreato
             int hashCode = obsConst.hashCode();
             /* sfp the offerings to find the templates */
             if (obsConst.getOfferings() == null) {
-                if (hObservation instanceof AbstractSeriesObservation && ((AbstractSeriesObservation) hObservation).getSeries().hasOffering()) {
-                    obsConst.setOfferings(Sets.newHashSet(((AbstractSeriesObservation) hObservation).getSeries().getOffering().getIdentifier()));
+                if (hObservation instanceof AbstractSeriesObservation) {
+                    if (((AbstractSeriesObservation) hObservation).getSeries().hasOfferings()) {
+                        Set<String> set = Sets.newHashSet();
+                        for (Offering offering : ((AbstractSeriesObservation) hObservation).getSeries().getOfferings()) {
+                            set.add(offering.getIdentifier());
+                        }
+                        obsConst.setOfferings(set);
+                    } else if (((AbstractSeriesObservation) hObservation).getSeries().hasOffering()) {
+                        obsConst.setOfferings(Sets.newHashSet(((AbstractSeriesObservation) hObservation).getSeries().getOffering().getIdentifier()));
+                    }
                 } else {
                     final Set<String> offerings =
                             Sets.newHashSet(getCache().getOfferingsForObservableProperty(

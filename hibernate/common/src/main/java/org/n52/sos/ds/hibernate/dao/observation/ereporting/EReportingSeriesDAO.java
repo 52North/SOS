@@ -52,7 +52,7 @@ import org.n52.sos.request.GetObservationRequest;
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
-    protected Class<?> getSeriesClass() {
+    public Class<?> getSeriesClass() {
         return EReportingSeries.class;
     }
 
@@ -84,7 +84,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     @Override
     @SuppressWarnings("unchecked")
     public List<Series> getSeries(Collection<String> procedures, Collection<String> observedProperties,
-            Collection<String> features, Collection<String>offerings, Session session) throws OwsExceptionReport {
+            Collection<String> features, Collection<String> offerings, Session session) {
         return getSeriesCriteria(procedures, observedProperties, features, offerings, session).list();
     }
 

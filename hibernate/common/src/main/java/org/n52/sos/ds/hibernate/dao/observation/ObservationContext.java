@@ -28,15 +28,19 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -52,6 +56,7 @@ public class ObservationContext {
     private Procedure procedure;
     private String seriesType;
     private boolean hiddenChild = false; 
+    private Set<Offering> offerings;
 
     /**
      * @return the featureOfInterest
@@ -109,20 +114,38 @@ public class ObservationContext {
     public boolean isSetProcedure() {
         return getProcedure() != null;
     }
+    
+    /**
+     * @return the offerings
+     */
+    public Set<Offering> getOfferings() {
+        return offerings;
+    }
 
-    public void addIdentifierRestrictionsToCritera(Criteria criteria) {
+    /**
+     * @param offerings the offerings to set
+     */
+    public void setOfferings(Set<Offering> offerings) {
+        this.offerings = offerings;
+    }
+    
+    public boolean isSetOfferings() {
+        return getOfferings() != null && !getOfferings().isEmpty();
+    }
+
+    public void addIdentifierRestrictionsToCritera(Criteria c) {
         if (isSetFeatureOfInterest()) {
-            criteria.add(Restrictions
+            c.add(Restrictions
                     .eq(HasWriteableObservationContext.FEATURE_OF_INTEREST,
                         getFeatureOfInterest()));
         }
         if (isSetObservableProperty()) {
-            criteria.add(Restrictions
+            c.add(Restrictions
                     .eq(HasWriteableObservationContext.OBSERVABLE_PROPERTY,
                         getObservableProperty()));
         }
         if (isSetProcedure()) {
-            criteria.add(Restrictions
+            c.add(Restrictions
                     .eq(HasWriteableObservationContext.PROCEDURE,
                         getProcedure()));
         }
@@ -137,6 +160,9 @@ public class ObservationContext {
         }
         if (isSetProcedure()) {
             contextual.setProcedure(getProcedure());
+        }
+        if (isSetOfferings()) {
+            contextual.setOfferings(Sets.newHashSet(getOfferings()));
         }
         if (contextual instanceof HasSeriesType && isSetSeriesType()) {
             ((HasSeriesType)contextual).setSeriesType(getSeriesType());

@@ -27,14 +27,19 @@
 -- Public License for more details.
 --
 
-ALTER TABLE sos.series ADD COLUMN firstTimeStamp datetime;
-ALTER TABLE sos.series ADD COLUMN lastTimeStamp datetime;
-ALTER TABLE sos.series ADD COLUMN firstNumericValue DOUBLE PRECISION;
-ALTER TABLE sos.series ADD COLUMN lastNumericValue DOUBLE PRECISION;
-ALTER TABLE sos.series ADD COLUMN unitId bigint;
+use sos
 
-alter table sos.series add constraint seriesUnitFk foreign key (unitId) references sos.unit (unitId);
+-- create table
+create table dbo.seriesHasOffering (seriesId bigint not null, offeringId bigint not null, primary key (seriesId, offeringId));
 
-ALTER TABLE sos.`procedure` ADD COLUMN referenceFlag char(1) default 'F';
+-- create indices
+create index serieshasoffseriesidx on dbo.seriesHasOffering (seriesId);
+create index serieshasoffofferingidx on dbo.seriesHasOffering (offeringId);
 
-ALTER TABLE sos.observation ADD COLUMN samplingGeometry GEOMETRY;
+-- create foreign keys
+alter table dbo.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references dbo.offering;
+alter table dbo.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references dbo.series;
+
+-- Update table with values
+-- Run only this statement if you have update the database during the installation process!
+INSERT INTO dbo.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM dbo.observation o JOIN dbo.observationhasoffering oho ON o.observationid = oho.observationid);

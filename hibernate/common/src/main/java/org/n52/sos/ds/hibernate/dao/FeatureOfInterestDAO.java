@@ -39,27 +39,25 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
 import org.hibernate.sql.JoinType;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
-import org.n52.sos.ds.hibernate.dao.observation.series.SeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
+import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
-import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.feature.Specimen;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
-import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.ContextualReferencedLegacyObservation;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -209,28 +207,37 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                     SQL_QUERY_GET_FEATURE_OF_INTEREST_IDENTIFIER_FOR_OFFERING);
             return namedQuery.list();
         } else {
-            AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            Criteria c = null;
-            if (observationDAO instanceof SeriesObservationDAO) {
-                final DetachedCriteria dc = DetachedCriteria.forClass(observationDAO.getObservationFactory().contextualReferencedClass());
-                new OfferingDAO().addOfferingRestricionForObservation(dc, offeringIdentifiers);
-                dc.setProjection(Projections.distinct(Projections.property(AbstractSeriesObservation.SERIES)));
-                dc.add(Restrictions.eq(Observation.DELETED, false)).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-                c = new SeriesDAO().getDefaultSeriesCriteria(session);
-                c.add(Subqueries.propertyIn(Series.ID, dc));
-                c.createCriteria(Series.FEATURE_OF_INTEREST)
-                        .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
+            Criteria c  = null;
+            if (EntitiyHelper.getInstance().isSeriesSupported()) {
+                c = session.createCriteria(FeatureOfInterest.class).setProjection(
+                        Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
+                c.add(Subqueries.propertyIn(
+                        FeatureOfInterest.ID,
+                        getDetachedCriteriaSeriesForOffering(offeringIdentifiers, session)));
             } else {
-                c = observationDAO.getDefaultObservationInfoCriteria(session);
+                c = DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);
                 c.createCriteria(AbstractObservation.FEATURE_OF_INTEREST)
                         .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
                 new OfferingDAO().addOfferingRestricionForObservation(c, offeringIdentifiers);
             }
-            
             LOGGER.debug("QUERY getFeatureOfInterestIdentifiersForOffering(offeringIdentifiers): {}",
                     HibernateHelper.getSqlString(c));
             return c.list();
         }
+    }
+
+    private DetachedCriteria getDetachedCriteriaSeriesForOffering(String offering, Session session) throws CodedException {
+        final DetachedCriteria detachedCriteria = DetachedCriteria.forClass(DaoFactory.getInstance().getSeriesDAO().getSeriesClass());
+        detachedCriteria.add(Restrictions.eq(Series.DELETED, false)).add(Restrictions.eq(Series.PUBLISHED, true));
+        detachedCriteria.setProjection(Projections.distinct(Projections.property(Series.FEATURE_OF_INTEREST)));
+        detachedCriteria.createCriteria(Series.OFFERINGS, "offs", JoinType.LEFT_OUTER_JOIN);
+        detachedCriteria.createCriteria(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        Disjunction disjunction = Restrictions.disjunction();
+        disjunction.add(Restrictions.eq("offs." + Offering.IDENTIFIER, offering));
+        disjunction.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
+                Restrictions.eq("off." + Offering.IDENTIFIER, offering)));
+        detachedCriteria.add(disjunction);
+        return detachedCriteria;
     }
 
     /**

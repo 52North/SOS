@@ -56,8 +56,6 @@
         </many-to-one>
         <many-to-one name="offering" 
 				        class="org.n52.sos.ds.hibernate.entities.Offering" 
-				        fetch="select" 
-				        lazy="no-proxy" 
 				        foreign-key="oseriesOfferingFk">
             <column index="seriesOfferingIdx" 
 			            name="offeringId">
@@ -128,6 +126,19 @@
                 <comment>Foreign Key (FK) to the related unit of the first/last numeric values . Contains "unit".unitid</comment>
             </column>
         </many-to-one>
+        <set name="offerings" table="seriesHasOffering" inverse="false">
+            <comment>Table to store relations between series and associated offerings. Mapping file: mapping/ereporting/EReportingSeries.hbm.xml</comment>
+            <key>
+                <column name="seriesId" not-null="true" index="serieshasoffseriesidx">
+                    <comment>Foreign Key (FK) to the related series. Contains "series".seriesid</comment>
+                </column>
+            </key>
+            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.Offering" foreign-key="seriesOfferingsFk">
+                <column name="offeringId" not-null="true" index="serieshasoffofferingidx">
+                    <comment>Foreign Key (FK) to the related offering. Contains "offering".offeringid</comment>
+                </column>
+            </many-to-many>
+        </set>
         <property name="identifier" type="string">
             <column name="identifier" not-null="false" unique-key="seriesIdentifierUK">
                 <comment>The identifier of the series, gml:identifier. Unique</comment>

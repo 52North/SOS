@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -37,6 +38,8 @@ import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.parameter.SeriesParameterDAO;
+import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameterAdder;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
@@ -173,7 +176,13 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */
         if (obsConst.getOfferings() == null) {
-            if (getSeries().hasOffering()) {
+            if (getSeries().hasOfferings()) {
+                Set<String> set = Sets.newHashSet();
+                for (Offering offering : getSeries().getOfferings()) {
+                    set.add(offering.getIdentifier());
+                }
+                obsConst.setOfferings(set);
+            } else if (getSeries().hasOffering()) {
                 obsConst.setOfferings(Sets.newHashSet(getSeries().getOffering().getIdentifier()));
             } else {
                 AbstractSeriesObservationDAO observationDAO = (AbstractSeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();

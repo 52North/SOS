@@ -692,8 +692,24 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      * @param offering
      *            Offering identifier
      */
-    public void addOfferingRestricionForObservation(Criteria criteria, String offering) {
-        criteria.createCriteria(AbstractObservation.OFFERINGS).add(Restrictions.eq(Offering.IDENTIFIER, offering));
+    public void addOfferingRestricionForObservation(Criteria c, String offering) {
+        addOfferingRestrictionFor(c, offering, AbstractObservation.OFFERINGS);
+    }
+
+    /**
+     * Add offering identifier restriction to Hibernate Criteria
+     * 
+     * @param criteria
+     *            Hibernate Criteria to add restriction
+     * @param offering
+     *            Offering identifier
+     */
+    public void addOfferingRestricionForSeries(Criteria c, String offering) {
+        addOfferingRestrictionFor(c, offering, Series.OFFERINGS);
+    }
+
+    private void addOfferingRestrictionFor(Criteria c, String offering, String associationPath) {
+        c.createCriteria(associationPath).add(Restrictions.eq(Offering.IDENTIFIER, offering));
     }
 
     public void addOfferingRestricionForObservation(DetachedCriteria dc, String offering) {

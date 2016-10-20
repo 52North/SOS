@@ -52,11 +52,8 @@ import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
 import org.n52.sos.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.sos.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.time.Time;
-import org.n52.sos.ogc.gml.time.TimeInstant;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OWSConstants;
@@ -112,7 +109,6 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         this(service, version, operationName, true, requestType);
     }
     
-    @SuppressWarnings("unchecked")
     public AbstractRequestOperator(String service, String version, String operationName, boolean defaultActive, Class<Q> requestType) {
         this.operationName = operationName;
         this.requestOperatorKeyType = new RequestOperatorKey(service, version, operationName, defaultActive);
@@ -606,6 +602,19 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
             }
         }
         return Lists.newArrayList(allFeatures);
+    }
+    
+    protected List<String> addChildOfferings(List<String> offerings) {
+        final Set<String> allOffering = Sets.newHashSet();
+        if (offerings != null) {
+            for (final String offering : offerings) {
+                allOffering.add(offering);
+                for (String procedure : getCache().getHiddenChildProceduresForOffering(offering)) {
+                    allOffering.addAll(getCache().getOfferingsForProcedure(procedure));
+                }
+            }
+        }
+        return Lists.newArrayList(allOffering);
     }
 
     protected void checkObservationType(final String observationType, final String parameterName)

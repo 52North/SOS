@@ -10,7 +10,7 @@
         <property name="seriesPkid" column="seriesid"  type="long" />
         <property name="timestamp" column="phenomenontimeend" type="timestamp" />
         <property name="deleted" column="deleted" type="org.hibernate.type.TrueFalseType" />
-        <join table="numericvalue">
+        <join table="numericvalue" fetch="join">
             <key column="observationid" foreign-key="observationid" />
             <property name="value" type="double" />
         </join>

@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.util;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -59,6 +60,7 @@ import org.n52.sos.ds.hibernate.entities.series.SeriesBooleanObservation;
 import org.n52.sos.ogc.om.values.BooleanValue;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -91,21 +93,8 @@ public class HibernateObservationBuilder {
         this.session = session;
     }
 
-    public AbstractObservation createObservation(String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
+    public AbstractObservation createObservation(AbstractObservation observation, String id, Date phenomenonTimeStart, Date phenomenonTimeEnd, Date resultTime,
             Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
-        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-        AbstractObservation observation = observationDAO.createObservationFromValue(new BooleanValue(true), session);
-        if (observationDAO instanceof SeriesObservationDAO) {
-            SeriesBooleanObservation seriesBooleanObservation = (SeriesBooleanObservation)observation;
-            seriesBooleanObservation.setSeries(getSeries());
-            seriesBooleanObservation.setValue(true);
-        } else {
-            BooleanObservation booleanObservation = (BooleanObservation)observation;
-            booleanObservation.setFeatureOfInterest(getFeatureOfInterest());
-            booleanObservation.setProcedure(getProcedure());
-            booleanObservation.setObservableProperty(getObservableProperty());
-            booleanObservation.setValue(true);
-        }
         observation.setDeleted(false);
         observation.setIdentifier(id);
         observation.setPhenomenonTimeStart(phenomenonTimeStart);
@@ -120,44 +109,60 @@ public class HibernateObservationBuilder {
         session.flush();
         return observation;
     }
-
-    public AbstractObservation createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
+    
+    public List<AbstractObservation> createObservation(String id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
-        return createObservation(id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
-                phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
-                resultTime != null ? resultTime.toDate() : null, validTimeStart != null ? validTimeStart.toDate()
-                        : null, validTimeEnd != null ? validTimeEnd.toDate() : null);
+        List<AbstractObservation> observations = Lists.newArrayList(); 
+        for (Offering offering : getOfferings()) {
+             observations.add(createObservation(createObservation(offering), id, phenomenonTimeStart != null ? phenomenonTimeStart.toDate() : null,
+                    phenomenonTimeEnd != null ? phenomenonTimeEnd.toDate() : null,
+                    resultTime != null ? resultTime.toDate() : null, validTimeStart != null ? validTimeStart.toDate()
+                            : null, validTimeEnd != null ? validTimeEnd.toDate() : null));
+        }
+        return observations;
     }
 
-    public AbstractObservation createObservation(String id, DateTime begin, DateTime end) throws OwsExceptionReport {
-        Date s = begin != null ? begin.toDate() : null;
-        Date e = end != null ? end.toDate() : null;
+    public List<AbstractObservation> createObservation(String id, DateTime s, DateTime e) throws OwsExceptionReport {
         return createObservation(id, s, e, s, s, e);
     }
 
-    public AbstractObservation createObservation(String id, DateTime position) throws OwsExceptionReport {
-        Date s = position != null ? position.toDate() : null;
+    public List<AbstractObservation> createObservation(String id, DateTime s) throws OwsExceptionReport {
         return createObservation(id, s, s, s, s, s);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, Date phenomenonTimeStart, Date phenomenonTimeEnd,
-            Date resultTime, Date validTimeStart, Date validTimeEnd) throws OwsExceptionReport {
-        return createObservation(id.name(), phenomenonTimeStart, phenomenonTimeEnd, resultTime, validTimeStart,
-                validTimeEnd);
-    }
-
-    public AbstractObservation createObservation(Enum<?> id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
+    public List<AbstractObservation> createObservation(Enum<?> id, DateTime phenomenonTimeStart, DateTime phenomenonTimeEnd,
             DateTime resultTime, DateTime validTimeStart, DateTime validTimeEnd) throws OwsExceptionReport {
         return createObservation(id.name(), phenomenonTimeStart, phenomenonTimeEnd, resultTime, validTimeStart,
                 validTimeEnd);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, DateTime begin, DateTime end) throws OwsExceptionReport {
+    public List<AbstractObservation> createObservation(Enum<?> id, DateTime begin, DateTime end) throws OwsExceptionReport {
         return createObservation(id.name(), begin, end);
     }
 
-    public AbstractObservation createObservation(Enum<?> id, DateTime time) throws OwsExceptionReport {
+    public List<AbstractObservation> createObservation(Enum<?> id, DateTime time) throws OwsExceptionReport {
         return createObservation(id.name(), time);
+    }
+
+    protected AbstractObservation createObservation(Offering offering) throws OwsExceptionReport {
+        AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+        AbstractObservation observation = observationDAO.createObservationFromValue(new BooleanValue(true), session);
+        if (observationDAO instanceof SeriesObservationDAO) {
+            SeriesBooleanObservation seriesBooleanObservation = (SeriesBooleanObservation)observation;
+            seriesBooleanObservation.setSeries(getSeries(offering));
+            seriesBooleanObservation.setValue(true);
+        } else {
+            BooleanObservation booleanObservation = (BooleanObservation)observation;
+            booleanObservation.setFeatureOfInterest(getFeatureOfInterest());
+            booleanObservation.setProcedure(getProcedure());
+            booleanObservation.setObservableProperty(getObservableProperty());
+            booleanObservation.setValue(true);
+        }
+        return observation;
+    }
+
+    protected List<Offering> getOfferings() {
+       return Lists.newArrayList(getOffering1(), getOffering2());
     }
 
     protected FeatureOfInterest getFeatureOfInterest() {
@@ -254,18 +259,20 @@ public class HibernateObservationBuilder {
         return codespace;
     }
 
-    protected Series getSeries() {
+    protected Series getSeries(Offering offering) {
         Criteria criteria =
                 session.createCriteria(Series.class).setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                         .add(Restrictions.eq(Series.FEATURE_OF_INTEREST, getFeatureOfInterest()))
                         .add(Restrictions.eq(Series.OBSERVABLE_PROPERTY, getObservableProperty()))
-                        .add(Restrictions.eq(Series.PROCEDURE, getProcedure()));
+                        .add(Restrictions.eq(Series.PROCEDURE, getProcedure()))
+                        .add(Restrictions.eq(Series.OFFERING, offering));
         Series series = (Series) criteria.uniqueResult();
         if (series == null) {
             series = new Series();
             series.setObservableProperty(getObservableProperty());
             series.setProcedure(getProcedure());
             series.setFeatureOfInterest(getFeatureOfInterest());
+            series.setOffering(offering);
             series.setDeleted(false);
             series.setPublished(true);
             session.save(series);

@@ -186,8 +186,11 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                         }
                     } else {
                         do {
-                            writeObservationData(streamingValue.nextSingleObservation(), encoder, encodingValues);
-                            writeNewLine();
+                            OmObservation obs = streamingValue.nextSingleObservation();
+                            if (obs != null) {
+                                writeObservationData(obs, encoder, encodingValues);
+                                writeNewLine();
+                            }
                         } while (streamingValue.hasNextValue());
                     }
                 } else if (streamingValue.getValue() != null) {

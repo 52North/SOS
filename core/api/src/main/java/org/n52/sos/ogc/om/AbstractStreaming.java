@@ -102,7 +102,10 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
     public List<OmObservation> getObservation() throws OwsExceptionReport {
         List<OmObservation> observations = Lists.newArrayList();
         do {
-            observations.add(nextSingleObservation());
+            OmObservation obs = nextSingleObservation();
+            if (obs != null) {
+                observations.add(obs);
+            }
         } while (hasNextValue());
         return observations;
     }

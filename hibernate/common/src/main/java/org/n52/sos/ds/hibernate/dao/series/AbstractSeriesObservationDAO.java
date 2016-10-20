@@ -84,12 +84,12 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     
     @Override
     protected void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            AbstractObservation observation, Set<Offering> offerings, Session session) throws CodedException {
+            AbstractObservation observation, Session session) throws CodedException {
         SeriesIdentifiers identifiers = new SeriesIdentifiers();
         identifiers.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
         identifiers.setObservableProperty(observationIdentifiers.getObservableProperty());
         identifiers.setProcedure(observationIdentifiers.getProcedure());
-        identifiers.setOfferings(offerings);
+        identifiers.setOffering(observationIdentifiers.getOffering());
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Series series =
                 (Series)seriesDAO

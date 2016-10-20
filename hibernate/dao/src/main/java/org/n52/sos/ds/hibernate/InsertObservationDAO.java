@@ -48,7 +48,9 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.gml.AbstractFeature;
@@ -118,8 +120,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
             final CompositeOwsException exceptions = new CompositeOwsException();
-            final Set<String> allOfferings = Sets.newHashSet();
-            allOfferings.addAll(request.getOfferings());
+            final Set<String> allOfferings = Sets.newHashSet(request.getOfferings());
 
             // cache/tracking objects to avoid redundant queries
             Map<AbstractFeature, FeatureOfInterest> featureCache = Maps.newHashMap();
@@ -163,7 +164,7 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                 // TODO cache obsConst and feature (multi obs often have the
                 // same)
 
-                for (final String offeringID : sosObsConst.getOfferings()) {
+                for (final String offeringID : request.getOfferings()) {
                     ObservationConstellation hObservationConstellation =
                             obsConstOfferingHibernateObsConstTable.get(sosObsConst, offeringID);
                     if (hObservationConstellation == null) {
@@ -198,15 +199,19 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                         hObservationConstellations.add(hObservationConstellation);
                     }
                 }
+                
+                Set<Offering> hOfferings = getOfferings(hObservationConstellations);
 
                 if (!hObservationConstellations.isEmpty()) {
-                    final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-                    if (sosObservation.getValue() instanceof SingleObservationValue) {
-                        observationDAO.insertObservationSingleValue(hObservationConstellations, hFeature,
-                                sosObservation, codespaceCache, unitCache, session);
-                    } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                        observationDAO.insertObservationMultiValue(hObservationConstellations, hFeature,
-                                sosObservation, codespaceCache, unitCache, session);
+                    for (ObservationConstellation hObservationConstellation : hObservationConstellations) {
+                        final AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
+                        if (sosObservation.getValue() instanceof SingleObservationValue) {
+                            observationDAO.insertObservationSingleValue(hObservationConstellation, hFeature,
+                                    sosObservation, codespaceCache, unitCache, hOfferings, session);
+                        } else if (sosObservation.getValue() instanceof MultiObservationValues) {
+                            observationDAO.insertObservationMultiValue(hObservationConstellation, hFeature,
+                                    sosObservation, codespaceCache, unitCache, hOfferings, session);
+                        }
                     }
                 }
 
@@ -259,6 +264,14 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
          */
 
         return response;
+    }
+    
+    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
+        Set<Offering> offerings = Sets.newHashSet();
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            offerings.add(observationConstellation.getOffering());
+        }
+        return offerings;
     }
 
     private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {

@@ -104,7 +104,6 @@ import org.n52.sos.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -127,13 +126,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation identifiers
      * @param observation
      *            Observation to add identifiers
-     * @param offerings 
      * @param session
      *            Hibernate session
      * @throws CodedException
      */
     protected abstract void addObservationIdentifiersToObservation(ObservationIdentifiers observationIdentifiers,
-            AbstractObservation observation, Set<Offering> offerings, Session session) throws CodedException;
+            AbstractObservation observation, Session session) throws CodedException;
 
     /**
      * Get Hibernate Criteria for querying observations with parameters
@@ -491,8 +489,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * a multi value observation for observation constellations and
      * featureOfInterest
      *
-     * @param observationConstellations
-     *            Observation constellation objects
+     * @param observationConstellation
+     *            Observation constellation object
      * @param feature
      *            FeatureOfInterest object
      * @param containerObservation
@@ -506,13 +504,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public void insertObservationMultiValue(Set<ObservationConstellation> observationConstellations,
+    public void insertObservationMultiValue(ObservationConstellation observationConstellation,
             FeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
-            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+            Map<String, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
-            insertObservationSingleValue(observationConstellations, feature, sosObservation, codespaceCache, unitCache,
-                    session);
+            insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
+                    hOfferings, session);
         }
     }
 
@@ -520,8 +518,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
      *
-     * @param observationConstellations
-     *            Observation constellation objects
+     * @param observationConstellation
+     *            Observation constellation object
      * @param feature
      *            FeatureOfInterest object
      * @param sosObservation
@@ -530,9 +528,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Hibernate session
      * @throws OwsExceptionReport
      */
-    public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Session session) throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation, null, null, session);
+    public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
+            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
+        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, session);
     }
 
     /**
@@ -555,9 +553,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      */
     @SuppressWarnings("rawtypes")
-    public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
+    public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
             FeatureOfInterest hFeature, OmObservation sosObservation, Map<String, Codespace> codespaceCache,
-            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+            Map<String, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
         AbstractObservation hObservation = createObservationFromValue(value.getValue(), session);
         hObservation.setDeleted(false);
@@ -568,12 +566,12 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (value.getValue().getUnit() != null) {
             hObservation.setUnit(getUnit(value.getValue().getUnit(), unitCache, session));
         }
-        addOfferingsToObservation(hObservation, hObservationConstellations);
-        ObservationIdentifiers observationIdentifiers = createObservationIdentifiers(hObservationConstellations);
-        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        addOfferingsToObservation(hObservation, hOfferings);
+        ObservationIdentifiers observationIdentifiers = createObservationIdentifiers(hObservationConstellation);
+        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellation, observationIdentifiers);
         addFeatureOfInterestToObservationIdentifiers(hFeature, observationIdentifiers);
         addAdditionalObjectsToObservationIdentifiers(observationIdentifiers, sosObservation, session);
-        addObservationIdentifiersToObservation(observationIdentifiers, hObservation, getOfferings(hObservationConstellations), session);
+        addObservationIdentifiersToObservation(observationIdentifiers, hObservation, session);
         if (sosObservation.isSetSpatialFilteringProfileParameter()) {
             hObservation
                     .setSamplingGeometry(GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
@@ -588,37 +586,26 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
     }
 
-    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
-        Set<Offering> offerings = Sets.newHashSet();
-        for (ObservationConstellation observationConstellation : hObservationConstellations) {
-            offerings.add(observationConstellation.getOffering());
-        }
-        return offerings;
-    }
-
     protected void addOfferingsToObservation(AbstractObservation hObservation,
-            Set<ObservationConstellation> hObservationConstellations) {
-        hObservation.getOfferings().addAll(getOfferings(hObservationConstellations));
+            Set<Offering> hOfferings) {
+        hObservation.getOfferings().addAll(hOfferings);
     }
 
     protected ObservationIdentifiers createObservationIdentifiers(
-            Set<ObservationConstellation> hObservationConstellations) {
+            ObservationConstellation hObservationConstellation) {
         ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
-        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        if (hObservationConstellation != null) {
+            addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellation, observationIdentifiers);
+            observationIdentifiers.setOffering(hObservationConstellation.getOffering());
+        }
         return observationIdentifiers;
     }
 
     protected ObservationIdentifiers addProcedureObservablePropertyToObservationIdentifiers(
-            Set<ObservationConstellation> hObservationConstellations, ObservationIdentifiers observationIdentifiers) {
-        if (CollectionHelper.isNotEmpty(hObservationConstellations)) {
-            boolean firstObsConst = true;
-            for (ObservationConstellation observationConstellation : hObservationConstellations) {
-                if (firstObsConst) {
-                    observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
-                    observationIdentifiers.setProcedure(observationConstellation.getProcedure());
-                    firstObsConst = false;
-                }
-            }
+            ObservationConstellation hObservationConstellation, ObservationIdentifiers observationIdentifiers) {
+        if (hObservationConstellation != null) {
+            observationIdentifiers.setObservableProperty(hObservationConstellation.getObservableProperty());
+            observationIdentifiers.setProcedure(hObservationConstellation.getProcedure());
         }
         return observationIdentifiers;
     }
@@ -1318,6 +1305,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     protected abstract Class<?> getTextObservationClass();
 
+    public boolean isIdentifierContained(String identifier, Session session) {
+        Criteria c = getDefaultObservationCriteria(session).add(Restrictions.eq(Observation.IDENTIFIER, identifier));
+        LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
+                HibernateHelper.getSqlString(c));
+        return c.list().size() > 0;
+    }
+
     /**
      * Inner class to carry observation identifiers (featureOfInterest,
      * observableProperty, procedure)
@@ -1333,6 +1327,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         ObservableProperty observableProperty;
 
         Procedure procedure;
+        
+        Offering offering;
 
         /**
          * @return the featureOfInterest
@@ -1378,6 +1374,21 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         public void setProcedure(Procedure procedure) {
             this.procedure = procedure;
         }
+
+        /**
+         * @return the offering
+         */
+        public Offering getOffering() {
+            return offering;
+        }
+
+        /**
+         * @param offering the offering to set
+         */
+        public void setOffering(Offering offering) {
+            this.offering = offering;
+        }
+
 
     }
 

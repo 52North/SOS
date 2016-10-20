@@ -328,7 +328,28 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
             }
 
         }
-        return dataAvailabilityValues;
+        return checkForDuplictation(dataAvailabilityValues);
+    }
+
+    private List<DataAvailability> checkForDuplictation(List<DataAvailability> dataAvailabilityValues) {
+        List<DataAvailability> checked = Lists.newLinkedList();
+        for (DataAvailability dataAvailability : dataAvailabilityValues) {
+            if (checked.isEmpty()) {
+                checked.add(dataAvailability);
+            } else {
+                boolean notDuplicated = true;
+                for (DataAvailability checkedDA : checked) {
+                    if (dataAvailability.equals(checkedDA)) {
+                        checkedDA.getPhenomenonTime().extendToContain(dataAvailability.getPhenomenonTime());
+                        notDuplicated = false;
+                    }
+                }
+                if (notDuplicated) {
+                    checked.add(dataAvailability);
+                }
+            }
+        }
+        return checked;
     }
 
     /**

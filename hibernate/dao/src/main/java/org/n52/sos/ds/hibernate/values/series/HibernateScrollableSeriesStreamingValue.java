@@ -59,10 +59,11 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @param duplicated 
      * @throws CodedException 
      */
-    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series) throws CodedException {
-        super(request, series);
+    public HibernateScrollableSeriesStreamingValue(GetObservationRequest request, long series, boolean duplicated) throws CodedException {
+        super(request, series, duplicated);
     }
 
     @Override
@@ -92,7 +93,10 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             SeriesValue resultObject = nextEntity();
-            TimeValuePair value = resultObject.createTimeValuePairFrom();
+            TimeValuePair value = null;
+            if (checkValue(resultObject)) {
+                value = resultObject.createTimeValuePairFrom();
+            }
             session.evict(resultObject);
             return value;
         } catch (final HibernateException he) {
@@ -105,10 +109,13 @@ public class HibernateScrollableSeriesStreamingValue extends HibernateSeriesStre
     @Override
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
-            OmObservation observation = observationTemplate.cloneTemplate();
+            OmObservation observation = null;
             SeriesValue resultObject = nextEntity();
-            resultObject.addValuesToObservation(observation, getResponseFormat());
-            checkForModifications(observation);
+            if (checkValue(resultObject)) {
+                observation = observationTemplate.cloneTemplate();
+                resultObject.addValuesToObservation(observation, getResponseFormat());
+                checkForModifications(observation);
+            }
             session.evict(resultObject);
             return observation;
         } catch (final HibernateException he) {

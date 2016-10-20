@@ -53,7 +53,7 @@ public class Series
                     HasDeletedFlag, 
                     HasPublishedFlag,
                     HasUnit,
-                    HasOfferings {
+                    HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
     
@@ -64,6 +64,8 @@ public class Series
     private FeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private Offering offering;
+
     private Boolean deleted = false;
     private Boolean published = true;
     // the following values are used by the rest api
@@ -72,8 +74,6 @@ public class Series
     private Double firstNumericValue;
     private Double lastNumericValue;
     private Unit unit;
-    private Set<Offering> offerings = new HashSet<Offering>(0);
-    
     /**
      * Get series id
      * 
@@ -241,29 +241,23 @@ public class Series
     }
 
     @Override
-    public Set<Offering> getOfferings() {
-        return offerings;
+    public Offering getOffering() {
+        return offering;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public void setOfferings(final Object offerings) {
-        if (offerings instanceof Set<?>) {
-            this.offerings = (Set<Offering>) offerings;
-        } else {
-            getOfferings().add((Offering) offerings);
-        }
+    public void setOffering(final Offering offering) {
+        this.offering = offering;
+    }
+    
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
     }
 
-    public boolean hasOfferings(Set<Offering> offerings) {
-        if (getOfferings() != null && !getOfferings().isEmpty()) {
-            for (Offering offering : offerings) {
-                if (!getOfferings().contains(offering)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+    public boolean hasSameObservationIdentifier(Series s) {
+        return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
+                && getObservableProperty().equals(s.getObservableProperty());
     }
+
 }

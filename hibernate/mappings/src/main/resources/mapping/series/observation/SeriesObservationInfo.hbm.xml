@@ -22,7 +22,7 @@
             <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
         </property>
         <property name="identifier" type="string">
-            <column name="identifier" unique-key="obsIdentifierUK"/>
+            <column name="identifier" />
         </property>
         <many-to-one name="codespace" class="org.n52.sos.ds.hibernate.entities.Codespace" foreign-key="obsCodespaceIdentifierFk">
             <column name="codespace" />

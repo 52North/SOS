@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao.series;
 
-import java.util.Set;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -46,7 +44,7 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
 
     private Procedure procedure;
     
-    private Set<Offering> offerings;
+    private Offering offering;
     
     public SeriesIdentifiers() {
         
@@ -110,21 +108,21 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
     }
     
     /**
-     * @return the offerings
+     * @return the offering
      */
-    public Set<Offering> getOfferings() {
-        return offerings;
+    public Offering getOffering() {
+        return offering;
     }
 
     /**
-     * @param offerings the offerings to set
+     * @param offering the offering to set
      */
-    public void setOfferings(Set<Offering> offerings) {
-        this.offerings = offerings;
+    public void setOffering(Offering offering) {
+        this.offering = offering;
     }
     
-    public boolean isSetOfferings() {
-        return getOfferings() != null && !getOfferings().isEmpty();
+    public boolean isSetOffering() {
+        return getOffering() != null;
     }
 
     public void addIdentifierRestrictionsToCritera(Criteria c) {
@@ -136,6 +134,9 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
         }
         if (isSetProcedure()) {
             addProcedureToCriteria(c, getProcedure());
+        }
+        if (isSetOffering()) {
+            addOfferingToCriteria(c, getOffering());
         }
     }
     
@@ -149,8 +150,8 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
         if (isSetProcedure()) {
             series.setProcedure(getProcedure());
         }
-        if (isSetOfferings()) {
-            series.setOfferings(getOfferings());
+        if (isSetOffering()) {
+            series.setOffering(getOffering());
         }
     }
     
@@ -188,6 +189,19 @@ public class SeriesIdentifiers extends AbstractSeriesIdentifiers {
      */
     private void addProcedureToCriteria(Criteria c, Procedure procedure) {
         c.add(Restrictions.eq(Series.PROCEDURE, procedure));
+
+    }
+    
+    /**
+     * Add offering restriction to Hibernate Criteria
+     * 
+     * @param c
+     *            Hibernate Criteria to add restriction
+     * @param procedure
+     *            Procedure to add
+     */
+    private void addOfferingToCriteria(Criteria c, Offering offering) {
+        c.add(Restrictions.eq(Series.OFFERING, offering));
 
     }
 

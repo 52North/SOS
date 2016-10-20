@@ -27,17 +27,22 @@
 -- Public License for more details.
 --
 
--- create table
-create table seriesHasOffering (seriesId number(19) not null, offeringId number(19) not null, primary key (seriesId, offeringId));
+-- alter table
+alter table series add column offeringid int8;
 
--- create indices
-create index serieshasoffseSriesidx on seriesHasOffering (seriesId);
-create index serieshasoffofferingidx on seriesHasOffering (offeringId);
+-- drop and add constraint
+alter table series drop constraint seriesIdentity;
+alter table observation drop constraint obsIdentifierUK;
+alter table series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId, offeringId);
+
+-- create index
+create index seriesOfferingIdx on series (offeringId);
 
 -- create foreign keys
-alter table seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references offering;
-alter table seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references series;
+alter table series add constraint seriesOfferingFk foreign key (offeringId) references offering;
 
--- Update table with values
--- Run only this statement if you have update the database during the installation process!
-INSERT INTO serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM observation o JOIN observationhasoffering oho ON o.observationid = oho.observationid);
+
+-- update series table (!!! Works only if each observation relates to one and the same offering!!!)
+UPDATE series ser SET offeringid = q.offeringid FROM (SELECT DISTINCT s.seriesid, off.offeringid FROM series s 
+inner join observation o on s.seriesid = o.seriesid 
+inner join observationhasoffering off on o.observationid = off.observationid) q WHERE q.seriesid = ser.seriesid;

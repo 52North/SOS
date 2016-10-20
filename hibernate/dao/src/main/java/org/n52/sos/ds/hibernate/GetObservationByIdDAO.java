@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate;
 
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -36,6 +37,9 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
@@ -82,7 +86,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            List<AbstractObservation> observations = queryObservation(request, session);
+            List<AbstractObservation> observations = checkObservations(queryObservation(request, session), request);
             GetObservationByIdResponse response = new GetObservationByIdResponse();
             response.setService(request.getService());
             response.setVersion(request.getVersion());
@@ -98,6 +102,21 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
         } finally {
             sessionHolder.returnSession(session);
         }
+    }
+
+    private List<AbstractObservation> checkObservations(List<AbstractObservation> queryObservation, GetObservationByIdRequest request) {
+        if (!request.isCheckForDuplicity()) {
+            return queryObservation;
+        }
+        List<AbstractObservation> checkedObservations = Lists.newArrayList();
+        Set<String> identifiers = Sets.newHashSet();
+        for (AbstractObservation abstractObservation : queryObservation) {
+            if (!identifiers.contains(abstractObservation.getIdentifier())) {
+                identifiers.add(abstractObservation.getIdentifier());
+                checkedObservations.add(abstractObservation);
+            }
+        }
+        return checkedObservations;
     }
 
     /**

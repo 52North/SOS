@@ -27,17 +27,22 @@
 -- Public License for more details.
 --
 
--- create table
-create table public.seriesHasOffering (seriesId int8 not null, offeringId int8 not null, primary key (seriesId, offeringId));
+-- alter table
+alter table public.series add column offeringid int8;
 
--- create indices
-create index serieshasoffseriesidx on public.seriesHasOffering (seriesId);
-create index serieshasoffofferingidx on public.seriesHasOffering (offeringId);
+-- drop and add constraint
+alter table public.series drop constraint seriesIdentity;
+alter table public.observation drop constraint obsIdentifierUK;
+alter table public.series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId, offeringId);
+
+-- create index
+create index seriesOfferingIdx on public.series (offeringId);
 
 -- create foreign keys
-alter table public.seriesHasOffering add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
-alter table public.seriesHasOffering add constraint FK_ehsn5rny4c7pg5mfk5b7pjcoc foreign key (seriesId) references public.series;
+alter table public.series add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
 
--- Update table with values
--- Run only this statement if you have update the database during the installation process!
-INSERT INTO public.serieshasoffering (SELECT DISTINCT o.seriesid, oho.offeringid FROM public.observation o JOIN public.observationhasoffering oho ON o.observationid = oho.observationid);
+
+-- update series table (!!! Works only if each observation relates to one and the same offering!!!)
+UPDATE public.series ser SET offeringid = q.offeringid FROM (SELECT DISTINCT s.seriesid, off.offeringid FROM public.series s 
+inner join public.observation o on s.seriesid = o.seriesid 
+inner join public.observationhasoffering off on o.observationid = off.observationid) q WHERE q.seriesid = ser.seriesid;

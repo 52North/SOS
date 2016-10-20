@@ -100,8 +100,11 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
                     }
                 } else {
                     while (value.hasNextValue()) {
-                        getAqdHelper().processObservation(value.nextSingleObservation(), timePeriod, resultTime,
-                                featureCollection, eReportingHeader, counter++);
+                        OmObservation obs = value.nextSingleObservation();
+                        if (value != null) {
+                            getAqdHelper().processObservation(obs, timePeriod, resultTime,
+                                    featureCollection, eReportingHeader, counter++);
+                        }
                     }
                 }
             } else {

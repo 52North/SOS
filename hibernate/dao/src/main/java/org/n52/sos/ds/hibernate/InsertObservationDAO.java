@@ -48,6 +48,7 @@ import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.exception.CodedException;
@@ -111,12 +112,9 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
         try {
             session = sessionHolder.getSession();
             transaction = session.beginTransaction();
+            final CompositeOwsException exceptions = new CompositeOwsException();
 
-            CompositeOwsException exceptions = new CompositeOwsException();
             InsertObservationCache cache = new InsertObservationCache();
-
-            cache.addOfferings(request.getOfferings());
-
             // counter for batch flushing
             int obsCount = 0;
 
@@ -129,7 +127,14 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
                                     + " the Spatial Filtering Profile is specification conformant. To use a less"
                                     + " restrictive Spatial Filtering Profile you can change this in the Service-Settings!");
                 }
-
+                if (sosObservation.isSetIdentifier()) {
+                    if (DaoFactory.getInstance().getObservationDAO()
+                            .isIdentifierContained(sosObservation.getIdentifier(), session)) {
+                        throw new NoApplicableCodeException().withMessage(
+                                "The observation identifier '%s' already exists in the database!",
+                                sosObservation.getIdentifier());
+                    }
+                }
                 insertObservation(sosObservation, cache, exceptions, session);
 
                 // flush every FLUSH_INTERVAL
@@ -162,6 +167,14 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
          */
 
         return response;
+    }
+    
+    private Set<Offering> getOfferings(Set<ObservationConstellation> hObservationConstellations) {
+        Set<Offering> offerings = Sets.newHashSet();
+        for (ObservationConstellation observationConstellation : hObservationConstellations) {
+            offerings.add(observationConstellation.getOffering());
+        }
+        return offerings;
     }
 
     private void insertObservation(OmObservation sosObservation,
@@ -215,14 +228,16 @@ public class InsertObservationDAO extends AbstractInsertObservationDAO {
 
         if (!hObservationConstellations.isEmpty()) {
             AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-            if (sosObservation.getValue() instanceof SingleObservationValue) {
-                observationDAO.insertObservationSingleValue(
-                        hObservationConstellations, hFeature, sosObservation,
-                        cache.getCodespaceCache(), cache.getUnitCache(), session);
-            } else if (sosObservation.getValue() instanceof MultiObservationValues) {
-                observationDAO.insertObservationMultiValue(
-                        hObservationConstellations, hFeature, sosObservation,
-                        cache.getCodespaceCache(), cache.getUnitCache(), session);
+            for (ObservationConstellation hObservationConstellation : hObservationConstellations) {
+                if (sosObservation.getValue() instanceof SingleObservationValue) {
+                    observationDAO.insertObservationSingleValue(
+                            hObservationConstellation, hFeature, sosObservation,
+                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), session);
+                } else if (sosObservation.getValue() instanceof MultiObservationValues) {
+                    observationDAO.insertObservationMultiValue(
+                            hObservationConstellation, hFeature, sosObservation,
+                            cache.getCodespaceCache(), cache.getUnitCache(), getOfferings(hObservationConstellations), session);
+                }
             }
         }
     }

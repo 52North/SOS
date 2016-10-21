@@ -103,21 +103,23 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
         Map<String, OmObservation> observations = Maps.newHashMap();
         while (hasNextValue()) {
             AbstractValuedLegacyObservation<?> nextEntity = nextEntity();
-            boolean mergableObservationValue = checkForMergability(nextEntity);
-            OmObservation observation = null;
-            if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
-                observation = observations.get(nextEntity.getDiscriminator());
-            } else {
-                observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
-                addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
-                if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
-                    observations.put(Long.toString(nextEntity.getObservationId()), observation);
+            if (nextEntity != null) {
+                boolean mergableObservationValue = checkForMergability(nextEntity);
+                OmObservation observation = null;
+                if (observations.containsKey(nextEntity.getDiscriminator()) && mergableObservationValue) {
+                    observation = observations.get(nextEntity.getDiscriminator());
                 } else {
-                    observations.put(nextEntity.getDiscriminator(), observation);
+                    observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+                    addSpecificValuesToObservation(observation, nextEntity, request.getExtensions());
+                    if (!mergableObservationValue && nextEntity.getDiscriminator() == null) {
+                        observations.put(Long.toString(nextEntity.getObservationId()), observation);
+                    } else {
+                        observations.put(nextEntity.getDiscriminator(), observation);
+                    }
                 }
+                nextEntity.mergeValueToObservation(observation, getResponseFormat());
+                sessionHolder.getSession().evict(nextEntity);
             }
-            nextEntity.mergeValueToObservation(observation, getResponseFormat());
-            sessionHolder.getSession().evict(nextEntity);
         }
         return observations.values();
     }

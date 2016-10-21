@@ -110,6 +110,24 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
     public abstract List<Series> getSeries(String observedProperty, Collection<String> features, Session session);
 
     /**
+     * Query series for observedProiperty and featuresOfInterest
+     *
+     * @param procedure
+     *            Procedure to get series for
+     * @param observedProperty
+     *            ObservedProperty to get series for
+     * @param offering
+     *            offering to get series for
+     * @param features
+     *            FeaturesOfInterest to get series for
+     * @param session
+     *            Hibernate session
+     * @return Series list
+     */
+    public abstract List<Series> getSeries(String procedure, String observedProperty, String offering,
+            Collection<String> featureIdentifiers, Session session);
+
+    /**
      * Create series for parameter
      *
      * @param procedures
@@ -191,12 +209,6 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
             session.refresh(series);
         } else if (series.isDeleted()) {
             series.setDeleted(false);
-            series.setOfferings(ctx.getOfferings());
-            session.saveOrUpdate(series);
-            session.flush();
-            session.refresh(series);
-        } else if (!series.hasOfferings(ctx.getOfferings())) {
-            series.addOfferings(ctx.getOfferings());
             session.saveOrUpdate(series);
             session.flush();
             session.refresh(series);
@@ -221,7 +233,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         LOGGER.debug("QUERY getSeries(request, features): {}", HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
     public Criteria  getSeriesCriteria(GetObservationByIdRequest request, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         c.add(Restrictions.in(Series.IDENTIFIER, request.getObservationIdentifier()));
@@ -236,7 +248,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
     public Criteria getSeriesCriteria(Collection<String> procedures, Collection<String> observedProperties,
             Collection<String> features, Collection<String> offerings, Session session) {
         final Criteria c = createCriteriaFor(procedures, observedProperties, features, offerings, session);
@@ -244,7 +256,7 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
                 HibernateHelper.getSqlString(c));
         return c;
     }
-    
+
     public Criteria getSeriesCriteria(String observedProperty, Collection<String> features, Session session) {
         final Criteria c = getDefaultSeriesCriteria(session);
         if (CollectionHelper.isNotEmpty(features)) {
@@ -252,6 +264,24 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
         }
         if (StringHelper.isNotEmpty(observedProperty)) {
             addObservablePropertyToCriteria(c, observedProperty);
+        }
+        return c;
+    }
+
+    public Criteria getSeriesCriteria(String procedure, String observedProperty, String offering, Collection<String> features,
+            Session session) {
+        final Criteria c = getDefaultSeriesCriteria(session);
+        if (CollectionHelper.isNotEmpty(features)) {
+            addFeatureOfInterestToCriteria(c, features);
+        }
+        if (StringHelper.isNotEmpty(observedProperty)) {
+            addObservablePropertyToCriteria(c, observedProperty);
+        }
+        if (StringHelper.isNotEmpty(offering)) {
+            addOfferingToCriteria(c, offering);
+        }
+        if (StringHelper.isNotEmpty(procedure)) {
+            addProcedureToCriteria(c, procedure);
         }
         return c;
     }
@@ -389,15 +419,22 @@ public abstract class AbstractSeriesDAO extends AbstractIdentifierNameDescriptio
      * @throws OwsExceptionReport 
      */
     public void addOfferingToCriteria(Criteria c, Collection<String> offerings) {
-        c.createCriteria(Series.OFFERINGS, JoinType.LEFT_OUTER_JOIN).add(Restrictions.in(Offering.IDENTIFIER, offerings));
-//        c.createCriteria(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
-//        Disjunction disjunction = Restrictions.disjunction();
-//        disjunction.add(Restrictions.in("offs." + Offering.IDENTIFIER, offerings));
-//        disjunction.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
-//                Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
-//        c.add(disjunction);
+        c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
+                Restrictions.in("off." + Offering.IDENTIFIER, offerings)));
+
     }
     
+    public void addOfferingToCriteria(Criteria c, String offering) {
+        c.createAlias(Series.OFFERING, "off", JoinType.LEFT_OUTER_JOIN);
+        c.add(Restrictions.or(Restrictions.isNull(Series.OFFERING),
+                Restrictions.eq("off." + Offering.IDENTIFIER, offering)));
+    }
+    
+    public void addOfferingToCriteria(Criteria c, Offering offering) {
+        c.add(Restrictions.eq(Series.PROCEDURE, offering));
+    }
+
     /**
      * Get default Hibernate Criteria for querying series, deleted flag ==
      * <code>false</code>

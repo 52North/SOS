@@ -705,7 +705,7 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Offering identifier
      */
     public void addOfferingRestricionForSeries(Criteria c, String offering) {
-        addOfferingRestrictionFor(c, offering, Series.OFFERINGS);
+        addOfferingRestrictionFor(c, offering, Series.OFFERING);
     }
 
     private void addOfferingRestrictionFor(Criteria c, String offering, String associationPath) {

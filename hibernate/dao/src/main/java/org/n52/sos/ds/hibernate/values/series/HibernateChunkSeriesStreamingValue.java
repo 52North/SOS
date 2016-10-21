@@ -72,10 +72,11 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @param duplicated 
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(AbstractObservationRequest request, long series) throws CodedException {
-        super(request, series);
+    public HibernateChunkSeriesStreamingValue(AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
+        super(request, series, duplicated);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -106,7 +107,12 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     @Override
     public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
-        return (AbstractValuedLegacyObservation<?>) seriesValuesResult.next();
+        AbstractValuedLegacyObservation<?> resultObject = (AbstractValuedLegacyObservation<?>) seriesValuesResult.next();
+        if (checkValue(resultObject)) {
+            return resultObject;
+        }
+        session.evict(resultObject);
+        return null;
     }
 
     @Override
@@ -114,7 +120,10 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         try {
             if (hasNextValue()) {
                 AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
-                TimeValuePair value = resultObject.createTimeValuePairFrom();
+                TimeValuePair value = null;
+                if (checkValue(resultObject)) {
+                    value = resultObject.createTimeValuePairFrom();
+                }
                 session.evict(resultObject);
                 return value;
             }
@@ -130,10 +139,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public OmObservation nextSingleObservation(boolean withIdentifierNameDesription) throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+                OmObservation observation = null;
                 AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
-                resultObject.addValuesToObservation(observation, getResponseFormat());
-                checkForModifications(observation);
+                if (checkValue(resultObject)) {
+                    observation = observationTemplate.cloneTemplate(withIdentifierNameDesription);
+                    resultObject.addValuesToObservation(observation, getResponseFormat());
+                    checkForModifications(observation);
+                }
                 session.evict(resultObject);
                 return observation;
             }

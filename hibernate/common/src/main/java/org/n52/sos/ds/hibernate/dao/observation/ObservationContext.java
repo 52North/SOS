@@ -28,8 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import java.util.Set;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasSeriesType;
@@ -40,7 +38,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 /**
  * Class to carry observation identifiers (featureOfInterest,
@@ -54,9 +51,9 @@ public class ObservationContext {
     private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private Offering offering;
     private String seriesType;
     private boolean hiddenChild = false; 
-    private Set<Offering> offerings;
 
     /**
      * @return the featureOfInterest
@@ -116,21 +113,21 @@ public class ObservationContext {
     }
     
     /**
-     * @return the offerings
+     * @return the offering
      */
-    public Set<Offering> getOfferings() {
-        return offerings;
+    public Offering getOffering() {
+        return offering;
     }
 
     /**
-     * @param offerings the offerings to set
+     * @param offering the offering to set
      */
-    public void setOfferings(Set<Offering> offerings) {
-        this.offerings = offerings;
+    public void setOffering(Offering offering) {
+        this.offering = offering;
     }
     
-    public boolean isSetOfferings() {
-        return getOfferings() != null && !getOfferings().isEmpty();
+    public boolean isSetOffering() {
+        return getOffering() != null;
     }
 
     public void addIdentifierRestrictionsToCritera(Criteria c) {
@@ -149,6 +146,9 @@ public class ObservationContext {
                     .eq(HasWriteableObservationContext.PROCEDURE,
                         getProcedure()));
         }
+        if (isSetOffering()) {
+            c.add(Restrictions.eq(HasWriteableObservationContext.OFFERING, offering));
+        }
     }
 
     public void addValuesToSeries(HasWriteableObservationContext contextual) {
@@ -161,8 +161,8 @@ public class ObservationContext {
         if (isSetProcedure()) {
             contextual.setProcedure(getProcedure());
         }
-        if (isSetOfferings()) {
-            contextual.setOfferings(Sets.newHashSet(getOfferings()));
+        if (isSetOffering()) {
+            contextual.setOffering(getOffering());
         }
         if (contextual instanceof HasSeriesType && isSetSeriesType()) {
             ((HasSeriesType)contextual).setSeriesType(getSeriesType());

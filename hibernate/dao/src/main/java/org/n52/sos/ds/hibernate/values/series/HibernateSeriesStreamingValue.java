@@ -63,6 +63,7 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected Set<Long> series = Sets.newHashSet();
+    private boolean duplicated;
 
     /**
      * constructor
@@ -71,11 +72,13 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
      *            {@link GetObservationRequest}
      * @param series
      *            Datasource series id
+     * @param duplicated 
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(AbstractObservationRequest request, long series) throws CodedException {
+    public HibernateSeriesStreamingValue(AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
         super(request);
         this.series.add(series);
+        this.duplicated = duplicated;
         this.seriesValueDAO =  DaoFactory.getInstance().getValueDAO();
         this.seriesValueTimeDAO = DaoFactory.getInstance().getValueTimeDAO();
     }
@@ -125,6 +128,17 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         if (streamingValue instanceof HibernateSeriesStreamingValue) {
             series.addAll(((HibernateSeriesStreamingValue) streamingValue).getSeries());
         }
+    }
+    
+    protected boolean checkValue(AbstractValuedLegacyObservation<?> value) {
+        if (isDuplicated()) {
+            return value.getOfferings() != null && value.getOfferings().size() == 1;
+        }
+        return true;
+     }
+    
+    protected boolean isDuplicated() {
+        return duplicated;
     }
 
 }

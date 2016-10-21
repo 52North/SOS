@@ -101,17 +101,9 @@ public class RelatedFeature implements Serializable, HasFeatureOfInterest, HasRe
         }
     }
     
-//    @Override
-//    public Offering getOffering() {
-//        return this.offering;
-//    }
-//    
-//    @Override
-//    public void setOfferings(final Offering offering) {
-//        if (getOfferings() == null)  {
-//            setOfferings( new HashSet<Offering>(0));
-//        }
-//        getOfferings().add(offering);
-//        this.offering = offering;
-//    }
+    @Override
+    public boolean isSetOfferings() {
+        return getOfferings() != null && !getOfferings().isEmpty();
+    }
+    
 }

@@ -64,6 +64,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.ogc.swe.SweField;
 import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
@@ -84,6 +85,8 @@ import org.n52.sos.util.http.HTTPStatus;
 import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.n52.sos.util.http.MediaType;
+import org.n52.sos.util.http.MediaTypes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -132,6 +135,19 @@ public class SplitMergeObservations
             splitObservations((InsertObservationRequest) request);
         } else if (request instanceof AbstractObservationRequest) {
             checkGetObservationRequest((AbstractObservationRequest) request);
+        }
+        if (request instanceof AbstractObservationRequest) {
+            AbstractObservationRequest req = (AbstractObservationRequest) request;
+            if (req.isSetResponseFormat()) {
+                if (OmConstants.NS_OM_2.equals(req.getResponseFormat())
+                        || OmConstants.NS_OM.equals(req.getResponseFormat())
+                        || OmConstants.CONTENT_TYPE_OM.toString().equals(req.getResponseFormat())
+                        || OmConstants.CONTENT_TYPE_OM_2.toString().equals(req.getResponseFormat())) {
+                    req.setCheckForDuplicity(true);
+                } else {
+                    req.setCheckForDuplicity(false);
+                }
+            }
         }
         return request;
     }

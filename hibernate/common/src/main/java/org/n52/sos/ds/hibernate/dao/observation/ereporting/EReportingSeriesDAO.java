@@ -73,6 +73,12 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     public List<Series> getSeries(String observedProperty, Collection<String> features, Session session) {
         return getSeriesCriteria(observedProperty, features, session).list();
     }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Series> getSeries(String procedure, String observedProperty, String offering, Collection<String> features, Session session) {
+        return getSeriesCriteria(procedure, observedProperty, offering, features, session).list();
+    }
 
     @Override
     @SuppressWarnings("unchecked")

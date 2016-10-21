@@ -53,6 +53,7 @@ import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.FeatureOfInterest;
@@ -71,7 +72,6 @@ import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
@@ -171,12 +171,15 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
     }
     
     @Override
-    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session) throws CodedException {
-       Criteria criteria = getDefaultObservationTimeCriteria(session);
-       OmObservationConstellation oc = observation.getObservationConstellation();
-       Criteria seriesCriteria = addRestrictionsToCriteria(criteria, oc.getProcedureIdentifier(), oc.getObservablePropertyIdentifier(), oc.getFeatureOfInterestIdentifier());
-       addAdditionalObservationIdentification(seriesCriteria, observation);
-       return criteria;
+    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, ObservationConstellation oc,
+            Session session) throws CodedException {
+        Criteria criteria = getDefaultObservationTimeCriteria(session);
+        Criteria seriesCriteria = addRestrictionsToCriteria(criteria, oc.getProcedure().getIdentifier(),
+                oc.getObservableProperty().getIdentifier(),
+                observation.getObservationConstellation().getFeatureOfInterestIdentifier(),
+                oc.getOffering().getIdentifier());
+        addAdditionalObservationIdentification(seriesCriteria, observation);
+        return criteria;
     }
     
     /**
@@ -201,6 +204,17 @@ public abstract class AbstractSeriesObservationDAO extends AbstractObservationDA
         seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
         seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
         seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
+        return seriesCriteria;
+    }
+    
+    private Criteria addRestrictionsToCriteria(Criteria criteria, String procedure, String observableProperty,
+            String featureOfInterest, String offering) throws CodedException {
+        AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
+        Criteria seriesCriteria = criteria.createCriteria(AbstractSeriesObservation.SERIES);
+        seriesDAO.addFeatureOfInterestToCriteria(seriesCriteria, featureOfInterest);
+        seriesDAO.addProcedureToCriteria(seriesCriteria, procedure);
+        seriesDAO.addObservablePropertyToCriteria(seriesCriteria, observableProperty);
+        seriesDAO.addOfferingToCriteria(seriesCriteria, offering);
         return seriesCriteria;
     }
 

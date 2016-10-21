@@ -111,6 +111,11 @@ public class ObservationConstellation
     public void setOffering(Offering offering) {
         this.offering = offering;
     }
+    
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
 
     @Override
     public boolean getDeleted() {

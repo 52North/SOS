@@ -88,6 +88,11 @@ public abstract class AbstractBaseObservation
     }
 
     @Override
+    public boolean isSetOfferings() {
+        return getOfferings() != null && !getOfferings().isEmpty();
+    }
+    
+    @Override
     public Geometry getSamplingGeometry() {
         return samplingGeometry;
     }

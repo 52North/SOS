@@ -148,11 +148,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             response.setObservation(o);
             final List<OmObservation> observations = getSingleObservationsFromObservation(o);
 
-            final Set<ObservationConstellation> obsConsts =
-                    Sets.newHashSet(new ObservationConstellationDAO().getObservationConstellation(
+            final ObservationConstellation obsConst =
+                    new ObservationConstellationDAO().getObservationConstellation(
                             resultTemplate.getProcedure(),
                             resultTemplate.getObservableProperty(),
-                            Sets.newHashSet(resultTemplate.getOffering().getIdentifier()), session));
+                            resultTemplate.getOffering(), session);
 
             int insertion = 0;
             final int size = observations.size();
@@ -160,11 +160,11 @@ public class InsertResultDAO extends AbstractInsertResultDAO implements Capabili
             LOGGER.debug("Start saving {} observations.", size);
             for (final OmObservation observation : observations) {
                 if (observation.getValue() instanceof SingleObservationValue) {
-                    observationDAO.insertObservationSingleValue(obsConsts, resultTemplate.getFeatureOfInterest(),
-                            observation, codespaceCache, unitCache, session);
+                    observationDAO.insertObservationSingleValue(obsConst, resultTemplate.getFeatureOfInterest(),
+                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), session);
                 } else if (observation.getValue() instanceof MultiObservationValues) {
-                    observationDAO.insertObservationMultiValue(obsConsts, resultTemplate.getFeatureOfInterest(),
-                            observation, codespaceCache, unitCache, session);
+                    observationDAO.insertObservationMultiValue(obsConst, resultTemplate.getFeatureOfInterest(),
+                            observation, codespaceCache, unitCache, Sets.newHashSet(obsConst.getOffering()), session);
                 }
                 if ((++insertion % FLUSH_THRESHOLD) == 0) {
                     session.flush();

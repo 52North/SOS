@@ -31,11 +31,15 @@ package org.n52.sos.ds.hibernate;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
 import org.n52.sos.convert.ConverterException;
 import org.n52.sos.ds.AbstractGetObservationByIdDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
@@ -61,9 +65,6 @@ import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Lists;
-
 
 /**
  * Implementation of the abstract class AbstractGetObservationByIdDAO
@@ -101,7 +102,7 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
             List<Observation<?>> observations = Lists.newArrayList();
             observations.addAll(queryObservation(request, session));
             omObservations.addAll(HibernateObservationUtilities.createSosObservationsFromObservations(
-                    observations, request, LocaleHelper.fromRequest(request), session));
+                    checkObservations(observations, request), request, LocaleHelper.fromRequest(request), session));
             GetObservationByIdResponse response = new GetObservationByIdResponse();
             
             response.setService(request.getService());
@@ -129,6 +130,21 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
             observations.addAll(querySeriesObservationForNonStreaming(request, session));
         }
         return observations;
+    }
+
+    private List<Observation<?>> checkObservations(List<Observation<?>> queryObservation, GetObservationByIdRequest request) {
+        if (!request.isCheckForDuplicity()) {
+            return queryObservation;
+        }
+        List<Observation<?>> checkedObservations = Lists.newArrayList();
+        Set<String> identifiers = Sets.newHashSet();
+        for (Observation<?> observation : queryObservation) {
+            if (!identifiers.contains(observation.getIdentifier())) {
+                identifiers.add(observation.getIdentifier());
+                checkedObservations.add(observation);
+            }
+        }
+        return checkedObservations;
     }
 
     /**
@@ -216,9 +232,9 @@ public class GetObservationByIdDAO extends AbstractGetObservationByIdDAO {
      */
     private HibernateSeriesStreamingValue getSeriesStreamingValue(GetObservationByIdRequest request, long seriesId) throws CodedException {
         if (HibernateStreamingConfiguration.getInstance().isChunkDatasourceStreaming()) {
-            return new HibernateChunkSeriesStreamingValue(request, seriesId);
+            return new HibernateChunkSeriesStreamingValue(request, seriesId, request.isCheckForDuplicity());
         } else {
-            return new HibernateScrollableSeriesStreamingValue(request, seriesId);
+            return new HibernateScrollableSeriesStreamingValue(request, seriesId, request.isCheckForDuplicity());
         }
     }
 

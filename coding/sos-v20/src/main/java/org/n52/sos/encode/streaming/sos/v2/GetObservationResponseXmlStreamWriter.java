@@ -163,8 +163,11 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                         }
                     } else {
                         do {
-                            writeObservationData(streamingObservation.nextSingleObservation(), encoder, encodingValues);
-                            writeNewLine();
+                            OmObservation observation = streamingObservation.nextSingleObservation();
+                            if (observation != null) {
+                                writeObservationData(observation, encoder, encodingValues);
+                                writeNewLine();
+                            }
                         } while (streamingObservation.hasNextValue());
                     }
                 } else if (streamingObservation.getValue() != null) {
@@ -186,8 +189,11 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
                         }
                     } else {
                         do {
-                            writeObservationData(streamingValue.nextSingleObservation(), encoder, encodingValues);
-                            writeNewLine();
+                            OmObservation obs = streamingValue.nextSingleObservation();
+                            if (obs != null) {
+                                writeObservationData(obs, encoder, encodingValues);
+                                writeNewLine();
+                            }
                         } while (streamingValue.hasNextValue());
                     }
                 } else if (streamingValue.getValue() != null) {

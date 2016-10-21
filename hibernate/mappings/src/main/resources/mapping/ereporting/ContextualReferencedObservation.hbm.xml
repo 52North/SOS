@@ -52,8 +52,7 @@
         </property>
         <property name="identifier"
                   type="string">
-            <column name="identifier"
-                    unique-key="obsIdentifierUK">
+            <column name="identifier" >
                 <comment>The identifier of the observation, gml:identifier. Used as parameter for queries. Optional but unique</comment>
             </column>
         </property>

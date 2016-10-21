@@ -88,6 +88,27 @@ public class OmObservationConstellation implements Serializable, Cloneable {
         this.observableProperty = observableProperty;
         this.featureOfInterest = featureOfInterest;
     }
+    
+    /**
+     * constructor
+     * 
+     * @param procedure
+     *            Procedure by which the observation is made
+     * @param observableProperty
+     *            observableProperty to which the observation accords to
+     * @param featureOfInterest
+     *            featureOfInterest to which this observation belongs
+     * @param offerings
+     *            offering to which this observation belongs
+     */
+    public OmObservationConstellation(SosProcedureDescription procedure, AbstractPhenomenon observableProperty,
+            AbstractFeature featureOfInterest, Set<String> offerings) {
+        super();
+        this.procedure = procedure;
+        this.observableProperty = observableProperty;
+        this.offerings = offerings;
+        this.featureOfInterest = featureOfInterest;
+    }
 
     /**
      * constructor

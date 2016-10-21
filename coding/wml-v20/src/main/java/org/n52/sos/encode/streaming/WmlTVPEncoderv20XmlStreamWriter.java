@@ -115,8 +115,10 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             writeNewLine();
             while (observationValue.hasNextValue()) {
                 TimeValuePair timeValuePair = observationValue.nextValue();
-                writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
-                writeNewLine();
+                if (timeValuePair != null) {
+                    writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
+                    writeNewLine();
+                }
             }
             close();
         } else {

@@ -168,7 +168,7 @@ public class SosGetObservationOperatorV20 extends
         }
 
         try {
-            if (sosRequest.getResponseFormat() == null) {
+            if (!sosRequest.isSetResponseFormat()) {
                 sosRequest.setResponseFormat(getActiveProfile().getObservationResponseFormat());
             }
             SosHelper.checkResponseFormat(sosRequest.getResponseFormat(), sosRequest.getService(),

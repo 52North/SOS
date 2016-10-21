@@ -29,6 +29,7 @@
 package org.n52.sos.ds.hibernate.entities.observation.legacy;
 
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
@@ -48,6 +49,7 @@ public abstract class AbstractLegacyObservation<T>
     private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private Offering offering;
 
     @Override
     public AbstractFeatureOfInterest getFeatureOfInterest() {
@@ -79,4 +81,18 @@ public abstract class AbstractLegacyObservation<T>
         this.procedure = procedure;
     }
 
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
+    
+    @Override
+    public void setOffering(Offering offering) {
+       this.offering = offering;
+    }
+
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
 }

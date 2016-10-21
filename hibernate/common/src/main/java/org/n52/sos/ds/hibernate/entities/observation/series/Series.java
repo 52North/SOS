@@ -63,8 +63,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
                    HasUnit, 
                    HasPublishedFlag, 
                    HasSeriesType,
-                   HasOffering,
-                   HasOfferings {
+                   HasOffering{
 
     private static final long serialVersionUID = 7838379468605356753L;
     
@@ -80,6 +79,8 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private AbstractFeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private Offering offering;
+
     private Boolean deleted = false;
     private Boolean published = true;
     // the following values are used by the rest api
@@ -89,10 +90,7 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     private Double lastNumericValue;
     private Unit unit;
     private boolean hiddenChild;
-    private Offering offering;
     private String seriesType;
-    private Set<Offering> offerings = new HashSet<Offering>(0);
-    
     /**
      * Get series id
      *
@@ -287,59 +285,25 @@ public class Series extends AbstractIdentifierNameDescriptionEntity
     }
 
     @Override
-    public Set<Offering> getOfferings() {
-        return offerings;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void setOfferings(final Object offerings) {
-        if (offerings instanceof Set<?>) {
-            getOfferings().addAll((Set<Offering>) offerings);
-        } else {
-            getOfferings().add((Offering) offerings);
-        }
-    }
-
-    public void addOfferings(Set<Offering> offerings) {
-        getOfferings().addAll(offerings);
-    }
-
-    public boolean hasOfferings(Set<Offering> offerings) {
-        if (getOfferings() != null && !getOfferings().isEmpty()) {
-            for (Offering offering : offerings) {
-                if (!getOfferings().contains(offering)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    public void addOffering(Offering offering) {
-        getOfferings().add(offering);
-    }
-
-    public boolean hasOfferings() {
-        return getOfferings() != null && !getOfferings().isEmpty();
-    }
-    
-    @Override
-    public void setOffering(Offering offering) {
-       this.offering = offering;
-    }
-
-    @Override
     public Offering getOffering() {
         return offering;
     }
+
+    @Override
+    public void setOffering(final Offering offering) {
+        this.offering = offering;
+    }
     
-    public boolean hasOffering() {
-       return getOffering() != null;
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
     }
 
-    
+    public boolean hasSameObservationIdentifier(Series s) {
+        return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
+                && getObservableProperty().equals(s.getObservableProperty());
+    }
+
     public String getSeriesType() {
         return this.seriesType;
     }

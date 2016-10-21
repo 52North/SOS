@@ -34,6 +34,7 @@ import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
@@ -78,6 +79,7 @@ public abstract class AbstractValuedLegacyObservation<T>
     private Procedure procedure;
     private ObservableProperty observableProperty;
     private AbstractFeatureOfInterest featureOfInterest;
+    private Offering offering;
 
     @Override
     public Unit getUnit() {
@@ -122,6 +124,21 @@ public abstract class AbstractValuedLegacyObservation<T>
     @Override
     public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
+    }
+    
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
+    
+    @Override
+    public void setOffering(Offering offering) {
+       this.offering = offering;
+    }
+
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
     }
     
     /**

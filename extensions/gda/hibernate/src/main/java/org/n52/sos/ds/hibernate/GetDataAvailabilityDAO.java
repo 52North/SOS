@@ -299,7 +299,10 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 processDataAvailability(series, context, session);
             }
         }
-        return context.getDataAvailabilityList();
+        if (gdaV20) {
+            return context.getDataAvailabilityList();
+        }
+        return checkForDuplictation(context.getDataAvailabilityList());
     }
 
     private boolean checkForGDAv20(GetDataAvailabilityRequest request) {
@@ -321,7 +324,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
      */
     private void processDataAvailabilityForEachOffering(Series series, GdaRequestContext context, Session session) throws OwsExceptionReport {
         List<OfferingMinMaxTime> offeringTimePeriodList = null;
-        if (series.hasOffering() && series.isSetFirstLastTime()) {
+        if (series.isSetOffering() && series.isSetFirstLastTime()) {
             offeringTimePeriodList = Lists.newArrayList();
             offeringTimePeriodList.add(new OfferingMinMaxTime().setOffering(series.getOffering().getIdentifier())
                     .setTimePeriod(new TimePeriod(series.getFirstTimeStamp(), series.getLastTimeStamp())));
@@ -410,6 +413,27 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                 }
             }
         }
+    }
+
+    private List<DataAvailability> checkForDuplictation(List<DataAvailability> dataAvailabilityValues) {
+        List<DataAvailability> checked = Lists.newLinkedList();
+        for (DataAvailability dataAvailability : dataAvailabilityValues) {
+            if (checked.isEmpty()) {
+                checked.add(dataAvailability);
+            } else {
+                boolean notDuplicated = true;
+                for (DataAvailability checkedDA : checked) {
+                    if (dataAvailability.equals(checkedDA)) {
+                        checkedDA.getPhenomenonTime().extendToContain(dataAvailability.getPhenomenonTime());
+                        notDuplicated = false;
+                    }
+                }
+                if (notDuplicated) {
+                    checked.add(dataAvailability);
+                }
+            }
+        }
+        return checked;
     }
 
     private boolean addParentDataAvailabilityIfMissing(Set<DataAvailability> parentDataAvailabilities,

@@ -176,13 +176,7 @@ public class SeriesOmObservationCreator extends AbstractOmObservationCreator {
         OmObservationConstellation obsConst = new OmObservationConstellation(procedure, obsProp, null, feature, null);
         /* get the offerings to find the templates */
         if (obsConst.getOfferings() == null) {
-            if (getSeries().hasOfferings()) {
-                Set<String> set = Sets.newHashSet();
-                for (Offering offering : getSeries().getOfferings()) {
-                    set.add(offering.getIdentifier());
-                }
-                obsConst.setOfferings(set);
-            } else if (getSeries().hasOffering()) {
+            if (getSeries().isSetOffering()) {
                 obsConst.setOfferings(Sets.newHashSet(getSeries().getOffering().getIdentifier()));
             } else {
                 AbstractSeriesObservationDAO observationDAO = (AbstractSeriesObservationDAO)DaoFactory.getInstance().getObservationDAO();

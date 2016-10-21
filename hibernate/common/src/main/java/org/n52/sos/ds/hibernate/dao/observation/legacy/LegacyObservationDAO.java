@@ -214,8 +214,10 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         addFeatureOfInterestRestrictionToObservationCriteria(criteria, featureOfInterest);
         return criteria;
     }
+
     @Override
-    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session) throws CodedException {
+    public Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation,
+            ObservationConstellation observationConstellation, Session session) throws CodedException {
         OmObservationConstellation oc = observation.getObservationConstellation();
         Criteria criteria = getDefaultObservationTimeCriteria(session);
         addProcedureRestrictionToObservationCriteria(criteria, oc.getProcedureIdentifier());

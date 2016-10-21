@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.entities.observation.legacy;
 
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
@@ -79,6 +80,20 @@ public class TemporalReferencedLegacyObservation
     @Override
     public void setFeatureOfInterest(AbstractFeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
+    }
+
+    @Override
+    public void setOffering(Offering offering) {
+    }
+
+    @Override
+    public Offering getOffering() {
+        return null;
+    }
+
+    @Override
+    public boolean isSetOffering() {
+        return false;
     }
 
 }

@@ -357,7 +357,7 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
                         dataAvailability.setResultTimes(getResultTimesFromSeriesObservation(context.getSeriesObservationDAO(), series,
                                 context.getRequest(), session));
                     }
-                    dataAvailability.setOffering(getOfferingReference(context.getOfferings(), ommt.getOffering(), session));
+                    dataAvailability.setOffering(getOfferingReference(series, context.getOfferings(), ommt.getOffering(), session));
                     dataAvailability.setFormatDescriptor(getFormatDescriptor(ommt.getOffering(), context, series));
                     checkForMetadataExtension(dataAvailability, series, session);
                     context.addDataAvailability(dataAvailability);
@@ -792,12 +792,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         String identifier = series.getProcedure().getIdentifier();
         if (!procedures.containsKey(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
-            // TODO
-            // SosProcedureDescription sosProcedureDescription = new
-            // HibernateProcedureConverter().createSosProcedureDescription(procedure,
-            // procedure.getProcedureDescriptionFormat().getProcedureDescriptionFormat(),
-            // Sos2Constants.SERVICEVERSION, session);
-            // if ()
+            if (series.getProcedure().isSetName()) {
+                referenceType.setTitle(series.getProcedure().getName());
+            }
             procedures.put(identifier, referenceType);
         }
         return procedures.get(identifier);
@@ -807,10 +804,9 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         String identifier = series.getObservableProperty().getIdentifier();
         if (!observableProperties.containsKey(identifier)) {
             ReferenceType referenceType = new ReferenceType(identifier);
-            // TODO
-            // if (observableProperty.isSetDescription()) {
-            // referenceType.setTitle(observableProperty.getDescription());
-            // }
+            if (series.getObservableProperty().isSetName()) {
+                referenceType.setTitle(series.getObservableProperty().getName());
+            }
             observableProperties.put(identifier, referenceType);
         }
         return observableProperties.get(identifier);
@@ -833,11 +829,13 @@ public class GetDataAvailabilityDAO extends AbstractGetDataAvailabilityDAO imple
         return featuresOfInterest.get(identifier);
     }
     
-    private ReferenceType getOfferingReference(Map<String, ReferenceType> offerings, String offering,
+    private ReferenceType getOfferingReference(Series series, Map<String, ReferenceType> offerings, String offering,
             Session session) throws OwsExceptionReport {
         if (!offerings.containsKey(offering)) {
             ReferenceType referenceType = new ReferenceType(offering);
-            // TODO query for name?
+            if (series.isSetOffering() && series.getOffering().isSetName()) {
+                referenceType.setTitle(series.getOffering().getName());
+            }
             offerings.put(offering, referenceType);
         }
         return offerings.get(offering);

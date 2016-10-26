@@ -19,11 +19,12 @@
             <property column="samplingGeometry" name="geometry" type="org.hibernate.spatial.GeometryType"/>
         </component>
         <!-- Or add only to specific joined-subclasses -->
+        <!--
         <set inverse="true" name="parameters" table="parameters">
             <key column="observationid" not-null="true"/>
             <one-to-many class="DataParameter"/>
         </set>
-
+        -->
         <joined-subclass extends="DataEntity" name="MeasurementDataEntity" table="numericValue">
             <key column="observationid"/>
             <property column="value" name="value" type="double"/>

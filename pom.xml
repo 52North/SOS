@@ -68,6 +68,7 @@
         <slf4j.version>1.7.2</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
         <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
+        <c3p0.version>0.9.5.2</c3p0.version>
         <sqlite.version>3.7.2</sqlite.version>
         <geotools.version>3.7.2</geotools.version>
         <jackson.version>2.3.3</jackson.version>
@@ -526,6 +527,10 @@
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.mchange</groupId>
+                        <artifactId>c3p0</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -542,6 +547,11 @@
                         <artifactId>postgresql</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.mchange</groupId>
+                <artifactId>c3p0</artifactId>
+                <version>${c3p0.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.postgresql</groupId>

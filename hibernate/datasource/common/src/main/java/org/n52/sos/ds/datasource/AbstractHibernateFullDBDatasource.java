@@ -132,6 +132,8 @@ public abstract class AbstractHibernateFullDBDatasource extends AbstractHibernat
         p.put(HibernateConstants.C3P0_ACQUIRE_INCREMENT, "1");
         p.put(HibernateConstants.C3P0_TIMEOUT, "0");
         p.put(HibernateConstants.C3P0_MAX_STATEMENTS, "0");
+        p.put(HibernateConstants.C3P0_PRIVILEGE_SPAWNED_THREAD, "true");
+        p.put(HibernateConstants.C3P0_CONTEXT_CLASS_LOADER_SOURCE, "library");
         if (settings.containsKey(BATCH_SIZE_KEY)) {
             p.put(HibernateConstants.JDBC_BATCH_SIZE, settings.get(BATCH_SIZE_KEY).toString());
         }

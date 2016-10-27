@@ -139,7 +139,7 @@
             </column>
         </many-to-one>
         <set name="offerings"
-             table="observationHasOffering"
+             table="observationhasoffering"
              inverse="false">
             <key>
                 <column name="observationId"
@@ -164,7 +164,7 @@
                 <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true" fetch="join" cascade="delete-orphan">
+        <set name="parameters" table="parameter" inverse="true" fetch="join" cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>
@@ -176,27 +176,9 @@
 	        </key>
 	        <one-to-many class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation" />
     	</set>
-        <!-- <set name="relatedObservations" 
-        	 table="relatedobservations" 
-			 inverse="false" 
-			 lazy="true"
-			 fetch="select">
-            <key>
-                <column name="observationId" 
-                        not-null="true" 
-                        index="relatedObsObsIdx"/>
-            </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
-                          foreign-key="obsRelatedObsFk">
-                <column name="relatedObservation"
-                        not-null="true"
-                        index="relatedObsRelatedObsIdx">
-	            </column>
-            </many-to-many>
-        </set> -->
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.BlobValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="blobValue">
+                         table="blobvalue">
             <comment>Value table for blob observation</comment>
             <key foreign-key="observationBlobValueFk">
                 <column name="observationId" >
@@ -212,7 +194,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.BooleanValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="booleanValue"
+                         table="booleanvalue"
                          check="value in ('T','F')">
             <comment>Value table for boolean observation</comment>
             <key foreign-key="observationBooleanValueFk">
@@ -229,7 +211,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.CategoryValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="categoryValue">
+                         table="categoryvalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationCategoryValueFk">
                 <column name="observationId" >
@@ -263,7 +245,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.CountValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="countValue">
+                         table="countvalue">
             <comment>Value table for count observation</comment>
             <key foreign-key="observationCountValueFk">
                 <column name="observationId" >
@@ -279,7 +261,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.GeometryValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="geometryValue">
+                         table="geometryvalue">
             <comment>Value table for geometry observation</comment>
             <key foreign-key="observationGeometryValueFk">
                 <column name="observationId" >
@@ -295,7 +277,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.NumericValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="numericValue">
+                         table="numericvalue">
                     <comment>Value table for numeric/Measurment observation</comment>
             <key foreign-key="observationNumericValueFk">
                  <column name="observationId" >
@@ -311,7 +293,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.TextValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="textValue">
+                         table="textvalue">
             <comment>Value table for text observation</comment>
             <key foreign-key="observationTextValueFk">
                 <column name="observationId" >
@@ -345,7 +327,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.SweDataArrayValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="sweDataArrayValue">
+                         table="swedataarrayvalue">
             <comment>Value table for SweDataArray observation</comment>
             <key foreign-key="observationSweDataArrayValueFk">
                 <column name="observationId" >
@@ -361,7 +343,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ComplexValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="complexValue">
+                         table="complexvalue">
             <comment>Value table for complex observation</comment>
             <key foreign-key="observationComplexValueFk">
                 <column name="observationId" >
@@ -369,7 +351,7 @@
                 </column>
             </key>
             <set name="value"
-                 table="compositeObservation"
+                 table="compositeobservation"
                  inverse="false"
                  sort="natural"
                  cascade="delete-orphan">
@@ -389,7 +371,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.series.valued.ProfileValuedSeriesObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation"
-                         table="profileValue">
+                         table="profilevalue">
            <comment>Value table for profile observation</comment>
         	<key foreign-key="observationProfileValueFk">
 	        	<column name="observationId" >
@@ -421,7 +403,7 @@
 	            </column>
         	</many-to-one>
             <set name="value"
-                 table="profileObservation"
+                 table="profileobservation"
                  inverse="false"
                  sort="natural"
                  cascade="delete-orphan">

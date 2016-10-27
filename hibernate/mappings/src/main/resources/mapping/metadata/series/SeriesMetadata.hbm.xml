@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.metadata.SeriesMetadata"
-           table="seriesMetadata">
+           table="seriesmetadata">
         <id name="metadataId"
             type="long">
             <column name="metadataId">

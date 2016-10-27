@@ -121,7 +121,7 @@
             </column>
         </many-to-one>
         <set name="offerings"
-             table="observationHasOffering"
+             table="observationhasoffering"
              inverse="false">
             <key>
                 <column name="observationId"
@@ -146,7 +146,7 @@
                 <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true"  cascade="delete-orphan">
+        <set name="parameters" table="parameter" inverse="true"  cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>
@@ -189,7 +189,7 @@
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.NumericValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="numericValue">
+                         table="numericvalue">
             <comment>Value table for numeric/Measurment observation</comment>
             <key foreign-key="observationNumericValueFk">
                  <column name="observationId" >
@@ -205,7 +205,7 @@
         </joined-subclass>
         <!-- <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.BlobValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="blobValue">
+                         table="blobvalue">
             <comment>Value table for blob observation</comment>
             <key foreign-key="observationBlobValueFk">
                 <column name="observationId" >
@@ -221,7 +221,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.BooleanValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="booleanValue"
+                         table="booleanvalue"
                          check="value in ('T','F')">
             <comment>Value table for boolean observation</comment>
             <key foreign-key="observationBooleanValueFk">
@@ -238,7 +238,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.CategoryValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="categoryValue">
+                         table="categoryvalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationCategoryValueFk">
                 <column name="observationId" >
@@ -278,7 +278,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.CountValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="countValue">
+                         table="countvalue">
             <comment>Value table for count observation</comment>
             <key foreign-key="observationCountValueFk">
                 <column name="observationId" >
@@ -294,7 +294,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.GeometryValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="geometryValue">
+                         table="geometryvalue">
             <comment>Value table for geometry observation</comment>
             <key foreign-key="observationGeometryValueFk">
                 <column name="observationId" >
@@ -310,7 +310,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.TextValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="textValue">
+                         table="textvalue">
             <comment>Value table for text observation</comment>
             <key foreign-key="observationTextValueFk">
                 <column name="observationId" >
@@ -350,7 +350,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.SweDataArrayValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="sweDataArrayValue">
+                         table="swedataarrayvalue">
             <comment>Value table for SweDataArray observation</comment>
             <key foreign-key="observationSweDataArrayValueFk">
                 <column name="observationId" >
@@ -366,7 +366,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.ereporting.valued.ComplexValuedEReportingObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation"
-                         table="complexValue">
+                         table="complexvalue">
             <comment>Value table for complex observation</comment>
             <key foreign-key="observationComplexValueFk">
                 <column name="observationId" >
@@ -374,7 +374,7 @@
                 </column>
             </key>
             <set name="value"
-                 table="compositeObservation"
+                 table="compositeobservation"
                  inverse="false"
                 >
                 <comment>Relation table for complex parent/child observations</comment>

@@ -156,7 +156,7 @@
             </column>
         </many-to-one>
         <set name="offerings"
-             table="observationHasOffering"
+             table="observationhasoffering"
              inverse="false">
             <key>
                 <column name="observationId"
@@ -181,7 +181,7 @@
                 <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true"  cascade="delete-orphan">
+        <set name="parameters" table="parameter" inverse="true"  cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>
@@ -189,7 +189,7 @@
         </set>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.BlobValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="blobValue">
+                         table="blobvalue">
             <comment>Value table for blob observation</comment>
             <key foreign-key="observationBlobValueFk">
                 <column name="observationId" >
@@ -205,7 +205,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.BooleanValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="booleanValue"
+                         table="booleanvalue"
                          check="value in ('T','F')">
             <comment>Value table for boolean observation</comment>
             <key foreign-key="observationBooleanValueFk">
@@ -222,7 +222,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.CategoryValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="categoryValue">
+                         table="categoryvalue">
             <comment>Value table for category observation</comment>
             <key foreign-key="observationCategoryValueFk">
                 <column name="observationId" >
@@ -262,7 +262,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.CountValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="countValue">
+                         table="countvalue">
             <comment>Value table for count observation</comment>
             <key foreign-key="observationCountValueFk">
                 <column name="observationId" >
@@ -278,7 +278,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.GeometryValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="geometryValue">
+                         table="geometryvalue">
             <comment>Value table for geometry observation</comment>
             <key foreign-key="observationGeometryValueFk">
                 <column name="observationId" >
@@ -294,7 +294,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.NumericValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="numericValue">
+                         table="numericvalue">
             <comment>Value table for numeric/Measurment observation</comment>
             <key foreign-key="observationNumericValueFk">
                  <column name="observationId" >
@@ -310,7 +310,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.TextValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="textValue">
+                         table="textvalue">
             <comment>Value table for text observation</comment>
             <key foreign-key="observationTextValueFk">
                 <column name="observationId" >
@@ -350,7 +350,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="sweDataArrayValue">
+                         table="swedataarrayvalue">
             <comment>Value table for SweDataArray observation</comment>
             <key foreign-key="observationSweDataArrayValueFk">
                 <column name="observationId" >
@@ -366,7 +366,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.observation.legacy.valued.ComplexValuedLegacyObservation"
                          extends="org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation"
-                         table="complexValue">
+                         table="complexvalue">
             <comment>Value table for complex observation</comment>
             <key foreign-key="observationComplexValueFk">
                 <column name="observationId" >
@@ -374,7 +374,7 @@
                 </column>
             </key>
             <set name="value"
-                 table="compositeObservation"
+                 table="compositeobservation"
                  inverse="false"
                  sort="natural"
                  cascade="delete-orphan">

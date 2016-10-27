@@ -113,7 +113,7 @@
             </column>
         </property>
          <set name="offerings"
-             table="observationHasOffering"
+             table="observationhasoffering"
              inverse="false">
             <key>
                 <column name="observationId"
@@ -138,7 +138,7 @@
                 <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true"  cascade="delete-orphan">
+        <set name="parameters" table="parameter" inverse="true"  cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>

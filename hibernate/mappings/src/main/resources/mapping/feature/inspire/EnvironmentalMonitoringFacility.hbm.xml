@@ -12,7 +12,7 @@
                 </column>
             </key>
             <component name="mediaMonitored" class="org.n52.sos.ds.hibernate.entities.feature.inspire.MediaMonitored">
-                <set name="mediaMonitored" table="mediaMonitored">
+                <set name="mediaMonitored" table="mediamonitored">
                     <key column="featureOfInterestId" not-null="true" />
                     <element column="mediaMonitored" type="string" not-null="true" />
                 </set>

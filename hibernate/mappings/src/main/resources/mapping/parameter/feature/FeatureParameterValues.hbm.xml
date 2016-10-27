@@ -5,7 +5,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureBooleanValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
-        table="booleanFeatParamValue" check="value in ('T','F')">
+        table="booleanfeatparamvalue" check="value in ('T','F')">
         <comment>Value table for boolean parameter</comment>
         <key foreign-key="featParamBooleanValueFk">
             <column name="parameterId">
@@ -22,7 +22,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureCategoryValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
-        table="categoryFeatParamValue">
+        table="categoryfeatparamvalue">
         <comment>Value table for category parameter</comment>
         <key foreign-key="featParamCategoryValueFk">
             <column name="parameterId">
@@ -36,7 +36,7 @@
             </column>
         </property>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit"
-            fetch="select" lazy="no-proxy" foreign-key="catFeatParamValueUnitFk">
+            fetch="select" lazy="no-proxy" foreign-key="catfeatparamvalueUnitFk">
             <column name="unitId" not-null="false">
                 <comment>Foreign Key (FK) to the related unit of measure. Contains
                     "unit".unitid. Optional</comment>
@@ -46,7 +46,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureCountValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
-        table="countFeatParamValue">
+        table="countfeatparamvalue">
         <comment>Value table for count parameter</comment>
         <key foreign-key="featParamCountValueFk">
             <column name="parameterId">
@@ -63,7 +63,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureQuantityValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
-        table="numericFeatParamValue">
+        table="numericfeatparamvalue">
         <comment>Value table for numeric/Measurment parameter</comment>
         <key foreign-key="featParamNumericValueFk">
             <column name="parameterId">
@@ -77,7 +77,7 @@
             </column>
         </property>
         <many-to-one name="unit" class="org.n52.sos.ds.hibernate.entities.Unit"
-            fetch="select" lazy="no-proxy" foreign-key="quanFeatParamValueUnitFk">
+            fetch="select" lazy="no-proxy" foreign-key="quanfeatparamvalueUnitFk">
             <column name="unitId" not-null="false">
                 <comment>Foreign Key (FK) to the related unit of measure. Contains
                     "unit".unitid. Optional</comment>
@@ -87,7 +87,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureTextValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
-        table="textFeatParamValue">
+        table="textfeatparamvalue">
         <comment>Value table for text parameter</comment>
         <key foreign-key="featParamTextValueFk">
             <column name="parameterId">
@@ -104,7 +104,7 @@
     <joined-subclass
         name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureXmlValuedParameter"
         extends="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter"
-        table="xmlFeatParamValue">
+        table="xmlfeatparamvalue">
         <comment>Value table for XML parameter</comment>
         <key foreign-key="featParamXmlValueFk">
             <column name="parameterId">

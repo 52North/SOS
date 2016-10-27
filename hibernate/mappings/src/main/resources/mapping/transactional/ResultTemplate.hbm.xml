@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ResultTemplate" table="resultTemplate">
+    <class name="org.n52.sos.ds.hibernate.entities.ResultTemplate" table="resulttemplate">
     <comment>Table to store resultTemplates (OGC SOS 2.0 result handling profile). Mapping file: mapping/transactionl/ResultTemplate.hbm.xml</comment>
         <id name="resultTemplateId" type="long">
             <column name="resultTemplateId">

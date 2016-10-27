@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
 <subclass name="org.n52.sos.ds.hibernate.entities.TProcedure" extends="org.n52.sos.ds.hibernate.entities.Procedure" discriminator-value="true">
-    <set name="validProcedureTimes" table="validProcedureTime" inverse="true">
+    <set name="validProcedureTimes" table="validproceduretime" inverse="true">
         <key>
             <column name="procedureId" not-null="true" />
         </key>

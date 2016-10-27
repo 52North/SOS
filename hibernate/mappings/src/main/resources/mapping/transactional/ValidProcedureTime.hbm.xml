@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" table="validProcedureTime">
+    <class name="org.n52.sos.ds.hibernate.entities.ValidProcedureTime" table="validproceduretime">
         <comment>Table to store procedure descriptions which were inserted or updated via the transactional Profile. Mapping file: mapping/transactionl/ValidProcedureTime.hbm.xml</comment>
         <id name="validProcedureTimeId" type="long">
             <column name="validProcedureTimeId">

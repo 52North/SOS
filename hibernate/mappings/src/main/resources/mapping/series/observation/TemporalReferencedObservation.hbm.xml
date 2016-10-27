@@ -102,7 +102,7 @@
             </column>
         </property>
         <set name="offerings"
-             table="observationHasOffering"
+             table="observationhasoffering"
              inverse="false">
             <key>
                 <column name="observationId"
@@ -127,7 +127,7 @@
                 <comment>Sampling geometry describes exactly where the measurement has taken place. Used for OGC SOS 2.0 Spatial Filtering Profile. Optional</comment>
             </column>
         </property>
-        <set name="parameters" table="parameters" inverse="true" fetch="join" cascade="delete-orphan">
+        <set name="parameters" table="parameter" inverse="true" fetch="join" cascade="delete-orphan">
             <key>
                 <column name="observationId" not-null="true" />
             </key>
@@ -139,23 +139,5 @@
 	        </key>
 	        <one-to-many class="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation" />
     	</set>
-        <!-- <set name="relatedObservations" 
-        	 table="relatedobservations" 
-			 inverse="false" 
-			 lazy="true"
-			 fetch="select" >
-            <key>
-                <column name="observationId" 
-                        not-null="true" 
-                        index="relatedObsObsIdx"/>
-            </key>
-            <many-to-many entity-name="org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation"
-                          foreign-key="obsRelatedObsFk">
-                <column name="relatedObservation"
-                        not-null="true"
-                        index="relatedObsRelatedObsIdx">
-	            </column>
-            </many-to-many>
-        </set> -->
     </class>
 </hibernate-mapping>

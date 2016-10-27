@@ -4,7 +4,7 @@
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.feature.AbstractFeatureOfInterest"
            abstract="true"
-           table="featureOfInterest">
+           table="featureofinterest">
         <id name="featureOfInterestId"
             type="long">
             <column name="featureOfInterestId">
@@ -83,7 +83,7 @@
             </column>
         </property> 
         -->
-        <set name="childs" table="featureRelation" inverse="false">
+        <set name="childs" table="featurerelation" inverse="false">
             <comment>Relation table to store feature hierarchies. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TFeatureOfInterest.hbm.xml</comment>
             <key>
                 <column name="parentFeatureId" not-null="true">
@@ -96,7 +96,7 @@
                 </column>
             </many-to-many>
         </set>
-        <set name="parents" table="featureRelation" inverse="false">
+        <set name="parents" table="featurerelation" inverse="false">
             <key>
                 <column name="childFeatureId" not-null="true" />
             </key>

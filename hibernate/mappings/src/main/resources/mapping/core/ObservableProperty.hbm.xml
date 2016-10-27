@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty" table="observableProperty">
+    <class name="org.n52.sos.ds.hibernate.entities.ObservableProperty" table="observableproperty">
         <comment>Table to store the ObservedProperty/Phenomenon information. Mapping file: mapping/core/ObservableProperty.hbm.xml</comment>
         <id name="observablePropertyId" type="long">
             <column name="observablePropertyId">
@@ -45,7 +45,7 @@
         <property name="hiddenChild" type="org.hibernate.type.TrueFalseType">
             <column name="hiddenChild" not-null="true" default="'F'" check="hiddenChild in ('T','F')"/>
         </property>
-        <set name="childs" table="compositePhenomenon" inverse="false">
+        <set name="childs" table="compositephenomenon" inverse="false">
             <comment>Relation table to store observableProperty hierarchies, aka compositePhenomenon. E.g. define a parent in a query and all childs are also contained in the response. Mapping file: mapping/transactional/TObservableProperty.hbm.xml</comment>
             <key>
                 <column name="parentObservablePropertyId" not-null="true">
@@ -58,7 +58,7 @@
                 </column>
             </many-to-many>
         </set>
-        <set name="parents" table="compositePhenomenon" inverse="false" >
+        <set name="parents" table="compositephenomenon" inverse="false" >
             <key>
                 <column name="childObservablePropertyId" not-null="true" />
             </key>

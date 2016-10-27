@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.RelatedFeature" table="relatedFeature">
+    <class name="org.n52.sos.ds.hibernate.entities.RelatedFeature" table="relatedfeature">
         <comment>Table to store related feature information used in the OGC SOS 2.0 Capabilities (See also OGC SWES 2.0). Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
         <id name="relatedFeatureId" type="long">
             <column name="relatedFeatureId">
@@ -17,7 +17,7 @@
                 <comment>Foreign Key (FK) to the related featureOfInterest. Contains "featureOfInterest".featureOfInterestid</comment>
             </column>
         </many-to-one>
-        <set name="relatedFeatureRoles" table="relatedFeatureHasRole" inverse="false">
+        <set name="relatedFeatureRoles" table="relatedfeaturehasrole" inverse="false">
             <comment>Relation table to store relatedFeatures and their associated relatedFeatureRoles. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
             <key>
                 <column name="relatedFeatureId" not-null="true">
@@ -30,7 +30,7 @@
                 </column>
             </many-to-many>
         </set>
-        <set name="offerings" table="offeringHasRelatedFeature" inverse="true">
+        <set name="offerings" table="offeringhasrelatedfeature" inverse="true">
             <comment>Relation table to store relatedFeatures and their associated offerings. Mapping file: mapping/transactionl/RelatedFeature.hbm.xml</comment>
             <key>
                 <column name="relatedFeatureId" not-null="true">

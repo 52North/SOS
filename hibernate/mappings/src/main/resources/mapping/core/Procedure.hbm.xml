@@ -124,7 +124,7 @@
                 <comment>Flag to indicate that this procedure is insitu (true) or remote (false). Optional</comment>
             </column>
         </property>
-        <set name="childs" table="sensorSystem" inverse="false">
+        <set name="childs" table="sensorsystem" inverse="false">
         <comment>Relation table to store procedure hierarchies. E.g. define a parent in a query and all childs are also contained in the response.  Mapping file: mapping/transactional/TProcedure.hbm.xml</comment>
         <key>
             <column name="parentSensorId" not-null="true">
@@ -137,7 +137,7 @@
                 </column>
         </many-to-many>
         </set>
-        <set name="parents" table="sensorSystem" inverse="false">
+        <set name="parents" table="sensorsystem" inverse="false">
             <key>
                 <column name="childSensorId" not-null="true" />
             </key>

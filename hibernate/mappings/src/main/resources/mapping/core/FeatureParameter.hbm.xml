@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter" table="featureParameter">
+    <class name="org.n52.sos.ds.hibernate.entities.parameter.feature.FeatureParameter" table="featureparameter">
     	<comment>Table to store additional featureOfInterest information (sf:parameter). Mapping file: mapping/core/FeatureParameter.hbm.xml</comment>
         <id name="parameterId" type="long">
             <column name="parameterId">

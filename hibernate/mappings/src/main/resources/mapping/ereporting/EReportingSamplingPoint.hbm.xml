@@ -3,7 +3,7 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class name="org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint"
-           table="samplingPoint">
+           table="samplingpoint">
         <comment>Table to store the AQD e-Reporting Sampling Point information. Mapping file: mapping/ereporting/EReportingSamplingPoint.hbm.xml</comment>
         <id name="samplingPointId"
             type="long">

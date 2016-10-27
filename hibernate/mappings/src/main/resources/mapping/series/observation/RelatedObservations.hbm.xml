@@ -4,7 +4,7 @@
 <hibernate-mapping>
 	<class
 		name="org.n52.sos.ds.hibernate.entities.observation.RelatedObservation"
-		table="relatedObservation">
+		table="relatedobservation">
 		<comment>The related observation of an observation.</comment>
 		<id name="relationId" type="long">
             <column name="relatedObservationId">

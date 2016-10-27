@@ -24,7 +24,7 @@
         </property>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesBooleanValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
-                         table="booleanSeriesParamValue"
+                         table="booleanseriesparamvalue"
                          check="value in ('T','F')">
             <comment>Value table for boolean parameter</comment>
             <key foreign-key="seriesParamBooleanValueFk">
@@ -41,7 +41,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesCategoryValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
-                         table="categorySeriesParamValue">
+                         table="categoryseriesparamvalue">
             <comment>Value table for category parameter</comment>
             <key foreign-key="seriesParamCategoryValueFk">
                 <column name="parameterId" >
@@ -64,7 +64,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesCountValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
-                         table="countSeriesParamValue">
+                         table="countseriesparamvalue">
             <comment>Value table for count parameter</comment>
             <key foreign-key="seriesParamCountValueFk">
                 <column name="parameterId" >
@@ -80,7 +80,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesQuantityValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
-                         table="numericSeriesParamValue">
+                         table="numericseriesparamvalue">
             <comment>Value table for numeric/Measurment parameter</comment>
             <key foreign-key="seriesParamNumericValueFk">
                 <column name="parameterId" >
@@ -104,7 +104,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesTextValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
-                         table="textSeriesParamValue">
+                         table="textseriesparamvalue">
             <comment>Value table for text parameter</comment>
             <key foreign-key="seriesParamTextValueFk">
                 <column name="parameterId" >
@@ -120,7 +120,7 @@
         </joined-subclass>
         <joined-subclass name="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesXmlValuedParameter"
                          extends="org.n52.sos.ds.hibernate.entities.parameter.series.SeriesParameter"
-                         table="xmlSeriesParamValue">
+                         table="xmlseriesparamvalue">
             <comment>Value table for XML parameter</comment>
             <key foreign-key="seriesParamXmlValueFk">
                 <column name="parameterId" >

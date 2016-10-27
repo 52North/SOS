@@ -45,6 +45,7 @@
     "provider": "Datenanbieter",
     "serviceUrl": "Service-URL",
     "stations": "Stationen",
+    "platforms": "Platformen",
     "timeseries": "Zeitreihen",
     "phenomena": "Phänomene",
     "selectAll": "Selektiere alle Anbieter"
@@ -277,6 +278,7 @@
     "header": "Listenbasierte Fahrtenauswahl",
     "headers": {
       "platform": "Mobile Platform",
+      "offering": "Offering",
       "track": "Pfad",
       "phenomenon": "Phänomen",
       "dataset": "Dataset"

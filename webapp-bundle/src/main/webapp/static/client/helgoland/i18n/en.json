@@ -48,6 +48,7 @@
     "provider": "Provider",
     "serviceUrl": "Service-URL",
     "stations": "Stations",
+    "platforms": "Platforms",
     "timeseries": "Timeseries",
     "phenomena": "Phenomena",
     "selectAll": "Select all provider"
@@ -280,6 +281,7 @@
     "header": "Track selection by list",
     "headers": {
       "platform": "Mobile platform",
+      "offering": "Offering",
       "track": "Tracks",
       "phenomenon": "Phenomenon",
       "dataset": "Dataset"

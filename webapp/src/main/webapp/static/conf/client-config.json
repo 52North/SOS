@@ -1788,7 +1788,7 @@
 			"version":"2.0.0",
 			"binding": "application/xml",
 			"operation":"InsertResultTemplate",
-			"title":"for ComplecObservation with SamplingGeometry",
+			"title":"for ComplexObservation with SamplingGeometry",
 			"headers":{
 				"Accept":"application/xml",
 				"Content-Type":"application/xml"

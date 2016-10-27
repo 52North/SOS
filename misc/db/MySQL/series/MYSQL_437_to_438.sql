@@ -31,8 +31,8 @@
 alter table sos.series add column offeringid int8;
 
 -- drop and add constraint
-alter table sos.series drop constraint seriesIdentity;
-alter table sos.observation drop constraint obsIdentifierUK;
+alter table sos.series drop index seriesIdentity;
+alter table sos.observation drop index obsIdentifierUK;
 alter table sos.series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId, offeringId);
 
 -- create index
@@ -43,7 +43,5 @@ alter table sos.series add constraint seriesOfferingFk foreign key (offeringId) 
 
 -- update series table (!!! Works only if each observation relates to one and the same offering!!!)
 SET SQL_SAFE_UPDATES=0;
-UPDATE sos.series ser SET offeringid = q.offeringid FROM (SELECT DISTINCT s.seriesid, off.offeringid FROM sos.series s 
-inner join sos.observation o on s.seriesid = o.seriesid 
-inner join sos.observationhasoffering off on o.observationid = off.observationid) q WHERE q.seriesid = ser.seriesid;
+UPDATE sos.series ser, (SELECT DISTINCT s.seriesid, off.offeringid FROM sos.observation o inner join sos.observationhasoffering off on o.observationid = off.observationid) q SET ser.offeringid = q.offeringid  WHERE q.seriesid = ser.seriesid;
 SET SQL_SAFE_UPDATES=1;

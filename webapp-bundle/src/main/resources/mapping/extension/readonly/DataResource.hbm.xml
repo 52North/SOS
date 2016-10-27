@@ -20,22 +20,22 @@
         </component>
         <!-- Or add only to specific joined-subclasses -->
         <!--
-        <set inverse="true" name="parameters" table="parameters">
+        <set inverse="true" name="parameters" table="parameter">
             <key column="observationid" not-null="true"/>
             <one-to-many class="DataParameter"/>
         </set>
         -->
-        <joined-subclass extends="DataEntity" name="MeasurementDataEntity" table="numericValue">
+        <joined-subclass extends="DataEntity" name="MeasurementDataEntity" table="numericvalue">
             <key column="observationid"/>
             <property column="value" name="value" type="double"/>
         </joined-subclass>
 
-        <joined-subclass extends="DataEntity" name="TextDataEntity" table="textValue">
+        <joined-subclass extends="DataEntity" name="TextDataEntity" table="textvalue">
             <key column="observationid"/>
             <property column="value" name="value" type="string"/>
         </joined-subclass>
 
-        <joined-subclass extends="DataEntity" name="CountDataEntity" table="countValue">
+        <joined-subclass extends="DataEntity" name="CountDataEntity" table="countvalue">
             <key column="observationid"/>
             <property column="value" name="value" type="integer"/>
         </joined-subclass>

@@ -10,29 +10,29 @@
         <property name="observationId" column="observationid" type="long" not-null="true" />
         <property name="name" column="name" type="string" not-null="true" />
 
-        <joined-subclass extends="DataParameter" name="DataParameterBoolean" table="booleanParameterValue">
+        <joined-subclass extends="DataParameter" name="DataParameterBoolean" table="booleanparametervalue">
             <key column="parameterid"/>
             <property column="value" name="value" type="org.hibernate.type.TrueFalseType"/>
         </joined-subclass>
 
-        <joined-subclass extends="DataParameter" name="DataParameterCategory" table="categoryParameterValue">
+        <joined-subclass extends="DataParameter" name="DataParameterCategory" table="categoryparametervalue">
             <key column="parameterid"/>
             <property column="value" name="value" type="string"/>
             <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false"/>
         </joined-subclass>
 
-        <joined-subclass extends="DataParameter" name="DataParameterCount" table="countParameterValue">
+        <joined-subclass extends="DataParameter" name="DataParameterCount" table="countparametervalue">
             <key column="parameterid"/>
             <property column="value" name="value" type="integer"/>
         </joined-subclass>
 
-        <joined-subclass extends="DataParameter" name="DataParameterQuantity" table="numericParameterValue">
+        <joined-subclass extends="DataParameter" name="DataParameterQuantity" table="numericparametervalue">
             <key column="parameterid"/>
             <property column="value" name="value" type="double"/>
             <many-to-one class="UnitEntity" column="unitid" insert="false" name="unit" update="false"/>
         </joined-subclass>
 
-        <joined-subclass extends="DataParameter" name="DataParameterText" table="textParameterValue">
+        <joined-subclass extends="DataParameter" name="DataParameterText" table="textparametervalue">
             <key column="parameterid"/>
             <property column="value" name="value" type="string"/>
         </joined-subclass>

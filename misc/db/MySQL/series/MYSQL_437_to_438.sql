@@ -43,5 +43,5 @@ alter table sos.series add constraint seriesOfferingFk foreign key (offeringId) 
 
 -- update series table (!!! Works only if each observation relates to one and the same offering!!!)
 SET SQL_SAFE_UPDATES=0;
-UPDATE sos.series ser, (SELECT DISTINCT s.seriesid, off.offeringid FROM sos.observation o inner join sos.observationhasoffering off on o.observationid = off.observationid) q SET ser.offeringid = q.offeringid  WHERE q.seriesid = ser.seriesid;
+UPDATE sos.series ser, (SELECT DISTINCT o.seriesid, off.offeringid FROM sos.observation o inner join sos.observationhasoffering off on o.observationid = off.observationid) q SET ser.offeringid = q.offeringid  WHERE q.seriesid = ser.seriesid;
 SET SQL_SAFE_UPDATES=1;

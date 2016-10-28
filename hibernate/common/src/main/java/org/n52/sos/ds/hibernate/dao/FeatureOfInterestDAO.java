@@ -39,7 +39,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -214,6 +213,8 @@ public class FeatureOfInterestDAO extends AbstractFeatureOfInterestDAO {
                         .setProjection(Projections.distinct(Projections.property(FeatureOfInterest.IDENTIFIER)));
                 c.add(Subqueries.propertyIn(FeatureOfInterest.ID,
                         getDetachedCriteriaSeriesForOffering(offeringIdentifiers, session)));
+                LOGGER.debug("QUERY getFeatureOfInterestIdentifiersForOffering(offeringIdentifiers): {}",
+                        HibernateHelper.getSqlString(c));
                 List list = c.list();
                 if (list == null || (list != null && list.isEmpty())) {
                     c = DaoFactory.getInstance().getObservationDAO().getDefaultObservationInfoCriteria(session);

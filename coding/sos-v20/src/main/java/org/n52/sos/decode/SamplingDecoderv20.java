@@ -40,6 +40,7 @@ import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
 import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
 import net.opengis.samplingSpatial.x20.ShapeType;
 
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
@@ -58,6 +59,7 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.sos.w3c.W3CConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,6 +120,15 @@ public class SamplingDecoderv20 extends AbstractOmDecoderv20 {
     public AbstractFeature decode(final Object element) throws OwsExceptionReport {
         // validate XmlObject
         if (element instanceof XmlObject) {
+            // set namespace for default XML type (e.g. xs:string, xs:integer,
+            // xs:boolean, ...)
+            // Fix for problem with XmlBeans: namespace is not set in child elements
+            // when defined in root of request (SOAP)
+            final XmlCursor cursor = ((XmlObject)element).newCursor();
+            if (cursor.toFirstChild() && cursor.namespaceForPrefix(W3CConstants.NS_XS_PREFIX) == null) {
+                cursor.prefixForNamespace(W3CConstants.NS_XS);
+            }
+            cursor.dispose();
             XmlHelper.validateDocument((XmlObject)element);
         }
         if (element instanceof SFSpatialSamplingFeatureDocument) {

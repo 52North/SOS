@@ -30,6 +30,7 @@ package org.n52.sos.decode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -606,17 +607,20 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
                                         abstractProcess.addOffering(SosOffering.from((SweAbstractSimpleType<?>) o));
                                     }
                                     // } else if
-                                    // (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(cs.getName()))
-                                    // {
-                                    // abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps,
-                                    // xbcaps).keySet());
-                                    // } else if
                                     // (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(cs.getName()))
                                     // {
                                     // abstractProcess.addFeaturesOfInterest(parseCapabilitiesMetadata(caps,
                                     // xbcaps).keySet());
+                                } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(cs.getName())) {
+                                    if (o instanceof DataRecord) {
+                                        abstractProcess.addParentProcedures(fromSet(
+                                                ((DataRecord) o).getSweAbstractSimpleTypeFromFields(SweText.class)));
+                                    } else if (o instanceof SweAbstractSimpleType<?>) {
+                                        abstractProcess.addParentProcedures(from((SweAbstractSimpleType<?>) o));
+                                    }
+//                                    abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps,  xbcaps).keySet());
+//                                        capabilities.addCapability(capability);
                                 }
-                                capabilities.addCapability(capability);
                             } else {
                                 throw new InvalidParameterValueException().at(XmlHelper.getLocalName(cs))
                                         .withMessage("Error while parsing the capabilities of "
@@ -634,6 +638,21 @@ public class SensorMLDecoderV20 extends AbstractSensorMLDecoder {
             }
             abstractProcess.addCapabilities(capabilities);
         }
+    }
+
+    private Collection<String> fromSet(Set<SweAbstractSimpleType<?>> typeSet) {
+        Set<String> set = Sets.newConcurrentHashSet();
+        for (SweAbstractSimpleType<?> type : typeSet) {
+            set.addAll(from(type));
+        }
+        return set;
+    }
+
+    private Collection<String> from(SweAbstractSimpleType<?> type) {
+        if (type.isSetValue()) {
+            return Sets.newHashSet(type.getValue().toString());
+        }
+        return Sets.newHashSet();
     }
 
     private List<SmlContact> parseContact(final ContactListPropertyType[] clpts) throws OwsExceptionReport {

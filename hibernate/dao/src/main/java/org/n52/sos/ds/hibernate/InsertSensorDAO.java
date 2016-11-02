@@ -156,8 +156,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
                                 }
                             }
                             final Offering hOffering =
-                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering.getIdentifier(),
-                                            assignedOffering.getOfferingName(), hRelatedFeatures, observationTypes,
+                                    offeringDAO.getAndUpdateOrInsertNewOffering(assignedOffering, hRelatedFeatures, observationTypes,
                                             featureOfInterestTypes, session);
                             for (final ObservableProperty hObservableProperty : hObservableProperties) {
                                 observationConstellationDAO.checkOrInsertObservationConstellation(hProcedure,

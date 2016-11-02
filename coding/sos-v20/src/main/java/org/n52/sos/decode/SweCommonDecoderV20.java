@@ -501,7 +501,7 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
 		return new RangeValue<Double>(Double.parseDouble(value.get(0).toString()), Double.parseDouble(value.get(1).toString()));
 	}
 
-	private SweText parseText(final TextType xbText) {
+    private SweText parseText(final TextType xbText) {
         final SweText sosText = new SweText();
         if (xbText.isSetValue()) {
             sosText.setValue(xbText.getValue());

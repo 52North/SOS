@@ -66,6 +66,7 @@ import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
 import org.n52.sos.exception.CodedException;
 import org.n52.sos.ogc.gml.time.TimePeriod;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.DateTimeHelper;
 import org.slf4j.Logger;
@@ -516,18 +517,43 @@ public class OfferingDAO extends TimeCreator implements HibernateSqlQueryConstan
      *            Hibernate session
      * @return Offering object
      */
+    @Deprecated
     public Offering getAndUpdateOrInsertNewOffering(final String offeringIdentifier, final String offeringName,
             final List<RelatedFeature> relatedFeatures, final List<ObservationType> observationTypes,
             final List<FeatureOfInterestType> featureOfInterestTypes, final Session session) {
+        return getAndUpdateOrInsertNewOffering(new SosOffering(offeringIdentifier, offeringName), relatedFeatures,
+                observationTypes, featureOfInterestTypes, session);
+    }
 
-        TOffering offering = getTOfferingForIdentifier(offeringIdentifier, session);
+    /**
+     * Insert or update and get offering
+     *
+     * @param assignedOffering
+     *            SosOffering to insert, update or get
+     * @param relatedFeatures
+     *            Related feature objects
+     * @param observationTypes
+     *            Allowed observation type objects
+     * @param featureOfInterestTypes
+     *            Allowed featureOfInterest type objects
+     * @param session
+     *            Hibernate session
+     * @return Offering object
+     */
+    public Offering getAndUpdateOrInsertNewOffering(SosOffering assignedOffering,
+            List<RelatedFeature> relatedFeatures, List<ObservationType> observationTypes,
+            List<FeatureOfInterestType> featureOfInterestTypes, Session session) {
+        TOffering offering = getTOfferingForIdentifier(assignedOffering.getIdentifier(), session);
         if (offering == null) {
             offering = new TOffering();
-            offering.setIdentifier(offeringIdentifier);
-            if (offeringName != null) {
-                offering.setName(offeringName);
+            offering.setIdentifier(assignedOffering.getIdentifier());
+            if (assignedOffering.isSetName()) {
+                offering.setName(assignedOffering.getFirstName().getValue());
             } else {
-                offering.setName("Offering for the procedure " + offeringIdentifier);
+                offering.setName("Offering for the procedure " + assignedOffering.getIdentifier());
+            }
+            if (assignedOffering.isSetDescription()) {
+                offering.setDescription(assignedOffering.getDescription());
             }
         }
         if (!relatedFeatures.isEmpty()) {

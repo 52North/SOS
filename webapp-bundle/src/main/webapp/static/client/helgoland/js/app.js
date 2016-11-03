@@ -1,31 +1,3 @@
-/*
- * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
- * Software GmbH
- *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 as published
- * by the Free Software Foundation.
- *
- * If the program is linked with libraries which are licensed under one of
- * the following licenses, the combination of the program with the linked
- * library is not considered a "derivative work" of the program:
- *
- *     - Apache License, version 2.0
- *     - Apache Software License, version 1.0
- *     - GNU Lesser General Public License, version 3
- *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
- *     - Common Development and Distribution License (CDDL), version 1.0
- *
- * Therefore the distribution of the program linked with libraries licensed
- * under the aforementioned licenses, is permitted by the copyright holders
- * if the distribution is compliant with both the GNU General Public
- * License version 2 and the aforementioned licenses.
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details.
- */
 var mainApp = angular.module('jsClient', [
     'ngRoute',
     'ui.bootstrap',
@@ -85,79 +57,81 @@ var mainApp = angular.module('jsClient', [
     'n52.client.mobile'
 ]);
 
-mainApp.config(['$routeProvider', function ($routeProvider) {
-        $routeProvider
-                .when('/', {
-                    templateUrl: 'templates/views/diagramView.html',
-                    reloadOnSearch: false
-                })
-                .when('/diagram', {
-                    templateUrl: 'templates/views/diagramView.html',
-                    name: 'navigation.diagram',
-                    reloadOnSearch: false
-                })
-                .when('/map', {
-                    templateUrl: 'templates/views/mapView.html',
-                    name: 'navigation.map',
-                    reloadOnSearch: false
-                })
-                .when('/mobileDiagram', {
-                    templateUrl: 'templates/views/combiView.html',
-                    name: 'navigation.trajectories',
-                    reloadOnSearch: false
-                })
-                .when('/favorite', {
-                    templateUrl: 'templates/views/favoriteView.html',
-                    name: 'navigation.favorite',
-                    reloadOnSearch: false
-                })
-                .when('/map/provider', {
-                    name: 'navigation.provider',
-                    modal: {
-                        controller: 'SwcProviderListModalCtrl',
-                        templateUrl: 'templates/map/provider-list-modal.html'
-                    },
-                    reloadOnSearch: false
-                })
-                .when('/diagram/listSelection', {
-                    name: 'navigation.listSelection',
-                    modal: {
-                        controller: 'ModalWindowCtrl',
-                        templateUrl: 'templates/listSelection/modal-list-selection.html'
-                    },
-                    reloadOnSearch: false
-                })
-                .when('/diagram/settings', {
-                    name: 'navigation.settings',
-                    modal: {
-                        controller: 'SwcUserSettingsWindowCtrl',
-                        templateUrl: 'templates/settings/user-settings-modal.html'
-                    },
-                    reloadOnSearch: false
-                })
-                .otherwise({redirectTo: '/'});
-    }]);
-
-mainApp.config(['$translateProvider', 'settingsServiceProvider', function ($translateProvider, settingsServiceProvider) {
-        $translateProvider.useStaticFilesLoader({
-            prefix: 'i18n/',
-            suffix: '.json'
+mainApp.config(['$routeProvider', function($routeProvider) {
+    $routeProvider
+        .when('/', {
+            templateUrl: 'templates/views/diagramView.html',
+            reloadOnSearch: false
+        })
+        .when('/diagram', {
+            templateUrl: 'templates/views/diagramView.html',
+            name: 'navigation.diagram',
+            reloadOnSearch: false
+        })
+        .when('/map', {
+            templateUrl: 'templates/views/mapView.html',
+            name: 'navigation.map',
+            reloadOnSearch: false
+        })
+        .when('/mobileDiagram', {
+            templateUrl: 'templates/views/combiView.html',
+            name: 'navigation.trajectories',
+            reloadOnSearch: false
+        })
+        .when('/favorite', {
+            templateUrl: 'templates/views/favoriteView.html',
+            name: 'navigation.favorite',
+            reloadOnSearch: false
+        })
+        .when('/map/provider', {
+            name: 'navigation.provider',
+            modal: {
+                controller: 'SwcProviderListModalCtrl',
+                templateUrl: 'templates/map/provider-list-modal.html'
+            },
+            reloadOnSearch: false
+        })
+        .when('/diagram/listSelection', {
+            name: 'navigation.listSelection',
+            modal: {
+                controller: 'ModalWindowCtrl',
+                templateUrl: 'templates/listSelection/modal-list-selection.html'
+            },
+            reloadOnSearch: false
+        })
+        .when('/diagram/settings', {
+            name: 'navigation.settings',
+            modal: {
+                controller: 'SwcUserSettingsWindowCtrl',
+                templateUrl: 'templates/settings/user-settings-modal.html'
+            },
+            reloadOnSearch: false
+        })
+        .otherwise({
+            redirectTo: '/'
         });
-        var suppLang = [];
-        angular.forEach(settingsServiceProvider.$get().supportedLanguages, function (lang) {
-            suppLang.push(lang.code);
-        });
-        $translateProvider.registerAvailableLanguageKeys(suppLang);
-        $translateProvider.determinePreferredLanguage();
-        if ($translateProvider.preferredLanguage() === '' 
-                || suppLang.indexOf($translateProvider.preferredLanguage()) === -1) {
-            $translateProvider.preferredLanguage('en');
-        }
-        $translateProvider.useSanitizeValueStrategy('sanitize');
-    }]);
+}]);
 
-mainApp.filter('objectCount', function () {
-    return function (item) {
+mainApp.config(['$translateProvider', 'settingsServiceProvider', function($translateProvider, settingsServiceProvider) {
+    $translateProvider.useStaticFilesLoader({
+        prefix: 'i18n/',
+        suffix: '.json'
+    });
+    var suppLang = [];
+    angular.forEach(settingsServiceProvider.$get().supportedLanguages, function(lang) {
+        suppLang.push(lang.code);
+    });
+    $translateProvider.registerAvailableLanguageKeys(suppLang);
+    $translateProvider.determinePreferredLanguage();
+    if ($translateProvider.preferredLanguage() === '' ||
+        suppLang.indexOf($translateProvider.preferredLanguage()) === -1) {
+        $translateProvider.preferredLanguage('en');
+    }
+    $translateProvider.useSanitizeValueStrategy(null);
+}]);
+
+mainApp.filter('objectCount', function() {
+    return function(item) {
         if (item) {
             return Object.keys(item).length;
         } else {
@@ -166,31 +140,28 @@ mainApp.filter('objectCount', function () {
     };
 });
 
-mainApp.config(["$provide", function ($provide)
-    {
-        // Use the `decorator` solution to substitute or attach behaviors to
-        // original service instance; @see angular-mocks for more examples....
+mainApp.config(["$provide", function($provide) {
+    // Use the `decorator` solution to substitute or attach behaviors to
+    // original service instance; @see angular-mocks for more examples....
 
-        $provide.decorator('$log', ["$delegate", function ($delegate)
-            {
-                // Save the original $log.debug()
-                var debugFn = $delegate.debug;
+    $provide.decorator('$log', ["$delegate", function($delegate) {
+        // Save the original $log.debug()
+        var debugFn = $delegate.debug;
 
-                $delegate.info = function ( )
-                {
-                    var args = [].slice.call(arguments),
-                            now = moment().format('HH:mm:ss.SSS');
+        $delegate.info = function() {
+            var args = [].slice.call(arguments),
+                now = moment().format('HH:mm:ss.SSS');
 
-                    // Prepend timestamp
-                    args[0] = now + " - " + args[0];
+            // Prepend timestamp
+            args[0] = now + " - " + args[0];
 
-                    // Call the original with the output prepended with formatted timestamp
-                    debugFn.apply(null, args);
-                };
+            // Call the original with the output prepended with formatted timestamp
+            debugFn.apply(null, args);
+        };
 
-                return $delegate;
-            }]);
+        return $delegate;
     }]);
+}]);
 
 // start the app after loading the settings.json
 fetchData().then(bootstrapApp);
@@ -198,14 +169,16 @@ fetchData().then(bootstrapApp);
 function fetchData() {
     var initInjector = angular.injector(["ng"]);
     var $http = initInjector.get("$http");
-    return $http.get("settings.json").then(function (response) {
+    return $http.get("settings.json").then(function(response) {
         mainApp.constant("config", response.data);
     });
 }
 
 function bootstrapApp() {
-    angular.element(document).ready(function () {
-        var injector = angular.bootstrap(document, ["jsClient"], {strictDi: true});
+    angular.element(document).ready(function() {
+        var injector = angular.bootstrap(document, ["jsClient"], {
+            strictDi: true
+        });
         // initilize parameter reader
         var startupService = injector.get('startupService');
         startupService.registerServices([
@@ -286,9 +259,9 @@ angular.module('n52.client.navigation', [])
         function($provide) {
             $provide.decorator('providerService', ['$delegate', '$location',
                 function($delegate, $location) {
-                    var oldSelectProvider = $delegate.selectProvider;
+                    $delegate.oldSelectProvider = $delegate.selectProvider;
                     $delegate.selectProvider = function(selection) {
-                        oldSelectProvider(selection);
+                        $delegate.oldSelectProvider(selection);
                         $location.url('/map');
                     };
                     return $delegate;

@@ -5,6 +5,7 @@
     </div>
     <div class="modal-body provider-list">
         <div class="provider-item" ng-repeat="provider in providerList | orderBy:'+label'" ng-class="{selected : provider.selected}" ng-click="selectProvider(provider)">
+            <span ng-if="provider.isUserAdded" class="glyphicon glyphicon-remove delete-user-added" ng-click="$event.stopPropagation(); deleteProvider(provider);"></span>
             <div>{{provider.label}}</div>
             <div class="small">{{provider.type}},
                 {{provider.version}}</div>
@@ -33,6 +34,9 @@
                 <span translate="providerList.phenomena"></span>:
                 <span>{{provider.quantities.phenomena}}</span>
             </div>
+        </div>
+        <div class="add-provider">
+            <swc-add-provider></swc-add-provider>
         </div>
         <div class="btn btn-block btn-default" ng-controller="SwcProviderDeselectProviderCtrl" ng-click="deselectAll(); close();">
             <div translate="providerList.selectAll"></div>

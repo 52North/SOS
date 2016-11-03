@@ -14,32 +14,32 @@
                 </div>
                 <div id="collapseSettings" class="panel-collapse collapse in">
                     <div class="panel-body">
-                        <swc-settings-toggle-button 
-                            field="saveStatus" 
-                            caption="settings.saveStatus.header" 
+                        <swc-settings-toggle-button
+                            field="saveStatus"
+                            caption="settings.saveStatus.header"
                             description="settings.saveStatus.label">
                         </swc-settings-toggle-button>
-                        <a class="btn btn-block btn-default resetStatus" translate="settings.resetStatus" 
-                           ng-controller="SwcResetStatusButtonCtrl" 
+                        <a class="btn btn-block btn-default resetStatus" translate="settings.resetStatus"
+                           ng-controller="SwcResetStatusButtonCtrl"
                            ng-click="resetStatus()"></a>
                         <swc-language-selector></swc-language-selector>
                         <div class="panel panel-default permalink">
                             <div class="panel-heading" translate="settings.permalink.create">:</div>
                             <div class="panel-body">
-                                <div class="item link" 
-                                     ng-controller="SwcPermalinkInWindowCtrl" 
+                                <div class="item link"
+                                     ng-controller="SwcPermalinkInWindowCtrl"
                                      ng-click="openInNewWindow()">
                                     <span class="glyphicon glyphicon-link"></span>
                                     <span translate="settings.permalink.inWindow"></span>
                                 </div>
-                                <div class="item mail" 
-                                     ng-controller="SwcPermalinkInMailCtrl" 
+                                <div class="item mail"
+                                     ng-controller="SwcPermalinkInMailCtrl"
                                      ng-click="openInMail()">
                                     <span class="glyphicon glyphicon-envelope"></span>
                                     <span translate="settings.permalink.inMail"></span>
                                 </div>
-                                <div class="item clipboard" 
-                                     ng-controller="SwcPermalinkToClipboardCtrl" 
+                                <div class="item clipboard"
+                                     ng-controller="SwcPermalinkToClipboardCtrl"
                                      ng-click="copyToClipboard()">
                                     <span class="glyphicon glyphicon-paperclip"></span>
                                     <span translate="settings.permalink.inClipboard"></span>
@@ -52,19 +52,13 @@
                                 </div>
                             </div>
                         </div>
-                        <swc-settings-toggle-button 
-                            field="clusterStations" 
-                            caption="settings.clusterMarker">
-                        </swc-settings-toggle-button>
-                        <swc-settings-toggle-button 
-                            field="concentrationMarker" 
-                            caption="settings.markerWithLastInfo.header" 
+                        <a class="btn btn-block btn-default" ng-class="{'btn-primary':status.clusterStations}" translate="settings.clusterMarker" ng-controller="SwcClusterMarkerCtrl" ng-click="toggle(); close();"></a>
+                        <swc-settings-toggle-button
+                            field="concentrationMarker"
+                            caption="settings.markerWithLastInfo.header"
                             description="settings.markerWithLastInfo.label">
                         </swc-settings-toggle-button>
-                        <swc-settings-toggle-button 
-                            field="generalizeData" 
-                            caption="settings.generalizeData">
-                        </swc-settings-toggle-button>
+                        <a class="btn btn-block btn-default" ng-class="{'btn-primary':status.generalizeData}" translate="settings.generalizeData" ng-controller="SwcToggleGeneralizationCtrl" ng-click="toggleGeneralization(); close();"></a>
                     </div>
                 </div>
             </div>

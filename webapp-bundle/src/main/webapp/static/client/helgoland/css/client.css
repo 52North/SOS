@@ -1866,8 +1866,9 @@ footer {
   padding: 5px;
   border-radius: 8px;
 }
+.provider-list .provider-item + .add-provider,
 .provider-list .provider-item + .provider-item {
-  margin-top: 5px;
+  margin-top: 10px;
 }
 .provider-list .provider-item:hover {
   cursor: pointer;
@@ -1877,6 +1878,15 @@ footer {
 .provider-list .provider-item.selected {
   background-color: #66c5e4;
   color: #626250;
+}
+.provider-list .provider-item .delete-user-added {
+  float: right;
+}
+.provider-list .add-provider + .provider-item {
+  margin-top: 5px;
+}
+.provider-list .input-group {
+  margin-bottom: 10px;
 }
 
 /* colors */

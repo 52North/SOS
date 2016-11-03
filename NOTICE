@@ -59,10 +59,8 @@ This project includes:
   52°North SOS - Hibernate Mappings under GPLv2
   52°North SOS - Hibernate Module under GPLv2
   52°North SOS - Hibernate MySQL Datasource under GPLv2
-  52°North SOS - Hibernate Oracle Datasource under GPLv2
   52°North SOS - Hibernate Postgres/PostGIS Datasource under GPLv2
   52°North SOS - Hibernate Session Factory under GPLv2
-  52°North SOS - Hibernate SQL Server Datasource under GPLv2
   52°North SOS - Identifier Modifier Modules under GPLv2
   52°North SOS - JSON Binding under GPLv2
   52°North SOS - JSON Coding under GPLv2
@@ -138,7 +136,6 @@ This project includes:
   Batik utility library under The Apache Software License, Version 2.0
   Batik XML utility library under The Apache Software License, Version 2.0
   Berkeley DB Java Edition under Sleepycat License
-  c3p0 under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   c3p0:JDBC DataSources/Resource Pools under GNU LESSER GENERAL PUBLIC LICENSE
   cf4j under GNU Lesser General Public License
   ClassLoader leak prevention under Apache 2
@@ -186,7 +183,6 @@ This project includes:
   Jackson-annotations under The Apache Software License, Version 2.0
   Jackson-core under The Apache Software License, Version 2.0
   jackson-databind under The Apache Software License, Version 2.0
-  Java Advanced Imaging under Java Advanced Imaging Distribution License, http://download.java.net/media/jai/builds/release/1_1_3/LICENSE-jai.txt
   Java Annotation Indexer under AL 2.0
   Java implementation of GeographicLib under The MIT License(MIT)
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
@@ -218,7 +214,6 @@ This project includes:
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Main module under GNU Lesser General Public License (LGPL) version 2.1
-  mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under GNU Lesser General Public License (LGPL) version 2.1
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
@@ -251,11 +246,9 @@ This project includes:
   OGC SWES schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML DR schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC WaterML schema (spec. v2.0) under The Apache Software License, Version 2.0
-  ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under GNU Lesser General Public License (LGPL) version 2.1
   Portele Schape Change schema (spec. v3.0) under The Apache Software License, Version 2.0
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver under BSD License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Protocol Buffer Java API under New BSD license
   Quartz Enterprise Job Scheduler under Apache 2.0
@@ -287,7 +280,6 @@ This project includes:
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
-  sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0
   udunits under (MIT-style) netCDF C library license
   vecmath under GPL 2.0 license w/ CPE

@@ -34,8 +34,11 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.n52.sos.cache.ContentCache;
+import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.convert.RequestResponseModifier;
 import org.n52.sos.convert.RequestResponseModifierRepository;
 import org.n52.sos.ds.OperationDAO;
@@ -44,6 +47,7 @@ import org.n52.sos.event.SosEventBus;
 import org.n52.sos.event.events.RequestEvent;
 import org.n52.sos.event.events.ResponseEvent;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.CodedOwsException;
 import org.n52.sos.exception.ows.InvalidParameterValueException;
 import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.OperationNotSupportedException;
@@ -60,6 +64,7 @@ import org.n52.sos.ogc.ows.CompositeOwsException;
 import org.n52.sos.ogc.ows.OWSConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.ows.OwsOperation;
+import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.swes.SwesExtensions;
@@ -68,10 +73,12 @@ import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.AbstractServiceResponse;
 import org.n52.sos.service.Configurator;
+import org.n52.sos.service.operator.ServiceOperatorKey;
 import org.n52.sos.service.operator.ServiceOperatorRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CollectionHelper;
 import org.n52.sos.util.Constants;
+import org.n52.sos.util.http.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -811,13 +818,69 @@ public abstract class AbstractRequestOperator<D extends OperationDAO, Q extends 
         return Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE.equals(valueReference);
     }
 
-    protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format, Enum<?> parameter)
-            throws MissingParameterValueException {
+    protected boolean checkOnlyRequestableProcedureDescriptionFromats(String format, Enum<?> parameter, boolean mimeTypeAllowed)
+            throws CodedOwsException {
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
         } else {
-            return getCache().hasRequestableProcedureDescriptionFormat(format);
+            if (!mimeTypeAllowed && MediaType.check(format)) {
+                throw new InvalidParameterValueException(parameter, format);
+            }
+            return getCache().hasRequestableProcedureDescriptionFormat(format) ? true : hasPossibleProcedureDescriptionFormats(format, mimeTypeAllowed);
         }
+    }
+    
+    /**
+     * Get possible procedure description formats for this procedure description
+     * format. More precise, are there converter available.
+     *
+     * @param procedureDescriptionFormat
+     *            Procedure description format to check
+     * @return All possible procedure description formats
+     */
+    private boolean hasPossibleProcedureDescriptionFormats(String procedureDescriptionFormat, boolean mimeTypeAllowed) {
+        Set<String> possibleFormats = Sets.newHashSet();
+        if (mimeTypeAllowed) {
+            possibleFormats.addAll(checkForUrlVsMimeType(procedureDescriptionFormat));
+        }
+        String procedureDescriptionFormatMatchingString =
+                getProcedureDescriptionFormatMatchingString(procedureDescriptionFormat);
+        for (Entry<ServiceOperatorKey, Set<String>> pdfByServiceOperatorKey : CodingRepository.getInstance()
+                .getAllProcedureDescriptionFormats().entrySet()) {
+            for (String pdfFromRepository : pdfByServiceOperatorKey.getValue()) {
+                if (procedureDescriptionFormatMatchingString
+                        .equals(getProcedureDescriptionFormatMatchingString(pdfFromRepository))) {
+                    possibleFormats.add(pdfFromRepository);
+                }
+            }
+        }
+        possibleFormats.addAll(ConverterRepository.getInstance().getFromNamespaceConverterTo(
+                procedureDescriptionFormat));
+        return !possibleFormats.isEmpty();
+    }
+    
+    private Set<String> checkForUrlVsMimeType(String procedureDescriptionFormat) {
+        Set<String> possibleFormats = Sets.newHashSet();
+        possibleFormats.add(procedureDescriptionFormat);
+        if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE.equalsIgnoreCase(procedureDescriptionFormat)) {
+            possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL);
+        } else if (SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL.equalsIgnoreCase(procedureDescriptionFormat)) {
+            possibleFormats.add(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE);
+        }
+        return possibleFormats;
+   }
+
+    /**
+     * Get procedure description format matching String, to lower case replace
+     * \s
+     *
+     * @param procedureDescriptionFormat
+     *            Procedure description formats to format
+     * @return Formatted procedure description format String
+     */
+    private String getProcedureDescriptionFormatMatchingString(String procedureDescriptionFormat) {
+        // match against lowercase string, ignoring whitespace
+        return procedureDescriptionFormat.toLowerCase().replaceAll("\\s", "");
     }
 
 }

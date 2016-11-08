@@ -197,7 +197,7 @@ public class Process extends SosProcedureDescription {
     }
     
 
-    public boolean isSetResponsiblePartyn() {
+    public boolean isSetResponsibleParty() {
         return CollectionHelper.isNotEmpty(getResponsibleParty());
     }
 

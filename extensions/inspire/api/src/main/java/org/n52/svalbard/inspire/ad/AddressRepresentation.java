@@ -32,35 +32,35 @@ public class AddressRepresentation {
 //    /**
 //     * 1..*
 //     */
-//    GeographicalName adminUnit;
+//    private GeographicalName adminUnit;
 //    /**
 //     * 0..*
 //     */
-//    String locatorDesignator;
+//    private String locatorDesignator;
 //
 //    /**
 //     * 0..*
 //     */
-//    GeographicalName locatorName;
+//    private GeographicalName locatorName;
 //    /**
 //     * 0..*
 //     */
-//    GeographicalName addressArea;
+//    private GeographicalName addressArea;
 //    /**
 //     * 0..*
 //     */
-//    GeographicalName postName;
+//    private GeographicalName postName;
 //   
 //    /**
 //     * 0..1
 //     */
-//    String postCode;
+//    private String postCode;
 //    /**
 //     * 0..*
 //     */
-//    GeographicalNamethoroughfare;
+//    private GeographicalName thoroughfare;
 //    /**
 //     * 0..1
 //     */
-//    ReferenceType addressFeature;
+//    private ReferenceType addressFeature;
 }

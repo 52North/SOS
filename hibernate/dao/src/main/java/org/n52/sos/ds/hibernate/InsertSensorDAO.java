@@ -31,6 +31,8 @@ package org.n52.sos.ds.hibernate;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.Map.Entry;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -38,6 +40,7 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.n52.sos.coding.CodingRepository;
+import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ds.AbstractInsertSensorDAO;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
@@ -66,6 +69,7 @@ import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.ogc.om.OmObservableProperty;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sensorML.SensorML;
+import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.CapabilitiesExtension;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.sos.ogc.sos.CapabilitiesExtensionProvider;
@@ -77,8 +81,10 @@ import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
+import org.n52.sos.service.operator.ServiceOperatorKey;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorDAO
@@ -254,7 +260,7 @@ public class InsertSensorDAO extends AbstractInsertSensorDAO implements Capabili
             throw new NoApplicableCodeException().withMessage("The transactional database profile is not activated!");
         }
     }
-
+    
     @Override
     public CapabilitiesExtension getExtension() {
         final SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();

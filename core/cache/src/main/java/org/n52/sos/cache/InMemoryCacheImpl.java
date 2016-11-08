@@ -2627,7 +2627,7 @@ public class InMemoryCacheImpl extends AbstractStaticContentCache implements Wri
     public void setRequestableProcedureDescriptionFormat(Collection<String> formats) {
         LOG.trace("Adding requestable procedureDescriptionFormat");
         getRequestableProcedureDescriptionFormat().addAll(formats);
-    }//#################
+    }
     
     @Override
     public Set<String> getOfferingsForProcedures(Set<String> procedures) {

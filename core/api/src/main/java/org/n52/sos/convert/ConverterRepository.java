@@ -46,12 +46,12 @@ import com.google.common.collect.Sets;
 @SuppressWarnings("rawtypes")
 public class ConverterRepository extends AbstractConfiguringServiceLoaderRepository<Converter> {
 
-	private static class LazyHolder {
-		private static final ConverterRepository INSTANCE = new ConverterRepository();
-		
-		private LazyHolder() {};
-	}
+    private static class LazyHolder {
+        private static final ConverterRepository INSTANCE = new ConverterRepository();
 
+        private LazyHolder() {
+        };
+    }
 
     public static ConverterRepository getInstance() {
         return LazyHolder.INSTANCE;

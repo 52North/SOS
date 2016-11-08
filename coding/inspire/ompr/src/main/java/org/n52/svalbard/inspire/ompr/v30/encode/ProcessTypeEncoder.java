@@ -52,6 +52,7 @@ import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.ServiceConstants.SupportedTypeKey;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.JavaHelper;
 import org.n52.sos.util.http.MediaType;
 import org.n52.sos.w3c.SchemaLocation;
 import org.n52.svalbard.inspire.base.InspireBaseConstants;
@@ -176,6 +177,9 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
             }
         } else {
             ProcessType pt = ProcessType.Factory.newInstance();
+            if (!process.isSetGmlID()) {
+                process.setGmlId("p_" + JavaHelper.generateID(process.toString()));
+            }
             pt.setId(process.getGmlId());
 
             addInspireId(pt, process);
@@ -236,7 +240,7 @@ public class ProcessTypeEncoder extends AbstractGmlEncoderv321<Process>
     }
 
     private void addResponsibleParty(ProcessType pt, Process process) throws OwsExceptionReport {
-        if (process.isSetResponsiblePartyn()) {
+        if (process.isSetResponsibleParty()) {
             for (RelatedParty relatedParty : process.getResponsibleParty()) {
                 pt.addNewResponsibleParty().addNewRelatedParty().set(encodeBASE2(relatedParty));
             }

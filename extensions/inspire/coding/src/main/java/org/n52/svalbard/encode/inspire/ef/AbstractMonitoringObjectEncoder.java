@@ -35,6 +35,7 @@ import org.n52.sos.ogc.gml.CodeType;
 import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
+import org.n52.sos.w3c.xlink.SimpleAttrs;
 import org.n52.svalbard.inspire.base2.LegislationCitation;
 import org.n52.svalbard.inspire.ef.AbstractMonitoringObject;
 import org.n52.svalbard.inspire.ef.Hierarchy;
@@ -113,11 +114,14 @@ public abstract class AbstractMonitoringObjectEncoder extends AbstractEnvironmen
             AbstractMonitoringObject abstractMonitoringObject) throws OwsExceptionReport {
         if (abstractMonitoringObject.isSetLegalBackground()) {
             for (LegislationCitation legislationCitation : abstractMonitoringObject.getLegalBackground()) {
-                if (legislationCitation.isSetHref()) {
-                    LegalBackground lb = amot.addNewLegalBackground();
-                    lb.setHref(legislationCitation.getHref());
-                    if (legislationCitation.isSetTitle()) {
-                        lb.setTitle(legislationCitation.getTitle());
+                if (legislationCitation.isSetSimpleAttrs()) {
+                    SimpleAttrs simpleAttrs = legislationCitation.getSimpleAttrs();
+                    if (simpleAttrs.isSetHref()) {
+                        LegalBackground lb = amot.addNewLegalBackground();
+                        lb.setHref(simpleAttrs.getHref());
+                        if (simpleAttrs.isSetTitle()) {
+                            lb.setTitle(simpleAttrs.getTitle());
+                        }
                     }
                 } else {
                     amot.addNewLegalBackground().addNewLegislationCitation().set(encodeEF(legislationCitation));

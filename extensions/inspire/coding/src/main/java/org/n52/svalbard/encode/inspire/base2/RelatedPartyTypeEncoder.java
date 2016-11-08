@@ -44,6 +44,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.inspire.base2.Contact;
+import org.n52.svalbard.inspire.base2.InspireBase2Constants;
 import org.n52.svalbard.inspire.base2.RelatedParty;
 import org.n52.svalbard.inspire.ompr.InspireOMPRConstants;
 import org.slf4j.Logger;
@@ -55,6 +56,7 @@ import eu.europa.ec.inspire.schemas.base2.x20.ContactType;
 import eu.europa.ec.inspire.schemas.base2.x20.ContactType.TelephoneFacsimile;
 import eu.europa.ec.inspire.schemas.base2.x20.ContactType.TelephoneVoice;
 import eu.europa.ec.inspire.schemas.base2.x20.ContactType.Website;
+import net.opengis.gml.x32.NilReasonType;
 import eu.europa.ec.inspire.schemas.base2.x20.RelatedPartyType;
 
 public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
@@ -63,7 +65,7 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
 
     private static final Set<EncoderKey> ENCODER_KEYS =
             Sets.newHashSet(new ClassToClassEncoderKey(RelatedPartyType.class, RelatedParty.class),
-                    new XmlEncoderKey(InspireOMPRConstants.NS_OMPR_30, RelatedParty.class));
+                    new XmlEncoderKey(InspireBase2Constants.NS_BASE2, RelatedParty.class));
 
     @Override
     public Set<EncoderKey> getEncoderKeyType() {
@@ -97,8 +99,8 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
     private ContactType createContact(Contact contact) {
         ContactType ct = ContactType.Factory.newInstance();
         ct.addNewAddress().setNil();
-        if (contact.getAddress().getNilReason().isPresent()) {
-            ct.getAddress().setNilReason(contact.getAddress().getNilReason());
+        if (contact.getAddress().isNil() && contact.getAddress().getNilReason().isPresent()) {
+            ct.getAddress().setNilReason(contact.getAddress().getNilReason().get());
         }
         ct.addNewContactInstructions();
         if (contact.getElectronicMailAddress().isPresent()) {
@@ -106,7 +108,7 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
         } else if (contact.getElectronicMailAddress().isNil()) {
             ct.addNewElectronicMailAddress().setNil();
             if (contact.getElectronicMailAddress().getNilReason().isPresent()) {
-                ct.getElectronicMailAddress().setNilReason(contact.getElectronicMailAddress().getNilReason());
+                ct.getElectronicMailAddress().setNilReason(contact.getElectronicMailAddress().getNilReason().get());
             }
         }
         if (contact.getTelephoneFacsimile().isPresent()) {
@@ -117,7 +119,7 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
             TelephoneFacsimile tf = ct.addNewTelephoneFacsimile();
             tf.setNil();
             if (contact.getTelephoneFacsimile().getNilReason().isPresent()) {
-                tf.setNilReason(contact.getTelephoneFacsimile().getNilReason());
+                tf.setNilReason(contact.getTelephoneFacsimile().getNilReason().get());
             }
         }
         if (contact.getTelephoneVoice().isPresent()) {
@@ -128,7 +130,7 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
             TelephoneVoice tv = ct.addNewTelephoneVoice();
             tv.setNil();
             if (contact.getTelephoneVoice().getNilReason().isPresent()) {
-                tv.setNilReason(contact.getTelephoneVoice().getNilReason());
+                tv.setNilReason(contact.getTelephoneVoice().getNilReason().get());
             }
         }
         if (contact.getWebsite().isPresent()) {
@@ -137,7 +139,7 @@ public class RelatedPartyTypeEncoder extends AbstractXmlEncoder<RelatedParty> {
             Website w = ct.addNewWebsite();
             w.setNil();
             if (contact.getWebsite().getNilReason().isPresent()) {
-                w.setNilReason(contact.getWebsite().getNilReason());
+                w.setNilReason(contact.getWebsite().getNilReason().get());
             }
         }
         return ct;

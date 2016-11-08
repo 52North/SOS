@@ -486,6 +486,10 @@
 			<artifactId>coding-inspire-omso</artifactId>
 		</dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>coding-inspire-ompr</artifactId>
+        </dependency>
+        <dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>inspire-api</artifactId>
 		</dependency>

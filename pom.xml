@@ -362,6 +362,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>coding-inspire-ompr</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>inspire-api</artifactId>
                 <version>${project.version}</version>
             </dependency>

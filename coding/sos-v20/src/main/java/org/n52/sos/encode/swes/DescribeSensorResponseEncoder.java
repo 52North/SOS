@@ -28,6 +28,7 @@
  */
 package org.n52.sos.encode.swes;
 
+import java.util.EnumMap;
 import java.util.Set;
 
 import net.opengis.swes.x20.DescribeSensorResponseDocument;
@@ -35,11 +36,13 @@ import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.SensorDescriptionType;
 
 import org.apache.xmlbeans.XmlObject;
+import org.n52.sos.encode.EncoderKey;
 import org.n52.sos.ogc.gml.GmlConstants;
 import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.ogc.sos.SosConstants.HelperValues;
 import org.n52.sos.ogc.swes.SwesConstants;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.CodingHelper;
@@ -48,6 +51,7 @@ import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.sos.w3c.SchemaLocation;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -94,6 +98,10 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
         if (sosProcedureDescription instanceof SosProcedureDescriptionUnknowType && sosProcedureDescription.isSetSensorDescriptionXmlString()) {
             return  XmlHelper.parseXmlString(sosProcedureDescription.getSensorDescriptionXmlString());
         } 
+        XmlObject xmlObject = CodingHelper.encodeObjectToXmlPropertyType(response.getOutputFormat(), sosProcedureDescription);
+        if (xmlObject != null) {
+            return xmlObject;
+        }
         return CodingHelper.encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
     }
 

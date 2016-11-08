@@ -29,12 +29,16 @@
 package org.n52.sos.cache.ctrl.action;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Sets;
+
 import org.n52.sos.cache.ContentCache;
 import org.n52.sos.cache.WritableContentCache;
+import org.n52.sos.convert.ConverterRepository;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
@@ -89,6 +93,16 @@ public class SensorInsertionUpdate extends InMemoryCacheUpdate {
         if (request.getProcedureDescription().isSetParentProcedures()) {
             cache.addParentProcedures(procedure, request.getProcedureDescription().getParentProcedures());
         }
+        
+        // Update procedureDescriptionFormats
+        String procedureDescriptionFormat = request.getProcedureDescriptionFormat();
+        Set<String> formats = Sets.newHashSet(procedureDescriptionFormat);
+        Set<String> toNamespaceConverterFrom = ConverterRepository.getInstance().getToNamespaceConverterFrom(procedureDescriptionFormat);
+        if (CollectionHelper.isNotEmpty(toNamespaceConverterFrom)) {
+            formats.addAll(toNamespaceConverterFrom);
+        }
+        getCache().addProcedureDescriptionFormatsForProcedure(procedure, formats);
+        
         // if the inserted procedure is not a type, add values to cache
         if (!request.isType()) {
             // TODO child procedures

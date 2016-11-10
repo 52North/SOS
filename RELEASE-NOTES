@@ -32,6 +32,34 @@ RELEASE NOTES
   
   
 
+      Release 52n-sensorweb-sos-4.3.8
+=====================================
+
+  --- New features ---
+  
+    * Add offering to series table (optional -> can be null)
+    * Add support of SensorML connections encoding
+    * Add support for gml:MetadataProperty encoding
+    
+  --- Changes ---
+ 
+    * Issue #427: Check and remove lazy and fetch attributes from Hibernate mapping files
+    * Add child procedure and featureOfInterest to GDA request
+    * Update PostgreSQL version to support PostgreSQL 9.6.x
+    * Update REST-API version of bundle to 1.9.0
+      * Also implements support for offering in series table
+  
+  --- Fixed issues ---
+    
+    * Issue #350: java.lang.nullPointerException w/ SML contact element
+    * Issue #446: Issue regarding getCapabilities
+    * Issue #452: 'Clear Database' utility fails to remove data from PostgreSQL
+    * Issue #466: SOS 4.3.7 InsertObservation Geometry doesn't work
+    * Issue #467: Get 500 error with indeterminatePosition in TimeInstant
+    * Issue #484: WaterML 2.0 TVP response contains no values if phenomenonTime is a time period
+    * Fix issue with H2 file database when create schema is selected
+    
+ 
       Release 52n-sensorweb-sos-4.3.7
 =====================================
 

@@ -78,7 +78,7 @@
         <sqljdbc4.version>4.0</sqljdbc4.version>
 
         <!-- 52N dependency versions -->
-        <n52.common.xml.version>2.1.1-SNAPSHOT</n52.common.xml.version>
+        <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
         <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>

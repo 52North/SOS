@@ -27,14 +27,24 @@
 -- Public License for more details.
 --
 
-ALTER TABLE sos.series ADD COLUMN firstTimeStamp datetime;
-ALTER TABLE sos.series ADD COLUMN lastTimeStamp datetime;
-ALTER TABLE sos.series ADD COLUMN firstNumericValue DOUBLE PRECISION;
-ALTER TABLE sos.series ADD COLUMN lastNumericValue DOUBLE PRECISION;
-ALTER TABLE sos.series ADD COLUMN unitId bigint;
+use sos
 
-alter table sos.series add constraint seriesUnitFk foreign key (unitId) references sos.unit (unitId);
+-- alter table
+alter table dbo.series add column offeringid int8;
 
-ALTER TABLE sos.`procedure` ADD COLUMN referenceFlag char(1) default 'F';
+-- drop and add constraint
+alter table dbo.series drop constraint seriesIdentity;
+alter table dbo.observation drop constraint obsIdentifierUK;
+alter table dbo.series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId, offeringId);
 
-ALTER TABLE sos.observation ADD COLUMN samplingGeometry GEOMETRY;
+-- create index
+create index seriesOfferingIdx on dbo.series (offeringId);
+
+-- create foreign keys
+alter table dbo.series add constraint seriesOfferingFk foreign key (offeringId) references dbo.offering;
+
+
+-- update series table (!!! Works only if each observation relates to one and the same offering!!!)
+UPDATE dbo.series ser SET offeringid = q.offeringid FROM (SELECT DISTINCT s.seriesid, off.offeringid FROM dbo.series s 
+inner join dbo.observation o on s.seriesid = o.seriesid 
+inner join dbo.observationhasoffering off on o.observationid = off.observationid) q WHERE q.seriesid = ser.seriesid;

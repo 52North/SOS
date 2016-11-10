@@ -125,8 +125,11 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
                 }
             } else {
                 do {
-                    xbResponse.addNewObservationData().addNewOMObservation()
-                            .set(encoder.encode(streamingValue.nextSingleObservation()));
+                    OmObservation obs = streamingValue.nextSingleObservation();
+                    if (obs != null) {
+                        xbResponse.addNewObservationData().addNewOMObservation()
+                                .set(encoder.encode(obs));
+                    }
                 } while (streamingValue.hasNextValue());
             }
         } else if (streamingValue.getValue() != null) {

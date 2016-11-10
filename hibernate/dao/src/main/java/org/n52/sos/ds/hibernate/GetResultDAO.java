@@ -51,6 +51,7 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Observation;
 import org.n52.sos.ds.hibernate.entities.Offering;
+import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.series.Series;
 import org.n52.sos.ds.hibernate.entities.series.SeriesObservation;
@@ -77,6 +78,7 @@ import org.n52.sos.util.GeometryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -119,10 +121,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
                 final SosResultStructure sosResultStructure =
                         new SosResultStructure(resultTemplates.get(0).getResultStructure());
                 final List<AbstractObservation> observations;
+                String procedure = resultTemplates.get(0).getProcedure().getIdentifier();
                 if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
-                    observations = querySeriesObservation(request, featureIdentifier, session);
+                    observations = querySeriesObservation(request, featureIdentifier, procedure, session);
                 } else {
-                    observations = queryObservation(request, featureIdentifier, session);
+                    observations = queryObservation(request, featureIdentifier, procedure, session);
                 }
 
                 response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations,
@@ -170,7 +173,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
      */
     @SuppressWarnings("unchecked")
     protected List<AbstractObservation> queryObservation(final GetResultRequest request,
-            final Set<String> featureIdentifiers, final Session session) throws OwsExceptionReport {
+            final Set<String> featureIdentifiers, String procedure, final Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(Observation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
@@ -184,6 +187,10 @@ public class GetResultDAO extends AbstractGetResultDAO {
         if (request.isSetObservedProperty()) {
             c.createCriteria(Observation.OBSERVABLE_PROPERTY).add(
                     Restrictions.eq(ObservableProperty.IDENTIFIER, request.getObservedProperty()));
+        }
+        if (!Strings.isNullOrEmpty(procedure)) {
+            c.createCriteria(Observation.PROCEDURE).add(
+                    Restrictions.eq(Procedure.IDENTIFIER, procedure));
         }
         if (request.isSetOffering()) {
             addOfferingRestriction(c, request.getOffering());
@@ -207,6 +214,7 @@ public class GetResultDAO extends AbstractGetResultDAO {
      *            Set of feature identifiers. If <tt>null</tt>, query filter
      *            will not be added. If <tt>empty</tt>, <tt>null</tt> will be
      *            returned.
+     * @param procedure 
      * @param session
      *            Hibernate session
      * @return List of Observation objects
@@ -215,11 +223,11 @@ public class GetResultDAO extends AbstractGetResultDAO {
      */
     @SuppressWarnings("unchecked")
     protected List<AbstractObservation> querySeriesObservation(GetResultRequest request,
-            Collection<String> featureIdentifiers, Session session) throws OwsExceptionReport {
+            Collection<String> featureIdentifiers, String procedure, Session session) throws OwsExceptionReport {
         final Criteria c = createCriteriaFor(SeriesObservation.class, session);
         addSpatialFilteringProfileRestrictions(c, request, session);
 
-        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(request.getObservedProperty(), featureIdentifiers, session);
+        List<Series> series = DaoFactory.getInstance().getSeriesDAO().getSeries(procedure, request.getObservedProperty(), request.getOffering(), featureIdentifiers, session);
         if (CollectionHelper.isEmpty(series)) {
             return null;
         } else {

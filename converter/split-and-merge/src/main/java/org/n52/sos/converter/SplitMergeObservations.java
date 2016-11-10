@@ -45,6 +45,7 @@ import org.n52.sos.ogc.ows.OwsExceptionReport;
 import org.n52.sos.ogc.sos.Sos1Constants;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.AbstractServiceRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -54,6 +55,8 @@ import org.n52.sos.response.InsertObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.http.MediaType;
+import org.n52.sos.util.http.MediaTypes;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -97,6 +100,19 @@ public class SplitMergeObservations implements
     public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
         if (request instanceof InsertObservationRequest) {
             // TODO
+        }
+        if (request instanceof AbstractObservationRequest) {
+            AbstractObservationRequest req = (AbstractObservationRequest) request;
+            if (req.isSetResponseFormat()) {
+                if (OmConstants.NS_OM_2.equals(req.getResponseFormat())
+                        || OmConstants.NS_OM.equals(req.getResponseFormat())
+                        || OmConstants.CONTENT_TYPE_OM.toString().equals(req.getResponseFormat())
+                        || OmConstants.CONTENT_TYPE_OM_2.toString().equals(req.getResponseFormat())) {
+                    req.setCheckForDuplicity(true);
+                } else {
+                    req.setCheckForDuplicity(false);
+                }
+            }
         }
         return request;
     }

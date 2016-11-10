@@ -27,6 +27,21 @@
 -- Public License for more details.
 --
 
-ALTER TABLE sos.`procedure` ADD COLUMN referenceFlag char(1) default 'F';
+-- alter table
+alter table sos.series add column offeringid int8;
 
-ALTER TABLE sos.observation ADD COLUMN samplingGeometry GEOMETRY;
+-- drop and add constraint
+alter table sos.series drop index seriesIdentity;
+alter table sos.observation drop index obsIdentifierUK;
+alter table sos.series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId, offeringId);
+
+-- create index
+create index seriesOfferingIdx on sos.series (offeringId);
+
+-- create foreign keys
+alter table sos.series add constraint seriesOfferingFk foreign key (offeringId) references sos.offering;
+
+-- update series table (!!! Works only if each observation relates to one and the same offering!!!)
+SET SQL_SAFE_UPDATES=0;
+UPDATE sos.series ser, (SELECT DISTINCT o.seriesid, off.offeringid FROM sos.observation o inner join sos.observationhasoffering off on o.observationid = off.observationid) q SET ser.offeringid = q.offeringid  WHERE q.seriesid = ser.seriesid;
+SET SQL_SAFE_UPDATES=1;

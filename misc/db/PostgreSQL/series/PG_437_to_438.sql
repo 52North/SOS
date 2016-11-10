@@ -27,21 +27,22 @@
 -- Public License for more details.
 --
 
--- add published flag to series table
-ALTER TABLE public.series ADD published char(1) NOT NULL default 'T' check (published in ('T','F'));
+-- alter table
+alter table public.series add column offeringid int8;
 
--- add station table
-create sequence public.stationId_seq;
-create table public.station (stationId int8 not null, identifier varchar(255) not null, codespace int8, name varchar(255), codespacename int8, description varchar(255), primary key (stationId));
-alter table public.station add constraint stationIdentifierUK unique (identifier);
+-- drop and add constraint
+alter table public.series drop constraint seriesIdentity;
+alter table public.observation drop constraint obsIdentifierUK;
+alter table public.series add constraint seriesIdentity unique (featureOfInterestId, observablePropertyId, procedureId, offeringId);
 
--- add network table
-create sequence public.networkId_seq;
-create table public.network (networkId int8 not null, identifier varchar(255) not null, codespace int8, name varchar(255), codespacename int8, description varchar(255), primary key (networkId));
-alter table public.network add constraint networkIdentifierUK unique (identifier);
+-- create index
+create index seriesOfferingIdx on public.series (offeringId);
 
--- add station and network columns to
-alter table public.samplingPoint add column station int8;
-alter table public.samplingPoint add constraint sampPointStationFk foreign key (station) references public.station;
-alter table public.samplingPoint add column network int8;
-alter table public.samplingPoint add constraint sampPointNetworkFk foreign key (network) references public.network;
+-- create foreign keys
+alter table public.series add constraint seriesOfferingFk foreign key (offeringId) references public.offering;
+
+
+-- update series table (!!! Works only if each observation relates to one and the same offering!!!)
+UPDATE public.series ser SET offeringid = q.offeringid FROM (SELECT DISTINCT s.seriesid, off.offeringid FROM public.series s 
+inner join public.observation o on s.seriesid = o.seriesid 
+inner join public.observationhasoffering off on o.observationid = off.observationid) q WHERE q.seriesid = ser.seriesid;

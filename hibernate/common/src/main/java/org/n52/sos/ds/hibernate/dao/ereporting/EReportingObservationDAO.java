@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.dao.ereporting;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -178,6 +177,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
         identifiers.setFeatureOfInterest(observationIdentifiers.getFeatureOfInterest());
         identifiers.setObservableProperty(observationIdentifiers.getObservableProperty());
         identifiers.setProcedure(observationIdentifiers.getProcedure());
+        identifiers.setOffering(observationIdentifiers.getOffering());
         if (observationIdentifiers instanceof EReportingObservationIdentifiers) {
             identifiers.setSamplingPoint(((EReportingObservationIdentifiers) observationIdentifiers)
                     .getSamplingPoint());
@@ -189,10 +189,8 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     }
 
     @Override
-    protected ObservationIdentifiers createObservationIdentifiers(
-            Set<ObservationConstellation> hObservationConstellations) {
-        EReportingObservationIdentifiers observationIdentifiers = new EReportingObservationIdentifiers();
-        return observationIdentifiers;
+    protected ObservationIdentifiers createObservationIdentifiers(ObservationConstellation hObservationConstellation) {
+        return new EReportingObservationIdentifiers();
     }
 
     @Override

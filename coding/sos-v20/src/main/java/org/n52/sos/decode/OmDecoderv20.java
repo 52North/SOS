@@ -452,6 +452,10 @@ public class OmDecoderv20 implements Decoder<Object, Object> {
                 SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
                 result.setValue(new GeometryValue((Geometry) decodedObject));
                 return result;
+            } else if (decodedObject instanceof AbstractGeometry) {
+                SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
+                result.setValue(new GeometryValue(((AbstractGeometry) decodedObject).getGeometry()));
+                return result;
             } else if (decodedObject instanceof SweDataArray) {
                 SweDataArrayValue value = new SweDataArrayValue();
                 value.setValue((SweDataArray) decodedObject);

@@ -50,6 +50,9 @@ import org.n52.sos.ogc.sos.ConformanceClasses;
 import org.n52.sos.ogc.sos.Sos2Constants;
 import org.n52.sos.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.SosConstants.SosIndeterminateTime;
+import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.sos.ogc.swes.SwesExtensionImpl;
+import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
@@ -108,6 +111,9 @@ public class SosGetObservationOperatorV20 extends
 
         try {
             checkOfferingId(sosRequest.getOfferings());
+            if (sosRequest.isSetOffering()) {
+                sosRequest.setOfferings(addChildOfferings(sosRequest.getOfferings()));
+            }
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -153,7 +159,7 @@ public class SosGetObservationOperatorV20 extends
         }
 
         try {
-            if (sosRequest.getResponseFormat() == null) {
+            if (!sosRequest.isSetResponseFormat()) {
                 sosRequest.setResponseFormat(getActiveProfile().getObservationResponseFormat());
             }
             SosHelper.checkResponseFormat(sosRequest.getResponseFormat(), sosRequest.getService(),
@@ -161,7 +167,19 @@ public class SosGetObservationOperatorV20 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-
+        if (Configurator.getInstance().getProfileHandler().getActiveProfile().isMergeValues()) {
+            if (sosRequest.isSetExtensions() && !sosRequest.getExtensions()
+                    .containsExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray)) {
+                SwesExtensions extensions = new SwesExtensions();
+                extensions.addSwesExtension(new SwesExtensionImpl<SweBoolean>()
+                        .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())
+                        .setValue((SweBoolean) new SweBoolean()
+                                .setValue(Configurator.getInstance().getProfileHandler().getActiveProfile()
+                                        .isMergeValues())
+                                .setDefinition(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name())));
+                sosRequest.setExtensions(extensions);
+            }
+        }
         checkExtensions(sosRequest, exceptions);
         exceptions.throwIfNotEmpty();
 

@@ -132,7 +132,7 @@ This project includes:
   EXIficient under GNU General Public License (GPL), Version 2.0
   FindBugs-jsr305 under The Apache Software License, Version 2.0
   GeoDB Core under BSD style, https://github.com/jdeolive/geodb/blob/master/LICENSE.txt
-  Geographic COmmon (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
+  Geographic Common (GCO) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Geographic MetaData (GMD) schema (version 2012-07-13) under The Apache Software License, Version 2.0
   Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
   H2 Database Engine under The H2 License, Version 1.0
@@ -178,7 +178,7 @@ This project includes:
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Main module under Lesser General Public License (LGPL)
-  mchange-commons-java library under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
+  mchange-commons-java under GNU Lesser General Public License, Version 2.1 or Eclipse Public License, Version 1.0
   Metadata under Lesser General Public License (LGPL)
   Mockito under The MIT License
   Mozilla Rhino under Mozilla Public License, Version 2.0
@@ -210,7 +210,7 @@ This project includes:
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Postgis JDBC Driver under GNU Lesser General Public License
-  PostgreSQL JDBC Driver under BSD License
+  PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL
   SaxonB under Mozilla Public License Version 1.0

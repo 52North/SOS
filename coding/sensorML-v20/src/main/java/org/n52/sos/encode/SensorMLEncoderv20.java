@@ -55,6 +55,9 @@ import net.opengis.sensorml.x20.ClassifierListType.Classifier;
 import net.opengis.sensorml.x20.ComponentListPropertyType;
 import net.opengis.sensorml.x20.ComponentListType;
 import net.opengis.sensorml.x20.ComponentListType.Component;
+import net.opengis.sensorml.x20.ConnectionListPropertyType;
+import net.opengis.sensorml.x20.ConnectionListType;
+import net.opengis.sensorml.x20.ConnectionListType.Connection;
 import net.opengis.sensorml.x20.ContactListType;
 import net.opengis.sensorml.x20.DescribedObjectType;
 import net.opengis.sensorml.x20.DescribedObjectType.Capabilities;
@@ -67,6 +70,7 @@ import net.opengis.sensorml.x20.IdentifierListType;
 import net.opengis.sensorml.x20.IdentifierListType.Identifier;
 import net.opengis.sensorml.x20.InputListType;
 import net.opengis.sensorml.x20.InputListType.Input;
+import net.opengis.sensorml.x20.LinkType;
 import net.opengis.sensorml.x20.ObservablePropertyType;
 import net.opengis.sensorml.x20.OutputListType;
 import net.opengis.sensorml.x20.OutputListType.Output;
@@ -113,11 +117,13 @@ import org.n52.sos.ogc.sensorML.elements.SmlCharacteristic;
 import org.n52.sos.ogc.sensorML.elements.SmlCharacteristics;
 import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
 import org.n52.sos.ogc.sensorML.elements.SmlComponent;
+import org.n52.sos.ogc.sensorML.elements.SmlConnection;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentation;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationList;
 import org.n52.sos.ogc.sensorML.elements.SmlDocumentationListMember;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.sos.ogc.sensorML.elements.SmlIo;
+import org.n52.sos.ogc.sensorML.elements.SmlLink;
 import org.n52.sos.ogc.sensorML.elements.SmlLocation;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
@@ -150,6 +156,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -461,6 +468,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         // set connections
+        if (abstractProcess.isSetConnections() && !apt.isSetConnections()){
+            apt.setConnections(createConnections(abstractProcess.getConnections()));
+        }
     }
 
     private XmlObject encodeAbstractPhysicalProcess(AbstractPhysicalProcess abstractPhysicalProcess,
@@ -533,6 +543,9 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         // set connections
+        if (abstractPhysicalProcess.isSetConnections() && !pst.isSetConnections()){
+            pst.setConnections(createConnections(abstractPhysicalProcess.getConnections()));
+        }
     }
 
     private void addDescribedObjectValues(DescribedObjectType dot, DescribedObject describedObject)
@@ -672,7 +685,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         // set history
-
+        
     }
 
     private void addAbstractProcessValues(final AbstractProcessType apt, final AbstractProcessV20 sosAbstractProcess)
@@ -862,6 +875,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (final SmlCharacteristics sosSMLCharacteristics : smlCharacteristics) {
             if (sosSMLCharacteristics.isSetAbstractDataComponents()) {
                 Characteristics xbCharacteristics = Characteristics.Factory.newInstance(getOptions());
+                if (sosSMLCharacteristics.isSetName()) {
+                    xbCharacteristics.setName(sosSMLCharacteristics.getName());
+                } else {
+                    xbCharacteristics.setName("characteristics_" + smlCharacteristics.lastIndexOf(sosSMLCharacteristics));
+                }
                 CharacteristicListType characteristicList = xbCharacteristics.addNewCharacteristicList();
                 if (sosSMLCharacteristics.isSetCharacteristics()) {
                     for (SmlCharacteristic characteristic : sosSMLCharacteristics.getCharacteristic()) {
@@ -1097,7 +1115,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         for (final SmlComponent sosSMLComponent : sosComponents) {
             final Component component = clt.addNewComponent();
             if (sosSMLComponent.getName() != null) {
-                component.setName(sosSMLComponent.getName());
+                component.setName(NcNameResolver.fixNcName(sosSMLComponent.getName()));
             }
             if (sosSMLComponent.getTitle() != null) {
                 component.setTitle(sosSMLComponent.getTitle());
@@ -1115,6 +1133,30 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     XmlObject substituteElement =
                             XmlHelper.substituteElement(component.addNewAbstractProcess(), xmlObject);
                     substituteElement.set(xmlObject);
+                }
+            }
+        }
+        return clpt;
+    }
+
+    private ConnectionListPropertyType createConnections(SmlConnection connections) {
+        ConnectionListPropertyType clpt = ConnectionListPropertyType.Factory.newInstance(getOptions());
+        if (!Strings.isNullOrEmpty(connections.getHref())) {
+            clpt.setHref(connections.getHref());
+            if (!Strings.isNullOrEmpty(connections.getTitle())) {
+                clpt.setTitle(connections.getTitle());
+            }
+            if (!Strings.isNullOrEmpty(connections.getRole())) {
+                clpt.setRole(connections.getRole());
+            }
+        } else {
+            ConnectionListType clt = clpt.addNewConnectionList();
+            for (SmlLink link : connections.getConnections()) {
+                LinkType lt = clt.addNewConnection().addNewLink();
+                lt.addNewDestination().setRef(link.getDestination());
+                lt.addNewSource().setRef(link.getSource());
+                if (!Strings.isNullOrEmpty(link.getId())) {
+                    lt.setId(link.getId());
                 }
             }
         }

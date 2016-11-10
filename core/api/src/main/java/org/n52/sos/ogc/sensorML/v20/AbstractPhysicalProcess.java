@@ -29,6 +29,7 @@
 package org.n52.sos.ogc.sensorML.v20;
 
 import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.sos.ogc.sensorML.HasPosition;
 import org.n52.sos.ogc.sensorML.elements.SmlPosition;
 
 /**
@@ -38,7 +39,7 @@ import org.n52.sos.ogc.sensorML.elements.SmlPosition;
  * @since 4.2.0
  *
  */
-public class AbstractPhysicalProcess extends DescribedObject {
+public class AbstractPhysicalProcess extends DescribedObject implements HasPosition<AbstractPhysicalProcess> {
 
     private static final long serialVersionUID = -4028425256170806503L;
 
@@ -125,8 +126,13 @@ public class AbstractPhysicalProcess extends DescribedObject {
      * @param position
      *            the position to set
      */
-    public void setPosition(SmlPosition position) {
+    public AbstractPhysicalProcess setPosition(SmlPosition position) {
         this.position = position;
+        return this;
+    }
+
+    public boolean isSetPosition() {
+        return getPosition() != null;
     }
 
     /**
@@ -149,10 +155,6 @@ public class AbstractPhysicalProcess extends DescribedObject {
      */
     public static long getSerialversionuid() {
         return serialVersionUID;
-    }
-
-    public boolean isSetPosition() {
-        return getPosition() != null;
     }
 
 }

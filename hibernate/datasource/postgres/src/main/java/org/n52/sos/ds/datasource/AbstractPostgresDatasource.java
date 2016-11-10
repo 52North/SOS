@@ -41,6 +41,8 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.security.auth.login.CredentialException;
+
 import org.hibernate.dialect.Dialect;
 import org.hibernate.mapping.Table;
 import org.hibernate.spatial.dialect.postgis.PostgisDialect;
@@ -209,28 +211,31 @@ public abstract class AbstractPostgresDatasource extends AbstractHibernateFullDB
     public void clear(Properties properties) {
         Map<String, Object> settings = parseDatasourceProperties(properties);
         CustomConfiguration config = getConfig(settings);
-        Iterator<Table> tables = config.getTableMappings();
-        List<String> names = new LinkedList<String>();
-        while (tables.hasNext()) {
-            Table table = tables.next();
-            if (table.isPhysicalTable()) {
-                names.add(table.getName());
+        Connection conn = null;
+        Statement stmt = null;
+        try {
+            conn = openConnection(settings);
+            String catalog = checkCatalog(conn);
+            String schema = checkSchema((String) settings.get(SCHEMA_KEY), catalog, conn);
+            Iterator<Table> tables = config.getTableMappings();
+            List<String> names = new LinkedList<String>();
+            while (tables.hasNext()) {
+                Table table = tables.next();
+                if (table.isPhysicalTable()) {
+                    names.add(table.getQualifiedName(createDialect(), null, schema));
+                }
             }
-        }
-        if (!names.isEmpty()) {
-            Connection conn = null;
-            Statement stmt = null;
-            try {
-                conn = openConnection(settings);
+            if (!names.isEmpty()) {
                 stmt = conn.createStatement();
                 stmt.execute(String.format("truncate %s restart identity cascade", Joiner.on(", ").join(names)));
-            } catch (SQLException ex) {
-                throw new ConfigurationException(ex);
-            } finally {
-                close(stmt);
-                close(conn);
             }
+        } catch (SQLException ex) {
+            throw new ConfigurationException(ex);
+        } finally {
+            close(stmt);
+            close(conn);
         }
+        
     }
 
     @Override

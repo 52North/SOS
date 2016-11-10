@@ -71,6 +71,8 @@ import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.CodedException;
+import org.n52.sos.exception.ows.InvalidParameterValueException;
+import org.n52.sos.exception.ows.MissingParameterValueException;
 import org.n52.sos.exception.ows.NoApplicableCodeException;
 import org.n52.sos.exception.ows.OptionNotSupportedException;
 import org.n52.sos.ogc.gml.time.Time;
@@ -487,8 +489,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * a multi value observation for observation constellations and
      * featureOfInterest
      *
-     * @param observationConstellations
-     *            Observation constellation objects
+     * @param observationConstellation
+     *            Observation constellation object
      * @param feature
      *            FeatureOfInterest object
      * @param containerObservation
@@ -502,13 +504,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      *             If an error occurs
      */
-    public void insertObservationMultiValue(Set<ObservationConstellation> observationConstellations,
+    public void insertObservationMultiValue(ObservationConstellation observationConstellation,
             FeatureOfInterest feature, OmObservation containerObservation, Map<String, Codespace> codespaceCache,
-            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+            Map<String, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
         List<OmObservation> unfoldObservations = HibernateObservationUtilities.unfoldObservation(containerObservation);
         for (OmObservation sosObservation : unfoldObservations) {
-            insertObservationSingleValue(observationConstellations, feature, sosObservation, codespaceCache, unitCache,
-                    session);
+            insertObservationSingleValue(observationConstellation, feature, sosObservation, codespaceCache, unitCache,
+                    hOfferings, session);
         }
     }
 
@@ -516,8 +518,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * Insert a single observation for observation constellations and
      * featureOfInterest without local caching for codespaces and units
      *
-     * @param observationConstellations
-     *            Observation constellation objects
+     * @param observationConstellation
+     *            Observation constellation object
      * @param feature
      *            FeatureOfInterest object
      * @param sosObservation
@@ -526,9 +528,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Hibernate session
      * @throws OwsExceptionReport
      */
-    public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
-            FeatureOfInterest hFeature, OmObservation sosObservation, Session session) throws OwsExceptionReport {
-        insertObservationSingleValue(hObservationConstellations, hFeature, sosObservation, null, null, session);
+    public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
+            FeatureOfInterest hFeature, OmObservation sosObservation, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
+        insertObservationSingleValue(hObservationConstellation, hFeature, sosObservation, null, null, hOfferings, session);
     }
 
     /**
@@ -551,9 +553,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @throws OwsExceptionReport
      */
     @SuppressWarnings("rawtypes")
-    public void insertObservationSingleValue(Set<ObservationConstellation> hObservationConstellations,
+    public void insertObservationSingleValue(ObservationConstellation hObservationConstellation,
             FeatureOfInterest hFeature, OmObservation sosObservation, Map<String, Codespace> codespaceCache,
-            Map<String, Unit> unitCache, Session session) throws OwsExceptionReport {
+            Map<String, Unit> unitCache, Set<Offering> hOfferings, Session session) throws OwsExceptionReport {
         SingleObservationValue<?> value = (SingleObservationValue) sosObservation.getValue();
         AbstractObservation hObservation = createObservationFromValue(value.getValue(), session);
         hObservation.setDeleted(false);
@@ -564,9 +566,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (value.getValue().getUnit() != null) {
             hObservation.setUnit(getUnit(value.getValue().getUnit(), unitCache, session));
         }
-        addOfferingsToObservation(hObservation, hObservationConstellations);
-        ObservationIdentifiers observationIdentifiers = createObservationIdentifiers(hObservationConstellations);
-        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        addOfferingsToObservation(hObservation, hOfferings);
+        ObservationIdentifiers observationIdentifiers = createObservationIdentifiers(hObservationConstellation);
+        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellation, observationIdentifiers);
         addFeatureOfInterestToObservationIdentifiers(hFeature, observationIdentifiers);
         addAdditionalObjectsToObservationIdentifiers(observationIdentifiers, sosObservation, session);
         addObservationIdentifiersToObservation(observationIdentifiers, hObservation, session);
@@ -585,30 +587,25 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     protected void addOfferingsToObservation(AbstractObservation hObservation,
-            Set<ObservationConstellation> hObservationConstellations) {
-        for (ObservationConstellation observationConstellation : hObservationConstellations) {
-            hObservation.getOfferings().add(observationConstellation.getOffering());
-        }
+            Set<Offering> hOfferings) {
+        hObservation.getOfferings().addAll(hOfferings);
     }
 
     protected ObservationIdentifiers createObservationIdentifiers(
-            Set<ObservationConstellation> hObservationConstellations) {
+            ObservationConstellation hObservationConstellation) {
         ObservationIdentifiers observationIdentifiers = new ObservationIdentifiers();
-        addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellations, observationIdentifiers);
+        if (hObservationConstellation != null) {
+            addProcedureObservablePropertyToObservationIdentifiers(hObservationConstellation, observationIdentifiers);
+            observationIdentifiers.setOffering(hObservationConstellation.getOffering());
+        }
         return observationIdentifiers;
     }
 
     protected ObservationIdentifiers addProcedureObservablePropertyToObservationIdentifiers(
-            Set<ObservationConstellation> hObservationConstellations, ObservationIdentifiers observationIdentifiers) {
-        if (CollectionHelper.isNotEmpty(hObservationConstellations)) {
-            boolean firstObsConst = true;
-            for (ObservationConstellation observationConstellation : hObservationConstellations) {
-                if (firstObsConst) {
-                    observationIdentifiers.setObservableProperty(observationConstellation.getObservableProperty());
-                    observationIdentifiers.setProcedure(observationConstellation.getProcedure());
-                    firstObsConst = false;
-                }
-            }
+            ObservationConstellation hObservationConstellation, ObservationIdentifiers observationIdentifiers) {
+        if (hObservationConstellation != null) {
+            observationIdentifiers.setObservableProperty(hObservationConstellation.getObservableProperty());
+            observationIdentifiers.setProcedure(hObservationConstellation.getProcedure());
         }
         return observationIdentifiers;
     }
@@ -1016,11 +1013,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            SOS phenomenon time
      * @param resultTime
      *            SOS result Time
-     * @throws CodedException
-     *             If an error occurs
+     * @throws OwsExceptionReport 
      */
     protected void addPhenomeonTimeAndResultTimeToObservation(AbstractObservation observation, Time phenomenonTime,
-            TimeInstant resultTime) throws CodedException {
+            TimeInstant resultTime) throws OwsExceptionReport {
         addPhenomenonTimeToObservation(observation, phenomenonTime);
         addResultTimeToObservation(observation, resultTime, phenomenonTime);
     }
@@ -1032,15 +1028,42 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *            Observation object
      * @param phenomenonTime
      *            SOS phenomenon time
+     * @throws OwsExceptionReport
      */
-    protected void addPhenomenonTimeToObservation(AbstractObservation observation, Time phenomenonTime) {
+    protected void addPhenomenonTimeToObservation(AbstractObservation observation, Time phenomenonTime)
+            throws OwsExceptionReport {
         if (phenomenonTime instanceof TimeInstant) {
             TimeInstant time = (TimeInstant) phenomenonTime;
-            observation.setPhenomenonTimeStart(time.getValue().toDate());
-            observation.setPhenomenonTimeEnd(time.getValue().toDate());
+            if (time.isSetValue()) {
+                observation.setPhenomenonTimeStart(time.getValue().toDate());
+                observation.setPhenomenonTimeEnd(time.getValue().toDate());
+            } else if (time.isSetIndeterminateValue()) {
+                Date now = getDateForTimeIndeterminateValue(time.getIndeterminateValue(),
+                        "gml:TimeInstant/gml:timePosition[@indeterminatePosition]");
+                observation.setPhenomenonTimeStart(now);
+                observation.setPhenomenonTimeEnd(now);
+            } else {
+                throw new MissingParameterValueException("gml:TimeInstant/gml:timePosition");
+            }
         } else if (phenomenonTime instanceof TimePeriod) {
             TimePeriod time = (TimePeriod) phenomenonTime;
-            observation.setPhenomenonTimeStart(time.getStart().toDate());
+            if (time.isSetStart()) {
+                observation.setPhenomenonTimeStart(time.getStart().toDate());
+            } else if (time.isSetStartIndeterminateValue()) {
+                observation.setPhenomenonTimeStart(getDateForTimeIndeterminateValue(time.getStartIndet(),
+                        "gml:TimePeriod/gml:beginPosition[@indeterminatePosition]"));
+            } else {
+                throw new MissingParameterValueException("gml:TimePeriod/gml:beginPosition");
+            }
+            if (time.isSetEnd()) {
+                observation.setPhenomenonTimeEnd(time.getEnd().toDate());
+            } else if (time.isSetEndIndeterminateValue()) {
+                observation.setPhenomenonTimeEnd(getDateForTimeIndeterminateValue(time.getEndIndet(),
+                        "gml:TimePeriod/gml:endPosition[@indeterminatePosition]"));
+            } else {
+                throw new MissingParameterValueException("gml:TimePeriod/gml:endPosition");
+            }
+
             observation.setPhenomenonTimeEnd(time.getEnd().toDate());
         }
     }
@@ -1060,11 +1083,22 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     protected void addResultTimeToObservation(AbstractObservation observation, TimeInstant resultTime,
             Time phenomenonTime) throws CodedException {
         if (resultTime != null) {
-            if (resultTime.getValue() != null) {
+            if (resultTime.isSetValue()) {
                 observation.setResultTime(resultTime.getValue().toDate());
-            } else if (TimeIndeterminateValue.contains(Sos2Constants.EN_PHENOMENON_TIME)
+            } else if (resultTime.isSetGmlId() && resultTime.getGmlId().contains(Sos2Constants.EN_PHENOMENON_TIME)
                     && phenomenonTime instanceof TimeInstant) {
-                observation.setResultTime(((TimeInstant) phenomenonTime).getValue().toDate());
+                if (((TimeInstant) phenomenonTime).isSetValue()) {
+                    observation.setResultTime(((TimeInstant) phenomenonTime).getValue().toDate());
+                } else if (((TimeInstant) phenomenonTime).isSetIndeterminateValue()) {
+                    observation.setResultTime(getDateForTimeIndeterminateValue(((TimeInstant) phenomenonTime).getIndeterminateValue(),
+                            "gml:TimeInstant/gml:timePosition[@indeterminatePosition]"));
+                } else {
+                    throw new NoApplicableCodeException()
+                    .withMessage("Error while adding result time to Hibernate Observation entitiy!");
+                }
+            } else if (resultTime.isSetIndeterminateValue()) {
+                observation.setResultTime(getDateForTimeIndeterminateValue(resultTime.getIndeterminateValue(),
+                        "gml:TimeInstant/gml:timePosition[@indeterminatePosition]"));
             } else {
                 throw new NoApplicableCodeException()
                         .withMessage("Error while adding result time to Hibernate Observation entitiy!");
@@ -1076,6 +1110,16 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 throw new NoApplicableCodeException()
                         .withMessage("Error while adding result time to Hibernate Observation entitiy!");
             }
+        }
+    }
+
+    protected Date getDateForTimeIndeterminateValue(TimeIndeterminateValue timeIndeterminateValue, String parameter)
+            throws InvalidParameterValueException {
+        switch (timeIndeterminateValue) {
+        case now:
+            return new DateTime().toDate();
+        default:
+            throw new InvalidParameterValueException(parameter, timeIndeterminateValue.name());
         }
     }
 
@@ -1138,13 +1182,14 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         if (request.hasSpatialFilteringProfileSpatialFilter()) {
             if (GeometryHandler.getInstance().isSpatialDatasource()) {
                 c.add(SpatialRestrictions.filter(AbstractObservation.SAMPLING_GEOMETRY,
-                        request.getSpatialFilter().getOperator(), GeometryHandler.getInstance()
-                                .switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
+                        request.getSpatialFilter().getOperator(),
+                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
+                                request.getSpatialFilter().getGeometry())));
             } else {
                 // TODO add filter with lat/lon
                 LOGGER.warn("Spatial filtering for lat/lon is not yet implemented!");
             }
-            
+
         }
 
     }
@@ -1191,8 +1236,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 Criteria criteria = getDefaultObservationInfoCriteria(session);
                 criteria.createCriteria(AbstractObservation.OFFERINGS)
                         .add(Restrictions.eq(Offering.IDENTIFIER, offeringID));
-                
-                if (HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.SAMPLING_GEOMETRY)) {
+
+                if (HibernateHelper.isColumnSupported(getObservationTimeClass(),
+                        AbstractObservationTime.SAMPLING_GEOMETRY)) {
                     criteria.add(Restrictions.isNotNull(AbstractObservationTime.SAMPLING_GEOMETRY));
                     criteria.setProjection(Projections.property(AbstractObservationTime.SAMPLING_GEOMETRY));
                     LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
@@ -1201,16 +1247,20 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                     for (Geometry geom : (List<Geometry>) criteria.list()) {
                         envelope.expandToInclude(geom.getEnvelopeInternal());
                     }
-                } else if (HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.LATITUDE)
-                        && HibernateHelper.isColumnSupported(getObservationTimeClass(), AbstractObservationTime.LONGITUDE)) {
+                } else if (HibernateHelper.isColumnSupported(getObservationTimeClass(),
+                        AbstractObservationTime.LATITUDE)
+                        && HibernateHelper.isColumnSupported(getObservationTimeClass(),
+                                AbstractObservationTime.LONGITUDE)) {
                     criteria.add(Restrictions.and(Restrictions.isNotNull(AbstractObservationTime.LATITUDE),
                             Restrictions.isNotNull(AbstractObservationTime.LONGITUDE)));
-                    criteria.setProjection(Projections.projectionList().add(Projections.min(AbstractObservationTime.LATITUDE))
-                            .add(Projections.min(AbstractObservation.LONGITUDE))
-                            .add(Projections.max(AbstractObservationTime.LATITUDE))
-                            .add(Projections.max(AbstractObservation.LONGITUDE)));
+                    criteria.setProjection(
+                            Projections.projectionList().add(Projections.min(AbstractObservationTime.LATITUDE))
+                                    .add(Projections.min(AbstractObservation.LONGITUDE))
+                                    .add(Projections.max(AbstractObservationTime.LATITUDE))
+                                    .add(Projections.max(AbstractObservation.LONGITUDE)));
 
-                    LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}", HibernateHelper.getSqlString(criteria));
+                    LOGGER.debug("QUERY getBboxFromSamplingGeometries(feature): {}",
+                            HibernateHelper.getSqlString(criteria));
                     MinMaxLatLon minMaxLatLon = new MinMaxLatLon((Object[]) criteria.uniqueResult());
                     envelope = new Envelope(minMaxLatLon.getMinLon(), minMaxLatLon.getMaxLon(),
                             minMaxLatLon.getMinLat(), minMaxLatLon.getMaxLat());
@@ -1218,7 +1268,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
                 if (!envelope.isNull()) {
                     return new SosEnvelope(envelope, GeometryHandler.getInstance().getStorageEPSG());
                 }
-                
+
             }
         } catch (final HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he)
@@ -1228,9 +1278,9 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     public abstract List<Geometry> getSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
-    
+
     public abstract Long getSamplingGeometriesCount(String feature, Session session) throws OwsExceptionReport;
-    
+
     public abstract Envelope getBboxFromSamplingGeometries(String feature, Session session) throws OwsExceptionReport;
 
     protected abstract Class<?> getObservationClass();
@@ -1255,6 +1305,13 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
 
     protected abstract Class<?> getTextObservationClass();
 
+    public boolean isIdentifierContained(String identifier, Session session) {
+        Criteria c = getDefaultObservationCriteria(session).add(Restrictions.eq(Observation.IDENTIFIER, identifier));
+        LOGGER.debug("QUERY getSpatialFilteringProfileEnvelopeForOfferingId(offeringID): {}",
+                HibernateHelper.getSqlString(c));
+        return c.list().size() > 0;
+    }
+
     /**
      * Inner class to carry observation identifiers (featureOfInterest,
      * observableProperty, procedure)
@@ -1270,6 +1327,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         ObservableProperty observableProperty;
 
         Procedure procedure;
+        
+        Offering offering;
 
         /**
          * @return the featureOfInterest
@@ -1316,6 +1375,21 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
             this.procedure = procedure;
         }
 
+        /**
+         * @return the offering
+         */
+        public Offering getOffering() {
+            return offering;
+        }
+
+        /**
+         * @param offering the offering to set
+         */
+        public void setOffering(Offering offering) {
+            this.offering = offering;
+        }
+
+
     }
 
     /**
@@ -1323,7 +1397,8 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * 
      * @param session
      *            Hibernate session
-     * @return <code>true</code>, if the observation table contains samplingGeometries with values
+     * @return <code>true</code>, if the observation table contains
+     *         samplingGeometries with values
      */
     public boolean containsSamplingGeometries(Session session) {
         Criteria criteria = getDefaultObservationInfoCriteria(session);
@@ -1341,63 +1416,78 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         }
         return false;
     }
-    
+
     public class MinMaxLatLon {
         private Double minLat;
+
         private Double maxLat;
+
         private Double minLon;
+
         private Double maxLon;
-        
+
         public MinMaxLatLon(Object[] result) {
             setMinLat(JavaHelper.asDouble(result[0]));
             setMinLon(JavaHelper.asDouble(result[1]));
             setMaxLat(JavaHelper.asDouble(result[2]));
             setMaxLon(JavaHelper.asDouble(result[3]));
         }
+
         /**
          * @return the minLat
          */
         public Double getMinLat() {
             return minLat;
         }
+
         /**
-         * @param minLat the minLat to set
+         * @param minLat
+         *            the minLat to set
          */
         public void setMinLat(Double minLat) {
             this.minLat = minLat;
         }
+
         /**
          * @return the maxLat
          */
         public Double getMaxLat() {
             return maxLat;
         }
+
         /**
-         * @param maxLat the maxLat to set
+         * @param maxLat
+         *            the maxLat to set
          */
         public void setMaxLat(Double maxLat) {
             this.maxLat = maxLat;
         }
+
         /**
          * @return the minLon
          */
         public Double getMinLon() {
             return minLon;
         }
+
         /**
-         * @param minLon the minLon to set
+         * @param minLon
+         *            the minLon to set
          */
         public void setMinLon(Double minLon) {
             this.minLon = minLon;
         }
+
         /**
          * @return the maxLon
          */
         public Double getMaxLon() {
             return maxLon;
         }
+
         /**
-         * @param maxLon the maxLon to set
+         * @param maxLon
+         *            the maxLon to set
          */
         public void setMaxLon(Double maxLon) {
             this.maxLon = maxLon;

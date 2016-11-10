@@ -96,6 +96,34 @@ public class ObservationConstellationDAO {
                 HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
+    
+    /**
+     * Get observation constellation objects for procedure and observable
+     * property object and offering identifier
+     * 
+     * @param procedure
+     *            Procedure object
+     * @param observableProperty
+     *            Observable property object
+     * @param offering
+     *            Offering identifier
+     * @param session
+     *            Hibernate session
+     * @return Observation constellation objects
+     */
+    public ObservationConstellation getObservationConstellation(Procedure procedure,
+            ObservableProperty observableProperty, Offering offering, Session session) {
+        Criteria criteria =
+                session.createCriteria(ObservationConstellation.class)
+                        .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                        .add(Restrictions.eq(ObservationConstellation.PROCEDURE, procedure))
+                        .add(Restrictions.eq(ObservationConstellation.OBSERVABLE_PROPERTY, observableProperty))
+                        .add(Restrictions.eq(ObservationConstellation.OFFERING, offering))
+                        .add(Restrictions.eq(ObservationConstellation.DELETED, false));
+        LOGGER.debug("QUERY getObservationConstellation(procedure, observableProperty, offering): {}",
+                HibernateHelper.getSqlString(criteria));
+        return (ObservationConstellation)criteria.uniqueResult();
+    }
 
     /**
      * Get ObservationConstellations for procedure, observableProperty and

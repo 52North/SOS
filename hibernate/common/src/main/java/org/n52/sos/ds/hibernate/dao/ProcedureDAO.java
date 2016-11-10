@@ -113,7 +113,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     @SuppressWarnings("unchecked")
     public List<Procedure> getProcedureObjects(final Session session) {
-        Criteria criteria = session.createCriteria(Procedure.class);
+        Criteria criteria = getDefaultCriteria(session);
         LOGGER.debug("QUERY getProcedureObjects(): {}", HibernateHelper.getSqlString(criteria));
         return criteria.list();
     }
@@ -126,8 +126,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
      */
     public Map<String,Collection<String>> getProcedureIdentifiers(final Session session) {
         boolean tProcedureSupported = HibernateHelper.isEntitySupported(TProcedure.class);
-        Criteria criteria = session.createCriteria(Procedure.class)
-                .add(Restrictions.eq(Procedure.DELETED, false));
+        Criteria criteria = getDefaultCriteria(session);
         ProjectionList projectionList = Projections.projectionList();
         projectionList.add(Projections.property(Procedure.IDENTIFIER));
         if (tProcedureSupported) {
@@ -930,7 +929,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             //get the latest validProcedureTimes' procedureDescriptionFormats
             return new ValidProcedureTimeDAO().getTProcedureFormatMap(session);
         } else {
-            Criteria criteria = session.createCriteria(Procedure.class);
+            Criteria criteria = getDefaultCriteria(session);
             criteria.createAlias(Procedure.PROCEDURE_DESCRIPTION_FORMAT, "pdf");
             criteria.setProjection(Projections.projectionList()
                     .add(Projections.property(Procedure.IDENTIFIER))

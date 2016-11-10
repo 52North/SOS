@@ -106,7 +106,7 @@ public class AbstractSmlDataComponentContainer<T> {
      * @return the dataRecord
      */
     public DataRecord getDataRecord() {
-        if (!isSetAbstractDataRecord() && isSetDataComponents()) {
+        if (!isSetDataRecord() && isSetDataComponents()) {
             SweSimpleDataRecord sdr = new SweSimpleDataRecord();
             int counter = 1;
             for (SweAbstractDataComponent element : abstractDataComponents) {
@@ -141,7 +141,7 @@ public class AbstractSmlDataComponentContainer<T> {
     }
 
     public Set<SweAbstractDataComponent> getAbstractDataComponents() {
-        if (!isSetDataComponents() && isSetAbstractDataRecord()) {
+        if (!isSetDataComponents() && isSetDataRecord()) {
             Set<SweAbstractDataComponent> components = Sets.newHashSet();
             for (SweField field : getDataRecord().getFields()) {
                 components.add(field.getElement());

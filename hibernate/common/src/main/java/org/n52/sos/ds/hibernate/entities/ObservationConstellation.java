@@ -115,6 +115,11 @@ public class ObservationConstellation implements Serializable, HasProcedure, Has
     public void setOffering(final Offering offering) {
         this.offering = offering;
     }
+    
+    @Override
+    public boolean isSetOffering() {
+        return getOffering() != null;
+    }
 
     public boolean getDeleted() {
         return deleted;

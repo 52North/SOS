@@ -42,6 +42,7 @@
 		<module>converter</module>
 		<module>operations</module>
 		<module>hibernate</module>
+        <module>handler</module>
 		<module>extensions</module>
 		<module>spring</module>
 		<module>statistics</module>
@@ -239,6 +240,11 @@
 				<artifactId>gc-dao</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>handler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>hibernate-session-factory</artifactId>

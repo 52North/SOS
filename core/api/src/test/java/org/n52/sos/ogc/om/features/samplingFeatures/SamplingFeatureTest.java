@@ -146,5 +146,11 @@ public class SamplingFeatureTest {
             assertThat(feature.getRelatedSamplingFeatures(), hasItem(relatedSamplingFeature));
         }
     }
+    
+    @Test
+    public final void getRelatedSamplingFeatures_should_return_empty_collection_when_nothing_added_at_all() {
+        final SamplingFeature feature = new SamplingFeature(null);
+        assertThat(feature.getRelatedSamplingFeatures(), is(empty()));
+    }
 
 }

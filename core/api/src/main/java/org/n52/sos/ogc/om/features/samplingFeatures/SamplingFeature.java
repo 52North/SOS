@@ -341,7 +341,9 @@ public class SamplingFeature extends AbstractFeature implements FeatureWithGeome
      * @return Related sampling features
      */
     public List<SamplingFeatureComplex> getRelatedSamplingFeatures() {
-        return Lists.newArrayList(relatedSamplingFeatures);
+        return relatedSamplingFeatures != null
+                ? Lists.newArrayList(relatedSamplingFeatures)
+                : Collections.<SamplingFeatureComplex>emptyList();
     }
 
     /**

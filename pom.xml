@@ -79,10 +79,10 @@
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
-        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>

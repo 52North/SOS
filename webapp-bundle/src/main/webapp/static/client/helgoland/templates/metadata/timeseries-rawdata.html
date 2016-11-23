@@ -1,0 +1,14 @@
+<div uib-dropdown dropdown-append-to-body  
+     ng-hide="formatsList.length === 0" 
+     ng-click="toggled($event)">
+    <a id="raw-timeseries-data-dropdown" 
+       uib-dropdown-toggle
+       translate="metadataOutput.selectTimeseriesDataFormat">
+    </a>
+    <ul uib-dropdown-menu aria-labelledby="raw-timeseries-data-dropdown"
+        class="dropdown-menu-right" >
+        <li ng-repeat="choice in formatsList">
+            <a ng-click="select(choice)">{{choice}}</a>
+        </li>
+    </ul>
+</div>

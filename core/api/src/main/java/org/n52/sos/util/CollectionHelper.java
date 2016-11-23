@@ -459,9 +459,11 @@ public final class CollectionHelper {
         collection.add(valueToAdd);
     }
 
-    // The method below was written by StackOverflow user Carter Page and is licensed
+    // The method below was written by StackOverflow user Carter Page
+    // (http://stackoverflow.com/users/309596/carter-page) and is licensed
     // under CC BY-SA 3.0 ( http://creativecommons.org/licenses/by-sa/3.0/ ).
     // https://stackoverflow.com/a/2581754
+    // The original code has been modified.
     public static <K, V extends Comparable<? super V>> Map<K, V> sortByValue(Map<K, V> map) {
         List<Entry<K, V>> list = new LinkedList<>(map.entrySet());
         Collections.sort(list, new Comparator<Entry<K, V>>() {

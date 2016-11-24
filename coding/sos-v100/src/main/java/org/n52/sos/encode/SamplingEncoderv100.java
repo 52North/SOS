@@ -227,6 +227,9 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<AbstractFeature> {
         } else {
             xbSamplingFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
         }
+        
+        // set metadataProperty
+        setMetaDataProperty(xbSamplingFeature, sampFeat);
     }
     
     private void setMetaDataProperty(SamplingFeatureType sft, SamplingFeature sampFeat) throws OwsExceptionReport {

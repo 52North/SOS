@@ -90,6 +90,7 @@
 
 		<!-- 52N dependency versions -->
 		<iceland.version>1.2.0-SNAPSHOT</iceland.version>
+        <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>
 		<n52.common.xml.version>2.1.0</n52.common.xml.version>
 		<!-- Remove third party ncname resolver from SOS and use OXF instead -->
 		<!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
@@ -145,6 +146,12 @@
                 <artifactId>elasticsearch</artifactId>
                 <version>2.1.0</version>
             </dependency>
+            <dependency>
+                <groupId>org.n52.series-api</groupId>
+                <artifactId>proxy</artifactId>
+                <version>${dataset.api.version}</version>
+            </dependency>
+            
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>api</artifactId>
@@ -271,6 +278,11 @@
 				<artifactId>hibernate-dao</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>hibernate-handler</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<artifactId>hibernate-feature</artifactId>

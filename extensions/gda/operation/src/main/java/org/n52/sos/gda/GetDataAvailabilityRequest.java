@@ -33,8 +33,11 @@ import java.util.List;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.
@@ -43,7 +46,7 @@ import org.n52.iceland.util.StringHelper;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> {
+public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> implements ResponseFormat {
 
     private List<String> procedures = new LinkedList<String>();
 
@@ -53,6 +56,8 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     private List<String> offerings = new LinkedList<String>();
 
+    private String responseFormat;
+    
     private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
     @Override
@@ -170,13 +175,37 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
 
     @Override
     public GetDataAvailabilityResponse getResponse() throws OwsExceptionReport {
-        return (GetDataAvailabilityResponse) new GetDataAvailabilityResponse().set(this);
+        return (GetDataAvailabilityResponse) new GetDataAvailabilityResponse()
+                .setNamespace(this.getNamespace())
+                .set(this);
+    }
+    
+    @Override
+    public String getResponseFormat() {
+        return responseFormat;
     }
 
-    public void setNamespace(String namspace) {
+    @Override
+    public void setResponseFormat(String responseFormat) {
+        this.responseFormat = responseFormat;
+    }
+
+//    @Override
+//    public GetDataAvailabilityRequest setResponseFormat(String responseFormat) {
+//        this.responseFormat = responseFormat;
+//        return this;
+//    }
+    
+    @Override
+    public boolean isSetResponseFormat() {
+        return !Strings.isNullOrEmpty(getResponseFormat());
+    }
+
+    public GetDataAvailabilityRequest setNamespace(String namspace) {
         if (StringHelper.isNotEmpty(namspace)) {
             this.namspace = namspace;
         }
+        return this;
     }
 
     public String getNamespace() {

@@ -47,10 +47,9 @@ import org.n52.sos.ds.AbstractOperationHandler;
 public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperationHandler {
 
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
-
     public static final String SHOW_COUNT = "ShowCount";
-
     private boolean forceValueCount = false;
+    private boolean forceGDAv20Response = true;
 
     public AbstractGetDataAvailabilityHandler(String service) {
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
@@ -62,6 +61,8 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
         addQueryableProcedureParameter(operation);
         addObservablePropertyParameter(operation);
         addFeatureOfInterestParameter(operation, version);
+        addOfferingParameter(operation);
+        // TODO Add responseFormat
     }
 
     /**
@@ -91,5 +92,20 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
     @Setting(GetDataAvailabilitySettings.FORCE_GDA_VALUE_COUNT)
     public void setForceValueCount(boolean forceValueCount) {
         this.forceValueCount = forceValueCount;
+    }
+    
+    /**
+     * @return the forEachOffering
+     */
+    protected boolean isForceGDAv20Response() {
+        return forceGDAv20Response;
+    }
+
+    /**
+     * @param forceGDAv20Response the forceGDAv20Response to set
+     */
+    @Setting(GetDataAvailabilitySettings.FORCE_GDA_20_RESPONSE)
+    public void setForceGDAv20Response(boolean forceGDAv20Response) {
+        this.forceGDAv20Response = forceGDAv20Response;
     }
 }

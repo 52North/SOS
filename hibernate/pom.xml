@@ -15,6 +15,7 @@
         <module>session-factory</module>
         <module>common</module>
         <module>dao</module>
+        <module>handler</module>
         <module>feature</module>
 		<module>h2</module>
 		<module>datasource</module>

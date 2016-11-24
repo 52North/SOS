@@ -110,7 +110,4 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
 
     int getStorage3DEPSG();
 
-    int getDefaultResponseEPSG();
-
-    int getDefaultResponse3DEPSG();
 }

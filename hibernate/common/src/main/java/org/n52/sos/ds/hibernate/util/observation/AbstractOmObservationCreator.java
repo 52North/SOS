@@ -46,6 +46,7 @@ import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.series.db.beans.FeatureEntity;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -224,7 +225,7 @@ public abstract class AbstractOmObservationCreator {
      */
     protected AbstractFeature createFeatureOfInterest(String identifier) throws OwsExceptionReport {
         FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-        queryObject.addFeatureIdentifier(identifier).setConnection(getSession()).setVersion(getVersion());
+        queryObject.addFeature(new FeatureEntity().setDomainId(identifier)).setVersion(getVersion());
         final AbstractFeature feature =
                 getFeatureQueryHandler().getFeatureByID(queryObject);
         return feature;

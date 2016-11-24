@@ -34,19 +34,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.iceland.ogc.ows.Extension;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.StringHelper;
+import org.n52.sos.ogc.filter.Filter;
+import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Lists;
@@ -422,7 +420,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     @Override
-    public AbstractObservationResponse getResponse() throws OwsExceptionReport {
+    public GetObservationResponse getResponse() throws OwsExceptionReport {
         return (GetObservationResponse) new GetObservationResponse().set(this);
     }
 

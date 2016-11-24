@@ -218,6 +218,10 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
         return !isSetObservableProperties() && !isSetProcedures() && !isSetTemporalFilters() && !isSetFeatureOfInterestIdentifiers();
     }
 
+    public boolean hasParameter() {
+        return !hasNoParameter();
+    }
+
     @Override
     public GetFeatureOfInterestResponse getResponse() throws OwsExceptionReport {
         return (GetFeatureOfInterestResponse) new GetFeatureOfInterestResponse().set(this);

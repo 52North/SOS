@@ -31,10 +31,14 @@ package org.n52.sos.response;
 import java.util.Collections;
 import java.util.List;
 
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.request.AbstractObservationRequest;
 
 /**
  * TODO JavaDoc
@@ -45,12 +49,10 @@ import org.n52.sos.ogc.om.OmObservation;
  */
 public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
     private List<OmObservation> observationCollection;
-
     private String responseFormat;
-
     private String resultModel;
-
     private boolean mergeObservation = false;
+    private GlobalGetObservationValues globalValues;
 
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
@@ -84,8 +86,9 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
         return StringHelper.isNotEmpty(getResponseFormat());
     }
 
-    public void setResultModel(final String resultModel) {
+    public AbstractObservationResponse setResultModel(final String resultModel) {
         this.resultModel = resultModel;
+        return this;
     }
 
     public String getResultModel() {
@@ -104,4 +107,57 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
         return mergeObservation;
     }
 
+    public AbstractObservationResponse set(AbstractObservationRequest request) {
+        setResponseFormat(request.getResponseFormat());
+        setResultModel(request.getResultModel());
+        set(request);
+        return this;
+    }
+    
+    public AbstractObservationResponse setGlobalValues(GlobalGetObservationValues globalValues) {
+        this.globalValues = globalValues;
+        return this;
+    }
+    
+    public GlobalGetObservationValues getGlobalValues() {
+        return globalValues;
+    }
+    
+    public boolean hasGlobalValues() {
+        return getGlobalValues() != null && !getGlobalValues().isEmpty();
+    }
+    
+    public class GlobalGetObservationValues {
+        private Time phenomenonTime;
+        
+        public GlobalGetObservationValues addPhenomenonTime(Time phenomenonTime) {
+            if (isSetPhenomenonTime()) {
+                if (phenomenonTime instanceof TimeInstant) {
+                    this.phenomenonTime = new TimePeriod(this.phenomenonTime, this.phenomenonTime);
+                }
+                ((TimePeriod)this.phenomenonTime).extendToContain(phenomenonTime);
+            } else {
+                this.phenomenonTime = phenomenonTime;
+            }
+            return this;
+        }
+        
+        public GlobalGetObservationValues setPhenomenonTime(Time phenomenonTime) {
+            this.phenomenonTime = phenomenonTime;
+            return this;
+        }
+        
+        public Time getPhenomenonTime() {
+            return phenomenonTime;
+        }
+        
+        public boolean isSetPhenomenonTime() {
+            return getPhenomenonTime() != null && !getPhenomenonTime().isEmpty();
+        }
+        
+        public boolean isEmpty() {
+            return !isSetPhenomenonTime();
+        }
+    
+    }
 }

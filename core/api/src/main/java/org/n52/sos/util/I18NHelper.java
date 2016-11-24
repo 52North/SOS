@@ -67,7 +67,7 @@ public class I18NHelper {
         addOfferingNames(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
     }
 
-    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) throws CodedException {
+    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest<?> request, SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) throws CodedException {
         addOfferingNames(cache, sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), defaultLocale, showAllLanguages);
     }
 

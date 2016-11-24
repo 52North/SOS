@@ -137,6 +137,6 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     @Override
     public DescribeSensorResponse getResponse() {
-        return (DescribeSensorResponse ) new DescribeSensorResponse().set(this);
+        return (DescribeSensorResponse ) new DescribeSensorResponse().setOutputFormat(procedureDescriptionFormat).set(this);
     }
 }

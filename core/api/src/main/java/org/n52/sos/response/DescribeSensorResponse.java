@@ -49,8 +49,9 @@ public class DescribeSensorResponse extends AbstractServiceResponse {
         return outputFormat;
     }
 
-    public void setOutputFormat(String outputFormat) {
+    public DescribeSensorResponse setOutputFormat(String outputFormat) {
         this.outputFormat = outputFormat;
+        return this;
     }
 
     @Override

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.coding.encode;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.Encoder;
@@ -57,6 +58,12 @@ public interface ObservationEncoder<S, T> extends Encoder<S, T> {
      */
     boolean shouldObservationsWithSameXBeMerged();
 
+    /**
+     * Indicator whether the {@link ObservationEncoder} supports streaming for
+     * merged values.
+     * 
+     * @return Supports streaming for merged values
+     */
     boolean supportsResultStreamingForMergedValues();
 
     /**
@@ -71,5 +78,12 @@ public interface ObservationEncoder<S, T> extends Encoder<S, T> {
      * @return the response formats
      */
     Set<String> getSupportedResponseFormats(String service, String version);
+    
+    /**
+     * Get the supported observation type for the supported response formats
+     * 
+     * @return the observation types for the supported response formats
+     */
+    Map<String, Set<String>> getSupportedResponseFormatObservationTypes();
 
 }

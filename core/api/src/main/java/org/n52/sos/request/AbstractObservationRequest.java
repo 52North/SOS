@@ -145,7 +145,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
     public boolean isSetSrsName() {
         return StringHelper.isNotEmpty(getSrsName());
     }
-
+    
     public void copyOf(AbstractObservationRequest res) {
         res.setResponseFormat(this.responseFormat);
         res.setResponseMode(this.responseMode);

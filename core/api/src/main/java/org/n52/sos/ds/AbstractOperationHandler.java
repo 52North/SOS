@@ -216,35 +216,39 @@ public abstract class AbstractOperationHandler implements OperationHandler {
             throws OwsExceptionReport;
 
     protected void addProcedureParameter(OwsOperation opsMeta) {
-        addProcedureParameter(opsMeta, getCache().getProcedures());
+        opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
+//        addProcedureParameter(opsMeta, getCache().getProcedures());
     }
 
     protected void addQueryableProcedureParameter(OwsOperation opsMeta) {
-        addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
+        opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
+//        addProcedureParameter(opsMeta, getCache().getQueryableProcedures());
     }
 
     protected void addProcedureParameter(OwsOperation opsMeta, Collection<String> procedures) {
-        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, procedures);
-        } else {
+//        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+//            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.procedure, procedures);
+//        } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.procedure);
-        }
+//        }
     }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, String version) {
-        addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
+        opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.featureOfInterest);
+//        addFeatureOfInterestParameter(opsMeta, SosHelper.getFeatureIDs(getCache().getFeaturesOfInterest(), version));
     }
 
     protected void addFeatureOfInterestParameter(OwsOperation opsMeta, Collection<String> featuresOfInterest) {
-        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
-        } else {
+//        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+//            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.featureOfInterest, featuresOfInterest);
+//        } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.featureOfInterest);
-        }
+//        }
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta) {
-        addObservablePropertyParameter(opsMeta, getObservableProperties());
+        opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
+//        addObservablePropertyParameter(opsMeta, getObservableProperties());
     }
 
     protected Collection<String> getObservableProperties() {
@@ -260,23 +264,24 @@ public abstract class AbstractOperationHandler implements OperationHandler {
     }
 
     protected void addObservablePropertyParameter(OwsOperation opsMeta, Collection<String> observedProperties) {
-        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
-        } else {
+//        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+//            opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.observedProperty, observedProperties);
+//        } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.observedProperty);
-        }
+//        }
     }
 
     protected void addOfferingParameter(OwsOperation opsMeta) {
-        addOfferingParameter(opsMeta, getCache().getOfferings());
+        opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);
+//        addOfferingParameter(opsMeta, getCache().getOfferings());
     }
 
     protected void addOfferingParameter(OwsOperation opsMeta, Collection<String> offerings) {
-        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
-        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, offerings);
-        } else {
+//        if (getProfileHandler().getActiveProfile().isShowFullOperationsMetadataForObservations()) {
+//        opsMeta.addPossibleValuesParameter(SosConstants.GetObservationParams.offering, offerings);
+//        } else {
             opsMeta.addAnyParameterValue(SosConstants.GetObservationParams.offering);
-        }
+//        }
     }
 
     public boolean isIncludeChildObservableProperties() {

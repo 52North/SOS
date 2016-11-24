@@ -56,16 +56,18 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
         addProcedureParameter(opsMeta);
-        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            pdfs.addAll(ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION));
-            opsMeta.addPossibleValuesParameter(
-                    Sos1Constants.DescribeSensorParams.outputFormat, pdfs);
-        } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            pdfs.addAll( ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
-            opsMeta.addPossibleValuesParameter(
-                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, pdfs);
-        }
+        opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
+        
+//        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
+//        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+//            pdfs.addAll(ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION));
+//            opsMeta.addPossibleValuesParameter(
+//                    Sos1Constants.DescribeSensorParams.outputFormat, pdfs);
+//        } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
+//            pdfs.addAll( ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
+//            opsMeta.addPossibleValuesParameter(
+//                    Sos2Constants.DescribeSensorParams.procedureDescriptionFormat, pdfs);
+//        }
     }
 
     /**

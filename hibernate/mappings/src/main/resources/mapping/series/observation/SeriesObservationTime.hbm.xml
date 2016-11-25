@@ -22,10 +22,10 @@
             <column index="obsResultTimeIdx" name="resultTime" length="29" not-null="true" unique-key="observationIdentity"/>
         </property>
         <property name="validTimeStart" type="timestamp">
-            <column name="validTimeStart" length="29" />
+            <column name="validTimeStart" length="29" not-null="false" default="NULL"/>
         </property>
         <property name="validTimeEnd" type="timestamp">
-            <column name="validTimeEnd" length="29" />
+            <column name="validTimeEnd" length="29" not-null="false" default="NULL"/>
         </property>
                 <set name="offerings" table="observationHasOffering" inverse="false">
             <key>

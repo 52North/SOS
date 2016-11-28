@@ -222,21 +222,4 @@ public abstract class AbstractMySQLDatasource extends AbstractHibernateFullDBDat
         }
         return checkSchema;
     }
-
-    @Override
-    protected String[] checkCreateSchema(String[] script) {
-        String[] checkCreateSchema = super.checkCreateSchema(script);
-        for (int i = 0; i < checkCreateSchema.length; i++) {
-            checkCreateSchema[i] = checkForNullableTimestamp(checkCreateSchema[i]);
-        }
-        return checkCreateSchema;
-    }
-
-    private String checkForNullableTimestamp(String string) {
-        if (string.contains("timestamp default NULL")){
-            return string.replaceAll("timestamp default NULL", "timestamp NULL default NULL");
-        }
-        return string;
-    }
-    
 }

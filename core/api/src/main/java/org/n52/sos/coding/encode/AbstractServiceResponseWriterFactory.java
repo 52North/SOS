@@ -37,12 +37,12 @@ import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.service.StreamingSettings;
 
 /**
  * {@link ResponseWriterFactory} implementation for
- * {@link AbstractServiceResponse} and
+ * {@link OwsServiceResponse} and
  * {@link AbstractServiceResponseWriter}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -53,7 +53,7 @@ public class AbstractServiceResponseWriterFactory
         implements SingleTypeComponentFactory<ResponseWriterKey, ResponseWriter<?>>, ResponseWriterFactory {
 
     protected static final ResponseWriterKey RESPONSE_WRITER_KEY
-            = new ResponseWriterKey(AbstractServiceResponse.class);
+            = new ResponseWriterKey(OwsServiceResponse.class);
 
     private ResponseWriterRepository responseWriterRepository;
     private EncoderRepository encoderRepository;

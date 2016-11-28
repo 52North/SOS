@@ -54,7 +54,7 @@ import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;

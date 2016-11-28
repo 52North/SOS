@@ -34,7 +34,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 
 import com.google.common.collect.Lists;

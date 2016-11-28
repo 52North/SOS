@@ -39,10 +39,10 @@ import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -50,7 +50,7 @@ import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.PrefixedIdentifierHelper;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
@@ -88,7 +88,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     private Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<AbstractServiceRequest, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
+        Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
         requestResponseMap.put(new GetCapabilitiesRequest(SosConstants.SOS), new GetCapabilitiesResponse());
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
@@ -116,7 +116,7 @@ public class PrefixedIdentifierModifier extends AbstractIdentifierModifier {
     }
 
     @Override
-    protected boolean checkForFlag(AbstractServiceRequest request, AbstractServiceResponse response)
+    protected boolean checkForFlag(OwsServiceRequest request, OwsServiceResponse response)
             throws InvalidParameterValueException {
         return this.helper.isSetAnyPrefix();
     }

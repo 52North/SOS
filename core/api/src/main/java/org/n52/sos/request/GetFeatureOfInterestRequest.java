@@ -31,10 +31,10 @@ package org.n52.sos.request;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
 
 /**
@@ -42,7 +42,7 @@ import org.n52.shetland.util.CollectionHelper;
  *
  * @since 4.0.0
  */
-public class GetFeatureOfInterestRequest extends AbstractServiceRequest {
+public class GetFeatureOfInterestRequest extends OwsServiceRequest {
 
     /**
      * FOI identifiers list

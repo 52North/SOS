@@ -131,7 +131,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.encode.AbstractSensorMLDecoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 

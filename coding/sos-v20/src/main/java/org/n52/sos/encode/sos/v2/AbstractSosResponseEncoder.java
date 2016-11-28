@@ -40,7 +40,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -61,7 +61,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
+public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends AbstractResponseEncoder<T> {
     public AbstractSosResponseEncoder(String operation, Class<T> responseType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation, Sos2Constants.NS_SOS_20,
                 SosConstants.NS_SOS_PREFIX, responseType);

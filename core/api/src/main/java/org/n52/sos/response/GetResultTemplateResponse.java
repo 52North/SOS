@@ -28,8 +28,8 @@
  */
 package org.n52.sos.response;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.sos.SosResultStructure;
  * @since 4.0.0
  *
  */
-public class GetResultTemplateResponse extends AbstractServiceResponse {
+public class GetResultTemplateResponse extends OwsServiceResponse {
 
     private SosResultEncoding resultEncoding;
 

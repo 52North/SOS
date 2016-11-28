@@ -67,16 +67,14 @@ import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionRepository;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.OfferingExtensionRepository;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.iceland.util.LocalizedProducer;
 import org.n52.iceland.util.collections.MultiMaps;
 import org.n52.iceland.util.collections.SetMultiMap;
 import org.n52.janmayen.Comparables;
@@ -106,6 +104,9 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.exception.VersionNegotiationFailedException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
@@ -114,7 +115,7 @@ import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.I18NHelper;
@@ -302,8 +303,10 @@ public class GetCapabilitiesDAO extends AbstractGetCapabilitiesHandler {
 
     private OwsServiceIdentification getServiceIdentification(GetCapabilitiesRequest request, String service,
                                                               String version) throws OwsExceptionReport {
-        OwsServiceIdentification serviceIdentification = this.serviceMetadataRepository
-                .getServiceIdentificationFactory(service).get(request.getRequestedLocale());
+        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        LocalizedProducer<OwsServiceIdentification> serviceIdentificationFactory
+                = this.serviceMetadataRepository.getServiceIdentificationFactory(service);
+        OwsServiceIdentification serviceIdentification = serviceIdentificationFactory.get(locale);
         if (version.equals(Sos2Constants.SERVICEVERSION)) {
             serviceIdentification.setProfiles(getProfiles(SosConstants.SOS, Sos2Constants.SERVICEVERSION));
         }

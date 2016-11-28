@@ -55,7 +55,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapResponse;
@@ -176,7 +176,7 @@ public abstract class AbstractSoapEncoder<T, S> extends AbstractXmlEncoder<T, S>
     protected XmlObject getBodyContent(SoapResponse response) throws EncodingException {
         OperationResponseEncoderKey key =
                 new OperationResponseEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);
         }

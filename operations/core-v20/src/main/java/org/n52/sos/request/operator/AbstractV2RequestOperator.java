@@ -33,9 +33,9 @@ import java.util.Map;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.request.handler.OperationHandler;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * @param <D>
@@ -48,7 +48,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
 
     public AbstractV2RequestOperator(String operationName, Class<Q> requestType) {
@@ -65,7 +65,7 @@ public abstract class AbstractV2RequestOperator<D extends OperationHandler, Q ex
         return null;
     }
 
-    protected void checkExtensions(final AbstractServiceRequest request, final CompositeOwsException exceptions) {
+    protected void checkExtensions(final OwsServiceRequest request, final CompositeOwsException exceptions) {
         if (request.isSetExtensions()) {
             // currently nothing to check
         }

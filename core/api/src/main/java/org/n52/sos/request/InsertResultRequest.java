@@ -28,8 +28,8 @@
  */
 package org.n52.sos.request;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
 
 import com.google.common.base.Strings;
 
@@ -37,7 +37,7 @@ import com.google.common.base.Strings;
  * @since 4.0.0
  *
  */
-public class InsertResultRequest extends AbstractServiceRequest {
+public class InsertResultRequest extends OwsServiceRequest {
 
     private String templateIdentifier;
     private String resultValues;

@@ -30,16 +30,16 @@ package org.n52.sos.response;
 
 import java.util.List;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0
  *
  */
-public class DescribeSensorResponse extends AbstractServiceResponse {
+public class DescribeSensorResponse extends OwsServiceResponse {
 
     private String outputFormat;
 

@@ -46,9 +46,9 @@ import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -84,8 +84,8 @@ import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -106,7 +106,7 @@ import com.google.common.collect.Sets;
 
 public abstract class AbstractIdentifierModifier implements RequestResponseModifier {
 
-    protected abstract boolean checkForFlag(AbstractServiceRequest request, AbstractServiceResponse response) throws
+    protected abstract boolean checkForFlag(OwsServiceRequest request, OwsServiceResponse response) throws
             InvalidParameterValueException;
 
     protected abstract String checkOfferingParameterValue(String parameterValue);
@@ -134,7 +134,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected abstract void checkAndChangOfferingIdentifier(SosOffering offering);
 
     @Override
-    public AbstractServiceRequest modifyRequest(AbstractServiceRequest request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
             return changeGetObservationRequestParameterValues((GetObservationRequest) request);
         } else if (request instanceof GetFeatureOfInterestRequest) {
@@ -151,7 +151,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest changeGetObservationRequestParameterValues(GetObservationRequest request) {
+    protected OwsServiceRequest changeGetObservationRequestParameterValues(GetObservationRequest request) {
         if (request.isSetOffering()) {
             request.setOfferings(checkOfferingParameterValues(request.getOfferings()));
         }
@@ -167,7 +167,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest changeGetFeatureOfInterestRequestParameterValues(
+    protected OwsServiceRequest changeGetFeatureOfInterestRequestParameterValues(
             GetFeatureOfInterestRequest request) {
         if (request.isSetFeatureOfInterestIdentifiers()) {
             request.setFeatureIdentifiers(checkFeatureOfInterestParameterValues(request.getFeatureIdentifiers()));
@@ -181,12 +181,12 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest changeDescribeSensorRequestParameterValues(DescribeSensorRequest request) {
+    protected OwsServiceRequest changeDescribeSensorRequestParameterValues(DescribeSensorRequest request) {
         request.setProcedure(checkProcedureParameterValue(request.getProcedure()));
         return request;
     }
 
-    protected AbstractServiceRequest changeGetDataAvailabilityRequestParameterValues(
+    protected OwsServiceRequest changeGetDataAvailabilityRequestParameterValues(
             GetDataAvailabilityRequest request) {
         if (request.isSetOfferings()) {
             request.setOffering(checkOfferingParameterValues(request.getOfferings()));
@@ -203,7 +203,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest changeGetResultTemplateRequestParameterValues(GetResultTemplateRequest request) {
+    protected OwsServiceRequest changeGetResultTemplateRequestParameterValues(GetResultTemplateRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
         }
@@ -213,7 +213,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest changeGetResultRequestParameterValues(GetResultRequest request) {
+    protected OwsServiceRequest changeGetResultRequestParameterValues(GetResultRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
         }
@@ -227,7 +227,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest request, AbstractServiceResponse response)
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response)
             throws OwsExceptionReport {
         if (checkForFlag(request, response)) {
             if (response instanceof GetCapabilitiesResponse) {
@@ -305,13 +305,13 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return parameter;
     }
 
-    protected AbstractServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
+    protected OwsServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
         // TODO check typeOf title
         response.getProcedureDescriptions().stream().forEach(this::checkAndChangeProcedure);
         return response;
     }
 
-    protected AbstractServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
+    protected OwsServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
         for (OmObservation omObservation : response.getObservationCollection()) {
             OmObservationConstellation observationConstellation = omObservation.getObservationConstellation();
             checkAndChangeFeatureOfInterestIdentifier(observationConstellation.getFeatureOfInterest());
@@ -324,7 +324,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return response;
     }
 
-    protected AbstractServiceResponse changeGetFeatureOfInterestResponseIdentifier(GetFeatureOfInterestResponse response) {
+    protected OwsServiceResponse changeGetFeatureOfInterestResponseIdentifier(GetFeatureOfInterestResponse response) {
         if (response.getAbstractFeature() instanceof FeatureCollection) {
             FeatureCollection featureCollection = (FeatureCollection) response.getAbstractFeature();
             // TODO check if new map with new identifier should be created
@@ -335,7 +335,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return response;
     }
 
-    protected AbstractServiceResponse changeGetResultTemplateResponseIdentifier(GetResultTemplateResponse response)
+    protected OwsServiceResponse changeGetResultTemplateResponseIdentifier(GetResultTemplateResponse response)
             throws OwsExceptionReport {
         SweAbstractDataComponent resultStructure = response.getResultStructure().getResultStructure();
         SweDataRecord dataRecord = null;
@@ -360,7 +360,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return response;
     }
 
-    protected AbstractServiceResponse changeGetDataAvailabilityResponseIdentifier(GetDataAvailabilityResponse response) {
+    protected OwsServiceResponse changeGetDataAvailabilityResponseIdentifier(GetDataAvailabilityResponse response) {
         for (DataAvailability da : response.getDataAvailabilities()) {
             da.getFeatureOfInterest().setHref(checkFeatureOfInterestIdentifier(da.getFeatureOfInterest().getHref()));
             da.getProcedure().setHref(checkProcedureIdentifier(da.getProcedure().getHref()));

@@ -64,7 +64,7 @@ import org.n52.sos.netcdf.data.subsensor.PointProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.feature.FeatureUtil;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.svalbard.encode.exception.EncodingException;
 

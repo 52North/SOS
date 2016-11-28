@@ -47,7 +47,7 @@ import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
@@ -66,9 +66,9 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  * @param <T>
- *            concrete {@link AbstractServiceResponse}
+ *            concrete {@link OwsServiceResponse}
  */
-public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractDelegatingEncoder<EXIObject, T> {
+public class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends AbstractDelegatingEncoder<EXIObject, T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSosResponseEncoder.class);
 
@@ -78,7 +78,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
      * Constructor
      *
      * @param type
-     *            Concrete {@link AbstractServiceResponse} class
+     *            Concrete {@link OwsServiceResponse} class
      * @param operation
      *            SOS operation as {@link String}
      * @param version
@@ -94,7 +94,7 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
      * Constructor
      *
      * @param type
-     *            Concrete {@link AbstractServiceResponse} class
+     *            Concrete {@link OwsServiceResponse} class
      * @param operation
      *            SOS operation as {@link Enum}
      * @param version
@@ -107,8 +107,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     @Override
     public EXIObject encode(T objectToEncode, Map<HelperValues, String> additionalValues)
             throws EncodingException {
-        AbstractServiceResponse asr = objectToEncode;
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+        OwsServiceResponse asr = objectToEncode;
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
         if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
             try {
                 ((StreamingDataResponse)asr).mergeStreamingData();
@@ -140,16 +140,16 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     /**
-     * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
+     * Get the {@link Encoder} for the {@link OwsServiceResponse} and the
      * requested contentType
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to get {@link Encoder} for
-     * @return {@link Encoder} for the {@link AbstractServiceResponse}
+     *            {@link OwsServiceResponse} to get {@link Encoder} for
+     * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
-    protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
+    protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
         OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
                     MediaTypes.APPLICATION_XML)));
@@ -158,13 +158,13 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     /**
-     * Get encoding {@link MediaType} from {@link AbstractServiceResponse}
+     * Get encoding {@link MediaType} from {@link OwsServiceResponse}
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to get content type from
+     *            {@link OwsServiceResponse} to get content type from
      * @return Encoding {@link MediaType}
      */
-    protected MediaType getEncodedContentType(AbstractServiceResponse asr) {
+    protected MediaType getEncodedContentType(OwsServiceResponse asr) {
         if (asr instanceof ResponseFormat) {
             return getEncodedContentType((ResponseFormat) asr);
         }

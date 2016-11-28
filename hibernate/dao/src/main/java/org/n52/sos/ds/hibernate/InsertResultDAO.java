@@ -87,7 +87,7 @@ import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.request.InsertResultRequest;

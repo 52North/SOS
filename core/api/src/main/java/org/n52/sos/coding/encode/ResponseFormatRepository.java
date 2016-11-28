@@ -38,7 +38,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
 import org.n52.iceland.util.activation.ActivationListeners;
@@ -83,13 +83,13 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
 
     private void generateResponseFormatMaps() {
         this.responseFormats.clear();
-        Set<ServiceOperatorKey> serviceOperatorKeyTypes
+        Set<OwsServiceKey> serviceOperatorKeyTypes
                 = getServiceOperatorKeys();
 
         for (Encoder<?, ?> encoder : this.encoderRepository.getEncoders()) {
             if (encoder instanceof ObservationEncoder) {
                 ObservationEncoder<?, ?> observationEncoder = (ObservationEncoder<?, ?>) encoder;
-                for (ServiceOperatorKey key : serviceOperatorKeyTypes) {
+                for (OwsServiceKey key : serviceOperatorKeyTypes) {
                     Set<String> responseFormats = observationEncoder.getSupportedResponseFormats(key.getService(), key.getVersion());
                     if (responseFormats != null) {
                         for (String responseFormat : responseFormats) {
@@ -113,7 +113,7 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
         byVersion.add(key.getResponseFormat());
     }
 
-    public Set<String> getSupportedResponseFormats(ServiceOperatorKey sokt) {
+    public Set<String> getSupportedResponseFormats(OwsServiceKey sokt) {
         return getSupportedResponseFormats(sokt.getService(), sokt.getVersion());
     }
 
@@ -128,7 +128,7 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
             return Collections.emptySet();
         }
 
-        ServiceOperatorKey sokt = new ServiceOperatorKey(service, version);
+        OwsServiceKey sokt = new OwsServiceKey(service, version);
         Set<String> result = Sets.newHashSet();
         for (String responseFormat : responseFormats) {
             ResponseFormatKey rfkt = new ResponseFormatKey(sokt, responseFormat);
@@ -152,27 +152,27 @@ public class ResponseFormatRepository implements ActivationManager<ResponseForma
         return Collections.unmodifiableSet(rfs);
     }
 
-    public Map<ServiceOperatorKey, Set<String>> getAllSupportedResponseFormats() {
-        Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
-        for (ServiceOperatorKey sokt : getServiceOperatorKeys()) {
+    public Map<OwsServiceKey, Set<String>> getAllSupportedResponseFormats() {
+        Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
+        for (OwsServiceKey sokt : getServiceOperatorKeys()) {
             map.put(sokt, getAllSupportedResponseFormats(sokt));
         }
         return map;
     }
 
-    private Set<ServiceOperatorKey> getServiceOperatorKeys() {
+    private Set<OwsServiceKey> getServiceOperatorKeys() {
         return this.serviceOperatorRepository
                 .getServiceOperatorKeys();
     }
 
-    public Set<String> getAllSupportedResponseFormats(ServiceOperatorKey sokt) {
+    public Set<String> getAllSupportedResponseFormats(OwsServiceKey sokt) {
         return getAllSupportedResponseFormats(sokt.getService(),
                                               sokt.getVersion());
     }
 
-     public Map<ServiceOperatorKey, Set<String>> getSupportedResponseFormats() {
-        Map<ServiceOperatorKey, Set<String>> map = Maps.newHashMap();
-        for (ServiceOperatorKey sokt : getServiceOperatorKeys()) {
+     public Map<OwsServiceKey, Set<String>> getSupportedResponseFormats() {
+        Map<OwsServiceKey, Set<String>> map = Maps.newHashMap();
+        for (OwsServiceKey sokt : getServiceOperatorKeys()) {
             map.put(sokt, getSupportedResponseFormats(sokt));
         }
         return map;

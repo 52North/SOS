@@ -29,13 +29,13 @@
 package org.n52.sos.response;
 
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetResultResponse extends AbstractServiceResponse {
+public class GetResultResponse extends OwsServiceResponse {
 
     private String resultValues;
 

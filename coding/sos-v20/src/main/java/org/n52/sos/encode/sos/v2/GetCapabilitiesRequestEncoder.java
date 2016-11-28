@@ -38,7 +38,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.OwsAcceptVersions;
 import org.n52.shetland.ogc.ows.OwsSections;
 import org.n52.shetland.w3c.SchemaLocation;

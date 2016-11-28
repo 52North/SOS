@@ -29,7 +29,7 @@
 package org.n52.sos.encode.exi;
 
 import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.exi.EXIObject;
 
 /**
@@ -40,16 +40,16 @@ import org.n52.sos.exi.EXIObject;
  * @since 4.2.0
  *
  * @param <T>
- *            concrete {@link AbstractServiceResponse}
+ *            concrete {@link OwsServiceResponse}
  */
-public abstract class AbstractSosV1ResponseEncoder<T extends AbstractServiceResponse> extends
+public abstract class AbstractSosV1ResponseEncoder<T extends OwsServiceResponse> extends
         AbstractSosResponseEncoder<T> {
 
     /**
      * Constructor
      *
      * @param type
-     *            Concrete {@link AbstractServiceResponse} class
+     *            Concrete {@link OwsServiceResponse} class
      * @param operation
      *            SOS operation as {@link String}
      */
@@ -61,7 +61,7 @@ public abstract class AbstractSosV1ResponseEncoder<T extends AbstractServiceResp
      * Constructor
      *
      * @param type
-     *            Concrete {@link AbstractServiceResponse} class
+     *            Concrete {@link OwsServiceResponse} class
      * @param operation
      *            SOS operation as {@link Enum}
      */

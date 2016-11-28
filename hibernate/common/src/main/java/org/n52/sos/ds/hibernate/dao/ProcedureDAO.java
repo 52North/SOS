@@ -84,7 +84,7 @@ import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

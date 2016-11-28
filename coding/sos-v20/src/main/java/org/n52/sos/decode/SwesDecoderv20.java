@@ -62,8 +62,8 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -73,7 +73,7 @@ import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.InsertSensorRequest;
@@ -94,7 +94,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public class SwesDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommunicationObject> {
+public class SwesDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicationObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwesDecoderv20.class);
 
@@ -117,7 +117,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommun
     }
 
     @Override
-    public AbstractServiceRequest decode(XmlObject xmlObject) throws DecodingException {
+    public OwsServiceRequest decode(XmlObject xmlObject) throws DecodingException {
         LOGGER.debug("REQUESTTYPE:" + xmlObject.getClass());
         XmlHelper.validateDocument(xmlObject);
         if (xmlObject instanceof DescribeSensorDocument) {
@@ -145,7 +145,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommun
      * @throws DecodingException
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest parseDescribeSensor(final DescribeSensorDocument xbDescSenDoc)
+    private OwsServiceRequest parseDescribeSensor(final DescribeSensorDocument xbDescSenDoc)
             throws DecodingException {
         final DescribeSensorRequest descSensorRequest = new DescribeSensorRequest();
         final DescribeSensorType xbDescSensor = xbDescSenDoc.getDescribeSensor();
@@ -161,7 +161,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommun
         return descSensorRequest;
     }
 
-    private AbstractServiceRequest parseInsertSensor(final InsertSensorDocument xbInsSensDoc)
+    private OwsServiceRequest parseInsertSensor(final InsertSensorDocument xbInsSensDoc)
             throws DecodingException {
         final InsertSensorRequest request = new InsertSensorRequest();
         final InsertSensorType xbInsertSensor = xbInsSensDoc.getInsertSensor();
@@ -216,7 +216,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommun
         return request;
     }
 
-    private AbstractServiceRequest parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) throws DecodingException {
+    private OwsServiceRequest parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) throws DecodingException {
         final DeleteSensorRequest request = new DeleteSensorRequest();
         DeleteSensorType deleteSensor = xbDelSenDoc.getDeleteSensor();
         request.setService(deleteSensor.getService());
@@ -238,7 +238,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommun
      * @throws DecodingException
      *             * if an error occurs.
      */
-    private AbstractServiceRequest parseUpdateSensorDescription(final UpdateSensorDescriptionDocument xbUpSenDoc)
+    private OwsServiceRequest parseUpdateSensorDescription(final UpdateSensorDescriptionDocument xbUpSenDoc)
             throws DecodingException {
         final UpdateSensorRequest request = new UpdateSensorRequest();
         final UpdateSensorDescriptionType xbUpdateSensor = xbUpSenDoc.getUpdateSensorDescription();

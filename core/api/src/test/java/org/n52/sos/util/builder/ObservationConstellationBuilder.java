@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

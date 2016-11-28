@@ -47,7 +47,7 @@ import org.w3c.dom.NodeList;
 
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapRequest;
@@ -122,7 +122,7 @@ public class Soap12Decoder extends AbstractSoapDecoder {
         return r;
     }
 
-    private AbstractServiceRequest getBodyContent(EnvelopeDocument doc) throws DecodingException {
+    private OwsServiceRequest getBodyContent(EnvelopeDocument doc) throws DecodingException {
         Body body = doc.getEnvelope().getBody();
         try {
             Node domNode = body.getDomNode();

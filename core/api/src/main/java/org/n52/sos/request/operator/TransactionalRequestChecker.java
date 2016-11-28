@@ -32,11 +32,11 @@ import java.util.Set;
 
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.request.RequestContext;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.iceland.util.net.IPAddress;
-import org.n52.iceland.util.net.IPAddressRange;
-import org.n52.iceland.util.net.ProxyChain;
+import org.n52.janmayen.net.IPAddress;
+import org.n52.janmayen.net.IPAddressRange;
+import org.n52.janmayen.net.ProxyChain;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
 import com.google.common.base.Predicate;
@@ -49,7 +49,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class TransactionalRequestChecker {
-    private Predicate<RequestContext> predicate;
+    private Predicate<OwsServiceRequestContext> predicate;
 
     @SuppressWarnings("unchecked")
     public TransactionalRequestChecker(TransactionalSecurityConfiguration config) {
@@ -57,11 +57,11 @@ public class TransactionalRequestChecker {
                                         createTokenPredicate(config));
     }
 
-    public void add(Predicate<RequestContext> p) {
+    public void add(Predicate<OwsServiceRequestContext> p) {
         this.predicate = Predicates.and(this.predicate, p);
     }
 
-    public void check(RequestContext rc) throws OwsExceptionReport {
+    public void check(OwsServiceRequestContext rc) throws OwsExceptionReport {
         if (!predicate.apply(rc)) {
             throw new NoApplicableCodeException()
                     .withMessage("Not authorized for transactional operations!")
@@ -70,7 +70,7 @@ public class TransactionalRequestChecker {
         }
     }
 
-    private Predicate<RequestContext> createTokenPredicate(
+    private Predicate<OwsServiceRequestContext> createTokenPredicate(
             TransactionalSecurityConfiguration config) {
         if (!config.isTransactionalActive() ||
             !config.isSetTransactionalToken()) {
@@ -80,7 +80,7 @@ public class TransactionalRequestChecker {
         }
     }
 
-    private Predicate<RequestContext> createIpAdressPredicate(
+    private Predicate<OwsServiceRequestContext> createIpAdressPredicate(
             TransactionalSecurityConfiguration config) {
         if (!config.isTransactionalActive() ||
             !config.isSetTransactionalAllowedIps()) {
@@ -91,7 +91,7 @@ public class TransactionalRequestChecker {
         }
     }
 
-    private static class TokenPredicate implements Predicate<RequestContext> {
+    private static class TokenPredicate implements Predicate<OwsServiceRequestContext> {
         private final String token;
 
         TokenPredicate(String token) {
@@ -99,13 +99,13 @@ public class TransactionalRequestChecker {
         }
 
         @Override
-        public boolean apply(RequestContext ctx) {
+        public boolean apply(OwsServiceRequestContext ctx) {
             return ctx.getToken().isPresent() &&
                    ctx.getToken().get().equals(this.token);
         }
     }
 
-    private static class IpPredicate implements Predicate<RequestContext> {
+    private static class IpPredicate implements Predicate<OwsServiceRequestContext> {
         private final ImmutableSet<IPAddressRange> allowedAddresses;
         private final ImmutableSet<IPAddress> allowedProxies;
 
@@ -116,7 +116,7 @@ public class TransactionalRequestChecker {
         }
 
         @Override
-        public boolean apply(RequestContext ctx) {
+        public boolean apply(OwsServiceRequestContext ctx) {
             if (ctx.getIPAddress().isPresent()) {
                 final IPAddress address;
                 if (ctx.getForwardedForChain().isPresent()) {

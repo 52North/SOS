@@ -40,6 +40,7 @@ import org.hibernate.criterion.Criterion;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.om.OmObservation;
@@ -89,7 +90,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
                 ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations();
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
         this.serviceProvider = serviceProvider;
-        this.locale =  request.getRequestedLocale();
+        this.locale =  LocaleHelper.fromString(request.getRequestedLanguage());
     }
 
     @Override

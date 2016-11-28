@@ -42,10 +42,10 @@ import org.n52.iceland.event.events.OutgoingResponseEvent;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.iceland.request.RequestContext;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.iceland.statistics.impl.AbstractStatisticsServiceEventListener;
 import org.n52.janmayen.http.MediaType;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.janmayen.net.IPAddress;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
 
@@ -65,7 +65,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
     @Test
     public void sendSosNormalFlowToElasticSearch() throws InterruptedException {
 
-        RequestContext ctx = new RequestContext();
+        OwsServiceRequestContext ctx = new OwsServiceRequestContext();
         ctx.setIPAddress(new IPAddress("241.56.199.99"));
 
         DescribeSensorRequest request = new DescribeSensorRequest();
@@ -107,7 +107,7 @@ public class ServiceEventBusIt extends ElasticsearchAwareTest {
 
     @Test
     public void sendSosExceptionFlowTriadtToElasticSearch() throws InterruptedException {
-        RequestContext ctx = new RequestContext();
+        OwsServiceRequestContext ctx = new OwsServiceRequestContext();
         ctx.setIPAddress(new IPAddress("241.56.199.99"));
 
         DescribeSensorRequest request = new DescribeSensorRequest();

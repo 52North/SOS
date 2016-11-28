@@ -57,7 +57,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;

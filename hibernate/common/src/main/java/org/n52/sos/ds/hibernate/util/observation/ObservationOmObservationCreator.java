@@ -63,7 +63,7 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.util.SosHelper;
 

@@ -31,7 +31,7 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityRequest extends AbstractServiceRequest {
+public class GetDataAvailabilityRequest extends OwsServiceRequest {
 
     private List<String> procedures = new LinkedList<>();
     private List<String> observedProperties = new LinkedList<>();

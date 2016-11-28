@@ -95,7 +95,7 @@ import org.n52.sos.netcdf.data.subsensor.BinProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.ProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.AbstractObservationResponse;

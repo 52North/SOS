@@ -50,8 +50,8 @@ import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -123,7 +123,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public AbstractServiceRequest modifyRequest(AbstractServiceRequest request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
         if (request instanceof InsertObservationRequest) {
             splitObservations((InsertObservationRequest) request);
         }
@@ -274,7 +274,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest request, AbstractServiceResponse response) throws OwsExceptionReport{
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response) throws OwsExceptionReport{
         if (request instanceof GetObservationRequest && response instanceof GetObservationResponse) {
             return  mergeObservations((GetObservationRequest) request, (GetObservationResponse) response);
         } else  if (response instanceof GetObservationResponse) {
@@ -356,7 +356,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
         return false;
     }
 
-    private AbstractServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
+    private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         boolean checkEncoderForMergeObservations = checkEncoderForMergeObservations(response);
         if (checkEncoderForMergeObservations && !response.hasStreamingData()) {
             if (!response.hasStreamingData()) {

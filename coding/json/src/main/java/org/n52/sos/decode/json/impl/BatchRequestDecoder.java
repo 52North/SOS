@@ -34,7 +34,7 @@ import org.n52.svalbard.decode.OperationDecoderKey;
 import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
@@ -73,11 +73,11 @@ public class BatchRequestDecoder extends AbstractSosRequestDecoder<BatchRequest>
         return request;
     }
 
-    private Decoder<AbstractServiceRequest, JsonNode> getDecoder(JsonNode n) throws DecodingException {
+    private Decoder<OwsServiceRequest, JsonNode> getDecoder(JsonNode n) throws DecodingException {
         OperationDecoderKey k =
                 new OperationDecoderKey(n.path(JSONConstants.SERVICE).textValue(), n.path(JSONConstants.VERSION)
                         .textValue(), n.path(JSONConstants.REQUEST).textValue(), MediaTypes.APPLICATION_JSON);
-        Decoder<AbstractServiceRequest, JsonNode> decoder = getDecoder(k);
+        Decoder<OwsServiceRequest, JsonNode> decoder = getDecoder(k);
         if (decoder == null) {
             // TODO other exception?
             throw new NoDecoderForKeyException(k);

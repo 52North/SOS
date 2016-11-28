@@ -58,8 +58,8 @@ import org.n52.iceland.coding.decode.OwsDecodingException;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
@@ -125,10 +125,10 @@ public class EXIBinding extends SimpleBinding {
 
     @Override
     public void doPostOperation(HttpServletRequest req, HttpServletResponse res) throws HTTPException, IOException {
-        AbstractServiceRequest sosRequest = null;
+        OwsServiceRequest sosRequest = null;
         try {
             sosRequest = parseRequest(req);
-            AbstractServiceResponse sosResponse = getServiceOperator(sosRequest).receiveRequest(sosRequest);
+            OwsServiceResponse sosResponse = getServiceOperator(sosRequest).receiveRequest(sosRequest);
             writeResponse(req, res, sosResponse);
         } catch (OwsExceptionReport oer) {
             oer.setVersion(sosRequest != null ? sosRequest.getVersion() : null);
@@ -142,17 +142,17 @@ public class EXIBinding extends SimpleBinding {
      * @param request
      *            {@link HttpServletRequest} with EXI encoded
      *            {@link InputStream}
-     * @return {@link AbstractServiceRequest} from EXI encoded
+     * @return {@link OwsServiceRequest} from EXI encoded
      *         {@link InputStream}
      * @throws OwsExceptionReport
      *             If an error occurs during parsing
      */
-    protected AbstractServiceRequest parseRequest(HttpServletRequest request) throws OwsExceptionReport {
+    protected OwsServiceRequest parseRequest(HttpServletRequest request) throws OwsExceptionReport {
         XmlObject doc = decode(request);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("EXI-REQUEST: {}", doc.xmlText());
         }
-        Decoder<AbstractServiceRequest, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));
+        Decoder<OwsServiceRequest, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));
         try {
             return decoder.decode(doc).setRequestContext(getRequestContext(request));
         } catch (OwsDecodingException ex) {

@@ -43,11 +43,10 @@ import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterRepository;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
@@ -55,6 +54,8 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -64,7 +65,7 @@ import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.response.DescribeSensorResponse;
 
@@ -177,12 +178,11 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
                     new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                             INTERNAL_SERVER_ERROR);
         }
+        Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+        String pdf = request.getProcedureDescriptionFormat();
+        String version = request.getVersion();
 
-        return procedureConverter.createSosProcedureDescription(procedure,
-                                                                request.getProcedureDescriptionFormat(),
-                                                                request.getVersion(),
-                                                                request.getRequestedLocale(),
-                                                                session);
+        return procedureConverter.createSosProcedureDescription(procedure, pdf, version, locale, session);
     }
 
     /**
@@ -206,14 +206,12 @@ public class DescribeSensorDAO extends AbstractDescribeSensorHandler implements 
                     new ValidProcedureTimeDAO().getValidProcedureTimes(procedure, possibleProcedureDescriptionFormats,
                                                                                   request.getValidTime(), session);
             for (ValidProcedureTime validProcedureTime : validProcedureTimes) {
+                Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+                String pdf = request.getProcedureDescriptionFormat();
+                String version = request.getVersion();
                 SosProcedureDescription sosProcedureDescription
-                        = procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(
-                                procedure,
-                                request.getProcedureDescriptionFormat(),
-                                validProcedureTime,
-                                request.getVersion(),
-                                request.getRequestedLocale(),
-                                session);
+                        = procedureConverter.createSosProcedureDescriptionFromValidProcedureTime(procedure, pdf,
+                                validProcedureTime, version, locale, session);
                 list.add(convertProcedureDescription(sosProcedureDescription, request));
             }
         } else {

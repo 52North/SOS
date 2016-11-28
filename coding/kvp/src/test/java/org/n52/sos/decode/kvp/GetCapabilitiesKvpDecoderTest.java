@@ -40,7 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;

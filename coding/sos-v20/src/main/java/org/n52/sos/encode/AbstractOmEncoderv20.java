@@ -92,7 +92,7 @@ import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GmlHelper;

@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * Generator class for SensorML 1.0.1 procedure descriptions

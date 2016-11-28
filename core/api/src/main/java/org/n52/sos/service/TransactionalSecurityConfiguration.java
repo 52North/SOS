@@ -37,8 +37,8 @@ import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.janmayen.lifecycle.Constructable;
-import org.n52.iceland.util.net.IPAddress;
-import org.n52.iceland.util.net.IPAddressRange;
+import org.n52.janmayen.net.IPAddress;
+import org.n52.janmayen.net.IPAddressRange;
 import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;

@@ -28,14 +28,14 @@
  */
 package org.n52.sos.response;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0
  *
  */
-public class InsertObservationResponse extends AbstractServiceResponse {
+public class InsertObservationResponse extends OwsServiceResponse {
     public InsertObservationResponse() {
         super(null, null, SosConstants.Operations.InsertObservation.name());
     }

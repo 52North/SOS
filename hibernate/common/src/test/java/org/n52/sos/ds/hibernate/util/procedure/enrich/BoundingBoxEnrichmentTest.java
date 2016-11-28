@@ -46,7 +46,7 @@ import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
 import org.n52.shetland.ogc.swe.SweEnvelope;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 
 import com.google.common.collect.Lists;

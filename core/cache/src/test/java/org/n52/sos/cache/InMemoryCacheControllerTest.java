@@ -64,8 +64,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.util.Constants;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -135,11 +135,11 @@ public class InMemoryCacheControllerTest extends AbstractCacheControllerTest {
 
     private static final String OFFERING = PROCEDURE + OFFERING_IDENTIFIER_EXTENSION;
 
-    private AbstractServiceRequest request;
+    private OwsServiceRequest request;
 
     private TestableInMemoryCacheController controller;
 
-    private AbstractServiceResponse response;
+    private OwsServiceResponse response;
 
     private OmObservation observation;
 

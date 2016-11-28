@@ -29,7 +29,7 @@
 package org.n52.sos.decode.kvp;
 
 import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.sos.Sos2Constants;

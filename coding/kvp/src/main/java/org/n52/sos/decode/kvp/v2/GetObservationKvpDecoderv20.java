@@ -38,7 +38,7 @@ import org.apache.xmlbeans.XmlObject;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
@@ -139,12 +139,12 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
         builder.add(SosConstants.GetObservationParams.responseFormat,
                     GetObservationRequest::setResponseFormat);
         builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-                    AbstractServiceRequest::addSweBooleanExtension);
+                    OwsServiceRequest::addSweBooleanExtension);
         builder.add("extension", decodeList(this::parseExtensionParameter));
 
     }
 
-    protected void parseExtensionParameter(AbstractServiceRequest request, String name, List<String> value)
+    protected void parseExtensionParameter(OwsServiceRequest request, String name, List<String> value)
             throws DecodingException {
         try {
             for (String parameterValue : value) {

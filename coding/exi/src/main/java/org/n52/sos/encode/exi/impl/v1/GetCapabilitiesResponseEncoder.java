@@ -29,7 +29,7 @@
 package org.n52.sos.encode.exi.impl.v1;
 
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.sos.encode.exi.AbstractSosV1ResponseEncoder;
 
 

@@ -28,14 +28,14 @@
  */
 package org.n52.sos.response;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
  * @since 4.0.0
  *
  */
-public class UpdateSensorResponse extends AbstractServiceResponse {
+public class UpdateSensorResponse extends OwsServiceResponse {
 
     private String updatedProcedure;
 

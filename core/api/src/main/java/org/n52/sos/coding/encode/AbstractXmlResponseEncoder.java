@@ -47,7 +47,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.iceland.coding.encode.SchemaRepository;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.shetland.w3c.SchemaLocation;
@@ -181,19 +181,19 @@ public abstract class AbstractXmlResponseEncoder<T>
 
     /**
      * Get the concrete schema locations for this
-     * {@link AbstractServiceResponse} encoder
+     * {@link OwsServiceResponse} encoder
      *
      * @return the concrete schema locations
      */
     protected abstract Set<SchemaLocation> getConcreteSchemaLocations();
 
     /**
-     * Create an {@link XmlObject} from the {@link AbstractServiceResponse}
+     * Create an {@link XmlObject} from the {@link OwsServiceResponse}
      * object
      *
      * @param response
-     *            {@link AbstractServiceResponse} to encode
-     * @return XML encoded {@link AbstractServiceResponse}
+     *            {@link OwsServiceResponse} to encode
+     * @return XML encoded {@link OwsServiceResponse}
      * @throws EncodingException
      *             If an error occurs during the encoding
      */
@@ -204,7 +204,7 @@ public abstract class AbstractXmlResponseEncoder<T>
      * supported for this operations.
      *
      * @param response
-     *            Implementation of {@link AbstractServiceResponse}
+     *            Implementation of {@link OwsServiceResponse}
      * @param outputStream
      *            {@link OutputStream} to write
      * @param encodingValues

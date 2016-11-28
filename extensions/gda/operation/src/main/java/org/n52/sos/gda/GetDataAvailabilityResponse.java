@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -49,7 +49,7 @@ import com.google.common.collect.Lists;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityResponse extends AbstractServiceResponse {
+public class GetDataAvailabilityResponse extends OwsServiceResponse {
     private final List<DataAvailability> dataAvailabilities = new LinkedList<DataAvailability>();
 
     private String namespace = GetDataAvailabilityConstants.NS_GDA;

@@ -31,7 +31,7 @@ package org.n52.sos.statistics.sos.resolvers;
 import java.util.Map;
 
 import org.n52.iceland.event.events.RequestEvent;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventResolver;
 import org.n52.iceland.statistics.api.utils.EventHandlerFinder;
@@ -55,8 +55,8 @@ public class SosRequestEventResolver implements StatisticsServiceEventResolver<R
         if (event == null || event.getRequest() == null) {
             return null;
         }
-        AbstractServiceRequest request = event.getRequest();
-        StatisticsServiceEventHandler<AbstractServiceRequest> handler = EventHandlerFinder.findHandler(request, handlers);
+        OwsServiceRequest request = event.getRequest();
+        StatisticsServiceEventHandler<OwsServiceRequest> handler = EventHandlerFinder.findHandler(request, handlers);
 
         return handler.resolveAsMap(request);
 

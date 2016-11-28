@@ -38,8 +38,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.function.Functions;
 import org.n52.shetland.ogc.filter.Filter;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -47,9 +46,10 @@ import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swes.SwesExtensions;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.janmayen.function.Functions;
 import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 
 import com.google.common.base.Strings;

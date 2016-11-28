@@ -32,8 +32,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 import com.google.common.base.Strings;
 
@@ -44,7 +44,7 @@ import com.google.common.base.Strings;
  *
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
+public abstract class AbstractObservationResponse extends OwsServiceResponse implements ResponseFormat {
     private List<OmObservation> observationCollection;
 
     private String responseFormat;

@@ -34,8 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.response.BatchResponse.ExceptionOrResponse;
 import org.n52.sos.util.BatchConstants;
 
@@ -46,11 +46,11 @@ import org.n52.sos.util.BatchConstants;
  *
  * @since 4.0.0
  */
-public class BatchResponse extends AbstractServiceResponse implements Iterable<ExceptionOrResponse> {
+public class BatchResponse extends OwsServiceResponse implements Iterable<ExceptionOrResponse> {
     private final List<ExceptionOrResponse> responses;
 
     public BatchResponse() {
-        this(new LinkedList<ExceptionOrResponse>());
+        this(new LinkedList<>());
     }
 
     public BatchResponse(List<ExceptionOrResponse> responses) {
@@ -76,7 +76,7 @@ public class BatchResponse extends AbstractServiceResponse implements Iterable<E
         this.responses.add(new ExceptionOrResponse(e));
     }
 
-    public void add(AbstractServiceResponse r) {
+    public void add(OwsServiceResponse r) {
         this.responses.add(new ExceptionOrResponse(r));
     }
 
@@ -96,14 +96,14 @@ public class BatchResponse extends AbstractServiceResponse implements Iterable<E
     public static class ExceptionOrResponse {
         private final OwsExceptionReport exception;
 
-        private final AbstractServiceResponse response;
+        private final OwsServiceResponse response;
 
-        private ExceptionOrResponse(OwsExceptionReport exception, AbstractServiceResponse response) {
+        private ExceptionOrResponse(OwsExceptionReport exception, OwsServiceResponse response) {
             this.exception = exception;
             this.response = response;
         }
 
-        public ExceptionOrResponse(AbstractServiceResponse response) {
+        public ExceptionOrResponse(OwsServiceResponse response) {
             this(null, Objects.requireNonNull(response));
         }
 
@@ -119,7 +119,7 @@ public class BatchResponse extends AbstractServiceResponse implements Iterable<E
             return exception;
         }
 
-        public AbstractServiceResponse getResponse() {
+        public OwsServiceResponse getResponse() {
             return response;
         }
     }

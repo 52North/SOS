@@ -35,8 +35,8 @@ import org.apache.xmlbeans.XmlObject;
 
 import org.n52.svalbard.HelperValues;
 import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * Test class implementation for {@link AbstractSensorMLEncoder}
@@ -55,7 +55,7 @@ public class TestAbstractSensorMLEncoder extends AbstractSensorMLEncoder {
 
     @Override
     public XmlObject encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport, UnsupportedEncoderInputException {
+            throws EncodingException, UnsupportedEncoderInputException {
         // TODO Auto-generated method stub
         return null;
     }

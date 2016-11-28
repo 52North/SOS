@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweEnvelope;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.util.ReferencedEnvelope;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.base.Optional;

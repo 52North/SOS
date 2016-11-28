@@ -31,7 +31,7 @@ package org.n52.sos.encode.json;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
@@ -48,7 +48,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends JSONEncoder<T> {
+public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends JSONEncoder<T> {
     public AbstractSosResponseEncoder(Class<T> type, String operation) {
         super(type, new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation,
                                                     MediaTypes.APPLICATION_JSON));

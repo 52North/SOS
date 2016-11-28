@@ -48,7 +48,7 @@ import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
 import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;

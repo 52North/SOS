@@ -39,8 +39,8 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;

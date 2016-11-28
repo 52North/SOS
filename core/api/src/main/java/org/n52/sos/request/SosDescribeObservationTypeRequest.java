@@ -28,15 +28,15 @@
  */
 package org.n52.sos.request;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
 
 /**
  * SOS DescribeObservationType request
  *
  * @since 4.0.0
  */
-public class SosDescribeObservationTypeRequest extends AbstractServiceRequest {
+public class SosDescribeObservationTypeRequest extends OwsServiceRequest {
     public SosDescribeObservationTypeRequest() {
         super(null, null, Sos1Constants.Operations.DescribeObservationType.name());
     }

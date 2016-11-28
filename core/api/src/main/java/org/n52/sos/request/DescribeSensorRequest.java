@@ -28,9 +28,9 @@
  */
 package org.n52.sos.request;
 
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 import com.google.common.base.Strings;
 
@@ -39,7 +39,7 @@ import com.google.common.base.Strings;
  *
  * @since 4.0.0
  */
-public class DescribeSensorRequest extends AbstractServiceRequest {
+public class DescribeSensorRequest extends OwsServiceRequest {
 
     /**
      * Procedure identifier

@@ -35,7 +35,7 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosConstants.Operations;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;

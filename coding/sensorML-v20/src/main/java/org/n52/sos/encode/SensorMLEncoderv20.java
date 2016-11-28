@@ -150,7 +150,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.XmlHelper;
 
 import com.google.common.base.Joiner;

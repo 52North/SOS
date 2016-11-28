@@ -28,7 +28,7 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
@@ -49,7 +49,7 @@ public class InsertResultTemplateResponseBuilder {
         return this;
     }
 
-    public AbstractServiceResponse build() {
+    public OwsServiceResponse build() {
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setAcceptedTemplate(resultTemplateIdentifier);
         return response;

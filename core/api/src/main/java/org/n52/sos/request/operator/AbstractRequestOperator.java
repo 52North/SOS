@@ -51,17 +51,17 @@ import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.RequestEvent;
 import org.n52.iceland.event.events.ResponseEvent;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingValueReferenceException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
+import org.n52.shetland.ogc.ows.exception.MissingVersionParameterException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.request.handler.OperationHandlerRepository;
 import org.n52.iceland.request.operator.RequestOperator;
 import org.n52.iceland.request.operator.RequestOperatorKey;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -102,7 +102,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 @Configurable
-public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest, A extends AbstractServiceResponse> implements RequestOperator {
+public abstract class AbstractRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse> implements RequestOperator {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRequestOperator.class);
 
     public static final String EXPOSE_CHILD_OBSERVABLE_PROPERTIES = "service.exposeChildObservableProperties";
@@ -247,7 +247,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
     }
 
     @Override
-    public AbstractServiceResponse receiveRequest(final AbstractServiceRequest abstractRequest)
+    public OwsServiceResponse receiveRequest(final OwsServiceRequest abstractRequest)
             throws OwsExceptionReport {
         this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
@@ -262,7 +262,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    private void checkForModifierAndProcess(AbstractServiceRequest request) throws OwsExceptionReport {
+    private void checkForModifierAndProcess(OwsServiceRequest request) throws OwsExceptionReport {
         if (this.requestResponseModifierRepository.hasRequestResponseModifier(request)) {
             List<RequestResponseModifier> splitter = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
@@ -291,8 +291,8 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         }
     }
 
-    private AbstractServiceResponse checkForModifierAndProcess(AbstractServiceRequest request,
-            AbstractServiceResponse response) throws OwsExceptionReport {
+    private OwsServiceResponse checkForModifierAndProcess(OwsServiceRequest request,
+            OwsServiceResponse response) throws OwsExceptionReport {
         if (this.requestResponseModifierRepository.hasRequestResponseModifier(request, response)) {
             List<RequestResponseModifier> defaultModifier = new ArrayList<>();
             List<RequestResponseModifier> remover = new ArrayList<>();
@@ -379,7 +379,7 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
      * @throws OwsExceptionReport
      *             * if this SOS does not support the requested versions
      */
-    protected void checkSingleVersionParameter(final AbstractServiceRequest request) throws OwsExceptionReport {
+    protected void checkSingleVersionParameter(final OwsServiceRequest request) throws OwsExceptionReport {
 
         // if version is incorrect, throw exception
         if (request.getVersion() == null) {

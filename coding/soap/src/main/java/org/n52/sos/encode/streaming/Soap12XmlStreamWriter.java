@@ -41,7 +41,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.w3c.soap.SoapConstants;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapResponse;
@@ -176,7 +176,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
         Set<SchemaLocation> schemaLocations = Sets.newHashSet();
         schemaLocations.add(SoapConstants.SOAP_12_SCHEMA_LOCATION);
         if (response.isSetBodyContent()) {
-            Encoder<Object, AbstractServiceResponse> encoder = getEncoder(response.getBodyContent());
+            Encoder<Object, OwsServiceResponse> encoder = getEncoder(response.getBodyContent());
             if (encoder != null && encoder instanceof SchemaAwareEncoder) {
                 schemaLocations.addAll(((SchemaAwareEncoder<?,?>) encoder).getSchemaLocations());
             }
@@ -213,7 +213,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
     }
 
     /**
-     * Encode and write the {@link AbstractServiceResponse} to stream
+     * Encode and write the {@link OwsServiceResponse} to stream
      *
      * @param bodyResponse
      *            The service internal response to encode and write
@@ -223,9 +223,9 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
      *             If an encoding error occurs
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    protected void writeBodyContent(AbstractServiceResponse bodyResponse) throws XMLStreamException,
+    protected void writeBodyContent(OwsServiceResponse bodyResponse) throws XMLStreamException,
                                                                                  EncodingException {
-        Encoder<Object, AbstractServiceResponse> encoder =
+        Encoder<Object, OwsServiceResponse> encoder =
                 getEncoder(new OperationResponseEncoderKey(bodyResponse.getOperationKey(), MediaTypes.APPLICATION_XML));
         if (encoder instanceof StreamingEncoder<?, ?>) {
             ((StreamingEncoder) encoder).encode(bodyResponse, getOutputStream(), new EncodingValues().setAsDocument(true).setEmbedded(true).setIndent(indent));
@@ -289,7 +289,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
         rawText(soapFault);
     }
 
-    protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse abstractServiceResponse) throws NoEncoderForKeyException {
+    protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse abstractServiceResponse) throws NoEncoderForKeyException {
          return getEncoder(new OperationResponseEncoderKey(abstractServiceResponse.getOperationKey(), MediaTypes.APPLICATION_XML));
     }
 
@@ -302,8 +302,8 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
      * @throws NoEncoderForKeyException
      *             If no matching encoder was found
      */
-    protected Encoder<Object, AbstractServiceResponse> getEncoder(EncoderKey key) throws NoEncoderForKeyException {
-        Encoder<Object, AbstractServiceResponse> encoder = this.encoderRepository.getEncoder(key);
+    protected Encoder<Object, OwsServiceResponse> getEncoder(EncoderKey key) throws NoEncoderForKeyException {
+        Encoder<Object, OwsServiceResponse> encoder = this.encoderRepository.getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);
         }

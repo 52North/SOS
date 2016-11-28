@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -36,7 +36,7 @@ import org.n52.iceland.request.AbstractServiceRequest;
  *
  * @since 1.0.0
  */
-public class DeleteObservationRequest extends AbstractServiceRequest {
+public class DeleteObservationRequest extends OwsServiceRequest {
 
     private String observationIdentifier;
 

@@ -28,14 +28,14 @@
  */
 package org.n52.sos.request;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
 
 /**
  * @since 4.0.0
  *
  */
-public class DeleteSensorRequest extends AbstractServiceRequest {
+public class DeleteSensorRequest extends OwsServiceRequest {
 
     private String procedureIdentifier;
 

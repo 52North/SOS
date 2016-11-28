@@ -30,9 +30,9 @@ package org.n52.sos.response;
 
 import java.util.List;
 
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 
 import com.google.common.collect.Lists;

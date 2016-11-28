@@ -36,9 +36,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.iceland.request.RequestContext;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.janmayen.http.HTTPStatus;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.janmayen.net.IPAddress;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
 import com.vividsolutions.jts.io.ParseException;
@@ -153,21 +153,21 @@ public class TransactionalRequestCheckerTest {
         new TransactionalRequestChecker(tsc).check(getRequestContextBoth(false, true));
     }
 
-    private RequestContext getRequestContextIp(boolean validIp) {
-        RequestContext requestContext = new RequestContext();
+    private OwsServiceRequestContext getRequestContextIp(boolean validIp) {
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setIPAddress(validIp ? IP : INVALID_IP);
         return requestContext;
     }
 
-    private RequestContext getRequestContextToken(boolean validToken) {
-        RequestContext requestContext = new RequestContext();
+    private OwsServiceRequestContext getRequestContextToken(boolean validToken) {
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setToken(validToken ? TOKEN : INVALID_TOKEN);
         return requestContext;
     }
 
-    private RequestContext getRequestContextBoth(boolean validIp,
+    private OwsServiceRequestContext getRequestContextBoth(boolean validIp,
                                                  boolean validToken) {
-        RequestContext requestContext = new RequestContext();
+        OwsServiceRequestContext requestContext = new OwsServiceRequestContext();
         requestContext.setIPAddress(validIp ? IP : INVALID_IP);
         requestContext.setToken(validToken ? TOKEN : INVALID_TOKEN);
         return requestContext;

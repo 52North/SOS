@@ -38,7 +38,7 @@ import org.junit.Test;
 
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator2;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -46,7 +46,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Lists;
 
-public abstract class AbstractKvpDecoderTest extends AbstractSosKvpDecoder<AbstractServiceRequest> {
+public abstract class AbstractKvpDecoderTest extends AbstractSosKvpDecoder<OwsServiceRequest> {
 
     private static final String START_TIME = "2012-11-19T14:00:00+01:00";
 

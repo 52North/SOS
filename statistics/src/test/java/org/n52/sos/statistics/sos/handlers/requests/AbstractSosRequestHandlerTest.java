@@ -37,9 +37,9 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.janmayen.net.IPAddress;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.swes.SwesExtension;
 

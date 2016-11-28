@@ -74,7 +74,6 @@ import net.opengis.sensorML.x101.ResponsiblePartyDocument.ResponsibleParty;
 import net.opengis.sensorML.x101.SensorMLDocument;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
-import net.opengis.sensorML.x101.SmlLocation;
 import net.opengis.sensorML.x101.SmlLocation.SmlLocation2;
 import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.sensorML.x101.SystemType;
@@ -86,10 +85,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.sensorML.AbstractComponent;
@@ -114,15 +109,19 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
 import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swe.DataRecord;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.encode.AbstractSensorMLDecoder;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -602,15 +601,15 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
      * @throws DecodingException
      *             * if an error occurs
      */
-    private SmlLocation parseLocation(final SmlLocation2 location) throws DecodingException {
+    private org.n52.shetland.ogc.sensorML.elements.SmlLocation parseLocation(final SmlLocation2 location) throws DecodingException {
         if (!location.isSetPoint()) {
             throw new DecodingException(XmlHelper.getLocalName(location),
                     "Error while parsing the sml:location of the SensorML (point is not set, only point is supported)!");
         }
-        SmlLocation sosSmlLocation = null;
+        org.n52.shetland.ogc.sensorML.elements.SmlLocation sosSmlLocation = null;
         final Object point = decodeXmlElement(location.getPoint());
         if (point instanceof Point) {
-            sosSmlLocation = new SmlLocation((Point) point);
+            sosSmlLocation = new org.n52.shetland.ogc.sensorML.elements.SmlLocation((Point) point);
         }
         return sosSmlLocation;
     }

@@ -32,18 +32,21 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.statistics.api.AbstractElasticSearchDataHolder;
 import org.n52.iceland.statistics.api.interfaces.StatisticsServiceEventHandler;
 import org.n52.iceland.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.sos.statistics.sos.models.ExtensionEsModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest> extends AbstractElasticSearchDataHolder
-        implements StatisticsServiceEventHandler<AbstractServiceRequest> {
+
+public abstract class AbstractSosRequestHandler<T extends OwsServiceRequest>
+        extends AbstractElasticSearchDataHolder
+        implements StatisticsServiceEventHandler<T> {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractSosRequestHandler.class);
 
@@ -55,9 +58,9 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
     private AbstractSosRequestHandler<?> init() {
 
         // Global constants
-        put(ServiceEventDataMapping.SR_SERVICE_FIELD, request.getOperationKey().getService());
-        put(ServiceEventDataMapping.SR_VERSION_FIELD, request.getOperationKey().getVersion());
-        put(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD, request.getOperationKey().getOperation());
+        put(ServiceEventDataMapping.SR_SERVICE_FIELD, request.getService());
+        put(ServiceEventDataMapping.SR_VERSION_FIELD, request.getVersion());
+        put(ServiceEventDataMapping.SR_OPERATION_NAME_FIELD, request.getOperationName());
         put(ServiceEventDataMapping.SR_LANGUAGE_FIELD, request.getRequestedLanguage());
 
         // requestcontext
@@ -66,8 +69,8 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
         put(ServiceEventDataMapping.SR_GEO_LOC_FIELD, locationUtil.ip2SpatialData(ip));
         if (request.getRequestContext() != null) {
             put(ServiceEventDataMapping.SR_PROXIED_REQUEST_FIELD, request.getRequestContext().getForwardedForChain().isPresent());
-            put(ServiceEventDataMapping.SR_CONTENT_TYPE, request.getRequestContext().getContentType().orNull());
-            put(ServiceEventDataMapping.SR_ACCEPT_TYPES, request.getRequestContext().getAcceptType().orNull());
+            put(ServiceEventDataMapping.SR_CONTENT_TYPE, request.getRequestContext().getContentType().orElse(null));
+            put(ServiceEventDataMapping.SR_ACCEPT_TYPES, request.getRequestContext().getAcceptType().orElse(null));
         }
         // extensions
         if (request.getExtensions() != null && request.getExtensions().getExtensions() != null) {
@@ -78,7 +81,7 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Object> resolveAsMap(AbstractServiceRequest request) {
+    public Map<String, Object> resolveAsMap(OwsServiceRequest request) {
         this.request = (T) request;
         init();
         resolveConcreteRequest();

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.om.OmObservation;
 
 /**
@@ -37,7 +37,7 @@ import org.n52.shetland.ogc.om.OmObservation;
  *
  * @since 1.0.0
  */
-public class DeleteObservationResponse extends AbstractServiceResponse {
+public class DeleteObservationResponse extends OwsServiceResponse {
     private OmObservation deletedObservation;
 
     private String observationIdentifier;

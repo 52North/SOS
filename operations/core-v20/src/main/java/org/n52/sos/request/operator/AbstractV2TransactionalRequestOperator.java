@@ -33,9 +33,9 @@ import java.util.Set;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.request.handler.OperationHandler;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmConstants;
@@ -58,7 +58,7 @@ import org.n52.shetland.ogc.swe.SweField;
  * @param <A>
  *            the response type
  */
-public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractV2TransactionalRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractTransactionalRequestOperator<D, Q, A> implements WSDLAwareRequestOperator {
 
     public AbstractV2TransactionalRequestOperator(String operationName, Class<Q> requestType) {

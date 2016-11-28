@@ -31,7 +31,7 @@ package org.n52.sos.request;
 import java.util.Collection;
 
 import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
 
@@ -40,7 +40,7 @@ import org.n52.shetland.ogc.om.AbstractPhenomenon;
  *
  * @since 4.0.0
  */
-public class SosRegisterSensorRequest extends AbstractServiceRequest {
+public class SosRegisterSensorRequest extends OwsServiceRequest {
 
     /**
      * SOS Sensor system

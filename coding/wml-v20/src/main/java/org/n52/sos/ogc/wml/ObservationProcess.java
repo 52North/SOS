@@ -35,8 +35,8 @@ import java.util.Set;
 
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0

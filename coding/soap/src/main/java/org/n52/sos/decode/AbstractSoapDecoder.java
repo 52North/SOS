@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
 import org.n52.iceland.util.collections.ListMultiMap;
 import org.n52.iceland.w3c.soap.SoapHeader;
@@ -106,7 +106,7 @@ public abstract class AbstractSoapDecoder extends AbstractXmlDecoder<XmlObject, 
      * @throws DecodingException
      *             * if an error occurs.
      */
-    protected AbstractServiceRequest getSOAPBodyContent(SOAPMessage message) throws DecodingException {
+    protected OwsServiceRequest getSOAPBodyContent(SOAPMessage message) throws DecodingException {
         try {
             Document bodyRequestDoc = message.getSOAPBody().extractContentAsDocument();
             String xmlString = W3cHelper.nodeToXmlString(bodyRequestDoc.getDocumentElement());

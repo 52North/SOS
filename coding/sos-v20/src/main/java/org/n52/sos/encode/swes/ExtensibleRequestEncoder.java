@@ -36,7 +36,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.ows.extension.Extension;
 
 /**
@@ -46,7 +46,7 @@ import org.n52.shetland.ogc.ows.extension.Extension;
  */
 public interface ExtensibleRequestEncoder {
 
-    default void addService(ExtensibleRequestType ert, AbstractServiceRequest request) {
+    default void addService(ExtensibleRequestType ert, OwsServiceRequest request) {
         if (request.isSetService()) {
             ert.setService(request.getService());
         } else {
@@ -54,7 +54,7 @@ public interface ExtensibleRequestEncoder {
         }
     }
 
-    default void addVersion(ExtensibleRequestType ert, AbstractServiceRequest request) {
+    default void addVersion(ExtensibleRequestType ert, OwsServiceRequest request) {
         if (request.isSetVersion()) {
             ert.setVersion(request.getVersion());
         } else {
@@ -62,7 +62,7 @@ public interface ExtensibleRequestEncoder {
         }
     }
 
-    default void addExtension(ExtensibleRequestType ert, AbstractServiceRequest request) throws EncodingException {
+    default void addExtension(ExtensibleRequestType ert, OwsServiceRequest request) throws EncodingException {
         if (request.isSetExtensions()) {
             for (Extension<?> extension : request.getExtensions().getExtensions()) {
                 ert.addNewExtension().set(encodeObjectToXml(extension.getNamespace(), extension));

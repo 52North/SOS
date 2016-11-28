@@ -45,7 +45,7 @@ import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.JsonDecoderKey;
 import org.n52.svalbard.decode.OperationDecoderKey;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.filter.ComparisonFilter;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
@@ -65,7 +65,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest> extends JSONDecoder<T> {
+public abstract class AbstractSosRequestDecoder<T extends OwsServiceRequest> extends JSONDecoder<T> {
 
     public AbstractSosRequestDecoder(Class<T> type, String service, String version, Enum<?> operation) {
         this(type, service, version, operation.name());

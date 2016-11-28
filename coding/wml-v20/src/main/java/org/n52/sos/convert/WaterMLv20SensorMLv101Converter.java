@@ -42,7 +42,7 @@ import org.n52.shetland.ogc.sensorML.ProcessModel;
 import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 

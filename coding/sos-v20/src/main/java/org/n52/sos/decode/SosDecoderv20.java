@@ -77,10 +77,10 @@ import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -116,7 +116,7 @@ import com.google.common.base.Joiner;
  * @since 4.0.0
  *
  */
-public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommunicationObject> implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class SosDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicationObject> implements Decoder<OwsServiceCommunicationObject, XmlObject> {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(SosDecoderv20.class);
@@ -153,7 +153,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
     }
 
     @Override
-    public AbstractServiceCommunicationObject decode(final XmlObject xml) throws DecodingException {
+    public OwsServiceCommunicationObject decode(final XmlObject xml) throws DecodingException {
         LOGGER.debug("REQUESTTYPE:" + xml.getClass());
         // validate document
         XmlHelper.validateDocument(xml);
@@ -196,7 +196,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
      * @throws DecodingException
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetCapabilities(final GetCapabilitiesDocument getCapsDoc)
+    private OwsServiceRequest parseGetCapabilities(final GetCapabilitiesDocument getCapsDoc)
             throws DecodingException {
 
         final GetCapabilitiesType getCapsType = getCapsDoc.getGetCapabilities2();
@@ -233,7 +233,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
      * @throws DecodingException
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetObservation(final GetObservationDocument getObsDoc)
+    private OwsServiceRequest parseGetObservation(final GetObservationDocument getObsDoc)
             throws DecodingException {
         final GetObservationRequest getObsRequest = new GetObservationRequest();
         final GetObservationType getObsType = getObsDoc.getGetObservation();
@@ -286,7 +286,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
      * @throws DecodingException
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest parseGetFeatureOfInterest(final GetFeatureOfInterestDocument getFoiDoc)
+    private OwsServiceRequest parseGetFeatureOfInterest(final GetFeatureOfInterestDocument getFoiDoc)
             throws DecodingException {
 
         final GetFeatureOfInterestRequest getFoiRequest = new GetFeatureOfInterestRequest();
@@ -301,7 +301,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return getFoiRequest;
     }
 
-    private AbstractServiceRequest parseGetObservationById(final GetObservationByIdDocument getObsByIdDoc)
+    private OwsServiceRequest parseGetObservationById(final GetObservationByIdDocument getObsByIdDoc)
             throws DecodingException {
         final GetObservationByIdRequest getObsByIdRequest = new GetObservationByIdRequest();
         final GetObservationByIdType getObsByIdType = getObsByIdDoc.getGetObservationById();
@@ -312,7 +312,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return getObsByIdRequest;
     }
 
-    private AbstractServiceRequest parseInsertObservation(final InsertObservationDocument insertObservationDoc)
+    private OwsServiceRequest parseInsertObservation(final InsertObservationDocument insertObservationDoc)
             throws DecodingException {
         // set namespace for default XML type (e.g. xs:string, xs:integer,
         // xs:boolean, ...)
@@ -368,7 +368,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
 
     }
 
-    private AbstractServiceRequest parseInsertResultTemplate(final InsertResultTemplateDocument insertResultTemplateDoc)
+    private OwsServiceRequest parseInsertResultTemplate(final InsertResultTemplateDocument insertResultTemplateDoc)
             throws DecodingException {
         final InsertResultTemplateRequest sosInsertResultTemplate = new InsertResultTemplateRequest();
         final InsertResultTemplateType insertResultTemplate = insertResultTemplateDoc.getInsertResultTemplate();
@@ -388,7 +388,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return sosInsertResultTemplate;
     }
 
-    private AbstractServiceRequest parseInsertResult(final InsertResultDocument insertResultDoc)
+    private OwsServiceRequest parseInsertResult(final InsertResultDocument insertResultDoc)
             throws DecodingException {
         final InsertResultType insertResult = insertResultDoc.getInsertResult();
         final InsertResultRequest sosInsertResultRequest = new InsertResultRequest();
@@ -400,7 +400,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return sosInsertResultRequest;
     }
 
-    private AbstractServiceRequest parseGetResult(final GetResultDocument getResultDoc) throws DecodingException {
+    private OwsServiceRequest parseGetResult(final GetResultDocument getResultDoc) throws DecodingException {
         final GetResultType getResult = getResultDoc.getGetResult();
         final GetResultRequest sosGetResultRequest = new GetResultRequest();
         sosGetResultRequest.setService(getResult.getService());
@@ -417,7 +417,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return sosGetResultRequest;
     }
 
-    private AbstractServiceRequest parseGetResultTemplate(final GetResultTemplateDocument getResultTemplateDoc)
+    private OwsServiceRequest parseGetResultTemplate(final GetResultTemplateDocument getResultTemplateDoc)
             throws DecodingException {
         final GetResultTemplateType getResultTemplate = getResultTemplateDoc.getGetResultTemplate();
         final GetResultTemplateRequest sosGetResultTemplateRequest = new GetResultTemplateRequest();
@@ -429,7 +429,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return sosGetResultTemplateRequest;
     }
 
-    private AbstractServiceResponse parseGetResultTemplateResponse(
+    private OwsServiceResponse parseGetResultTemplateResponse(
             final GetResultTemplateResponseDocument getResultTemplateResponseDoc) throws DecodingException {
         final GetResultTemplateResponse sosGetResultTemplateResponse = new GetResultTemplateResponse();
         final GetResultTemplateResponseType getResultTemplateResponse =
@@ -443,7 +443,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<AbstractServiceCommuni
         return sosGetResultTemplateResponse;
     }
 
-    private AbstractServiceResponse parseGetResultResponse(final GetResultResponseDocument getResultResponseDoc)
+    private OwsServiceResponse parseGetResultResponse(final GetResultResponseDocument getResultResponseDoc)
             throws DecodingException {
         final GetResultResponse sosGetResultResponse = new GetResultResponse();
         final GetResultResponseType getResultResponse = getResultResponseDoc.getGetResultResponse();

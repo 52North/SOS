@@ -156,7 +156,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.HelperValues;

@@ -50,7 +50,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.w3c.SchemaLocation;
@@ -67,11 +67,11 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class SosRequestEncoderv20 extends AbstractXmlEncoder<XmlObject, AbstractServiceRequest> {
+public class SosRequestEncoderv20 extends AbstractXmlEncoder<XmlObject, OwsServiceRequest> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SosRequestEncoderv20.class);
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(Sos2Constants.NS_SOS_20,
-            AbstractServiceRequest.class, GetResultTemplateRequest.class, GetResultRequest.class);
+            OwsServiceRequest.class, GetResultTemplateRequest.class, GetResultRequest.class);
 
     public SosRequestEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -94,21 +94,21 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<XmlObject, Abstract
     }
 
     @Override
-    public XmlObject encode(AbstractServiceRequest communicationObject) throws EncodingException {
+    public XmlObject encode(OwsServiceRequest communicationObject) throws EncodingException {
         final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
         additionalValues.put(HelperValues.VERSION, Sos2Constants.SERVICEVERSION);
         return encode(communicationObject, additionalValues);
     }
 
     @Override
-    public XmlObject encode(AbstractServiceRequest request, Map<HelperValues, String> additionalValues)
+    public XmlObject encode(OwsServiceRequest request, Map<HelperValues, String> additionalValues)
             throws EncodingException {
         XmlObject encodedObject = encodeRequests(request);
         XmlHelper.validateDocument(encodedObject, EncodingException::new);
         return encodedObject;
     }
 
-    private XmlObject encodeRequests(AbstractServiceRequest request) throws EncodingException {
+    private XmlObject encodeRequests(OwsServiceRequest request) throws EncodingException {
         if (request instanceof GetResultTemplateRequest) {
             return createGetResultTemplateRequest((GetResultTemplateRequest) request);
         } else if (request instanceof GetResultRequest) {

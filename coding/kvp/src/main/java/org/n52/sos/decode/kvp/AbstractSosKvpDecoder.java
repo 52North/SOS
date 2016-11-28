@@ -18,7 +18,7 @@ import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.service.MiscSettings;
 import org.n52.iceland.util.Validation;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
@@ -51,7 +51,7 @@ import com.vividsolutions.jts.geom.PrecisionModel;
  * @param <R> the request type
  */
 @Configurable
-public abstract class AbstractSosKvpDecoder<R extends AbstractServiceRequest> extends AbstractKvpDecoder<R> {
+public abstract class AbstractSosKvpDecoder<R extends OwsServiceRequest> extends AbstractKvpDecoder<R> {
     private int storageEPSG;
     private int storage3DEPSG;
     private int defaultResponseEPSG;
@@ -157,9 +157,9 @@ public abstract class AbstractSosKvpDecoder<R extends AbstractServiceRequest> ex
     @SuppressWarnings("rawtypes")
     protected void getCommonRequestParameterDefinitions(Builder<R> builder) {
         super.getCommonRequestParameterDefinitions(builder);
-        builder.add(OWSConstants.AdditionalRequestParams.language, AbstractServiceRequest::addSweTextExtension);
-        builder.add(OWSConstants.AdditionalRequestParams.crs, AbstractServiceRequest::addSweTextExtension);
-        builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier, AbstractServiceRequest::addSweBooleanExtension);
+        builder.add(OWSConstants.AdditionalRequestParams.language, OwsServiceRequest::addSweTextExtension);
+        builder.add(OWSConstants.AdditionalRequestParams.crs, OwsServiceRequest::addSweTextExtension);
+        builder.add(OWSConstants.AdditionalRequestParams.returnHumanReadableIdentifier, OwsServiceRequest::addSweBooleanExtension);
     }
 
     protected ThrowingBiConsumer<R, String, DecodingException> decodeNamespaces(

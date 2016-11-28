@@ -30,13 +30,13 @@ package org.n52.sos.request;
 
 import java.util.List;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -45,7 +45,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public class InsertSensorRequest extends AbstractServiceRequest {
+public class InsertSensorRequest extends OwsServiceRequest {
 
     private static final String SENSOR_TYPE_FLAG = "isType";
     private String procedureDescriptionFormat;

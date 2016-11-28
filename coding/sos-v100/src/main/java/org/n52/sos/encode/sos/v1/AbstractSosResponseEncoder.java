@@ -32,7 +32,7 @@ import java.util.Set;
 
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 
@@ -45,7 +45,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
+public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends AbstractResponseEncoder<T> {
     public AbstractSosResponseEncoder(String operation, Class<T> responseType) {
         super(SosConstants.SOS, Sos1Constants.SERVICEVERSION, operation, Sos1Constants.NS_SOS,
                 SosConstants.NS_SOS_PREFIX, responseType);

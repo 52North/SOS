@@ -54,7 +54,7 @@ import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.util.MinMax;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.shetland.ogc.gml.CodeType;
@@ -360,7 +360,7 @@ public class SosHelper {
      */
     public static void checkProcedureDescriptionFormat(final String procedureDescriptionFormat, final String service,
             final String version) throws OwsExceptionReport {
-        checkFormat(procedureDescriptionFormat, new ServiceOperatorKey(service, version),
+        checkFormat(procedureDescriptionFormat, new OwsServiceKey(service, version),
                 Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
     }
 
@@ -378,7 +378,7 @@ public class SosHelper {
      */
     public static void checkOutputFormat(final String checkOutputFormat, final String service, final String version)
             throws OwsExceptionReport {
-        checkFormat(checkOutputFormat, new ServiceOperatorKey(service, version),
+        checkFormat(checkOutputFormat, new OwsServiceKey(service, version),
                 Sos1Constants.DescribeSensorParams.outputFormat);
     }
 
@@ -394,7 +394,7 @@ public class SosHelper {
      * @throws OwsExceptionReport
      *             if the value of the procedure format is incorrect
      */
-    private static void checkFormat(final String format, ServiceOperatorKey serviceOperatorKey, Enum<?> parameter)
+    private static void checkFormat(final String format, OwsServiceKey serviceOperatorKey, Enum<?> parameter)
             throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);

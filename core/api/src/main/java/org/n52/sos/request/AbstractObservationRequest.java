@@ -28,8 +28,8 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.ResponseFormat;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 
 import com.google.common.base.Strings;
 
@@ -38,7 +38,7 @@ import com.google.common.base.Strings;
  *
  * @since 4.0.0
  */
-public abstract class AbstractObservationRequest extends AbstractServiceRequest
+public abstract class AbstractObservationRequest extends OwsServiceRequest
         implements ResponseFormat, SrsNameRequest {
     /**
      * SRS name

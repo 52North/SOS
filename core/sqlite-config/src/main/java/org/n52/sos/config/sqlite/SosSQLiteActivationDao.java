@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
 import org.n52.sos.config.sqlite.entities.ObservationEncoding;
@@ -70,7 +70,7 @@ public class SosSQLiteActivationDao
             List<ObservationEncodingKey> hkeys) {
         Set<ResponseFormatKey> keys = new HashSet<>(hkeys.size());
         for (ObservationEncodingKey key : hkeys) {
-            keys.add(new ResponseFormatKey(new ServiceOperatorKey(key
+            keys.add(new ResponseFormatKey(new OwsServiceKey(key
                     .getService(), key.getVersion()), key.getEncoding()));
         }
         return keys;
@@ -100,7 +100,7 @@ public class SosSQLiteActivationDao
         Set<ProcedureDescriptionFormatKey> keys = new HashSet<>(hkeys.size());
         for (ProcedureEncodingKey key : hkeys) {
             keys
-                    .add(new ProcedureDescriptionFormatKey(new ServiceOperatorKey(key
+                    .add(new ProcedureDescriptionFormatKey(new OwsServiceKey(key
                                             .getService(), key.getVersion()), key
                                                            .getEncoding()));
         }

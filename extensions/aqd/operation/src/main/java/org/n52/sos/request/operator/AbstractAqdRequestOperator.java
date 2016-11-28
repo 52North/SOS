@@ -33,12 +33,12 @@ import java.util.Optional;
 import javax.inject.Inject;
 
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
+import org.n52.shetland.ogc.ows.exception.MissingServiceParameterException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.request.handler.OperationHandler;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aqd.AqdConstants;
@@ -46,7 +46,7 @@ import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 
-public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
+public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends OwsServiceRequest, A extends OwsServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
     private AqdHelper aqdHelper;
@@ -79,26 +79,26 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
         return super.getOptionalOperationHandler(SosConstants.SOS, operationName);
     }
 
-    protected void checkExtensions(AbstractServiceRequest request, CompositeOwsException exceptions)
+    protected void checkExtensions(OwsServiceRequest request, CompositeOwsException exceptions)
             throws OwsExceptionReport {
         if (request.isSetExtensions() && aqdHelper.hasFlowExtension(request.getExtensions())) {
             aqdHelper.getFlow(request.getExtensions());
         }
     }
 
-    protected AbstractServiceRequest changeRequestServiceVersion(AbstractServiceRequest request) {
+    protected OwsServiceRequest changeRequestServiceVersion(OwsServiceRequest request) {
         request.setService(SosConstants.SOS);
         request.setVersion(Sos2Constants.SERVICEVERSION);
         return request;
     }
 
-    protected AbstractServiceRequest changeRequestServiceVersionToAqd(AbstractServiceRequest request) {
+    protected OwsServiceRequest changeRequestServiceVersionToAqd(OwsServiceRequest request) {
         request.setService(AqdConstants.AQD);
         request.setVersion(AqdConstants.VERSION);
         return request;
     }
 
-    protected AbstractServiceResponse changeResponseServiceVersion(AbstractServiceResponse response) {
+    protected OwsServiceResponse changeResponseServiceVersion(OwsServiceResponse response) {
         response.setService(AqdConstants.AQD);
         response.setVersion(AqdConstants.VERSION);
         return response;

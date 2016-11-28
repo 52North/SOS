@@ -28,15 +28,15 @@
  */
 package org.n52.sos.request;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
 
 /**
  * SOS DescribeFeatureType request
  *
  * @since 4.0.0
  */
-public class SosDescribeFeatureTypeRequest extends AbstractServiceRequest {
+public class SosDescribeFeatureTypeRequest extends OwsServiceRequest {
 
     /**
      * FeatureOfInterest identifier

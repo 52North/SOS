@@ -34,7 +34,7 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 

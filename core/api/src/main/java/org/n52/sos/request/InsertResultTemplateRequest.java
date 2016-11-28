@@ -30,9 +30,9 @@ package org.n52.sos.request;
 
 import org.joda.time.DateTime;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
@@ -42,7 +42,7 @@ import com.google.common.base.Strings;
 /**
  * @since 4.0.0
  */
-public class InsertResultTemplateRequest extends AbstractServiceRequest {
+public class InsertResultTemplateRequest extends OwsServiceRequest {
 
     private String identifier;
     private OmObservationConstellation observationTemplate;

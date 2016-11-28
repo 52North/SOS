@@ -31,10 +31,10 @@ package org.n52.sos.request;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
@@ -44,7 +44,7 @@ import com.google.common.base.Strings;
  *
  * @since 4.0.0
  */
-public class InsertObservationRequest extends AbstractServiceRequest {
+public class InsertObservationRequest extends OwsServiceRequest {
 
     /**
      * Assigned sensor id

@@ -33,7 +33,7 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
@@ -41,7 +41,7 @@ import org.n52.svalbard.decode.DecoderRepository;
 import org.n52.svalbard.decode.NoDecoderForKeyException;
 import org.n52.svalbard.decode.exception.DecodingException;
 
-public abstract class AbstractStringRequestDecoder implements Decoder<AbstractServiceCommunicationObject, String> {
+public abstract class AbstractStringRequestDecoder implements Decoder<OwsServiceCommunicationObject, String> {
 
     private DecoderRepository decoderRepository;
 
@@ -51,10 +51,10 @@ public abstract class AbstractStringRequestDecoder implements Decoder<AbstractSe
     }
 
     @Override
-    public AbstractServiceCommunicationObject decode(String string) throws DecodingException {
+    public OwsServiceCommunicationObject decode(String string) throws DecodingException {
         XmlObject xml = CodingHelper.readXML(string);
         DecoderKey key = CodingHelper.getDecoderKey(xml);
-        Decoder<AbstractServiceCommunicationObject, XmlObject> decoder = decoderRepository.getDecoder(key);
+        Decoder<OwsServiceCommunicationObject, XmlObject> decoder = decoderRepository.getDecoder(key);
         if (decoder == null) {
             throw new NoDecoderForKeyException(key);
         }

@@ -41,7 +41,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 
@@ -81,7 +81,7 @@ public class SosDecoderv20Test {
                                 + "            <swe:value>true</swe:value>\n" + "        </swe:Boolean>\n"
                                 + "    </swes:extension>\n" + "</sos:GetObservation>");
 
-        final AbstractServiceCommunicationObject decodedObject = decoder.decode(doc);
+        final OwsServiceCommunicationObject decodedObject = decoder.decode(doc);
 
         assertThat(decodedObject, instanceOf(GetObservationRequest.class));
 
@@ -105,7 +105,7 @@ public class SosDecoderv20Test {
                                 + "            <swe:value>true</swe:value>\n" + "        </swe:Text>\n"
                                 + "    </swes:extension>\n" + "</sos:GetObservation>");
 
-        final AbstractServiceCommunicationObject decodedObject = decoder.decode(doc);
+        final OwsServiceCommunicationObject decodedObject = decoder.decode(doc);
 
         assertThat(decodedObject, instanceOf(GetObservationRequest.class));
 

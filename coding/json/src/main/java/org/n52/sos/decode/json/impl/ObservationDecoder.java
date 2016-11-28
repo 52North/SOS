@@ -61,7 +61,7 @@ import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.decode.json.JSONDecodingException;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;

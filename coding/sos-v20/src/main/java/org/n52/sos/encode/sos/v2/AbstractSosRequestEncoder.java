@@ -40,7 +40,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -55,7 +55,7 @@ import org.n52.sos.coding.encode.AbstractRequestEncoder;
  *
  * @param <T> the request type
  */
-public abstract class AbstractSosRequestEncoder<T extends AbstractServiceRequest> extends AbstractRequestEncoder<T> {
+public abstract class AbstractSosRequestEncoder<T extends OwsServiceRequest> extends AbstractRequestEncoder<T> {
 
     public AbstractSosRequestEncoder(String operation, Class<T> responseType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation, Sos2Constants.NS_SOS_20,

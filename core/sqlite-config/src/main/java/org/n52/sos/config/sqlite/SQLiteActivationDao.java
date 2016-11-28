@@ -42,7 +42,7 @@ import org.n52.iceland.config.ActivationDao;
 import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
 import org.n52.iceland.ogc.swes.OfferingExtensionKey;
 import org.n52.iceland.request.operator.RequestOperatorKey;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.config.sqlite.entities.Activatable;
 import org.n52.sos.config.sqlite.entities.Binding;
 import org.n52.sos.config.sqlite.entities.DynamicOfferingExtension;
@@ -82,7 +82,7 @@ public class SQLiteActivationDao
             List<DynamicOfferingExtensionKey> hkeys) {
         Set<OfferingExtensionKey> keys = new HashSet<>(hkeys.size());
         for (DynamicOfferingExtensionKey key : hkeys) {
-            keys.add(new OfferingExtensionKey(new ServiceOperatorKey(key.getService(), key.getVersion()), key.getDomain()));
+            keys.add(new OfferingExtensionKey(new OwsServiceKey(key.getService(), key.getVersion()), key.getDomain()));
         }
         return keys;
     }
@@ -135,7 +135,7 @@ public class SQLiteActivationDao
                 .size());
         for (DynamicOwsExtendedCapabilitiesKey key : hkeys) {
             keys
-                    .add(new OwsExtendedCapabilitiesProviderKey(new ServiceOperatorKey(key
+                    .add(new OwsExtendedCapabilitiesProviderKey(new OwsServiceKey(key
                                             .getService(), key.getVersion()), key
                                                                 .getDomain()));
         }
@@ -164,7 +164,7 @@ public class SQLiteActivationDao
             List<OperationKey> hkeys) {
         Set<RequestOperatorKey> keys = new HashSet<>(hkeys.size());
         for (OperationKey key : hkeys) {
-            keys.add(new RequestOperatorKey(new ServiceOperatorKey(key
+            keys.add(new RequestOperatorKey(new OwsServiceKey(key
                     .getService(), key.getVersion()), key.getOperationName()));
         }
         return keys;

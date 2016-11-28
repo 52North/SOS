@@ -37,10 +37,10 @@ import java.util.Set;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
@@ -56,7 +56,7 @@ import org.n52.sos.convert.AbstractIdentifierModifier;
 import org.n52.sos.converter.util.EReportingPrefixedIdentifierHelper;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
@@ -86,7 +86,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     private Set<RequestResponseModifierKey> getKeyTypes() {
         Set<String> services = Sets.newHashSet(AqdConstants.AQD);
         Set<String> versions = Sets.newHashSet(AqdConstants.VERSION);
-        Map<AbstractServiceRequest, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
+        Map<OwsServiceRequest, OwsServiceResponse> requestResponseMap = Maps.newHashMap();
         requestResponseMap.put(new GetCapabilitiesRequest(SosConstants.SOS), new GetCapabilitiesResponse());
         requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
         requestResponseMap.put(new GetObservationByIdRequest(), new GetObservationByIdResponse());
@@ -98,7 +98,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
         Set<RequestResponseModifierKey> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (AbstractServiceRequest request : requestResponseMap.keySet()) {
+                for (OwsServiceRequest request : requestResponseMap.keySet()) {
                     keys.add(new RequestResponseModifierKey(service, version, request));
                     keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
                             .get(request)));
@@ -117,12 +117,12 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
-    protected AbstractServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
+    protected OwsServiceResponse changeAbstractObservationResponseIdentifier(AbstractObservationResponse response) {
         return changeOmParameterValues(super.changeAbstractObservationResponseIdentifier(response));
     }
 
-    private AbstractServiceResponse changeOmParameterValues(
-            AbstractServiceResponse response) {
+    private OwsServiceResponse changeOmParameterValues(
+            OwsServiceResponse response) {
         if (response instanceof AbstractObservationResponse) {
             ((AbstractObservationResponse)response).getObservationCollection().stream()
                     .filter(OmObservation::isSetParameter)
@@ -194,7 +194,7 @@ public class EReportingPrefixedIdentifierModifier extends AbstractIdentifierModi
     }
 
     @Override
-    protected boolean checkForFlag(AbstractServiceRequest request, AbstractServiceResponse response)
+    protected boolean checkForFlag(OwsServiceRequest request, OwsServiceResponse response)
             throws InvalidParameterValueException {
         return getEReportingPrefixedIdentifierHelper().isSetAnyPrefix();
     }

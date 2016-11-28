@@ -28,21 +28,21 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 
 /**
  * Parsed SOS request, used for GetResult requests
  *
  * @since 4.0.0
  */
-public class ParsedSosRequest extends AbstractServiceRequest {
+public class ParsedSosRequest extends OwsServiceRequest {
 
     /**
      * The SOS request
      */
-    private AbstractServiceRequest request;
+    private OwsServiceRequest request;
 
-    public ParsedSosRequest(AbstractServiceRequest request) {
+    public ParsedSosRequest(OwsServiceRequest request) {
         super(request.getService(), request.getVersion(), request.getOperationName());
         this.request = request;
     }
@@ -56,7 +56,7 @@ public class ParsedSosRequest extends AbstractServiceRequest {
      *
      * @return SOS request
      */
-    public AbstractServiceRequest getRequest() {
+    public OwsServiceRequest getRequest() {
         return request;
     }
 
@@ -66,7 +66,7 @@ public class ParsedSosRequest extends AbstractServiceRequest {
      * @param request
      *            SOS request
      */
-    public void setRequest(AbstractServiceRequest request) {
+    public void setRequest(OwsServiceRequest request) {
         this.request = request;
     }
 

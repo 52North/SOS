@@ -32,14 +32,14 @@ import java.net.URISyntaxException;
 import java.util.Locale;
 
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.i18n.LocalizedString;
 import org.n52.shetland.i18n.MultilingualString;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.cache.SosContentCache;
-import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.service.Configurator;
 
 import com.google.common.base.Optional;
@@ -63,11 +63,11 @@ public class I18NHelper {
      * @throws CodedException
      */
     @Deprecated
-    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest request) throws CodedException {
+    public static void addOfferingNames(SosOffering sosOffering, OwsServiceRequest request) throws CodedException {
         addOfferingNames(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
     }
 
-    public static void addOfferingNames(SosOffering sosOffering, AbstractServiceRequest request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) throws CodedException {
+    public static void addOfferingNames(SosOffering sosOffering, OwsServiceRequest request,SosContentCache cache, Locale defaultLocale, boolean showAllLanguages) throws CodedException {
         addOfferingNames(cache, sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()), defaultLocale, showAllLanguages);
     }
 
@@ -125,7 +125,7 @@ public class I18NHelper {
      *            Request with language
      */
     @Deprecated
-    public static void addOfferingDescription(SosOffering sosOffering, AbstractServiceRequest request) {
+    public static void addOfferingDescription(SosOffering sosOffering, OwsServiceRequest request) {
         addOfferingDescription(sosOffering, LocaleHelper.fromString(request.getRequestedLanguage()));
     }
 

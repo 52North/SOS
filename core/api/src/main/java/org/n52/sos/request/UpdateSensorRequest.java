@@ -31,10 +31,10 @@ package org.n52.sos.request;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Strings;
 
@@ -43,7 +43,7 @@ import com.google.common.base.Strings;
  *
  * @since 4.0.0
  */
-public class UpdateSensorRequest extends AbstractServiceRequest {
+public class UpdateSensorRequest extends OwsServiceRequest {
     private String procedureIdentifier;
 
     private String procedureDescriptionFormat;

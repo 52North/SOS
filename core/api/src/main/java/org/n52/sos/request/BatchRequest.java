@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.sos.util.BatchConstants;
 
 /**
@@ -44,25 +44,25 @@ import org.n52.sos.util.BatchConstants;
  *
  * @since 4.0.0
  */
-public class BatchRequest extends AbstractServiceRequest implements Iterable<AbstractServiceRequest> {
-    private final List<AbstractServiceRequest> requests;
+public class BatchRequest extends OwsServiceRequest implements Iterable<OwsServiceRequest> {
+    private final List<OwsServiceRequest> requests;
 
     private boolean stopAtFailure = false;
 
-    public BatchRequest(List<AbstractServiceRequest> requests) {
+    public BatchRequest(List<OwsServiceRequest> requests) {
         super(null, null, BatchConstants.OPERATION_NAME);
         this.requests = Objects.requireNonNull(requests);
     }
 
     public BatchRequest() {
-        this(new LinkedList<AbstractServiceRequest>());
+        this(new LinkedList<OwsServiceRequest>());
     }
 
-    public List<AbstractServiceRequest> getRequests() {
+    public List<OwsServiceRequest> getRequests() {
         return Collections.unmodifiableList(requests);
     }
 
-    public void add(AbstractServiceRequest request) {
+    public void add(OwsServiceRequest request) {
         this.requests.add(Objects.requireNonNull(request));
     }
 
@@ -71,7 +71,7 @@ public class BatchRequest extends AbstractServiceRequest implements Iterable<Abs
     }
 
     @Override
-    public Iterator<AbstractServiceRequest> iterator() {
+    public Iterator<OwsServiceRequest> iterator() {
         return getRequests().iterator();
     }
 

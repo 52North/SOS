@@ -35,9 +35,9 @@ import org.junit.BeforeClass;
 import org.mockito.Mock;
 
 import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.request.RequestContext;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.iceland.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.janmayen.net.IPAddress;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -62,7 +62,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public abstract class HandlerBaseTest extends MockitoBaseTest {
 
-    protected static RequestContext requestContext;
+    protected static OwsServiceRequestContext requestContext;
     protected static SpatialFilter spatialFilter;
     protected static TemporalFilter temporalFilter;
     protected static OmObservation omObservation;
@@ -73,7 +73,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
 
     @BeforeClass
     public static void beforeClass() throws OwsExceptionReport, DecodingException {
-        requestContext = new RequestContext();
+        requestContext = new OwsServiceRequestContext();
         requestContext.setContentType("application/json");
         requestContext.setAcceptType(Arrays.asList(new MediaType("*", "*")));
         requestContext.setIPAddress(new IPAddress("123.123.123.123"));

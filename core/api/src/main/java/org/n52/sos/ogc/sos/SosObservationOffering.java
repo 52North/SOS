@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ogc.sos;
 
+import org.n52.shetland.ogc.sos.SosOffering;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;

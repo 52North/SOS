@@ -44,7 +44,7 @@ import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -61,7 +61,7 @@ import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.collect.Sets;
 
-public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
+public abstract class AbstractAqdResponseEncoder<T extends OwsServiceResponse> extends AbstractResponseEncoder<T> {
 
     private ReportObligationRepository reportObligationRepository;
     private ProfileHandler profileHandler;
@@ -138,23 +138,23 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
 
-    protected AbstractServiceResponse changeResponseServiceVersion(AbstractServiceResponse response) {
+    protected OwsServiceResponse changeResponseServiceVersion(OwsServiceResponse response) {
         response.setService(SosConstants.SOS);
         response.setVersion(Sos2Constants.SERVICEVERSION);
         return response;
     }
 
     /**
-     * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
+     * Get the {@link Encoder} for the {@link OwsServiceResponse} and the
      * requested contentType
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to get {@link Encoder} for
-     * @return {@link Encoder} for the {@link AbstractServiceResponse}
+     *            {@link OwsServiceResponse} to get {@link Encoder} for
+     * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
-    protected Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
+    protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
         OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getContentType());
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
                     getContentType())));
@@ -163,7 +163,7 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
     }
 
     protected XmlObject encodeWithSosEncoder(T response) throws EncodingException {
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
         if (encoder != null) {
             Object encode = encoder.encode(response);
             if (encode != null && encode instanceof XmlObject) {

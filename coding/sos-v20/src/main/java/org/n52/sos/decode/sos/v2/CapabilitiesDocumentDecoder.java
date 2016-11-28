@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.shetland.ogc.ows.OwsCapabilities;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.DecoderKey;

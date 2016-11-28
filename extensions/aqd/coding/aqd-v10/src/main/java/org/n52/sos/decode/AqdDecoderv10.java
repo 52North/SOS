@@ -36,7 +36,7 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
@@ -53,7 +53,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
  * @since 4.3.0
  *
  */
-public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class AqdDecoderv10 implements Decoder<OwsServiceCommunicationObject, XmlObject> {
 
     private static final Set<DecoderKey> DECODER_KEYS =
             CodingHelper.xmlDecoderKeysForOperation(
@@ -75,9 +75,9 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
     }
 
     @Override
-    public AbstractServiceCommunicationObject decode(XmlObject objectToDecode) throws DecodingException {
+    public OwsServiceCommunicationObject decode(XmlObject objectToDecode) throws DecodingException {
         DecoderKey key = new XmlNamespaceDecoderKey(XmlHelper.getNamespace(objectToDecode), XmlObject.class);
-        Decoder<AbstractServiceCommunicationObject, XmlObject> decoder = this.decoderRepository.getDecoder(key);
+        Decoder<OwsServiceCommunicationObject, XmlObject> decoder = this.decoderRepository.getDecoder(key);
         return decoder.decode(objectToDecode);
     }
 

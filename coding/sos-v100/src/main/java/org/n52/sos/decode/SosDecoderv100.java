@@ -57,9 +57,9 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
@@ -86,7 +86,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServiceCommunicationObject> {
+public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, OwsServiceCommunicationObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosDecoderv100.class);
 
@@ -110,8 +110,8 @@ public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServic
     }
 
     @Override
-    public AbstractServiceCommunicationObject decode(XmlObject xmlObject) throws DecodingException {
-        AbstractServiceCommunicationObject request = null;
+    public OwsServiceCommunicationObject decode(XmlObject xmlObject) throws DecodingException {
+        OwsServiceCommunicationObject request = null;
         LOGGER.debug("REQUESTTYPE:" + xmlObject.getClass());
 
         /*
@@ -174,7 +174,7 @@ public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServic
      * @return Returns SosGetCapabilitiesRequest representing the request
      *
      */
-    private AbstractServiceRequest parseGetCapabilities(GetCapabilitiesDocument getCapsDoc)  {
+    private OwsServiceRequest parseGetCapabilities(GetCapabilitiesDocument getCapsDoc)  {
 
         GetCapabilities getCaps = getCapsDoc.getGetCapabilities();
         GetCapabilitiesRequest request = new GetCapabilitiesRequest(getCaps.getService());
@@ -202,7 +202,7 @@ public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServic
      *            XmlBean created from the incoming request stream
      * @return Returns SosDescribeSensorRequest representing the request
      */
-    private AbstractServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc) {
+    private OwsServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc) {
 
         DescribeSensorRequest request = new DescribeSensorRequest();
         DescribeSensor descSensor = descSensorDoc.getDescribeSensor();
@@ -226,7 +226,7 @@ public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServic
      * @throws DecodingException
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest parseGetObservation(GetObservationDocument getObsDoc) throws DecodingException {
+    private OwsServiceRequest parseGetObservation(GetObservationDocument getObsDoc) throws DecodingException {
         GetObservationRequest getObsRequest = new GetObservationRequest();
 
         GetObservation getObs = getObsDoc.getGetObservation();
@@ -293,7 +293,7 @@ public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServic
      * @throws DecodingException
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest parseGetFeatureOfInterest(GetFeatureOfInterestDocument getFoiDoc) throws DecodingException  {
+    private OwsServiceRequest parseGetFeatureOfInterest(GetFeatureOfInterestDocument getFoiDoc) throws DecodingException  {
 
         GetFeatureOfInterestRequest getFoiRequest = new GetFeatureOfInterestRequest();
         GetFeatureOfInterest getFoi = getFoiDoc.getGetFeatureOfInterest();
@@ -305,7 +305,7 @@ public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, AbstractServic
         return getFoiRequest;
     }
 
-    private AbstractServiceRequest parseGetObservationById(GetObservationByIdDocument getObsByIdDoc)
+    private OwsServiceRequest parseGetObservationById(GetObservationByIdDocument getObsByIdDoc)
             throws DecodingException {
         GetObservationByIdRequest getObsByIdRequest = new GetObservationByIdRequest();
         GetObservationById getObsById = getObsByIdDoc.getGetObservationById();

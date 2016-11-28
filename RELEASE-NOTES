@@ -6,7 +6,27 @@ RELEASE NOTES
  SensorML instance document), and information about the sensor mounting platform 
  (SensorML as well).
  
-      Release 52n-sensorweb-sos-4.3.8
+   Release 52n-sensorweb-sos-4.3.9
+===================================== 
+
+  --- New features ---
+  
+    * helgoland client
+    
+  --- Changes ---
+ 
+ 
+  
+  --- Fixed issues ---
+    
+    * Issue #390: Add default="NULL" to nullable timestamp properties in mapping files
+    * Set metadata property
+    * Document-Ready-Callback for SOS Test client
+    * Fix issue with not defined altitude in SensorML position
+    * Fix mapping files for MySQL if timestamp column is nullable
+    
+ 
+   Release 52n-sensorweb-sos-4.3.8
 =====================================
 
   --- New features ---

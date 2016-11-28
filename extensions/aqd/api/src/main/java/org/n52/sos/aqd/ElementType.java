@@ -28,9 +28,10 @@
  */
 package org.n52.sos.aqd;
 
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.sos.aqd.AqdConstants.PrimaryObservation;
+
+import com.google.common.base.Strings;
 
 public class ElementType {
 
@@ -79,7 +80,7 @@ public class ElementType {
     }
 
     public boolean isSetUOM() {
-        return StringHelper.isNotEmpty(getUOM());
+        return !Strings.isNullOrEmpty(getUOM());
     }
 
     public static ElementType getValueElementType(PrimaryObservation primaryObs, String uom)  {

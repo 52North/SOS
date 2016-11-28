@@ -28,6 +28,7 @@
  */
 package org.n52.sos.util;
 
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -38,19 +39,19 @@ import javax.xml.soap.SOAPConstants;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.W3CConstants;
 
 import com.google.common.collect.Sets;
 
@@ -60,59 +61,9 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public final class N52XmlHelper implements Constants {
-    public static final SchemaLocation SCHEMA_LOCATION_SOS_V1 = new SchemaLocation(Sos1Constants.NS_SOS,
-            Sos1Constants.SCHEMA_LOCATION_SOS);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SOS_V2 = new SchemaLocation(Sos2Constants.NS_SOS_20,
-            Sos2Constants.SCHEMA_LOCATION_URL_SOS);
-
-    public static final SchemaLocation SCHEMA_LOCATION_OM_100 = new SchemaLocation(OmConstants.NS_OM,
-            OmConstants.SCHEMA_LOCATION_URL_OM_CONSTRAINT);
-
-    public static final SchemaLocation SCHEMA_LOCATION_OM_200 = new SchemaLocation(OmConstants.NS_OM_2,
-            OmConstants.SCHEMA_LOCATION_URL_OM_20);
-
-    public static final SchemaLocation SCHEMA_LOCATION_GML_311 = new SchemaLocation(GmlConstants.NS_GML,
-            GmlConstants.SCHEMA_LOCATION_URL_GML_311);
-
-    public static final SchemaLocation SCHEMA_LOCATION_GML_321 = new SchemaLocation(GmlConstants.NS_GML_32,
-            GmlConstants.SCHEMA_LOCATION_URL_GML_32);
-
-    public static final SchemaLocation SCHEMA_LOCATION_OGC = new SchemaLocation(OGCConstants.NS_OGC,
-            OGCConstants.SCHEMA_LOCATION_OGC);
-
-    public static final SchemaLocation SCHEMA_LOCATION_OWS_110 = OWSConstants.OWS_110_SCHEMA_LOCATION;
-
-    public static final SchemaLocation SCHEMA_LOCATION_OWS_110_ER = new SchemaLocation(OWSConstants.NS_OWS,
-            OWSConstants.SCHEMA_LOCATION_URL_OWS_EXCEPTIONREPORT);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SA_100 = new SchemaLocation(SfConstants.NS_SA,
-            SfConstants.SCHEMA_LOCATION_URL_SA);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SF_20 = new SchemaLocation(SfConstants.NS_SF,
-            SfConstants.SCHEMA_LOCATION_URL_SF);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SAMS_20 = new SchemaLocation(SfConstants.NS_SAMS,
-            SfConstants.SCHEMA_LOCATION_URL_SAMS);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SML_101 = new SchemaLocation(SensorMLConstants.NS_SML,
-            SensorMLConstants.SCHEMA_LOCATION_URL_SML_101);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SWE_101 = new SchemaLocation(SweConstants.NS_SWE_101,
-            SweConstants.SCHEMA_LOCATION_URL_SWE_101);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SWE_200 = new SchemaLocation(SweConstants.NS_SWE_20,
-            SweConstants.SCHEMA_LOCATION_URL_SWE_20);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SWES_200 = new SchemaLocation(SwesConstants.NS_SWES_20,
-            SwesConstants.SCHEMA_LOCATION_URL_SWES_20);
-
-    public static final SchemaLocation SCHEMA_LOCATION_XLINK = new SchemaLocation(W3CConstants.NS_XLINK,
-            W3CConstants.SCHEMA_LOCATION_XLINK);
-
-    public static final SchemaLocation SCHEMA_LOCATION_SOAP_12 = new SchemaLocation(
-            SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
+public final class N52XmlHelper {
+    public static final SchemaLocation SCHEMA_LOCATION_OM_100 = new SchemaLocation(OmConstants.NS_OM, OmConstants.SCHEMA_LOCATION_URL_OM_CONSTRAINT);
+    public static final SchemaLocation SCHEMA_LOCATION_SOAP_12 = new SchemaLocation(SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE, SOAPConstants.URI_NS_SOAP_1_2_ENVELOPE);
 
     /**
      * Sets the schema location to a XmlObject
@@ -154,7 +105,7 @@ public final class N52XmlHelper implements Constants {
                 return builder.toString();
             }
         }
-        return EMPTY_STRING;
+        return "";
     }
 
     public static Set<String> getNamespaces(XmlObject xmlObject) {
@@ -196,7 +147,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSOS100() {
-        return SCHEMA_LOCATION_SOS_V1;
+        return Sos1Constants.SOS1_SCHEMA_LOCATION;
     }
 
     /**
@@ -205,7 +156,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSOS200() {
-        return SCHEMA_LOCATION_SOS_V2;
+        return Sos2Constants.SOS_SCHEMA_LOCATION;
     }
 
     /**
@@ -223,7 +174,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOM200() {
-        return SCHEMA_LOCATION_OM_200;
+        return OmConstants.OM_20_SCHEMA_LOCATION;
     }
 
     /**
@@ -232,7 +183,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForGML311() {
-        return SCHEMA_LOCATION_GML_311;
+        return GmlConstants.GML_311_SCHEMAL_LOCATION;
     }
 
     /**
@@ -241,7 +192,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForGML321() {
-        return SCHEMA_LOCATION_GML_321;
+        return GmlConstants.GML_32_SCHEMAL_LOCATION;
     }
 
     /**
@@ -250,7 +201,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOGC() {
-        return SCHEMA_LOCATION_OGC;
+        return OGCConstants.OGC_SCHEMA_LOCATION;
     }
 
     /**
@@ -259,7 +210,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOWS110() {
-        return SCHEMA_LOCATION_OWS_110;
+        return OWSConstants.OWS_110_SCHEMA_LOCATION;
     }
 
     /**
@@ -268,7 +219,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForOWS110Exception() {
-        return SCHEMA_LOCATION_OWS_110_ER;
+        return OWSConstants.OWS_110_EXCEPTION_REPORT_SCHEMA_LOCATION;
     }
 
     /**
@@ -277,7 +228,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSA100() {
-        return SCHEMA_LOCATION_SA_100;
+        return SfConstants.SA_SCHEMA_LOCATION;
     }
 
     /**
@@ -286,7 +237,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSF200() {
-        return SCHEMA_LOCATION_SF_20;
+        return SfConstants.SF_SCHEMA_LOCATION;
     }
 
     /**
@@ -295,7 +246,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSAMS200() {
-        return SCHEMA_LOCATION_SAMS_20;
+        return SfConstants.SAMS_SCHEMA_LOCATION;
     }
 
     /**
@@ -304,7 +255,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSML101() {
-        return SCHEMA_LOCATION_SML_101;
+        return SensorMLConstants.SML_101_SCHEMA_LOCATION;
     }
 
     /**
@@ -313,7 +264,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSWE101() {
-        return SCHEMA_LOCATION_SWE_101;
+        return SweConstants.SWE_101_SCHEMA_LOCATION;
     }
 
     /**
@@ -322,7 +273,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSWE200() {
-        return SCHEMA_LOCATION_SWE_200;
+        return SweConstants.SWE_20_SCHEMA_LOCATION;
     }
 
     /**
@@ -331,7 +282,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForSWES200() {
-        return SCHEMA_LOCATION_SWES_200;
+        return SwesConstants.SWES_20_SCHEMA_LOCATION;
     }
 
     /**
@@ -340,7 +291,7 @@ public final class N52XmlHelper implements Constants {
      * @return QName of schema location
      */
     public static SchemaLocation getSchemaLocationForXLINK() {
-        return SCHEMA_LOCATION_XLINK;
+        return W3CConstants.XLINK_SCHEMA_LOCATION;
     }
 
     public static SchemaLocation getSchemaLocationForSOAP12() {

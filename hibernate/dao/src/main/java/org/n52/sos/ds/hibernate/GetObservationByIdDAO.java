@@ -38,11 +38,11 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -52,6 +52,7 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.response.GetObservationByIdResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

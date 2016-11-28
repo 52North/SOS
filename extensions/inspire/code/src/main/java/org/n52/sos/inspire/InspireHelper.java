@@ -41,8 +41,8 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.i18n.I18NSettings;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.util.StringHelper;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.util.StringHelper;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.inspire.settings.InspireSettings;
@@ -237,7 +237,7 @@ public class InspireHelper implements Constructable {
      }
 
      public boolean isSetMetadataUrlMediaType() {
-         return StringHelper.isNotEmpty(getMetadataUrlMediaType());
+         return !Strings.isNullOrEmpty(getMetadataUrlMediaType());
     }
 
      @Setting(InspireSettings.INSPIRE_METADATA_DATE_KEY)
@@ -307,7 +307,7 @@ public class InspireHelper implements Constructable {
      *         the configured default language
      */
     public InspireLanguageISO6392B checkRequestedLanguage(String language) {
-        if (StringHelper.isNotEmpty(language)) {
+        if (!Strings.isNullOrEmpty(language)) {
             try {
                 InspireLanguageISO6392B requestedLanguage = InspireLanguageISO6392B.fromValue(language);
                 if (requestedLanguage != null && getSupportedLanguages().contains(requestedLanguage)) {

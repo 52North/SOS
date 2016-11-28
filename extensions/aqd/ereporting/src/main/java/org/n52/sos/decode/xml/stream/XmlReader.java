@@ -37,12 +37,11 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Function;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
@@ -167,13 +166,7 @@ public abstract class XmlReader<T> {
     }
 
     protected Iterable<Optional<String>> attr(Iterable<QName> names) {
-        return Iterables
-                .transform(names, new Function<QName, Optional<String>>() {
-                    @Override
-                    public Optional<String> apply(QName input) {
-                        return XmlReader.this.attr(input);
-                    }
-                });
+        return Iterables.transform(names, XmlReader.this::attr);
     }
 
     protected Optional<String> attr(QName qn) {

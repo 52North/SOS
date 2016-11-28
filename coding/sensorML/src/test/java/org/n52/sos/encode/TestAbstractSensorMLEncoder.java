@@ -32,10 +32,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * Test class implementation for {@link AbstractSensorMLEncoder}

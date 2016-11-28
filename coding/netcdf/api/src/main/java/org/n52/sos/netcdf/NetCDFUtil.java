@@ -37,12 +37,23 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.netcdf.data.dataset.IdentifierDatasetSensor;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesProfileSensorDataset;
 import org.n52.sos.netcdf.data.dataset.TimeSeriesSensorDataset;
@@ -53,20 +64,9 @@ import org.n52.sos.netcdf.data.subsensor.PointProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.feature.FeatureUtil;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Maps;
@@ -93,18 +93,17 @@ public class NetCDFUtil {
      *
      * @param omObservations
      *            The collection of observations to transform
-     * @return List<NetCDFObservation> ready for encoding
-     * @throws OwsExceptionReport
+     * @return List&lt;NetCDFObservation&gt; ready for encoding
+     * @throws EncodingException
      */
     public static List<NetCDFObservation> createNetCDFSosObservations(List<OmObservation> omObservations)
-            throws OwsExceptionReport {
+            throws EncodingException {
         // the main map of observation value strings by asset, time, phenomenon,
         // and subsensor (height, profile bin, etc)
-        Map<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesMap =
-                new HashMap<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>>();
+        Map<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesMap = new HashMap<>();
 
         SetMultimap<String, OmObservableProperty> sensorPhens = HashMultimap.create();
-        Map<String, SosProcedureDescription> sensorProcedure = Maps.newHashMap();
+        Map<String, SosProcedureDescription<?>> sensorProcedure = Maps.newHashMap();
         // Map<StationAsset,TimePeriod> stationPeriodMap = new
         // HashMap<StationAsset,TimePeriod>();
 
@@ -124,7 +123,7 @@ public class NetCDFUtil {
             }
 
             AbstractPhenomenon absPhen = obsConst.getObservableProperty();
-            Map<String, OmObservableProperty> phenomenaMap = new HashMap<String, OmObservableProperty>();
+            Map<String, OmObservableProperty> phenomenaMap = new HashMap<>();
             if (absPhen instanceof OmCompositePhenomenon) {
                 for (OmObservableProperty phen : ((OmCompositePhenomenon) absPhen).getPhenomenonComponents()) {
                     // TODO should the unit be set like this? seems sketchy
@@ -143,14 +142,13 @@ public class NetCDFUtil {
                 }
                 phenomenaMap.put(phen.getIdentifier(), phen);
             }
-            List<OmObservableProperty> phenomena = new ArrayList<OmObservableProperty>(phenomenaMap.values());
+            List<OmObservableProperty> phenomena = new ArrayList<>(phenomenaMap.values());
             sensorPhens.putAll(sensor, phenomena);
 
             // get foi
             AbstractFeature aFoi = obsConst.getFeatureOfInterest();
             if (!(aFoi instanceof SamplingFeature)) {
-                throw new NoApplicableCodeException()
-                        .withMessage("Encountered a feature which isn't a SamplingFeature");
+                throw new EncodingException("Encountered a feature which isn't a SamplingFeature");
             }
             SamplingFeature foi = (SamplingFeature) aFoi;
 
@@ -159,8 +157,7 @@ public class NetCDFUtil {
                     // TODO is this correct?
                     point = (Point) GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(point);
                 } catch (OwsExceptionReport e) {
-                    throw new NoApplicableCodeException()
-                            .withMessage("Exception while normalizing feature coordinate axis order.");
+                    throw new EncodingException("Exception while normalizing feature coordinate axis order.", e);
                 }
                 sensorLngs.put(sensor, point.getX());
                 sensorLats.put(sensor, point.getY());
@@ -171,7 +168,7 @@ public class NetCDFUtil {
             String phenId = obsConst.getObservableProperty().getIdentifier();
             ObservationValue<?> iObsValue = sosObs.getValue();
             if (!(iObsValue instanceof SingleObservationValue)) {
-                throw new NoApplicableCodeException().withMessage("Only SingleObservationValues are supported.");
+                throw new EncodingException("Only SingleObservationValues are supported.");
             }
             SingleObservationValue<?> singleObsValue = (SingleObservationValue<?>) iObsValue;
             Time obsTime = singleObsValue.getPhenomenonTime();
@@ -180,7 +177,7 @@ public class NetCDFUtil {
 
             Value<?> obsValue = singleObsValue.getValue();
             if (!(obsValue instanceof QuantityValue)) {
-                throw new NoApplicableCodeException().withMessage("Only QuantityValues are supported.");
+                throw new EncodingException("Only QuantityValues are supported.");
             }
             QuantityValue quantityValue = (QuantityValue) obsValue;
 
@@ -189,15 +186,15 @@ public class NetCDFUtil {
                 OmObservableProperty phenomenon = phenomena.get(0);
                 // add dimensional values to procedure dimension tracking maps
                 if (isLng(phenomenon.getIdentifier())) {
-                    sensorLngs.get(sensor).add(quantityValue.getValue().doubleValue());
+                    sensorLngs.get(sensor).add(quantityValue.getValue());
                 }
 
                 if (isLat(phenomenon.getIdentifier())) {
-                    sensorLats.get(sensor).add(quantityValue.getValue().doubleValue());
+                    sensorLats.get(sensor).add(quantityValue.getValue());
                 }
 
                 if (isZ(phenomenon.getIdentifier())) {
-                    Double zValue = quantityValue.getValue().doubleValue();
+                    Double zValue = quantityValue.getValue();
 //                    if (isDepth(phenomenon.getIdentifier())) {
 //                        zValue = 0 - zValue;
 //                    }
@@ -209,9 +206,9 @@ public class NetCDFUtil {
             if (sosObs.isSetParameter()) {
                 if (sosObs.isSetHeightDepthParameter()) {
                     if (sosObs.isSetHeightParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue().doubleValue());
+                        sensorHeights.get(sensor).add(sosObs.getHeightParameter().getValue().getValue());
                     } else if (sosObs.isSetDepthParameter()) {
-                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue().doubleValue());
+                        sensorHeights.get(sensor).add(sosObs.getDepthParameter().getValue().getValue());
                     }
                 }
                 if (hasSamplingGeometry(sosObs)) {
@@ -224,8 +221,7 @@ public class NetCDFUtil {
                                     (Point) GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
                                             point);
                         } catch (OwsExceptionReport e) {
-                            throw new NoApplicableCodeException()
-                                    .withMessage("Exception while normalizing sampling geometry coordinate axis order.");
+                            throw new EncodingException("Exception while normalizing sampling geometry coordinate axis order.");
                         }
                         sensorLngs.put(sensor, point.getX());
                         sensorLats.put(sensor, point.getY());
@@ -237,21 +233,21 @@ public class NetCDFUtil {
             // get the sensor's data map
             Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> sensorObsMap = obsValuesMap.get(sensor);
             if (sensorObsMap == null) {
-                sensorObsMap = new HashMap<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>();
+                sensorObsMap = new HashMap<>();
                 obsValuesMap.put(sensor, sensorObsMap);
             }
 
             // get the map of the asset's phenomena by time
             Map<OmObservableProperty, Map<SubSensor, Value<?>>> obsPropMap = sensorObsMap.get(obsTime);
             if (obsPropMap == null) {
-                obsPropMap = new HashMap<OmObservableProperty, Map<SubSensor, Value<?>>>();
+                obsPropMap = new HashMap<>();
                 sensorObsMap.put(obsTime, obsPropMap);
             }
 
             OmObservableProperty phen = phenomenaMap.get(phenId);
             Map<SubSensor, Value<?>> subSensorMap = obsPropMap.get(phen);
             if (subSensorMap == null) {
-                subSensorMap = new HashMap<SubSensor, Value<?>>();
+                subSensorMap = new HashMap<>();
                 obsPropMap.put(phen, subSensorMap);
             }
 
@@ -277,24 +273,22 @@ public class NetCDFUtil {
         // station datasets
         // Map<SensorAsset,PointSensorDataset> pointSensorDatasets =
         // new HashMap<SensorAsset,PointSensorDataset>();
-        Map<String, TimeSeriesSensorDataset> timeSeriesSensorDatasets = new HashMap<String, TimeSeriesSensorDataset>();
+        Map<String, TimeSeriesSensorDataset> timeSeriesSensorDatasets = new HashMap<>();
         // Map<SensorAsset,ProfileSensorDataset> profileSensorDatasets =
         // new HashMap<SensorAsset,ProfileSensorDataset>();
-        Map<String, TimeSeriesProfileSensorDataset> timeSeriesProfileSensorDatasets =
-                new HashMap<String, TimeSeriesProfileSensorDataset>();
-        Map<String, TrajectorySensorDataset> trajectorySensorDatasets = new HashMap<String, TrajectorySensorDataset>();
-        Map<String, TrajectoryProfileSensorDataset> trajectoryProfileSensorDatasets =
-                new HashMap<String, TrajectoryProfileSensorDataset>();
+        Map<String, TimeSeriesProfileSensorDataset> timeSeriesProfileSensorDatasets = new HashMap<>();
+        Map<String, TrajectorySensorDataset> trajectorySensorDatasets = new HashMap<>();
+        Map<String, TrajectoryProfileSensorDataset> trajectoryProfileSensorDatasets = new HashMap<>();
 
         // phenomena
         // Set<OmObservableProperty> pointPhenomena = new
         // HashSet<OmObservableProperty>();
-        Set<OmObservableProperty> timeSeriesPhenomena = new HashSet<OmObservableProperty>();
+        Set<OmObservableProperty> timeSeriesPhenomena = new HashSet<>();
         // Set<OmObservableProperty> profilePhenomena = new
         // HashSet<OmObservableProperty>();
-        Set<OmObservableProperty> timeSeriesProfilePhenomena = new HashSet<OmObservableProperty>();
-        Set<OmObservableProperty> trajectoryPhenomena = new HashSet<OmObservableProperty>();
-        Set<OmObservableProperty> trajectoryProfilePhenomena = new HashSet<OmObservableProperty>();
+        Set<OmObservableProperty> timeSeriesProfilePhenomena = new HashSet<>();
+        Set<OmObservableProperty> trajectoryPhenomena = new HashSet<>();
+        Set<OmObservableProperty> trajectoryProfilePhenomena = new HashSet<>();
 
         // envelopes
         // Envelope pointEnvelope = new Envelope();
@@ -396,7 +390,10 @@ public class NetCDFUtil {
         }
 
         // build NetCDFObservations
-        List<NetCDFObservation> iSosObsList = new ArrayList<NetCDFObservation>();
+        List<NetCDFObservation> iSosObsList = new ArrayList<>(timeSeriesSensorDatasets.size() +
+                                                              timeSeriesProfileSensorDatasets.size() +
+                                                              trajectorySensorDatasets.size() +
+                                                              trajectoryProfileSensorDatasets.size());
 
         // timeSeries
         if (timeSeriesSensorDatasets.size() > 0) {
@@ -435,12 +432,8 @@ public class NetCDFUtil {
     // }
 
     public static void expandEnvelopeToInclude(Envelope env, Set<Double> lngs, Set<Double> lats) {
-        for (double lng : lngs) {
-            env.expandToInclude(lng, env.getMinY());
-        }
-        for (double lat : lats) {
-            env.expandToInclude(env.getMinX(), lat);
-        }
+        lngs.stream().forEach(lng -> env.expandToInclude(lng, env.getMinY()));
+        lats.stream().forEach(lat -> env.expandToInclude(env.getMinX(), lat));
     }
 
     public static Envelope createEnvelope(Collection<OmObservation> observationCollection) {

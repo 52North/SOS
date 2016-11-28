@@ -28,9 +28,8 @@
  */
 package org.n52.sos.gda;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -56,27 +55,19 @@ public class GetDataAvailabilityJsonDecoder extends AbstractSosRequestDecoder<Ge
     }
 
     @Override
-    protected GetDataAvailabilityRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected GetDataAvailabilityRequest decodeRequest(JsonNode node) {
         GetDataAvailabilityRequest req = new GetDataAvailabilityRequest();
         if (node.has(JSONConstants.PROCEDURE)) {
-            for (String procedure : parseStringOrStringList(node.path(JSONConstants.PROCEDURE))) {
-                req.addProcedure(procedure);
-            }
+            parseStringOrStringList(node.path(JSONConstants.PROCEDURE)).forEach(req::addProcedure);
         }
         if (node.has(JSONConstants.OBSERVED_PROPERTY)) {
-            for (String property : parseStringOrStringList(node.path(JSONConstants.OBSERVED_PROPERTY))) {
-                req.addObservedProperty(property);
-            }
+            parseStringOrStringList(node.path(JSONConstants.OBSERVED_PROPERTY)).forEach(req::addObservedProperty);
         }
         if (node.has(JSONConstants.FEATURE_OF_INTEREST)) {
-            for (String feature : parseStringOrStringList(node.path(JSONConstants.FEATURE_OF_INTEREST))) {
-                req.addFeatureOfInterest(feature);
-            }
+            parseStringOrStringList(node.path(JSONConstants.FEATURE_OF_INTEREST)).forEach(req::addFeatureOfInterest);
         }
         if (node.has(JSONConstants.OFFERING)) {
-            for (String property : parseStringOrStringList(node.path(JSONConstants.OFFERING))) {
-                req.addOffering(property);
-            }
+            parseStringOrStringList(node.path(JSONConstants.OFFERING)).forEach(req::addOffering);
         }
         return req;
     }

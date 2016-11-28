@@ -32,10 +32,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.n52.iceland.ds.DatasourceDaoIdentifier;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.ReferencedEnvelope;
 
 /**
  * Interface for querying featurefInterest data from a data source
@@ -92,7 +92,7 @@ public interface FeatureQueryHandler extends DatasourceDaoIdentifier {
      *
      * @throws OwsExceptionReport
      */
-    SosEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
+    ReferencedEnvelope getEnvelopeForFeatureIDs(FeatureQueryHandlerQueryObject queryObject) throws OwsExceptionReport;
 
     /**
      * FIXME Add javadoc to clarify the semantics of this method

@@ -32,23 +32,21 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.ds.OperationHandler;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 
-public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
     private AqdHelper aqdHelper;
@@ -81,23 +79,20 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
         return super.getOptionalOperationHandler(SosConstants.SOS, operationName);
     }
 
-    protected void checkExtensions(final AbstractServiceRequest<?> request, final CompositeOwsException exceptions) {
+    protected void checkExtensions(AbstractServiceRequest request, CompositeOwsException exceptions)
+            throws OwsExceptionReport {
         if (request.isSetExtensions() && aqdHelper.hasFlowExtension(request.getExtensions())) {
-            try {
-                aqdHelper.getFlow(request.getExtensions());
-            } catch (InvalidParameterValueException e) {
-                exceptions.add(e);
-            }
+            aqdHelper.getFlow(request.getExtensions());
         }
     }
 
-    protected AbstractServiceRequest<?> changeRequestServiceVersion(AbstractServiceRequest<?> request) {
+    protected AbstractServiceRequest changeRequestServiceVersion(AbstractServiceRequest request) {
         request.setService(SosConstants.SOS);
         request.setVersion(Sos2Constants.SERVICEVERSION);
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeRequestServiceVersionToAqd(AbstractServiceRequest<?> request) {
+    protected AbstractServiceRequest changeRequestServiceVersionToAqd(AbstractServiceRequest request) {
         request.setService(AqdConstants.AQD);
         request.setVersion(AqdConstants.VERSION);
         return request;
@@ -109,7 +104,7 @@ public abstract class AbstractAqdRequestOperator<D extends OperationHandler, Q e
         return response;
     }
 
-    protected void checkReportingHeader(ReportObligationType type) throws CodedException {
+    protected void checkReportingHeader(ReportObligationType type) throws OwsExceptionReport {
         this.reportObligationRepository.createHeader(type);
     }
 

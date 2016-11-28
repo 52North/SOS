@@ -39,10 +39,11 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.sos.ConfiguredSettingsManager;
 
@@ -78,7 +79,7 @@ public class GetCapabilitiesRequestDecoderTest {
     }
 
     @Before
-    public void before() throws OwsExceptionReport {
+    public void before() throws DecodingException {
         this.decoder = new GetCapabilitiesRequestDecoder();
         this.request = decoder.decodeJSON(json, true);
     }

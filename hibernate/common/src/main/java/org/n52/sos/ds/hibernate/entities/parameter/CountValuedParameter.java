@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 public class CountValuedParameter extends Parameter<Integer> {
 

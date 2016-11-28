@@ -31,47 +31,53 @@ package org.n52.sos.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractObservationValue;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
+
+import com.google.common.base.Strings;
 
 /**
  * SWE helper class.
@@ -82,19 +88,21 @@ import org.slf4j.LoggerFactory;
 public final class SweHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SweHelper.class);
+    private SweHelper() {
+    }
 
     /**
      * Create {@link SweDataArray} from {@link OmObservation}
      *
-     * @param observationValue
+     * @param sosObservation
      *            The {@link OmObservation} to create
      *            {@link SweDataArray} from
      * @return Created {@link SweDataArray}
-     * @throws CodedException
+     * @throws EncodingException
      *             If the service does not support the {@link SweDataArray}
      *             creation from value of {@link OmObservation}
      */
-    public static SweDataArray createSosSweDataArray(OmObservation sosObservation) throws CodedException {
+    public static SweDataArray createSosSweDataArray(OmObservation sosObservation) throws EncodingException {
         String observablePropertyIdentifier =
                 sosObservation.getObservationConstellation().getObservableProperty().getIdentifier();
         SweDataArrayValue dataArrayValue = new SweDataArrayValue();
@@ -138,11 +146,11 @@ public final class SweHelper {
      *            The {@link AbstractObservationValue} to create
      *            {@link SweDataArray} from
      * @return Created {@link SweDataArray}
-     * @throws CodedException
+     * @throws EncodingException
      *             If the service does not support the {@link SweDataArray}
      *             creation from {@link AbstractObservationValue}
      */
-    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) throws CodedException {
+    public static SweDataArray createSosSweDataArray(AbstractObservationValue<?> observationValue) throws EncodingException {
         String observablePropertyIdentifier = observationValue.getObservableProperty();
         SweDataArrayValue dataArrayValue = new SweDataArrayValue();
         SweDataArray dataArray = new SweDataArray();
@@ -178,14 +186,14 @@ public final class SweHelper {
         return dataArray;
     }
 
-    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) throws CodedException {
+    private static SweAbstractDataComponent createElementType(TimeValuePair tvp, String name) throws EncodingException {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField(tvp.getTime()));
         dataRecord.addField(getFieldForValue(tvp.getValue(), name));
         return dataRecord;
     }
 
-    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) throws CodedException {
+    private static SweAbstractDataComponent createElementType(SingleObservationValue<?> sov, String name) throws EncodingException {
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.addField(getPhenomenonTimeField(sov.getPhenomenonTime()));
         dataRecord.addField(getFieldForValue(sov.getValue(), name));
@@ -193,7 +201,7 @@ public final class SweHelper {
     }
 
     private static SweField getPhenomenonTimeField(Time sosTime) {
-        SweAbstractUomType<?> time = null;
+        SweAbstractUomType<?> time;
         if (sosTime instanceof TimePeriod) {
             time = new SweTimeRange();
         } else {
@@ -204,35 +212,90 @@ public final class SweHelper {
         return new SweField(OmConstants.PHENOMENON_TIME_NAME, time);
     }
 
-    private static SweField getFieldForValue(Value<?> iValue, String name) throws CodedException {
+    private static SweField getFieldForValue(Value<?> iValue, String name) throws EncodingException {
         SweAbstractDataComponent value = getValue(iValue);
         value.setDefinition(name);
         return new SweField(name, value);
     }
 
-    private static SweAbstractDataComponent getValue(Value<?> iValue) throws CodedException {
-        if (iValue instanceof BooleanValue) {
-            return new SweBoolean();
-        } else if (iValue instanceof CategoryValue) {
-            SweCategory sosSweCategory = new SweCategory();
-            sosSweCategory.setCodeSpace(((CategoryValue) iValue).getUnit());
-            return sosSweCategory;
-        } else if (iValue instanceof CountValue) {
-            return new SweCount();
-        } else if (iValue instanceof QuantityValue) {
-            SweQuantity sosSweQuantity = new SweQuantity();
-            sosSweQuantity.setUom(((QuantityValue) iValue).getUnit());
-            return sosSweQuantity;
-        } else if (iValue instanceof TextValue) {
-            return new SweText();
-        } else if (iValue instanceof NilTemplateValue) {
-            return new SweText();
-        } else if (iValue instanceof ComplexValue) {
-            throw new NotYetSupportedException().withMessage("The merging of '%s' is not yet supported!",
-                    OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
-        }
-        throw new NotYetSupportedException().withMessage("The merging of value type '%s' is not yet supported!",
-                iValue.getClass().getName());
+    private static SweAbstractDataComponent getValue(Value<?> iValue) throws EncodingException {
+
+        return iValue.accept(new ValueVisitor<SweAbstractDataComponent, EncodingException>() {
+            @Override
+            public SweAbstractDataComponent visit(BooleanValue value) {
+                return new SweBoolean();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(CategoryValue value) {
+                SweCategory sosSweCategory = new SweCategory();
+                sosSweCategory.setCodeSpace(value.getUnit());
+                return sosSweCategory;
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(NilTemplateValue value) {
+                return new SweText();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(QuantityValue value) {
+                SweQuantity sosSweQuantity = new SweQuantity();
+                sosSweQuantity.setUom(value.getUnit());
+                return sosSweQuantity;
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(TextValue value) {
+                return new SweText();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(CountValue value) {
+                return new SweCount();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(ComplexValue value) throws EncodingException {
+                throw new EncodingException("The merging of '%s' is not yet supported!",
+                                            OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(GeometryValue value) throws EncodingException {
+                throw notSupported();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(HrefAttributeValue value) throws EncodingException {
+                throw notSupported();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(ReferenceValue value) throws EncodingException {
+                throw notSupported();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(SweDataArrayValue value) throws EncodingException {
+                throw notSupported();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(TVPValue value) throws EncodingException {
+                throw notSupported();
+            }
+
+            @Override
+            public SweAbstractDataComponent visit(UnknownValue value) throws EncodingException {
+                throw notSupported();
+            }
+
+            private EncodingException notSupported() {
+                return new EncodingException("The merging of value type '%s' is not yet supported!",
+                                             iValue.getClass().getName());
+            }
+        });
     }
 
     /**
@@ -300,7 +363,7 @@ public final class SweHelper {
         SweTextEncoding sosTextEncoding = new SweTextEncoding();
         sosTextEncoding.setBlockSeparator(tupleSeparator);
         sosTextEncoding.setTokenSeparator(tokenSeparator);
-        if (StringHelper.isNotEmpty(decimalSeparator)) {
+        if (!Strings.isNullOrEmpty(decimalSeparator)) {
             sosTextEncoding.setDecimalSeparator(decimalSeparator);
         }
         return sosTextEncoding;
@@ -345,9 +408,6 @@ public final class SweHelper {
      */
     public static SweQuantity createSweQuantity(Object value, String axis, String uom) {
         return new SweQuantity().setAxisID(axis).setUom(uom).setValue(JavaHelper.asDouble(value));
-    }
-
-    private SweHelper() {
     }
 
 }

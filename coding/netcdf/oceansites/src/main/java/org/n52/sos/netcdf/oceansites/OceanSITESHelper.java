@@ -30,8 +30,8 @@ package org.n52.sos.netcdf.oceansites;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.iso.CodeList.CiRoleCodes;
 
 import com.google.common.base.Strings;
 

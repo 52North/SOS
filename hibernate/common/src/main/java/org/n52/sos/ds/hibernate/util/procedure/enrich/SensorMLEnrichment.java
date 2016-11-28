@@ -28,12 +28,12 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifierPredicates;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifierPredicates;
 
 import com.google.common.base.Predicate;
 
@@ -63,12 +63,12 @@ public abstract class SensorMLEnrichment extends ProcedureDescriptionEnrichment 
 
     @Override
     public void enrich() throws OwsExceptionReport {
-        enrich((AbstractSensorML) getDescription());
+        enrich((AbstractSensorML) getDescription().getProcedureDescription());
     }
 
     @Override
     public boolean isApplicable() {
-        return getDescription() instanceof AbstractSensorML;
+        return getDescription().getProcedureDescription() instanceof AbstractSensorML;
     }
 
     protected abstract void enrich(AbstractSensorML description)

@@ -29,8 +29,9 @@
 package org.n52.sos.ds.hibernate.util;
 
 import org.hibernate.criterion.Criterion;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 
 import com.vividsolutions.jts.geom.Geometry;

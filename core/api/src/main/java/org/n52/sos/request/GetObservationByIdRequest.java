@@ -30,10 +30,7 @@ package org.n52.sos.request;
 
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.response.AbstractObservationResponse;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
  * SOS GetObservationById request
@@ -47,14 +44,16 @@ public class GetObservationByIdRequest extends AbstractObservationRequest {
      */
     private List<String> observationIdentifier;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetObservationById.name();
+    public GetObservationByIdRequest() {
+        super(null, null, SosConstants.Operations.GetObservationById.name());
+    }
+
+    public GetObservationByIdRequest(String service, String version) {
+        super(service, version, SosConstants.Operations.GetObservationById.name());
+    }
+
+    public GetObservationByIdRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -70,15 +69,10 @@ public class GetObservationByIdRequest extends AbstractObservationRequest {
      * Set observation identifier
      *
      * @param observationIdentifier
-     *            observation identifier
+     *                              observation identifier
      */
     public void setObservationIdentifier(List<String> observationIdentifier) {
         this.observationIdentifier = observationIdentifier;
-    }
-
-    @Override
-    public AbstractObservationResponse getResponse() throws OwsExceptionReport {
-        return (GetObservationByIdResponse) new GetObservationByIdResponse().set(this);
     }
 
 }

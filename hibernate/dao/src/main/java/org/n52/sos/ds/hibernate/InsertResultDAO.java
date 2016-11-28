@@ -40,21 +40,36 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
@@ -72,30 +87,11 @@ import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.request.InsertResultRequest;
 import org.n52.sos.response.InsertResultResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
@@ -207,15 +203,19 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private OmObservation getSingleObservationFromResultValues(final String version,
             final ResultTemplate resultTemplate, final String resultValues, final Session session)
             throws OwsExceptionReport {
-        final SosResultEncoding resultEncoding = new SosResultEncoding(resultTemplate.getResultEncoding());
-        final SosResultStructure resultStructure = new SosResultStructure(resultTemplate.getResultStructure());
-        final String[] blockValues = getBlockValues(resultValues, resultEncoding.getEncoding());
-        final OmObservation singleObservation =
-                getObservation(resultTemplate, blockValues, resultStructure.getResultStructure(),
-                        resultEncoding.getEncoding(), session);
-        final AbstractFeature feature = getSosAbstractFeature(resultTemplate.getFeatureOfInterest(), version, session);
-        singleObservation.getObservationConstellation().setFeatureOfInterest(feature);
-        return singleObservation;
+        try {
+            final SosResultEncoding resultEncoding = new SosResultEncoding(resultTemplate.getResultEncoding());
+            final SosResultStructure resultStructure = new SosResultStructure(resultTemplate.getResultStructure());
+            final String[] blockValues = getBlockValues(resultValues, resultEncoding.getEncoding());
+            final OmObservation singleObservation =
+                    getObservation(resultTemplate, blockValues, resultStructure.getResultStructure(),
+                                                            resultEncoding.getEncoding(), session);
+            final AbstractFeature feature = getSosAbstractFeature(resultTemplate.getFeatureOfInterest(), version, session);
+            singleObservation.getObservationConstellation().setFeatureOfInterest(feature);
+            return singleObservation;
+        } catch (DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
+        }
     }
 
     /**
@@ -292,7 +292,7 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
                 observationType = obsConst.getObservationType().getObservationType();
             }
         }
-        final SosProcedureDescription procedure = createProcedure(resultTemplate.getProcedure());
+        final SosProcedureDescription<?> procedure = createProcedure(resultTemplate.getProcedure());
         final AbstractPhenomenon observablePropety =
                 new OmObservableProperty(resultTemplate.getObservableProperty().getIdentifier());
         final AbstractFeature feature =

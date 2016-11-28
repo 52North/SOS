@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
-import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.sos.ds.hibernate.entities.observation.ObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;

@@ -29,84 +29,14 @@
 package org.n52.sos.service.it.functional;
 
 import static org.hamcrest.Matchers.arrayWithSize;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.Assert.assertThat;
 
 import java.util.Iterator;
 
-import javax.naming.ConfigurationException;
 import javax.xml.namespace.NamespaceContext;
-
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.joda.time.DateTime;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ErrorCollector;
-import org.n52.iceland.cache.ContentCache;
-import org.n52.iceland.config.SettingDefinition;
-import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.config.SettingValueFactory;
-import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.request.operator.RequestOperatorKey;
-import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.ServiceSettings;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.ds.hibernate.H2Configuration;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.request.operator.AbstractRequestOperator;
-import org.n52.sos.service.Configurator;
-import org.n52.sos.service.it.AbstractComplianceSuiteTest;
-import org.n52.sos.service.it.Client;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.w3c.dom.Node;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.Iterators;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
 import net.opengis.sos.x20.GetObservationResponseDocument;
@@ -117,6 +47,68 @@ import net.opengis.sos.x20.SosInsertionMetadataType;
 import net.opengis.swes.x20.InsertSensorDocument;
 import net.opengis.swes.x20.InsertSensorResponseDocument;
 import net.opengis.swes.x20.InsertSensorType;
+
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
+import org.w3c.dom.Node;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.iceland.request.operator.RequestOperatorKey;
+import org.n52.iceland.request.operator.RequestOperatorRepository;
+import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.http.MediaTypes;
+import org.n52.shetland.w3c.W3CConstants;
+import org.n52.sos.ds.hibernate.H2Configuration;
+import org.n52.sos.request.operator.AbstractRequestOperator;
+import org.n52.sos.service.Configurator;
+import org.n52.sos.service.it.AbstractComplianceSuiteTest;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlOptionsHelper;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableBiMap;
+import com.google.common.collect.Iterators;
+
+import ch.qos.logback.core.net.server.Client;
 
 public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private static final NamespaceContextImpl NS_CTX = new NamespaceContextImpl();
@@ -157,7 +149,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
 
 
     @Before
-    public void before() throws OwsExceptionReport {
+    public void before() throws OwsExceptionReport, EncodingException {
         activate();
         assertThat(pox().entity(createComplexInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createComplexInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
@@ -242,19 +234,19 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     @Test
-    public void testInsertComplexThenNumericObservation() throws OwsExceptionReport {
+    public void testInsertComplexThenNumericObservation() throws OwsExceptionReport, EncodingException {
         assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
     }
 
     @Test
-    public void testInsertComplexThenNumericObservationSameOffering() throws OwsExceptionReport {
+    public void testInsertComplexThenNumericObservationSameOffering() throws OwsExceptionReport, EncodingException {
         assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
     }
 
     @Test
-    public void testInsertNumericThenComplexObservation() throws OwsExceptionReport {
+    public void testInsertNumericThenComplexObservation() throws OwsExceptionReport, EncodingException {
         after();
         assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         assertThat(pox().entity(createNumericInsertObservationRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
@@ -269,7 +261,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     @Test
-    public void testInsertMultipleComplexObservations() throws OwsExceptionReport {
+    public void testInsertMultipleComplexObservations() throws OwsExceptionReport, EncodingException {
         DateTime now = DateTime.now();
         for (int i = 0; i < 5; ++i) {
             assertThat(pox().entity(createComplexInsertObservationRequest(now.plusHours(i)).xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertObservationResponseDocument.class)));
@@ -281,7 +273,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     @Test
-    public void testInsertMultipleNumericObservations() throws OwsExceptionReport {
+    public void testInsertMultipleNumericObservations() throws OwsExceptionReport, EncodingException {
         after();
         assertThat(pox().entity(createNumericInsertSensorRequest().xmlText(getXmlOptions())).response().asXmlObject(), is(instanceOf(InsertSensorResponseDocument.class)));
         DateTime now = DateTime.now();
@@ -380,11 +372,11 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
 
-    private InsertSensorDocument createComplexInsertSensorRequest() throws OwsExceptionReport {
+    private InsertSensorDocument createComplexInsertSensorRequest() throws OwsExceptionReport, EncodingException {
         return createInsertSensorRequest(createComplexObservationProcedure());
     }
 
-    private InsertSensorDocument createNumericInsertSensorRequest() throws OwsExceptionReport {
+    private InsertSensorDocument createNumericInsertSensorRequest() throws OwsExceptionReport, EncodingException {
         return createInsertSensorRequest(createNumericObservationProcedure());
     }
 
@@ -396,7 +388,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         return createProcedure(NUMERIC_OBSERVATION_PROCEDURE, NUMERIC_OBSERVATION_OFFERING);
     }
 
-    protected InsertSensorDocument createInsertSensorRequest(SensorML procedure) throws OwsExceptionReport {
+    protected InsertSensorDocument createInsertSensorRequest(SensorML procedure) throws OwsExceptionReport, EncodingException {
         InsertSensorDocument document = InsertSensorDocument.Factory.newInstance();
         InsertSensorType insertSensor = document.addNewInsertSensor();
         insertSensor.setService(SosConstants.SOS);
@@ -420,7 +412,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
 
     protected SensorML createProcedure(String procedure, String offering) {
         SensorML wrapper = new SensorML();
-        org.n52.sos.ogc.sensorML.System sensorML = new org.n52.sos.ogc.sensorML.System();
+        org.n52.shetland.ogc.sensorML.System sensorML = new org.n52.shetland.ogc.sensorML.System();
         wrapper.addMember(sensorML);
         sensorML.addIdentifier(new SmlIdentifier(UNIQUE_ID_NAME, OGCConstants.URN_UNIQUE_IDENTIFIER, procedure));
         sensorML.addCapabilities(createOfferingCapabilities(offering));
@@ -437,23 +429,23 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
         return new SweField(offering, new SweText().setValue(offering).setDefinition(OGCConstants.URN_OFFERING_ID));
     }
 
-    protected InsertObservationDocument createComplexInsertObservationRequest() throws OwsExceptionReport {
+    protected InsertObservationDocument createComplexInsertObservationRequest() throws OwsExceptionReport, EncodingException {
         return createComplexInsertObservationRequest(DateTime.now());
     }
 
-    protected InsertObservationDocument createComplexInsertObservationRequest(DateTime time) throws OwsExceptionReport {
+    protected InsertObservationDocument createComplexInsertObservationRequest(DateTime time) throws EncodingException, OwsExceptionReport {
         return createInsertObservationRequest(createComplexObservation(time), COMPLEX_OBSERVATION_OFFERING);
     }
 
-    protected InsertObservationDocument createNumericInsertObservationRequest() throws OwsExceptionReport {
+    protected InsertObservationDocument createNumericInsertObservationRequest() throws OwsExceptionReport, EncodingException {
         return createNumericInsertObservationRequest(DateTime.now());
     }
 
-    protected InsertObservationDocument createNumericInsertObservationRequest(DateTime time) throws OwsExceptionReport {
+    protected InsertObservationDocument createNumericInsertObservationRequest(DateTime time) throws OwsExceptionReport, EncodingException {
         return createInsertObservationRequest(createNumericObservation(time), NUMERIC_OBSERVATION_OFFERING);
     }
 
-    protected InsertObservationDocument createInsertObservationRequest(OmObservation observation, String offering) throws OwsExceptionReport {
+    protected InsertObservationDocument createInsertObservationRequest(OmObservation observation, String offering) throws OwsExceptionReport, EncodingException {
         InsertObservationDocument document = InsertObservationDocument.Factory.newInstance();
         InsertObservationType insertObservation = document.addNewInsertObservation();
         insertObservation.setService(SosConstants.SOS);

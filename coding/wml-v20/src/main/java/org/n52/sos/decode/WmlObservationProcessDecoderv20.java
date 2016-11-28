@@ -32,27 +32,30 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.DecoderKey;
+import net.opengis.waterml.x20.ObservationProcessDocument;
+import net.opengis.waterml.x20.ObservationProcessPropertyType;
+import net.opengis.waterml.x20.ObservationProcessType;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.coding.decode.ProcedureDecoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.service.ServiceConstants.ProcedureDescriptionFormat;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
@@ -60,33 +63,24 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
-import net.opengis.waterml.x20.ObservationProcessDocument;
-import net.opengis.waterml.x20.ObservationProcessPropertyType;
-import net.opengis.waterml.x20.ObservationProcessType;
-
 public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 implements ProcedureDecoder<Object, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WmlObservationProcessDecoderv20.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
             CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING,
-                    ObservationProcessDocument.class, ObservationProcessPropertyType.class,
-                    ObservationProcessType.class),
-            CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20, ObservationProcessDocument.class,
-                    ObservationProcessPropertyType.class, ObservationProcessType.class));
+                                                ObservationProcessDocument.class,
+                                                ObservationProcessPropertyType.class,
+                                                ObservationProcessType.class),
+            CodingHelper.decoderKeysForElements(WaterMLConstants.NS_WML_20,
+                                                ObservationProcessDocument.class,
+                                                ObservationProcessPropertyType.class,
+                                                ObservationProcessType.class));
 
-    private static final Map<String, ImmutableMap<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
-            ImmutableMap.of(
-                    SosConstants.SOS,
-                    ImmutableMap
-                            .<String, Set<String>> builder()
-                            .put(Sos2Constants.SERVICEVERSION,
-                                    ImmutableSet.of(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)).build());
+    private static final Map<String, Map<String, Set<String>>> SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS =
+            ImmutableMap.of(SosConstants.SOS, ImmutableMap.of(Sos2Constants.SERVICEVERSION, ImmutableSet.of(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)));
 
-    private static final ImmutableSet<SupportedType> SUPPORTED_TYPES
-            = ImmutableSet.<SupportedType>builder()
-            .add(new ProcedureDescriptionFormat(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
-            .build();
+    private static final Set<SupportedType> SUPPORTED_TYPES = ImmutableSet.of(new ProcedureDescriptionFormat(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING));
 
     public WmlObservationProcessDecoderv20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
@@ -100,20 +94,18 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
 
     @Override
     public Set<SupportedType> getSupportedTypes() {
-        return SUPPORTED_TYPES;
+        return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
     @Override
     public Set<String> getSupportedProcedureDescriptionFormats(String service, String version) {
-        if (SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.containsKey(service)
-                && SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).containsKey(version)) {
-            return SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS.get(service).get(version);
-        }
-        return Collections.emptySet();
+        return SUPPORTED_TRANSACTIONAL_PROCEDURE_DESCRIPTION_FORMATS
+                .getOrDefault(service, Collections.emptyMap())
+                .getOrDefault(version, Collections.emptySet());
     }
 
     @Override
-    public Object decode(Object object) throws OwsExceptionReport, UnsupportedDecoderInputException {
+    public Object decode(Object object) throws DecodingException {
         if (object instanceof ObservationProcessDocument) {
             return parseObservationProcess(((ObservationProcessDocument) object).getObservationProcess());
         } else if (object instanceof ObservationProcessPropertyType) {
@@ -124,7 +116,7 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
         return super.decode(object);
     }
 
-    private Object parseObservationProcess(ObservationProcessType opt) throws OwsExceptionReport {
+    private Object parseObservationProcess(ObservationProcessType opt) throws DecodingException {
         ObservationProcess observationProcess = new ObservationProcess();
         observationProcess.setGmlId(opt.getId());
         // parse identifier, names, description, locations
@@ -143,9 +135,9 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
 
     private void setDescriptionXml(ObservationProcessType opt, ObservationProcess observationProcess) {
         ObservationProcessDocument doc =
-                ObservationProcessDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                ObservationProcessDocument.Factory.newInstance(getXmlOptions());
         doc.setObservationProcess(opt);
-        observationProcess.setSensorDescriptionXmlString(doc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
+        observationProcess.setSensorDescriptionXmlString(doc.xmlText(getXmlOptions()));
     }
 
     private void parseProcessType(ObservationProcessType opt, ObservationProcess observationProcess) {
@@ -153,7 +145,7 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
     }
 
     private void parseOriginatingProcess(ObservationProcessType opt, ObservationProcess observationProcess)
-            throws OwsExceptionReport {
+            throws DecodingException {
         if (opt.isSetOriginatingProcess()) {
             observationProcess.setOriginatingProcess(parseReferenceType(opt.getOriginatingProcess()));
         }
@@ -166,9 +158,9 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
     }
 
     private void parseVerticalDatum(ObservationProcessType opt, ObservationProcess observationProcess)
-            throws OwsExceptionReport {
+            throws DecodingException {
         if (opt.isSetVerticalDatum()) {
-            Object decodeXmlElement = CodingHelper.decodeXmlElement(opt.getVerticalDatum());
+            Object decodeXmlElement = decodeXmlElement(opt.getVerticalDatum());
             if (decodeXmlElement instanceof ReferenceType) {
                 observationProcess.setVerticalDatum((ReferenceType) decodeXmlElement);
             }
@@ -193,8 +185,7 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
         }
     }
 
-    private void parseParameter(ObservationProcessType opt, ObservationProcess observationProcess)
-            throws OwsExceptionReport {
+    private void parseParameter(ObservationProcessType opt, ObservationProcess observationProcess) throws DecodingException  {
         if (CollectionHelper.isNotNullOrEmpty(opt.getParameterArray())) {
             observationProcess.setParameters(parseNamedValueTypeArray(opt.getParameterArray()));
         }
@@ -204,26 +195,25 @@ public class WmlObservationProcessDecoderv20 extends AbstractWmlDecoderv20 imple
     @VisibleForTesting
     protected void checkForOffering(ObservationProcess observationProcess) {
         if (observationProcess.isSetParameters()) {
-            for (NamedValue<?> namedValue : observationProcess.getParameters()) {
-                if (checkNameForOffering(namedValue) && namedValue.isSetValue()) {
-                    if (namedValue.getValue() instanceof TextValue) {
-                        TextValue value = (TextValue) namedValue.getValue();
-                        observationProcess.addOffering(new SosOffering(value.getValue(), true));
-                    } else if (namedValue.getValue() instanceof ReferenceValue) {
-                        ReferenceValue refValue = (ReferenceValue) namedValue.getValue();
-                        if (refValue.isSetValue()) {
-                            ReferenceType value = refValue.getValue();
-                            if (value.isSetHref()) {
-                                if (value.isSetTitle()) {
-                                    observationProcess.addOffering(new SosOffering(value.getHref(), value.getTitle()));
-                                } else {
-                                    observationProcess.addOffering(new SosOffering(value.getHref(), true));
+            observationProcess.getParameters().stream().filter(this::checkNameForOffering).filter(NamedValue::isSetValue)
+                    .forEachOrdered(namedValue -> {
+                        if (namedValue.getValue() instanceof TextValue) {
+                            TextValue value = (TextValue) namedValue.getValue();
+                            observationProcess.addOffering(new SosOffering(value.getValue(), true));
+                        } else if (namedValue.getValue() instanceof ReferenceValue) {
+                            ReferenceValue refValue = (ReferenceValue) namedValue.getValue();
+                            if (refValue.isSetValue()) {
+                                ReferenceType value = refValue.getValue();
+                                if (value.isSetHref()) {
+                                    if (value.isSetTitle()) {
+                                        observationProcess.addOffering(new SosOffering(value.getHref(), value.getTitle()));
+                                    } else {
+                                        observationProcess.addOffering(new SosOffering(value.getHref(), true));
+                                    }
                                 }
                             }
                         }
-                    }
-                }
-            }
+            });
         }
     }
 

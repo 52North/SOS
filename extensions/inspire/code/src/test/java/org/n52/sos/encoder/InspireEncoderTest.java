@@ -40,10 +40,11 @@ import javax.xml.validation.Validator;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
 import org.n52.sos.inspire.InspireConformityCitation;
@@ -64,6 +65,7 @@ import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
 import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireServiceSpatialDataResourceType;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
+
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Sets;

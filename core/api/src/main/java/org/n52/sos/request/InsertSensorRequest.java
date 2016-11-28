@@ -30,54 +30,57 @@ package org.n52.sos.request;
 
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
-import org.n52.sos.response.InsertSensorResponse;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
  *
  */
-public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResponse> {
+public class InsertSensorRequest extends AbstractServiceRequest {
 
     private static final String SENSOR_TYPE_FLAG = "isType";
-
     private String procedureDescriptionFormat;
 
-    /** observableProperty parameter */
+    /**
+     * observableProperty parameter
+     */
     private List<String> observableProperty;
-
     private List<SwesFeatureRelationship> relatedFeatures;
 
-    /** SOS SensorML description */
-    private SosProcedureDescription procedureDescription;
-
+    /**
+     * SOS SensorML description
+     */
+    private SosProcedureDescription<?> procedureDescription;
     private String assignedProcedureIdentifier;
-
     private List<SosOffering> assignedOfferings = Lists.newLinkedList();
 
-    /** metadata parameter */
+    /**
+     * metadata parameter
+     */
     private SosInsertionMetadata metadata;
 
     /**
      * default constructor
      */
     public InsertSensorRequest() {
-        super();
+        super(null, null, Sos2Constants.Operations.InsertSensor.name());
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.InsertSensor.name();
+    public InsertSensorRequest(String service, String version) {
+        super(service, version, Sos2Constants.Operations.InsertSensor.name());
+    }
+
+    public InsertSensorRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     public String getProcedureDescriptionFormat() {
@@ -89,7 +92,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     }
 
     public boolean isSetProcedureDescriptionFormat() {
-        return StringHelper.isNotEmpty(getProcedureDescriptionFormat());
+        return !Strings.isNullOrEmpty(getProcedureDescriptionFormat());
     }
 
     /**
@@ -105,7 +108,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      * Set the observableProperty contained in request.
      *
      * @param observableProperty
-     *            the observableProperty to set
+     *                           the observableProperty to set
      */
     public void setObservableProperty(List<String> observableProperty) {
         this.observableProperty = observableProperty;
@@ -120,7 +123,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      *
      * @return the sosSensorML
      */
-    public SosProcedureDescription getProcedureDescription() {
+    public SosProcedureDescription<?> getProcedureDescription() {
         return procedureDescription;
     }
 
@@ -128,9 +131,9 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      * Set the sensor description contained in request.
      *
      * @param procedureDescription
-     *            the procedureDescription to set
+     *                             the procedureDescription to set
      */
-    public void setProcedureDescription(SosProcedureDescription procedureDescription) {
+    public void setProcedureDescription(SosProcedureDescription<?> procedureDescription) {
         this.procedureDescription = procedureDescription;
     }
 
@@ -151,7 +154,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
      * Set the metadata contained in request.
      *
      * @param metadata
-     *            the metadata to set
+     *                 the metadata to set
      */
     public void setMetadata(SosInsertionMetadata metadata) {
         this.metadata = metadata;
@@ -182,7 +185,7 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
     }
 
     public boolean isSetAssignedProcedureIdentifier() {
-        return StringHelper.isNotEmpty(getAssignedProcedureIdentifier());
+        return !Strings.isNullOrEmpty(getAssignedProcedureIdentifier());
     }
 
     public List<SosOffering> getAssignedOfferings() {
@@ -202,11 +205,6 @@ public class InsertSensorRequest extends AbstractServiceRequest<InsertSensorResp
 
     public boolean isSetAssignedOfferings() {
         return CollectionHelper.isNotEmpty(getAssignedOfferings());
-    }
-
-    @Override
-    public InsertSensorResponse getResponse() throws OwsExceptionReport {
-        return (InsertSensorResponse) new InsertSensorResponse().set(this);
     }
 
     /**

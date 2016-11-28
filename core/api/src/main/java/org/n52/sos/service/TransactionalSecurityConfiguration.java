@@ -36,12 +36,12 @@ import static org.n52.sos.service.TransactionalSecuritySettings.TRANSACTIONAL_TO
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.util.net.IPAddress;
 import org.n52.iceland.util.net.IPAddressRange;
+import org.n52.shetland.util.CollectionHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -110,7 +110,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
 
     @Setting(TRANSACTIONAL_ALLOWED_IPS)
     public void setTransactionalAllowedIps(final String txAllowedIps) throws ConfigurationError {
-        if (StringHelper.isNotEmpty(txAllowedIps)) {
+        if (!Strings.isNullOrEmpty(txAllowedIps)) {
             final Builder<IPAddressRange> builder = ImmutableSet.builder();
             for (final String splitted : txAllowedIps.split(",")) {
                 final String trimmed = splitted.trim();
@@ -130,7 +130,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
 
     @Setting(ALLOWED_PROXIES)
     public void setAllowedProxies(final String proxies) {
-        if (StringHelper.isNotEmpty(proxies)) {
+        if (!Strings.isNullOrEmpty(proxies)) {
             final Builder<IPAddress> builder = ImmutableSet.builder();;
             for (final String splitted : proxies.split(",")) {
                 try {
@@ -180,7 +180,7 @@ public class TransactionalSecurityConfiguration implements Constructable {
      * @return true if token is defined
      */
     public boolean isSetTransactionalToken() {
-        return StringHelper.isNotEmpty(getTransactionalToken());
+        return !Strings.isNullOrEmpty(getTransactionalToken());
     }
 
 }

@@ -35,11 +35,11 @@ import javax.inject.Inject;
 
 import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
+import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionKey;
 import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
@@ -66,7 +66,7 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
     }
 
     @Override
-    public CapabilitiesExtension getExtension() {
+    public OwsCapabilitiesExtension getExtension() {
         SosInsertionCapabilities insertionCapabilities = new SosInsertionCapabilities();
         SosContentCache cache = getCache();
         insertionCapabilities.addFeatureOfInterestTypes(cache.getFeatureOfInterestTypes());
@@ -76,10 +76,6 @@ public class InsertResultTemplateCapabilitiesExtensionProvider
         // TODO dynamic
         insertionCapabilities.addSupportedEncoding(SweConstants.ENCODING_TEXT);
         return insertionCapabilities;
-    }
-
-    private CodingRepository getCodingRepository() {
-        return this.codingRepository;
     }
 
     private SosContentCache getCache() {

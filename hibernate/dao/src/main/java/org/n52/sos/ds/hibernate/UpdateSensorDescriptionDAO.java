@@ -39,9 +39,9 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;

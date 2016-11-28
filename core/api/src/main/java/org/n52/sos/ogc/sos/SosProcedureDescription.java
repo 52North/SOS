@@ -28,387 +28,61 @@
  */
 package org.n52.sos.ogc.sos;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
-import org.n52.iceland.binding.BindingConstants;
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.operator.ServiceOperatorRepository;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.util.SosHelper;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
 
-import com.google.common.base.Objects;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
  *
  */
-public abstract class SosProcedureDescription extends AbstractFeature {
+public class SosProcedureDescription<T extends AbstractFeature> extends AbstractFeature {
+    private Set<SosOffering> offerings = Sets.newLinkedHashSet();
 
-    private static final long serialVersionUID = 1144253800787127139L;
-    private String sensorDescriptionXmlString;
-    private String descriptionFormat;
-    private final Map<String, AbstractFeature> featuresOfInterestMap = Maps.newHashMap();
-    private final Map<String, AbstractPhenomenon> phenomenonMap = Maps.newHashMap();
-    private final Set<SosOffering> offerings = Sets.newLinkedHashSet();
-    private final Set<String> featuresOfInterest = Sets.newLinkedHashSet();
-    private final Set<String> parentProcedures = Sets.newLinkedHashSet();
-    private final Set<SosProcedureDescription> childProcedures = Sets.newLinkedHashSet();
+    private final T description;
+
     private Time validTime;
-    private ReferenceType typeOf;
 
-    public SosProcedureDescription() {
-        super("");
+    public SosProcedureDescription(T description) {
+        super(description.getIdentifier());
+        this.description = description;
     }
 
-    /**
-     * constructor
-     *
-     * @param identifier
-     *            Feature identifier
-     */
-    public SosProcedureDescription(String identifier) {
-        super(identifier);
-    }
-
-    /**
-     * constructor
-     *
-     * @param identifier
-     *            Feature identifier
-     */
-    public SosProcedureDescription(CodeWithAuthority identifier) {
-        super(identifier);
-    }
-
-    /**
-     * constructor
-     *
-     * @param identifier
-     *            Feature identifier
-     * @param gmlId
-     *            GML id
-     */
-    public SosProcedureDescription(CodeWithAuthority identifier, String gmlId) {
-        super(identifier, gmlId);
-    }
-
-    /**
-     * Is it an aggregation procedure, e.g. System, PhysicalSystem
-     *
-     * @return <code>true</code>, if this is an aggregation procedure
-     */
-    public boolean isAggragation() {
-        return false;
-    }
-
-    @Override
-    public SosProcedureDescription setIdentifier(String identifier) {
-        super.setIdentifier(identifier);
-        return this;
+    public T getProcedureDescription() {
+        return this.description;
     }
 
     public Set<SosOffering> getOfferings() {
         return offerings;
     }
 
-    public SosProcedureDescription addOfferings(Collection<SosOffering> offerings) {
-        this.offerings.addAll(offerings);
-        return this;
+    public void setOfferings(Collection<SosOffering> offering) {
+        this.offerings = Optional.ofNullable(offering).map(HashSet::new).orElseGet(HashSet::new);
     }
 
-    public SosProcedureDescription addOffering(SosOffering offering) {
-        if (offering != null) {
-            this.offerings.add(offering);
-        }
-        return this;
+    public void addOffering(SosOffering offering) {
+        this.offerings.add(offering);
     }
 
-    public boolean isSetOfferings() {
-        return offerings != null && !offerings.isEmpty();
-    }
-
-    public String getSensorDescriptionXmlString() {
-        return sensorDescriptionXmlString;
-    }
-
-    public SosProcedureDescription setSensorDescriptionXmlString(String sensorDescriptionXmlString) {
-        this.sensorDescriptionXmlString = sensorDescriptionXmlString;
-        return this;
-    }
-
-    public boolean isSetSensorDescriptionXmlString() {
-        return sensorDescriptionXmlString != null &&
-               !sensorDescriptionXmlString.isEmpty();
-    }
-
-    public String getDescriptionFormat() {
-        return descriptionFormat;
-    }
-
-    public SosProcedureDescription setDescriptionFormat(String descriptionFormat) {
-        this.descriptionFormat = descriptionFormat;
-        return this;
-    }
-
-    public SosProcedureDescription setFeaturesOfInterest(Collection<String> features) {
-        getFeaturesOfInterest().clear();
-        getFeaturesOfInterest().addAll(features);
-        return this;
-    }
-
-    public SosProcedureDescription addFeaturesOfInterest(Collection<String> features) {
-        getFeaturesOfInterest().addAll(features);
-        return this;
-    }
-
-    public SosProcedureDescription addFeatureOfInterest(String featureIdentifier) {
-        getFeaturesOfInterest().add(featureIdentifier);
-        return this;
-    }
-
-    public Set<String> getFeaturesOfInterest() {
-        return featuresOfInterest;
-    }
-
-    public boolean isSetFeaturesOfInterest() {
-        return CollectionHelper.isNotEmpty(getFeaturesOfInterest());
-    }
-
-    public SosProcedureDescription setFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
-        this.featuresOfInterestMap.clear();
-        this.featuresOfInterestMap.putAll(featuresOfInterestMap);
-        return this;
-    }
-
-    public SosProcedureDescription addFeaturesOfInterest(Map<String, AbstractFeature> featuresOfInterestMap) {
-        getFeaturesOfInterestMap().putAll(featuresOfInterestMap);
-        return this;
-    }
-
-    public SosProcedureDescription addFeatureOfInterest(AbstractFeature feature) {
-        getFeaturesOfInterestMap().put(feature.getIdentifier(), feature);
-        return this;
-    }
-
-    public Map<String, AbstractFeature> getFeaturesOfInterestMap() {
-        return featuresOfInterestMap;
-    }
-
-    public boolean isSetFeaturesOfInterestMap() {
-        return CollectionHelper.isNotEmpty(getFeaturesOfInterestMap());
-    }
-
-    public boolean hasAbstractFeatureFor(String identifier) {
-        return isSetFeaturesOfInterestMap() && getFeaturesOfInterestMap().containsKey(identifier);
-    }
-
-    public AbstractFeature getAbstractFeatureFor(String identifier) {
-        return getFeaturesOfInterestMap().get(identifier);
-    }
-
-    public SosProcedureDescription setParentProcedures(Collection<String> parentProcedures) {
-        this.parentProcedures.clear();
-        addParentProcedures(parentProcedures);
-        return this;
-    }
-
-    public SosProcedureDescription addParentProcedures(Collection<String> parentProcedures) {
-        this.parentProcedures.addAll(parentProcedures);
-        return this;
-    }
-
-    public SosProcedureDescription addParentProcedure(String parentProcedureIdentifier) {
-        this.parentProcedures.add(parentProcedureIdentifier);
-        return this;
-    }
-
-    public Set<String> getParentProcedures() {
-        return parentProcedures;
-    }
-
-    public boolean isSetParentProcedures() {
-        return parentProcedures != null && !parentProcedures.isEmpty();
-    }
-
-    public SosProcedureDescription addChildProcedures(Collection<SosProcedureDescription> childProcedures) {
-        if (childProcedures != null) {
-            this.childProcedures.addAll(childProcedures);
-        }
-        return this;
-    }
-
-    public SosProcedureDescription addChildProcedure(SosProcedureDescription childProcedure) {
-        this.childProcedures.add(childProcedure);
-        return this;
-    }
-
-    public Set<SosProcedureDescription> getChildProcedures() {
-        return childProcedures;
-    }
-
-    public boolean isSetChildProcedures() {
-        return getChildProcedures() != null && !getChildProcedures().isEmpty();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(getIdentifierCodeWithAuthority());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj != null && getClass().equals(obj.getClass())) {
-            final SosProcedureDescription other = (SosProcedureDescription) obj;
-            return Objects.equal(getIdentifierCodeWithAuthority(), other.getIdentifierCodeWithAuthority());
-
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return "SosProcedureDescription [identifier=" + getIdentifier() + "]";
-    }
-
-    public SosProcedureDescription setValidTime(Time validTime) {
-        this.validTime = validTime;
-        return this;
-    }
-
-    public boolean isSetValidTime() {
-        return getValidTime() != null;
+    public boolean isSetOfferings(){
+        return this.offerings != null && !this.offerings.isEmpty();
     }
 
     public Time getValidTime() {
-        return this.validTime;
+        return validTime;
     }
 
-    public SosProcedureDescription addPhenomenon(AbstractPhenomenon phenomenon) {
-        getPhenomenon().put(phenomenon.getIdentifier(), phenomenon);
-        return this;
+    public void setValidTime(Time validTime) {
+        this.validTime = validTime;
     }
 
-    public SosProcedureDescription setPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
-        getPhenomenon().clear();
-        getPhenomenon().putAll(phenomenons);
-        return this;
-    }
-
-    public SosProcedureDescription addPhenomenon(Map<String, AbstractPhenomenon> phenomenons) {
-        getPhenomenon().putAll(phenomenons);
-        return this;
-    }
-
-    public Map<String, AbstractPhenomenon> getPhenomenon() {
-        return phenomenonMap;
-    }
-
-    public boolean isSetPhenomenon() {
-        return CollectionHelper.isNotEmpty(getPhenomenon());
-    }
-
-    public boolean hasPhenomenonFor(String identifier) {
-        return isSetPhenomenon() && getPhenomenon().containsKey(identifier);
-    }
-
-    public AbstractPhenomenon getPhenomenonFor(String identifer) {
-        return getPhenomenon().get(identifer);
-    }
-
-
-    /**
-     * Copies all values from this object to the copyOf object except XML description and description format
-     * @param copyOf {@link SosProcedureDescription} to copy values to
-     */
-    public void copyTo(SosProcedureDescription copyOf) {
-        super.copyTo(copyOf);
-        copyOf.setValidTime(getValidTime());
-        copyOf.setFeatureOfInterest(getFeaturesOfInterest());
-        copyOf.setFeatureOfInterestMap(getFeaturesOfInterestMap());
-        copyOf.setOffetrings(getOfferings());
-        copyOf.setParentProcedures(getParentProcedures());
-        copyOf.setChildProcedures(getChildProcedures());
-        copyOf.setTypeOf(getTypeOf());
-    }
-
-    public boolean isSetFeatures() {
-        return isSetFeaturesOfInterest() || isSetFeaturesOfInterestMap();
-    }
-
-    /**
-     * @return the typeOf
-     */
-    public ReferenceType getTypeOf() {
-        return typeOf;
-    }
-
-    /**
-     * @param typeOf the typeOf to set
-     */
-    public void setTypeOf(ReferenceType typeOf) {
-        this.typeOf = typeOf;
-    }
-
-
-    /**
-     * @return <code>true</code>, if typeOf is not null
-     */
-    public boolean isSetTypeOf() {
-        return getTypeOf() != null;
-    }
-
-    public String createKvpDescribeSensorOrReturnIdentifier(String identifier) throws CodedException {
-        String href = identifier;
-        if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
-            final String version =
-                    ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
-                            .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
-                            : Sos1Constants.SERVICEVERSION;
-            try {
-                href =
-                        SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance().getServiceURL(),
-                                identifier, BindingConstants.KVP_BINDING_ENDPOINT, getDescriptionFormat());
-            } catch (final UnsupportedEncodingException uee) {
-                throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL").causedBy(
-                        uee);
-            }
-        }
-        return href;
-    }
-
-    private void setFeatureOfInterest(Set<String> featuresOfInterest) {
-        this.featuresOfInterest.addAll(featuresOfInterest);
-    }
-
-    private void setFeatureOfInterestMap(Map<String, AbstractFeature> featuresOfInterestMap) {
-        this.featuresOfInterestMap.putAll(featuresOfInterestMap);
-    }
-
-    private void setOffetrings(Set<SosOffering> offerings) {
-        this.offerings.addAll(offerings);
-    }
-
-    private void setParentProcedures(Set<String> parentProcedures) {
-        this.parentProcedures.addAll(parentProcedures);
-    }
-
-    private void setChildProcedures(Set<SosProcedureDescription> childProcedures) {
-        this.childProcedures.addAll(childProcedures);
+    public boolean isSetValidTime() {
+        return this.validTime != null && !this.validTime.isEmpty();
     }
 }

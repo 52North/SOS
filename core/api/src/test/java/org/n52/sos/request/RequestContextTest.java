@@ -36,7 +36,7 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import org.n52.iceland.request.RequestContext;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.janmayen.http.MediaType;
 import org.n52.iceland.util.net.IPAddress;
 
 /**

@@ -38,12 +38,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.joda.time.DateTime;
+
 import org.n52.iceland.coding.SupportedTypeRepository;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
 
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
@@ -191,12 +192,12 @@ public abstract class AbstractStaticSosContentCache implements SosContentCache {
      *
      * @return a copy
      */
-    protected static SosEnvelope copyOf(SosEnvelope e) {
+    protected static ReferencedEnvelope copyOf(ReferencedEnvelope e) {
         if (e == null) {
             // TODO empty envelope
             return null;
         } else {
-            return new SosEnvelope(e.getEnvelope() == null ? null
+            return new ReferencedEnvelope(e.getEnvelope() == null ? null
                                    : new Envelope(e.getEnvelope()), e.getSrid());
         }
     }

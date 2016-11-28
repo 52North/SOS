@@ -28,29 +28,31 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.response.GetResultTemplateResponse;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetResultTemplateRequest extends AbstractServiceRequest<GetResultTemplateResponse> {
+public class GetResultTemplateRequest extends AbstractServiceRequest {
 
     private String offering;
 
     private String observedProperty;
 
     public GetResultTemplateRequest() {
-        super();
+        super(null, null, Sos2Constants.Operations.GetResultTemplate.name());
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.GetResultTemplate.name();
+    public GetResultTemplateRequest(String service, String version) {
+        super(service, version, Sos2Constants.Operations.GetResultTemplate.name());
+    }
+
+    public GetResultTemplateRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     public String getOffering() {
@@ -62,7 +64,7 @@ public class GetResultTemplateRequest extends AbstractServiceRequest<GetResultTe
     }
 
     public boolean isSetOffering() {
-        return StringHelper.isNotEmpty(getOffering());
+        return !Strings.isNullOrEmpty(getOffering());
     }
 
     public String getObservedProperty() {
@@ -74,12 +76,7 @@ public class GetResultTemplateRequest extends AbstractServiceRequest<GetResultTe
     }
 
     public boolean isSetObservedProperty() {
-        return StringHelper.isNotEmpty(getObservedProperty());
-    }
-
-    @Override
-    public GetResultTemplateResponse getResponse() throws OwsExceptionReport {
-        return (GetResultTemplateResponse) new GetResultTemplateResponse().set(this);
+        return !Strings.isNullOrEmpty(getObservedProperty());
     }
 
 }

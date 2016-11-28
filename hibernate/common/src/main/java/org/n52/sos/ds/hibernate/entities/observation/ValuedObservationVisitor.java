@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BooleanValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;

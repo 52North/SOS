@@ -28,7 +28,7 @@
  */
 package org.n52.sos.inspire;
 
-import org.n52.iceland.util.StringHelper;
+import com.google.common.base.Strings;
 
 /**
  * Service internal representation of INSPIRE unique resource identifier
@@ -94,7 +94,7 @@ public class InspireUniqueResourceIdentifier {
      * @return <code>true</code>, if the namespace is set
      */
     public boolean isSetNamespace() {
-        return StringHelper.isNotEmpty(getNamespace());
+        return !Strings.isNullOrEmpty(getNamespace());
     }
 
     /**
@@ -124,7 +124,7 @@ public class InspireUniqueResourceIdentifier {
      * @return <code>true</code>, if the metadata URL is set
      */
     public boolean isSetMetadataUrl() {
-        return StringHelper.isNotEmpty(getMetadataUrl());
+        return !Strings.isNullOrEmpty(getMetadataUrl());
     }
 
 }

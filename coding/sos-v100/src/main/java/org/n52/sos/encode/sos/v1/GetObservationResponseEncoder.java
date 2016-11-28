@@ -29,12 +29,11 @@
 package org.n52.sos.encode.sos.v1;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
+
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * TODO JavaDoc
@@ -49,16 +48,12 @@ public class GetObservationResponseEncoder extends AbstractSosResponseEncoder<Ge
     }
 
     @Override
-    protected XmlObject create(GetObservationResponse response) throws OwsExceptionReport {
+    protected XmlObject create(GetObservationResponse response) throws EncodingException {
         String responseFormat = response.getResponseFormat();
-        Encoder<XmlObject, GetObservationResponse> encoder = CodingHelper.getEncoder(responseFormat, response);
-        if (encoder != null) {
-            if (response.hasStreamingData()) {
-                response.mergeStreamingData();
-            }
-            return encoder.encode(response);
-        } else {
-            throw new InvalidResponseFormatParameterException(responseFormat);
+        Encoder<XmlObject, GetObservationResponse> encoder = getEncoder(responseFormat, response);
+        if (response.hasStreamingData()) {
+            response.mergeStreamingData();
         }
+        return encoder.encode(response);
     }
 }

@@ -37,7 +37,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  *
  * @since 4.0.0
  */
-public abstract class SosDeletionEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse> extends
+public abstract class SosDeletionEvent<I extends AbstractServiceRequest, O extends AbstractServiceResponse> extends
         ModificationResponseEvent<I, O> {
 
     public SosDeletionEvent(I request, O response) {

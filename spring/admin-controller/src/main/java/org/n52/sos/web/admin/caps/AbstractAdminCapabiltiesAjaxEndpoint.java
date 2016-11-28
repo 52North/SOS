@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.exception.JSONException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.config.CapabilitiesExtensionService;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;

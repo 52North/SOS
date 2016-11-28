@@ -44,33 +44,34 @@ import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
+import org.w3c.dom.Node;
+
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.w3c.dom.Node;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
@@ -107,7 +108,7 @@ public class OmEncoderv20Test {
 
     @Test
     public void testComplexObservation()
-            throws OwsExceptionReport {
+            throws EncodingException {
         OmObservation observation = createComplexObservation();
         Map<HelperValues, String> helperValues
                 = new EnumMap<>(HelperValues.class);
@@ -142,7 +143,7 @@ public class OmEncoderv20Test {
         observationConstellation.setObservableProperty(observableProperty);
         observationConstellation.setObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
         observationConstellation.addOffering(OFFERING);
-        SensorML procedure = new SensorML();
+        PhysicalComponent procedure = new PhysicalComponent();
         procedure.setIdentifier(new CodeWithAuthority(PROCEDURE, CODE_SPACE));
         observationConstellation.setProcedure(procedure);
         observation.setObservationConstellation(observationConstellation);

@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,46 +46,40 @@ import org.hibernate.criterion.HibernateCriterionHelper;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.sos.coding.encode.ObservationEncoder;
+import org.n52.svalbard.encode.Encoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.filter.BinaryLogicFilter;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
+import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.util.LocalizedProducer;
-
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 /**
  * Helper class for GetObservation DAOs
@@ -94,6 +91,9 @@ import com.google.common.collect.Sets;
 public class HibernateGetObservationHelper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateGetObservationHelper.class);
+
+    private HibernateGetObservationHelper() {
+    }
 
     /**
      * Get ObservationConstellations and check if size limit is exceeded
@@ -123,13 +123,12 @@ public class HibernateGetObservationHelper {
      * @throws CodedException
      *             If the size limit is exceeded
      */
+    @SuppressWarnings("rawtypes")
     public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends SeriesObservation<?>> seriesObservations,
             int metadataObservationsCount) throws CodedException {
-        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
-            Set<Long> seriesIds = Sets.newHashSet();
-            for (SeriesObservation<?> seriesObs : seriesObservations) {
-                seriesIds.add(seriesObs.getSeries().getSeriesId());
-            }
+        if (getMaxNumberOfReturnedTimeSeriess() > 0) {
+            Set<Long> seriesIds = seriesObservations.stream()
+                    .map(SeriesObservation::getSeries).map(Series::getSeriesId).collect(toSet());
             checkMaxNumberOfReturnedSeriesSize(seriesIds.size() + metadataObservationsCount);
         }
     }
@@ -144,7 +143,7 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0 && size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries()) {
+        if (getMaxNumberOfReturnedTimeSeriess() > 0 && size > getMaxNumberOfReturnedTimeSeriess()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedTimeSeries");
         }
     }
@@ -159,16 +158,16 @@ public class HibernateGetObservationHelper {
      */
     public static void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0 &&  size > ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues()) {
+        if (getMaxNumberOfReturnedValues() > 0 &&  size > getMaxNumberOfReturnedValues()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
         }
     }
 
     public static int getMaxNumberOfValuesPerSeries(int size) {
-        if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0) {
-            return ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() / size;
+        if (getMaxNumberOfReturnedValues() > 0) {
+            return getMaxNumberOfReturnedValues() / size;
         }
-        return ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues();
+        return getMaxNumberOfReturnedValues();
     }
 
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
@@ -227,14 +226,21 @@ public class HibernateGetObservationHelper {
             c.add(getCriterionForComparisonFilter((ComparisonFilter) resultFilter));
         } else if (resultFilter instanceof BinaryLogicFilter) {
             BinaryLogicFilter binaryLogicFilter = (BinaryLogicFilter) resultFilter;
-            Junction junction = null;
-            if (FilterConstants.BinaryLogicOperator.And.equals(binaryLogicFilter.getOperator())) {
-                junction = Restrictions.conjunction();
-            } else if (FilterConstants.BinaryLogicOperator.Or.equals(binaryLogicFilter.getOperator())) {
-                junction = Restrictions.disjunction();
-            } else {
+            Junction junction;
+            if (null == binaryLogicFilter.getOperator()) {
                 throw new NoApplicableCodeException()
                         .withMessage("The requested binary logic filter operator is invalid!");
+            }
+            switch (binaryLogicFilter.getOperator()) {
+                case And:
+                    junction = Restrictions.conjunction();
+                    break;
+                case Or:
+                    junction = Restrictions.disjunction();
+                    break;
+                default:
+                    throw new NoApplicableCodeException()
+                            .withMessage("The requested binary logic filter operator is invalid!");
             }
             for (Filter<?> filterPredicate : binaryLogicFilter.getFilterPredicates()) {
                 if (!(filterPredicate instanceof ComparisonFilter)) {
@@ -262,8 +268,7 @@ public class HibernateGetObservationHelper {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
                 return HibernateCriterionHelper.getLikeExpression(AbstractLegacyObservation.DESCRIPTION,
-                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE,
-                        Constants.DOLLAR_CHAR, true);
+                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
             } else {
                 return Restrictions.like(AbstractLegacyObservation.DESCRIPTION,
                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
@@ -286,14 +291,14 @@ public class HibernateGetObservationHelper {
      */
     public static String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
         String value = resultFilter.getValue();
-        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals(Constants.PERCENT_STRING)) {
-            value = value.replace(resultFilter.getSingleChar(), Constants.UNDERSCORE_STRING);
+        if (resultFilter.isSetSingleChar() && !resultFilter.getSingleChar().equals("%")) {
+            value = value.replace(resultFilter.getSingleChar(), "_");
         }
-        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard().equals(Constants.UNDERSCORE_STRING)) {
-            value = value.replace(resultFilter.getWildCard(), Constants.UNDERSCORE_STRING);
+        if (resultFilter.isSetWildCard() && !resultFilter.getWildCard().equals("_")) {
+            value = value.replace(resultFilter.getWildCard(), "_");
         }
-        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString().equals(Constants.DOLLAR_STRING)) {
-            value = value.replace(resultFilter.getWildCard(), Constants.UNDERSCORE_STRING);
+        if (resultFilter.isSetEscapeString() && !resultFilter.getEscapeString().equals("$")) {
+            value = value.replace(resultFilter.getWildCard(), "_");
         }
         return value;
     }
@@ -363,11 +368,23 @@ public class HibernateGetObservationHelper {
      *         merging of observations with the same timeseries.
      */
     public static boolean checkEncoderForMergeObservationValues(String responseFormat) {
-        Encoder<XmlObject, OmObservation> encoder =
-                CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
+        XmlEncoderKey key = new XmlEncoderKey(responseFormat, OmObservation.class);
+        Encoder<XmlObject, OmObservation> encoder = getEncoder(key);
         if (encoder != null && encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder<?, OmObservation>) encoder).shouldObservationsWithSameXBeMerged();
         }
         return false;
+    }
+
+    private static int getMaxNumberOfReturnedTimeSeriess() {
+        return org.n52.iceland.service.ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries();
+    }
+
+    private static int getMaxNumberOfReturnedValues() {
+        return org.n52.iceland.service.ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues();
+    }
+
+    private static <T, S> Encoder<T, S> getEncoder(XmlEncoderKey key) {
+        return org.n52.iceland.coding.CodingRepository.getInstance().getEncoder(key);
     }
 }

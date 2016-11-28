@@ -39,8 +39,10 @@ import org.apache.xmlbeans.XmlException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
@@ -64,7 +66,7 @@ public class SosDecoderv20Test {
     }
 
     @Test
-    public void should_decode_boolean_swesExtensions() throws XmlException, OwsExceptionReport {
+    public void should_decode_boolean_swesExtensions() throws XmlException, OwsExceptionReport, DecodingException {
         final GetObservationDocument doc =
                 GetObservationDocument.Factory
                         .parse("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
@@ -89,7 +91,7 @@ public class SosDecoderv20Test {
     }
 
     @Test
-    public void should_decode_text_swesExtensions() throws XmlException, OwsExceptionReport {
+    public void should_decode_text_swesExtensions() throws XmlException, OwsExceptionReport, DecodingException {
         final GetObservationDocument doc =
                 GetObservationDocument.Factory
                         .parse("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"

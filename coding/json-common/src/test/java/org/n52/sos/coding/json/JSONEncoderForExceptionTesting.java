@@ -28,7 +28,7 @@
  */
 package org.n52.sos.coding.json;
 
-import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderKey;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
 

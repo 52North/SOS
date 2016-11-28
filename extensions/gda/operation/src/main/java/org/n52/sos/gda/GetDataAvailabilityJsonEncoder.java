@@ -28,7 +28,7 @@
  */
 package org.n52.sos.gda;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
@@ -49,7 +49,7 @@ public class GetDataAvailabilityJsonEncoder extends AbstractSosResponseEncoder<G
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, GetDataAvailabilityResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, GetDataAvailabilityResponse t) throws EncodingException {
         ArrayNode a = json.putArray(GetDataAvailabilityConstants.DATA_AVAILABILITY);
         for (DataAvailability da : t.getDataAvailabilities()) {
             ObjectNode objectNode = a.addObject();

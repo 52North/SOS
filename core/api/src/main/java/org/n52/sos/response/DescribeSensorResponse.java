@@ -30,9 +30,9 @@ package org.n52.sos.response;
 
 import java.util.List;
 
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
@@ -43,7 +43,19 @@ public class DescribeSensorResponse extends AbstractServiceResponse {
 
     private String outputFormat;
 
-    private List<SosProcedureDescription> procedureDescriptions;
+    private List<SosProcedureDescription<?>> procedureDescriptions;
+
+    public DescribeSensorResponse() {
+        super(null, null, SosConstants.Operations.DescribeSensor.name());
+    }
+
+    public DescribeSensorResponse(String service, String version) {
+        super(service, version, SosConstants.Operations.DescribeSensor.name());
+    }
+
+    public DescribeSensorResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public String getOutputFormat() {
         return outputFormat;
@@ -53,15 +65,10 @@ public class DescribeSensorResponse extends AbstractServiceResponse {
         this.outputFormat = outputFormat;
     }
 
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.DescribeSensor.name();
-    }
-
-    public void setSensorDescriptions(List<SosProcedureDescription> procedureDescriptions) {
+    public void setSensorDescriptions(List<SosProcedureDescription<?>> procedureDescriptions) {
         if (isSetProcedureDescriptions()) {
-            this.procedureDescriptions =
-                    CollectionHelper.conjunctCollections(getProcedureDescriptions(), procedureDescriptions);
+            this.procedureDescriptions = CollectionHelper
+                    .conjunctCollections(getProcedureDescriptions(), procedureDescriptions);
         } else {
             this.procedureDescriptions = procedureDescriptions;
         }
@@ -71,11 +78,11 @@ public class DescribeSensorResponse extends AbstractServiceResponse {
         return CollectionHelper.isNotEmpty(getProcedureDescriptions());
     }
 
-    public List<SosProcedureDescription> getProcedureDescriptions() {
+    public List<SosProcedureDescription<?>> getProcedureDescriptions() {
         return this.procedureDescriptions;
     }
 
-    public void addSensorDescription(SosProcedureDescription procedureDescription) {
+    public void addSensorDescription(SosProcedureDescription<?> procedureDescription) {
         if (isSetProcedureDescriptions()) {
             getProcedureDescriptions().add(procedureDescription);
         } else {

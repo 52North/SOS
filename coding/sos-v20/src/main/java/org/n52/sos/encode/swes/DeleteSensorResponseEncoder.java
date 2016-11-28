@@ -34,10 +34,11 @@ import net.opengis.swes.x20.DeleteSensorResponseDocument;
 import net.opengis.swes.x20.DeleteSensorResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.response.DeleteSensorResponse;
 import org.n52.sos.util.XmlOptionsHelper;
 
@@ -56,7 +57,7 @@ public class DeleteSensorResponseEncoder extends AbstractSwesResponseEncoder<Del
     }
 
     @Override
-    protected XmlObject create(DeleteSensorResponse response) throws OwsExceptionReport {
+    protected XmlObject create(DeleteSensorResponse response) throws EncodingException {
         DeleteSensorResponseDocument document =
                 DeleteSensorResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         DeleteSensorResponseType dsr = document.addNewDeleteSensorResponse();

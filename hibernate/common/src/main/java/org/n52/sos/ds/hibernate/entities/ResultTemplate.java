@@ -30,7 +30,6 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasFeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasIdentifier;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservableProperty;
@@ -38,6 +37,8 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasOffering;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasProcedure;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultEncoding;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasResultStructure;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
@@ -129,7 +130,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
 
     @Override
     public boolean isSetIdentifier() {
-        return StringHelper.isNotEmpty(getIdentifier());
+        return !Strings.isNullOrEmpty(getIdentifier());
     }
 
     @Override
@@ -139,7 +140,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
 
     @Override
     public boolean isSetResultStructure() {
-        return StringHelper.isNotEmpty(resultStructure);
+        return !Strings.isNullOrEmpty(resultStructure);
     }
 
     @Override
@@ -154,7 +155,7 @@ public class ResultTemplate implements Serializable, HasIdentifier, HasProcedure
 
     @Override
     public boolean isSetResultEncoding() {
-        return StringHelper.isNotEmpty(resultEncoding);
+        return !Strings.isNullOrEmpty(resultEncoding);
     }
 
     @Override

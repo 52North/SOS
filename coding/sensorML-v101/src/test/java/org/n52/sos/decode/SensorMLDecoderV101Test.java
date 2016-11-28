@@ -52,6 +52,7 @@ import net.opengis.sensorML.x101.OutputsDocument.Outputs.OutputList;
 import net.opengis.sensorML.x101.PersonDocument.Person;
 import net.opengis.sensorML.x101.ResponsiblePartyDocument.ResponsibleParty;
 import net.opengis.sensorML.x101.SensorMLDocument;
+import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SystemType;
 import net.opengis.sensorML.x101.TermDocument.Term;
 import net.opengis.swe.x101.AnyScalarPropertyType;
@@ -61,23 +62,23 @@ import net.opengis.swe.x101.DataRecordType;
 import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
+
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.SmlContactList;
+import org.n52.shetland.ogc.sensorML.SmlPerson;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.ogc.sensorML.System;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.SmlContactList;
-import org.n52.sos.ogc.sensorML.SmlPerson;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.ogc.sensorML.System;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author Shane StClair
@@ -94,7 +95,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     private static final String TEST_NAME_2 = "test-name-2";
 
     @Test
-    public void should_set_identifier_by_identifier_name() throws OwsExceptionReport {
+    public void should_set_identifier_by_identifier_name() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -116,7 +117,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_set_identifier_by_identifier_definition() throws OwsExceptionReport {
+    public void should_set_identifier_by_identifier_definition() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -130,7 +131,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_set_identifier_by_identifier_prefix_and_suffix() throws OwsExceptionReport {
+    public void should_set_identifier_by_identifier_prefix_and_suffix() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -154,7 +155,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_decode_offerings_from_sml() throws OwsExceptionReport {
+    public void should_decode_offerings_from_sml() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -178,7 +179,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_decode_parent_procedures_from_sml() throws OwsExceptionReport {
+    public void should_decode_parent_procedures_from_sml() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -200,7 +201,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_decode_features_of_interest_from_sml() throws OwsExceptionReport {
+    public void should_decode_features_of_interest_from_sml() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -228,7 +229,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
         xbField.getText().addNewName().setStringValue(name);
     }
 
-    private AbstractProcess decodeAbstractProcess(SensorMLDocument xbSmlDoc) throws OwsExceptionReport {
+    private AbstractProcess decodeAbstractProcess(SensorMLDocument xbSmlDoc) throws DecodingException {
         Object decoded = CodingHelper.decodeXmlObject(xbSmlDoc);
         assertThat(decoded, instanceOf(SensorML.class));
         SensorML sml = (SensorML) decoded;
@@ -237,7 +238,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_decode_child_procedure_from_sml() throws OwsExceptionReport {
+    public void should_decode_child_procedure_from_sml() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -265,7 +266,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_decode_io_from_sml() throws OwsExceptionReport {
+    public void should_decode_io_from_sml() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()
@@ -315,7 +316,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_decode_contact_from_sml() throws OwsExceptionReport {
+    public void should_decode_contact_from_sml() throws DecodingException {
         String role1 = "role1";
         String role2 = "role2";
         String orgName = "orgName";
@@ -441,7 +442,7 @@ public class SensorMLDecoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_set_gml_id() throws OwsExceptionReport {
+    public void should_set_gml_id() throws DecodingException {
         SensorMLDocument xbSmlDoc = getSensorMLDoc();
         SystemType xbSystem =
                 (SystemType) xbSmlDoc.getSensorML().addNewMember().addNewProcess()

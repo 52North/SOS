@@ -37,7 +37,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;
@@ -47,8 +47,8 @@ import org.n52.iceland.util.activation.ActivationManager;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 
 /**

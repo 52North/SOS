@@ -28,12 +28,20 @@
  */
 package org.n52.sos.ds;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Inject;
 
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.request.UpdateSensorRequest;
 import org.n52.sos.response.UpdateSensorResponse;
 
@@ -51,17 +59,6 @@ public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOpe
         super(service, Sos2Constants.Operations.UpdateSensorDescription.name());
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
-        if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            opsMeta.addPossibleValuesParameter(Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat,
-                    this.procedureDescriptionFormatRepository.getSupportedTransactionalProcedureDescriptionFormats(service, version));
-        }
-        opsMeta.addAnyParameterValue(Sos2Constants.UpdateSensorDescriptionParams.description);
-    }
-
     public abstract UpdateSensorResponse updateSensorDescription(UpdateSensorRequest request)
             throws OwsExceptionReport;
 
@@ -73,5 +70,26 @@ public abstract class AbstractUpdateSensorDescriptionHandler extends AbstractOpe
     public void setProcedureDescriptionFormatRepository(ProcedureDescriptionFormatRepository repo) {
         this.procedureDescriptionFormatRepository = repo;
     }
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return new HashSet<>(Arrays.asList(getProcedureParameter(service, version),
+                                           getDescriptionParameter(service, version),
+                                           getProcedureDescriptionFormatParameter(service, version)));
+    }
+
+    private OwsDomain getDescriptionParameter(String service, String version) {
+        UpdateSensorDescriptionParams name = Sos2Constants.UpdateSensorDescriptionParams.description;
+        return new OwsDomain(name, OwsAnyValue.instance());
+    }
+
+    private OwsDomain getProcedureDescriptionFormatParameter(String service, String version) {
+        UpdateSensorDescriptionParams name = Sos2Constants.UpdateSensorDescriptionParams.procedureDescriptionFormat;
+        Set<String> procedureDescriptionFormats
+                = this.procedureDescriptionFormatRepository.getSupportedTransactionalProcedureDescriptionFormats(service, version);
+        return new OwsDomain(name, new OwsAllowedValues(procedureDescriptionFormats.stream().map(OwsValue::new)));
+    }
+
+
 
 }

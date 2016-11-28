@@ -42,17 +42,17 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.decode.Decoder;
 import org.n52.iceland.coding.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
 import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.http.HTTPHeaders;
-import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HttpUtils;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.http.HTTPHeaders;
+import org.n52.shetland.util.http.HTTPStatus;
+import org.n52.shetland.util.http.MediaType;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -92,8 +92,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
 
 
     @Override
-    public RestRequest decode(final HttpServletRequest httpRequest)
-            throws OwsExceptionReport{
+    public RestRequest decode(final HttpServletRequest httpRequest) throws DecodingException {
 
         // check requested content type
         if (!isAcceptHeaderOk(httpRequest))
@@ -150,7 +149,7 @@ public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Co
     }
 
     private ResourceDecoder getDecoderForResource(
-            final String httpRequestPathInfo) throws OwsExceptionReport {
+            final String httpRequestPathInfo) throws DecodingException {
         if (isSensorsRequest(httpRequestPathInfo)) {
             return new SensorsDecoder();
         } else if (isObservationsRequest(httpRequestPathInfo)) {

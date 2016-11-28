@@ -30,7 +30,7 @@ package org.n52.sos.binding.rest.resources;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
 
@@ -42,28 +42,28 @@ public class ServiceEndpointDecoder extends ResourceDecoder {
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
                                            String pathPayload) throws
-            OwsExceptionReport {
+            DecodingException {
         return new ServiceEndpointRequest();
     }
 
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
                                               String pathPayload) throws
-            OwsExceptionReport {
+            DecodingException {
         return new ServiceEndpointRequest();
     }
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
                                             String pathPayload) throws
-            OwsExceptionReport {
+            DecodingException {
         return new ServiceEndpointRequest();
     }
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
                                            String pathPayload) throws
-            OwsExceptionReport {
+            DecodingException {
         return new ServiceEndpointRequest();
     }
 

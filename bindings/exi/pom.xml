@@ -18,6 +18,10 @@
             <artifactId>iceland</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -31,7 +35,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
-                   <artifactId>stax-api</artifactId>
+                    <artifactId>stax-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -44,17 +48,17 @@
             <artifactId>coding-exi</artifactId>
         </dependency>
         <dependency>
-			<groupId>com.siemens.ct.exi</groupId>
-			<artifactId>exificient</artifactId>
-		</dependency>
+            <groupId>com.siemens.ct.exi</groupId>
+            <artifactId>exificient</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
         <dependency>
-        	<groupId>xerces</groupId>
-        	<artifactId>xercesImpl</artifactId>
-			<scope>runtime</scope>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <scope>runtime</scope>
         </dependency> 
     </dependencies>
 </project>

@@ -42,8 +42,8 @@ import org.n52.sos.statistics.sos.models.ExtensionEsModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest<?>> extends AbstractElasticSearchDataHolder
-        implements StatisticsServiceEventHandler<AbstractServiceRequest<?>> {
+public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest> extends AbstractElasticSearchDataHolder
+        implements StatisticsServiceEventHandler<AbstractServiceRequest> {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractSosRequestHandler.class);
 
@@ -78,7 +78,7 @@ public abstract class AbstractSosRequestHandler<T extends AbstractServiceRequest
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Object> resolveAsMap(AbstractServiceRequest<?> request) {
+    public Map<String, Object> resolveAsMap(AbstractServiceRequest request) {
         this.request = (T) request;
         init();
         resolveConcreteRequest();

@@ -34,12 +34,12 @@ import net.opengis.swes.x20.InsertSensorResponseDocument;
 import net.opengis.swes.x20.InsertSensorResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.response.InsertSensorResponse;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
@@ -51,14 +51,15 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class InsertSensorResponseEncoder extends AbstractSwesResponseEncoder<InsertSensorResponse> {
+
     public InsertSensorResponseEncoder() {
         super(Sos2Constants.Operations.InsertSensor.name(), InsertSensorResponse.class);
     }
 
     @Override
-    protected XmlObject create(InsertSensorResponse response) throws OwsExceptionReport {
+    protected XmlObject create(InsertSensorResponse response) throws EncodingException {
         InsertSensorResponseDocument document =
-                InsertSensorResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                InsertSensorResponseDocument.Factory.newInstance(getXmlOptions());
         InsertSensorResponseType isr = document.addNewInsertSensorResponse();
         isr.setAssignedProcedure(response.getAssignedProcedure());
         isr.setAssignedOffering(response.getAssignedOffering());

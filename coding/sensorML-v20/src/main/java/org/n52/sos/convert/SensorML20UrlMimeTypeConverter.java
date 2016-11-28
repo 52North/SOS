@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Joiner;

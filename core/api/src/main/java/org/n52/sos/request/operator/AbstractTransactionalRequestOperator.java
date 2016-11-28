@@ -31,11 +31,11 @@ package org.n52.sos.request.operator;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.ds.OperationHandler;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.iceland.request.handler.OperationHandler;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.service.TransactionalSecurityConfiguration;
 
@@ -46,7 +46,7 @@ import org.n52.sos.service.TransactionalSecurityConfiguration;
  * @param <Q>
  * @param <A>
  */
-public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest<?>, A extends AbstractServiceResponse>
+public abstract class AbstractTransactionalRequestOperator<D extends OperationHandler, Q extends AbstractServiceRequest, A extends AbstractServiceResponse>
         extends AbstractRequestOperator<D, Q, A> {
 
     private static final boolean TRANSACTIONAL_ACTIVATION_STATE = false;
@@ -67,7 +67,7 @@ public abstract class AbstractTransactionalRequestOperator<D extends OperationHa
     }
 
     @Override
-    public AbstractServiceResponse receiveRequest(AbstractServiceRequest<?> request)
+    public AbstractServiceResponse receiveRequest(AbstractServiceRequest request)
             throws OwsExceptionReport {
         try {
             new TransactionalRequestChecker(getTransactionalSecurityConfiguration())

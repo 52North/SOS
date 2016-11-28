@@ -34,13 +34,13 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.XmlNamespaceOperationDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.XmlNamespaceOperationDecoderKey;
 import org.n52.iceland.w3c.soap.SoapConstants;
 import org.n52.iceland.w3c.soap.SoapRequest;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 
@@ -51,7 +51,7 @@ import com.google.common.base.Joiner;
  * @since 1.0.0
  *
  */
-public abstract class AbstractSoapStringDecoder implements Decoder<SoapRequest, String> {
+public abstract class AbstractSoapStringDecoder extends AbstractXmlDecoder<String, SoapRequest> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSoapStringDecoder.class);
 
@@ -71,7 +71,7 @@ public abstract class AbstractSoapStringDecoder implements Decoder<SoapRequest, 
     }
 
     @Override
-    public SoapRequest decode(String xmlString) throws OwsExceptionReport {
-        return (SoapRequest) CodingHelper.decodeXmlObject(xmlString);
+    public SoapRequest decode(String xmlString) throws DecodingException {
+        return (SoapRequest) decodeXmlObject(xmlString);
     }
 }

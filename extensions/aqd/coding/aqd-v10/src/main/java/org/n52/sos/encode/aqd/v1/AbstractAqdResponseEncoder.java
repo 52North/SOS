@@ -28,30 +28,28 @@
  */
 package org.n52.sos.encode.aqd.v1;
 
-import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
 
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
@@ -65,9 +63,33 @@ import com.google.common.collect.Sets;
 
 public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
 
+    private ReportObligationRepository reportObligationRepository;
+    private ProfileHandler profileHandler;
+    private AqdHelper aqdHelper;
+
+
     public AbstractAqdResponseEncoder(String operation, Class<T> responseType) {
         super(AqdConstants.AQD, AqdConstants.VERSION, operation, AqdConstants.NS_AQD,
                 AqdConstants.NS_AQD_PREFIX, responseType);
+    }
+
+    @Inject
+    public void setReportObligationRepository(ReportObligationRepository reportObligationRepository) {
+        this.reportObligationRepository = reportObligationRepository;
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+
+    @Inject
+    public void setAqdHelper(AqdHelper aqdHelper) {
+        this.aqdHelper = aqdHelper;
+    }
+
+    protected AqdHelper getAqdHelper() {
+        return this.aqdHelper;
     }
 
     @Override
@@ -76,47 +98,43 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
     }
 
     protected EReportingHeader getEReportingHeader(ReportObligationType type)
-            throws CodedException {
-        return ReportObligationRepository.getInstance().createHeader(type);
+            throws OwsExceptionReport {
+        return reportObligationRepository.createHeader(type);
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return this.profileHandler.getActiveProfile();
     }
 
-    protected AqdHelper getAqdHelper() {
-        return AqdHelper.getInstance();
-    }
-
-    protected XmlObject encodeGml(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeGml(Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    protected XmlObject encodeGml(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeGml(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
 
-    protected XmlObject encodeOws(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeOws(Object o) throws EncodingException {
         return encodeObjectToXml(OWSConstants.NS_OWS, o);
     }
 
-    protected XmlObject encodeOws(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeOws(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(OWSConstants.NS_OWS, o, helperValues);
     }
 
-    protected XmlObject encodeFes(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeFes(Object o) throws EncodingException {
         return encodeObjectToXml(FilterConstants.NS_FES_2, o);
     }
 
-    protected XmlObject encodeFes(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeFes(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(FilterConstants.NS_FES_2, o, helperValues);
     }
 
-    protected XmlObject encodeSwe(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeSwe(Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected XmlObject encodeSwe(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeSwe(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
 
@@ -144,18 +162,7 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         return encoder;
     }
 
-    /**
-     * Getter for encoder, encapsulates the instance call
-     *
-     * @param key
-     *            Encoder key
-     * @return Matching encoder
-     */
-    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
-        return CodingRepository.getInstance().getEncoder(key);
-    }
-
-    protected XmlObject encodeWithSosEncoder(T response) throws OwsExceptionReport {
+    protected XmlObject encodeWithSosEncoder(T response) throws EncodingException {
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(changeResponseServiceVersion(response));
         if (encoder != null) {
             Object encode = encoder.encode(response);
@@ -165,5 +172,9 @@ public abstract class AbstractAqdResponseEncoder<T extends AbstractServiceRespon
         }
         return null;
     }
+
+
+
+
 
 }

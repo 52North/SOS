@@ -33,20 +33,22 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
+
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -55,13 +57,13 @@ public class OmObservationEsModelTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void validateAllFields() throws OwsExceptionReport {
+    public void validateAllFields() throws OwsExceptionReport, DecodingException {
         OmObservation obs = new OmObservation();
         obs.setIdentifier("id");
 
         // constellation
         OmObservationConstellation constellation = new OmObservationConstellation();
-        constellation.setProcedure(new SosProcedureDescriptionUnknowType("id", "format", "xml"));
+        constellation.setProcedure(new SosProcedureDescriptionUnknownType("id", "format", "xml"));
         constellation.setObservableProperty(new OmObservableProperty("id", "desc", "unit", "value"));
         constellation.setFeatureOfInterest(new OmObservation() {
             {

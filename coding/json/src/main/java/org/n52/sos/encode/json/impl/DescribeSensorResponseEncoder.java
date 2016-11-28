@@ -31,12 +31,13 @@ package org.n52.sos.encode.json.impl;
 import java.util.List;
 
 import org.apache.xmlbeans.XmlOptions;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -58,22 +59,22 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, DescribeSensorResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, DescribeSensorResponse t) throws EncodingException {
         json.put(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT, t.getOutputFormat());
         json.set(JSONConstants.PROCEDURE_DESCRIPTION,
                 encodeDescriptions(t.getProcedureDescriptions(), t.getOutputFormat()));
 
     }
 
-    private String toString(SosProcedureDescription desc, String format) throws OwsExceptionReport {
-        if (desc instanceof SosProcedureDescriptionUnknowType && desc.isSetSensorDescriptionXmlString()) {
+    private String toString(SosProcedureDescription<?> desc, String format) throws EncodingException {
+        if (desc instanceof SosProcedureDescriptionUnknownType && desc.isSetSensorDescriptionXmlString()) {
            return desc.getSensorDescriptionXmlString();
         }
         XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
         return CodingHelper.encodeObjectToXml(format, desc).xmlText(options);
     }
 
-    private JsonNode encodeDescription(SosProcedureDescription desc, String format) throws OwsExceptionReport {
+    private JsonNode encodeDescription(SosProcedureDescription<?> desc, String format) throws EncodingException {
         String xml = toString(desc, format);
         if (desc.isSetValidTime()) {
             ObjectNode j = nodeFactory().objectNode();
@@ -85,12 +86,12 @@ public class DescribeSensorResponseEncoder extends AbstractSosResponseEncoder<De
         }
     }
 
-    private JsonNode encodeDescriptions(List<SosProcedureDescription> descs, String format) throws OwsExceptionReport {
+    private JsonNode encodeDescriptions(List<SosProcedureDescription<?>> descs, String format) throws EncodingException {
         if (descs.size() == 1) {
             return encodeDescription(descs.get(0), format);
         } else {
             ArrayNode a = nodeFactory().arrayNode();
-            for (SosProcedureDescription desc : descs) {
+            for (SosProcedureDescription<?> desc : descs) {
                 a.add(encodeDescription(desc, format));
             }
             return a;

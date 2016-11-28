@@ -31,10 +31,10 @@ package org.n52.sos.binding.rest.resources.offerings;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.util.http.HTTPMethods;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -50,7 +50,7 @@ public class OfferingsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeGetRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws OwsExceptionReport
+            final String pathPayload) throws DecodingException
     {
         // 0 variables
         RestRequest result = null;
@@ -88,7 +88,7 @@ public class OfferingsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeDeleteRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws OwsExceptionReport
+            final String pathPayload) throws DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.DELETE,
                 bindingConstants.getResourceOfferings());
@@ -96,7 +96,7 @@ public class OfferingsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws OwsExceptionReport
+            final String pathPayload) throws DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
                 bindingConstants.getResourceOfferings());
@@ -104,7 +104,7 @@ public class OfferingsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(final HttpServletRequest httpRequest,
-            final String pathPayload) throws OwsExceptionReport
+            final String pathPayload) throws DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.PUT,
                 bindingConstants.getResourceOfferings());

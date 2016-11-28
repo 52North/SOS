@@ -55,36 +55,33 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlObject.Factory;
-
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.BinaryLogicOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.filter.BinaryLogicFilter;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.filter.UnaryLogicFilter;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
 
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator2;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.filter.UnaryLogicFilter;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
+
+import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -92,7 +89,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
-public class FesDecoderv20 implements Decoder<Object, XmlObject> {
+public class FesDecoderv20 extends AbstractXmlDecoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FesDecoderv20.class);
 
@@ -101,13 +98,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
             FilterType.class, FilterDocument.class, TemporalOpsDocument.class);
 
     public FesDecoderv20() {
-        StringBuilder builder = new StringBuilder();
-        for (DecoderKey decoderKeyType : DECODER_KEYS) {
-            builder.append(decoderKeyType.toString());
-            builder.append(", ");
-        }
-        builder.delete(builder.lastIndexOf(", "), builder.length());
-        LOGGER.debug("Decoder for the following keys initialized successfully: " + builder.toString() + "!");
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(DECODER_KEYS));
     }
 
     @Override
@@ -116,7 +107,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Object decode(XmlObject xmlObject) throws OwsExceptionReport {
+    public Object decode(XmlObject xmlObject) throws DecodingException {
         if (xmlObject instanceof SpatialOpsType) {
             return parseSpatialFilterType((SpatialOpsType) xmlObject);
         } else if (xmlObject instanceof TemporalOpsType) {
@@ -142,10 +133,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param filterType
      *            XML element to parse
      * @return SOS Filter object
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If an error occurs or the filter type is not supported!
      */
-    private Filter<?> parseFilterType(FilterType filterType) throws OwsExceptionReport {
+    private Filter<?> parseFilterType(FilterType filterType) throws DecodingException {
         if (filterType.isSetComparisonOps()) {
             return parseComparisonFilterType(filterType.getComparisonOps());
         } else if (filterType.isSetSpatialOps()) {
@@ -173,10 +164,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      *         parameter
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if creation of the SpatialFilter failed
      */
-    private SpatialFilter parseSpatialFilterType(SpatialOpsType xbSpatialOpsType) throws OwsExceptionReport {
+    private SpatialFilter parseSpatialFilterType(SpatialOpsType xbSpatialOpsType) throws DecodingException {
         SpatialFilter spatialFilter = new SpatialFilter();
         try {
             if (xbSpatialOpsType instanceof BBOXType) {
@@ -187,7 +178,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
                 }
                 XmlCursor geometryCursor = xbSpatialOpsType.newCursor();
                 if (geometryCursor.toChild(GmlConstants.QN_ENVELOPE_32)) {
-                    Object sosGeometry = CodingHelper.decodeXmlObject(Factory.parse(geometryCursor.getDomNode()));
+                    Object sosGeometry = decodeXmlObject(Factory.parse(geometryCursor.getDomNode()));
                     if (sosGeometry instanceof Geometry) {
                         spatialFilter.setGeometry((Geometry) sosGeometry);
                     } else {
@@ -195,16 +186,16 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
                     }
 
                 } else {
-                    throw new InvalidParameterValueException().at(Sos2Constants.GetObservationParams.spatialFilter)
-                            .withMessage("The requested spatial filter operand is not supported by this SOS!");
+                    throw new DecodingException(Sos2Constants.GetObservationParams.spatialFilter,
+                            "The requested spatial filter operand is not supported by this SOS!");
                 }
                 geometryCursor.dispose();
             } else {
-                throw new InvalidParameterValueException().at(Sos2Constants.GetObservationParams.spatialFilter)
-                        .withMessage("The requested spatial filter is not supported by this SOS!");
+                throw new DecodingException(Sos2Constants.GetObservationParams.spatialFilter,
+                        "The requested spatial filter is not supported by this SOS!");
             }
         } catch (XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error while parsing spatial filter!");
+            throw new DecodingException("Error while parsing spatial filter!", xmle);
         }
         return spatialFilter;
     }
@@ -218,10 +209,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @return Returns SOS representation of temporal filter
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if parsing of the element failed
      */
-    private TemporalFilter parseTemporalFilterType(TemporalOpsType xbTemporalOpsType) throws OwsExceptionReport {
+    private TemporalFilter parseTemporalFilterType(TemporalOpsType xbTemporalOpsType) throws DecodingException {
         TemporalFilter temporalFilter = new TemporalFilter();
         try {
             if (xbTemporalOpsType instanceof BinaryTemporalOpType) {
@@ -233,7 +224,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     if (nodes.item(i).getNamespaceURI() != null
                             && !nodes.item(i).getLocalName().equals(FilterConstants.EN_VALUE_REFERENCE)) {
-                        Object timeObject = CodingHelper.decodeXmlObject(Factory.parse(nodes.item(i)));
+                        Object timeObject = decodeXmlObject(Factory.parse(nodes.item(i)));
                         if (timeObject instanceof Time) {
                             TimeOperator operator;
                             Time time = (Time) timeObject;
@@ -265,26 +256,24 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
                             } else if (localName.equals(TimeOperator2.OverlappedBy.name())) {
                                 operator = TimeOperator.TM_OverlappedBy;
                             } else {
-                                throw new InvalidParameterValueException().at(
-                                        Sos2Constants.GetObservationParams.temporalFilter).withMessage(
+                                throw new DecodingException(Sos2Constants.GetObservationParams.temporalFilter,
                                         "The requested temporal filter operand is not supported by this SOS!");
                             }
                             temporalFilter.setOperator(operator);
                             temporalFilter.setTime(time);
                             break;
                         } else {
-                            throw new InvalidParameterValueException().at(
-                                    Sos2Constants.GetObservationParams.temporalFilter).withMessage(
+                            throw new DecodingException(Sos2Constants.GetObservationParams.temporalFilter,
                                     "The requested temporal filter value is not supported by this SOS!");
                         }
                     }
                 }
             } else {
-                throw new InvalidParameterValueException().at(Sos2Constants.GetObservationParams.temporalFilter)
-                        .withMessage("The requested temporal filter operand is not supported by this SOS!");
+                throw new DecodingException(Sos2Constants.GetObservationParams.temporalFilter,
+                        "The requested temporal filter operand is not supported by this SOS!");
             }
         } catch (XmlException xmle) {
-            throw new NoApplicableCodeException().withMessage("Error while parsing temporal filter!").causedBy(xmle);
+            throw new DecodingException("Error while parsing temporal filter!", xmle);
         }
         return temporalFilter;
     }
@@ -296,10 +285,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param comparisonOpsType
      *            XmlObject representing the comparison filter
      * @return Service representation of comparison filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the ComparisonFilter failed
      */
-    private ComparisonFilter parseComparisonFilterType(ComparisonOpsType comparisonOpsType) throws OwsExceptionReport {
+    private ComparisonFilter parseComparisonFilterType(ComparisonOpsType comparisonOpsType) throws DecodingException {
         if (comparisonOpsType instanceof BinaryComparisonOpType) {
             return parseBinaryComparisonFilter((BinaryComparisonOpType) comparisonOpsType);
         } else if (comparisonOpsType instanceof PropertyIsLikeType) {
@@ -316,7 +305,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
     }
 
     private ComparisonFilter parseBinaryComparisonFilter(BinaryComparisonOpType comparisonOpsType)
-            throws OwsExceptionReport {
+            throws DecodingException {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         String localName = XmlHelper.getLocalName(comparisonOpsType);
         if (ComparisonOperator.PropertyIsEqualTo.name().equals(localName)) {
@@ -345,18 +334,17 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      *            XML expression array
      * @param comparisonFilter
      *            SOS comparison filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if an error occurs
      */
     private void parseExpressions(XmlObject[] expressionArray, ComparisonFilter comparisonFilter)
-            throws OwsExceptionReport {
+            throws DecodingException {
         for (XmlObject xmlObject : expressionArray) {
             if (isValueReferenceExpression(xmlObject)) {
                 try {
                     comparisonFilter.setValueReference(parseValueReference(xmlObject));
                 } catch (XmlException xmle) {
-                    throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                            "Error while parsing valueReference element!");
+                    throw new DecodingException("Error while parsing valueReference element!", xmle);
                 }
             } else if (xmlObject instanceof LiteralType) {
                 // TODO is this the best way?
@@ -397,10 +385,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param comparisonOpsType
      *            XML propertyIsLike element
      * @return SOS comparison filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If an error occurs of the filter is not supported!
      */
-    private ComparisonFilter parsePropertyIsLikeFilter(PropertyIsLikeType comparisonOpsType) throws OwsExceptionReport {
+    private ComparisonFilter parsePropertyIsLikeFilter(PropertyIsLikeType comparisonOpsType) throws DecodingException {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsLike);
         comparisonFilter.setEscapeString(comparisonOpsType.getEscapeChar());
@@ -416,10 +404,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param comparisonOpsType
      *            XML propertyIsNull element
      * @return SOS comparison filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If an error occurs of the filter is not supported
      */
-    private ComparisonFilter parsePropertyIsNullFilter(PropertyIsNullType comparisonOpsType) throws OwsExceptionReport {
+    private ComparisonFilter parsePropertyIsNullFilter(PropertyIsNullType comparisonOpsType) throws DecodingException {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsNull);
         throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
@@ -433,10 +421,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param comparisonOpsType
      *            XML propertyIsNil element
      * @return SOS comparison filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If an error occurs of the filter is not supported
      */
-    private ComparisonFilter parsePropertyIsNilFilter(PropertyIsNilType comparisonOpsType) throws OwsExceptionReport {
+    private ComparisonFilter parsePropertyIsNilFilter(PropertyIsNilType comparisonOpsType) throws DecodingException {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsNil);
         throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
@@ -450,11 +438,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param comparisonOpsType
      *            XML propertyIsBetween element
      * @return SOS comparison filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If an error occurs of the filter is not supported
      */
     private ComparisonFilter parsePropertyIsBetweenFilter(PropertyIsBetweenType comparisonOpsType)
-            throws OwsExceptionReport {
+            throws DecodingException {
         ComparisonFilter comparisonFilter = new ComparisonFilter();
         comparisonFilter.setOperator(ComparisonOperator.PropertyIsBetween);
         throw new UnsupportedDecoderXmlInputException(this, comparisonOpsType);
@@ -469,10 +457,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param logicOpsType
      *            XmlObject representing the logic filter
      * @return Service representation of logic filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the logic filter failed
      */
-    private Filter<?> parseLogicFilterType(LogicOpsType logicOpsType) throws OwsExceptionReport {
+    private Filter<?> parseLogicFilterType(LogicOpsType logicOpsType) throws DecodingException {
         if (logicOpsType instanceof UnaryLogicOpType) {
             return parseUnaryLogicalFilter((UnaryLogicOpType) logicOpsType);
         } else if (logicOpsType instanceof BinaryLogicOpType) {
@@ -488,10 +476,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param unaryLogicOpType
      *            XmlObject representing the unary logic filter
      * @return Service representation of unary logic filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the UnaryLogicFilter failed
      */
-    private UnaryLogicFilter parseUnaryLogicalFilter(UnaryLogicOpType unaryLogicOpType) throws OwsExceptionReport {
+    private UnaryLogicFilter parseUnaryLogicalFilter(UnaryLogicOpType unaryLogicOpType) throws DecodingException {
         if (unaryLogicOpType.isSetComparisonOps()) {
             return new UnaryLogicFilter(parseComparisonFilterType(unaryLogicOpType.getComparisonOps()));
         } else if (unaryLogicOpType.isSetSpatialOps()) {
@@ -516,11 +504,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param binaryLogicOpType
      *            XmlObject representing the binary logic filter
      * @return Service representation of binary logic filter
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the BinaryLogicFilter failed or filter size is
      *             less than two
      */
-    private BinaryLogicFilter parseBinaryLogicalFilter(BinaryLogicOpType binaryLogicOpType) throws OwsExceptionReport {
+    private BinaryLogicFilter parseBinaryLogicalFilter(BinaryLogicOpType binaryLogicOpType) throws DecodingException {
         BinaryLogicFilter binaryLogicFilter = null;
         String localName = XmlHelper.getLocalName(binaryLogicOpType);
         if (localName.equals(BinaryLogicOperator.And.name())) {
@@ -533,7 +521,7 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
         Set<Filter<?>> filters = getFilterPredicates(binaryLogicOpType);
 
         if (filters.size() < 2) {
-            throw new NoApplicableCodeException().withMessage("The binary logic filter requires minimla two filter predicates!");
+            throw new DecodingException("The binary logic filter requires minimla two filter predicates!");
         }
         binaryLogicFilter.addFilterPredicates(filters);
         return binaryLogicFilter;
@@ -545,10 +533,10 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param binaryLogicOpType
      *            XmlObject representing the binary logic filter
      * @return Predicate filters
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the predicate filters failed
      */
-    private Set<Filter<?>> getFilterPredicates(BinaryLogicOpType binaryLogicOpType) throws OwsExceptionReport {
+    private Set<Filter<?>> getFilterPredicates(BinaryLogicOpType binaryLogicOpType) throws DecodingException {
         Set<Filter<?>> filters = Sets.newHashSet();
         if (CollectionHelper.isNotNullOrEmpty(binaryLogicOpType.getComparisonOpsArray())) {
             filters.addAll(parseComparisonFilterArray(binaryLogicOpType.getComparisonOpsArray()));
@@ -580,11 +568,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param comparisonOpsArray
      *            XmlBeans comparison filter array
      * @return Service comparison filters
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the comparison filters failed
      */
     private Collection<? extends Filter<?>> parseComparisonFilterArray(ComparisonOpsType[] comparisonOpsArray)
-            throws OwsExceptionReport {
+            throws DecodingException {
         Set<Filter<?>> filters = Sets.newHashSet();
         for (ComparisonOpsType comparisonOpsType : comparisonOpsArray) {
             filters.add(parseComparisonFilterType(comparisonOpsType));
@@ -598,11 +586,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param logicOpsArray
      *            XmlBeans logic filter array
      * @return Service logic filters
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the logic filters failed
      */
     private Collection<? extends Filter<?>> parseLogicFilterArray(LogicOpsType[] logicOpsArray)
-            throws OwsExceptionReport {
+            throws DecodingException {
         Set<Filter<?>> filters = Sets.newHashSet();
         for (LogicOpsType logicOpsType : logicOpsArray) {
             filters.add(parseLogicFilterType(logicOpsType));
@@ -616,11 +604,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param spatialOpsArray
      *            XmlBeans spatial filter array
      * @return Service spatial filters
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the spatial filters failed
      */
     private Collection<? extends Filter<?>> parseSpatialFilterArray(SpatialOpsType[] spatialOpsArray)
-            throws OwsExceptionReport {
+            throws DecodingException {
         Set<Filter<?>> filters = Sets.newHashSet();
         for (SpatialOpsType spatialOpsType : spatialOpsArray) {
             filters.add(parseSpatialFilterType(spatialOpsType));
@@ -634,11 +622,11 @@ public class FesDecoderv20 implements Decoder<Object, XmlObject> {
      * @param temporalOpsArray
      *            XmlBeans temporal filter array
      * @return Service temporal filters
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if creation of the temporal filters failed
      */
     private Collection<? extends Filter<?>> parseTemporalFilterArray(TemporalOpsType[] temporalOpsArray)
-            throws OwsExceptionReport {
+            throws DecodingException {
         Set<Filter<?>> filters = Sets.newHashSet();
         for (TemporalOpsType temporalOpsType : temporalOpsArray) {
             filters.add(parseTemporalFilterType(temporalOpsType));

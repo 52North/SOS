@@ -30,14 +30,14 @@ package org.n52.sos.util.builder;
 
 import java.util.ArrayList;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
- *         J&uuml;rrens</a>
+ * J&uuml;rrens</a>
  * @since 4.0.0
  */
 public class ObservationConstellationBuilder {
@@ -79,7 +79,7 @@ public class ObservationConstellationBuilder {
     public ObservationConstellationBuilder addOffering(String offeringIdentifier) {
         if (offeringIdentifier != null && !offeringIdentifier.isEmpty()) {
             if (offerings == null) {
-                offerings = new ArrayList<String>();
+                offerings = new ArrayList<>();
             }
             offerings.add(offeringIdentifier);
         }

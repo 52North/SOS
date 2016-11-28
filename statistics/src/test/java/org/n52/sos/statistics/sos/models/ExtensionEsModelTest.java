@@ -32,10 +32,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.swes.SwesExtension;
+
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swes.SwesExtension;
 
 public class ExtensionEsModelTest {
 
@@ -43,7 +44,7 @@ public class ExtensionEsModelTest {
     public void transformExtensionToEsModel() {
         SweBoolean bool = new SweBoolean();
         bool.setValue(true);
-        Extension<SweBoolean> ext = new SwesExtension<SweBoolean>(bool);
+        Extension<SweBoolean> ext = new SwesExtension<>(bool);
         ext.setDefinition("definition");
         ext.setIdentifier("identifier");
         ext.setNamespace("namespace");

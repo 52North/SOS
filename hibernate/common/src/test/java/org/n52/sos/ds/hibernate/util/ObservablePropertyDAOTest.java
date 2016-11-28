@@ -42,13 +42,14 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
 
 
 public class ObservablePropertyDAOTest extends HibernateTestCase {

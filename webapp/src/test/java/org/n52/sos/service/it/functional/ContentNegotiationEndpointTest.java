@@ -28,8 +28,8 @@
  */
 package org.n52.sos.service.it.functional;
 
+import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.is;
-import static org.n52.sos.service.it.util.XPath.hasXPath;
 
 import java.io.IOException;
 
@@ -44,20 +44,19 @@ import org.junit.rules.ErrorCollector;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.ogc.ows.OWSConstants;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.util.http.HTTPStatus;
+import org.n52.shetland.util.http.MediaTypes;
+import org.n52.sos.coding.json.SchemaConstants.Response;
+import org.n52.sos.service.it.AbstractComplianceSuiteTest;
 import org.n52.sos.service.it.v2.XPaths;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import org.n52.sos.service.it.AbstractComplianceSuiteTest;
-import org.n52.sos.service.it.Response;
 
 /**
  * TODO JavaDoc
@@ -223,7 +222,7 @@ public class ContentNegotiationEndpointTest extends AbstractComplianceSuiteTest 
                 .response();
         errors.checkThat(response.getStatus(),
                          is(HTTPStatus.UNSUPPORTED_MEDIA_TYPE
-                .getCode()));
+                                 .getCode()));
     }
 
     @Test

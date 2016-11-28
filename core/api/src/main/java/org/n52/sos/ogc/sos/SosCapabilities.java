@@ -28,19 +28,21 @@
  */
 package org.n52.sos.ogc.sos;
 
-import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.n52.iceland.ogc.ows.OwsCapabilities;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.filter.FilterCapabilities;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.FilterCapabilities;
+import org.n52.shetland.ogc.ows.OwsCapabilities;
+import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
+import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.util.CollectionHelper;
 
 /**
  * Class which represents the Capabilities.
@@ -53,24 +55,38 @@ public class SosCapabilities extends OwsCapabilities {
     /**
      * Metadata for all supported filter
      */
-    private FilterCapabilities filterCapabilities;
+    private Optional<FilterCapabilities> filterCapabilities;
 
     /**
      * All ObservationOfferings provided by this SOS.
      */
-    private SortedSet<SosObservationOffering> contents = new TreeSet<SosObservationOffering>();
+    private Optional<SortedSet<SosObservationOffering>> contents;
 
-    /**
-     * extensions
-     */
-    private List<CapabilitiesExtension> extensions = new LinkedList<CapabilitiesExtension>();
-
-    public SosCapabilities(String version) {
-        super(SosConstants.SOS, version);
+    public SosCapabilities(SosCapabilities owsCapabilities) {
+        super(owsCapabilities);
+        this.filterCapabilities = owsCapabilities.getFilterCapabilities();
+        this.contents = owsCapabilities.getContents();
     }
 
     public SosCapabilities(OwsCapabilities owsCapabilities) {
-        super(SosConstants.SOS, owsCapabilities);
+        this(owsCapabilities, null, null);
+    }
+
+    public SosCapabilities(OwsCapabilities owsCapabilities, FilterCapabilities filterCapabilities, Collection<SosObservationOffering> contents) {
+        super(owsCapabilities);
+        this.filterCapabilities = Optional.ofNullable(filterCapabilities);
+        this.contents = Optional.ofNullable(contents).map(CollectionHelper::newSortedSet);
+    }
+
+    public SosCapabilities(String service, String version, String updateSequence,
+                           OwsServiceIdentification serviceIdentification, OwsServiceProvider serviceProvider,
+                           OwsOperationsMetadata operationsMetadata, Set<String> languages,
+                           FilterCapabilities filterCapabilities,
+                           Collection<SosObservationOffering> contents,
+                           Collection<OwsCapabilitiesExtension> extensions) {
+        super(SosConstants.SOS, version, updateSequence, serviceIdentification, serviceProvider, operationsMetadata, languages, extensions);
+        this.filterCapabilities = Optional.ofNullable(filterCapabilities);
+        this.contents = Optional.ofNullable(contents).map(CollectionHelper::newSortedSet);
     }
 
     /**
@@ -78,22 +94,12 @@ public class SosCapabilities extends OwsCapabilities {
      *
      * @return filter capabilities
      */
-    public FilterCapabilities getFilterCapabilities() {
+    public Optional<FilterCapabilities> getFilterCapabilities() {
         return filterCapabilities;
     }
 
-    /**
-     * Set filter capabilities
-     *
-     * @param filterCapabilities
-     *            filter capabilities
-     */
     public void setFilterCapabilities(FilterCapabilities filterCapabilities) {
-        this.filterCapabilities = filterCapabilities;
-    }
-
-    public boolean isSetFilterCapabilities() {
-        return getFilterCapabilities() != null;
+        this.filterCapabilities = Optional.ofNullable(filterCapabilities);
     }
 
     /**
@@ -101,49 +107,11 @@ public class SosCapabilities extends OwsCapabilities {
      *
      * @return contents data
      */
-    public SortedSet<SosObservationOffering> getContents() {
-        return Collections.unmodifiableSortedSet(contents);
+    public Optional<SortedSet<SosObservationOffering>> getContents() {
+        return this.contents.map(Collections::unmodifiableSortedSet);
     }
 
-    /**
-     * Set contents data
-     *
-     * @param contents
-     *            contents data
-     */
     public void setContents(Collection<SosObservationOffering> contents) {
-        this.contents =
-                contents == null ? new TreeSet<SosObservationOffering>() : new TreeSet<SosObservationOffering>(
-                        contents);
+        this.contents = Optional.ofNullable(contents).map(CollectionHelper::newSortedSet);
     }
-
-    public boolean isSetContents() {
-        return contents != null && !contents.isEmpty();
-    }
-
-    /**
-     * Set extension data
-     *
-     * @param extensions
-     *            extension data
-     */
-    public void setExensions(Collection<CapabilitiesExtension> extensions) {
-        this.extensions =
-                extensions == null ? new LinkedList<CapabilitiesExtension>() : new ArrayList<CapabilitiesExtension>(
-                        extensions);
-    }
-
-    /**
-     * Get extension data
-     *
-     * @return extension data
-     */
-    public List<CapabilitiesExtension> getExtensions() {
-        return Collections.unmodifiableList(this.extensions);
-    }
-
-    public boolean isSetExtensions() {
-        return CollectionHelper.isNotEmpty(getExtensions());
-    }
-
 }

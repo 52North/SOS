@@ -52,29 +52,30 @@ import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.swe.RangeValue;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataComponentVisitor;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweEnvelope;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
+import org.n52.shetland.ogc.swe.VoidSweDataComponentVisitor;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuality;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataComponentVisitor;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweEnvelope;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.VoidSweDataComponentVisitor;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuality;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;
@@ -85,16 +86,18 @@ import com.vividsolutions.jts.geom.Envelope;
  * @since 4.0.0
  */
 public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsManagerTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public final void should_encode_simpleDataRecord() throws OwsExceptionReport {
+    public void should_encode_simpleDataRecord() throws EncodingException {
         final XmlObject encode = new SweCommonEncoderv101().encode(new SweSimpleDataRecord());
 
         assertThat(encode, instanceOf(SimpleDataRecordType.class));
     }
 
     @Test
-    public void should_encode_simpleDataRecordWithFields() throws OwsExceptionReport {
+    public void should_encode_simpleDataRecordWithFields() throws EncodingException {
         final String field0Value = "field-0-value";
         final String field0Name = "field-0";
         final String field1Name = "field-1";
@@ -121,7 +124,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_fieldBoolean() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_fieldBoolean() throws EncodingException {
         final String field1Name = "field-1";
         final Boolean field1Value = Boolean.TRUE;
 
@@ -141,7 +144,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldText() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldText() throws EncodingException {
 
         final String field1Name = "test-name";
         final String field1Value = "test-value";
@@ -160,7 +163,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldBoolean() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldBoolean() throws EncodingException {
 
         final String field1Name = "test-name";
         final boolean field1Value = true;
@@ -179,7 +182,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldCategory() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldCategory() throws EncodingException {
 
         final String field1Name = "test-name";
         final String field1Value = "test-value";
@@ -200,7 +203,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldCount() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldCount() throws EncodingException {
 
         final String field1Name = "test-name";
         final int field1Value = 52;
@@ -219,7 +222,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldQuantity() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldQuantity() throws EncodingException {
 
         final String field1Name = "test-name";
         final double field1Value = 52.0;
@@ -238,7 +241,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldTimeRange() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldTimeRange() throws EncodingException {
 
         final String field1Name = "test-name";
         final RangeValue<DateTime> field1Value = new RangeValue<DateTime>();
@@ -271,7 +274,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_Datarecord_with_fieldTime() throws OwsExceptionReport {
+    public void should_encode_Datarecord_with_fieldTime() throws EncodingException {
 
         final String field1Name = "test-name";
         final DateTime field1Value = new DateTime(System.currentTimeMillis());
@@ -291,12 +294,10 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
         assertThat(xbTime.toDateTime(field1Value.getZone()), is(field1Value));
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void should_throw_NoApplicableCodeException_with_DataRecord_and_field_with_not_supported_element()
-            throws OwsExceptionReport {
+            throws EncodingException {
         thrown.expect(NoApplicableCodeException.class);
         thrown.expectMessage("The element type 'org.n52.sos.encode.SweCommonEncoderv101Test$1' "
                 + "of the received '"+ SweField.class.getName() + "' is not supported"
@@ -310,12 +311,12 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
                     }
 
                     @Override
-                    public <T> T accept(SweDataComponentVisitor<T> visitor) {
+                    public <T, X extends Throwable> T accept(SweDataComponentVisitor<T, X> visitor) {
                         return null;
                     }
 
                     @Override
-                    public void accept(VoidSweDataComponentVisitor visitor) {
+                    public <X extends Throwable> void accept(VoidSweDataComponentVisitor<X> visitor) {
                     }
 
                     @Override
@@ -326,7 +327,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_fieldText() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_fieldText() throws EncodingException {
         final String field1Name = "field-1";
         final String field1Value = "field-1-value";
 
@@ -346,7 +347,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_fieldCategory() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_fieldCategory() throws EncodingException {
         final String name = "field-1";
         final String value = "field-1-value";
 
@@ -369,7 +370,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_fieldCount() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_fieldCount() throws EncodingException {
         final String name = "field-1";
         final int value = 42;
 
@@ -389,7 +390,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_fieldQuantity() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_fieldQuantity() throws EncodingException {
         final String name = "field-1";
         final double value = 42.5;
 
@@ -409,7 +410,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_fieldTime() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_fieldTime() throws EncodingException {
         final String name = "field-1";
         final DateTime value = new DateTime(DateTimeZone.UTC);
 
@@ -429,7 +430,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_simpleDatarecord_with_quantities() throws OwsExceptionReport {
+    public void should_encode_simpleDatarecord_with_quantities() throws EncodingException {
         final String name = "field-1";
         final String unit = "m";
         final Double value = 1.1;
@@ -464,13 +465,13 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
 
     @Test(expected = NoApplicableCodeException.class)
     public void should_throw_exception_if_received_simpleDataRecord_with_field_with_null_element()
-            throws OwsExceptionReport {
+            throws EncodingException {
         new SweCommonEncoderv101().encode(new SweSimpleDataRecord().addField(new SweField("field-name", null)));
     }
 
     @Test public void
     should_encode_count_with_quality_text()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final String qualityTextValue = "quality-text-value";
         final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweText().setValue(qualityTextValue)));
 
@@ -488,7 +489,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
 
     @Test public void
     should_encode_count_with_quality_Category()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final String qualityCategoryValue = "quality-category-value";
         final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweCategory().setValue(qualityCategoryValue)));
 
@@ -506,7 +507,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
 
     @Test public void
     should_encode_count_with_quality_Quantity()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final double qualityQuantityValue = 42.0;
         final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweQuantity().setValue(qualityQuantityValue)));
 
@@ -524,8 +525,8 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
 
     @Test public void
     should_encode_count_with_quality_QuantityRange()
-            throws OwsExceptionReport {
-        final RangeValue<Double> qualityQuantityRangeValue = new RangeValue<Double>(1.0, 2.0);
+            throws EncodingException {
+        final RangeValue<Double> qualityQuantityRangeValue = new RangeValue<>(1.0, 2.0);
         final SweCount sosCount = (SweCount) new SweCount().setQuality(Lists.newArrayList((SweQuality)new SweQuantityRange().setValue(qualityQuantityRangeValue)));
 
 
@@ -542,7 +543,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
     }
 
     @Test
-    public void should_encode_SosEnvelope() throws OwsExceptionReport {
+    public void should_encode_ReferencedEnvelope() throws EncodingException {
         final int srid = 4326;
         final double y1 = 7.0;
         final double x1 = 51.0;
@@ -550,7 +551,7 @@ public class SweCommonEncoderv101Test extends AbstractBeforeAfterClassSettingsMa
         final double x2 = 52.0;
         final String uom = "test-uom";
         final String definition = "test-definition";
-        final SweEnvelope sweEnvelope = new SweEnvelope(new SosEnvelope(new Envelope(x1, x2, y1, y2), srid), uom);
+        final SweEnvelope sweEnvelope = new SweEnvelope(new ReferencedEnvelope(new Envelope(x1, x2, y1, y2), srid), uom, true);
         final String xAxisId = "x";
         final String yAxisId = "y";
         final String northing = "northing";

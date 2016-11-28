@@ -37,30 +37,28 @@ import java.util.Set;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.service.MiscSettings;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.JavaHelper;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.ogc.gml.ReferenceType;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -212,14 +210,12 @@ public class SosInsertSensorOperatorV20 extends
         if (featureOfInterestTypes != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
             Collection<String> validFeatureOfInterestTypes =
-                    Configurator.getInstance().getCache().getFeatureOfInterestTypes();
+                    getCache().getFeatureOfInterestTypes();
             for (String featureOfInterestType : featureOfInterestTypes) {
                 if (featureOfInterestType.isEmpty()) {
                     exceptions.add(new MissingFeatureOfInterestTypeException());
-                } else {
-                    if (!validFeatureOfInterestTypes.contains(featureOfInterestType)) {
-                        exceptions.add(new InvalidFeatureOfInterestTypeException(featureOfInterestType));
-                    }
+                } else  if (!validFeatureOfInterestTypes.contains(featureOfInterestType)) {
+                    exceptions.add(new InvalidFeatureOfInterestTypeException(featureOfInterestType));
                 }
             }
             exceptions.throwIfNotEmpty();
@@ -254,7 +250,7 @@ public class SosInsertSensorOperatorV20 extends
 
     private void checkAndSetAssignedOfferings(InsertSensorRequest request) throws OwsExceptionReport {
         Set<SosOffering> sosOfferings = request.getProcedureDescription().getOfferings();
-        SosContentCache cache = Configurator.getInstance().getCache();
+        SosContentCache cache = getCache();
 
         // add parent procedure offerings
         if (request.getProcedureDescription().isSetParentProcedures()) {
@@ -264,7 +260,7 @@ public class SosInsertSensorOperatorV20 extends
                 for (String offering : cache.getOfferingsForProcedure(parentProcedure)) {
                     // TODO I18N
                     if (!checkOfferingsForOffering(sosOfferings, offering)) {
-                        SosOffering sosOffering = new SosOffering(offering, Constants.EMPTY_STRING);
+                        SosOffering sosOffering = new SosOffering(offering, "");
                         sosOffering.setParentOfferingFlag(true);
                         sosOfferings.add(sosOffering);
                     }
@@ -275,14 +271,14 @@ public class SosInsertSensorOperatorV20 extends
 
         // if no offerings are assigned, generate one
         if (CollectionHelper.isEmpty(sosOfferings)) {
-            sosOfferings = new HashSet<SosOffering>(0);
+            sosOfferings = new HashSet<>(0);
             sosOfferings.add(new SosOffering(getDefaultOfferingPrefix() + request.getAssignedProcedureIdentifier()));
         }
         // check for reserved character
         for (SosOffering offering : sosOfferings) {
             checkReservedCharacter(offering.getIdentifier(), Sos2Constants.InsertSensorParams.offeringIdentifier);
         }
-        request.setAssignedOfferings(new ArrayList<SosOffering>(sosOfferings));
+        request.setAssignedOfferings(new ArrayList<>(sosOfferings));
     }
 
     private boolean checkOfferingsForOffering(Set<SosOffering> sosOfferings, String offering) {
@@ -306,9 +302,9 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkParentChildProcedures(SosProcedureDescription procedureDescription, String assignedIdentifier) throws CodedException {
+    private void checkParentChildProcedures(SosProcedureDescription <?>procedureDescription, String assignedIdentifier) throws CodedException {
         if (procedureDescription.isSetChildProcedures()) {
-            for (SosProcedureDescription child : procedureDescription.getChildProcedures()) {
+            for (SosProcedureDescription<?> child : procedureDescription.getChildProcedures()) {
                 if (child.getIdentifier().equalsIgnoreCase(assignedIdentifier)) {
                     throw new InvalidParameterValueException().at("childProcdureIdentifier").withMessage(
                             "The procedure with the identifier '%s' is linked to itself as child procedure !",
@@ -326,14 +322,14 @@ public class SosInsertSensorOperatorV20 extends
 
     }
 
-    private void checkTypeOf(SosProcedureDescription procedureDescription) throws OwsExceptionReport {
+    private void checkTypeOf(SosProcedureDescription<?> procedureDescription) throws OwsExceptionReport {
         // if href is URL, remove typeOf
         // else href empty/title.xml/PREFIX/title.xml check title if exists
         if (procedureDescription.isSetTypeOf()) {
             ReferenceType typeOf = procedureDescription.getTypeOf();
             boolean referenced = false;
             if (typeOf.isSetHref()) {
-                if (typeOf.getHref().startsWith(Constants.HTTP) && !typeOf.getHref().equals(typeOf.getTitle())) {
+                if (typeOf.getHref().startsWith("http") && !typeOf.getHref().equals(typeOf.getTitle())) {
                     procedureDescription.setTypeOf(null);
                     referenced = true;
                 }

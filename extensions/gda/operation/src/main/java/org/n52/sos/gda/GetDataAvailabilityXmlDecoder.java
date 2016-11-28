@@ -39,20 +39,20 @@ import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.coding.decode.AbstractXmlDecoder;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XPathConstants;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 
@@ -63,7 +63,7 @@ import com.google.common.base.Joiner;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetDataAvailabilityRequest> {
+public class GetDataAvailabilityXmlDecoder extends AbstractXmlDecoder<XmlObject, GetDataAvailabilityRequest> {
 
     private static final Logger LOG = LoggerFactory.getLogger(GetDataAvailabilityXmlDecoder.class);
 
@@ -85,23 +85,13 @@ public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetData
         LOG.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(DECODER_KEYS));
     }
 
-    private static String getBasePath(String basePath, String prefix) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(basePath);
-        builder.append("/");
-        builder.append(prefix);
-        builder.append(":");
-        builder.append("GetDataAvailability");
-        return builder.toString();
-    }
-
     @Override
     public Set<DecoderKey> getKeys() {
         return Collections.unmodifiableSet(DECODER_KEYS);
     }
 
     @Override
-    public GetDataAvailabilityRequest decode(XmlObject xml) throws OwsExceptionReport {
+    public GetDataAvailabilityRequest decode(XmlObject xml) throws DecodingException {
         return parseGetDataAvailability(xml);
     }
 
@@ -112,9 +102,9 @@ public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetData
      *            the request
      *
      * @return the parsed request
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      */
-    public GetDataAvailabilityRequest parseGetDataAvailability(XmlObject xml) throws OwsExceptionReport {
+    public GetDataAvailabilityRequest parseGetDataAvailability(XmlObject xml) throws DecodingException {
         XmlObject[] roots = xml.selectPath(BASE_PATH_SOS);
         if (roots != null && roots.length > 0) {
             return parseGetDataAvailability(xml, BASE_PATH_SOS, XPathConstants.XPATH_PREFIX_SOS_20,
@@ -143,11 +133,11 @@ public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetData
      * @param namespace
      *            XML document namespace
      * @return {@code GetDataAvailabilityRequest}
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             If the document could no be parsed
      */
     private GetDataAvailabilityRequest parseGetDataAvailability(XmlObject xml, String basePath, String xpathPrefix,
-            String prefix, String namespace) throws OwsExceptionReport {
+            String prefix, String namespace) throws DecodingException {
         GetDataAvailabilityRequest request = new GetDataAvailabilityRequest();
         request.setNamespace(namespace);
         XmlObject[] roots = xml.selectPath(basePath);
@@ -200,18 +190,15 @@ public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetData
      * @param xml
      *            swes:extension
      * @return parsed {@code SwesExtensions}
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if the swes:extension could not be parsed
      */
-    private SwesExtensions parseExtensions(XmlObject xml) throws OwsExceptionReport {
+    private SwesExtensions parseExtensions(XmlObject xml) throws DecodingException {
         SwesExtensions extensions = new SwesExtensions();
-        for (XmlObject x : xml.selectPath(getPath(XPathConstants.XPATH_PREFIXES_SWES, SwesConstants.NS_SWES_PREFIX,
-                "extension"))) {
+        for (XmlObject x : xml.selectPath(getPath(XPathConstants.XPATH_PREFIXES_SWES, SwesConstants.NS_SWES_PREFIX, "extension"))) {
             try {
                 if (x.getDomNode().hasChildNodes()) {
-                    Object obj =
-                            CodingHelper.decodeXmlElement(XmlObject.Factory.parse(XmlHelper.getNodeFromNodeList(x
-                                    .getDomNode().getChildNodes())));
+                    Object obj = decodeXmlElement(XmlObject.Factory.parse(XmlHelper.getNodeFromNodeList(x.getDomNode().getChildNodes())));
                     SwesExtension<?> extension = null;
                     if (!(obj instanceof SwesExtension<?>)) {
                         extension = new SwesExtension<>().setValue(obj);
@@ -260,6 +247,16 @@ public class GetDataAvailabilityXmlDecoder implements AbstractXmlDecoder<GetData
         builder.append(prefix);
         builder.append(":");
         builder.append(element);
+        return builder.toString();
+    }
+
+    private static String getBasePath(String basePath, String prefix) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(basePath);
+        builder.append("/");
+        builder.append(prefix);
+        builder.append(":");
+        builder.append("GetDataAvailability");
         return builder.toString();
     }
 }

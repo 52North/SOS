@@ -29,13 +29,13 @@
 package org.n52.sos.encode.json;
 
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -44,13 +44,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * TODO JavaDoc
  *
  * @author Christian Autermann <c.autermann@52north.org>
+ * @param <T> the response type
  *
  * @since 4.0.0
  */
 public abstract class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends JSONEncoder<T> {
     public AbstractSosResponseEncoder(Class<T> type, String operation) {
         super(type, new OperationResponseEncoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation,
-                MediaTypes.APPLICATION_JSON));
+                                                    MediaTypes.APPLICATION_JSON));
     }
 
     public AbstractSosResponseEncoder(Class<T> type, Enum<?> operation) {
@@ -58,7 +59,7 @@ public abstract class AbstractSosResponseEncoder<T extends AbstractServiceRespon
     }
 
     @Override
-    public JsonNode encodeJSON(T t) throws OwsExceptionReport {
+    public JsonNode encodeJSON(T t) throws EncodingException {
         ObjectNode n = JSONUtils.nodeFactory().objectNode();
         n.put(JSONConstants.REQUEST, t.getOperationName());
         n.put(JSONConstants.VERSION, t.getVersion());
@@ -67,5 +68,5 @@ public abstract class AbstractSosResponseEncoder<T extends AbstractServiceRespon
         return n;
     }
 
-    protected abstract void encodeResponse(ObjectNode json, T t) throws OwsExceptionReport;
+    protected abstract void encodeResponse(ObjectNode json, T t) throws EncodingException;
 }

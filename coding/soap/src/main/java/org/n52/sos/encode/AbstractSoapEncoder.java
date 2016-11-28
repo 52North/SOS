@@ -28,9 +28,11 @@
  */
 package org.n52.sos.encode;
 
+import static org.n52.iceland.util.Constants.BLANK_CHAR;
+import static org.n52.iceland.util.Constants.LINE_SEPARATOR_CHAR;
+
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -43,36 +45,33 @@ import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.ogc.ows.ExceptionCode;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.iceland.w3c.soap.SoapFault;
-import org.n52.iceland.w3c.soap.SoapHelper;
-import org.n52.iceland.w3c.soap.SoapResponse;
-import org.n52.sos.exception.sos.SosExceptionCode;
-import org.n52.sos.exception.swes.SwesExceptionCode;
-import org.n52.sos.ogc.sos.SosSoapConstants;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.N52XmlHelper;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.iceland.w3c.soap.SoapFault;
+import org.n52.iceland.w3c.soap.SoapHelper;
+import org.n52.iceland.w3c.soap.SoapResponse;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.ExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.w3c.W3CConstants;
+import org.n52.sos.exception.sos.SosExceptionCode;
+import org.n52.sos.exception.swes.SwesExceptionCode;
+import org.n52.sos.ogc.sos.SosSoapConstants;
+import org.n52.sos.util.N52XmlHelper;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -80,7 +79,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Constants {
+public abstract class AbstractSoapEncoder<T, S> extends AbstractXmlEncoder<T, S> {
     public static final String DEFAULT_FAULT_REASON = "A server exception was encountered.";
 
     public static final String MISSING_RESPONSE_DETAIL_TEXT = "Missing SOS response document!";
@@ -100,26 +99,12 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
     }
 
     @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-    }
-
-    @Override
     public MediaType getContentType() {
         return MediaTypes.APPLICATION_SOAP_XML;
     }
 
     @Override
-    public T encode(S response) throws OwsExceptionReport {
+    public T encode(S response) throws EncodingException {
         return encode(response, null);
     }
 
@@ -170,11 +155,11 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
      * @return action URI
      * @throws SOAPException
      *             If an error occurs when add content to {@link SOAPMessage}
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs while encoding the body content
      */
     protected String createSOAPBody(SOAPMessage soapResponseMessage, SoapResponse soapResponse, String actionURI)
-            throws SOAPException, OwsExceptionReport {
+            throws SOAPException, EncodingException {
         return createSOAPBody(soapResponseMessage, getBodyContent(soapResponse), actionURI);
     }
 
@@ -184,14 +169,14 @@ public abstract class AbstractSoapEncoder<T, S> implements Encoder<T, S>, Consta
      * @param response
      *            SOAP response
      * @return SOAPBody content as {@link XmlObject}
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If no encoder is available, the object to encode is not
      *             supported or an error occurs during the encoding
      */
-    protected XmlObject getBodyContent(SoapResponse response) throws OwsExceptionReport {
+    protected XmlObject getBodyContent(SoapResponse response) throws EncodingException {
         OperationResponseEncoderKey key =
                 new OperationResponseEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
-        Encoder<Object, AbstractServiceResponse> encoder = CodingRepository.getInstance().getEncoder(key);
+        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);
         }

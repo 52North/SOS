@@ -36,7 +36,7 @@ import java.util.Set;
 
 import org.n52.iceland.config.SettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
-import org.n52.iceland.util.JavaHelper;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
 
 import com.google.common.collect.Sets;

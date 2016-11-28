@@ -28,9 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
+
+import com.google.common.base.Strings;
 
 public abstract class AbstractEReportingObservation<T>
         extends AbstractSeriesObservation<T>
@@ -109,7 +110,7 @@ public abstract class AbstractEReportingObservation<T>
 
     @Override
     public boolean isSetPrimaryObservation() {
-        return StringHelper.isNotEmpty(getPrimaryObservation());
+        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
     @Override

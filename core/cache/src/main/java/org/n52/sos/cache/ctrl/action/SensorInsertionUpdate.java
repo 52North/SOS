@@ -33,12 +33,12 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.cache.SosWritableContentCache;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.action.Action;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
+import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 

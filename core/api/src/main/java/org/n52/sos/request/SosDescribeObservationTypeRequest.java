@@ -28,31 +28,25 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.response.DummyResponse;
 
 /**
  * SOS DescribeObservationType request
  *
  * @since 4.0.0
  */
-public class SosDescribeObservationTypeRequest extends AbstractServiceRequest<AbstractServiceResponse> {
-
-    /**
-     * DescribeObservationType operation name
-     */
-    private final String operationName = Sos1Constants.Operations.DescribeObservationType.name();
-
-    @Override
-    public String getOperationName() {
-        return operationName;
+public class SosDescribeObservationTypeRequest extends AbstractServiceRequest {
+    public SosDescribeObservationTypeRequest() {
+        super(null, null, Sos1Constants.Operations.DescribeObservationType.name());
     }
 
-    @Override
-    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
-        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
+    public SosDescribeObservationTypeRequest(String service, String version) {
+        super(service, version, Sos1Constants.Operations.DescribeObservationType.name());
     }
+
+    public SosDescribeObservationTypeRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
 }

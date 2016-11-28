@@ -39,10 +39,11 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
 import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;

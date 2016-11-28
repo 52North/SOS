@@ -33,14 +33,13 @@ import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.gml.time.TimePosition;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.gml.time.TimePosition;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.inspire.InspireCitation;
@@ -93,7 +92,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     }
 
     @Override
-    public void write(OutputStream out) throws XMLStreamException, DateTimeFormatException {
+    public void write(OutputStream out) throws XMLStreamException, EncodingException {
         init(out);
         if (getInspireObject() instanceof FullInspireExtendedCapabilities) {
             writeFullInspireExtendedCapabilities((FullInspireExtendedCapabilities) getInspireObject());
@@ -108,22 +107,20 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     }
 
     @Override
-    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, EncodingException {
       write(out);
     }
 
     @Override
-    public void write(InspireObject elementToStream, OutputStream out) throws XMLStreamException, OwsExceptionReport {
+    public void write(InspireObject elementToStream, OutputStream out) throws XMLStreamException, EncodingException {
         this.inspireObject = elementToStream;
         write(out);
     }
 
     @Override
-    public void write(InspireObject elementToStream, OutputStream out, EncodingValues encodingValues) throws XMLStreamException,
-            OwsExceptionReport {
+    public void write(InspireObject elementToStream, OutputStream out, EncodingValues encodingValues) throws XMLStreamException, EncodingException {
         this.inspireObject = elementToStream;
         write(out);
-
     }
 
     /**
@@ -437,9 +434,6 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write namespaces to stream
      *
-     * @param root
-     *            indicator if this is a root element and namespaces should be
-     *            added
      * @throws XMLStreamException
      *             If an error occurs when writing the object to stream
      */
@@ -989,7 +983,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write {@link InspireSupportedCRS} to stream
      *
-     * @param supportedCRSs
+     * @param supportedCRSes
      *            {@link InspireSupportedCRS} to write to stream
      * @param root
      *            indicator if this is a root element and namespaces should be
@@ -1018,7 +1012,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write default CRS string as default CRS element to stream
      *
-     * @param defaultCRS
+     * @param crs
      *            default CRS string to write to stream
      * @throws XMLStreamException
      *             If an error occurs when writing the object to stream
@@ -1046,7 +1040,7 @@ public class InspireXmlStreamWriter extends XmlStreamWriter<InspireObject> imple
     /**
      * Write CRS string to stream
      *
-     * @param CRS
+     * @param crs
      *            CRS string to write to stream
      * @throws XMLStreamException
      *             If an error occurs when writing the object to stream

@@ -29,7 +29,7 @@
 package org.n52.sos.encode;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -39,41 +39,39 @@ import java.util.Set;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.custommonkey.xmlunit.Diff;
-import org.n52.iceland.binding.BindingConstants;
-import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.coding.encode.ProcedureEncoder;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.operator.ServiceOperatorRepository;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilitiesPredicates;
-import org.n52.sos.ogc.sensorML.elements.SmlComponent;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.DataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.SweSimpleDataRecord;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.request.ProcedureRequestSettingProvider;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
+
+import org.n52.iceland.binding.BindingConstants;
+import org.n52.iceland.binding.BindingRepository;
+import org.n52.iceland.coding.encode.ProcedureEncoder;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.oxf.xml.NcNameResolver;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilitiesPredicates;
+import org.n52.shetland.ogc.sensorML.elements.SmlComponent;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.DataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ogc.sos.SosOffering;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.request.ProcedureRequestSettingProvider;
+import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -89,7 +87,7 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
-public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object> implements ProcedureEncoder<XmlObject, Object> {
+public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<XmlObject,Object> implements ProcedureEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSensorMLEncoder.class);
 
@@ -167,9 +165,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
             }
             // add capabilities not yet present
             final List<SweField> additionalFields = createCapabilitiesFieldsFrom(definition, valueNamePairs);
-            for (final SweField field : additionalFields) {
-                dataRecord.addField(field);
-            }
+            additionalFields.forEach(dataRecord::addField);
         } else {
             if (capabilities.isPresent()) {
                 process.removeCapabilities(capabilities.get());
@@ -215,10 +211,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
                 }
             }
             // add capabilities not yet present
-            final List<SweField> additionalFields = createCapabilitiesFieldsFrom(definition, fieldName, sweTextFieldSet);
-            for (final SweField field : additionalFields) {
-                dataRecord.addField(field);
-            }
+            createCapabilitiesFieldsFrom(definition, fieldName, sweTextFieldSet).forEach(dataRecord::addField);
         } else {
             if (capabilities.isPresent()) {
                 process.removeCapabilities(capabilities.get());
@@ -237,16 +230,12 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
      */
     protected Map<String, String> convertOfferingsToMap(final Set<SosOffering> offerings) {
         final Map<String, String> valueNamePairs = Maps.newHashMapWithExpectedSize(offerings.size());
-        for (final SosOffering offering : offerings) {
-            valueNamePairs.put(offering.getIdentifier(), offering.getOfferingName());
-        }
+        offerings.forEach(offering -> valueNamePairs.put(offering.getIdentifier(), offering.getOfferingName()));
         return valueNamePairs;
     }
 
     /**
      * Convert SOS sosOfferings to map with key == identifier and value = name
-     * @param featureOfInterestFieldName
-     *
      * @param map
      *            .values() SOS sosOfferings
      * @return Set with identifier, name.
@@ -256,9 +245,7 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         for (final AbstractFeature abstractFeature : map.values()) {
             SweText sweText = new SweText();
             sweText.setValue(abstractFeature.getIdentifier());
-            for (CodeType name : abstractFeature.getName()) {
-                sweText.addName(name);
-            }
+            abstractFeature.getName().forEach(sweText::addName);
             if (abstractFeature.isSetDescription()) {
                 sweText.setDescription(abstractFeature.getDescription());
             }
@@ -377,11 +364,11 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
      * @param childProcedures
      *            Chile procedure descriptions
      * @return SOS component list
-     * @throws CodedException
+     * @throws EncodingException
      *             If an error occurs
      */
     protected List<SmlComponent> createComponentsForChildProcedures(final Set<SosProcedureDescription> childProcedures)
-            throws CodedException {
+            throws EncodingException {
         final List<SmlComponent> smlComponents = Lists.newLinkedList();
         int childCount = 0;
         for (final SosProcedureDescription childProcedure : childProcedures) {
@@ -389,26 +376,25 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
             final SmlComponent component = new SmlComponent("component" + childCount);
             component.setTitle(childProcedure.getIdentifier());
 
-            if (ProcedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor()
-                    && childProcedure instanceof AbstractSensorML) {
+            if (ProcedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor() && childProcedure instanceof AbstractSensorML) {
                 component.setProcess((AbstractSensorML) childProcedure);
             } else {
                 try {
+
+                    //FIXME move this to operator
                     if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
-                        final String version =
-                                ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
+                        String version = ServiceOperatorRepository.getInstance().getSupportedVersions(SosConstants.SOS)
                                         .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
                                         : Sos1Constants.SERVICEVERSION;
-
-                        component.setHref(SosHelper.getDescribeSensorUrl(version, ServiceConfiguration.getInstance()
-                                .getServiceURL(), childProcedure.getIdentifier(),
-                                BindingConstants.KVP_BINDING_ENDPOINT, childProcedure.getDescriptionFormat()));
+                        String serviceURL = ServiceConfiguration.getInstance().getServiceURL();
+                        String pdf = childProcedure.getDescriptionFormat();
+                        component.setHref(SosHelper.getDescribeSensorUrl(version, serviceURL, childProcedure.getIdentifier(),
+                                BindingConstants.KVP_BINDING_ENDPOINT, pdf).toString());
                     } else {
                         component.setHref(childProcedure.getIdentifier());
                     }
-                } catch (final UnsupportedEncodingException uee) {
-                    throw new NoApplicableCodeException().withMessage("Error while encoding DescribeSensor URL")
-                            .causedBy(uee);
+                } catch (MalformedURLException uee) {
+                    throw new EncodingException("Error while encoding DescribeSensor URL", uee);
                 }
             }
             smlComponents.add(component);
@@ -467,20 +453,11 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
     protected boolean isIdentical(final XmlObject xmlObject, final XmlOptions xmlOptions,
             final XmlObject anotherXmlObject) {
         try {
-            final Diff diff = new Diff(xmlObject.xmlText(xmlOptions), anotherXmlObject.xmlText(xmlOptions));
-            if (diff.similar()) {
-                return true;
-            }
-        } catch (final SAXException e) {
-            // TODO Auto-generated catch block generated on 05.12.2013 around
-            // 09:56:52
+            return new Diff(xmlObject.xmlText(xmlOptions), anotherXmlObject.xmlText(xmlOptions)).similar();
+        } catch (SAXException | IOException e) {
             LOGGER.error("Exception thrown: {}", e.getMessage(), e);
-        } catch (final IOException e) {
-            // TODO Auto-generated catch block generated on 05.12.2013 around
-            // 09:56:52
-            LOGGER.error("Exception thrown: {}", e.getMessage(), e);
+            return false;
         }
-        return false;
     }
 
     /**
@@ -500,7 +477,4 @@ public abstract class AbstractSensorMLEncoder extends AbstractXmlEncoder<Object>
         return NcNameResolver.fixNcName(outputName);
     }
 
-    protected XmlOptions getOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
-    }
 }

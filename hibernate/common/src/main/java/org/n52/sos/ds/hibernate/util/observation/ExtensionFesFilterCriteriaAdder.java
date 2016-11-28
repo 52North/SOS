@@ -28,6 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
+import static org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.And;
+import static org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator.Or;
+import static org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator.PropertyIsEqualTo;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -39,19 +43,19 @@ import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.util.CollectionHelper;
+
+import org.n52.shetland.ogc.filter.BinaryLogicFilter;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.FilterConstants.BinaryLogicOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractBaseObservation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.TextValuedParameter;
-import org.n52.sos.ogc.filter.BinaryLogicFilter;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.filter.Filter;
-import org.opengis.filter.PropertyIsEqualTo;
-import org.n52.iceland.ogc.filter.FilterConstants.BinaryLogicOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -248,7 +252,7 @@ public class ExtensionFesFilterCriteriaAdder {
             return map;
         default:
             throw new NoApplicableCodeException().withMessage("Currently only the operator '{}' is supported!",
-                    PropertyIsEqualTo.NAME);
+                    PropertyIsEqualTo.toString());
         }
     }
 

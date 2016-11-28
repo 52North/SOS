@@ -28,18 +28,22 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.coding.json.JSONConstants;
-import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.response.GetResultTemplateResponse;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.sos.coding.json.JSONConstants;
+import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.sos.response.GetResultTemplateResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -59,14 +63,19 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, GetResultTemplateResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, GetResultTemplateResponse t) throws EncodingException {
         encodeResultEncoding(t, json);
         encodeResultStructure(t, json);
     }
 
-    private void encodeResultStructure(GetResultTemplateResponse t, ObjectNode json) throws OwsExceptionReport {
+    private void encodeResultStructure(GetResultTemplateResponse t, ObjectNode json) throws EncodingException {
         ObjectNode jrs = json.putObject(JSONConstants.RESULT_STRUCTURE);
-        SweAbstractDataComponent structure = t.getResultStructure().getResultStructure();
+        SweAbstractDataComponent structure;
+        try {
+            structure = t.getResultStructure().getResultStructure();
+        } catch (DecodingException ex) {
+            throw new EncodingException(ex.getMessage(), ex);
+        }
         if (structure instanceof SweDataRecord) {
             encodeSweDataRecord(structure, jrs);
         } else {
@@ -74,9 +83,14 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
         }
     }
 
-    private void encodeResultEncoding(GetResultTemplateResponse t, ObjectNode json) throws OwsExceptionReport {
+    private void encodeResultEncoding(GetResultTemplateResponse t, ObjectNode json) throws EncodingException {
         ObjectNode jre = json.putObject(JSONConstants.RESULT_ENCODING);
-        SweAbstractEncoding encoding = t.getResultEncoding().getEncoding();
+        SweAbstractEncoding encoding;
+        try {
+            encoding = t.getResultEncoding().getEncoding();
+        } catch (DecodingException ex) {
+            throw new EncodingException(ex.getMessage(), ex);
+        }
         if (encoding instanceof SweTextEncoding) {
             encodeSweTextEncoding(encoding, jre);
         } else {
@@ -100,7 +114,7 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
         }
     }
 
-    private void encodeSweDataRecord(SweAbstractDataComponent structure, ObjectNode node) throws OwsExceptionReport {
+    private void encodeSweDataRecord(SweAbstractDataComponent structure, ObjectNode node) throws EncodingException {
         SweDataRecord sweDataRecord = (SweDataRecord) structure;
         ArrayNode fields = node.putArray(JSONConstants.FIELDS);
         for (SweField field : sweDataRecord.getFields()) {

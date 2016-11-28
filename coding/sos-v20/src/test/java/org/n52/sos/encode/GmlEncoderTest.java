@@ -32,9 +32,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.sos.ogc.om.values.QuantityValue;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * @since 4.0.0
@@ -45,30 +47,30 @@ public class GmlEncoderTest {
     private GmlEncoderv321 encoder = new GmlEncoderv321();
 
     @Test(expected = OwsExceptionReport.class)
-    public void throwIAEForEncodeNullTest() throws OwsExceptionReport {
+    public void throwIAEForEncodeNullTest() throws OwsExceptionReport, EncodingException {
         encoder.encode(null);
     }
 
     @Test(expected = UnsupportedEncoderInputException.class)
-    public void isNullForNotSupportedObjectTest() throws OwsExceptionReport {
+    public void isNullForNotSupportedObjectTest() throws OwsExceptionReport, EncodingException {
         encoder.encode(5);
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void throwsIllegalArgumentExceptionWhenConstructorValueNullTest() throws OwsExceptionReport {
+    public void throwsIllegalArgumentExceptionWhenConstructorValueNullTest() throws OwsExceptionReport, EncodingException {
         QuantityValue quantity = new QuantityValue(null);
         encoder.encode(quantity);
     }
 
     @Test
-    public void isMeasureTypeValidWithoutUnitTest() throws OwsExceptionReport {
+    public void isMeasureTypeValidWithoutUnitTest() throws OwsExceptionReport, EncodingException {
         QuantityValue quantity = new QuantityValue(2.2);
         XmlObject encode = encoder.encode(quantity);
         assertTrue("Encoded Object is NOT valid", encode.validate());
     }
 
     @Test
-    public void isMeasureTypeValidAllSetTest() throws OwsExceptionReport {
+    public void isMeasureTypeValidAllSetTest() throws OwsExceptionReport, EncodingException {
         QuantityValue quantity = new QuantityValue(2.2);
         quantity.setUnit("cm");
         XmlObject encode = encoder.encode(quantity);

@@ -39,14 +39,15 @@ import org.apache.xmlbeans.XmlObject;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweField;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
 import org.n52.sos.util.CodingHelper;
 
 /**
@@ -119,9 +120,8 @@ public class OmDecoderV20Test {
 
     @Test
     public void testComplexObservation()
-            throws XmlException, OwsExceptionReport {
-        CodingRepository
-                .getInstance();
+            throws XmlException, DecodingException {
+        CodingRepository.getInstance();
         XmlObject xml = XmlObject.Factory.parse(getComplexObservationXml());
 
         Object decoded = CodingHelper.decodeXmlObject(xml);

@@ -57,7 +57,6 @@ import org.n52.sos.ogc.ows.OwsParameterValue;
 import org.n52.sos.ogc.ows.OwsParameterValuePossibleValues;
 import org.n52.sos.ogc.sensorML.AbstractProcess;
 import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorML;
 import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
@@ -103,7 +102,7 @@ import com.google.common.collect.Sets;
 
 public class FlexibleIdentifierModifier
         implements
-        RequestResponseModifier<AbstractServiceRequest<?>, AbstractServiceResponse> {
+        RequestResponseModifier<AbstractServiceRequest, AbstractServiceResponse> {
 
     private static final Set<RequestResponseModifierKeyType> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
 
@@ -116,7 +115,7 @@ public class FlexibleIdentifierModifier
         Set<String> services = Sets.newHashSet(SosConstants.SOS);
         Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION,
                 Sos2Constants.SERVICEVERSION);
-        Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps
+        Map<AbstractServiceRequest, AbstractServiceResponse> requestResponseMap = Maps
                 .newHashMap();
         requestResponseMap.put(new GetCapabilitiesRequest(),
                 new GetCapabilitiesResponse());
@@ -136,7 +135,7 @@ public class FlexibleIdentifierModifier
         Set<RequestResponseModifierKeyType> keys = Sets.newHashSet();
         for (String service : services) {
             for (String version : versions) {
-                for (AbstractServiceRequest<?> request : requestResponseMap
+                for (AbstractServiceRequest request : requestResponseMap
                         .keySet()) {
                     keys.add(new RequestResponseModifierKeyType(service,
                             version, request));
@@ -154,8 +153,8 @@ public class FlexibleIdentifierModifier
     }
 
     @Override
-    public AbstractServiceRequest<?> modifyRequest(
-            AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    public AbstractServiceRequest modifyRequest(
+            AbstractServiceRequest request) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
             return changeGetObservationRequestParameterValues((GetObservationRequest) request);
         } else if (request instanceof GetFeatureOfInterestRequest) {
@@ -172,7 +171,7 @@ public class FlexibleIdentifierModifier
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetObservationRequestParameterValues(
+    private AbstractServiceRequest changeGetObservationRequestParameterValues(
             GetObservationRequest request) {
         if (request.isSetOffering()) {
             request.setOfferings(checkOfferingParameterValues(request.getOfferings()));
@@ -189,7 +188,7 @@ public class FlexibleIdentifierModifier
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetFeatureOfInterestRequestParameterValues(
+    private AbstractServiceRequest changeGetFeatureOfInterestRequestParameterValues(
             GetFeatureOfInterestRequest request) {
         if (request.isSetFeatureOfInterestIdentifiers()) {
             request.setFeatureIdentifiers(checkFeatureOfInterestParameterValues(request.getFeatureIdentifiers()));
@@ -203,13 +202,13 @@ public class FlexibleIdentifierModifier
         return request;
     }
 
-    private AbstractServiceRequest<?> changeDescribeSensorRequestParameterValues(
+    private AbstractServiceRequest changeDescribeSensorRequestParameterValues(
             DescribeSensorRequest request) {
         request.setProcedure(checkProcedureParameterValue(request.getProcedure()));
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetDataAvailabilityRequestParameterValues(
+    private AbstractServiceRequest changeGetDataAvailabilityRequestParameterValues(
             GetDataAvailabilityRequest request) {
         if (request.isSetOfferings()) {
             request.setOffering(checkOfferingParameterValues(request.getOfferings()));
@@ -226,7 +225,7 @@ public class FlexibleIdentifierModifier
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetResultTemplateRequestParameterValues(
+    private AbstractServiceRequest changeGetResultTemplateRequestParameterValues(
             GetResultTemplateRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
@@ -237,7 +236,7 @@ public class FlexibleIdentifierModifier
         return request;
     }
 
-    private AbstractServiceRequest<?> changeGetResultRequestParameterValues(
+    private AbstractServiceRequest changeGetResultRequestParameterValues(
             GetResultRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
@@ -253,7 +252,7 @@ public class FlexibleIdentifierModifier
 
     @Override
     public AbstractServiceResponse modifyResponse(
-            AbstractServiceRequest<?> request, AbstractServiceResponse response)
+            AbstractServiceRequest request, AbstractServiceResponse response)
             throws OwsExceptionReport {
         if (checkForReturnHumanReadableIdentifier(request, response)) {
             if (response instanceof GetCapabilitiesResponse) {
@@ -448,7 +447,7 @@ public class FlexibleIdentifierModifier
     }
 
     private boolean checkForReturnHumanReadableIdentifier(
-            AbstractServiceRequest<?> request, AbstractServiceResponse response)
+            AbstractServiceRequest request, AbstractServiceResponse response)
             throws InvalidParameterValueException {
         if (getFlexibleIdentifierHelper()
                 .checkIsReturnHumanReadableIdentifierFlagExtensionSet(
@@ -613,7 +612,7 @@ public class FlexibleIdentifierModifier
     }
 
     private boolean checkRequestForReturnHumanReadableIdentifierFlag(
-            AbstractServiceRequest<?> request)
+            AbstractServiceRequest request)
             throws InvalidParameterValueException {
         return getFlexibleIdentifierHelper()
                 .checkForReturnHumanReadableIdentifierFlagExtension(

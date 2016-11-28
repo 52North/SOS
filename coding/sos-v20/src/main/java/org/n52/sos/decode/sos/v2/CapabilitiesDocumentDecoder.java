@@ -28,26 +28,26 @@
  */
 package org.n52.sos.decode.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.decodeXmlObject;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsCapabilities;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.sos.util.CodingHelper;
+import net.opengis.sos.x20.CapabilitiesDocument;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.OwsCapabilities;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
+
 import com.google.common.base.Joiner;
 
-import net.opengis.sos.x20.CapabilitiesDocument;
-
-public class CapabilitiesDocumentDecoder implements Decoder<GetCapabilitiesResponse, CapabilitiesDocument> {
+public class CapabilitiesDocumentDecoder extends AbstractXmlDecoder<CapabilitiesDocument, GetCapabilitiesResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationResponseDocumentDecoder.class);
 
@@ -68,7 +68,7 @@ public class CapabilitiesDocumentDecoder implements Decoder<GetCapabilitiesRespo
 
     @Override
     public GetCapabilitiesResponse decode(CapabilitiesDocument cd)
-            throws OwsExceptionReport, UnsupportedDecoderInputException {
+            throws DecodingException {
         if (cd != null)  {
             GetCapabilitiesResponse response = new GetCapabilitiesResponse();
             OwsCapabilities capabilities = (OwsCapabilities)decodeXmlObject(cd.getCapabilities());

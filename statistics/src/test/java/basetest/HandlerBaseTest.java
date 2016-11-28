@@ -33,27 +33,29 @@ import java.util.Arrays;
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
+
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.request.RequestContext;
 import org.n52.iceland.statistics.api.interfaces.geolocation.IStatisticsLocationUtil;
-import org.n52.iceland.util.http.MediaType;
 import org.n52.iceland.util.net.IPAddress;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.http.MediaType;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.util.JTSHelper;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -70,7 +72,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
     protected IStatisticsLocationUtil locationUtil;
 
     @BeforeClass
-    public static void beforeClass() throws OwsExceptionReport {
+    public static void beforeClass() throws OwsExceptionReport, DecodingException {
         requestContext = new RequestContext();
         requestContext.setContentType("application/json");
         requestContext.setAcceptType(Arrays.asList(new MediaType("*", "*")));
@@ -88,7 +90,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
     private static void createOmConstellation() {
         // constellation
         omConstellation = new OmObservationConstellation();
-        omConstellation.setProcedure(new SosProcedureDescriptionUnknowType("id", "format", "xml"));
+        omConstellation.setProcedure(new SosProcedureDescriptionUnknownType("id", "format", "xml"));
         omConstellation.setObservableProperty(new OmObservableProperty("id", "desc", "unit", "value"));
         omConstellation.setFeatureOfInterest(new OmObservation() {
             {
@@ -98,7 +100,7 @@ public abstract class HandlerBaseTest extends MockitoBaseTest {
         omConstellation.setObservationType("obstype");
     }
 
-    private static void createOmObservation() throws OwsExceptionReport {
+    private static void createOmObservation() throws OwsExceptionReport, DecodingException {
         omObservation = new OmObservation();
         omObservation.setIdentifier("id");
 

@@ -28,13 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.parameter;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.ogc.om.NamedValue;
+import org.n52.sos.ds.hibernate.entities.Unit;
 
 import com.google.common.base.Strings;
-
-import org.n52.sos.ds.hibernate.entities.Unit;
 
 public class CategoryValuedParameter extends Parameter<String> implements HasUnit {
 

@@ -33,21 +33,15 @@ import static org.hamcrest.core.Is.is;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-
-import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
 import org.n52.sos.inspire.aqd.Address;
 import org.n52.sos.inspire.aqd.Contact;
@@ -61,7 +55,6 @@ import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Reference;
 import org.n52.sos.util.Referenceable;
-import org.xml.sax.SAXException;
 
 /**
  * TODO JavaDoc
@@ -74,49 +67,41 @@ public class ReportingHeaderReaderTest {
     public final ErrorCollector errors = new ErrorCollector();
 
     @Test
-    public void testValidity()
-            throws XMLStreamException, OwsExceptionReport,
-                                       SAXException, MalformedURLException, IOException, URISyntaxException {
+    public void testValidity() throws Exception {
         EReportingHeader header
                 = new EReportingHeader()
                         .setInspireID(new InspireID()
                                 .setLocalId("id")
                                 .setNamespace("namespace")
-                                .setVersionId(Nillable.<String>missing()))
+                                .setVersionId(Nillable.missing()))
                         .setChange(new EReportingChange("Changed because... you know"))
                         .setReportingPeriod(Referenceable.of(Nillable
-                                .<Time>present(new TimeInstant(DateTime.now()))))
+                                .present(new TimeInstant(DateTime.now()))))
                         .setReportingAuthority(new RelatedParty()
-                                .setIndividualName(Nillable.<String>missing())
+                                .setIndividualName(Nillable.missing())
                                 .setOrganisationName("Organisation")
                                 .setPositionName("Postionti")
-                                .addRole(new Reference().setHref(URI
-                                        .create("http://hallo")))
-                                .addRole(Nillable.<Reference>withheld())
+                                .addRole(new Reference().setHref(URI.create("http://hallo")))
+                                .addRole(Nillable.withheld())
                                 .setContact(new Contact()
                                         .addTelephoneFacsimile("1234")
-                                        .addTelephoneFacsimile(Nillable
-                                                .<String>missing())
+                                        .addTelephoneFacsimile(Nillable.missing())
                                         .addTelephoneVoice("asdfasdf")
                                         .setHoursOfService("asdfasdf")
-                                        .setWebsite(Nillable.<String>unknown())
-                                        .setElectronicMailAddress(Nillable
-                                                .<String>unknown())
+                                        .setWebsite(Nillable.unknown())
+                                        .setElectronicMailAddress(Nillable.unknown())
                                         .setAddress(new Address()
                                                 .setPostCode("12341234")
                                                 .setAddressFeature(new Reference()
-                                                        .setHref(URI
-                                                                .create("http://asdfasdf")))
+                                                        .setHref(URI.create("http://asdfasdf")))
                                                 .addLocatorDesignator("localtor")
-                                                .addAddressArea(Nillable
-                                                        .<GeographicalName>withheld())
+                                                .addAddressArea(Nillable.withheld())
                                                 .addAddressArea(new GeographicalName()
                                                         .setGrammaticalGender(new CodeType("a", new URI("b")))
                                                         .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
-                                                        .setNameStatus(Nillable
-                                                                .<CodeType>unknown())
+                                                        .setNameStatus(Nillable.unknown())
                                                         .addSpelling(new Spelling()
                                                                 .setScript("asdfasdf")
                                                                 .setText("asdfasdf")
@@ -124,8 +109,7 @@ public class ReportingHeaderReaderTest {
                                                         )
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
-                                                                .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                .setSoundLink(URI.create("http://asdfasdf"))
                                                         )
                                                 )
                                                 .addAdminUnit(new GeographicalName()
@@ -133,8 +117,7 @@ public class ReportingHeaderReaderTest {
                                                         .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
-                                                        .setNameStatus(Nillable
-                                                                .<CodeType>unknown())
+                                                        .setNameStatus(Nillable.unknown())
                                                         .addSpelling(new Spelling()
                                                                 .setScript("asdfasdf")
                                                                 .setText("asdfasdf")
@@ -142,18 +125,15 @@ public class ReportingHeaderReaderTest {
                                                         )
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
-                                                                .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                .setSoundLink(URI.create("http://asdfasdf"))
                                                         ))
-                                                .addPostName(Nillable
-                                                        .<GeographicalName>withheld())
+                                                .addPostName(Nillable.withheld())
                                                 .addPostName(new GeographicalName()
                                                         .setGrammaticalGender(new CodeType("a", new URI("b")))
                                                         .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
-                                                        .setNameStatus(Nillable
-                                                                .<CodeType>unknown())
+                                                        .setNameStatus(Nillable.unknown())
                                                         .addSpelling(new Spelling()
                                                                 .setScript("asdfasdf")
                                                                 .setText("asdfasdf")
@@ -161,18 +141,15 @@ public class ReportingHeaderReaderTest {
                                                         )
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
-                                                                .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                .setSoundLink(URI.create("http://asdfasdf"))
                                                         ))
-                                                .addThoroughfare(Nillable
-                                                        .<GeographicalName>withheld())
+                                                .addThoroughfare(Nillable.withheld())
                                                 .addThoroughfare(new GeographicalName()
                                                         .setGrammaticalGender(new CodeType("a", new URI("b")))
                                                         .setGrammaticalNumber(new CodeType("c", new URI("d")))
                                                         .setLanguage("eng")
                                                         .setNativeness(new CodeType("<asdfasdf"))
-                                                        .setNameStatus(Nillable
-                                                                .<CodeType>unknown())
+                                                        .setNameStatus(Nillable.unknown())
                                                         .addSpelling(new Spelling()
                                                                 .setScript("asdfasdf")
                                                                 .setText("asdfasdf")
@@ -180,8 +157,7 @@ public class ReportingHeaderReaderTest {
                                                         )
                                                         .setPronunciation(new Pronunciation()
                                                                 .setIPA("asdfasdf")
-                                                                .setSoundLink(URI
-                                                                        .create("http://asdfasdf"))
+                                                                .setSoundLink(URI.create("http://asdfasdf"))
                                                         )
                                                 )
                                         )

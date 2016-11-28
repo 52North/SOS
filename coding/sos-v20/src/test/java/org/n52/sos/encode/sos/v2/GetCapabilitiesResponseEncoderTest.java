@@ -41,8 +41,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.xml.sax.SAXException;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 
 
@@ -57,7 +58,7 @@ public class GetCapabilitiesResponseEncoderTest {
 
     @Test public void
     should_create_static_capabilities()
-            throws OwsExceptionReport, SAXException, IOException {
+            throws OwsExceptionReport, SAXException, IOException, EncodingException {
         XmlObject encodedResponse = encoder.encode(minimalCapabilities());
 
         Diff d = new Diff (encodedResponse.xmlText(), minimalCapabilities().getXmlString());
@@ -71,7 +72,7 @@ public class GetCapabilitiesResponseEncoderTest {
 
     @Test public void
     should_throw_Exception_when_static_content_is_invalid()
-        throws OwsExceptionReport {
+        throws OwsExceptionReport, EncodingException {
         expectedEx.expect(XmlDecodingException.class);
         expectedEx.expectMessage("Error while decoding Static Capabilities:\nBAD XML STRING");
 

@@ -33,20 +33,22 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.TemporalReferencedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link AbstractValueDAO} for old concept to query only time information
@@ -77,7 +79,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
     public TemporalReferencedLegacyObservation getMinValueFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
-                temporalFilterCriterion, ExtendedIndeterminateTime.first, session).uniqueResult();
+                temporalFilterCriterion, ExtendedIndeterminateTime.FIRST, session).uniqueResult();
     }
 
     /**
@@ -100,7 +102,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
     public TemporalReferencedLegacyObservation getMaxValueFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest,
-                temporalFilterCriterion, ExtendedIndeterminateTime.latest, session).uniqueResult();
+                temporalFilterCriterion, ExtendedIndeterminateTime.LATEST, session).uniqueResult();
     }
 
     /**
@@ -121,7 +123,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
     public TemporalReferencedLegacyObservation getMinValueFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Session session) throws OwsExceptionReport {
         return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null,
-                ExtendedIndeterminateTime.first, session).uniqueResult();
+                ExtendedIndeterminateTime.FIRST, session).uniqueResult();
     }
 
     /**
@@ -142,7 +144,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
     public TemporalReferencedLegacyObservation getMaxValueFor(GetObservationRequest request, long procedure, long observableProperty,
             long featureOfInterest, Session session) throws OwsExceptionReport {
         return (TemporalReferencedLegacyObservation) getValueCriteriaFor(request, procedure, observableProperty, featureOfInterest, null,
-                ExtendedIndeterminateTime.latest, session).uniqueResult();
+                ExtendedIndeterminateTime.LATEST, session).uniqueResult();
     }
 
     /**
@@ -165,7 +167,7 @@ public class ValueTimeDAO extends AbstractValueDAO {
      *             restrictions
      */
     private Criteria getValueCriteriaFor(GetObservationRequest request, long procedure, long observableProperty,
-            long featureOfInterest, Criterion temporalFilterCriterion, ExtendedIndeterminateTime sosIndeterminateTime,
+            long featureOfInterest, Criterion temporalFilterCriterion, IndeterminateValue sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
         final Criteria c =
                 getDefaultObservationCriteria(TemporalReferencedLegacyObservation.class, session)

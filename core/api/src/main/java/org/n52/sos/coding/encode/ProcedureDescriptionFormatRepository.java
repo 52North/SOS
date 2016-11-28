@@ -37,10 +37,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ProcedureEncoder;
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.iceland.util.activation.ActivationListener;

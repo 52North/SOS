@@ -31,23 +31,20 @@ package org.n52.sos.request;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.util.CollectionHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> implements SpatialFeatureQueryRequest {
-
-    private final String operationName = SosConstants.Operations.GetResult.name();
+public class GetResultRequest extends AbstractServiceRequest implements SpatialFeatureQueryRequest {
 
     /**
      * Identifier for the observation template
@@ -67,12 +64,15 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
     private Map<String, String> namespaces;
 
     public GetResultRequest() {
-        super();
+        super(null, null, SosConstants.Operations.GetResult.name());
     }
 
-    @Override
-    public String getOperationName() {
-        return operationName;
+    public GetResultRequest(String service, String version) {
+        super(service, version, SosConstants.Operations.GetResult.name());
+    }
+
+    public GetResultRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -95,7 +95,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
     }
 
     public boolean isSetObservationTemplateIdentifier() {
-        return StringHelper.isNotEmpty(getObservationTemplateIdentifier());
+        return !Strings.isNullOrEmpty(getObservationTemplateIdentifier());
     }
 
     public String getOffering() {
@@ -107,7 +107,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
     }
 
     public boolean isSetOffering() {
-        return StringHelper.isNotEmpty(getOffering());
+        return !Strings.isNullOrEmpty(getOffering());
     }
 
     public String getObservedProperty() {
@@ -119,7 +119,7 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
     }
 
     public boolean isSetObservedProperty() {
-        return StringHelper.isNotEmpty(getObservedProperty());
+        return !Strings.isNullOrEmpty(getObservedProperty());
     }
 
     /**
@@ -193,10 +193,4 @@ public class GetResultRequest extends AbstractServiceRequest<GetResultResponse> 
                 && getSpatialFilter().getValueReference().equals(
                         Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
     }
-
-    @Override
-    public GetResultResponse getResponse() throws OwsExceptionReport {
-        return (GetResultResponse) new GetResultResponse().set(this);
-    }
-
 }

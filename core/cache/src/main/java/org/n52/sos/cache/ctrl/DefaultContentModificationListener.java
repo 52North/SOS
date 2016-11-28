@@ -40,7 +40,7 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.cache.ctrl.action.ObservationInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;

@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.util;
 import java.util.Collection;
 import java.util.Map;
 
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.collect.Maps;
 

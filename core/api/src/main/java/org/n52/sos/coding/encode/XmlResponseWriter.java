@@ -39,7 +39,7 @@ import org.apache.xmlbeans.XmlOptions;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.iceland.util.Producer;
+import org.n52.janmayen.Producer;
 
 /**
  * TODO JavaDoc

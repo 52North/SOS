@@ -40,12 +40,11 @@ import java.util.TreeSet;
 
 import javax.xml.namespace.QName;
 
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.QNameComparator;
-import org.n52.sos.ogc.swes.AbstractSWES;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.swes.AbstractSWES;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.Comparables;
+import org.n52.shetland.util.ReferencedEnvelope;
 
 /**
  * Class which represents a ObservationOffering. Used in the SosCapabilities.
@@ -53,8 +52,6 @@ import org.n52.sos.ogc.swes.AbstractSWES;
  * @since 4.0.0
  */
 public class SosObservationOffering extends AbstractSWES implements Comparable<SosObservationOffering> {
-
-    private static final long serialVersionUID = -9094472499167970506L;
 
     /**
      * clear and add collection to sorted set
@@ -143,7 +140,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     /**
      * area observed by this offering
      */
-    private SosEnvelope observedArea;
+    private ReferencedEnvelope observedArea;
 
     /**
      * All observableProperties contained in the offering
@@ -188,7 +185,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
     /**
      * All resultModels contained in the offering
      */
-    private final SortedSet<QName> resultModels = new TreeSet<>(new QNameComparator());
+    private final SortedSet<QName> resultModels = new TreeSet<>(Comparables.qname());
 
     /**
      * All observation types contained in the offering
@@ -252,7 +249,7 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
      *            Offering identifier
      */
     public void setOffering(String offering) {
-        setOffering(new SosOffering(offering, Constants.EMPTY_STRING));
+        setOffering(new SosOffering(offering, ""));
     }
 
     /**
@@ -470,11 +467,11 @@ public class SosObservationOffering extends AbstractSWES implements Comparable<S
         set(this.responseModes, responseModes);
     }
 
-    public SosEnvelope getObservedArea() {
+    public ReferencedEnvelope getObservedArea() {
         return observedArea;
     }
 
-    public void setObservedArea(SosEnvelope observedArea) {
+    public void setObservedArea(ReferencedEnvelope observedArea) {
         this.observedArea = observedArea;
     }
 

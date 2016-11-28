@@ -36,25 +36,25 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.svalbard.HelperValues;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.coding.encode.OwsEncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.iceland.coding.encode.AbstractDelegatingEncoder;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;
+import org.n52.svalbard.AbstractDelegatingEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -105,12 +105,16 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     @Override
-    public EXIObject encode(T objectToEncode, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
-            UnsupportedEncoderInputException {
+    public EXIObject encode(T objectToEncode, Map<HelperValues, String> additionalValues)
+            throws EncodingException {
         AbstractServiceResponse asr = objectToEncode;
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
         if (asr instanceof StreamingDataResponse && ((StreamingDataResponse)asr).hasStreamingData() && !(encoder instanceof StreamingDataEncoder)) {
-            ((StreamingDataResponse)asr).mergeStreamingData();
+            try {
+                ((StreamingDataResponse)asr).mergeStreamingData();
+            } catch (OwsExceptionReport ex) {
+                throw new OwsEncodingException(ex);
+            }
         }
         Object encode = encoder.encode(asr);
         if (encode != null && encode instanceof XmlObject) {
@@ -121,18 +125,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     @Override
-    public EXIObject encode(T objectToEncode) throws OwsExceptionReport, UnsupportedEncoderInputException {
+    public EXIObject encode(T objectToEncode) throws EncodingException {
         return encode(objectToEncode, null);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
     }
 
     @Override
@@ -141,18 +135,8 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
     }
 
     @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        // nothing to add
-    }
-
-    @Override
     public MediaType getContentType() {
         return MediaTypes.APPLICATION_EXI;
-    }
-
-    @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Collections.emptySet();
     }
 
     /**
@@ -198,14 +182,12 @@ public class AbstractSosResponseEncoder<T extends AbstractServiceResponse> exten
         if (responseFormat.isSetResponseFormat()) {
             MediaType contentTypeFromResponseFormat = null;
             try {
-                contentTypeFromResponseFormat =
-                        MediaType.parse(responseFormat.getResponseFormat()).withoutParameters();
+                contentTypeFromResponseFormat = MediaType.parse(responseFormat.getResponseFormat()).withoutParameters();
             } catch (IllegalArgumentException iae) {
                 LOGGER.debug("Requested responseFormat {} is not a MediaType", responseFormat.getResponseFormat());
             }
             if (contentTypeFromResponseFormat != null) {
-                if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat,
-                        MediaTypes.APPLICATION_XML)) {
+                if (MediaTypes.COMPATIBLE_TYPES.containsEntry(contentTypeFromResponseFormat, MediaTypes.APPLICATION_XML)) {
                     return MediaTypes.APPLICATION_XML;
                 }
                 return contentTypeFromResponseFormat;

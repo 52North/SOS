@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
@@ -43,25 +43,32 @@ public class GetResultTemplateResponse extends AbstractServiceResponse {
 
     private SosResultStructure resultStructure;
 
-    public void setResultEncoding(SosResultEncoding resultEncoding) {
-        this.resultEncoding = resultEncoding;
+    public GetResultTemplateResponse() {
+        super(null, null, Sos2Constants.Operations.GetResultTemplate.name());
     }
 
-    public void setResultStructure(SosResultStructure resultStructure) {
-        this.resultStructure = resultStructure;
+    public GetResultTemplateResponse(String service, String version) {
+        super(service, version, Sos2Constants.Operations.GetResultTemplate.name());
+    }
+
+    public GetResultTemplateResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
+    public void setResultEncoding(SosResultEncoding resultEncoding) {
+        this.resultEncoding = resultEncoding;
     }
 
     public SosResultEncoding getResultEncoding() {
         return resultEncoding;
     }
 
-    public SosResultStructure getResultStructure() {
-        return resultStructure;
+    public void setResultStructure(SosResultStructure resultStructure) {
+        this.resultStructure = resultStructure;
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.GetResultTemplate.name();
+    public SosResultStructure getResultStructure() {
+        return resultStructure;
     }
 
 }

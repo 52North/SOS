@@ -36,8 +36,7 @@ import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.w3c.W3CConstants;
+import org.n52.shetland.w3c.W3CConstants;
 
 import com.google.common.xml.XmlEscapers;
 
@@ -51,7 +50,6 @@ import com.google.common.xml.XmlEscapers;
 public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
     private final Map<String, String> prefixes = new HashMap<>();
-
     private XMLStreamWriter w;
 
     @Override
@@ -103,7 +101,7 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
     @Override
     protected void start(boolean embedded) throws XMLStreamException {
         if (!embedded) {
-            getXmlWriter().writeStartDocument(Constants.DEFAULT_ENCODING, XML_VERSION);
+            getXmlWriter().writeStartDocument(ENCODING, XML_VERSION);
             writeNewLine();
         }
     }
@@ -121,10 +119,7 @@ public abstract class XmlStreamWriter<S> extends XmlWriter<XMLStreamWriter, S> {
 
     @Override
     protected void chars(String chars, boolean escape) throws XMLStreamException {
-        if (escape) {
-            chars = XmlEscapers.xmlContentEscaper().escape(chars);
-        }
-        getXmlWriter().writeCharacters(chars);
+        getXmlWriter().writeCharacters(escape ? XmlEscapers.xmlContentEscaper().escape(chars) : chars);
     }
 
     @Override

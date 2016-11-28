@@ -44,13 +44,14 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+
 import org.n52.iceland.util.Constants;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.sos.request.GetObservationRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
@@ -78,22 +79,22 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasRequest() throws IOException, OwsExceptionReport {
+    public void hasRequest() throws IOException, DecodingException {
         assertThat(loadSingle().getOperationName(), is(equalTo("GetObservation")));
     }
 
     @Test
-    public void hasVersion() throws IOException, OwsExceptionReport {
+    public void hasVersion() throws IOException, DecodingException {
         assertThat(loadSingle().getVersion(), is(equalTo("2.0.0")));
     }
 
     @Test
-    public void hasService() throws IOException, OwsExceptionReport {
+    public void hasService() throws IOException, DecodingException {
         assertThat(loadSingle().getService(), is(equalTo("SOS")));
     }
 
     @Test
-    public void hasProcedure() throws IOException, OwsExceptionReport {
+    public void hasProcedure() throws IOException, DecodingException {
         final GetObservationRequest req = loadSingle();
         assertThat(req.getProcedures(), is(notNullValue()));
         assertThat(req.getProcedures(), hasSize(1));
@@ -102,7 +103,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasProcedures() throws IOException, OwsExceptionReport {
+    public void hasProcedures() throws IOException, DecodingException {
         final GetObservationRequest req = loadMultiple();
         assertThat(req.getProcedures(), is(notNullValue()));
         assertThat(req.getProcedures(), hasSize(2));
@@ -114,7 +115,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasOffering() throws IOException, OwsExceptionReport {
+    public void hasOffering() throws IOException, DecodingException {
         final GetObservationRequest req = loadSingle();
         assertThat(req.getOfferings(), is(notNullValue()));
         assertThat(req.getOfferings(), hasSize(1));
@@ -123,7 +124,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasOfferings() throws IOException, OwsExceptionReport {
+    public void hasOfferings() throws IOException, DecodingException {
         final GetObservationRequest req = loadMultiple();
         assertThat(req.getOfferings(), is(notNullValue()));
         assertThat(req.getOfferings(), hasSize(2));
@@ -135,7 +136,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasObservedProperty() throws IOException, OwsExceptionReport {
+    public void hasObservedProperty() throws IOException, DecodingException {
         final GetObservationRequest req = loadSingle();
         assertThat(req.getObservedProperties(), is(notNullValue()));
         assertThat(req.getObservedProperties(), hasSize(1));
@@ -144,7 +145,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasObservedProperties() throws IOException, OwsExceptionReport {
+    public void hasObservedProperties() throws IOException, DecodingException {
         final GetObservationRequest req = loadMultiple();
         assertThat(req.getObservedProperties(), is(notNullValue()));
         assertThat(req.getObservedProperties(), hasSize(2));
@@ -155,7 +156,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasFeatureOfInterest() throws IOException, OwsExceptionReport {
+    public void hasFeatureOfInterest() throws IOException, DecodingException {
         final GetObservationRequest req = loadSingle();
         assertThat(req.getFeatureIdentifiers(), is(notNullValue()));
         assertThat(req.getFeatureIdentifiers(), hasSize(1));
@@ -164,7 +165,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasFeaturesOfInterest() throws IOException, OwsExceptionReport {
+    public void hasFeaturesOfInterest() throws IOException, DecodingException {
         final GetObservationRequest req = loadMultiple();
         assertThat(req.getFeatureIdentifiers(), is(notNullValue()));
         assertThat(req.getFeatureIdentifiers(), hasSize(2));
@@ -175,7 +176,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasSpatialFilter() throws IOException, OwsExceptionReport {
+    public void hasSpatialFilter() throws IOException, DecodingException {
         final GetObservationRequest req = loadSingle();
         assertThat(req.getSpatialFilter(), is(notNullValue()));
         assertThat(req.getSpatialFilter().getOperator(), is(SpatialOperator.Equals));
@@ -190,14 +191,14 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasNoTemporalFilters() throws IOException, OwsExceptionReport {
+    public void hasNoTemporalFilters() throws IOException, DecodingException {
         final GetObservationRequest req = loadNoFilters();
         assertThat(req.getTemporalFilters(), is(notNullValue()));
         assertThat(req.getTemporalFilters(), hasSize(0));
     }
 
     @Test
-    public void hasSingleTemporalFilter() throws IOException, OwsExceptionReport {
+    public void hasSingleTemporalFilter() throws IOException, DecodingException {
         final GetObservationRequest req = loadSingle();
         assertThat(req.getTemporalFilters(), is(notNullValue()));
         assertThat(req.getTemporalFilters(), hasSize(1));
@@ -213,7 +214,7 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasMultipleTemporalFilters() throws IOException, OwsExceptionReport {
+    public void hasMultipleTemporalFilters() throws IOException, DecodingException {
         final GetObservationRequest req = loadMultiple();
         assertThat(req.getTemporalFilters(), is(notNullValue()));
         assertThat(req.getTemporalFilters(), hasSize(2));
@@ -238,34 +239,34 @@ public class GetObservationRequestDecoderTest {
     }
 
     @Test
-    public void hasMergeObservationsIntoDataArrayExtension() throws IOException, OwsExceptionReport {
+    public void hasMergeObservationsIntoDataArrayExtension() throws IOException, DecodingException {
         final GetObservationRequest req = loadMergeIntoArray();
         assertThat(req.getExtensions(), is(notNullValue()));
         assertThat(req.getExtensions().isBooleanExtensionSet("MergeObservationsIntoDataArray"), is(true));
    }
 
-    protected GetObservationRequest loadSingle() throws OwsExceptionReport, IOException {
+    protected GetObservationRequest loadSingle() throws DecodingException, IOException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/GetObservationRequest-single.json");
         final GetObservationRequest req = decoder.decodeJSON(json, true);
         assertThat(req, is(notNullValue()));
         return req;
     }
 
-    protected GetObservationRequest loadMultiple() throws OwsExceptionReport, IOException {
+    protected GetObservationRequest loadMultiple() throws DecodingException, IOException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/GetObservationRequest-multiple.json");
         final GetObservationRequest req = decoder.decodeJSON(json, true);
         assertThat(req, is(notNullValue()));
         return req;
     }
 
-    protected GetObservationRequest loadNoFilters() throws OwsExceptionReport, IOException {
+    protected GetObservationRequest loadNoFilters() throws DecodingException, IOException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/GetObservationRequest-no-filters.json");
         final GetObservationRequest req = decoder.decodeJSON(json, true);
         assertThat(req, is(notNullValue()));
         return req;
     }
 
-    protected GetObservationRequest loadMergeIntoArray() throws OwsExceptionReport, IOException {
+    protected GetObservationRequest loadMergeIntoArray() throws DecodingException, IOException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/GetObservationRequest-merge-into-array.json");
         final GetObservationRequest req = decoder.decodeJSON(json, true);
         assertThat(req, is(notNullValue()));

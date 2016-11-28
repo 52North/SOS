@@ -28,21 +28,18 @@
  */
 package org.n52.sos.encode;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.ext.deleteobservation.DeleteObservationConstants;
 import org.n52.sos.ext.deleteobservation.DeleteObservationResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * TODO JavaDoc
+ *
  * @author Christian Autermann <c.autermann@52north.org>
  */
 public class DeleteObservationJsonEncoder extends AbstractSosResponseEncoder<DeleteObservationResponse> {
@@ -54,21 +51,10 @@ public class DeleteObservationJsonEncoder extends AbstractSosResponseEncoder<Del
 
     @Override
     protected void encodeResponse(ObjectNode json, DeleteObservationResponse t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (t == null) {
             throw new UnsupportedEncoderInputException(this, t);
         }
-        final CompositeOwsException exceptions = new CompositeOwsException();
-        if (t.getService() == null) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-        if (t.getVersion() == null) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-        if (t.getObservationId() == null || t.getObservationId().isEmpty()) {
-            exceptions.add(new MissingParameterValueException(DeleteObservationConstants.PARAMETER_NAME));
-        }
-        exceptions.throwIfNotEmpty();
         json.put(JSONConstants.DELETED_OBSERVATION, t.getObservationId());
     }
 

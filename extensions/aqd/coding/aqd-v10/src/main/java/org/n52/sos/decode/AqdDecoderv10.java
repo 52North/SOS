@@ -29,39 +29,31 @@
 package org.n52.sos.decode;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
-import javax.xml.crypto.dsig.XMLObject;
+import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.service.AbstractServiceCommunicationObject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-
-import com.google.common.base.Joiner;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
- * {@link XMLObject} decoder for AQD e-Reporting requests
+ * {@link XmlObject} decoder for AQD e-Reporting requests
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.3.0
  *
  */
 public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AqdDecoderv10.class);
 
     private static final Set<DecoderKey> DECODER_KEYS =
             CodingHelper.xmlDecoderKeysForOperation(
@@ -70,9 +62,11 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
                     AqdConstants.Operations.GetObservation,
                     AqdConstants.Operations.DescribeSensor);
 
-    public AqdDecoderv10() {
-        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(DECODER_KEYS));
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = Objects.requireNonNull(decoderRepository);
     }
 
     @Override
@@ -81,11 +75,10 @@ public class AqdDecoderv10 implements Decoder<AbstractServiceCommunicationObject
     }
 
     @Override
-    public AbstractServiceCommunicationObject decode(XmlObject objectToDecode)
-            throws OwsExceptionReport, UnsupportedDecoderInputException {
-        return (AbstractServiceCommunicationObject) CodingRepository.getInstance()
-                .getDecoder(new XmlNamespaceDecoderKey(XmlHelper.getNamespace(objectToDecode), XmlObject.class))
-                .decode(objectToDecode);
+    public AbstractServiceCommunicationObject decode(XmlObject objectToDecode) throws DecodingException {
+        DecoderKey key = new XmlNamespaceDecoderKey(XmlHelper.getNamespace(objectToDecode), XmlObject.class);
+        Decoder<AbstractServiceCommunicationObject, XmlObject> decoder = this.decoderRepository.getDecoder(key);
+        return decoder.decode(objectToDecode);
     }
 
 }

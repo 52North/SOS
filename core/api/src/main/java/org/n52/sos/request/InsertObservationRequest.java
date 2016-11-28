@@ -31,21 +31,20 @@ package org.n52.sos.request;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.util.CollectionHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * SOS InsertObservation request
  *
  * @since 4.0.0
  */
-public class InsertObservationRequest extends AbstractServiceRequest<InsertObservationResponse> {
+public class InsertObservationRequest extends AbstractServiceRequest {
 
     /**
      * Assigned sensor id
@@ -60,17 +59,15 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
     private List<OmObservation> observations;
 
     public InsertObservationRequest() {
-        super();
+        super(null, null, SosConstants.Operations.InsertObservation.name());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.InsertObservation.name();
+    public InsertObservationRequest(String service, String version) {
+        super(service, version, SosConstants.Operations.InsertObservation.name());
+    }
+
+    public InsertObservationRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -86,14 +83,14 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
      * Set assigned sensor id
      *
      * @param assignedSensorId
-     *            assigned sensor id
+     *                         assigned sensor id
      */
     public void setAssignedSensorId(String assignedSensorId) {
         this.assignedSensorId = assignedSensorId;
     }
 
     public boolean isSetAssignedSensorId() {
-        return StringHelper.isNotEmpty(getAssignedSensorId());
+        return !Strings.isNullOrEmpty(getAssignedSensorId());
     }
 
     /**
@@ -109,7 +106,7 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
      * Set observations to insert
      *
      * @param observation
-     *            observations to insert
+     *                    observations to insert
      */
     public void setObservation(List<OmObservation> observation) {
         this.observations = observation;
@@ -138,13 +135,8 @@ public class InsertObservationRequest extends AbstractServiceRequest<InsertObser
         return CollectionHelper.isNotEmpty(getOfferings());
     }
 
-    @Override
-    public InsertObservationResponse getResponse() throws OwsExceptionReport {
-        return (InsertObservationResponse) new InsertObservationResponse().set(this);
-    }
-
     public boolean isSetExtensionSplitDataArrayIntoObservations() {
         return isSetExtensions() && getExtensions()
-                .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
+               .isBooleanExtensionSet(Sos2Constants.Extensions.SplitDataArrayIntoObservations.name());
     }
 }

@@ -28,31 +28,33 @@
  */
 package org.n52.sos.decode.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.decodeXmlObject;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.GetObservationResponseType;
 import net.opengis.sos.x20.GetObservationResponseType.ObservationData;
 
-public class GetObservationResponseDocumentDecoder implements SosResponseDecoder, Decoder<GetObservationResponse, GetObservationResponseDocument> {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
+public class GetObservationResponseDocumentDecoder extends AbstractXmlDecoder<GetObservationResponseDocument, GetObservationResponse>
+        implements SosResponseDecoder {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationResponseDocumentDecoder.class);
 
@@ -72,7 +74,7 @@ public class GetObservationResponseDocumentDecoder implements SosResponseDecoder
 
     @Override
     public GetObservationResponse decode(GetObservationResponseDocument gord)
-            throws OwsExceptionReport, UnsupportedDecoderInputException {
+            throws DecodingException {
         if (gord != null)  {
             GetObservationResponse response = new GetObservationResponse();
             setService(response);
@@ -87,7 +89,7 @@ public class GetObservationResponseDocumentDecoder implements SosResponseDecoder
         throw new UnsupportedDecoderInputException(this, gord);
     }
 
-    private List<OmObservation> parseObservtions(GetObservationResponseType gort) throws OwsExceptionReport {
+    private List<OmObservation> parseObservtions(GetObservationResponseType gort) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(gort.getObservationDataArray())) {
             List<OmObservation> observations = Lists.newArrayList();
             for (ObservationData od : gort.getObservationDataArray()) {

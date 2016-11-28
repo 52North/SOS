@@ -36,15 +36,11 @@ import net.opengis.sosdo.x10.DeleteObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 
 import com.google.common.collect.Sets;
@@ -76,21 +72,10 @@ public class DeleteObservationEncoder extends AbstractResponseEncoder<DeleteObse
     }
 
     @Override
-    protected XmlObject create(DeleteObservationResponse dor) throws OwsExceptionReport {
+    protected XmlObject create(DeleteObservationResponse dor) throws EncodingException {
         if (dor == null) {
             throw new UnsupportedEncoderInputException(this, dor);
         }
-        final CompositeOwsException exceptions = new CompositeOwsException();
-        if (dor.getService() == null) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-        if (dor.getVersion() == null) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-        if (dor.getObservationId() == null || dor.getObservationId().isEmpty()) {
-            exceptions.add(new MissingParameterValueException(DeleteObservationConstants.PARAMETER_NAME));
-        }
-        exceptions.throwIfNotEmpty();
 
         String observationId = dor.getObservationId();
         DeleteObservationResponseDocument xbDeleteObsDoc =

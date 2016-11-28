@@ -29,9 +29,11 @@
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
 import org.hibernate.Criteria;
-import org.n52.iceland.exception.CodedException;
+
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.request.GetObservationRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

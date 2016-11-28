@@ -38,7 +38,7 @@ import org.n52.iceland.response.AbstractServiceResponse;
  *
  * @since 4.0.0
  */
-public abstract class SosModificationEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse>
+public abstract class SosModificationEvent<I extends AbstractServiceRequest, O extends AbstractServiceResponse>
         extends ModificationResponseEvent<I, O> {
 
     public SosModificationEvent(I request, O response) {

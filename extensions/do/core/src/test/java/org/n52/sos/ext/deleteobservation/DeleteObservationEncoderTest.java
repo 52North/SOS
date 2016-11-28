@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.n52.iceland.ogc.sos.SosConstants.SOS;
+import static org.n52.shetland.ogc.sos.SosConstants.SOS;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0_PREFIX;
 
@@ -45,19 +45,18 @@ import java.util.Set;
 
 import net.opengis.sosdo.x10.DeleteObservationResponseDocument;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import org.n52.iceland.coding.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.w3c.SchemaLocation;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -134,17 +133,17 @@ public class DeleteObservationEncoderTest {
     }
 
     @Test(expected = UnsupportedEncoderInputException.class)
-    public void encodeNullReturnsNull() throws OwsExceptionReport {
+    public void encodeNullReturnsNull() throws EncodingException {
         instance.encode(null);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void encodingCoreResponseWithMissingAttributesReturnsNull() throws OwsExceptionReport {
+    @Test(expected = EncodingException.class)
+    public void encodingCoreResponseWithMissingAttributesReturnsNull() throws EncodingException {
         instance.encode(incorrectCoreResponseMissingAttributes);
     }
 
     @Test
-    public void encodeCorrectCoreResponse() throws OwsExceptionReport {
+    public void encodeCorrectCoreResponse() throws EncodingException {
         final DeleteObservationResponse correctCoreResponse = new DeleteObservationResponse();
         correctCoreResponse.setService("SOS");
         correctCoreResponse.setVersion("2.0.0");
@@ -155,7 +154,7 @@ public class DeleteObservationEncoderTest {
     }
 
     @Test
-    public void encodingCorrectXmlObjectReturnsCorrectServiceRequest() throws OwsExceptionReport {
+    public void encodingCorrectXmlObjectReturnsCorrectServiceRequest() throws EncodingException {
         assertNotNull("Decoding of correct XmlObject returned null", instance.encode(correctCoreResponse));
         assertTrue("Class of Result ",
                 instance.encode(correctCoreResponse) instanceof DeleteObservationResponseDocument);
@@ -171,7 +170,7 @@ public class DeleteObservationEncoderTest {
 
     @Test
     public void should_add_correct_namespace_and_prefix_to_given_map() {
-        final Map<String, String> givenMap = new HashMap<String, String>(1);
+        final Map<String, String> givenMap = new HashMap<>(1);
 
         instance.addNamespacePrefixToMap(givenMap);
 

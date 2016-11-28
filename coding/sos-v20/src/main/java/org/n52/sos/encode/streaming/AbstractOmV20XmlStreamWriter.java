@@ -32,7 +32,6 @@ import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -45,34 +44,30 @@ import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.sos.coding.encode.ObservationEncoder;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.w3c.W3CConstants;
+import org.n52.iceland.exception.ConfigurationError;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractObservationValue;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.janmayen.function.Functions;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.AbstractOmEncoderv20;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.CodingHelper;
@@ -111,33 +106,29 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
     }
 
     @Override
-    public void write(OutputStream out) throws XMLStreamException, OwsExceptionReport {
+    public void write(OutputStream out) throws XMLStreamException, EncodingException {
         write(getOmObservation(), out);
     }
 
     @Override
-    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+    public void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException, EncodingException {
         write(getOmObservation(), out, encodingValues);
     }
 
     @Override
-    public void write(OmObservation response, OutputStream out) throws XMLStreamException, OwsExceptionReport {
+    public void write(OmObservation response, OutputStream out) throws XMLStreamException, EncodingException {
         write(response, out, new EncodingValues());
     }
 
     @Override
     public void write(OmObservation observation, OutputStream out, EncodingValues encodingValues)
-            throws XMLStreamException, OwsExceptionReport {
-        try {
-            setOmObservation(observation);
-            init(out, encodingValues);
-            start(encodingValues.isEmbedded());
-            writeOmObservationDoc(encodingValues);
-            end();
-            finish();
-        } catch (XMLStreamException xmlse) {
-            throw new NoApplicableCodeException().causedBy(xmlse);
-        }
+            throws XMLStreamException, EncodingException {
+        setOmObservation(observation);
+        init(out, encodingValues);
+        start(encodingValues.isEmbedded());
+        writeOmObservationDoc(encodingValues);
+        end();
+        finish();
     }
 
     /**
@@ -148,11 +139,11 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *            encoding
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written If an
      *             error occurs when creating elements to be written
      */
-    protected void writeOmObservationDoc(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+    protected void writeOmObservationDoc(EncodingValues encodingValues) throws XMLStreamException, EncodingException {
         start(OmConstants.QN_OM_20_OBSERVATION);
         namespace(W3CConstants.NS_XLINK_PREFIX, W3CConstants.NS_XLINK);
         namespace(OmConstants.NS_OM_PREFIX, OmConstants.NS_OM_2);
@@ -204,20 +195,19 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *
      * @param identifier
      *            {@link CodeWithAuthority} to write
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    protected void writeIdentifier(CodeWithAuthority identifier) throws OwsExceptionReport, XMLStreamException {
+    protected void writeIdentifier(CodeWithAuthority identifier) throws EncodingException, XMLStreamException {
         Encoder<?, CodeWithAuthority> encoder =
                 CodingRepository.getInstance().getEncoder(
                         CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, identifier));
         if (encoder != null) {
             writeXmlObject((XmlObject) encoder.encode(identifier), GmlConstants.QN_IDENTIFIER_32);
         } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("Error while encoding geometry value, needed encoder is missing!");
+            throw new EncodingException("Error while encoding geometry value, needed encoder is missing!");
         }
     }
 
@@ -253,12 +243,12 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *
      * @param time
      *            {@link Time} to write as om:phenomenonTime to stream
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    protected void writePhenomenonTime(Time time) throws OwsExceptionReport, XMLStreamException {
+    protected void writePhenomenonTime(Time time) throws EncodingException, XMLStreamException {
         start(OmConstants.QN_OM_20_PHENOMENON_TIME);
         writeNewLine();
         writeTimeContent(time);
@@ -268,7 +258,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         indent++;
     }
 
-    protected void writeValidTime(TimePeriod validTime) throws OwsExceptionReport, XMLStreamException {
+    protected void writeValidTime(TimePeriod validTime) throws EncodingException, XMLStreamException {
         start(OmConstants.QN_OM_20_VALID_TIME);
         writeNewLine();
         writeTimeContent(validTime);
@@ -283,17 +273,17 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      */
-    protected void writeResultTime() throws XMLStreamException, OwsExceptionReport {
+    protected void writeResultTime() throws XMLStreamException, EncodingException {
         TimeInstant resultTime = observation.getResultTime();
         Time phenomenonTime = observation.getPhenomenonTime();
         // get result time from SOS result time representation
         if (observation.getResultTime() != null) {
             if (resultTime.equals(phenomenonTime)) {
                 empty(OmConstants.QN_OM_20_RESULT_TIME);
-                addXlinkHrefAttr(Constants.NUMBER_SIGN_STRING + phenomenonTime.getGmlId());
+                addXlinkHrefAttr("#".concat(phenomenonTime.getGmlId()));
             } else {
                 addResultTime(resultTime);
             }
@@ -303,7 +293,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
         else {
             if (phenomenonTime instanceof TimeInstant) {
                 empty(OmConstants.QN_OM_20_RESULT_TIME);
-                addXlinkHrefAttr(Constants.NUMBER_SIGN_STRING + phenomenonTime.getGmlId());
+                addXlinkHrefAttr("#".concat(phenomenonTime.getGmlId()));
             } else if (phenomenonTime instanceof TimePeriod) {
                 TimeInstant rsTime = new TimeInstant(((TimePeriod) observation.getPhenomenonTime()).getEnd());
                 addResultTime(rsTime);
@@ -320,12 +310,11 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *             If an error occurs when writing to stream
      * @throws UnsupportedEncoderInputException
      *             If the procedure could not be encoded
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      */
     @SuppressWarnings("unchecked")
-    protected void writeProcedure(EncodingValues encodingValues) throws XMLStreamException,
-            UnsupportedEncoderInputException, OwsExceptionReport {
+    protected void writeProcedure(EncodingValues encodingValues) throws XMLStreamException, EncodingException {
 //        if (encodingValues.isSetEncoder() && checkEncodProcedureForEncoderKeys(encodingValues.getEncoder())) {
 //            SosProcedureDescription procedureToEncode = observation
 //                    .getObservationConstellation().getProcedure();
@@ -386,11 +375,11 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *            {@link EncodingValues} contains the required encoder
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      */
     @SuppressWarnings("unchecked")
-    protected void writeParameter(EncodingValues encodingValues) throws XMLStreamException, OwsExceptionReport {
+    protected void writeParameter(EncodingValues encodingValues) throws XMLStreamException, EncodingException {
         if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof ObservationEncoder) {
             for (NamedValue<?> namedValue : observation.getParameter()) {
                 start(OmConstants.QN_OM_20_PARAMETER);
@@ -430,19 +419,18 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *            {@link EncodingValues} contains the required encoder
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      */
     protected void writeFeatureOfIntererst(EncodingValues encodingValues) throws XMLStreamException,
-            OwsExceptionReport {
+            EncodingException {
         if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof AbstractOmEncoderv20) {
             AbstractOmEncoderv20 encoder = (AbstractOmEncoderv20) encodingValues.getEncoder();
-            Map<HelperValues, String> additionalValues =
-                    new EnumMap<SosConstants.HelperValues, String>(HelperValues.class);
-            Profile activeProfile = ProfileHandler.getInstance().getActiveProfile();
+            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
+            Profile activeProfile = getActiveProfile();
             additionalValues.put(HelperValues.ENCODE,
                     Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
-            if (StringHelper.isNotEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
+            if (!Strings.isNullOrEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
                 additionalValues.put(HelperValues.ENCODE_NAMESPACE,
                         activeProfile.getEncodingNamespaceForFeatureOfInterest());
             } else {
@@ -472,11 +460,11 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *            {@link EncodingValues} contains the result element namespace
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      */
     protected void writeResult(OmObservation observation, EncodingValues encodingValues) throws XMLStreamException,
-            OwsExceptionReport {
+            EncodingException {
         if (observation.getValue() instanceof AbstractObservationValue<?>) {
             ((AbstractObservationValue<?>) observation.getValue()).setValuesForResultEncoding(observation);
         }
@@ -495,8 +483,7 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
                     if (Strings.isNullOrEmpty(prefix)) {
                         XmlCursor newCursor = createResult.newCursor();
                         prefix = newCursor.prefixForNamespace(name.getNamespaceURI());
-                        newCursor.setAttributeText(W3CConstants.QN_XSI_TYPE,
-                                prefix + Constants.COLON_STRING + name.getLocalPart());
+                        newCursor.setAttributeText(W3CConstants.QN_XSI_TYPE, prefix + ":" + name.getLocalPart());
                         newCursor.dispose();
                     }
                     writeXmlObject(createResult, OmConstants.QN_OM_20_RESULT);
@@ -585,12 +572,12 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *
      * @param time
      *            {@link Time} to encode and write
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void writeTimeContent(Time time) throws OwsExceptionReport, XMLStreamException {
+    private void writeTimeContent(Time time) throws EncodingException, XMLStreamException {
         XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
         writeXmlObject(xmlObject, GmlHelper.getGml321QnameForITime(time));
     }
@@ -600,16 +587,15 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *
      * @param time
      *            {@link Time} to encode and write
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs when creating elements to be written
      * @throws XMLStreamException
      *             If an error occurs when writing to stream
      */
-    private void addResultTime(TimeInstant time) throws OwsExceptionReport, XMLStreamException {
+    private void addResultTime(TimeInstant time) throws EncodingException, XMLStreamException {
         start(OmConstants.QN_OM_20_RESULT_TIME);
         writeNewLine();
-        XmlObject xmlObject =
-                CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
+        XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, time, getDocumentAdditionalHelperValues());
         writeXmlObject(xmlObject, GmlConstants.QN_TIME_INSTANT_32);
         writeNewLine();
         indent--;
@@ -663,15 +649,14 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      * @return True or false
      */
     private boolean checkEncodProcedureForEncoderKeys(Encoder<?, ?> encoder) {
-        Set<EncoderKey> encoderKeyType = encoder.getKeys();
-        for (EncoderKey encoderKey : encoderKeyType) {
-            if (encoderKey instanceof XmlEncoderKey) {
-                if (ProfileHandler.getInstance().getActiveProfile()
-                        .isEncodeProcedureInObservation(((XmlEncoderKey) encoderKey).getNamespace())) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return encoder.getKeys().stream()
+                .filter(Functions.instanceOf(XmlEncoderKey.class))
+                .map(Functions.cast(XmlEncoderKey.class))
+                .map(XmlEncoderKey::getNamespace)
+                .anyMatch(getActiveProfile()::isEncodeProcedureInObservation);
+    }
+
+    private Profile getActiveProfile() throws ConfigurationError {
+        return ProfileHandler.getInstance().getActiveProfile();
     }
 }

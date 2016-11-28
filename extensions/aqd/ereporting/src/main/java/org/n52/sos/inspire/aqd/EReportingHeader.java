@@ -32,9 +32,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.aqd.AbstractEReportingHeader;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.util.Nillable;
@@ -45,8 +45,6 @@ import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 public class EReportingHeader extends AbstractEReportingHeader {
-
-    private static final long serialVersionUID = -552875135737898115L;
     private InspireID inspireID;
     private RelatedParty reportingAuthority;
     private EReportingChange change;
@@ -122,6 +120,7 @@ public class EReportingHeader extends AbstractEReportingHeader {
         return this;
     }
 
+    @Override
     public EReportingHeader addContent(AbstractFeature content) {
         return addContent(Referenceable.of(content));
     }

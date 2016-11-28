@@ -28,10 +28,10 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.util.AQDJSONConstants;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -48,7 +48,7 @@ public class EReportingChangeJSONEncoder extends JSONEncoder<EReportingChange> {
 
     @Override
     public JsonNode encodeJSON(EReportingChange t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         return nodeFactory().objectNode()
                 .put(AQDJSONConstants.CHANGED, t.isChange())
                 .put(AQDJSONConstants.DESCRIPTION, t.getDescription().orNull());

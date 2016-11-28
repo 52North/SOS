@@ -30,10 +30,10 @@ package org.n52.sos.encode.sos.v1;
 
 import java.util.Set;
 
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 
 import com.google.common.collect.Sets;

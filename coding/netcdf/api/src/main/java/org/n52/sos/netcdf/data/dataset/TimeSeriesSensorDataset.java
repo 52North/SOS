@@ -30,10 +30,10 @@ package org.n52.sos.netcdf.data.dataset;
 
 import java.util.Map;
 
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.values.Value;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
@@ -47,12 +47,12 @@ import ucar.nc2.constants.CF;
  *
  */
 public class TimeSeriesSensorDataset extends AbstractSensorDataset implements StaticLocationDataset, StaticAltitudeDataset{
-    private Double lng;
-    private Double lat;
-    private Double alt;
+    private final Double lng;
+    private final Double lat;
+    private final Double alt;
 
     public TimeSeriesSensorDataset( DatasetSensor sensor, Double lng, Double lat, Double alt,
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription procedure) {
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription<?> procedure) {
         super( CF.FeatureType.timeSeries, sensor, dataValues, procedure);
         this.lng = lng;
         this.lat = lat;

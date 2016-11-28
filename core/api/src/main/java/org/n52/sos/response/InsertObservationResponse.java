@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
@@ -36,10 +36,16 @@ import org.n52.iceland.response.AbstractServiceResponse;
  *
  */
 public class InsertObservationResponse extends AbstractServiceResponse {
+    public InsertObservationResponse() {
+        super(null, null, SosConstants.Operations.InsertObservation.name());
+    }
 
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.InsertObservation.name();
+    public InsertObservationResponse(String service, String version) {
+        super(service, version, SosConstants.Operations.InsertObservation.name());
+    }
+
+    public InsertObservationResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
 }

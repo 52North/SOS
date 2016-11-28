@@ -28,32 +28,34 @@
  */
 package org.n52.sos.decode.json;
 
+import static java.util.stream.Collectors.toList;
 import static org.n52.sos.coding.json.JSONConstants.DEFINITION;
 import static org.n52.sos.coding.json.JSONConstants.EXTENSIONS;
 import static org.n52.sos.coding.json.JSONConstants.SERVICE;
 import static org.n52.sos.coding.json.JSONConstants.VALUE;
 import static org.n52.sos.coding.json.JSONConstants.VERSION;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.JsonDecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.OperationDecoderKey;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.janmayen.Streams;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONValidator;
-import org.n52.sos.ogc.filter.ComparisonFilter;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swes.SwesExtensions;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 /**
  * TODO JavaDoc
@@ -63,15 +65,16 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest<?>> extends JSONDecoder<T> {
+public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest> extends JSONDecoder<T> {
 
     public AbstractSosRequestDecoder(Class<T> type, String service, String version, Enum<?> operation) {
         this(type, service, version, operation.name());
     }
 
     public AbstractSosRequestDecoder(Class<T> type, String service, String version, String operation) {
-        super(Sets.newHashSet(new JsonDecoderKey(type), new OperationDecoderKey(service, version, operation,
-                MediaTypes.APPLICATION_JSON)));
+        super(new HashSet<>(Arrays.asList(
+                new JsonDecoderKey(type),
+                new OperationDecoderKey(service, version, operation, MediaTypes.APPLICATION_JSON))));
     }
 
     public AbstractSosRequestDecoder(Set<DecoderKey> keys) {
@@ -87,7 +90,7 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
     }
 
     @Override
-    public T decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public T decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (node == null || node.isNull() || node.isMissingNode()) {
             return null;
         }
@@ -118,32 +121,24 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
 
     @SuppressWarnings("rawtypes")
     protected SwesExtension parseExtension(JsonNode node) {
-        SwesExtension extension = null;
         if (node.isObject() && node.has(DEFINITION) && node.has(VALUE)) {
             if (node.path("value").isBoolean()) {
-                SwesExtension<SweBoolean> ext = new SwesExtension<>();
-                ext.setDefinition(node.path(DEFINITION).asText())
+                return new SwesExtension<>().setDefinition(node.path(DEFINITION).asText())
                     .setValue(new SweBoolean().setValue(node.path(VALUE).asBoolean()));
-                extension = ext;
             } else if (node.path(VALUE).isTextual()) {
-                SwesExtension<SweText> ext = new SwesExtension<>();
-                ext.setDefinition(node.path(DEFINITION).asText())
+                return new SwesExtension<>().setDefinition(node.path(DEFINITION).asText())
                     .setValue(new SweText().setValue(node.path(VALUE).asText()));
-                extension = ext;
             }
         }
-        return extension;
+        return null;
     }
 
     protected List<String> parseStringOrStringList(JsonNode node) {
         if (node.isArray()) {
-            List<String> offerings = Lists.newArrayListWithExpectedSize(node.size());
-            for (JsonNode n : node) {
-                if (n.isTextual()) {
-                    offerings.add(n.textValue());
-                }
-            }
-            return offerings;
+            return Streams.stream(node)
+                    .filter(JsonNode::isTextual)
+                    .map(JsonNode::textValue)
+                    .collect(toList());
         } else if (node.isTextual()) {
             return Collections.singletonList(node.textValue());
         } else {
@@ -158,5 +153,5 @@ public abstract class AbstractSosRequestDecoder<T extends AbstractServiceRequest
 
     protected abstract String getSchemaURI();
 
-    protected abstract T decodeRequest(JsonNode node) throws OwsExceptionReport;
+    protected abstract T decodeRequest(JsonNode node) throws DecodingException;
 }

@@ -30,6 +30,7 @@ package org.n52.sos.decode;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+
 import net.opengis.fes.x20.BinaryComparisonOpType;
 import net.opengis.fes.x20.FilterDocument;
 import net.opengis.fes.x20.FilterType;
@@ -38,9 +39,11 @@ import net.opengis.fes.x20.PropertyIsEqualToDocument;
 
 import org.apache.xmlbeans.XmlString;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.sos.ogc.filter.ComparisonFilter;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.filter.ComparisonFilter;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * FES 2.0 decoder test class
@@ -64,7 +67,7 @@ public class FesDecoderV20Test {
      * @throws OwsExceptionReport
      */
     @Test
-    public void should_parse_PropertyIsEqualTo_Filter() throws OwsExceptionReport {
+    public void should_parse_PropertyIsEqualTo_Filter() throws DecodingException {
         PropertyIsEqualToDocument propertyIsEqualToDoc = PropertyIsEqualToDocument.Factory.newInstance();
         BinaryComparisonOpType propertyIsEqualToType = propertyIsEqualToDoc.addNewPropertyIsEqualTo();
         // valueReference

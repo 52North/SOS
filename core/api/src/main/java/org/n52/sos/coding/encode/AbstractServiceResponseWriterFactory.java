@@ -30,12 +30,12 @@ package org.n52.sos.coding.encode;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.StreamingSettings;

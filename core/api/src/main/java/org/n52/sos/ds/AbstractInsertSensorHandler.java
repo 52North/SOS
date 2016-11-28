@@ -28,12 +28,24 @@
  */
 package org.n52.sos.ds;
 
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsDomainMetadata;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos1Constants.RegisterSensorParams;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.InsertSensorParams;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 
@@ -49,30 +61,62 @@ public abstract class AbstractInsertSensorHandler extends AbstractOperationHandl
         super(service, Sos2Constants.Operations.InsertSensor.name());
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.SensorDescription);
-            opsMeta.addAnyParameterValue(Sos1Constants.RegisterSensorParams.ObservationTemplate);
-        } else {
-            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.procedureDescription);
-            opsMeta.addPossibleValuesParameter(Sos2Constants.InsertSensorParams.procedureDescriptionFormat,
-                    getProcedureDescriptionFormatRepository().getSupportedTransactionalProcedureDescriptionFormats(service, version));
-            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.observableProperty);
-            opsMeta.addAnyParameterValue(Sos2Constants.InsertSensorParams.metadata);
-            opsMeta.addDataTypeParameter(Sos2Constants.InsertSensorParams.metadata,
-                    Sos2Constants.SCHEMA_LOCATION_URL_SOS_INSERTION_CAPABILITIES);
-        }
-    }
-
     private ProcedureDescriptionFormatRepository getProcedureDescriptionFormatRepository() {
         return ProcedureDescriptionFormatRepository.getInstance();
     }
 
-    public CodingRepository getCodingRepository() {
+    @Deprecated
+    protected CodingRepository getCodingRepository() {
         return CodingRepository.getInstance();
     }
 
     public abstract InsertSensorResponse insertSensor(InsertSensorRequest request) throws OwsExceptionReport;
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        switch (version) {
+            case Sos1Constants.SERVICEVERSION:
+                return new HashSet<>(Arrays.asList(getSensorDescriptionParameter(service, version),
+                                                   getObservationTemplateParameter(service, version)));
+            case Sos2Constants.SERVICEVERSION:
+                return new HashSet<>(Arrays.asList(getProcedureDescriptionParameter(service, version),
+                                                   getProcedureDescriptionFormatParameter(service, version),
+                                                   getAnyObservablePropertyParameter(service, version),
+                                                   getMetadataProperty(service, version)));
+            default:
+                return Collections.emptySet();
+        }
+    }
+
+    private OwsDomain getSensorDescriptionParameter(String service, String version) {
+        RegisterSensorParams name = Sos1Constants.RegisterSensorParams.SensorDescription;
+        return new OwsDomain(name, OwsAnyValue.instance());
+    }
+
+    private OwsDomain getObservationTemplateParameter(String service, String version) {
+        RegisterSensorParams name = Sos1Constants.RegisterSensorParams.ObservationTemplate;
+        return new OwsDomain(name, OwsAnyValue.instance());
+    }
+
+    private OwsDomain getProcedureDescriptionParameter(String service, String version) {
+        InsertSensorParams name = Sos2Constants.InsertSensorParams.procedureDescription;
+        return new OwsDomain(name, OwsAnyValue.instance());
+    }
+
+    private OwsDomain getProcedureDescriptionFormatParameter(String service, String version) {
+        InsertSensorParams name = Sos2Constants.InsertSensorParams.procedureDescriptionFormat;
+        return new OwsDomain(name, new OwsAllowedValues(getProcedureDescriptionFormatRepository().getSupportedTransactionalProcedureDescriptionFormats(service, version).stream().map(OwsValue::new)));
+    }
+
+    private OwsDomain getAnyObservablePropertyParameter(String service, String version) {
+        InsertSensorParams name = Sos2Constants.InsertSensorParams.observableProperty;
+        return new OwsDomain(name, OwsAnyValue.instance());
+    }
+
+    private OwsDomain getMetadataProperty(String service, String version) {
+        InsertSensorParams name = Sos2Constants.InsertSensorParams.metadata;
+        OwsDomainMetadata dataType
+                = new OwsDomainMetadata(URI.create(Sos2Constants.SCHEMA_LOCATION_URL_SOS_INSERTION_CAPABILITIES));
+        return new OwsDomain(name, OwsAnyValue.instance(), null, null, dataType, null, null);
+    }
 }

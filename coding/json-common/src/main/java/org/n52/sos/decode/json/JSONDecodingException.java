@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json;
 
-import org.n52.sos.exception.swes.InvalidRequestException;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * TODO JavaDoc
@@ -37,15 +37,12 @@ import org.n52.sos.exception.swes.InvalidRequestException;
  *
  * @since 4.0.0
  */
-public class JSONDecodingException extends InvalidRequestException {
+public class JSONDecodingException extends DecodingException {
 
     private static final long serialVersionUID = 8960081053988570614L;
 
     public JSONDecodingException(String message) {
-        withMessage(message);
-    }
-
-    public JSONDecodingException() {
+        super(message);
     }
 
 }

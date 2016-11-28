@@ -28,8 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.entities.i18n;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of {@link AbstractHibernateI18NMetadata} for {@link Procedure}
@@ -71,7 +72,7 @@ public class HibernateI18NProcedureMetadata extends AbstractHibernateI18NMetadat
      * @return <code>true</code>, if short name is set
      */
     public boolean isSetShortname() {
-        return StringHelper.isNotEmpty(getShortname());
+        return !Strings.isNullOrEmpty(getShortname());
     }
 
     /**
@@ -99,6 +100,6 @@ public class HibernateI18NProcedureMetadata extends AbstractHibernateI18NMetadat
      * @return <code>true</code>, if long name is set
      */
     public boolean isSetLongname() {
-        return StringHelper.isNotEmpty(getLongname());
+        return !Strings.isNullOrEmpty(getLongname());
     }
 }

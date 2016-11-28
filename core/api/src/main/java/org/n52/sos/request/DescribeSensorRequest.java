@@ -28,18 +28,18 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.gml.time.Time;
+
+import com.google.common.base.Strings;
 
 /**
  * SOS DescribeSensor request
  *
  * @since 4.0.0
  */
-public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensorResponse> {
+public class DescribeSensorRequest extends AbstractServiceRequest {
 
     /**
      * Procedure identifier
@@ -56,15 +56,18 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
      */
     private Time validTime;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.DescribeSensor.name();
+    public DescribeSensorRequest() {
+        super(null, null, SosConstants.Operations.DescribeSensor.name());
     }
+
+    public DescribeSensorRequest(String service, String version) {
+        super(service, version, SosConstants.Operations.DescribeSensor.name());
+    }
+
+    public DescribeSensorRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
 
     /**
      * Get output format
@@ -86,7 +89,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
     }
 
     public boolean isSetProcedureDescriptionFormat() {
-        return StringHelper.isNotEmpty(getProcedureDescriptionFormat());
+        return !Strings.isNullOrEmpty(getProcedureDescriptionFormat());
     }
 
     /**
@@ -109,7 +112,7 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
     }
 
     public boolean isSetProcedure() {
-        return StringHelper.isNotEmpty(getProcedure());
+        return !Strings.isNullOrEmpty(getProcedure());
     }
 
     /**
@@ -133,10 +136,5 @@ public class DescribeSensorRequest extends AbstractServiceRequest<DescribeSensor
 
     public boolean isSetValidTime() {
         return getValidTime() != null;
-    }
-
-    @Override
-    public DescribeSensorResponse getResponse() {
-        return (DescribeSensorResponse ) new DescribeSensorResponse().set(this);
     }
 }

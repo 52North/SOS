@@ -32,10 +32,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesResourceLocator;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -99,7 +99,7 @@ public class InspireCitation implements InspireExtendedCapabilitiesResourceLocat
      * @return <code>true</code>, if the title is set
      */
     public boolean isSetTitle() {
-        return StringHelper.isNotEmpty(getTitle());
+        return !Strings.isNullOrEmpty(getTitle());
     }
 
     /**

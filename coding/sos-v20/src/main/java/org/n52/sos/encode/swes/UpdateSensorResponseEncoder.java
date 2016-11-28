@@ -34,12 +34,12 @@ import net.opengis.swes.x20.UpdateSensorDescriptionResponseDocument;
 import net.opengis.swes.x20.UpdateSensorDescriptionResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.response.UpdateSensorResponse;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
@@ -56,10 +56,9 @@ public class UpdateSensorResponseEncoder extends AbstractSwesResponseEncoder<Upd
     }
 
     @Override
-    protected XmlObject create(UpdateSensorResponse response) throws OwsExceptionReport {
+    protected XmlObject create(UpdateSensorResponse response) throws EncodingException {
         final UpdateSensorDescriptionResponseDocument document =
-                UpdateSensorDescriptionResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance()
-                        .getXmlOptions());
+                UpdateSensorDescriptionResponseDocument.Factory.newInstance(getXmlOptions());
         final UpdateSensorDescriptionResponseType usdr = document.addNewUpdateSensorDescriptionResponse();
         usdr.setUpdatedProcedure(response.getUpdatedProcedure());
         return document;

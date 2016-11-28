@@ -37,12 +37,11 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 
 /**
  * Writer for {@link SOAPMessage} objects
@@ -58,11 +57,12 @@ public class SoapResponseWriter extends AbstractResponseWriter<SOAPMessage> {
         return Collections.singleton(KEY);
     }
 
-    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException, CodedException {
+    @Override
+    public void write(SOAPMessage t, OutputStream out, ResponseProxy responseProxy) throws IOException, EncodingException {
         try {
             t.writeTo(out);
         } catch (SOAPException soapex) {
-             throw new NoApplicableCodeException().causedBy(soapex);
+             throw new EncodingException(soapex);
         }
     }
 

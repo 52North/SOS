@@ -31,12 +31,12 @@ package org.n52.sos.decode.json.impl;
 import static org.n52.sos.coding.json.JSONConstants.OBSERVATION;
 import static org.n52.sos.coding.json.JSONConstants.OFFERING;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.InsertObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -51,7 +51,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class InsertObservationRequestDecoder extends AbstractSosRequestDecoder<InsertObservationRequest> {
     public InsertObservationRequestDecoder() {
         super(InsertObservationRequest.class, SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                SosConstants.Operations.InsertObservation);
+              SosConstants.Operations.InsertObservation);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class InsertObservationRequestDecoder extends AbstractSosRequestDecoder<I
     }
 
     @Override
-    public InsertObservationRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    public InsertObservationRequest decodeRequest(JsonNode node) throws DecodingException {
         InsertObservationRequest r = new InsertObservationRequest();
         r.setObservation(decodeJsonToObjectList(node.path(OBSERVATION), OmObservation.class));
         r.setOfferings(parseStringOrStringList(node.path(OFFERING)));

@@ -28,6 +28,7 @@
  */
 package org.n52.sos.decode.json.impl;
 
+import static java.util.stream.Collectors.toList;
 import static org.n52.sos.coding.json.JSONConstants.GEOMETRY;
 import static org.n52.sos.coding.json.JSONConstants.IDENTIFIER;
 import static org.n52.sos.coding.json.JSONConstants.NAME;
@@ -37,15 +38,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.janmayen.Streams;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vividsolutions.jts.geom.Geometry;
@@ -65,14 +66,15 @@ public class FeatureDecoder extends JSONDecoder<AbstractFeature> {
     }
 
     @Override
-    public AbstractFeature decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public AbstractFeature decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (validate) {
-            JSONValidator.getInstance().validateAndThrow(node, SchemaConstants.Common.FEATURE_OF_INTEREST);
+            JSONValidator.getInstance()
+                    .validateAndThrow(node, SchemaConstants.Common.FEATURE_OF_INTEREST);
         }
         return decodeJSON(node);
     }
 
-    protected AbstractFeature decodeJSON(JsonNode node) throws OwsExceptionReport {
+    protected AbstractFeature decodeJSON(JsonNode node) throws DecodingException {
         if (node.isArray()) {
             return parseFeatureCollection(node);
         } else {
@@ -80,7 +82,7 @@ public class FeatureDecoder extends JSONDecoder<AbstractFeature> {
         }
     }
 
-    protected SamplingFeature parseSamplingFeature(JsonNode node) throws OwsExceptionReport {
+    protected SamplingFeature parseSamplingFeature(JsonNode node) throws DecodingException {
         if (node.isTextual()) {
             return new SamplingFeature(parseCodeWithAuthority(node));
         } else if (node.isObject()) {
@@ -94,7 +96,7 @@ public class FeatureDecoder extends JSONDecoder<AbstractFeature> {
         }
     }
 
-    private FeatureCollection parseFeatureCollection(JsonNode node) throws OwsExceptionReport {
+    private FeatureCollection parseFeatureCollection(JsonNode node) throws DecodingException {
         if (node.isArray()) {
             FeatureCollection collection = new FeatureCollection();
             for (JsonNode n : node) {
@@ -106,10 +108,10 @@ public class FeatureDecoder extends JSONDecoder<AbstractFeature> {
         }
     }
 
-    protected List<AbstractFeature> parseSampledFeatures(JsonNode node) throws OwsExceptionReport {
+    protected List<AbstractFeature> parseSampledFeatures(JsonNode node) throws DecodingException {
         final JsonNode sfnode = node.path(SAMPLED_FEATURE);
         if (sfnode.isArray()) {
-            ArrayList<AbstractFeature> features = new ArrayList<AbstractFeature>(sfnode.size());
+            ArrayList<AbstractFeature> features = new ArrayList<>(sfnode.size());
             for (JsonNode n : sfnode) {
                 features.add(parseSamplingFeature(n));
             }
@@ -124,18 +126,14 @@ public class FeatureDecoder extends JSONDecoder<AbstractFeature> {
         }
     }
 
-    protected Geometry parseGeometry(JsonNode node) throws OwsExceptionReport {
+    protected Geometry parseGeometry(JsonNode node) throws DecodingException {
         return geometryDecoder.decodeJSON(node.path(GEOMETRY), false);
     }
 
-    private List<CodeType> parseNames(JsonNode node) throws CodedException {
-        final JsonNode name = node.path(NAME);
+    private List<CodeType> parseNames(JsonNode node) {
+        JsonNode name = node.path(NAME);
         if (name.isArray()) {
-            ArrayList<CodeType> codeTypes = new ArrayList<CodeType>(name.size());
-            for (JsonNode n : name) {
-                codeTypes.add(parseCodeType(n));
-            }
-            return codeTypes;
+            return Streams.stream(name).map(this::parseCodeType).collect(toList());
         } else {
             return Collections.singletonList(parseCodeType(name));
         }

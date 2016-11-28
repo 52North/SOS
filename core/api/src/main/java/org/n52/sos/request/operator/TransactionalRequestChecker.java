@@ -30,10 +30,10 @@ package org.n52.sos.request.operator;
 
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.request.RequestContext;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.iceland.util.net.IPAddress;
 import org.n52.iceland.util.net.IPAddressRange;
 import org.n52.iceland.util.net.ProxyChain;

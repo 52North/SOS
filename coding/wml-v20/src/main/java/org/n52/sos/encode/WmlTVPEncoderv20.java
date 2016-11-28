@@ -45,43 +45,40 @@ import net.opengis.waterml.x20.TVPDefaultMetadataPropertyType;
 import net.opengis.waterml.x20.TVPMeasurementMetadataType;
 
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.wml.ConformanceClassesWML2;
-import org.n52.sos.ogc.wml.WaterMLConstants;
-import org.n52.sos.response.GetObservationResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.service.ServiceConstants.ObservationType;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.AbstractObservationValue;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.ObservationType;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
+import org.n52.sos.ogc.wml.ConformanceClassesWML2;
+import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -122,12 +119,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 .join(ENCODER_KEYS));
     }
 
-    @SuppressWarnings("unchecked")
-    private static Set<EncoderKey> createEncoderKeys() {
-        return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
-                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class,
-                SingleObservationValue.class, MultiObservationValues.class));
-    }
 
     @Override
     public Set<EncoderKey> getKeys() {
@@ -139,9 +130,6 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         return Collections.unmodifiableSet(SUPPORTED_TYPES);
     }
 
-
-
-
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
         if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
@@ -152,11 +140,8 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     @Override
     public Set<String> getSupportedResponseFormats(String service, String version) {
-        if (SUPPORTED_RESPONSE_FORMATS.get(service) != null
-                && SUPPORTED_RESPONSE_FORMATS.get(service).get(version) != null) {
-            return SUPPORTED_RESPONSE_FORMATS.get(service).get(version);
-        }
-        return Collections.emptySet();
+        return SUPPORTED_RESPONSE_FORMATS.getOrDefault(service, Collections.emptyMap())
+                .getOrDefault(version, Collections.emptySet());
     }
 
     @Override
@@ -170,7 +155,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         if (element instanceof ObservationValue) {
@@ -183,13 +168,13 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
                 new WmlTVPEncoderv20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
             } catch (XMLStreamException xmlse) {
-                throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
+                throw new EncodingException("Error while writing element to stream!", xmlse);
             }
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
@@ -197,18 +182,18 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
+    protected XmlObject createResult(OmObservation sosObservation) throws EncodingException {
         return createMeasurementTimeseries(sosObservation);
     }
 
     @Override
-    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
+    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws EncodingException {
         return createMeasurementTimeseries((AbstractObservationValue<?>)observationValue);
     }
 
     @Override
     protected void addObservationType(OMObservationType xbObservation, String observationType) {
-        if (StringHelper.isNotEmpty(observationType)) {
+        if (!Strings.isNullOrEmpty(observationType)) {
             if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
                     || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP)) {
                 xbObservation.addNewType().setHref(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TVP);
@@ -226,10 +211,8 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
      * @param sosObservation
      *            SOS observation
      * @return XML MeasurementTimeseries object
-     * @throws OwsExceptionReport
-     *             If an error occurs
      */
-    private XmlObject createMeasurementTimeseries(OmObservation sosObservation) throws OwsExceptionReport {
+    private XmlObject createMeasurementTimeseries(OmObservation sosObservation) {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + sosObservation.getObservationID());
@@ -256,13 +239,13 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                 if (sosObservation.getValue().getValue() instanceof QuantityValue) {
                     QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
                     if (!quantityValue.getValue().equals(Double.NaN)) {
-                        String value = Double.toString(quantityValue.getValue().doubleValue());
+                        String value = Double.toString(quantityValue.getValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
                     }
                 } else if (sosObservation.getValue().getValue() instanceof CountValue) {
                     CountValue countValue = (CountValue) singleObservationValue.getValue();
                     if (countValue.getValue() != null) {
-                        String value = Integer.toString(countValue.getValue().intValue());
+                        String value = Integer.toString(countValue.getValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
                     }
                 }
@@ -280,7 +263,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                         if (!quantityValue.getValue().equals(Double.NaN)) {
                             timeValuePair.getTime();
                             String time = getTimeString(timeValuePair.getTime());
-                            String value = Double.toString(quantityValue.getValue().doubleValue());
+                            String value = Double.toString(quantityValue.getValue());
                             addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
                                     value);
                         }
@@ -288,7 +271,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                         CountValue countValue = (CountValue) timeValuePair.getValue();
                         if (countValue.getValue() != null) {
                             String time = getTimeString(timeValuePair.getTime());
-                            String value = Integer.toString(countValue.getValue().intValue());
+                            String value = Integer.toString(countValue.getValue());
                             addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
                                     value);
                         }
@@ -331,7 +314,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
         }
     }
 
-    private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue) throws OwsExceptionReport {
+    private XmlObject createMeasurementTimeseries(AbstractObservationValue<?> observationValue)  {
         MeasurementTimeseriesDocument measurementTimeseriesDoc = MeasurementTimeseriesDocument.Factory.newInstance();
         MeasurementTimeseriesType measurementTimeseries = measurementTimeseriesDoc.addNewMeasurementTimeseries();
         measurementTimeseries.setId("timeseries." + observationValue.getObservationID());
@@ -356,13 +339,13 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
             if (observationValue.getValue() instanceof QuantityValue) {
                 QuantityValue quantityValue = (QuantityValue) singleObservationValue.getValue();
                 if (!quantityValue.getValue().equals(Double.NaN)) {
-                    String value = Double.toString(quantityValue.getValue().doubleValue());
+                    String value = Double.toString(quantityValue.getValue());
                     addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
                 }
             } else if (observationValue.getValue() instanceof CountValue) {
                 CountValue countValue = (CountValue) singleObservationValue.getValue();
                 if (countValue.getValue() != null) {
-                    String value = Integer.toString(countValue.getValue().intValue());
+                    String value = Integer.toString(countValue.getValue());
                     addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time, value);
                 }
             }
@@ -377,7 +360,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                     if (!quantityValue.getValue().equals(Double.NaN)) {
                         timeValuePair.getTime();
                         String time = getTimeString(timeValuePair.getTime());
-                        String value = Double.toString(quantityValue.getValue().doubleValue());
+                        String value = Double.toString(quantityValue.getValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
                                 value);
                     }
@@ -385,7 +368,7 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
                     CountValue countValue = (CountValue) timeValuePair.getValue();
                     if (countValue.getValue() != null) {
                         String time = getTimeString(timeValuePair.getTime());
-                        String value = Integer.toString(countValue.getValue().intValue());
+                        String value = Integer.toString(countValue.getValue());
                         addValuesToMeasurementTVP(measurementTimeseries.addNewPoint().addNewMeasurementTVP(), time,
                                 value);
                     }
@@ -405,5 +388,11 @@ public class WmlTVPEncoderv20 extends AbstractWmlEncoderv20 {
 
         xbMetaComponent.set(xbDefMeasureMetaComponent);
         return measurementTimeseriesDoc;
+    }
+    @SuppressWarnings("unchecked")
+    private static Set<EncoderKey> createEncoderKeys() {
+        return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
+                WaterMLConstants.NS_WML_20, GetObservationResponse.class, OmObservation.class,
+                                                                          SingleObservationValue.class, MultiObservationValues.class));
     }
 }

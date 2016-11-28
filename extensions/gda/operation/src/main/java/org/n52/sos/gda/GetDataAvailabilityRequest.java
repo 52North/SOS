@@ -31,10 +31,10 @@ package org.n52.sos.gda;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.util.CollectionHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * A request to obtain the {@code DataAvailabilites} of the SOS.
@@ -43,21 +43,24 @@ import org.n52.iceland.util.StringHelper;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAvailabilityResponse> {
+public class GetDataAvailabilityRequest extends AbstractServiceRequest {
 
-    private List<String> procedures = new LinkedList<String>();
-
-    private List<String> observedProperties = new LinkedList<String>();
-
-    private List<String> featuresOfInterest = new LinkedList<String>();
-
-    private List<String> offerings = new LinkedList<String>();
-
+    private List<String> procedures = new LinkedList<>();
+    private List<String> observedProperties = new LinkedList<>();
+    private List<String> featuresOfInterest = new LinkedList<>();
+    private List<String> offerings = new LinkedList<>();
     private String namspace = GetDataAvailabilityConstants.NS_GDA;
 
-    @Override
-    public String getOperationName() {
-        return GetDataAvailabilityConstants.OPERATION_NAME;
+    public GetDataAvailabilityRequest() {
+        super(null, null, GetDataAvailabilityConstants.OPERATION_NAME);
+    }
+
+    public GetDataAvailabilityRequest(String service, String version) {
+        super(service, version, GetDataAvailabilityConstants.OPERATION_NAME);
+    }
+
+    public GetDataAvailabilityRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -92,7 +95,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * Add a {@code procedure} to the request.
      *
      * @param procedure
-     *            the {@code procedure}
+     *                  the {@code procedure}
      */
     public void addProcedure(String procedure) {
         this.procedures.add(procedure);
@@ -102,7 +105,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * Add a {@code observedProperty} to the request.
      *
      * @param observedProperty
-     *            the {@code observedProperty}
+     *                         the {@code observedProperty}
      */
     public void addObservedProperty(String observedProperty) {
         this.observedProperties.add(observedProperty);
@@ -112,7 +115,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * Add a {@code featureOfInterest} to the request.
      *
      * @param featureOfInterest
-     *            the {@code featureOfInterest}
+     *                          the {@code featureOfInterest}
      */
     public void addFeatureOfInterest(String featureOfInterest) {
         this.featuresOfInterest.add(featureOfInterest);
@@ -126,7 +129,7 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
      * Add a {@code offering} to the request.
      *
      * @param offering
-     *            the {@code offering}
+     *                 the {@code offering}
      */
     public void addOffering(String offering) {
         this.offerings.add(offering);
@@ -168,13 +171,8 @@ public class GetDataAvailabilityRequest extends AbstractServiceRequest<GetDataAv
         return CollectionHelper.isNotEmpty(getOfferings());
     }
 
-    @Override
-    public GetDataAvailabilityResponse getResponse() throws OwsExceptionReport {
-        return (GetDataAvailabilityResponse) new GetDataAvailabilityResponse().set(this);
-    }
-
     public void setNamespace(String namspace) {
-        if (StringHelper.isNotEmpty(namspace)) {
+        if (!Strings.isNullOrEmpty(namspace)) {
             this.namspace = namspace;
         }
     }

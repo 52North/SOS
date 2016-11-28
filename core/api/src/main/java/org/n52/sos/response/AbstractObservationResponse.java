@@ -33,8 +33,9 @@ import java.util.List;
 
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservation;
+
+import com.google.common.base.Strings;
 
 /**
  * TODO JavaDoc
@@ -51,6 +52,17 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
     private String resultModel;
 
     private boolean mergeObservation = false;
+
+    public AbstractObservationResponse() {
+    }
+
+    public AbstractObservationResponse(String service, String version) {
+        super(service, version);
+    }
+
+    public AbstractObservationResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
@@ -81,7 +93,7 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
 
     @Override
     public boolean isSetResponseFormat() {
-        return StringHelper.isNotEmpty(getResponseFormat());
+        return !Strings.isNullOrEmpty(getResponseFormat());
     }
 
     public void setResultModel(final String resultModel) {

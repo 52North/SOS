@@ -30,8 +30,9 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
@@ -66,7 +67,7 @@ public class Unit implements Serializable {
     }
 
     public boolean isSetUnit() {
-        return StringHelper.isNotEmpty(getUnit());
+        return !Strings.isNullOrEmpty(getUnit());
     }
 
 }

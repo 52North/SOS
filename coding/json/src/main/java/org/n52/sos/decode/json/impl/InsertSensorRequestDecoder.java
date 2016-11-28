@@ -43,21 +43,18 @@ import java.util.List;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.request.InsertSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -84,7 +81,7 @@ public class InsertSensorRequestDecoder extends AbstractSosRequestDecoder<Insert
     }
 
     @Override
-    protected InsertSensorRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected InsertSensorRequest decodeRequest(JsonNode node) throws DecodingException {
         final InsertSensorRequest r = new InsertSensorRequest();
         final SosInsertionMetadata meta = new SosInsertionMetadata();
         meta.setFeatureOfInterestTypes(parseStringOrStringList(node.path(FEATURE_OF_INTEREST_TYPE)));
@@ -98,7 +95,7 @@ public class InsertSensorRequestDecoder extends AbstractSosRequestDecoder<Insert
         return r;
     }
 
-    protected List<SwesFeatureRelationship> parseFeatureRelationships(JsonNode node) throws OwsExceptionReport {
+    protected List<SwesFeatureRelationship> parseFeatureRelationships(JsonNode node) throws DecodingException {
         if (node.isArray()) {
             List<SwesFeatureRelationship> list = Lists.newArrayListWithExpectedSize(node.size());
             for (JsonNode n : node) {
@@ -114,27 +111,27 @@ public class InsertSensorRequestDecoder extends AbstractSosRequestDecoder<Insert
         }
     }
 
-    protected SwesFeatureRelationship parseFeatureRelationship(JsonNode node) throws OwsExceptionReport {
+    protected SwesFeatureRelationship parseFeatureRelationship(JsonNode node) throws DecodingException {
         return new SwesFeatureRelationship(node.path(ROLE).textValue(), featureDecoder.decodeJSON(node.path(TARGET),
                 false));
     }
 
-    private SosProcedureDescription parseProcedureDescription(JsonNode path, String pdf) throws OwsExceptionReport {
+    private SosProcedureDescription<?> parseProcedureDescription(JsonNode path, String pdf) throws DecodingException {
         try {
             final XmlObject xb = XmlObject.Factory.parse(path.textValue());
             Decoder<?, XmlObject> decoder = getProcedureDescriptionDecoder(pdf, xb);
             if (decoder == null) {
-                throw new InvalidParameterValueException().at(PROCEDURE_DESCRIPTION_FORMAT).withMessage(
-                        "The requested %s is not supported!", PROCEDURE_DESCRIPTION_FORMAT);
+                throw new DecodingException(PROCEDURE_DESCRIPTION_FORMAT,
+                                            "The requested %s is not supported!",
+                                            PROCEDURE_DESCRIPTION_FORMAT);
             }
             return (SosProcedureDescription) decoder.decode(xb);
         } catch (final XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                    "Error while parsing procedure description of InsertSensor request!");
+            throw new DecodingException("Error while parsing procedure description of InsertSensor request!", xmle);
         }
     }
 
     protected Decoder<?, XmlObject> getProcedureDescriptionDecoder(String pdf, XmlObject xb) {
-        return CodingRepository.getInstance().getDecoder(new XmlNamespaceDecoderKey(pdf, xb.getClass()));
+        return getDecoder(new XmlNamespaceDecoderKey(pdf, xb.getClass()));
     }
 }

@@ -30,8 +30,9 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescriptionXml;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
@@ -55,6 +56,6 @@ public abstract class DescriptionXmlEntity extends AbstractIdentifierNameDescrip
 
     @Override
     public boolean isSetDescriptionXml() {
-        return StringHelper.isNotEmpty(descriptionXml);
+        return !Strings.isNullOrEmpty(descriptionXml);
     }
 }

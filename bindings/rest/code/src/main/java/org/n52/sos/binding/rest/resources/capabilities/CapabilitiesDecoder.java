@@ -33,9 +33,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.util.http.HTTPMethods;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;

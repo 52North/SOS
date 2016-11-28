@@ -55,8 +55,8 @@ public class SosRequestEventResolver implements StatisticsServiceEventResolver<R
         if (event == null || event.getRequest() == null) {
             return null;
         }
-        AbstractServiceRequest<?> request = event.getRequest();
-        StatisticsServiceEventHandler<AbstractServiceRequest<?>> handler = EventHandlerFinder.findHandler(request, handlers);
+        AbstractServiceRequest request = event.getRequest();
+        StatisticsServiceEventHandler<AbstractServiceRequest> handler = EventHandlerFinder.findHandler(request, handlers);
 
         return handler.resolveAsMap(request);
 

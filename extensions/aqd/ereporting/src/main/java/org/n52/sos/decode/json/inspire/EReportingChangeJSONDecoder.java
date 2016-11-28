@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.util.AQDJSONConstants;
 
@@ -43,7 +43,7 @@ public class EReportingChangeJSONDecoder extends AbstractJSONDecoder<EReportingC
 
     @Override
     public EReportingChange decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         boolean changed = node.path(AQDJSONConstants.CHANGED).asBoolean();
         String description = node.path(AQDJSONConstants.DESCRIPTION).textValue();
         return new EReportingChange(changed, description);

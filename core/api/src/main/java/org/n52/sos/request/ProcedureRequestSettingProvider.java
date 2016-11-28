@@ -30,7 +30,7 @@ package org.n52.sos.request;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Constructable;
 
 /**
  * ProcedureRequestSettings for procedure request/response handling

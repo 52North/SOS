@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
@@ -39,17 +39,24 @@ public class InsertResultTemplateResponse extends AbstractServiceResponse {
 
     private String acceptedTemplate;
 
+    public InsertResultTemplateResponse() {
+        super(null, null, Sos2Constants.Operations.InsertResultTemplate.name());
+    }
+
+    public InsertResultTemplateResponse(String service, String version) {
+        super(service, version, Sos2Constants.Operations.InsertResultTemplate.name());
+    }
+
+    public InsertResultTemplateResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
     public String getAcceptedTemplate() {
         return acceptedTemplate;
     }
 
     public void setAcceptedTemplate(String acceptedTemplate) {
         this.acceptedTemplate = acceptedTemplate;
-    }
-
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.InsertResultTemplate.name();
     }
 
 }

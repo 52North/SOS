@@ -28,7 +28,7 @@
  */
 package org.n52.sos.netcdf;
 
-import org.n52.iceland.util.http.MediaType;
+import org.n52.janmayen.http.MediaType;
 
 import com.google.common.collect.ImmutableListMultimap;
 

@@ -34,22 +34,21 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.request.ResponseFormat;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.response.StreamingDataResponse;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * {@link ResponseWriter} for {@link AbstractServiceResponse}
@@ -80,7 +79,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
 
     @Override
     public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy)
-            throws IOException, OwsExceptionReport {
+            throws IOException, EncodingException {
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
         if (encoder != null) {
             if (isStreaming(asr)) {
@@ -122,21 +121,9 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
 
         Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
-                    getContentType())));
+            throw new RuntimeException(new NoEncoderForKeyException(key));
         }
         return encoder;
-    }
-
-     /**
-     * Getter for encoder, encapsulates the instance call
-     *
-     * @param key
-     *            Encoder key
-     * @return Matching encoder
-     */
-    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
-        return this.encoderRepository.getEncoder(key);
     }
 
     private MediaType getEncodedContentType(AbstractServiceResponse asr) {

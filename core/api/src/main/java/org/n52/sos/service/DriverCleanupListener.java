@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Destroyable;
+import org.n52.janmayen.lifecycle.Destroyable;
 import org.n52.iceland.service.ServiceSettings;
 
 import com.google.common.collect.Sets;

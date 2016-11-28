@@ -35,73 +35,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlBoolean;
-import org.apache.xmlbeans.XmlInteger;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.apache.xmlbeans.XmlString;
-import org.isotc211.x2005.gmd.AbstractDQElementDocument;
-import org.isotc211.x2005.gmd.DQElementPropertyType;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.convert.Converter;
-import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.convert.ConverterRepository;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.quality.OmResultQuality;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.service.profile.Profile;
-import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.GmlHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-
 import net.opengis.om.x20.NamedValueType;
 import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationPropertyType;
@@ -109,11 +42,78 @@ import net.opengis.om.x20.OMObservationType;
 import net.opengis.om.x20.OMProcessPropertyType;
 import net.opengis.om.x20.TimeObjectPropertyType;
 
+import org.apache.xmlbeans.XmlBoolean;
+import org.apache.xmlbeans.XmlInteger;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.apache.xmlbeans.XmlString;
+import org.isotc211.x2005.gmd.AbstractDQElementDocument;
+import org.isotc211.x2005.gmd.DQElementPropertyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.encode.XmlEncoderKey;
+import org.n52.iceland.convert.Converter;
+import org.n52.iceland.convert.ConverterException;
+import org.n52.iceland.convert.ConverterRepository;
+import org.n52.iceland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.quality.OmResultQuality;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.w3c.W3CConstants;
+import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.ObservationEncoder;
+import org.n52.sos.encode.streaming.StreamingEncoder;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.service.profile.Profile;
+import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.sos.util.GmlHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+
 
 public abstract class AbstractOmEncoderv20
-        extends AbstractXmlEncoder<Object>
+        extends AbstractXmlEncoder<XmlObject, Object>
         implements ObservationEncoder<XmlObject, Object>,
                    StreamingEncoder<XmlObject, Object> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractOmEncoderv20.class);
 
     /**
      * Method to create the om:result element content
@@ -121,12 +121,12 @@ public abstract class AbstractOmEncoderv20
      * @param sosObservation
      *            SosObservation to be encoded
      * @return XML encoded result object, e.g a gml:MeasureType
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             if an error occurs
      */
-    protected abstract XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport;
+    protected abstract XmlObject createResult(OmObservation sosObservation) throws EncodingException;
 
-    protected abstract XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport;
+    protected abstract XmlObject encodeResult(ObservationValue<?> observationValue) throws EncodingException;
 
     /**
      * Method to add the observation type to the om:Observation. Subclasses
@@ -167,8 +167,7 @@ public abstract class AbstractOmEncoderv20
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
-            UnsupportedEncoderInputException {
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
         if (element instanceof OmObservation) {
             encodedObject = encodeOmObservation((OmObservation) element, additionalValues);
@@ -188,13 +187,13 @@ public abstract class AbstractOmEncoderv20
     }
 
     @Override
-    public void encode(Object objectToEncode, OutputStream outputStream) throws OwsExceptionReport {
+    public void encode(Object objectToEncode, OutputStream outputStream) throws EncodingException {
         encode(objectToEncode, outputStream, new EncodingValues());
     }
 
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         try {
             XmlOptions xmlOptions = getXmlOptions();
             if (encodingValues.isEmbedded()) {
@@ -203,7 +202,7 @@ public abstract class AbstractOmEncoderv20
             // writeIndent(encodingValues.getIndent(), outputStream);
             encode(objectToEncode, encodingValues.getAdditionalValues()).save(outputStream, xmlOptions);
         } catch (IOException ioe) {
-            throw new NoApplicableCodeException().causedBy(ioe).withMessage("Error while writing element to stream!");
+            throw new EncodingException("Error while writing element to stream!", ioe);
         } finally {
             if (encodingValues.isEmbedded()) {
                 getXmlOptions().remove(XmlOptions.SAVE_NO_XML_DECL);
@@ -224,11 +223,11 @@ public abstract class AbstractOmEncoderv20
      * @param additionalValues
      *            Additional values which are used during the encoding
      * @return XmlBeans representation of O&M 2.0 observation
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     protected XmlObject encodeOmObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         OMObservationType xbObservation = createOmObservationType();
 
         if (!sosObservation.isSetObservationID()) {
@@ -286,7 +285,7 @@ public abstract class AbstractOmEncoderv20
         }
     }
 
-    private void setResult(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setResult(OmObservation observation, OMObservationType xb) throws EncodingException {
         XmlObject result = createResult(observation);
         if (result != null) {
              xb.addNewResult().set(result);
@@ -295,13 +294,13 @@ public abstract class AbstractOmEncoderv20
         }
     }
 
-    private void setFeatureOfInterest(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setFeatureOfInterest(OmObservation observation, OMObservationType xb) throws EncodingException {
         AbstractFeature foi = observation.getObservationConstellation().getFeatureOfInterest();
         XmlObject xbFoi = encodeFeatureOfInterest(foi);
         xb.addNewFeatureOfInterest().set(xbFoi);
     }
 
-    private void setObservationIdentifier(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setObservationIdentifier(OmObservation observation, OMObservationType xb) throws EncodingException {
         // set observation identifier if available
         if (observation.isSetIdentifier()) {
             XmlObject xbId = encodeGML(observation.getIdentifierCodeWithAuthority());
@@ -314,7 +313,7 @@ public abstract class AbstractOmEncoderv20
         addObservationType(xb, observation.getObservationConstellation().getObservationType());
     }
 
-    private void setPhenomenonTime(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setPhenomenonTime(OmObservation observation, OMObservationType xb) throws EncodingException {
         // set validTime
         Time phenomenonTime = observation.getPhenomenonTime();
         if (phenomenonTime.getGmlId() == null) {
@@ -324,18 +323,17 @@ public abstract class AbstractOmEncoderv20
     }
 
     private void setResultTime(OmObservation observation, OMObservationType xb)
-            throws OwsExceptionReport {
+            throws EncodingException {
         // set resultTime
         addResultTime(xb, observation);
     }
 
-    private void setProcedure(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setProcedure(OmObservation observation, OMObservationType xb) throws EncodingException {
         // set procedure
-        addProcedure(xb.addNewProcedure(), observation
-                .getObservationConstellation().getProcedure());
+        addProcedure(xb.addNewProcedure(), observation.getObservationConstellation().getProcedure());
     }
 
-    private void setParameter(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setParameter(OmObservation observation, OMObservationType xb) throws EncodingException {
         // set parameter
         if (observation.isSetParameter()) {
             addParameter(xb, observation.getParameter());
@@ -353,7 +351,7 @@ public abstract class AbstractOmEncoderv20
         }
     }
 
-    private XmlObject encodeProcedureDescription(SosProcedureDescription procedureDescription) throws OwsExceptionReport {
+    private XmlObject encodeProcedureDescription(SosProcedureDescription<?> procedureDescription) throws EncodingException {
         OMProcessPropertyType procedure = OMProcessPropertyType.Factory.newInstance();
         addProcedure(procedure, procedureDescription);
         return procedure;
@@ -367,35 +365,34 @@ public abstract class AbstractOmEncoderv20
      *            XML process type
      * @param procedureDescription
      *            SosProcedureDescription to be encoded
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private void addProcedure(OMProcessPropertyType procedure, SosProcedureDescription procedureDescription)
-            throws OwsExceptionReport {
+    private void addProcedure(OMProcessPropertyType procedure, SosProcedureDescription<?> procedureDescription)
+            throws EncodingException {
         if (checkEncodProcedureForEncoderKeys()) {
-            SosProcedureDescription procedureToEncode = null;
+            SosProcedureDescription<?> procedureToEncode = null;
             // should the procedure be converted
             if (convertEncodedProcedure()) {
-                Converter<SosProcedureDescription, SosProcedureDescription> converter =
+                Converter<SosProcedureDescription<?>, SosProcedureDescription<?>> converter =
                         ConverterRepository.getInstance().getConverter(procedureDescription.getDescriptionFormat(),
                                                                        getDefaultProcedureEncodingNamspace());
                 if (converter != null) {
                     try {
                         procedureToEncode = converter.convert(procedureDescription);
                     } catch (ConverterException e) {
-                        throw new NoApplicableCodeException().causedBy(e).withMessage(
-                                "Error while converting procedureDescription!");
+                        throw new EncodingException("Error while converting procedureDescription!", e);
                     }
                 } else {
-                    throw new NoApplicableCodeException().withMessage("No converter (%s -> %s) found!",
-                                                                      procedureDescription.getDescriptionFormat(), getDefaultProcedureEncodingNamspace());
+                    throw new EncodingException("No converter (%s -> %s) found!", new Object[] {
+                        procedureDescription.getDescriptionFormat(), getDefaultProcedureEncodingNamspace() });
                 }
             } else {
                 procedureToEncode = procedureDescription;
             }
             // encode procedure or add reference
             XmlObject encodedProcedure =
-                    CodingHelper.encodeObjectToXml(procedureToEncode.getDescriptionFormat(), procedureToEncode);
+                    encodeObjectToXml(procedureToEncode.getDescriptionFormat(), procedureToEncode);
             if (encodedProcedure != null) {
                 procedure.set(encodedProcedure);
             } else {
@@ -435,10 +432,10 @@ public abstract class AbstractOmEncoderv20
      *            XML time object from XML observation object
      * @param time
      *            SOS phenomenon time representation
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private void addPhenomenonTime(TimeObjectPropertyType timeObjectPropertyType, Time time) throws OwsExceptionReport {
+    private void addPhenomenonTime(TimeObjectPropertyType timeObjectPropertyType, Time time) throws EncodingException {
         XmlObject xmlObject = encodeGML(time);
         XmlObject substitution =
                 timeObjectPropertyType.addNewAbstractTimeObject().substitute(
@@ -453,10 +450,10 @@ public abstract class AbstractOmEncoderv20
      *            XML observation object
      * @param sosObservation
      *            SOS observation object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs.
      */
-    private void addResultTime(OMObservationType xbObs, OmObservation sosObservation) throws OwsExceptionReport {
+    private void addResultTime(OMObservationType xbObs, OmObservation sosObservation) throws EncodingException {
          TimeInstant resultTime = sosObservation.getResultTime();
          Time phenomenonTime = sosObservation.getPhenomenonTime();
          // get result time from SOS result time representation
@@ -480,7 +477,7 @@ public abstract class AbstractOmEncoderv20
      }
 
 
-    private void setValidTime(OmObservation observation, OMObservationType xb) throws OwsExceptionReport {
+    private void setValidTime(OmObservation observation, OMObservationType xb) throws EncodingException {
         Time validTime = observation.getValidTime();
         if (validTime == null) {
             return;
@@ -498,10 +495,10 @@ public abstract class AbstractOmEncoderv20
      *            XML observation object
      * @param time
      *            SOS result time representation
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs.
      */
-    private void addResultTime(OMObservationType xbObs, TimeInstant time) throws OwsExceptionReport {
+    private void addResultTime(OMObservationType xbObs, TimeInstant time) throws EncodingException {
          XmlObject xmlObject = encodeGML(time);
          xbObs.addNewResultTime().addNewTimeInstant().set(xmlObject);
          XmlObject substitution =
@@ -511,7 +508,7 @@ public abstract class AbstractOmEncoderv20
      }
 
     private void addParameter(OMObservationType xbObservation, Collection<NamedValue<?>> parameter)
-            throws OwsExceptionReport {
+            throws EncodingException {
         for (NamedValue<?> namedValue : parameter) {
             xbObservation.addNewParameter().setNamedValue(createNamedValue(namedValue));
         }
@@ -523,16 +520,15 @@ public abstract class AbstractOmEncoderv20
      * @param feature
      *            SOS feature representation
      * @return Encoded featureOfInterest
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs.
      */
-    private XmlObject encodeFeatureOfInterest(AbstractFeature feature) throws OwsExceptionReport {
-        Map<HelperValues, String> additionalValues =
-                new EnumMap<SosConstants.HelperValues, String>(HelperValues.class);
+    private XmlObject encodeFeatureOfInterest(AbstractFeature feature) throws EncodingException {
+        Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
         Profile activeProfile = ProfileHandler.getInstance().getActiveProfile();
         additionalValues.put(HelperValues.ENCODE,
                 Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
-        if (StringHelper.isNotEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
+        if (!Strings.isNullOrEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
             additionalValues.put(HelperValues.ENCODE_NAMESPACE,
                     activeProfile.getEncodingNamespaceForFeatureOfInterest());
         } else {
@@ -547,15 +543,15 @@ public abstract class AbstractOmEncoderv20
      * @param sosNamedValue
      *            SOS NamedValue
      * @return XmlBeans object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs.
      */
-   protected NamedValueType createNamedValue(NamedValue<?> sosNamedValue) throws OwsExceptionReport {
+   protected NamedValueType createNamedValue(NamedValue<?> sosNamedValue) throws EncodingException {
         // encode value (any)
         XmlObject namedValuePropertyValue = getNamedValueValue(sosNamedValue.getValue());
         if (namedValuePropertyValue != null) {
             NamedValueType xbNamedValue =
-                    NamedValueType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                    NamedValueType.Factory.newInstance(getXmlOptions());
             // encode gml:ReferenceType
             XmlObject encodeObjectToXml = encodeGML(sosNamedValue.getName());
             xbNamedValue.addNewName().set(encodeObjectToXml);
@@ -575,7 +571,7 @@ public abstract class AbstractOmEncoderv20
      * @throws OwsExceptionReport
      *             If an error occurs.
      */
-    private XmlObject getNamedValueValue(Value<?> value) throws OwsExceptionReport {
+    private XmlObject getNamedValueValue(Value<?> value) throws EncodingException {
         if (value.isSetValue()) {
             return value.accept(new NamedValueValueEncoder());
         }
@@ -583,7 +579,7 @@ public abstract class AbstractOmEncoderv20
     }
 
     private void setResultQualities(OMObservationType xbObservation, OmObservation sosObservation)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (sosObservation.isSetResultQuality()) {
             encodeResultQualities(xbObservation, sosObservation.getResultQuality());
         } else if (sosObservation.getValue() instanceof SingleObservationValue) {
@@ -593,9 +589,9 @@ public abstract class AbstractOmEncoderv20
     }
 
     private void encodeResultQualities(OMObservationType xbObservation, Set<OmResultQuality> resultQuality)
-            throws OwsExceptionReport {
+            throws EncodingException {
         for (OmResultQuality quality : resultQuality) {
-            AbstractDQElementDocument encodedQuality = (AbstractDQElementDocument) CodingHelper.encodeObjectToXml(null,
+            AbstractDQElementDocument encodedQuality = (AbstractDQElementDocument) encodeObjectToXml(null,
                     quality, ImmutableMap.of(HelperValues.DOCUMENT, "true"));
             DQElementPropertyType addNewResultQuality = xbObservation.addNewResultQuality();
             addNewResultQuality.setAbstractDQElement(encodedQuality.getAbstractDQElement());
@@ -604,9 +600,6 @@ public abstract class AbstractOmEncoderv20
         }
     }
 
-    private static OMObservationType createOmObservationType() {
-        return OMObservationType.Factory.newInstance();
-    }
 
     private OMObservationPropertyType createObservationPropertyType() {
         return OMObservationPropertyType.Factory.newInstance(getXmlOptions());
@@ -616,36 +609,38 @@ public abstract class AbstractOmEncoderv20
         return OMObservationDocument.Factory.newInstance(getXmlOptions());
     }
 
-    protected static XmlObject encodeXLINK(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(W3CConstants.NS_XLINK, o);
+    protected XmlObject encodeXLINK(Object o) throws EncodingException {
+        return encodeObjectToXml(W3CConstants.NS_XLINK, o);
     }
 
-    protected static XmlObject encodeXLINK(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(W3CConstants.NS_XLINK, o, helperValues);
+    protected XmlObject encodeXLINK(Object o, Map<HelperValues, String> helperValues) throws EncodingException {
+        return encodeObjectToXml(W3CConstants.NS_XLINK, o, helperValues);
     }
 
-    protected static XmlObject encodeGML(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o);
+    protected XmlObject encodeGML(Object o) throws EncodingException {
+        return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    protected static XmlObject encodeGML(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
+    protected XmlObject encodeGML(Object o, Map<HelperValues, String> helperValues) throws EncodingException {
+        return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
 
-    protected static XmlObject encodeSweCommon(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
+    protected XmlObject encodeSweCommon(Object o) throws EncodingException {
+        return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected static XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
+    protected XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws EncodingException {
+        return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
+    }
+    private static OMObservationType createOmObservationType() {
+        return OMObservationType.Factory.newInstance();
     }
 
     private static String generateObservationGMLId() {
         return "o_" + JavaHelper.generateID(Double.toString(System.currentTimeMillis() * Math.random()));
     }
 
-    private static class NamedValueValueEncoder implements ValueVisitor<XmlObject> {
-        private static final Logger LOG =  LoggerFactory.getLogger(NamedValueValueEncoder.class);
+    private class NamedValueValueEncoder implements ValueVisitor<XmlObject, EncodingException> {
 
         @Override
         public XmlObject visit(BooleanValue value) {
@@ -655,7 +650,7 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(CategoryValue value) throws OwsExceptionReport {
+        public XmlObject visit(CategoryValue value) throws EncodingException {
             return encodeGML(value, createHelperValues(value));
         }
 
@@ -673,13 +668,13 @@ public abstract class AbstractOmEncoderv20
 
         @Override
         public XmlObject visit(GeometryValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return encodeGML(value, createHelperValues(value));
         }
 
         @Override
         public XmlObject visit(HrefAttributeValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return encodeXLINK(value.getValue(), createHelperValues(value));
         }
 
@@ -689,13 +684,13 @@ public abstract class AbstractOmEncoderv20
         }
 
         @Override
-        public XmlObject visit(QuantityValue value) throws OwsExceptionReport {
+        public XmlObject visit(QuantityValue value) throws EncodingException {
             return encodeGML(value, createHelperValues(value));
         }
 
         @Override
         public XmlObject visit(ReferenceValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return encodeGML(value.getValue(), createHelperValues(value));
         }
 
@@ -722,13 +717,13 @@ public abstract class AbstractOmEncoderv20
         }
 
         private Map<HelperValues, String> createHelperValues(Value<?> value) {
-            Map<SosConstants.HelperValues, String> helperValues = Maps.newHashMap();
+            Map<HelperValues, String> helperValues = Maps.newHashMap();
             helperValues.put(HelperValues.PROPERTY_TYPE, null);
             helperValues.put(HelperValues.GMLID, JavaHelper.generateID(value.toString()));
             return helperValues;
         }
 
-        private static XmlObject defaultValue(Value<?> value) {
+        private XmlObject defaultValue(Value<?> value) {
             LOG.warn("Can not encode named value value {}", value);
             return null;
         }

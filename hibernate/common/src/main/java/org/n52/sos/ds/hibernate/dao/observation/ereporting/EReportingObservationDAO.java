@@ -39,12 +39,19 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Subqueries;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OptionNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
+
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdConstants.AssessmentType;
 import org.n52.sos.aqd.AqdHelper;
@@ -58,7 +65,6 @@ import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -66,12 +72,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.base.Strings;
@@ -95,7 +95,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<SeriesObservation<?>> getSeriesObservationForSosIndeterminateTimeFilter(Series series,
-            List<String> offerings, ExtendedIndeterminateTime sosIndeterminateTime, Session session) {
+            List<String> offerings, IndeterminateValue sosIndeterminateTime, Session session) {
         return getSeriesObservationCriteriaForSosIndeterminateTimeFilter(series, offerings, sosIndeterminateTime,
                 session).list();
     }
@@ -114,7 +114,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
 
     @Override
     public List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
-            Collection<String> features, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            Collection<String> features, IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
@@ -122,7 +122,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     @SuppressWarnings("unchecked")
     @Override
     protected List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
-            Collection<String> features, Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime,
+            Collection<String> features, Criterion filterCriterion, IndeterminateValue sosIndeterminateTime,
             Session session) throws HibernateException, OwsExceptionReport {
         return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session)
                 .list();
@@ -131,7 +131,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
-            ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
     }
 

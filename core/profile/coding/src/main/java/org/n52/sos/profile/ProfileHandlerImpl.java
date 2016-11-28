@@ -43,9 +43,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.service.profile.DefaultProfile;
 import org.n52.sos.service.profile.Profile;

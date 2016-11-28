@@ -31,8 +31,8 @@ package org.n52.sos.ext.deleteobservation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.n52.iceland.ogc.sos.SosConstants.SOS;
-import static org.n52.iceland.util.CollectionHelper.union;
+import static org.n52.shetland.ogc.sos.SosConstants.SOS;
+import static org.n52.shetland.util.CollectionHelper.union;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.CONFORMANCE_CLASSES;
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.NS_SOSDO_1_0;
 import static org.n52.sos.util.CodingHelper.decoderKeysForElements;
@@ -40,27 +40,18 @@ import static org.n52.sos.util.CodingHelper.xmlDecoderKeysForOperation;
 
 import java.util.Set;
 
-
-
-
-
-
 import net.opengis.sosdo.x10.DeleteObservationDocument;
 
-
-
-
-
-
 import org.apache.xmlbeans.XmlObject;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -86,15 +77,6 @@ public class DeleteObservationDecoderTest {
 
     private static String observationId = "test_obs_id";
 
-    @SuppressWarnings("unchecked")
-    @BeforeClass
-    public static void initFixtures() {
-        incorrectXmlObject = XmlObject.Factory.newInstance();
-        dkt =
-                union(decoderKeysForElements(NS_SOSDO_1_0, DeleteObservationDocument.class),
-                        xmlDecoderKeysForOperation(SOS, Sos2Constants.SERVICEVERSION,
-                                DeleteObservationConstants.Operations.DeleteObservation));
-    }
 
     @Before
     public void initInstance() {
@@ -131,17 +113,17 @@ public class DeleteObservationDecoderTest {
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void decodeNullThrowsOwsExceptionReport() throws OwsExceptionReport {
+    public void decodeNullThrowsOwsExceptionReport() throws DecodingException {
         instance.decode(null);
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void decodingIncorrectXmlObjectThrowsOwsExceptionReport() throws OwsExceptionReport {
+    public void decodingIncorrectXmlObjectThrowsOwsExceptionReport() throws DecodingException {
         instance.decode(incorrectXmlObject);
     }
 
     @Test
-    public void decodingCorrectXmlObjectReturnsCorrectServiceRequest() throws OwsExceptionReport {
+    public void decodingCorrectXmlObjectReturnsCorrectServiceRequest() throws DecodingException {
         String className = DeleteObservationRequest.class.getName();
         assertNotNull("Decoding of correct XmlObject returned null", instance.decode(correctXmlObject));
         assertEquals("Class of Result ", className, instance.decode(correctXmlObject).getClass().getName());
@@ -151,9 +133,19 @@ public class DeleteObservationDecoderTest {
 
     @Test(expected = OwsExceptionReport.class)
     public void should_throw_OwsExceptionReport_when_receving_invalid_DeleteObservationDocument()
-            throws OwsExceptionReport {
+            throws DecodingException {
         correctXmlObject = DeleteObservationDocument.Factory.newInstance();
         instance.decode(correctXmlObject);
+    }
+
+    @SuppressWarnings("unchecked")
+    @BeforeClass
+    public static void initFixtures() {
+        incorrectXmlObject = XmlObject.Factory.newInstance();
+        dkt =
+                union(decoderKeysForElements(NS_SOSDO_1_0, DeleteObservationDocument.class),
+                      xmlDecoderKeysForOperation(SOS, Sos2Constants.SERVICEVERSION,
+                                                        DeleteObservationConstants.Operations.DeleteObservation));
     }
 
 }

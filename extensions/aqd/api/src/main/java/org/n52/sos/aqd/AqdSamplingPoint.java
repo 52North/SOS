@@ -40,8 +40,6 @@ import org.n52.sos.ef.EfEnvironmentalMonitoringFacility;
  */
 public class AqdSamplingPoint extends EfEnvironmentalMonitoringFacility {
 
-    private static final long serialVersionUID = -5679922725853829576L;
-
     private AssessmentType assessmentType;
 
     private AqdStation station;

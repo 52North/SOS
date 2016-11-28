@@ -28,9 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.entities.ereporting;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingQualityData;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
+
+import com.google.common.base.Strings;
 
 public class EReportingQuality implements HasPrimaryObservation, EReportingQualityData {
 
@@ -110,7 +111,7 @@ public class EReportingQuality implements HasPrimaryObservation, EReportingQuali
 
     @Override
     public boolean isSetPrimaryObservation() {
-        return StringHelper.isNotEmpty(getPrimaryObservation());
+        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
     @Override

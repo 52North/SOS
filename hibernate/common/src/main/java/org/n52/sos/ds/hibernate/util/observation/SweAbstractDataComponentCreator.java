@@ -32,11 +32,22 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeType;
+
 import org.n52.oxf.xml.NcNameResolver;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
@@ -51,18 +62,9 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * {@code ValuedObservationVisitor} to create {@link SweAbstractDataComponent}
@@ -89,7 +91,7 @@ public class SweAbstractDataComponentCreator
     @Override
     public SweQuantity visit(NumericValuedObservation o) throws CodedException {
         SweQuantity component = new SweQuantity();
-        component.setValue(o.getValue().doubleValue());
+        component.setValue(o.getValue());
         return setCommonValues(component, o);
     }
 
@@ -142,8 +144,12 @@ public class SweAbstractDataComponentCreator
     @Override
     public SweDataArray visit(SweDataArrayValuedObservation o)
             throws OwsExceptionReport {
-        XmlObject xml = XmlHelper.parseXmlString(o.getValue());
-        return (SweDataArray) CodingHelper.decodeXmlElement(xml);
+        try {
+            XmlObject xml = XmlHelper.parseXmlString(o.getValue());
+            return (SweDataArray) CodingHelper.decodeXmlElement(xml);
+        } catch (DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
+        }
     }
 
     protected <T extends SweAbstractDataComponent> T setCommonValues(

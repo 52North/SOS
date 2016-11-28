@@ -30,25 +30,17 @@ package org.n52.sos.request;
 
 import java.util.Collection;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.response.DummyResponse;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
 
 /**
  * SOS RegisterSensor request
  *
  * @since 4.0.0
  */
-public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractServiceResponse> {
-
-    /**
-     * RegisterSensor operation name
-     */
-    private final String operationName = Sos1Constants.Operations.RegisterSensor.name();
+public class SosRegisterSensorRequest extends AbstractServiceRequest {
 
     /**
      * SOS Sensor system
@@ -73,18 +65,6 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
     /**
      * constructor
      *
-     * @param system
-     *            SOS sensor system
-     * @param sosComponents
-     *            observableProperties
-     * @param sensorDescription
-     *            Sensor description
-     * @param featuresOfInterest
-     *            featuresOfInterst
-     */
-    /**
-     * constructor
-     *
      * @param observableProperties
      *            Observable properties
      * @param sensorDescription
@@ -92,8 +72,10 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
      * @param featuresOfInterest
      *            FeatureOfInterest
      */
-    public SosRegisterSensorRequest(Collection<AbstractPhenomenon> observableProperties, String sensorDescription,
-            Collection<AbstractFeature> featuresOfInterest) {
+    public SosRegisterSensorRequest(Collection<AbstractPhenomenon> observableProperties,
+                                    String sensorDescription,
+                                    Collection<AbstractFeature> featuresOfInterest) {
+        super(null, null, Sos1Constants.Operations.RegisterSensor.name());
         // this.system = system;
         this.observableProperties = observableProperties;
         this.sensorDescription = sensorDescription;
@@ -176,14 +158,5 @@ public class SosRegisterSensorRequest extends AbstractServiceRequest<AbstractSer
         this.featuresOfInterest = featuresOfInterest;
     }
 
-    @Override
-    public String getOperationName() {
-        return operationName;
-    }
-
-    @Override
-    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
-        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
-    }
 
 }

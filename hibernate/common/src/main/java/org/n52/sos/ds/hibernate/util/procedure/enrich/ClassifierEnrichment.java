@@ -28,10 +28,10 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.elements.SmlClassifier;
-import org.n52.sos.ogc.sensorML.elements.SmlClassifierPredicates;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlClassifierPredicates;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
@@ -38,8 +38,19 @@ import org.n52.iceland.response.AbstractServiceResponse;
 public class InsertSensorResponse extends AbstractServiceResponse {
 
     private String assignedProcedure;
-
     private String assignedOffering;
+
+    public InsertSensorResponse() {
+        super(null, null, Sos2Constants.Operations.InsertSensor.name());
+    }
+
+    public InsertSensorResponse(String service, String version) {
+        super(service, version, Sos2Constants.Operations.InsertSensor.name());
+    }
+
+    public InsertSensorResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public void setAssignedProcedure(String assignedProcedure) {
         this.assignedProcedure = assignedProcedure;
@@ -55,11 +66,6 @@ public class InsertSensorResponse extends AbstractServiceResponse {
 
     public String getAssignedOffering() {
         return assignedOffering;
-    }
-
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.InsertSensor.name();
     }
 
 }

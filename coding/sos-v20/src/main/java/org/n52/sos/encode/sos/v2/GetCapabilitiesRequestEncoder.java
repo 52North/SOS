@@ -30,19 +30,20 @@ package org.n52.sos.encode.sos.v2;
 
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.AcceptVersions;
-import org.n52.iceland.ogc.ows.Sections;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.w3c.SchemaLocation;
-
-import com.google.common.collect.Sets;
-
 import net.opengis.sos.x20.GetCapabilitiesDocument;
 import net.opengis.sos.x20.GetCapabilitiesType;
+
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.OwsAcceptVersions;
+import org.n52.shetland.ogc.ows.OwsSections;
+import org.n52.shetland.w3c.SchemaLocation;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -62,7 +63,7 @@ public class GetCapabilitiesRequestEncoder extends AbstractSosRequestEncoder<Get
     }
 
     @Override
-    protected XmlObject create(GetCapabilitiesRequest request) throws OwsExceptionReport {
+    protected XmlObject create(GetCapabilitiesRequest request) throws EncodingException {
        GetCapabilitiesDocument doc = GetCapabilitiesDocument.Factory.newInstance(getXmlOptions());
        GetCapabilitiesType gct = doc.addNewGetCapabilities2();
        addService(gct, request);
@@ -79,9 +80,9 @@ public class GetCapabilitiesRequestEncoder extends AbstractSosRequestEncoder<Get
         }
     }
 
-    private void addAcceptVersion(GetCapabilitiesType gct, GetCapabilitiesRequest request) throws OwsExceptionReport {
+    private void addAcceptVersion(GetCapabilitiesType gct, GetCapabilitiesRequest request) throws EncodingException {
        if (request.isSetAcceptVersions()) {
-           gct.addNewAcceptVersions().set(encodeOws(new AcceptVersions().setAcceptVersions(request.getAcceptVersions())));
+           gct.addNewAcceptVersions().set(encodeOws(new OwsAcceptVersions().setAcceptVersions(request.getAcceptVersions())));
        } else if (request.isSetVersion()) {
            gct.addNewAcceptVersions().addVersion(request.getVersion());
        } else {
@@ -89,9 +90,9 @@ public class GetCapabilitiesRequestEncoder extends AbstractSosRequestEncoder<Get
        }
     }
 
-    private void addSections(GetCapabilitiesType gct, GetCapabilitiesRequest request) throws OwsExceptionReport {
+    private void addSections(GetCapabilitiesType gct, GetCapabilitiesRequest request) throws EncodingException {
        if (request.isSetSections()) {
-           gct.addNewSections().set(encodeOws(new Sections().setSections(request.getSections())));
+           gct.addNewSections().set(encodeOws(new OwsSections().setSections(request.getSections())));
        }
     }
 

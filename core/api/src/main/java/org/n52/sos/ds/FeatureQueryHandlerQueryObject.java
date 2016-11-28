@@ -33,11 +33,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.util.CollectionHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -108,7 +108,7 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     public FeatureQueryHandlerQueryObject addFeatureIdentifier(String identifier) {
-        if (StringHelper.isNotEmpty(identifier)) {
+        if (!Strings.isNullOrEmpty(identifier)) {
             featureIdentifiers.add(identifier);
         }
         return this;
@@ -151,6 +151,6 @@ public class FeatureQueryHandlerQueryObject {
     }
 
     public boolean isSetVersion() {
-        return StringHelper.isNotEmpty(getVersion());
+        return !Strings.isNullOrEmpty(getVersion());
     }
 }

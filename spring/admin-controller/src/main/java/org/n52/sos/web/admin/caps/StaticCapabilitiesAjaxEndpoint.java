@@ -35,11 +35,6 @@ import net.opengis.sos.x20.CapabilitiesDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.exception.NoSuchExtensionException;
-import org.n52.sos.exception.NoSuchIdentifierException;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -51,8 +46,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.ogc.ows.StaticCapabilities;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.sos.exception.NoSuchExtensionException;
+import org.n52.sos.exception.NoSuchIdentifierException;
 import org.n52.sos.web.common.ControllerConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;

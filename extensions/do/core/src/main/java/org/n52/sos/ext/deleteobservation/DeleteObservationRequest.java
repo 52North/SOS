@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
 
 /**
@@ -37,16 +36,9 @@ import org.n52.iceland.request.AbstractServiceRequest;
  *
  * @since 1.0.0
  */
-public class DeleteObservationRequest extends AbstractServiceRequest<DeleteObservationResponse> {
+public class DeleteObservationRequest extends AbstractServiceRequest {
 
     private String observationIdentifier;
-
-    private final String operationName = DeleteObservationConstants.Operations.DeleteObservation.name();
-
-    @Override
-    public String getOperationName() {
-        return operationName;
-    }
 
     public String getObservationIdentifier() {
         return observationIdentifier;
@@ -60,12 +52,6 @@ public class DeleteObservationRequest extends AbstractServiceRequest<DeleteObser
     public String toString() {
         return String.format(
                 "DeleteObservationRequest [service=%s, version=%s, observationIdentifier=%s, operationName=%s]",
-                getService(), getVersion(), observationIdentifier, operationName);
+                getService(), getVersion(), observationIdentifier, getOperationName());
     }
-
-    @Override
-    public DeleteObservationResponse getResponse() throws OwsExceptionReport {
-        return (DeleteObservationResponse) new DeleteObservationResponse().set(this);
-    }
-
 }

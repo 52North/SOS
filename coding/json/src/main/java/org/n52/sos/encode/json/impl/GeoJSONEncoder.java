@@ -43,7 +43,6 @@ import static org.n52.sos.coding.json.JSONConstants.POLYGON;
 import static org.n52.sos.coding.json.JSONConstants.PROPERTIES;
 import static org.n52.sos.coding.json.JSONConstants.TYPE;
 
-import org.n52.iceland.util.Constants;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
 
@@ -70,7 +69,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @since 4.0.0
  */
 public class GeoJSONEncoder extends JSONEncoder<Geometry> {
-    public static final int DEFAULT_SRID = Constants.EPSG_WGS84;
+    public static final int DEFAULT_SRID = 4326;
 
     public static final String SRID_LINK_PREFIX = "http://www.opengis.net/def/crs/EPSG/0/";
 

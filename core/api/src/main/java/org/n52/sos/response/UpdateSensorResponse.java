@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
@@ -39,6 +39,18 @@ public class UpdateSensorResponse extends AbstractServiceResponse {
 
     private String updatedProcedure;
 
+    public UpdateSensorResponse() {
+        super(null, null, Sos2Constants.Operations.UpdateSensorDescription.name());
+    }
+
+    public UpdateSensorResponse(String service, String version) {
+        super(service, version, Sos2Constants.Operations.UpdateSensorDescription.name());
+    }
+
+    public UpdateSensorResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
     public void setUpdatedProcedure(String updatedProcedure) {
         this.updatedProcedure = updatedProcedure;
     }
@@ -47,8 +59,4 @@ public class UpdateSensorResponse extends AbstractServiceResponse {
         return updatedProcedure;
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.UpdateSensorDescription.name();
-    }
 }

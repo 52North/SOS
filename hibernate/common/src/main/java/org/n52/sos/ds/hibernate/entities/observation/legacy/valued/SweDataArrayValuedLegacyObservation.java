@@ -28,14 +28,15 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy.valued;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
-import org.n52.sos.ogc.swe.SweDataArray;
+
+import com.google.common.base.Strings;
 
 /**
  * Implementation of a {@link ValuedObservation} for the legacy observation
@@ -64,7 +65,7 @@ public class SweDataArrayValuedLegacyObservation
 
     @Override
     public boolean isSetValue() {
-        return StringHelper.isNotEmpty(getValue());
+        return !Strings.isNullOrEmpty(getValue());
     }
 
     @Override

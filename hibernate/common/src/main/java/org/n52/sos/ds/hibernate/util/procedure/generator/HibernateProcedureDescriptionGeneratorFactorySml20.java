@@ -34,20 +34,20 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
+import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
+import org.n52.shetland.ogc.sensorML.v20.DescribedObject;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
-import org.n52.sos.ogc.sensorML.v20.DescribedObject;
-import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.simpleType.SweText;
 
 /**
  * Generator class for SensorML 2.0 procedure descriptions

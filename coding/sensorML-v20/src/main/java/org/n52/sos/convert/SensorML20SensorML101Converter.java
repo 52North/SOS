@@ -37,17 +37,17 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
-import org.n52.sos.ogc.sensorML.Component;
-import org.n52.sos.ogc.sensorML.ProcessChain;
-import org.n52.sos.ogc.sensorML.ProcessModel;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sensorML.v20.AggregateProcess;
-import org.n52.sos.ogc.sensorML.v20.PhysicalComponent;
-import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
+import org.n52.shetland.ogc.sensorML.Component;
+import org.n52.shetland.ogc.sensorML.ProcessChain;
+import org.n52.shetland.ogc.sensorML.ProcessModel;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 
 import com.google.common.base.Joiner;
@@ -111,14 +111,14 @@ public class SensorML20SensorML101Converter implements Converter<SosProcedureDes
 
     private SosProcedureDescription convertSensorML20ToSensorML101(SosProcedureDescription objectToConvert)
             throws ConverterException {
-        if (objectToConvert instanceof PhysicalSystem) {
-            return toSystem((PhysicalSystem) objectToConvert);
-        } else if (objectToConvert instanceof PhysicalComponent) {
-            return toComponent((PhysicalComponent) objectToConvert);
-        } else if (objectToConvert instanceof SimpleProcess) {
-            return toProcessModel((SimpleProcess) objectToConvert);
-        } else if (objectToConvert instanceof AggregateProcess) {
-            return toProcessChain((AggregateProcess) objectToConvert);
+        if (objectToConvert.getProcedureDescription() instanceof PhysicalSystem) {
+            return toSystem((PhysicalSystem) objectToConvert.getProcedureDescription() );
+        } else if (objectToConvert.getProcedureDescription()  instanceof PhysicalComponent) {
+            return toComponent((PhysicalComponent) objectToConvert.getProcedureDescription() );
+        } else if (objectToConvert.getProcedureDescription()  instanceof SimpleProcess) {
+            return toProcessModel((SimpleProcess) objectToConvert.getProcedureDescription() );
+        } else if (objectToConvert.getProcedureDescription()  instanceof AggregateProcess) {
+            return toProcessChain((AggregateProcess) objectToConvert.getProcedureDescription() );
         }
         throw new ConverterException(String.format("The procedure type  %s is not supported!", objectToConvert
                 .getClass().getName()));

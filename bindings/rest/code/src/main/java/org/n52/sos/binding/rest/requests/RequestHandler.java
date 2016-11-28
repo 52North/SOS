@@ -38,12 +38,12 @@ import net.opengis.swes.x20.AbstractContentsType.Offering;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.CodingRepository;
 import org.n52.iceland.coding.encode.Encoder;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
@@ -53,11 +53,10 @@ import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperator;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.http.MediaTypes;
 import org.n52.sos.binding.rest.Constants;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -132,7 +131,7 @@ public abstract class RequestHandler {
         return ObservationOfferingDocument.Factory.parse(xb_offering.newInputStream()).getObservationOffering();
     }
 
-    private ServiceOperator getServiceOperator(AbstractServiceRequest<?> req) throws OwsExceptionReport
+    private ServiceOperator getServiceOperator(AbstractServiceRequest req) throws OwsExceptionReport
     {
         for (ServiceOperatorKey sok : req.getServiceOperatorKeys()) {
             ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sok);
@@ -143,7 +142,7 @@ public abstract class RequestHandler {
         throw new ServiceOperatorNotFoundException(req);
     }
 
-    protected XmlObject executeSosRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    protected XmlObject executeSosRequest(AbstractServiceRequest request) throws OwsExceptionReport {
         return encodeResponse(getServiceOperator(request).receiveRequest(request));
     }
 

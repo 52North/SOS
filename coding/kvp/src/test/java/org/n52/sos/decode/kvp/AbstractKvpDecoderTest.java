@@ -28,28 +28,25 @@
  */
 package org.n52.sos.decode.kvp;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
+import org.hamcrest.Matchers;
 import org.junit.Test;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator2;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator2;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Lists;
 
-public class AbstractKvpDecoderTest extends AbstractKvpDecoder {
+public abstract class AbstractKvpDecoderTest extends AbstractSosKvpDecoder<AbstractServiceRequest> {
 
     private static final String START_TIME = "2012-11-19T14:00:00+01:00";
 
@@ -59,33 +56,21 @@ public class AbstractKvpDecoderTest extends AbstractKvpDecoder {
 
     private static final String OM_PHENOMENON_TIME = "om:phenomenonTime";
 
-
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return null;
+    public AbstractKvpDecoderTest() {
+        super(() -> null, Collections.emptySet());
     }
-
-    @Override
-    public AbstractServiceRequest<?> decode(Map<String, String> objectToDecode) throws OwsExceptionReport,
-            UnsupportedDecoderInputException {
-        return null;
-    }
-
-    /*
-     * SOS 1.0.0 tests
-     */
 
     /*
      * two parameter
      */
 
     @Test
-    public void should_decode_eventTime_TM_Equals_2_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Equals_2_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, START_TIME)), TimeOperator.TM_Equals);
     }
 
     @Test
-    public void should_decode_eventTime_TM_During_2_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_During_2_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, START_END_TIME)), TimeOperator.TM_During);
     }
 
@@ -93,67 +78,67 @@ public class AbstractKvpDecoderTest extends AbstractKvpDecoder {
      * three parameter
      */
     @Test
-    public void should_decode_eventTime_TM_After_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_After_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_After.name(), START_TIME)), TimeOperator.TM_After);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Before_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Before_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Before.name(), START_TIME)), TimeOperator.TM_Before);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Begins_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Begins_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Begins.name(), START_TIME)), TimeOperator.TM_Begins);
     }
 
     @Test
-    public void should_decode_eventTime_TM_BegunBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_BegunBy_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_BegunBy.name(), START_TIME)), TimeOperator.TM_BegunBy);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Contains_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Contains_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Contains.name(), START_TIME)), TimeOperator.TM_Contains);
     }
 
     @Test
-    public void should_decode_eventTime_TM_During_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_During_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_During.name(), START_END_TIME)), TimeOperator.TM_During);
     }
 
     @Test
-    public void should_decode_eventTime_TM_EndedBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_EndedBy_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_EndedBy.name(), START_TIME)), TimeOperator.TM_EndedBy);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Ends_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Ends_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Ends.name(), START_TIME)), TimeOperator.TM_Ends);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Equals_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Equals_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Equals.name(), START_TIME)), TimeOperator.TM_Equals);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Meets_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Meets_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Meets.name(), START_TIME)), TimeOperator.TM_Meets);
     }
 
     @Test
-    public void should_decode_eventTime_TM_MetBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_MetBy_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_MetBy.name(), START_TIME)), TimeOperator.TM_MetBy);
     }
 
     @Test
-    public void should_decode_eventTime_TM_OverlappedBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_OverlappedBy_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_OverlappedBy.name(), START_TIME)), TimeOperator.TM_OverlappedBy);
     }
 
     @Test
-    public void should_decode_eventTime_TM_Overlaps_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_eventTime_TM_Overlaps_3_Param() throws DecodingException {
         check(parseEventTime(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator.TM_Overlaps.name(), START_TIME)), TimeOperator.TM_Overlaps);
     }
 
@@ -166,83 +151,81 @@ public class AbstractKvpDecoderTest extends AbstractKvpDecoder {
      */
 
     @Test
-    public void should_decode_temporalFilter_After_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_After_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.After.name(), START_TIME)), TimeOperator.TM_After);
     }
 
     @Test
-    public void should_decode_temporalFilter_Before_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_Before_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.Before.name(), START_TIME)), TimeOperator.TM_Before);
     }
 
     @Test
-    public void should_decode_temporalFilter_Begins_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_Begins_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.Begins.name(), START_TIME)), TimeOperator.TM_Begins);
     }
 
     @Test
-    public void should_decode_temporalFilter_BegunBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_BegunBy_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.BegunBy.name(), START_TIME)), TimeOperator.TM_BegunBy);
     }
 
     @Test
-    public void should_decode_temporalFilter_TContains_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_TContains_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.TContains.name(), START_TIME)), TimeOperator.TM_Contains);
     }
 
     @Test
-    public void should_decode_temporalFilter_During_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_During_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.During.name(), START_END_TIME)), TimeOperator.TM_During);
     }
 
     @Test
-    public void should_decode_temporalFilter_EndedBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_EndedBy_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.EndedBy.name(), START_TIME)), TimeOperator.TM_EndedBy);
     }
 
     @Test
-    public void should_decode_temporalFilter_Ends_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_Ends_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.Ends.name(), START_TIME)), TimeOperator.TM_Ends);
     }
 
     @Test
-    public void should_decode_temporalFilter_TEquals_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_TEquals_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.TEquals.name(), START_TIME)), TimeOperator.TM_Equals);
     }
 
     @Test
-    public void should_decode_temporalFilter_Meets_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_Meets_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.Meets.name(), START_TIME)), TimeOperator.TM_Meets);
     }
 
     @Test
-    public void should_decode_temporalFilter_MetBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_MetBy_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.MetBy.name(), START_TIME)), TimeOperator.TM_MetBy);
     }
 
     @Test
-    public void should_decode_temporalFilter_OverlappedBy_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_OverlappedBy_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.OverlappedBy.name(), START_TIME)), TimeOperator.TM_OverlappedBy);
     }
 
     @Test
-    public void should_decode_temporalFilter_TOverlaps_3_Param() throws DateTimeParseException, OwsExceptionReport {
+    public void should_decode_temporalFilter_TOverlaps_3_Param() throws DecodingException {
         check(parseTemporalFilter(Lists.newArrayList(OM_PHENOMENON_TIME, TimeOperator2.TOverlaps.name(), START_TIME)), TimeOperator.TM_Overlaps);
     }
 
-
-
-    private List<TemporalFilter> parseEventTime(List<String> parameterValues) throws DateTimeParseException, OwsExceptionReport {
-        return parseTemporalFilter(parameterValues, Sos1Constants.GetObservationParams.eventTime.name());
+    private List<TemporalFilter> parseEventTime(List<String> parameterValues) throws DecodingException {
+        return Collections.singletonList(decodeTemporalFilter(Sos1Constants.GetObservationParams.eventTime.name(), parameterValues));
     }
 
-    private List<TemporalFilter> parseTemporalFilter(List<String> parameterValues) throws DateTimeParseException, OwsExceptionReport {
-        return parseTemporalFilter(parameterValues, Sos2Constants.GetObservationParams.temporalFilter.name());
+    private List<TemporalFilter> parseTemporalFilter(List<String> parameterValues) throws DecodingException {
+        return Collections.singletonList(decodeTemporalFilter(Sos2Constants.GetObservationParams.temporalFilter.name(), parameterValues));
     }
 
     private void check(List<TemporalFilter> parseEventTime, TimeOperator operator) {
         for (TemporalFilter temporalFilter : parseEventTime) {
-            assertThat(temporalFilter.getOperator().name(), is(operator.name()));
+            assertThat(temporalFilter.getOperator().name(), Matchers.is(operator.name()));
         }
     }
 

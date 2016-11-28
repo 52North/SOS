@@ -32,16 +32,13 @@ import java.io.OutputStream;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.sos.coding.encode.EncodingValues;
-import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * TODO JavaDoc
@@ -50,8 +47,9 @@ import org.n52.sos.response.AbstractObservationResponse;
  *
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse> extends
-        AbstractSosResponseEncoder<T> {
+public abstract class AbstractObservationResponseEncoder<T extends AbstractObservationResponse>
+        extends AbstractSosResponseEncoder<T> {
+
     public AbstractObservationResponseEncoder(String operation, Class<T> responseType) {
         super(operation, responseType);
     }
@@ -64,21 +62,19 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
      *
      * @return the encoder or {@code null} if none is found
      *
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             if the found encoder is not a {@linkplain ObservationEncoder}
      */
     private ObservationEncoder<XmlObject, OmObservation> findObservationEncoder(String responseFormat)
-            throws OwsExceptionReport {
-        Encoder<XmlObject, OmObservation> encoder =
-                CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
+            throws EncodingException {
+        Encoder<XmlObject, OmObservation> encoder = getEncoder(new XmlEncoderKey(responseFormat, OmObservation.class));
         if (encoder == null) {
             return null;
         } else if (encoder instanceof ObservationEncoder) {
             ObservationEncoder<XmlObject, OmObservation> oe = (ObservationEncoder<XmlObject, OmObservation>) encoder;
             return oe.isObservationAndMeasurmentV20Type() ? oe : null;
         } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("Error while encoding response, encoder is not of type ObservationEncoder!");
+            throw new EncodingException("Error while encoding response, encoder is not of type ObservationEncoder!");
         }
     }
 
@@ -88,14 +84,15 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
      * @param responseFormat
      *            the response format
      *
-     * @return the encoder or {@code null} if no encoder was found
+     * @return the encoder
+     * @throws org.n52.svalbard.encode.exception.EncodingException if no encoder is found
      */
-    private Encoder<XmlObject, T> findResponseEncoder(String responseFormat) {
-        return CodingRepository.getInstance().getEncoder(new XmlEncoderKey(responseFormat, getResponseType()));
+    private Encoder<XmlObject, T> findResponseEncoder(String responseFormat) throws EncodingException {
+        return getEncoder(responseFormat, getResponseType());
     }
 
     @Override
-    protected XmlObject create(T response) throws OwsExceptionReport {
+    protected XmlObject create(T response) throws EncodingException {
         final String responseFormat = response.getResponseFormat();
         // search for an O&M2 encoder for this response format
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(responseFormat);
@@ -105,17 +102,11 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
         }
         // there is no O&M2 compatible observation encoder:
         // search for a encoder for the response and delegate
-        Encoder<XmlObject, T> responseEncoder = findResponseEncoder(responseFormat);
-        if (responseEncoder != null) {
-            return responseEncoder.encode(response);
-        } else {
-            // unsupported responseFormat
-            throw new InvalidResponseFormatParameterException(responseFormat);
-        }
+        return findResponseEncoder(responseFormat).encode(response);
     }
 
     @Override
-    protected void create(T response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
+    protected void create(T response, OutputStream outputStream, EncodingValues encodingValues) throws EncodingException {
         final String responseFormat = response.getResponseFormat();
         // search for an O&M2 encoder for this response format
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(responseFormat);
@@ -135,11 +126,11 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
      *
      * @return the encoded response
      *
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             if an error occurs
      */
     protected abstract XmlObject createResponse(ObservationEncoder<XmlObject, OmObservation> encoder, T response)
-            throws OwsExceptionReport;
+            throws EncodingException;
 
     /**
      * Override this method in concrete response encoder if streaming is
@@ -149,10 +140,11 @@ public abstract class AbstractObservationResponseEncoder<T extends AbstractObser
      * @param response
      * @param outputStream
      * @param encodingValues
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      */
     protected void createResponse(ObservationEncoder<XmlObject, OmObservation> encoder, T response, OutputStream outputStream,  EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         super.create(response, outputStream, encodingValues);
     }
+
 }

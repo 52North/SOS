@@ -30,20 +30,19 @@ package org.n52.sos.inspire.aqd;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.inspire.aqd.persistence.ReportingHeaderSQLiteManager;
 
 public class ReportObligationRepository {
-    @Deprecated
-    private static ReportObligationRepository instance;
     private final ReadWriteLock reportingAuthorityLock = new ReentrantReadWriteLock();
     private final ReadWriteLock obligationsLock = new ReentrantReadWriteLock();
     private RelatedParty reportingAuthority;
@@ -54,7 +53,6 @@ public class ReportObligationRepository {
 
     private ReportObligationRepository() {
         this.obligations = new EnumMap<>(ReportObligationType.class);
-        ReportObligationRepository.instance = this;
     }
 
     public RelatedParty getReportingAuthority() {
@@ -114,8 +112,7 @@ public class ReportObligationRepository {
         this._saveReportingAuthority(relatedParty);
     }
 
-    public void saveReportObligation(ReportObligationType type,
-                                     ReportObligation obligation) {
+    public void saveReportObligation(ReportObligationType type, ReportObligation obligation) {
         Lock write = this.obligationsLock.writeLock();
         write.lock();
         try {
@@ -126,19 +123,18 @@ public class ReportObligationRepository {
         this._saveReportObligation(type, obligation);
     }
 
-    public EReportingHeader createHeader(ReportObligationType flow) throws CodedException {
+    public EReportingHeader createHeader(ReportObligationType flow) throws OwsExceptionReport {
         ReportObligation reportObligation = getReportObligation(flow);
-        if (reportObligation.isValid()) {
-            return new EReportingHeader()
-                    .setChange(reportObligation.getChange())
-                    .setInspireID(reportObligation.getInspireID())
-                    .setReportingPeriod(reportObligation.getReportingPeriod())
-                    .setReportingAuthority(getReportingAuthority());
+        if (!reportObligation.isValid()) {
+            throw new NoApplicableCodeException().at("AQD Repoting Header").withMessage(
+                    "No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting) and configure the AQD Repoting Header!",
+                    flow.name());
         }
-        throw new NoApplicableCodeException()
-                    .at("AQD Repoting Header")
-                    .withMessage(
-                            "No AQD Repoting Header set for %s! Please go to the admin interface (Admin -> Settings -> eReporting) and configure the AQD Repoting Header!", flow.name());
+        return new EReportingHeader()
+                .setChange(reportObligation.getChange())
+                .setInspireID(reportObligation.getInspireID())
+                .setReportingPeriod(reportObligation.getReportingPeriod())
+                .setReportingAuthority(getReportingAuthority());
     }
 
     private void _saveReportingAuthority(RelatedParty relatedParty) {
@@ -146,29 +142,14 @@ public class ReportObligationRepository {
     }
 
     private RelatedParty _getReportingAuthority() {
-        RelatedParty reportingAuthority = sqlite.loadRelatedParty();
-        if (reportingAuthority == null) {
-            reportingAuthority = new RelatedParty();
-        }
-        return reportingAuthority;
+        return Optional.ofNullable(sqlite.loadRelatedParty()).orElseGet(RelatedParty::new);
     }
 
-    private void _saveReportObligation(ReportObligationType type,
-                                       ReportObligation obligation) {
+    private void _saveReportObligation(ReportObligationType type, ReportObligation obligation) {
         sqlite.save(type, obligation);
     }
 
     private ReportObligation _getReportObligation(ReportObligationType type) {
-        ReportObligation reportObligation = sqlite.loadReportObligation(type);
-        if (reportObligation == null) {
-            reportObligation = new ReportObligation();
-        }
-        return reportObligation;
-    }
-
-
-    @Deprecated
-    public static ReportObligationRepository getInstance() {
-        return ReportObligationRepository.instance;
+        return Optional.ofNullable(sqlite.loadReportObligation(type)).orElseGet(ReportObligation::new);
     }
 }

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode.sos.v2;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.sos.decode.ExtensibleResponseDecoder;
 

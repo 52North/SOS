@@ -30,8 +30,9 @@ package org.n52.sos.ds.hibernate.entities;
 
 import java.io.Serializable;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasCodespace;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
@@ -62,6 +63,6 @@ public class Codespace implements Serializable {
     }
 
     public boolean isSetCodespace() {
-        return StringHelper.isNotEmpty(getCodespace());
+        return !Strings.isNullOrEmpty(getCodespace());
     }
 }

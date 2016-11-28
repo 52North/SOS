@@ -28,29 +28,38 @@
  */
 package org.n52.sos.request.operator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import static java.util.stream.Collectors.toList;
+import static org.n52.janmayen.function.Functions.mutate;
+
+import java.net.URI;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.SortedSet;
+import java.util.stream.Stream;
+
 import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
-import org.n52.iceland.ogc.ows.DCP;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.iceland.ogc.ows.OwsServiceIdentification;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsDCP;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsOperation;
+import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+import org.n52.shetland.ogc.ows.OwsRequestMethod;
+import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.http.HTTPMethods;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 public class AqdGetCapabilitiesOperatorV10 extends
         AbstractAqdRequestOperator<AbstractGetCapabilitiesHandler, GetCapabilitiesRequest, GetCapabilitiesResponse> {
@@ -71,69 +80,28 @@ public class AqdGetCapabilitiesOperatorV10 extends
         SosCapabilities capabilities = (SosCapabilities)response.getCapabilities();
         capabilities.setVersion(AqdConstants.VERSION);
         capabilities.setService(AqdConstants.AQD);
-        if (capabilities.isSetServiceIdentification()) {
-            OwsServiceIdentification serviceIdentification = capabilities.getServiceIdentification();
-            serviceIdentification.setVersions(Lists.newArrayList(AqdConstants.VERSION));
-        }
-        if (capabilities.isSetOperationsMetadata()) {
-            for (String key : capabilities.getOperationsMetadata().getCommonValues().keySet()) {
-                if (key.equals(OWSConstants.RequestParams.service.name())) {
-                    capabilities.getOperationsMetadata().overrideCommonValue(
-                            OWSConstants.RequestParams.service.name(),
-                            new OwsParameterValuePossibleValues(AqdConstants.AQD));
-                } else if (key.equals(OWSConstants.RequestParams.version.name())) {
-                    capabilities.getOperationsMetadata().overrideCommonValue(
-                            OWSConstants.RequestParams.version.name(),
-                            new OwsParameterValuePossibleValues(AqdConstants.VERSION));
-                }
-            }
-            Set<OwsOperation> aqdOperations = Sets.newHashSetWithExpectedSize(2);
-            for (OwsOperation operation : capabilities.getOperationsMetadata().getOperations()) {
-                if (operation.getOperationName().equals(SosConstants.Operations.GetCapabilities.name())) {
-                    if (operation.getParameterValues().containsKey(
-                            org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions.name())) {
-                        operation.overrideParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions,
-                                new OwsParameterValuePossibleValues(AqdConstants.VERSION));
-                    }
-                    aqdOperations.add(operation);
-                    checkDCP(operation);
-                }
-                if (operation.getOperationName().equals(SosConstants.Operations.GetObservation.name())) {
-                    if (operation.getParameterValues().containsKey(
-                            SosConstants.GetObservationParams.responseFormat.name())) {
-                        operation.overrideParameter(SosConstants.GetObservationParams.responseFormat,
-                                new OwsParameterValuePossibleValues(AqdConstants.NS_AQD));
-                    }
-                    aqdOperations.add(operation);
-                    checkDCP(operation);
-                    Set<String> flows =
-                            Sets.newHashSet(ReportObligationType.E1A.name(), ReportObligationType.E1B.name(),
-                                    ReportObligationType.E2A.name());
-                    operation.addParameterValue(AqdConstants.EXTENSION_FLOW,
-                            new OwsParameterValuePossibleValues(flows));
-                }
-            }
-            capabilities.getOperationsMetadata().setOperations(aqdOperations);
-        }
-        if (capabilities.isSetContents()) {
-            ArrayList<String> responseFormats = Lists.newArrayList(AqdConstants.NS_AQD);
-            for (SosObservationOffering observationOffering : capabilities.getContents()) {
-                observationOffering.setResponseFormats(responseFormats);
-            }
-        }
+        capabilities.getServiceIdentification().ifPresent(this::modifyServiceIdentification);
+        capabilities.getOperationsMetadata().ifPresent(this::modifyOperationsMetadata);
+        capabilities.getContents().ifPresent(this::modifyContents);
         return response;
     }
 
-    private void checkDCP(OwsOperation operation) {
-        DCP toRemove = null;
-        for (DCP dcp : operation.getDcp().get("POST")) {
-            if (dcp.getUrl().endsWith("/json")) {
-                toRemove = dcp;
-            }
-        }
-        if (toRemove != null) {
-            operation.getDcp().get("POST").remove(toRemove);
-        }
+    private void addFlowParameter(OwsOperation operation) {
+        operation.addParameter(new OwsDomain(AqdConstants.EXTENSION_FLOW, new OwsAllowedValues(Arrays
+                                    .stream(ReportObligationType.values())
+                                    .map(ReportObligationType::name).map(OwsValue::new))));
+    }
+
+    private void removeJSONEndpoint(OwsOperation operation) {
+        operation.getDCP().stream()
+                .filter(OwsDCP::isHTTP)
+                .map(OwsDCP::asHTTP)
+                .forEach(http -> http.removeRequestMethodIf(this::isJsonEndpoint));
+    }
+
+    private boolean isJsonEndpoint(OwsRequestMethod  method) {
+        return method.getHttpMethod().equals(HTTPMethods.POST) &&
+               method.getHref().map(URI::getPath).map(path -> path.endsWith("/json")).orElse(false);
     }
 
     @Override
@@ -152,6 +120,66 @@ public class AqdGetCapabilitiesOperatorV10 extends
         }
         checkExtensions(request, exceptions);
         exceptions.throwIfNotEmpty();
+    }
+
+    private void setAcceptVersionsParameter(OwsOperation operation) {
+        operation.getParameters().stream().filter(this::isAcceptVersions)
+                .forEach(d -> d.setPossibleValues(new OwsAllowedValues(new OwsValue(AqdConstants.VERSION))));
+    }
+
+    private void setResponseFormat(OwsOperation operation) {
+        operation.getParameters().stream().filter(this::isResponseFormat)
+                .forEach(d -> d.setPossibleValues(new OwsAllowedValues(new OwsValue(AqdConstants.NS_AQD))));
+    }
+
+    private boolean isGetObservation(OwsOperation operation) {
+        return operation.getName().equals(SosConstants.Operations.GetObservation.name());
+    }
+
+    private boolean isGetCapabilities(OwsOperation operation) {
+        return operation.getName().equals(SosConstants.Operations.GetCapabilities.name());
+    }
+
+    private boolean isAcceptVersions(OwsDomain d) {
+        return d.getName().equals(OWSConstants.GetCapabilitiesParams.AcceptVersions.name());
+    }
+
+    private boolean isResponseFormat(OwsDomain d) {
+        return d.getName().equals(SosConstants.GetObservationParams.responseFormat.name());
+    }
+
+    private void modifyServiceIdentification(OwsServiceIdentification serviceIdentification) {
+        serviceIdentification.setServiceTypeVersion(Arrays.asList(AqdConstants.VERSION));
+    }
+
+    private void modifyOperationsMetadata(OwsOperationsMetadata operationsMetadata) {
+
+        modifyCommonParameters(operationsMetadata.getParameters());
+
+        SortedSet<OwsOperation> operations = operationsMetadata.getOperations();
+        operationsMetadata.setOperations(Stream.concat(
+                operations.stream().filter(this::isGetCapabilities).map(mutate(this::setAcceptVersionsParameter)),
+                operations.stream().filter(this::isGetObservation).map(mutate(this::setResponseFormat))
+        )
+                .map(mutate(this::removeJSONEndpoint)).map(mutate(this::addFlowParameter)).collect(toList()));
+    }
+
+    private void modifyContents(Collection<SosObservationOffering> contents) {
+        contents.forEach(this::modifyObservationOffering);
+    }
+
+    private void modifyObservationOffering(SosObservationOffering offering) {
+        offering.setResponseFormats(Arrays.asList(AqdConstants.NS_AQD));
+    }
+
+    private void modifyCommonParameters(SortedSet<OwsDomain> parameters) {
+        parameters.stream()
+                .filter(d -> d.getName().equals(OWSConstants.RequestParams.service.name()))
+                .forEach(d -> d.setPossibleValues(new OwsAllowedValues(new OwsValue(AqdConstants.AQD))));
+
+        parameters.stream()
+                .filter(d -> d.getName().equals(OWSConstants.RequestParams.version.name()))
+                .forEach(d -> d.setPossibleValues(new OwsAllowedValues(new OwsValue(AqdConstants.VERSION))));
     }
 
 }

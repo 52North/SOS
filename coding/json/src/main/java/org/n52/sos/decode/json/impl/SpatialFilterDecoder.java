@@ -31,12 +31,12 @@ package org.n52.sos.decode.json.impl;
 import static org.n52.sos.coding.json.JSONConstants.REF;
 import static org.n52.sos.coding.json.JSONConstants.VALUE;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.ogc.filter.SpatialFilter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vividsolutions.jts.geom.Geometry;
@@ -54,7 +54,7 @@ public class SpatialFilterDecoder extends JSONDecoder<SpatialFilter> {
     }
 
     @Override
-    public SpatialFilter decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public SpatialFilter decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (node == null || node.isNull() || node.isMissingNode()) {
             return null;
         }
@@ -72,7 +72,7 @@ public class SpatialFilterDecoder extends JSONDecoder<SpatialFilter> {
         }
     }
 
-    private Geometry decodeGeometry(JsonNode value) throws OwsExceptionReport {
+    private Geometry decodeGeometry(JsonNode value) throws DecodingException {
         return decodeJsonToObject(value, Geometry.class);
     }
 

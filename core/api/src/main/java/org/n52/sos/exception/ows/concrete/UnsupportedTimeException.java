@@ -28,8 +28,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.gml.time.Time;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

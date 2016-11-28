@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
@@ -39,6 +39,18 @@ public class DeleteSensorResponse extends AbstractServiceResponse {
 
     private String deletedProcedure;
 
+    public DeleteSensorResponse() {
+        super(null, null, Sos2Constants.Operations.DeleteSensor.name());
+    }
+
+    public DeleteSensorResponse(String service, String version) {
+        super(service, version, Sos2Constants.Operations.DeleteSensor.name());
+    }
+
+    public DeleteSensorResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
     public void setDeletedProcedure(String deletedProcedure) {
         this.deletedProcedure = deletedProcedure;
     }
@@ -47,8 +59,4 @@ public class DeleteSensorResponse extends AbstractServiceResponse {
         return deletedProcedure;
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.DeleteSensor.name();
-    }
 }

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest;
 
-import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.shetland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,21 +57,21 @@ import org.n52.iceland.coding.encode.ExceptionEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ExceptionEvent;
-import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.util.Producer;
-import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HttpUtils;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.Producer;
+import org.n52.shetland.util.http.HTTPStatus;
+import org.n52.shetland.util.http.MediaTypes;
 import org.n52.sos.binding.rest.decode.RestDecoder;
 import org.n52.sos.binding.rest.encode.RestEncoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;

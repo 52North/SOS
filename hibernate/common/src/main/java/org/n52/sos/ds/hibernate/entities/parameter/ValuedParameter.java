@@ -30,11 +30,11 @@ package org.n52.sos.ds.hibernate.entities.parameter;
 
 import java.io.Serializable;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasObservationId;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasValue;
-import org.n52.sos.ogc.om.NamedValue;
 
 public interface ValuedParameter<T> extends Serializable, HasValue<T>, HasName, HasObservationId {
 

@@ -46,8 +46,8 @@ import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.cache.WritableContentCache;
-import org.n52.sos.ogc.sos.SosEnvelope;
+
+import org.n52.shetland.util.ReferencedEnvelope;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -112,10 +112,10 @@ public class InMemoryCacheImplTest {
     @Test
     public void should_return_empty_global_envelope_when_setEnvelope_is_called_with_null_parameter() {
         instance.setGlobalEnvelope(null);
-        final SosEnvelope emptySosEnvelope = new SosEnvelope(null, instance.getDefaultEPSGCode());
+        final ReferencedEnvelope emptyReferencedEnvelope = new ReferencedEnvelope(null, instance.getDefaultEPSGCode());
 
         assertThat(instance.getGlobalEnvelope(), not(nullValue()));
-        assertThat(instance.getGlobalEnvelope(), is(emptySosEnvelope));
+        assertThat(instance.getGlobalEnvelope(), is(emptyReferencedEnvelope));
     }
 
     @Test

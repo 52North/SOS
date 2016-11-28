@@ -35,17 +35,21 @@ import java.util.Locale;
 
 import org.hibernate.Session;
 
-import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -54,14 +58,10 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.util.procedure.HibernateProcedureConverter;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.GeometryValue;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.request.AbstractObservationRequest;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
@@ -187,8 +187,8 @@ public abstract class AbstractOmObservationCreator {
             return new HibernateProcedureConverter(this.serviceProvider)
                     .createSosProcedureDescription(hProcedure, pdf, getVersion(), getSession());
         } else {
-            SosProcedureDescriptionUnknowType sosProcedure =
-                    new SosProcedureDescriptionUnknowType(identifier, pdf, null);
+            SosProcedureDescriptionUnknownType sosProcedure =
+                    new SosProcedureDescriptionUnknownType(identifier, pdf, null);
             if (hProcedure.isSetName()) {
                 sosProcedure.setHumanReadableIdentifier(hProcedure.getName());
                 addName(sosProcedure, hProcedure);

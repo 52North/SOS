@@ -28,21 +28,20 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.InvalidAcceptVersionsParameterException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceOrVersionException;
 import org.n52.iceland.exception.ows.concrete.InvalidServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
 import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
 import org.n52.iceland.exception.ows.concrete.VersionNotSupportedException;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.service.operator.ServiceOperator;
 import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.request.BatchRequest;
 import org.n52.sos.response.BatchResponse;
 import org.n52.sos.util.BatchConstants;
@@ -57,6 +56,7 @@ import org.n52.sos.util.BatchConstants;
  * @since 5.0.0
  */
 public class BatchOperationHandler extends AbstractOperationHandler {
+
     public BatchOperationHandler() {
         super(SosConstants.SOS, BatchConstants.OPERATION_NAME);
     }
@@ -65,7 +65,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         BatchResponse response = new BatchResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
-        for (AbstractServiceRequest<?> r : request) {
+        for (AbstractServiceRequest r : request) {
             try {
                 response.add(getServiceOperator(r).receiveRequest(r));
             } catch (OwsExceptionReport e) {
@@ -78,7 +78,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         return response;
     }
 
-    protected ServiceOperator getServiceOperator(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    protected ServiceOperator getServiceOperator(AbstractServiceRequest request) throws OwsExceptionReport {
         checkServiceOperatorKeys(request);
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeys()) {
             ServiceOperator so = getServiceOperatorRepository().getServiceOperator(sokt);
@@ -98,7 +98,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         return ServiceOperatorRepository.getInstance();
     }
 
-    protected void checkServiceOperatorKeys(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    protected void checkServiceOperatorKeys(AbstractServiceRequest request) throws OwsExceptionReport {
         CompositeOwsException exceptions = new CompositeOwsException();
         for (ServiceOperatorKey sokt : request.getServiceOperatorKeys()) {
             checkService(sokt, exceptions);
@@ -115,13 +115,7 @@ public class BatchOperationHandler extends AbstractOperationHandler {
         return getServiceOperatorRepository().isVersionSupported(service, version);
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation operation, String service, String version)
-            throws OwsExceptionReport {
-        /* nothing to do here */
-    }
-
-    private void checkAcceptVersions(AbstractServiceRequest<?> request, CompositeOwsException exceptions) {
+    private void checkAcceptVersions(AbstractServiceRequest request, CompositeOwsException exceptions) {
         GetCapabilitiesRequest gcr = (GetCapabilitiesRequest) request;
         if (gcr.isSetAcceptVersions()) {
             boolean hasSupportedVersion = false;

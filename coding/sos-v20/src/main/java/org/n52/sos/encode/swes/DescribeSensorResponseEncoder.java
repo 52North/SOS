@@ -35,18 +35,17 @@ import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.SensorDescriptionType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.response.DescribeSensorResponse;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;
 
@@ -63,17 +62,17 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
     }
 
     @Override
-    protected XmlObject create(DescribeSensorResponse response) throws OwsExceptionReport {
+    protected XmlObject create(DescribeSensorResponse response) throws EncodingException {
         DescribeSensorResponseDocument doc =
-                DescribeSensorResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                DescribeSensorResponseDocument.Factory.newInstance(getXmlOptions());
         DescribeSensorResponseType dsr = doc.addNewDescribeSensorResponse();
         dsr.setProcedureDescriptionFormat(response.getOutputFormat());
-        for (SosProcedureDescription sosProcedureDescription : response.getProcedureDescriptions()) {
+        for (SosProcedureDescription<?> sosProcedureDescription : response.getProcedureDescriptions()) {
             SensorDescriptionType sensorDescription = dsr.addNewDescription().addNewSensorDescription();
             sensorDescription.addNewData().set(getSensorDescription(response, sosProcedureDescription ));
             if (sosProcedureDescription.isSetValidTime()) {
                 XmlObject xmlObjectValidtime =
-                        CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosProcedureDescription.getValidTime());
+                        encodeObjectToXml(GmlConstants.NS_GML_32, sosProcedureDescription.getValidTime());
                 XmlObject substitution =
                         sensorDescription
                                 .addNewValidTime()
@@ -90,11 +89,11 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
         return doc;
     }
 
-    private XmlObject getSensorDescription(DescribeSensorResponse response, SosProcedureDescription sosProcedureDescription) throws OwsExceptionReport {
-        if (sosProcedureDescription instanceof SosProcedureDescriptionUnknowType && sosProcedureDescription.isSetSensorDescriptionXmlString()) {
+    private XmlObject getSensorDescription(DescribeSensorResponse response, SosProcedureDescription sosProcedureDescription) throws EncodingException {
+        if (sosProcedureDescription instanceof SosProcedureDescriptionUnknownType && sosProcedureDescription.isSetSensorDescriptionXmlString()) {
             return  XmlHelper.parseXmlString(sosProcedureDescription.getSensorDescriptionXmlString());
         }
-        return CodingHelper.encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
+        return encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
     }
 
     @Override

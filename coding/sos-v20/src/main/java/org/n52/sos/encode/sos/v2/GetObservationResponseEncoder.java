@@ -38,22 +38,20 @@ import net.opengis.sos.x20.GetObservationResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 
@@ -76,7 +74,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
 
     @Override
     protected XmlObject createResponse(ObservationEncoder<XmlObject, OmObservation> encoder,
-            GetObservationResponse response) throws OwsExceptionReport {
+            GetObservationResponse response) throws EncodingException {
         GetObservationResponseDocument doc = GetObservationResponseDocument.Factory.newInstance(getXmlOptions());
         GetObservationResponseType xbResponse = doc.addNewGetObservationResponse();
         if (!response.isSetMergeObservation()) {
@@ -104,7 +102,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
     }
 
     private void processAbstractStreaming(GetObservationResponseType xbResponse, AbstractStreaming value,
-            ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge) throws UnsupportedEncoderInputException, OwsExceptionReport {
+            ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge) throws EncodingException {
         if (value instanceof StreamingObservation) {
             processStreamingObservation(xbResponse, (StreamingObservation) value, encoder,
                     merge);
@@ -118,7 +116,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
 
     private void processStreamingValue(GetObservationResponseType xbResponse, StreamingValue<?> streamingValue,
             ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge)
-            throws UnsupportedEncoderInputException, OwsExceptionReport {
+            throws EncodingException {
         if (streamingValue.hasNextValue()) {
             if (merge) {
                 for (OmObservation obs : streamingValue.mergeObservation()) {
@@ -138,7 +136,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
 
     private void processStreamingObservation(GetObservationResponseType xbResponse,
             StreamingObservation streamingObservation, ObservationEncoder<XmlObject, OmObservation> encoder,
-            boolean merge) throws UnsupportedEncoderInputException, OwsExceptionReport {
+            boolean merge) throws EncodingException {
         if (streamingObservation.hasNextValue()) {
             if (merge) {
                 for (OmObservation obs : streamingObservation.mergeObservation()) {
@@ -159,12 +157,12 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
     @Override
     protected void createResponse(ObservationEncoder<XmlObject, OmObservation> encoder,
             GetObservationResponse response, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         try {
             encodingValues.setEncoder(this);
             new GetObservationResponseXmlStreamWriter().write(response, outputStream, encodingValues);
         } catch (XMLStreamException xmlse) {
-            throw new NoApplicableCodeException().causedBy(xmlse);
+            throw new EncodingException(xmlse);
         }
     }
 

@@ -28,35 +28,34 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.response.DummyResponse;
 
 /**
  * Parsed SOS request, used for GetResult requests
  *
  * @since 4.0.0
  */
-public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResponse> {
+public class ParsedSosRequest extends AbstractServiceRequest {
 
     /**
      * The SOS request
      */
-    @SuppressWarnings("rawtypes")
     private AbstractServiceRequest request;
 
-    /**
-     * SOS version
-     */
-    private String version;
+    public ParsedSosRequest(AbstractServiceRequest request) {
+        super(request.getService(), request.getVersion(), request.getOperationName());
+        this.request = request;
+    }
+
+    public ParsedSosRequest() {
+    }
+
 
     /**
      * Get the SOS request
      *
      * @return SOS request
      */
-    @SuppressWarnings("rawtypes")
     public AbstractServiceRequest getRequest() {
         return request;
     }
@@ -67,30 +66,8 @@ public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResp
      * @param request
      *            SOS request
      */
-    @SuppressWarnings("rawtypes")
     public void setRequest(AbstractServiceRequest request) {
         this.request = request;
-    }
-
-    /**
-     * Get the SOS version
-     *
-     * @return SOS version
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * Set the SOS version
-     *
-     * @param version
-     *            SOS version
-     * @return this
-     */
-    public ParsedSosRequest setVersion(String version) {
-        this.version = version;
-        return this;
     }
 
     @Override
@@ -99,7 +76,10 @@ public class ParsedSosRequest extends AbstractServiceRequest<AbstractServiceResp
     }
 
     @Override
-    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
-        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
+    public void setOperationName(String operationName) {
+        request.setOperationName(operationName);
     }
+
+
+
 }

@@ -56,18 +56,19 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.SmlPerson;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.SmlPerson;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -92,7 +93,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     private static final String TEST_CHILD_1 = "test-id-child-1";
 
     @Test
-    public void should_set_identifier() throws OwsExceptionReport {
+    public void should_set_identifier() throws EncodingException {
         final SensorML sensorMl = new SensorML();
         final System system = new System();
         sensorMl.addMember(system);
@@ -107,7 +108,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
         assertThat(xbIdentifier.getTerm().getValue(), is(TEST_ID_1));
     }
 
-    private SystemType encodeSystem(final SensorML sensorMl) throws OwsExceptionReport {
+    private SystemType encodeSystem(final SensorML sensorMl) throws EncodingException {
         final XmlObject encodedSml = CodingHelper.encodeObjectToXml(SensorMLConstants.NS_SML, sensorMl);
         assertThat(encodedSml, instanceOf(SensorMLDocument.class));
         final net.opengis.sensorML.x101.SensorMLDocument.SensorML xbSml = ((SensorMLDocument) encodedSml).getSensorML();
@@ -117,7 +118,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     private SimpleDataRecordType encodeSimpleDataRecord(final SensorML sensorMl, final String capName, final int fields)
-            throws OwsExceptionReport {
+            throws EncodingException {
         return encodeSimpleDataRecord(encodeSystem(sensorMl), capName, fields);
     }
 
@@ -140,7 +141,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_encode_features_of_interest() throws OwsExceptionReport {
+    public void should_encode_features_of_interest() throws EncodingException {
         final SensorML sensorMl = new SensorML();
         final System system = new System();
         sensorMl.addMember(system);
@@ -155,7 +156,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_encode_offerings() throws OwsExceptionReport {
+    public void should_encode_offerings() throws EncodingException {
         final SensorML sensorMl = new SensorML();
         final System system = new System();
         sensorMl.addMember(system);
@@ -170,7 +171,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_encode_parent_procedures() throws OwsExceptionReport {
+    public void should_encode_parent_procedures() throws EncodingException {
         final SensorML sensorMl = new SensorML();
         final System system = new System();
         sensorMl.addMember(system);
@@ -185,7 +186,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
     }
 
     @Test
-    public void should_encode_child_procedures() throws OwsExceptionReport {
+    public void should_encode_child_procedures() throws EncodingException {
         final SensorML sensorMl = new SensorML();
         final System system = new System();
         sensorMl.addMember(system);
@@ -206,7 +207,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test
     @SuppressWarnings("unchecked")
-    public void should_aggregate_child_outputs() throws OwsExceptionReport {
+    public void should_aggregate_child_outputs() throws EncodingException {
         final SweQuantity q1 = new SweQuantity();
         q1.setDefinition("def1");
         q1.setUom("uom1");
@@ -254,7 +255,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test public void
     should_encode_single_contact_person()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
@@ -269,7 +270,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test public void
     should_encode_single_contact_responsibleParty()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
@@ -289,7 +290,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test public void
     should_merge_and_encode_multiple_contacts()
-            throws OwsExceptionReport{
+            throws EncodingException{
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
@@ -333,7 +334,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test public void
     should_encode_multiple_contacts_in_contactList()
-        throws OwsExceptionReport {
+        throws EncodingException {
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
@@ -364,7 +365,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test public void
     should_merge_and_encode_two_same_contact_person_only_once()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);
@@ -387,7 +388,7 @@ public class SensorMLEncoderV101Test extends AbstractBeforeAfterClassSettingsMan
 
     @Test public void
     should_merge_and_encode_two_same_contact_responsibleParty_only_once()
-            throws OwsExceptionReport {
+            throws EncodingException {
         final SensorML sensorML = new SensorML();
         final System system = new System();
         sensorML.addMember(system);

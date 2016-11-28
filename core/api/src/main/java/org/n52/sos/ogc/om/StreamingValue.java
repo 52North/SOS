@@ -28,12 +28,15 @@
  */
 package org.n52.sos.ogc.om;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.ogc.om.values.Value;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.OWSConstants.AdditionalRequestParams;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.util.GeometryHandler;
 
@@ -101,16 +104,16 @@ public abstract class StreamingValue<S> extends AbstractStreaming {
         return phenomenonTime;
     }
 
+    @Override
+    public void setPhenomenonTime(Time phenomenonTime) {
+        this.phenomenonTime = phenomenonTime;
+    }
+
     public boolean isSetPhenomenonTime() {
         if (phenomenonTime == null) {
             queryTimes();
         }
         return phenomenonTime != null;
-    }
-
-    @Override
-    public void setPhenomenonTime(Time phenomenonTime) {
-        this.phenomenonTime = phenomenonTime;
     }
 
     @Override

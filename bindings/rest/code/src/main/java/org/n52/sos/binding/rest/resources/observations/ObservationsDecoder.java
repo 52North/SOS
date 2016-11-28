@@ -45,22 +45,21 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeException;
-import org.n52.iceland.ogc.ows.Extensions;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.swes.SwesExtension;
 import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.GetObservationByIdRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
@@ -77,7 +76,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport, DateTimeException
+            String pathPayload) throws DecodingException
     {
         // 0 variables
         RestRequest result = null;
@@ -112,7 +111,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeDeleteRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
      // 0 variables
         RestRequest result = null;
@@ -137,7 +136,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
         if(isContentOfPostRequestValid(httpRequest) && pathPayload == null){
             // 0 read xml encoded post content
@@ -226,13 +225,13 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
         throw new OperationNotSupportedException(String.format("HTTP-PUT + '%s'",
                 bindingConstants.getResourceObservations()));
     }
 
-    private ObservationsSearchRequest decodeObservationsSearchRequest(HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
+    private ObservationsSearchRequest decodeObservationsSearchRequest(HttpServletRequest httpRequest) throws DecodingException
     {
         // 2.2.1 get kvp encoded parameters from querystring
         Map<String,String> parameterMap = getKvPEncodedParameters(httpRequest);
@@ -256,7 +255,7 @@ public class ObservationsDecoder extends ResourceDecoder {
         return new ObservationsGetRequest(getObservationRequest,getCapabilitesRequestOnlyContents);
     }
 
-    private GetObservationRequest buildGetObservationSearchRequest(Map<String, String> parameterMap) throws OwsExceptionReport, DateTimeException
+    private GetObservationRequest buildGetObservationSearchRequest(Map<String, String> parameterMap) throws DecodingException
     {
         GetObservationRequest request = new GetObservationRequest();
         request.setVersion(bindingConstants.getSosVersion());
@@ -350,7 +349,7 @@ public class ObservationsDecoder extends ResourceDecoder {
         return extensions;
     }
 
-    private OmObservation createSosObservationFromOMObservation(OMObservationType omObservation) throws OwsExceptionReport
+    private OmObservation createSosObservationFromOMObservation(OMObservationType omObservation) throws DecodingException
     {
         Object decodedObject = CodingHelper.decodeXmlObject(omObservation);
         if (decodedObject != null && decodedObject instanceof OmObservation) {

@@ -35,9 +35,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
@@ -50,8 +50,6 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class SosOffering extends AbstractFeature implements Comparable<SosOffering> {
-
-    private static final long serialVersionUID = -7800205161914910464L;
 
     /**
      * flag to identify offering as offering from a parent procedure, default =

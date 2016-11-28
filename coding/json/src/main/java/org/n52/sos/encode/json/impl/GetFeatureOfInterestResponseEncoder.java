@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
@@ -49,7 +49,7 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, GetFeatureOfInterestResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, GetFeatureOfInterestResponse t) throws EncodingException {
         json.set(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(t.getAbstractFeature()));
     }
 }

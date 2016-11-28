@@ -28,9 +28,12 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import java.util.Collections;
+import java.util.Set;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.request.DeleteSensorRequest;
 import org.n52.sos.response.DeleteSensorResponse;
 
@@ -45,12 +48,12 @@ public abstract class AbstractDeleteSensorHandler extends AbstractOperationHandl
         super(service, Sos2Constants.Operations.DeleteSensor.name());
     }
 
+    public abstract DeleteSensorResponse deleteSensor(DeleteSensorRequest request) throws OwsExceptionReport;
+
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addProcedureParameter(opsMeta);
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return Collections.singleton(getProcedureParameter(service, version));
     }
 
-    public abstract DeleteSensorResponse deleteSensor(DeleteSensorRequest request) throws OwsExceptionReport;
 
 }

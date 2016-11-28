@@ -34,7 +34,7 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import org.n52.iceland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtension;
 
 
 /**

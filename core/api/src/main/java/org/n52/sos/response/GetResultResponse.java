@@ -28,7 +28,7 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
 
 /**
@@ -38,6 +38,18 @@ import org.n52.iceland.response.AbstractServiceResponse;
 public class GetResultResponse extends AbstractServiceResponse {
 
     private String resultValues;
+
+    public GetResultResponse() {
+        super(null, null, SosConstants.Operations.GetResult.name());
+    }
+
+    public GetResultResponse(String service, String version) {
+        super(service, version, SosConstants.Operations.GetResult.name());
+    }
+
+    public GetResultResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public void setResultValues(String resultValues) {
         this.resultValues = resultValues;
@@ -49,11 +61,6 @@ public class GetResultResponse extends AbstractServiceResponse {
 
     public boolean hasResultValues() {
         return resultValues != null && !resultValues.isEmpty();
-    }
-
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetResult.name();
     }
 
 }

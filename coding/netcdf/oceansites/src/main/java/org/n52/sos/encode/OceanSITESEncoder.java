@@ -37,23 +37,21 @@ import java.util.Set;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.coding.encode.EncoderKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.oceansites.OceanSITESConstants;
 import org.n52.sos.netcdf.om.NetCDFObservation;
 import org.n52.sos.response.BinaryAttachmentResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -122,9 +120,10 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         return Collections.emptySet();
     }
 
-    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws OwsExceptionReport {
+    @Override
+    protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version) throws EncodingException, IOException {
         if (CollectionHelper.isEmptyOrNull(netCDFObsList)) {
-            throw new NoApplicableCodeException().withMessage("No feature types to encode");
+            throw new EncodingException("No feature types to encode");
         } else if (netCDFObsList.size() > 1) {
             throwTooManyFeatureTypesOrSensorsException(netCDFObsList, netCDFObsList.size(), null);
         }
@@ -132,7 +131,7 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         NetCDFObservation netCDFObservation = netCDFObsList.get(0);
 
         if (CollectionHelper.isEmpty(netCDFObservation.getSensorDatasets())) {
-            throw new NoApplicableCodeException().withMessage("No sensors to encode");
+            throw new EncodingException("No sensors to encode");
         } else if (netCDFObservation.getSensorDatasets().size() > 1) {
             throwTooManyFeatureTypesOrSensorsException(netCDFObsList, null, netCDFObservation.getSensorDatasets().size());
         }
@@ -147,8 +146,6 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
         try {
             response = new BinaryAttachmentResponse(Files.toByteArray(netcdfFile), getContentType(),
                     String.format(filename, makeDateSafe(new DateTime(DateTimeZone.UTC))));
-        } catch (IOException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage("Couldn't create netCDF file");
         } finally {
             tempDir.delete();
         }
@@ -157,19 +154,21 @@ private static final Logger LOGGER = LoggerFactory.getLogger(OceanSITESEncoder.c
     }
 
     private void throwTooManyFeatureTypesOrSensorsException(List<NetCDFObservation> netCDFObsList,
-            Integer numFeatureTypes, Integer numSensors) throws CodedException {
+            Integer numFeatureTypes, Integer numSensors) throws EncodingException {
         StringBuilder sb = new StringBuilder();
-        sb.append("This encoder (" + OceanSITESConstants.CONTENT_TYPE_NETCDF_OCEANSITES.toString() + ") can only encode a single feature type");
+        sb.append("This encoder (")
+                .append(OceanSITESConstants.CONTENT_TYPE_NETCDF_OCEANSITES.toString())
+                .append(") can only encode a single feature type");
         if (numFeatureTypes != null) {
-            sb.append(" (found " + numFeatureTypes + ")");
+            sb.append(" (found ").append(numFeatureTypes).append(")");
         }
         sb.append(" and a single sensor");
         if (numSensors != null) {
-            sb.append(" (found " + numSensors + ")");
+            sb.append(" (found ").append(numSensors).append(")");
         }
-        sb.append(". Change your request to only return a single feature type or use the zipped netCDF encoder ("
-                + OceanSITESConstants.CONTENT_TYPE_NETCDF_ZIP_OCEANSITES.toString() + ").");
-        throw new UnsupportedEncoderInputException(this, netCDFObsList).withMessage(sb.toString());
+        sb.append(". Change your request to only return a single feature type or use the zipped netCDF encoder (")
+                .append(OceanSITESConstants.CONTENT_TYPE_NETCDF_ZIP_OCEANSITES.toString()).append(").");
+        throw new EncodingException(sb.toString());
     }
 
 }

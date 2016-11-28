@@ -28,75 +28,30 @@
  */
 package org.n52.sos.gda;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetDataAvailabilityKvpDecoder extends AbstractKvpDecoder {
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, GetDataAvailabilityConstants.OPERATION_NAME, MediaTypes.APPLICATION_KVP);
+public class GetDataAvailabilityKvpDecoder extends AbstractSosKvpDecoder<GetDataAvailabilityRequest> {
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public GetDataAvailabilityKvpDecoder() {
+        super(GetDataAvailabilityRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              GetDataAvailabilityConstants.OPERATION_NAME);
     }
 
     @Override
-    public GetDataAvailabilityRequest decode(Map<String, String> element) throws OwsExceptionReport {
-        GetDataAvailabilityRequest request = new GetDataAvailabilityRequest();
-        CompositeOwsException exceptions = new CompositeOwsException();
-
-        for (String name : element.keySet()) {
-            String parameterValues = element.get(name);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, name)) {
-                    if (name.equalsIgnoreCase(GetDataAvailabilityConstants.GetDataAvailabilityParams.observedProperty
-                            .name())) {
-                        for (String observedProperty : KvpHelper.checkParameterMultipleValues(parameterValues, name)) {
-                            request.addObservedProperty(observedProperty);
-                        }
-                    } else if (name.equalsIgnoreCase(GetDataAvailabilityConstants.GetDataAvailabilityParams.procedure
-                            .name())) {
-                        for (String procedure : KvpHelper.checkParameterMultipleValues(parameterValues, name)) {
-                            request.addProcedure(procedure);
-                        }
-                    } else if (name
-                            .equalsIgnoreCase(GetDataAvailabilityConstants.GetDataAvailabilityParams.featureOfInterest
-                                    .name())) {
-                        for (String featureOfInterest : KvpHelper.checkParameterMultipleValues(parameterValues, name)) {
-                            request.addFeatureOfInterest(featureOfInterest);
-                        }
-                    } else if (name.equalsIgnoreCase(GetDataAvailabilityConstants.GetDataAvailabilityParams.offering
-                            .name())) {
-                        for (String offering : KvpHelper.checkParameterMultipleValues(parameterValues, name)) {
-                            request.addOffering(offering);
-                        }
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(name));
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
+    protected void getRequestParameterDefinitions(Builder<GetDataAvailabilityRequest> builder) {
+        builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.observedProperty,
+                    decodeList(GetDataAvailabilityRequest::setObservedProperty));
+        builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.procedure,
+                    decodeList(GetDataAvailabilityRequest::setProcedure));
+        builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.featureOfInterest,
+                    decodeList(GetDataAvailabilityRequest::setFeatureOfInterest));
+        builder.add(GetDataAvailabilityConstants.GetDataAvailabilityParams.offering,
+                    decodeList(GetDataAvailabilityRequest::setOffering));
     }
 }

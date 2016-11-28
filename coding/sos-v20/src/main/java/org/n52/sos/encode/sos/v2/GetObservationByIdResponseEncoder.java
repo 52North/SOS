@@ -39,14 +39,14 @@ import net.opengis.sos.x20.GetObservationByIdResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.response.GetObservationByIdResponse;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
@@ -69,14 +69,14 @@ public class GetObservationByIdResponseEncoder extends AbstractObservationRespon
 
     @Override
     protected XmlObject createResponse(ObservationEncoder<XmlObject, OmObservation> encoder,
-            GetObservationByIdResponse response) throws OwsExceptionReport {
+            GetObservationByIdResponse response) throws EncodingException {
         GetObservationByIdResponseDocument doc =
                 GetObservationByIdResponseDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
         GetObservationByIdResponseType xbResponse = doc.addNewGetObservationByIdResponse();
         List<OmObservation> oc = response.getObservationCollection();
-        HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<CodeWithAuthority, String>(oc.size());
+        HashMap<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<>(oc.size());
         for (OmObservation observation : oc) {
-            Map<HelperValues, String> foiHelper = new EnumMap<HelperValues, String>(HelperValues.class);
+            Map<HelperValues, String> foiHelper = new EnumMap<>(HelperValues.class);
             final String gmlId;
             CodeWithAuthority foiId = observation.getObservationConstellation().getFeatureOfInterest().getIdentifierCodeWithAuthority();
             if (gmlID4sfIdentifier.containsKey(foiId)) {

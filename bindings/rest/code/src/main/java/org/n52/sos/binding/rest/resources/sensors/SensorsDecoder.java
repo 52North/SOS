@@ -37,30 +37,26 @@ import net.opengis.sensorML.x101.AbstractProcessType;
 import net.opengis.sensorML.x101.CapabilitiesDocument.Capabilities;
 import net.opengis.sensorML.x101.IoComponentPropertyType;
 import net.opengis.sensorML.x101.SystemType;
-import net.opengis.swe.x101.AnyScalarPropertyType;
-import net.opengis.swe.x101.SimpleDataRecordType;
 import net.opengis.sosREST.x10.SensorDocument;
 import net.opengis.sosREST.x10.SensorType;
-
-
-
-
-
+import net.opengis.swe.x101.AnyScalarPropertyType;
+import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
 import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;

@@ -28,21 +28,23 @@
  */
 package org.n52.sos.ds;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.response.GetResultResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.request.GetResultRequest;
+import org.n52.sos.response.GetResultResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultDAO
@@ -51,31 +53,38 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class AbstractGetResultHandler extends AbstractOperationHandler {
-    private static final Logger log = LoggerFactory.getLogger(AbstractGetResultHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractGetResultHandler.class);
+
     public AbstractGetResultHandler(String service) {
         super(service, SosConstants.Operations.GetResult.name());
     }
 
+    public abstract GetResultResponse getResult(GetResultRequest request) throws OwsExceptionReport;
+
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        Set<String> resultTemplateIdentifier = getCache().getResultTemplates();
-        Set<String> offerings = new HashSet<>(0);
-        Collection<String> observableProperties = new ArrayList<>(0);
-        Collection<String> featureOfInterest = new ArrayList<>(0);
-        if (resultTemplateIdentifier != null && !resultTemplateIdentifier.isEmpty()) {
-            offerings = getCache().getOfferingsWithResultTemplate();
-            observableProperties = getCache().getObservablePropertiesWithResultTemplate();
-            featureOfInterest = getCache().getFeaturesOfInterestWithResultTemplate();
-        }
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
         switch (version) {
             case Sos1Constants.SERVICEVERSION:
-                throw new OperationNotSupportedException().at(SosConstants.Operations.GetResult).withMessage(
-                        "This operation is not supported for SOS {}!", version);
+                throw new OperationNotSupportedException()
+                        .at(SosConstants.Operations.GetResult)
+                        .withMessage("This operation is not supported for SOS {}!", version);
             case Sos2Constants.SERVICEVERSION:
-                addOfferingParameter(opsMeta, offerings);
-                addObservablePropertyParameter(opsMeta, observableProperties);
-                addFeatureOfInterestParameter(opsMeta, featureOfInterest);
+                Set<String> resultTemplateIdentifier = getCache().getResultTemplates();
+
+                Set<String> offerings = null;
+                Collection<String> observableProperties = null;
+                Collection<String> featureOfInterest = null;
+
+                if (resultTemplateIdentifier != null && !resultTemplateIdentifier.isEmpty()) {
+                    offerings = getCache().getOfferingsWithResultTemplate();
+                    observableProperties = getCache().getObservablePropertiesWithResultTemplate();
+                    featureOfInterest = getCache().getFeaturesOfInterestWithResultTemplate();
+                }
+
+                return new HashSet<>(Arrays.asList(
+                        getOfferingParameter(service, version, offerings),
+                        getObservablePropertyParameter(service, version, observableProperties),
+                        getFeatureOfInterestParameter(service, version, featureOfInterest)));
                 // TODO get the values for temporal and spatial filtering
                 // set param temporalFilter
                 // opsMeta.addParameterValue(Sos2Constants.GetResultParams.temporalFilter.name(),
@@ -83,13 +92,10 @@ public abstract class AbstractGetResultHandler extends AbstractOperationHandler 
                 // // set param spatialFilter
                 // opsMeta.addParameterValue(Sos2Constants.GetResultParams.spatialFilter.name(),
                 // new OWSParameterValuePossibleValues(null));
-                break;
              default:
-                 log.trace("Not supported version '{}'", version);
-                 break;
+                 LOG.trace("Not supported version '{}'", version);
+                 return Collections.emptySet();
         }
     }
-
-    public abstract GetResultResponse getResult(GetResultRequest request) throws OwsExceptionReport;
 
 }

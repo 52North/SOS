@@ -33,25 +33,22 @@ import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.n52.iceland.ogc.ows.MergableExtension;
-import org.n52.iceland.ogc.sos.CapabilitiesExtension;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.iceland.ogc.ows.extension.MergableExtension;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
+import org.n52.shetland.util.CollectionHelper;
 
 /**
  * @since 4.0.0
  *
  */
-public class SosInsertionCapabilities implements CapabilitiesExtension, MergableExtension<SosInsertionCapabilities> {
+public class SosInsertionCapabilities implements OwsCapabilitiesExtension, MergableExtension<SosInsertionCapabilities> {
     private static final String SECTION_NAME = Sos2Constants.CapabilitiesSections.InsertionCapabilities.name();
 
-    private SortedSet<String> featureOfInterestTypes = new TreeSet<String>();
-
-    private SortedSet<String> observationTypes = new TreeSet<String>();
-
-    private SortedSet<String> procedureDescriptionFormats = new TreeSet<String>();
-
-    private SortedSet<String> supportedEncodings = new TreeSet<String>();
+    private final SortedSet<String> featureOfInterestTypes = new TreeSet<>();
+    private final SortedSet<String> observationTypes = new TreeSet<>();
+    private final SortedSet<String> procedureDescriptionFormats = new TreeSet<>();
+    private final SortedSet<String> supportedEncodings = new TreeSet<>();
 
     public SortedSet<String> getFeatureOfInterestTypes() {
         return Collections.unmodifiableSortedSet(featureOfInterestTypes);

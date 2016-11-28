@@ -28,59 +28,64 @@
  */
 package org.n52.sos.convert;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
-import org.n52.sos.cache.SosContentCache;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.ows.OwsCapabilities;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.ows.OwsParameterValue;
-import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.Constants;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsCapabilities;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsOperation;
+import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+import org.n52.shetland.ogc.ows.OwsPossibleValues;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.ProcessMethod;
+import org.n52.shetland.ogc.sensorML.ProcessModel;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.gda.GetDataAvailabilityRequest;
 import org.n52.sos.gda.GetDataAvailabilityResponse;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.ProcessMethod;
-import org.n52.sos.ogc.sensorML.ProcessModel;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.ogc.sos.SosOffering;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationRequest;
@@ -90,19 +95,19 @@ import org.n52.sos.response.AbstractObservationResponse;
 import org.n52.sos.response.DescribeSensorResponse;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public abstract class AbstractIdentifierModifier implements RequestResponseModifier {
 
-
-    protected abstract  boolean checkForFlag(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws InvalidParameterValueException;
+    protected abstract boolean checkForFlag(AbstractServiceRequest request, AbstractServiceResponse response) throws
+            InvalidParameterValueException;
 
     protected abstract String checkOfferingParameterValue(String parameterValue);
 
@@ -129,7 +134,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     protected abstract void checkAndChangOfferingIdentifier(SosOffering offering);
 
     @Override
-    public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    public AbstractServiceRequest modifyRequest(AbstractServiceRequest request) throws OwsExceptionReport {
         if (request instanceof GetObservationRequest) {
             return changeGetObservationRequestParameterValues((GetObservationRequest) request);
         } else if (request instanceof GetFeatureOfInterestRequest) {
@@ -146,7 +151,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeGetObservationRequestParameterValues(GetObservationRequest request) {
+    protected AbstractServiceRequest changeGetObservationRequestParameterValues(GetObservationRequest request) {
         if (request.isSetOffering()) {
             request.setOfferings(checkOfferingParameterValues(request.getOfferings()));
         }
@@ -162,7 +167,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeGetFeatureOfInterestRequestParameterValues(
+    protected AbstractServiceRequest changeGetFeatureOfInterestRequestParameterValues(
             GetFeatureOfInterestRequest request) {
         if (request.isSetFeatureOfInterestIdentifiers()) {
             request.setFeatureIdentifiers(checkFeatureOfInterestParameterValues(request.getFeatureIdentifiers()));
@@ -176,12 +181,12 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeDescribeSensorRequestParameterValues(DescribeSensorRequest request) {
+    protected AbstractServiceRequest changeDescribeSensorRequestParameterValues(DescribeSensorRequest request) {
         request.setProcedure(checkProcedureParameterValue(request.getProcedure()));
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeGetDataAvailabilityRequestParameterValues(
+    protected AbstractServiceRequest changeGetDataAvailabilityRequestParameterValues(
             GetDataAvailabilityRequest request) {
         if (request.isSetOfferings()) {
             request.setOffering(checkOfferingParameterValues(request.getOfferings()));
@@ -198,7 +203,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeGetResultTemplateRequestParameterValues(GetResultTemplateRequest request) {
+    protected AbstractServiceRequest changeGetResultTemplateRequestParameterValues(GetResultTemplateRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
         }
@@ -208,7 +213,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         return request;
     }
 
-    protected AbstractServiceRequest<?> changeGetResultRequestParameterValues(GetResultRequest request) {
+    protected AbstractServiceRequest changeGetResultRequestParameterValues(GetResultRequest request) {
         if (request.isSetOffering()) {
             request.setOffering(checkOfferingParameterValue(request.getOffering()));
         }
@@ -222,7 +227,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
+    public AbstractServiceResponse modifyResponse(AbstractServiceRequest request, AbstractServiceResponse response)
             throws OwsExceptionReport {
         if (checkForFlag(request, response)) {
             if (response instanceof GetCapabilitiesResponse) {
@@ -244,80 +249,65 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     protected GetCapabilitiesResponse changeGetCapabilitiesResponseIdentifier(GetCapabilitiesResponse response) {
         OwsCapabilities capabilities = response.getCapabilities();
-        if (capabilities.isSetOperationsMetadata() && capabilities.getOperationsMetadata().isSetOperations()) {
-            for (OwsOperation operation : capabilities.getOperationsMetadata().getOperations()) {
-                SortedMap<String, List<OwsParameterValue>> parameterValues = operation.getParameterValues();
-                if (parameterValues.containsKey(SosConstants.GetObservationParams.offering.name())) {
-                    checkOwsParameterValues(parameterValues.get(SosConstants.GetObservationParams.offering.name()),
-                            SosConstants.GetObservationParams.offering.name());
-                }
-                if (parameterValues.containsKey(SosConstants.GetObservationParams.featureOfInterest.name())) {
-                    checkOwsParameterValues(
-                            parameterValues.get(SosConstants.GetObservationParams.featureOfInterest.name()),
-                            SosConstants.GetObservationParams.featureOfInterest.name());
-                }
-                if (parameterValues.containsKey(Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name())) {
-                    checkOwsParameterValues(
-                            parameterValues.get(Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name()),
-                            SosConstants.GetObservationParams.featureOfInterest.name());
-                }
-                if (parameterValues.containsKey(SosConstants.GetObservationParams.observedProperty.name())) {
-                    checkOwsParameterValues(
-                            parameterValues.get(SosConstants.GetObservationParams.observedProperty.name()),
-                            SosConstants.GetObservationParams.observedProperty.name());
-                }
-                if (parameterValues.containsKey(SosConstants.GetObservationParams.procedure.name())) {
-                    checkOwsParameterValues(parameterValues.get(SosConstants.GetObservationParams.procedure.name()),
-                            SosConstants.GetObservationParams.procedure.name());
+
+        capabilities.getOperationsMetadata()
+                .map(OwsOperationsMetadata::getOperations)
+                .map(Set::stream)
+                .orElseGet(Stream::empty)
+                .map(OwsOperation::getParameters)
+                .flatMap(Set::stream)
+                .forEach(this::checkParameter);
+
+        if (capabilities instanceof SosCapabilities) {
+            SosCapabilities sosCapabilities = (SosCapabilities) capabilities;
+            if (sosCapabilities.getContents().isPresent()) {
+                for (SosObservationOffering observationOffering : sosCapabilities.getContents().get()) {
+                    if (!observationOffering.isEmpty()) {
+                        checkAndChangOfferingIdentifier(observationOffering.getOffering());
+                        observationOffering.setFeatureOfInterest(checkFeatureOfInterestIdentifier(observationOffering.getFeatureOfInterest()));
+                        observationOffering.setProcedures(checkProcedureIdentifier(observationOffering.getProcedures()));
+                        observationOffering.setObservableProperties(checkObservablePropertyIdentifier(observationOffering.getObservableProperties()));
+                    }
                 }
             }
-        }
-        if (capabilities instanceof SosCapabilities && ((SosCapabilities)capabilities).isSetContents()) {
-            for (SosObservationOffering observationOffering : ((SosCapabilities)capabilities).getContents()) {
-                if (!observationOffering.isEmpty()) {
-                    checkAndChangOfferingIdentifier(observationOffering.getOffering());
-                    observationOffering.setFeatureOfInterest(checkFeatureOfInterestIdentifier(observationOffering
-                            .getFeatureOfInterest()));
-                    observationOffering.setProcedures(checkProcedureIdentifier(observationOffering.getProcedures()));
-                    observationOffering.setObservableProperties(checkObservablePropertyIdentifier(observationOffering
-                            .getObservableProperties()));
-                }
-            }
+
         }
         return response;
     }
 
-    protected void checkOwsParameterValues(List<OwsParameterValue> list, String name) {
-        // List<OwsParameterValue> checkedList =
-        // Lists.newArrayListWithCapacity(list.size());
-        for (OwsParameterValue owsParameterValue : list) {
-            if (owsParameterValue instanceof OwsParameterValuePossibleValues
-                    && CollectionHelper.isNotEmpty(((OwsParameterValuePossibleValues) owsParameterValue).getValues())) {
-                OwsParameterValuePossibleValues pvpv = (OwsParameterValuePossibleValues) owsParameterValue;
-                SortedSet<String> checkedValues = Sets.<String> newTreeSet();
-                for (String identifier : pvpv.getValues()) {
-                    if (SosConstants.GetObservationParams.offering.name().equals(name)) {
-                        checkedValues.add(checkOfferingIdentifier(identifier));
-                    } else if (SosConstants.GetObservationParams.featureOfInterest.name().equals(name)) {
-                        checkedValues.add(checkFeatureOfInterestIdentifier(identifier));
-                    } else if (SosConstants.GetObservationParams.observedProperty.name().equals(name)) {
-                        checkedValues.add(checkObservablePropertyIdentifier(identifier));
-                    } else if (SosConstants.GetObservationParams.procedure.name().equals(name)) {
-                        checkedValues.add(checkProcedureIdentifier(identifier));
-                    } else {
-                        checkedValues.add(identifier);
-                    }
-                }
-                pvpv.setValues(checkedValues);
-            }
+    private void checkParameter(OwsDomain parameter) {
+        if (parameter.getName().equals(SosConstants.GetObservationParams.offering.name())) {
+            checkOwsParameterValues(parameter.getPossibleValues(), parameter.getName());
+        }
+        if (parameter.getName().equals(SosConstants.GetObservationParams.featureOfInterest.name())) {
+            checkOwsParameterValues(parameter.getPossibleValues(), parameter.getName());
+        }
+        if (parameter.getName().equals(Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name())) {
+            checkOwsParameterValues(parameter.getPossibleValues(), parameter.getName());
+        }
+        if (parameter.getName().equals(SosConstants.GetObservationParams.observedProperty.name())) {
+            checkOwsParameterValues(parameter.getPossibleValues(), parameter.getName());
+        }
+        if (parameter.getName().equals(SosConstants.GetObservationParams.procedure.name())) {
+            checkOwsParameterValues(parameter.getPossibleValues(), parameter.getName());
         }
     }
 
-    protected AbstractServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
-        for (SosProcedureDescription procedure : response.getProcedureDescriptions()) {
-            checkAndChangeProcedure(procedure);
-            // TODO check typeOf title
+    protected OwsPossibleValues checkOwsParameterValues(OwsPossibleValues parameter, String name) {
+        if (parameter.isAllowedValues()) {
+            OwsAllowedValues allowedValues = parameter.asAllowedValues();
+            getIdentifierCheckerForName(name).ifPresent(c
+                    -> allowedValues.setRestrictions(allowedValues.getRestrictions().stream().map(r
+                            -> !r.isValue() ? r : new OwsValue(c.apply(r.asValue().getValue()))
+                    ))
+            );
         }
+        return parameter;
+    }
+
+    protected AbstractServiceResponse changeDescribeSensorResponseIdentifier(DescribeSensorResponse response) {
+        // TODO check typeOf title
+        response.getProcedureDescriptions().stream().forEach(this::checkAndChangeProcedure);
         return response;
     }
 
@@ -338,9 +328,7 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
         if (response.getAbstractFeature() instanceof FeatureCollection) {
             FeatureCollection featureCollection = (FeatureCollection) response.getAbstractFeature();
             // TODO check if new map with new identifier should be created
-            for (AbstractFeature abstractFeature : featureCollection.getMembers().values()) {
-                checkAndChangeFeatureOfInterestIdentifier(abstractFeature);
-            }
+            featureCollection.getMembers().values().forEach(this::checkAndChangeFeatureOfInterestIdentifier);
         } else {
             checkAndChangeFeatureOfInterestIdentifier(response.getAbstractFeature());
         }
@@ -373,13 +361,10 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     }
 
     protected AbstractServiceResponse changeGetDataAvailabilityResponseIdentifier(GetDataAvailabilityResponse response) {
-        for (DataAvailability dataAvailability : response.getDataAvailabilities()) {
-            dataAvailability.getFeatureOfInterest().setHref(
-                    checkFeatureOfInterestIdentifier(dataAvailability.getFeatureOfInterest().getHref()));
-            dataAvailability.getProcedure().setHref(
-                    checkProcedureIdentifier(dataAvailability.getProcedure().getHref()));
-            dataAvailability.getObservedProperty().setHref(
-                    checkObservablePropertyIdentifier(dataAvailability.getObservedProperty().getHref()));
+        for (DataAvailability da : response.getDataAvailabilities()) {
+            da.getFeatureOfInterest().setHref(checkFeatureOfInterestIdentifier(da.getFeatureOfInterest().getHref()));
+            da.getProcedure().setHref(checkProcedureIdentifier(da.getProcedure().getHref()));
+            da.getObservedProperty().setHref(checkObservablePropertyIdentifier(da.getObservedProperty().getHref()));
         }
         return response;
     }
@@ -398,17 +383,15 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
             procedure.setFeaturesOfInterest(checkedFeatures);
         }
         if (procedure.isSetOfferings()) {
-            for (SosOffering offering : procedure.getOfferings()) {
-                checkAndChangOfferingIdentifier(offering);
-            }
+            procedure.getOfferings().forEach(this::checkAndChangOfferingIdentifier);
         }
         if (procedure.isSetPhenomenon()) {
-            Map<String, AbstractPhenomenon> checkedPhens = Maps.newHashMap();
-            for (AbstractPhenomenon phen : procedure.getPhenomenon().values()) {
-                checkAndChangeObservablePropertyIdentifier(phen);
-                checkedPhens.put(phen.getIdentifier(), phen);
-            }
-            procedure.setPhenomenon(checkedPhens);
+            procedure.setPhenomenon(procedure.getPhenomenon().values().stream()
+                    .map(phen -> {
+                        checkAndChangeObservablePropertyIdentifier(phen);
+                        return phen;
+                    })
+                    .collect(toMap(AbstractPhenomenon::getIdentifier, identity())));
         }
         if (procedure.isSetParentProcedures()) {
             procedure.setParentProcedures(checkProcedureIdentifier(procedure.getParentProcedures()));
@@ -427,56 +410,49 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
             }
         }
         if (procedure.isSetChildProcedures()) {
-            for (SosProcedureDescription childProcedure : procedure.getChildProcedures()) {
-                checkAndChangeProcedure(childProcedure);
-            }
+            procedure.getChildProcedures().forEach(this::checkAndChangeProcedure);
         }
     }
 
     private List<String> checkKeywords(List<String> keywords) {
-        List<String> checkedKeyword = Lists.newArrayListWithCapacity(keywords.size());
-        for (String keyword : keywords) {
-            String checked = checkOfferingIdentifier(keyword);
-            checked = checkObservablePropertyIdentifier(checked);
-            checked = checkFeatureOfInterestIdentifier(checked);
-            checked = checkProcedureIdentifier(checked);
-            checkedKeyword.add(checked);
-        }
-        return checkedKeyword;
+        return keywords.stream()
+                .map(this::checkOfferingIdentifier)
+                .map(this::checkObservablePropertyIdentifier)
+                .map(this::checkFeatureOfInterestIdentifier)
+                .map(this::checkProcedureIdentifier)
+                .collect(toList());
     }
 
     private void checkSensorML(SensorML procedure) {
         checkIdentificationCapabilities((AbstractSensorML) procedure);
         if (procedure.isSetMembers()) {
-            for (AbstractProcess member : procedure.getMembers()) {
-                checkAndChangeProcedure(member);
-            }
+            procedure.getMembers().stream().forEach(this::checkAndChangeProcedure);
         }
     }
 
     private void checkAbstractProcess(AbstractProcess procedure) {
         checkIdentificationCapabilities((AbstractSensorML) procedure);
         if (procedure.isSetOutputs()) {
-            for (SmlIo<?> output : procedure.getOutputs()) {
-                checkAbstractDataComponentForObservableProperty(output.getIoValue());
-            }
+            procedure.getOutputs().stream().map(SmlIo::getIoValue)
+                    .forEach(this::checkAbstractDataComponentForObservableProperty);
         }
         checkProcessMethod(procedure);
     }
 
     private void checkProcessMethod(AbstractProcess procedure) {
-        if (procedure instanceof ProcessModel && ((ProcessModel)procedure).isSetMethod()) {
-            ProcessMethod method = ((ProcessModel)procedure).getMethod();
+        if (procedure instanceof ProcessModel && ((ProcessModel) procedure).isSetMethod()) {
+            ProcessMethod method = ((ProcessModel) procedure).getMethod();
             if (method.isSetRulesDefinition() && method.getRulesDefinition().isSetDescription()) {
-                String[] split = method.getRulesDefinition().getDescription().split(Constants.INVERTED_COMMA_STRING);
+                String[] split = method.getRulesDefinition().getDescription().split("'");
                 if (split.length == 5) {
                     StringBuilder builder = new StringBuilder();
-                    builder.append(split[0]).append(Constants.INVERTED_COMMA_CHAR);
-                    builder.append(checkProcedureIdentifier(split[1])).append(Constants.INVERTED_COMMA_CHAR);
-                    builder.append(split[2]).append(Constants.INVERTED_COMMA_CHAR);
-                    Collection<String> obsProps = checkObservablePropertyIdentifier(Sets.newTreeSet(Arrays.asList(split[3].split(Constants.COMMA_STRING))));
-                    builder.append(Joiner.on(Constants.COMMA_STRING).join(obsProps));
-                    builder.append(Constants.INVERTED_COMMA_CHAR);
+                    builder.append(split[0]).append('\'');
+                    builder.append(checkProcedureIdentifier(split[1])).append('\'');
+                    builder.append(split[2]).append('\'');
+                    Collection<String> obsProps = checkObservablePropertyIdentifier(Sets.newTreeSet(Arrays
+                            .asList(split[3].split(","))));
+                    builder.append(Joiner.on(",").join(obsProps));
+                    builder.append('\'');
                     builder.append(split[4]);
                     method.getRulesDefinition().setDescription(builder.toString());
                 }
@@ -495,125 +471,88 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
 
     private void checkIdentificationCapabilities(AbstractSensorML procedure) {
         if (procedure.isSetIdentifications()) {
-            for (SmlIdentifier identifier : procedure.getIdentifications()) {
-                if (isIdentificationProcedureIdentifier(identifier)) {
-                    identifier.setValue(checkProcedureIdentifier(identifier.getValue()));
-                }
-            }
+            procedure.getIdentifications().stream()
+                    .filter(this::isIdentificationProcedureIdentifier)
+                    .forEach(id -> id.setValue(checkProcedureIdentifier(id.getValue())));
         }
         if (procedure.isSetCapabilities()) {
             for (SmlCapabilities capabilities : procedure.getCapabilities()) {
-                if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(capabilities.getName())) {
-                    for (SweField field : capabilities.getDataRecord().getFields()) {
-                        if (field.getElement() instanceof SweText) {
-                            ((SweText) field.getElement()).setValue(checkOfferingIdentifier(((SweText) field
-                                    .getElement()).getValue()));
-                        }
-                    }
-                } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(capabilities.getName())) {
-                    for (SweField field : capabilities.getDataRecord().getFields()) {
-                        if (field.getElement() instanceof SweText) {
-                            ((SweText) field.getElement()).setValue(checkProcedureIdentifier(((SweText) field
-                                    .getElement()).getValue()));
-                        }
-                    }
-                } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(capabilities.getName())) {
-                    for (SweField field : capabilities.getDataRecord().getFields()) {
-                        if (field.getElement() instanceof SweText) {
-                            ((SweText) field.getElement()).setValue(checkFeatureOfInterestIdentifier(((SweText) field
-                                    .getElement()).getValue()));
-                        }
+                if (null != capabilities.getName()) {
+                    switch (capabilities.getName()) {
+                        case SensorMLConstants.ELEMENT_NAME_OFFERINGS:
+                            capabilities.getDataRecord().getFields().stream()
+                                    .map(SweField::getElement)
+                                    .filter(elem -> elem instanceof SweText)
+                                    .map(elem -> (SweText) elem)
+                                    .forEach(elem -> elem.setValue(checkOfferingIdentifier(elem.getValue())));
+                            break;
+                        case SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES:
+                            capabilities.getDataRecord().getFields().stream()
+                                    .map(SweField::getElement)
+                                    .filter(elem -> elem instanceof SweText)
+                                    .map(elem -> (SweText) elem)
+                                    .forEach(elem -> elem.setValue(checkProcedureIdentifier(elem.getValue())));
+                            break;
+                        case SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST:
+                            capabilities.getDataRecord().getFields().stream()
+                                    .map(SweField::getElement)
+                                    .filter(elem -> elem instanceof SweText)
+                                    .map(elem -> (SweText) elem)
+                                    .forEach(elem -> elem.setValue(checkFeatureOfInterestIdentifier(elem.getValue())));
+                            break;
                     }
                 }
             }
         }
     }
 
-    private boolean isIdentificationProcedureIdentifier(final SmlIdentifier identifier) {
-        return (checkIdentificationNameForProcedureIdentifier(identifier.getName()) || checkIdentificationDefinitionForProcedureIdentifier(identifier
-                .getDefinition()));
+    private boolean isIdentificationProcedureIdentifier(SmlIdentifier identifier) {
+        return checkIdentificationNameForProcedureIdentifier(identifier.getName()) ||
+               checkIdentificationDefinitionForProcedureIdentifier(identifier.getDefinition());
     }
 
-    private boolean checkIdentificationNameForProcedureIdentifier(final String name) {
+    private boolean checkIdentificationNameForProcedureIdentifier(String name) {
         return !Strings.isNullOrEmpty(name) && name.equals(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
     }
 
-    private boolean checkIdentificationDefinitionForProcedureIdentifier(final String definition) {
-        if (Strings.isNullOrEmpty(definition)) {
-            return false;
-        }
-        final Set<String> definitionValues =
-                Sets.newHashSet(OGCConstants.URN_UNIQUE_IDENTIFIER, OGCConstants.URN_IDENTIFIER_IDENTIFICATION);
-        return definitionValues.contains(definition) || checkDefinitionStartsWithAndContains(definition);
+    private boolean checkIdentificationDefinitionForProcedureIdentifier(String definition) {
+        return !Strings.isNullOrEmpty(definition) &&
+               (OGCConstants.URN_UNIQUE_IDENTIFIER.equals(definition) ||
+                OGCConstants.URN_IDENTIFIER_IDENTIFICATION.equals(definition) ||
+                checkDefinitionStartsWithAndContains(definition));
     }
 
     private boolean checkDefinitionStartsWithAndContains(final String definition) {
-        return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START)
-                && definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
+        return definition.startsWith(OGCConstants.URN_UNIQUE_IDENTIFIER_START) &&
+                 definition.contains(OGCConstants.URN_UNIQUE_IDENTIFIER_END);
     }
 
-    private List<String> checkOfferingParameterValues(Collection<String> requestedParameterValues) {
-        List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
-        for (String parameterValue : requestedParameterValues) {
-            checkedParameterValues.add(checkOfferingParameterValue(parameterValue));
-        }
-        return checkedParameterValues;
+    private List<String> checkOfferingParameterValues(Collection<String> values) {
+        return values.stream().map(this::checkOfferingParameterValue).collect(toList());
     }
 
-    private List<String> checkFeatureOfInterestParameterValues(Collection<String> requestedParameterValues) {
-        List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
-        for (String parameterValue : requestedParameterValues) {
-            checkedParameterValues.add(checkFeatureOfInterestParameterValue(parameterValue));
-        }
-        return checkedParameterValues;
+    private List<String> checkFeatureOfInterestParameterValues(Collection<String> values) {
+        return values.stream().map(this::checkFeatureOfInterestParameterValue).collect(toList());
     }
 
-    private List<String> checkObservablePropertyParameterValues(Collection<String> requestedParameterValues) {
-        List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
-        for (String parameterValue : requestedParameterValues) {
-            checkedParameterValues.add(checkObservablePropertyParameterValue(parameterValue));
-        }
-        return checkedParameterValues;
+    private List<String> checkObservablePropertyParameterValues(Collection<String> values) {
+        return values.stream().map(this::checkObservablePropertyParameterValue).collect(toList());
     }
 
-    private List<String> checkProcedureParameterValues(Collection<String> requestedParameterValues) {
-        List<String> checkedParameterValues = Lists.newArrayListWithCapacity(requestedParameterValues.size());
-        for (String parameterValue : requestedParameterValues) {
-            checkedParameterValues.add(checkProcedureParameterValue(parameterValue));
-        }
-        return checkedParameterValues;
+    private List<String> checkProcedureParameterValues(Collection<String> values) {
+        return values.stream().map(this::checkProcedureParameterValue).collect(toList());
     }
 
     private Collection<String> checkFeatureOfInterestIdentifier(Collection<String> identifiers) {
-        List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
-        for (String identifier : identifiers) {
-            checkedIdentifiers.add(checkFeatureOfInterestIdentifier(identifier));
-        }
-        return checkedIdentifiers;
+        return identifiers.stream().map(this::checkFeatureOfInterestIdentifier).collect(toList());
     }
 
     private Collection<String> checkObservablePropertyIdentifier(SortedSet<String> identifiers) {
-        List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
-        for (String identifier : identifiers) {
-            checkedIdentifiers.add(checkObservablePropertyIdentifier(identifier));
-        }
-        return checkedIdentifiers;
+        return identifiers.stream().map(this::checkObservablePropertyIdentifier).collect(toList());
     }
 
     private Collection<String> checkProcedureIdentifier(Set<String> identifiers) {
-        List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
-        for (String identifier : identifiers) {
-            checkedIdentifiers.add(checkProcedureIdentifier(identifier));
-        }
-        return checkedIdentifiers;
-    }
-
-    private Collection<String> checkProcedureIdentifier(SortedSet<String> identifiers) {
-        List<String> checkedIdentifiers = Lists.newArrayListWithCapacity(identifiers.size());
-        for (String identifier : identifiers) {
-            checkedIdentifiers.add(checkProcedureIdentifier(identifier));
-        }
-        return checkedIdentifiers;
+        return identifiers.stream().map(this::checkProcedureIdentifier).collect(toList());
     }
 
     protected Profile getActiveProfile() {
@@ -627,6 +566,19 @@ public abstract class AbstractIdentifierModifier implements RequestResponseModif
     @Override
     public RequestResponseModifierFacilitator getFacilitator() {
         return new RequestResponseModifierFacilitator().setAdderRemover(true);
+    }
+
+    private Optional<Function<String, String>> getIdentifierCheckerForName(String name) {
+        if (SosConstants.GetObservationParams.offering.name().equals(name)) {
+            return Optional.of(this::checkOfferingIdentifier);
+        } else if (SosConstants.GetObservationParams.featureOfInterest.name().equals(name)) {
+            return Optional.of(this::checkFeatureOfInterestIdentifier);
+        } else if (SosConstants.GetObservationParams.observedProperty.name().equals(name)) {
+            return Optional.of(this::checkObservablePropertyIdentifier);
+        } else if (SosConstants.GetObservationParams.procedure.name().equals(name)) {
+            return Optional.of(this::checkProcedureIdentifier);
+        }
+        return Optional.empty();
     }
 
 }

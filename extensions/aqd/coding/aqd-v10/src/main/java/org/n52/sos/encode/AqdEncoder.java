@@ -33,59 +33,61 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
+import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.encode.xml.stream.inspire.aqd.EReportingHeaderEncoder;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.om.features.FeatureCollection;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Referenceable;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 
-public class AqdEncoder extends AbstractXmlEncoder<Object> implements ObservationEncoder<XmlObject, Object> {
+public class AqdEncoder extends AbstractXmlEncoder<XmlObject, Object> implements ObservationEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AqdEncoder.class);
 
     private static final Set<EncoderKey> ENCODER_KEY_TYPES = CodingHelper.encoderKeysForElements(AqdConstants.NS_AQD,
             GetObservationResponse.class, OmObservation.class, EReportingHeader.class);
+
+    private AqdHelper aqdHelper;
+    private ReportObligationRepository reportObligationRepository;
 
     public AqdEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -131,7 +133,7 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         if (element instanceof GetObservationResponse) {
             return encodeGetObservationResponse((GetObservationResponse) element);
@@ -143,68 +145,72 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
         throw new UnsupportedEncoderInputException(this, element);
     }
 
-    private XmlObject encodeGetObservationResponse(GetObservationResponse response) throws OwsExceptionReport {
-        FeatureCollection featureCollection = getFeatureCollection(response);
-        // TODO get FLOW from response
-        EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
-        featureCollection.addMember(eReportingHeader);
-        TimePeriod timePeriod = new TimePeriod();
-        TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
-        boolean mergeStreaming = response.hasStreamingData() && !response.isSetMergeObservation();
-        int counter = 1;
-        for (OmObservation observation : response.getObservationCollection()) {
-            if (mergeStreaming) {
-                AbstractStreaming value = (AbstractStreaming) observation.getValue();
-                if (value instanceof StreamingValue) {
-                    for (OmObservation omObservation : value.mergeObservation()) {
-                        getAqdHelper().processObservation(omObservation, timePeriod, resultTime, featureCollection,
-                                eReportingHeader, counter++);
+    private XmlObject encodeGetObservationResponse(GetObservationResponse response) throws EncodingException {
+        try {
+            FeatureCollection featureCollection = getFeatureCollection(response);
+            // TODO get FLOW from response
+            EReportingHeader eReportingHeader = getEReportingHeader(getReportObligationType(response));
+            featureCollection.addMember(eReportingHeader);
+            TimePeriod timePeriod = new TimePeriod();
+            TimeInstant resultTime = new TimeInstant(new DateTime(DateTimeZone.UTC));
+            boolean mergeStreaming = response.hasStreamingData() && !response.isSetMergeObservation();
+            int counter = 1;
+            for (OmObservation observation : response.getObservationCollection()) {
+                if (mergeStreaming) {
+                    AbstractStreaming value = (AbstractStreaming) observation.getValue();
+                    if (value instanceof StreamingValue) {
+                        for (OmObservation omObservation : value.mergeObservation()) {
+                            getAqdHelper().processObservation(omObservation, timePeriod, resultTime, featureCollection,
+                                                                                                 eReportingHeader, counter++);
+                        }
+                    } else {
+                        while (value.hasNextValue()) {
+                            getAqdHelper().processObservation(value.nextSingleObservation(), timePeriod, resultTime,
+                                                                                                     featureCollection, eReportingHeader, counter++);
+                        }
                     }
                 } else {
-                    while (value.hasNextValue()) {
-                        getAqdHelper().processObservation(value.nextSingleObservation(), timePeriod, resultTime,
-                                featureCollection, eReportingHeader, counter++);
-                    }
+                    getAqdHelper().processObservation(observation, timePeriod, resultTime, featureCollection,
+                                                                                       eReportingHeader, counter++);
                 }
-            } else {
-                getAqdHelper().processObservation(observation, timePeriod, resultTime, featureCollection,
-                        eReportingHeader, counter++);
             }
+            if (!timePeriod.isEmpty()) {
+                eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
+            }
+            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
+            additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
+            additionalValues.put(HelperValues.DOCUMENT, null);
+            return encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection, additionalValues);
+        } catch (OwsExceptionReport ex) {
+            throw new EncodingException(ex);
         }
-        if (!timePeriod.isEmpty()) {
-            eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
-        }
-        Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
-        additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
-        additionalValues.put(HelperValues.DOCUMENT, null);
-        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection, additionalValues);
     }
 
-    private XmlObject encodeOmObservation(OmObservation element) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, element);
+    private XmlObject encodeOmObservation(OmObservation element) throws EncodingException {
+        return encodeObjectToXml(OmConstants.NS_OM_2, element);
     }
 
-    private XmlObject encodeEReportingHeader(EReportingHeader element) throws OwsExceptionReport {
+    private XmlObject encodeEReportingHeader(EReportingHeader element) throws EncodingException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             new EReportingHeaderEncoder(element).write(baos);
             return XmlObject.Factory.parse(baos.toString("UTF8"));
-        } catch (XMLStreamException xmlse) {
-            throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error encoding response");
-        } catch (XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error encoding response");
-        } catch (UnsupportedEncodingException uee) {
-            throw new NoApplicableCodeException().causedBy(uee).withMessage("Error encoding response");
+        } catch (XMLStreamException | XmlException | UnsupportedEncodingException xmlse) {
+            throw new EncodingException("Error encoding response", xmlse);
         }
 
     }
 
     private ReportObligationType getReportObligationType(GetObservationResponse response)
-            throws InvalidParameterValueException {
-        return getAqdHelper().getFlow(response.getExtensions());
+            throws EncodingException {
+        try {
+            return getAqdHelper().getFlow(response.getExtensions());
+        } catch (OwsExceptionReport ex) {
+            throw new EncodingException(ex);
+        }
     }
 
-    private FeatureCollection getFeatureCollection(GetObservationResponse response) throws CodedException {
+    private FeatureCollection getFeatureCollection(GetObservationResponse response) throws EncodingException {
         FeatureCollection featureCollection = new FeatureCollection();
         featureCollection.setGmlId("fc_" + JavaHelper.generateID(new DateTime().toString()));
 
@@ -212,10 +218,20 @@ public class AqdEncoder extends AbstractXmlEncoder<Object> implements Observatio
     }
 
     private AqdHelper getAqdHelper() {
-        return AqdHelper.getInstance();
+        return this.aqdHelper;
     }
 
-    protected EReportingHeader getEReportingHeader(ReportObligationType type) throws CodedException {
-        return ReportObligationRepository.getInstance().createHeader(type);
+    @Inject
+    public void setAqdHelper(AqdHelper aqdHelper) {
+        this.aqdHelper = Objects.requireNonNull(aqdHelper);
+    }
+
+    protected EReportingHeader getEReportingHeader(ReportObligationType type) throws OwsExceptionReport {
+        return this.reportObligationRepository.createHeader(type);
+    }
+
+    @Inject
+    public void setReportObligationRepository(ReportObligationRepository reportObligationRepository) {
+        this.reportObligationRepository = Objects.requireNonNull(reportObligationRepository);
     }
 }

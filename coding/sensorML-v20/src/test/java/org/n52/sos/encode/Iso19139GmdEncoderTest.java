@@ -43,15 +43,16 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.iso.gmd.GmdConformanceResult;
-import org.n52.sos.iso.gmd.GmdConstants;
-import org.n52.sos.iso.gmd.GmdDomainConsistency;
-import org.n52.sos.iso.gmd.GmdQuantitativeResult;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.iso.gmd.GmdConformanceResult;
+import org.n52.shetland.iso.gmd.GmdConstants;
+import org.n52.shetland.iso.gmd.GmdDomainConsistency;
+import org.n52.shetland.iso.gmd.GmdQuantitativeResult;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.NamespaceContextBuilder;
 import org.n52.sos.util.XmlHelper;
 
@@ -91,7 +92,7 @@ public class Iso19139GmdEncoderTest {
     }
 
     @Test
-    public void checkValidity() throws OwsExceptionReport {
+    public void checkValidity() throws EncodingException , DecodingException {
         errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.dataCapture(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));
         errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.dataCapture(true), DOCUMENT_TYPE)), is(true));
         errors.checkThat(XmlHelper.validateDocument(encoder.encode(GmdDomainConsistency.timeCoverage(GmlConstants.NilReason.unknown), DOCUMENT_TYPE)), is(true));
@@ -101,7 +102,7 @@ public class Iso19139GmdEncoderTest {
     }
 
     @Test
-    public void checkConformanceResult() throws OwsExceptionReport {
+    public void checkConformanceResult() throws EncodingException {
         Node node = encoder.encode(GmdDomainConsistency.dataCapture(true), DOCUMENT_TYPE).getDomNode();
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency", NS_CTX));
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_ConformanceResult/gmd:specification/gmd:CI_Citation/gmd:title/gco:CharacterString", NS_CTX, is("EC/50/2008")));
@@ -114,7 +115,7 @@ public class Iso19139GmdEncoderTest {
     }
 
     @Test
-    public void checkQuantitativeResult() throws OwsExceptionReport {
+    public void checkQuantitativeResult() throws EncodingException {
         Node node = encoder.encode(GmdDomainConsistency.uncertaintyEstimation(5), DOCUMENT_TYPE).getDomNode();
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_QuantitativeResult/gmd:valueUnit/gml:BaseUnit/@gml:id", NS_CTX, startsWith("PercentageUnit")));
         errors.checkThat(node, hasXPath("/gmd:DQ_DomainConsistency/gmd:result/gmd:DQ_QuantitativeResult/gmd:valueUnit/gml:BaseUnit/gml:identifier/@codeSpace", NS_CTX, is("http://dd.eionet.europa.eu/vocabularies/aq/resultquality/uncertaintyestimation/")));

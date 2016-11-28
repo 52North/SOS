@@ -45,16 +45,17 @@ import org.isotc211.x2005.gmd.CITelephoneType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.iso.gmd.GmdConstants;
+import org.n52.shetland.ogc.sensorML.Role;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.iso.gmd.GmdConstants;
-import org.n52.sos.ogc.sensorML.Role;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -66,7 +67,7 @@ import com.google.common.collect.Lists;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.2.0
  */
-public class Iso19139GmdDecoder implements Decoder<Object, Object> {
+public class Iso19139GmdDecoder extends AbstractXmlDecoder<XmlObject, Object>{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GmdDecoder.class);
 
@@ -84,7 +85,7 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
     }
 
     @Override
-    public Object decode(Object element) throws OwsExceptionReport, UnsupportedDecoderInputException {
+    public Object decode(XmlObject element) throws DecodingException {
         if (element instanceof CIResponsiblePartyDocument) {
             return decodeCIResponsibleParty(((CIResponsiblePartyDocument) element).getCIResponsibleParty());
         } else if (element instanceof CIResponsiblePartyPropertyType) {
@@ -92,14 +93,11 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
         } else if (element instanceof CIResponsiblePartyType) {
             return decodeCIResponsibleParty((CIResponsiblePartyType) element);
         } else {
-            if (element instanceof XmlObject) {
-                throw new UnsupportedDecoderXmlInputException(this, (XmlObject)element);
-            }
-            throw new UnsupportedDecoderInputException(this, element);
+            throw new UnsupportedDecoderXmlInputException(this, element);
         }
     }
 
-    private Object decodeCIResponsiblePartyPropertyType(CIResponsiblePartyPropertyType element) throws OwsExceptionReport {
+    private Object decodeCIResponsiblePartyPropertyType(CIResponsiblePartyPropertyType element) throws DecodingException {
         if (element.isSetCIResponsibleParty()) {
             return decodeCIResponsibleParty(element.getCIResponsibleParty());
         } else if (element.isSetHref()) {
@@ -116,7 +114,7 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
         throw new UnsupportedDecoderInputException(this, element);
     }
 
-    private Object decodeCIResponsibleParty(CIResponsiblePartyType element) throws OwsExceptionReport {
+    private Object decodeCIResponsibleParty(CIResponsiblePartyType element) throws DecodingException {
         SmlResponsibleParty responsibleParty = new SmlResponsibleParty();
         if (element.isSetIndividualName()) {
             responsibleParty.setIndividualName(element.getIndividualName().getCharacterString());
@@ -131,7 +129,7 @@ public class Iso19139GmdDecoder implements Decoder<Object, Object> {
             decodeContactInfo(element.getContactInfo(), responsibleParty);
         }
         if (element.getRole().isSetCIRoleCode()) {
-            Object decodeXmlElement = CodingHelper.decodeXmlElement(element.getRole().getCIRoleCode());
+            Object decodeXmlElement = decodeXmlElement(element.getRole().getCIRoleCode());
             if (decodeXmlElement instanceof Role) {
                 responsibleParty.setRole((Role) decodeXmlElement);
             }

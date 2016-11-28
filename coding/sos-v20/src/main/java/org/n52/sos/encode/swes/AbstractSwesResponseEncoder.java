@@ -30,11 +30,11 @@ package org.n52.sos.encode.swes;
 
 import java.util.Set;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 
 import com.google.common.collect.Sets;
@@ -49,8 +49,8 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSwesResponseEncoder<T extends AbstractServiceResponse> extends
-        AbstractResponseEncoder<T> {
+public abstract class AbstractSwesResponseEncoder<T extends AbstractServiceResponse>
+        extends AbstractResponseEncoder<T> {
     public AbstractSwesResponseEncoder(String operation, Class<T> responseType) {
         super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation, SwesConstants.NS_SWES_20,
                 SwesConstants.NS_SWES_PREFIX, responseType);

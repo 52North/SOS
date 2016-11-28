@@ -28,12 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting.valued;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.CategoryValuedObservation;
+
+import com.google.common.base.Strings;
 
 public class CategoryValuedEReportingObservation
         extends AbstractValuedEReportingObservation<String>
@@ -55,7 +56,7 @@ public class CategoryValuedEReportingObservation
 
     @Override
     public boolean isSetValue() {
-        return StringHelper.isNotEmpty(value);
+        return !Strings.isNullOrEmpty(value);
     }
 
     @Override

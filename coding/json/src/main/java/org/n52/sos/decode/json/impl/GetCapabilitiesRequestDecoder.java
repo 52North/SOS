@@ -28,17 +28,16 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.JsonDecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.sos.SosConstants.Operations;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants.Operations;
 import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -77,7 +76,7 @@ public class GetCapabilitiesRequestDecoder extends AbstractSosRequestDecoder<Get
     }
 
     @Override
-    protected GetCapabilitiesRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected GetCapabilitiesRequest decodeRequest(JsonNode node) {
         GetCapabilitiesRequest req = new GetCapabilitiesRequest(SosConstants.SOS);
         req.setAcceptFormats(parseStringOrStringList(node.path(JSONConstants.ACCEPT_FORMATS)));
         req.setAcceptVersions(parseStringOrStringList(node.path(JSONConstants.ACCEPT_VERSIONS)));

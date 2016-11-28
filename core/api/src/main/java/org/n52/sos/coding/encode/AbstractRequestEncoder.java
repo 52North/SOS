@@ -29,23 +29,24 @@
 package org.n52.sos.coding.encode;
 
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationRequestEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.http.MediaTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.coding.encode.OperationRequestEncoderKey;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
+import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+
 import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -53,7 +54,7 @@ import com.google.common.collect.Sets;
  *
  * @param <T>
  */
-public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest<? extends AbstractServiceResponse>> extends AbstractEncoder<T> {
+public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest> extends AbstractXmlResponseEncoder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 
@@ -80,11 +81,10 @@ public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest<? 
     public AbstractRequestEncoder(String service, String version, String operation, String namespace, String prefix, Class<T> responseType, boolean validate) {
         super(service, version, operation, namespace, prefix, responseType, validate);
         OperationKey key = new OperationKey(service, version, operation);
-        this.encoderKeys = Sets.newHashSet(new XmlEncoderKey(namespace, responseType),
-                new OperationRequestEncoderKey(key, MediaTypes.TEXT_XML),
-                new OperationRequestEncoderKey(key, MediaTypes.APPLICATION_XML));
-        LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(encoderKeys));
+        this.encoderKeys = new HashSet<>(Arrays.asList(new XmlEncoderKey(namespace, responseType),
+                                                       new OperationRequestEncoderKey(key, MediaTypes.TEXT_XML),
+                                                       new OperationRequestEncoderKey(key, MediaTypes.APPLICATION_XML)));
+        LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(encoderKeys));
     }
 
     /**
@@ -113,12 +113,12 @@ public abstract class AbstractRequestEncoder<T extends AbstractServiceRequest<? 
     }
 
     @Override
-    public void encode(T element, OutputStream outputStream) throws OwsExceptionReport {
+    public void encode(T element, OutputStream outputStream) throws EncodingException {
         encode(element, outputStream, new EncodingValues());
     }
 
     @Override
-    public void encode(T response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
+    public void encode(T response, OutputStream outputStream, EncodingValues encodingValues) throws EncodingException {
         if (response == null) {
             throw new UnsupportedEncoderInputException(this, response);
         }

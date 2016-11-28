@@ -30,8 +30,9 @@ package org.n52.sos.converter.util;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.util.StringHelper;
+import org.n52.janmayen.lifecycle.Constructable;
+
+import com.google.common.base.Strings;
 
 @Configurable
 public class PrefixedIdentifierHelper implements Constructable {
@@ -77,7 +78,7 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetGlobalPrefix() {
-        return StringHelper.isNotEmpty(getGlobalPrefix());
+        return !Strings.isNullOrEmpty(getGlobalPrefix());
     }
 
     /**
@@ -96,7 +97,7 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetOfferingPrefix() {
-        return StringHelper.isNotEmpty(getOfferingPrefix());
+        return !Strings.isNullOrEmpty(getOfferingPrefix());
     }
 
 
@@ -116,7 +117,7 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetProcedurePrefix() {
-        return StringHelper.isNotEmpty(getProcedurePrefix());
+        return !Strings.isNullOrEmpty(getProcedurePrefix());
     }
 
     /**
@@ -135,7 +136,7 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetObservablePropertyPrefix() {
-        return StringHelper.isNotEmpty(getObservablePropertyPrefix());
+        return !Strings.isNullOrEmpty(getObservablePropertyPrefix());
     }
 
     /**
@@ -154,7 +155,7 @@ public class PrefixedIdentifierHelper implements Constructable {
     }
 
     public boolean isSetFeatureOfInterestPrefix() {
-        return StringHelper.isNotEmpty(getFeatureOfInterestPrefix());
+        return !Strings.isNullOrEmpty(getFeatureOfInterestPrefix());
     }
 
     public boolean isSetAnyPrefix() {

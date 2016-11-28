@@ -33,16 +33,18 @@ import static org.hamcrest.core.IsNull.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
 import org.n52.iceland.util.MinMax;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -93,13 +95,13 @@ public class SosHelperTest extends SosHelper {
     }
 
     @Test
-    public void shouldValidHttpGetGetFeatureOfInterestRequest() {
+    public void shouldValidHttpGetGetFeatureOfInterestRequest() throws MalformedURLException{
         assertThat(createFoiGetUrl(FOI_ID, VERSION_1, SERVICE_URL, URL_PATTERN), is(getFoi100Url()));
         assertThat(createFoiGetUrl(FOI_ID, VERSION_2, SERVICE_URL, URL_PATTERN), is(getFoi200Url()));
     }
 
     @Test
-    public void shouldValidHttpGetDescribeSensorRequest() throws UnsupportedEncodingException {
+    public void shouldValidHttpGetDescribeSensorRequest() throws MalformedURLException, UnsupportedEncodingException {
         assertThat(
                 getDescribeSensorUrl(VERSION_1, SERVICE_URL, PROC_ID, URL_PATTERN,
                         SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE), is(getProcDesc100Url()));

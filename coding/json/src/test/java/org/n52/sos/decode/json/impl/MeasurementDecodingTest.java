@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
+import static org.n52.shetland.util.DateTimeHelper.parseIsoString2DateTime;
 
 import java.util.List;
 
@@ -46,24 +46,25 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
+
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.sos.ConfiguredSettingsManager;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.decode.json.JSONDecodingException;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.QuantityValue;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -124,7 +125,7 @@ public class MeasurementDecodingTest {
     }
 
     @Before
-    public void before() throws OwsExceptionReport {
+    public void before() throws DecodingException {
         this.decoder = new ObservationDecoder();
         this.observation = decoder.decodeJSON(json, true);
     }
@@ -313,12 +314,12 @@ public class MeasurementDecodingTest {
     }
 
     @Test
-    public void testNull() throws OwsExceptionReport {
+    public void testNull() throws DecodingException {
         assertThat(decoder.decode(null), is(nullValue()));
     }
 
     @Test
-    public void testUnknownObservationType() throws OwsExceptionReport {
+    public void testUnknownObservationType() throws DecodingException {
         final String type = "someType";
         final ObjectNode c = json.deepCopy();
         c.put(JSONConstants.TYPE, type);

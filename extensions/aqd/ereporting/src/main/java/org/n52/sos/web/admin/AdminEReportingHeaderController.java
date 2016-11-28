@@ -30,6 +30,8 @@ package org.n52.sos.web.admin;
 
 import java.util.Iterator;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -40,12 +42,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.JsonDecoderKey;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.encode.json.JSONEncoderKey;
 import org.n52.sos.inspire.aqd.RelatedParty;
@@ -53,6 +51,13 @@ import org.n52.sos.inspire.aqd.ReportObligation;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.web.common.AbstractController;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -70,20 +75,36 @@ public class AdminEReportingHeaderController extends AbstractController {
     private static final Logger LOG = LoggerFactory
             .getLogger(AdminEReportingHeaderController.class);
 
+    private ReportObligationRepository reportObligationRepository;
+    private EncoderRepository encoderRepository;
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    public void setReportObligationRepository(ReportObligationRepository reportObligationRepository) {
+        this.reportObligationRepository = reportObligationRepository;
+    }
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
     @RequestMapping(method = RequestMethod.GET)
     public String get() {
         return "admin/ereporting";
     }
 
     @ResponseBody
-    @RequestMapping(method = RequestMethod.GET,
-                    produces = "application/json")
-    public String getJSON() throws OwsExceptionReport {
+    @RequestMapping(method = RequestMethod.GET, produces = "application/json")
+    public String getJSON() throws OwsExceptionReport, EncodingException {
         ObjectNode node = JSONUtils.nodeFactory().objectNode();
-        ReportObligationRepository reportObligationRepository = ReportObligationRepository.getInstance();
-        CodingRepository codingRepository = CodingRepository.getInstance();
-        Encoder<JsonNode, ReportObligation> reportObligationEncoder = codingRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
-        Encoder<JsonNode, RelatedParty> relatedPartyEncoder = codingRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
+        Encoder<JsonNode, ReportObligation> reportObligationEncoder = encoderRepository.getEncoder(new JSONEncoderKey(ReportObligation.class));
+        Encoder<JsonNode, RelatedParty> relatedPartyEncoder = encoderRepository.getEncoder(new JSONEncoderKey(RelatedParty.class));
         node.set(AQDJSONConstants.REPORTING_AUTHORITY, relatedPartyEncoder.encode(reportObligationRepository.getReportingAuthority()));
         ArrayNode ros = node.putArray(AQDJSONConstants.REPORT_OBLIGATIONS);
         for (ReportObligationType reportObligationType : ReportObligationType.values()) {
@@ -96,15 +117,12 @@ public class AdminEReportingHeaderController extends AbstractController {
         return JSONUtils.print(node);
     }
 
-    @RequestMapping(method = RequestMethod.POST,
-                    consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, consumes = "application/json")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void save(@RequestBody String json) throws OwsExceptionReport {
+    public void save(@RequestBody String json) throws OwsExceptionReport, DecodingException {
         LOG.info("Saving {}", json);
-        ReportObligationRepository reportObligationRepository = ReportObligationRepository.getInstance();
-        CodingRepository codingRepository = CodingRepository.getInstance();
-        Decoder<ReportObligation, JsonNode> reportObligationDecoder = codingRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
-        Decoder<RelatedParty, JsonNode> relatedPartyDecoder = codingRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
+        Decoder<ReportObligation, JsonNode> reportObligationDecoder = decoderRepository.getDecoder(new JsonDecoderKey(ReportObligation.class));
+        Decoder<RelatedParty, JsonNode> relatedPartyDecoder = decoderRepository.getDecoder(new JsonDecoderKey(RelatedParty.class));
 
         JsonNode node = JSONUtils.loadString(json);
 

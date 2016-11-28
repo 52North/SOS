@@ -36,11 +36,11 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
@@ -48,9 +48,8 @@ import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
-import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.util.GeometryHandler;
 
 /**
@@ -100,7 +99,7 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, ExtendedIndeterminateTime sosIndeterminateTime) {
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, IndeterminateValue sosIndeterminateTime) {
         // get extrema indeterminate time
         c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
         Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
@@ -125,10 +124,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Value to get projection for
      * @return Projection to use to determine indeterminate time extrema
      */
-    protected Projection getIndeterminateTimeExtremaProjection(final ExtendedIndeterminateTime indetTime) {
-        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
+    protected Projection getIndeterminateTimeExtremaProjection(IndeterminateValue indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
             return Projections.min(AbstractValuedLegacyObservation.PHENOMENON_TIME_START);
-        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
             return Projections.max(AbstractValuedLegacyObservation.PHENOMENON_TIME_END);
         }
         return null;
@@ -142,10 +141,10 @@ public abstract class AbstractValueDAO extends TimeCreator {
      *            Value to get property for
      * @return String property to filter on
      */
-    protected String getIndeterminateTimeFilterProperty(final ExtendedIndeterminateTime indetTime) {
-        if (indetTime.equals(ExtendedIndeterminateTime.first)) {
+    protected String getIndeterminateTimeFilterProperty(IndeterminateValue indetTime) {
+        if (indetTime.equals(ExtendedIndeterminateTime.FIRST)) {
             return AbstractValuedLegacyObservation.PHENOMENON_TIME_START;
-        } else if (indetTime.equals(ExtendedIndeterminateTime.latest)) {
+        } else if (indetTime.equals(ExtendedIndeterminateTime.LATEST)) {
             return AbstractValuedLegacyObservation.PHENOMENON_TIME_END;
         }
         return null;

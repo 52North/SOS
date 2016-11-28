@@ -63,7 +63,7 @@ import org.n52.iceland.config.settings.IntegerSettingDefinition;
 import org.n52.iceland.config.settings.StringSettingDefinition;
 import org.n52.iceland.ds.DatasourceCallback;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.util.StringHelper;
 import org.n52.sos.ds.HibernateDatasourceConstants;
 import org.n52.sos.ds.hibernate.SessionFactoryProvider;
 import org.n52.sos.ds.hibernate.util.HibernateConstants;
@@ -444,11 +444,11 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
         if (metaData != null) {
             ResultSet rs = metaData.getSchemas();
             while (rs.next()) {
-                if (StringHelper.isNotEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
+                if (!Strings.isNullOrEmpty(rs.getString("TABLE_SCHEM")) && rs.getString("TABLE_SCHEM").equalsIgnoreCase(schema)) {
                     return rs.getString("TABLE_SCHEM");
                 }
             }
-            if (StringHelper.isNotEmpty(schema)) {
+            if (!Strings.isNullOrEmpty(schema)) {
                 throw new ConfigurationError(String.format("Requested schema (%s) is not contained in the database!", schema));
             }
         }
@@ -730,7 +730,7 @@ public abstract class AbstractHibernateDatasource extends AbstractHibernateCoreD
 
     protected boolean isSetSchema(Map<String, Object> settings) {
         if (settings.containsKey(HibernateConstants.DEFAULT_SCHEMA)) {
-            return StringHelper.isNotEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
+            return !Strings.isNullOrEmpty((String) settings.get(HibernateConstants.DEFAULT_SCHEMA));
         }
         return false;
     }

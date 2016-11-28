@@ -31,26 +31,27 @@ package org.n52.sos.decode;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsCapabilities;
-import org.n52.sos.util.CodingHelper;
+import net.opengis.ows.x11.CapabilitiesBaseType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Joiner;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OwsCapabilities;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
-import net.opengis.ows.x11.CapabilitiesBaseType;
+import com.google.common.base.Joiner;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 5.0.0
  *
  */
-public class CapabilitiesBaseTypeDecoder extends AbstractCapabilitiesBaseTypeDecoder implements Decoder<OwsCapabilities, CapabilitiesBaseType>{
+public class CapabilitiesBaseTypeDecoder extends AbstractCapabilitiesBaseTypeDecoder
+        implements Decoder<OwsCapabilities, CapabilitiesBaseType> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CapabilitiesBaseTypeDecoder.class);
 
@@ -70,9 +71,9 @@ public class CapabilitiesBaseTypeDecoder extends AbstractCapabilitiesBaseTypeDec
 
     @Override
     public OwsCapabilities decode(CapabilitiesBaseType cbt)
-            throws OwsExceptionReport, UnsupportedDecoderInputException {
+            throws DecodingException {
         if (cbt != null) {
-           return parseCapabilitiesBaseType(cbt);
+           return parseCapabilitiesBaseType(null, cbt);
         }
         return null;
     }

@@ -36,14 +36,16 @@ import java.util.Locale;
 import java.util.Scanner;
 
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
-import org.n52.sos.util.XmlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.hibernate.entities.Procedure;
+import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Strings;
 
@@ -60,7 +62,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
     @Override
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s) throws OwsExceptionReport {
         String xml = loadDescriptionFromHttp(p.getDescriptionFile());
-        return new SosProcedureDescriptionUnknowType(p.getIdentifier(), p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
+        return new SosProcedureDescriptionUnknownType(p.getIdentifier(), p.getProcedureDescriptionFormat().getProcedureDescriptionFormat(), xml);
     }
 
     private String loadDescriptionFromHttp(String descriptionFile) throws OwsExceptionReport {
@@ -75,7 +77,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
             scanner = new Scanner(is,"UTF-8");
             String inputStreamString = scanner.useDelimiter("\\A").next();
             return checkXml(inputStreamString);
-        } catch (IOException e) {
+        } catch (IOException|DecodingException e) {
            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while querying sensor description from:{}", descriptionFile);
         } finally {
             if (scanner != null) {
@@ -91,7 +93,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
         }
     }
 
-    private String checkXml(String xml) throws OwsExceptionReport {
+    private String checkXml(String xml) throws DecodingException {
         XmlHelper.parseXmlString(xml);
         if (xml.startsWith("<?xml")) {
             return xml.substring(xml.indexOf(">")+1);

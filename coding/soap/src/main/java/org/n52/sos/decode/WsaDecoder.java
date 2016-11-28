@@ -39,9 +39,9 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
 import org.n52.iceland.w3c.wsa.WsaHeader;

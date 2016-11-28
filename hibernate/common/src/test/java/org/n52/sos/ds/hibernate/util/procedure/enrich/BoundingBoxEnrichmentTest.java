@@ -39,14 +39,14 @@ import static org.mockito.Mockito.when;
 import java.util.Collection;
 
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.SosEnvelope;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.swe.SweEnvelope;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.swe.SweEnvelope;
 import org.n52.sos.service.ProcedureDescriptionSettings;
 
 import com.google.common.collect.Lists;
@@ -63,7 +63,7 @@ public class BoundingBoxEnrichmentTest {
                 final SosOffering sosOffering = new SosOffering("offeringIdentifier", "offeringName");
         final Collection<SosOffering> sosOfferings = Lists.newArrayList(sosOffering);
         final Envelope envelope = new Envelope(1.0,2.0,3.0,4.0);
-        final SosEnvelope sosEnvelope = new SosEnvelope(envelope, 4326);
+        final ReferencedEnvelope sosEnvelope = new ReferencedEnvelope(envelope, 4326);
         when(enrichmentMock.getSosOfferings()).thenReturn(sosOfferings);
         when(enrichmentMock.createEnvelopeForOfferings()).thenReturn(sosEnvelope);
         final ProcedureDescriptionSettings procSettMock = mock(ProcedureDescriptionSettings.class);
@@ -88,7 +88,7 @@ public class BoundingBoxEnrichmentTest {
         final SosOffering sosOffering = new SosOffering("offeringIdentifier", "offeringName");
         final Collection<SosOffering> sosOfferings = Lists.newArrayList(sosOffering);
         final Envelope envelope = new Envelope(1.0,2.0,3.0,4.0);
-        final SosEnvelope sosEnvelope = new SosEnvelope(envelope, 4326);
+        final ReferencedEnvelope sosEnvelope = new ReferencedEnvelope(envelope, 4326);
         when(enrichmentMock.getSosOfferings()).thenReturn(sosOfferings);
         when(enrichmentMock.createEnvelopeForOfferings()).thenReturn(sosEnvelope);
         final ProcedureDescriptionSettings procSettMock = mock(ProcedureDescriptionSettings.class);

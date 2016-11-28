@@ -33,26 +33,29 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProvider;
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProvider;
+import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.Producer;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OwsAddress;
+import org.n52.shetland.ogc.ows.OwsContact;
+import org.n52.shetland.ogc.ows.OwsOperationMetadataExtension;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.inspire.AbstractInspireProvider;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireConformity.InspireDegreeOfConformity;
@@ -66,9 +69,9 @@ import org.n52.sos.inspire.InspireMetadataPointOfContact;
 import org.n52.sos.inspire.InspireResourceLocator;
 import org.n52.sos.inspire.InspireTemporalReference;
 import org.n52.sos.inspire.InspireUniqueResourceIdentifier;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
 import org.n52.sos.util.SosHelper;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -103,7 +106,7 @@ public class InspireExtendedCapabilitiesProvider
     }
 
     @Override
-    public OwsExtendedCapabilities getOwsExtendedCapabilities(GetCapabilitiesRequest request)
+    public OwsOperationMetadataExtension getOwsExtendedCapabilities(GetCapabilitiesRequest request)
             throws OwsExceptionReport {
         if (getInspireHelper().isFullExtendedCapabilities()) {
             return getFullInspireExtendedCapabilities(request.getRequestedLanguage(), getRequestedCrs(request),
@@ -230,7 +233,9 @@ public class InspireExtendedCapabilitiesProvider
      */
     private InspireMetadataPointOfContact getMetadataPointOfContact() throws OwsExceptionReport {
         OwsServiceProvider serviceProvider = getOwsServiceProvider();
-        return new InspireMetadataPointOfContact(serviceProvider.getName(), serviceProvider.getMailAddress());
+        String mail = serviceProvider.getServiceContact().getContactInfo().flatMap(OwsContact::getAddress)
+                .map(OwsAddress::getElectronicMailAddress).map(l -> Iterables.getFirst(l, null)).orElse(null);
+        return new InspireMetadataPointOfContact(serviceProvider.getProviderName(), mail);
     }
 
     /**
@@ -289,25 +294,21 @@ public class InspireExtendedCapabilitiesProvider
      *            the request
      * @return the coordinate reference system
      */
-    private int getRequestedCrs(AbstractServiceRequest<?> request) {
-        int targetSrid = -1;
-        if (request.isSetExtensions()) {
-            if (request.getExtensions().containsExtension(OWSConstants.AdditionalRequestParams.crs)) {
-                Object value =
-                        request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs).getValue();
-                if (value instanceof SweCount) {
-                    targetSrid = ((SweCount) value).getValue();
-                } else if (value instanceof Integer) {
-                    targetSrid =
-                            (Integer) request.getExtensions().getExtension(OWSConstants.AdditionalRequestParams.crs)
-                                    .getValue();
-                }
-            }
-        }
-        if (getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid))) {
-            return targetSrid;
-        }
-        return getGeometryHandler().getDefaultResponseEPSG();
+    private int getRequestedCrs(AbstractServiceRequest request) {
+        int targetSrid = request.getExtension(OWSConstants.AdditionalRequestParams.crs)
+                .map(Extension::getValue)
+                .map(value -> {
+                    if (value instanceof SweCount) {
+                        return ((SweCount) value).getValue();
+                    } else if (value instanceof Integer) {
+                        return (Integer) value;
+                    } else {
+                        return null;
+                    }
+                }).orElse(-1);
+
+        return getGeometryHandler().getSupportedCRS().contains(Integer.toString(targetSrid))
+               ? targetSrid : getGeometryHandler().getDefaultResponseEPSG();
     }
 
 }

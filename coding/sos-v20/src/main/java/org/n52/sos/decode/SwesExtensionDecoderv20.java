@@ -35,18 +35,19 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
 import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.w3c.W3CConstants;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 
@@ -56,7 +57,7 @@ import com.google.common.base.Joiner;
  *
  * @since 4.0.0
  */
-public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObject> {
+public class SwesExtensionDecoderv20 extends AbstractXmlDecoder<XmlObject, SwesExtension<?>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwesDecoderv20.class);
 
@@ -76,16 +77,16 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
     }
 
     @Override
-    public SwesExtension<?> decode(final XmlObject xmlObject) throws OwsExceptionReport,
+    public SwesExtension<?> decode(XmlObject xmlObject) throws DecodingException,
             UnsupportedDecoderInputException {
-        if (isSwesExtension(xmlObject)) {
-            final XmlObject[] children = xmlObject.selectPath("./*");
 
+        if (isSwesExtension(xmlObject)) {
+            XmlObject[] children = xmlObject.selectPath("./*");
             if (children.length == 1) {
-                final Object xmlObj = CodingHelper.decodeXmlElement(children[0]);
-                final SwesExtension<Object> extension = new SwesExtension<Object>();
+                Object xmlObj = decodeXmlElement(children[0]);
+                SwesExtension<Object> extension = new SwesExtension<>();
                 extension.setValue(xmlObj);
-                if (isSweAbstractDataComponent(xmlObj)) {
+                if (xmlObj instanceof SweAbstractDataComponent) {
                     extension.setDefinition(((SweAbstractDataComponent) xmlObj).getDefinition());
                 }
                 return extension;
@@ -94,13 +95,10 @@ public class SwesExtensionDecoderv20 implements Decoder<SwesExtension<?>, XmlObj
         throw new UnsupportedDecoderXmlInputException(this, xmlObject);
     }
 
-    private boolean isSweAbstractDataComponent(final Object xmlObj) {
-        return xmlObj instanceof SweAbstractDataComponent && ((SweAbstractDataComponent) xmlObj).isSetDefinition();
-    }
-
-    private boolean isSwesExtension(final XmlObject xmlObject) {
-        return xmlObject.getDomNode().getNamespaceURI().equalsIgnoreCase(SwesConstants.NS_SWES_20)
-                && xmlObject.getDomNode().getLocalName().equalsIgnoreCase("extension");
+    private boolean isSwesExtension(XmlObject xmlObject) {
+        Node node = xmlObject.getDomNode();
+        return node.getNamespaceURI().equalsIgnoreCase(SwesConstants.NS_SWES_20) &&
+               node.getLocalName().equalsIgnoreCase(SwesConstants.EN_EXTENSION);
     }
 
 }

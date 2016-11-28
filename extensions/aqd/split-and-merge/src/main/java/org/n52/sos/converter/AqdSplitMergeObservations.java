@@ -36,12 +36,12 @@ import java.util.Set;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
@@ -72,7 +72,7 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    public AbstractServiceRequest modifyRequest(AbstractServiceRequest request) throws OwsExceptionReport {
         if (request instanceof InsertObservationRequest) {
             // TODO
         }
@@ -80,7 +80,7 @@ public class AqdSplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response)
+    public AbstractServiceResponse modifyResponse(AbstractServiceRequest request, AbstractServiceResponse response)
             throws OwsExceptionReport {
         if (response instanceof GetObservationResponse) {
             return mergeObservations((GetObservationResponse) response);

@@ -1,0 +1,11 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button type="button" class="close" ng-click="close()">&times;</button>
+        <div class="modal-title" translate="metadata.procedure.header"></div>
+    </div>
+    <div class="modal-body procedure-metadata">
+        <div ng-bind-html="result">{{result}}</div>
+        <hr>
+        <swc-procedure-rawdata timeseries='timeseries'></swc-procedure-rawdata>
+    </div>
+</div>

@@ -532,8 +532,13 @@ public class CoordinateTransformator implements
         SweQuantity xq =
                 SweHelper.createSweQuantity(x, SweConstants.X_AXIS, ProcedureDescriptionSettings.getInstance()
                         .getLatLongUom());
+        
+        if (altitude != null) {
+            return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
+                    new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
+        }
         return Lists.<SweCoordinate<?>> newArrayList(new SweCoordinate<Double>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq), altitude);
+                new SweCoordinate<Double>(SweCoordinateName.easting.name(), xq));
     }
 
     /**

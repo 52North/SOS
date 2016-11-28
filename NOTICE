@@ -153,6 +153,7 @@ This project includes:
   Java Excel API under GNU Lesser General Public License
   Java Persistence API, Version 2.1 under Eclipse Public License (EPL), Version 1.0 or Eclipse Distribution License (EDL), Version 1.0
   Java Property Utility under The Apache Software License, Version 2.0
+  Java Servlet API under CDDL 1.1 or GPL2 w/ CPE
   Java Transaction API under Common Development and Distribution License or GNU General Public License, Version 2 with the Classpath Exception
   JavaBeans Activation Framework (JAF) under Common Development and Distribution License (CDDL) v1.0
   JavaMail API jar under CDDL or GPLv2+CE
@@ -198,6 +199,7 @@ This project includes:
   OGC Sampling schema (spec. v2.0) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v1.0.1) under The Apache Software License, Version 2.0
   OGC SensorML schema (spec. v2.0.0) under The Apache Software License, Version 2.0
+  OGC SOS DeleteObservation schema 1.0 under The Apache Software License, Version 2.0
   OGC SOS GetDataAvailability schema 1.0 (OGC Best Practice 14-004r1) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v1.0.0) under The Apache Software License, Version 2.0
   OGC SOS schema (spec. v2.0) under The Apache Software License, Version 2.0
@@ -210,6 +212,7 @@ This project includes:
   ojdbc6 under Oracle Technology Network Development and Distribution License, http://www.oracle.com/technetwork/licenses/distribution-license-152002.html
   Open GIS Interfaces under OGC copyright or Lesser General Public License (LGPL)
   Postgis JDBC Driver under GNU Lesser General Public License
+  PostgreSQL JDBC Driver under BSD License
   PostgreSQL JDBC Driver - JDBC 4.1 under The PostgreSQL License
   Referencing services under Lesser General Public License (LGPL)
   Reflections under WTFPL
@@ -225,18 +228,16 @@ This project includes:
   Spring Context under The Apache Software License, Version 2.0
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
+  Spring JDBC under The Apache Software License, Version 2.0
   Spring TestContext Framework under The Apache Software License, Version 2.0
+  Spring Transaction under The Apache Software License, Version 2.0
   Spring Web under The Apache Software License, Version 2.0
   Spring Web MVC under The Apache Software License, Version 2.0
-  spring-aop under The Apache Software License, Version 2.0
-  spring-asm under The Apache Software License, Version 2.0
-  spring-jdbc under The Apache Software License, Version 2.0
   spring-security-acl under The Apache Software License, Version 2.0
   spring-security-config under The Apache Software License, Version 2.0
   spring-security-core under The Apache Software License, Version 2.0
   spring-security-taglibs under The Apache Software License, Version 2.0
   spring-security-web under The Apache Software License, Version 2.0
-  spring-tx under The Apache Software License, Version 2.0
   SQLite JDBC under The Apache Software License, Version 2.0
   sqljdbc4 under MICROSOFT SOFTWARE LICENSE TERMS, http://download.microsoft.com/download/0/2/A/02AAE597-3865-456C-AE7F-613F99F850A8/license.txt
   StAX API under The Apache Software License, Version 2.0

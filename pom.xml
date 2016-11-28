@@ -9,7 +9,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.n52.sensorweb.sos</groupId>
     <artifactId>52n-sos</artifactId>
-    <version>4.3.8</version>
+    <version>4.3.9</version>
     <name>52°North Sensor Observation Service</name>
     <description>52°North Sensor Observation Service - Parent POM for defining dependency versions</description>
     <url>https://wiki.52north.org/bin/view/SensorWeb/SensorObservationServiceIVDocumentation</url>
@@ -67,7 +67,7 @@
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.2</slf4j.version>
         <hibernate.version>4.3.11.Final</hibernate.version>
-        <hibernate.spatial.version>4.3-52N</hibernate.spatial.version>
+        <hibernate.spatial.version>4.3.1-52N</hibernate.spatial.version>
         <c3p0.version>0.9.5.2</c3p0.version>
         <sqlite.version>3.7.2</sqlite.version>
         <geotools.version>3.7.2</geotools.version>
@@ -79,10 +79,10 @@
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
-        <org.springframework.security.version>3.1.4.RELEASE</org.springframework.security.version>
-        <org.springframework.version>3.2.6.RELEASE</org.springframework.version>
+        <org.springframework.security.version>4.1.0.RELEASE</org.springframework.security.version>
+        <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
         <saxon.version>9.1.0.8</saxon.version>
-        <sos.test.suite.version>1.0.0-M5</sos.test.suite.version>
+        <sos.test.suite.version>1.0.0-M7</sos.test.suite.version>
     </properties>
     <dependencyManagement>
         <dependencies>

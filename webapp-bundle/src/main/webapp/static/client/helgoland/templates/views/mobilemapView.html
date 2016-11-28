@@ -1,0 +1,35 @@
+<div class="swc-page swc-page-current" id="map-page">
+    <div class="container-fluid content">
+        <div class="row fullHeight">
+            <div class="col-xs-12 col-sm-12 col-lg-12 fullHeight">
+                <div id="map">
+                    <leaflet id="mobileMap" bounds="map.bounds" markers="map.markers" layers="map.layers" paths="map.paths" width="100%" height="100%"></leaflet>
+                </div>
+                <div class="map-buttons">
+                    <!--<button class="btn btn-default" data-action="provider" ng-controller="ProviderButtonCtrl" ng-click="selectProvider()">
+                        <span class="glyphicon glyphicon-folder-open"></span>
+                    </button>-->
+                    <a class="btn btn-default" data-action="locate" swc-locate-user="mobileMap" ng-click="locateUser()" ng-class="{'btn-primary': isToggled}">
+                        <span class="glyphicon glyphicon-map-marker"></span>
+                    </a>
+                    <a class="btn btn-default" data-action="listSelection_mobile" ng-controller="ListSelectionMobileButtonCtrl" ng-click="openListSelectionMobile()">
+                        <span class="glyphicon glyphicon-list-alt"></span>
+                    </a>
+                </div>
+            </div>
+            <!--<div ng-controller="MobileMapController as data">
+                <div class="col-xs-8 col-sm-4 col-lg-3 rightPanel">
+                    <div class="timeseries-entry">
+                        <div ng-repeat="datas in data.platform.geometry">
+                            <a class="timeseriasItem" data-id="{{datas.id}}">
+                                <div class="item" ng-click="loadData(datas.id)">
+                                    <span>{{datas.id}}</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+</div>

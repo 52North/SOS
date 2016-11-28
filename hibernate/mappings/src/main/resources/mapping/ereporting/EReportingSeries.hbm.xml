@@ -103,6 +103,8 @@
         <property name="firstTimeStamp"
                   type="timestamp">
             <column name="firstTimeStamp"
+                    not-null="false"
+                    default="NULL"
                     length="29" >
                 <comment>The time stamp of the first (temporal) observation associated to this series</comment>
             </column>
@@ -110,6 +112,8 @@
         <property name="lastTimeStamp"
                   type="timestamp">
             <column name="lastTimeStamp"
+                    not-null="false"
+                    default="NULL"
                     length="29" >
                 <comment>The time stamp of the last (temporal) observation associated to this series</comment>
             </column>

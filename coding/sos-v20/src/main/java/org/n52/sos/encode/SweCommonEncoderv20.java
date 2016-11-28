@@ -741,7 +741,9 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<Object> {
         }
         if (sweVector.isSetCoordinates()) {
             for (SweCoordinate<?> coordinate : sweVector.getCoordinates()) {
-                xbVector.addNewCoordinate().set(createCoordinate(coordinate));
+                if (coordinate != null && coordinate.getValue() != null) {
+                    xbVector.addNewCoordinate().set(createCoordinate(coordinate));
+                }
             }
         }
         return xbVector;

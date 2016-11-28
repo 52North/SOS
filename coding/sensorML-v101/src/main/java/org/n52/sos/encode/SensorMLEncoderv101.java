@@ -1042,7 +1042,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         xbSwePosition.setReferenceFrame(position.getReferenceFrame());
         final VectorType xbVector = xbSwePosition.addNewLocation().addNewVector();
         for (final SweCoordinate<?> coordinate : position.getPosition()) {
-            if (coordinate.getValue().getValue() != null
+            if (coordinate != null && coordinate.getValue() != null
                     && (!coordinate.getValue().isSetValue() || !coordinate.getValue().getValue().equals(Double.NaN))) {
                 // FIXME: SWE Common NS
                 xbVector.addNewCoordinate().set(CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, coordinate));

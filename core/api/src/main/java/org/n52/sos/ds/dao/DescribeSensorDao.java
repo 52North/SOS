@@ -32,15 +32,11 @@ import java.util.List;
 
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.series.db.beans.ProcedureEntity;
 import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 
 public interface DescribeSensorDao {
 
     public List<SosProcedureDescription> querySensorDescriptions(DescribeSensorRequest request) throws OwsExceptionReport;
-
-    public List<SosProcedureDescription> querySensorDescriptions(ProcedureEntity entity,
-            DescribeSensorRequest request) throws OwsExceptionReport;
 
 }

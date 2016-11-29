@@ -28,18 +28,12 @@
  */
 package org.n52.sos.ds.dao;
 
-import java.util.List;
-
 import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
+import org.n52.sos.response.GetObservationResponse;
 
 public interface GetObservationDao {
 
-    List<OmObservation> getObservation(GetObservationRequest request) throws OwsExceptionReport;
-
-    GlobalGetObservationValues getGlobalValues(GetObservationRequest request);
-
+    GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport;
 
 }

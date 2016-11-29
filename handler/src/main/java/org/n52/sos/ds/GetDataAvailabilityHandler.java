@@ -148,8 +148,9 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         if (req.isSetOfferings()) {
             rsps.addParameter(IoParameters.OFFERINGS, IoParameters.getJsonNodeFrom(req.getOfferings()));
         }
-      return new DbQuery(IoParameters.createFromQuery(rsps));
-  }
+        rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
+        return new DbQuery(IoParameters.createFromQuery(rsps));
+    }
     
     private DataAvailability defaultProcessDataAvailability(DatasetEntity<?> entity, GDARequestContext context, Session session) throws OwsExceptionReport {
             TimePeriod timePeriod = createTimePeriod(entity);
@@ -162,7 +163,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
                     dataAvailability.setCount(entity.getObservationCount());
                 }
                 if (isIncludeResultTime(context.getRequest())) {
-                    dataAvailability.setResultTimes(dao.getResultTimes(entity, context.getRequest()));
+                    dataAvailability.setResultTimes(dao.getResultTimes(dataAvailability, context.getRequest()));
                 }
                 return dataAvailability;
             }
@@ -201,7 +202,7 @@ public class GetDataAvailabilityHandler extends AbstractGetDataAvailabilityHandl
         DataAvailability dataAvailability = defaultProcessDataAvailability(entity, context, session);
         if (dataAvailability != null) {
             dataAvailability.setFormatDescriptor(getFormatDescriptor(context, entity));
-            dataAvailability.setMetadata(dao.getMetadata(entity));
+            dataAvailability.setMetadata(dao.getMetadata(dataAvailability));
             context.addDataAvailability(dataAvailability);
         }
         checkForParentOfferings(context, entity.getOffering());

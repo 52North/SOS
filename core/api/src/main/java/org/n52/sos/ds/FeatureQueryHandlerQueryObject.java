@@ -32,13 +32,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.n52.iceland.util.StringHelper;
-import org.n52.series.db.beans.FeatureEntity;
 import org.n52.sos.ogc.filter.SpatialFilter;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -48,46 +45,46 @@ public class FeatureQueryHandlerQueryObject {
 
     private List<SpatialFilter> spatialFilters = Lists.newArrayList();
 
-    private Set<String> featureIdentifiers = Sets.newHashSet();
-    
-    private Set<FeatureEntity> features = Sets.newHashSet();
+//    private Set<String> featureIdentifiers = Sets.newHashSet();
+
+    private Set<String> features = Sets.newHashSet();
 
     private String version;
 
     /**
      * @return the features
      */
-    public Set<FeatureEntity> getFeatures() {
+    public Set<String> getFeatures() {
         return features;
     }
 
     /**
      * @param features the features to set
      */
-    public FeatureQueryHandlerQueryObject setFeatures(Set<FeatureEntity> features) {
+    public FeatureQueryHandlerQueryObject setFeatures(Collection<String> features) {
         this.features.clear();
         if (features != null) {
             this.features.addAll(features);
         }
         return this;
     }
-    
-    public FeatureQueryHandlerQueryObject addFeatures(Set<FeatureEntity> features) {
+
+    public FeatureQueryHandlerQueryObject addFeatures(Collection<String> features) {
         this.features.addAll(features);
         return this;
     }
-    
-    public FeatureQueryHandlerQueryObject addFeature(FeatureEntity feature) {
+
+    public FeatureQueryHandlerQueryObject addFeature(String feature) {
         this.features.add(feature);
         return this;
     }
-    
+
     public boolean isSetFeatures() {
         return getFeatures() != null && !getFeatures().isEmpty();
     }
 
     public Set<String> getFeatureIdentifier() {
-        return getFeatures().stream().map(f -> f.getDomainId()).collect(Collectors.toSet());
+        return getFeatures();
     }
 
     public List<SpatialFilter> getSpatialFilters() {

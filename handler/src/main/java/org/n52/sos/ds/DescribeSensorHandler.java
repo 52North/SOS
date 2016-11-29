@@ -135,7 +135,7 @@ public class DescribeSensorHandler extends AbstractDescribeSensorHandler impleme
                         new IllegalArgumentException("Parameter 'procedure' should not be null!")).setStatus(
                                 INTERNAL_SERVER_ERROR);
             } 
-            response.setSensorDescriptions(describeSensorDao.querySensorDescriptions(entity, request));
+            response.setSensorDescriptions(describeSensorDao.querySensorDescriptions(request));
             return response;
         } catch (final HibernateException | DataAccessException e) {
             throw new NoApplicableCodeException().causedBy(e).withMessage(

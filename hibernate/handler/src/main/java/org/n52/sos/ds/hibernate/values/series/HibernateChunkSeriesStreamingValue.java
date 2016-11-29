@@ -42,6 +42,7 @@ import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.TimeValuePair;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 
 /**
@@ -74,8 +75,8 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
-        super(connectionProvider, request, series);
+    public HibernateChunkSeriesStreamingValue(ConnectionProvider connectionProvider, AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
+        super(connectionProvider, request, series, duplicated);
         this.chunkSize = HibernateStreamingConfiguration.getInstance().getChunkSize();
     }
 
@@ -96,22 +97,25 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         if (!next) {
             sessionHolder.returnSession(session);
         }
-
+        
 
         return next;
     }
 
     @Override
-    public AbstractValuedLegacyObservation<?> nextEntity() throws OwsExceptionReport {
-        return (AbstractValuedLegacyObservation<?>) seriesValuesResult.next();
+    public AbstractValuedLegacyObservation nextEntity() throws OwsExceptionReport {
+        return (AbstractValuedLegacyObservation) seriesValuesResult.next();
     }
 
     @Override
     public TimeValuePair nextValue() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
-                TimeValuePair value = resultObject.createTimeValuePairFrom();
+                AbstractValuedLegacyObservation resultObject = nextEntity();
+                TimeValuePair value = null;
+                if (checkValue(resultObject)) {
+                    value = resultObject.createTimeValuePairFrom();
+                }
                 session.evict(resultObject);
                 return value;
             }
@@ -127,10 +131,13 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     public OmObservation nextSingleObservation() throws OwsExceptionReport {
         try {
             if (hasNextValue()) {
-                OmObservation observation = observationTemplate.cloneTemplate();
-                AbstractValuedLegacyObservation<?> resultObject = seriesValuesResult.next();
-                resultObject.addValuesToObservation(observation, getResponseFormat());
-                checkForModifications(observation);
+                OmObservation observation = null;
+                AbstractValuedLegacyObservation resultObject = nextEntity();
+                if (checkValue(resultObject)) {
+                    observation = observationTemplate.cloneTemplate();
+                    resultObject.addValuesToObservation(observation, getResponseFormat());
+                    checkForModifications(observation);
+                }
                 session.evict(resultObject);
                 return observation;
             }
@@ -144,7 +151,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
 
     /**
      * Get the next results from database
-     *
+     * 
      * @throws OwsExceptionReport
      *             If an error occurs when querying the next results
      */
@@ -154,7 +161,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
         try {
             // query with temporal filter
-            Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult;
+            Collection<AbstractValuedLegacyObservation<?>> seriesValuesResult = null;
             if (temporalFilterCriterion != null) {
                 seriesValuesResult =
                         seriesValueDAO.getStreamingSeriesValuesFor(request, series, temporalFilterCriterion,
@@ -178,7 +185,7 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
     /**
      * Check the queried {@link AbstractValuedLegacyObservation}s for null and set them as
      * iterator to local variable.
-     *
+     * 
      * @param seriesValuesResult
      *            Queried {@link AbstractValuedLegacyObservation}s
      */
@@ -189,5 +196,4 @@ public class HibernateChunkSeriesStreamingValue extends HibernateSeriesStreaming
         }
 
     }
-
 }

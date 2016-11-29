@@ -29,31 +29,43 @@
 package org.n52.sos.ds;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
-import org.n52.iceland.convert.ConverterException;
+import org.hibernate.Session;
+import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.series.db.da.FeatureRepository;
-import org.n52.sos.config.sqlite.hibernate.HibernateFileType;
+import org.n52.io.request.IoParameters;
+import org.n52.io.request.RequestSimpleParameterSet;
+import org.n52.proxy.db.dao.ProxyFeatureDao;
+import org.n52.series.db.DataAccessException;
+import org.n52.series.db.HibernateSessionStore;
+import org.n52.series.db.beans.FeatureEntity;
+import org.n52.series.db.dao.DbQuery;
 import org.n52.sos.ds.dao.GetObservationDao;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 public class GetObservationHandler extends AbstractGetObservationHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetObservationHandler.class);
 
+    private HibernateSessionStore sessionStore;
     private FeatureQueryHandler featureQueryHandler;
     private GetObservationDao dao;
 
+    @Inject
+    public void setConnectionProvider(HibernateSessionStore sessionStore) {
+        this.sessionStore = sessionStore;
+    }
+    
     @Inject
     public void setFeatureQueryHandler(FeatureQueryHandler featureQueryHandler) {
         this.featureQueryHandler = featureQueryHandler;
@@ -70,84 +82,43 @@ public class GetObservationHandler extends AbstractGetObservationHandler {
     
     @Override
     public GetObservationResponse getObservation(GetObservationRequest request) throws OwsExceptionReport {
-        GetObservationResponse response = request.getResponse();
-        response.setObservationCollection(dao.getObservation(request));
-        response.setGlobalValues(dao.getGlobalValues(request));
-        return response;
-    }
-    
-    
-    /**
-     * Query the series observations for streaming datasource
-     *
-     * @param request
-     *            The GetObservation request
-     * @param sosResponse 
-     * @param session
-     *            Hibernate Session
-     * @return List of internal observations
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     * @throws ConverterException
-     *             If an error occurs during sensor description creation.
-     */
-    protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request,
-            GetObservationResponse response) throws OwsExceptionReport, ConverterException {
-        long start = System.currentTimeMillis();
-        List<OmObservation> result = new LinkedList<OmObservation>();
-        // get valid featureOfInterest identifier
-        FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
-        if (request.isSetFeatureOfInterest()){
-            queryObject.setFeatureIdentifiers(request.getFeatureIdentifiers());
-        } else if (request.isSetSpatialFilter()) {
-            queryObject.addSpatialFilter(request.getSpatialFilter());
-        }
-        
-        Collection<String> features = featureQueryHandler.getFeatureIDs(queryObject);
-        if (features != null && features.isEmpty()) {
-            return result;
-        }
-        List<SosIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
-        Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            if (ServiceConfiguration.getInstance().isOverallExtrema()) {
-                result =
-                        observationDAO.getSeriesObservationsFor(request, features,
-                                sosIndeterminateTime, session);
-            } else {
-                for (Series series : seriesDAO.getSeries(request, features, session)) {
-                    result.addAll(observationDAO.getSeriesObservationsFor(series, request,
-                            sosIndeterminateTime, session));
-                    
+        Session session = sessionStore.getSession();
+        try {
+            GetObservationResponse response = request.getResponse();
+            // check for featureOfInterest
+            FeatureQueryHandlerQueryObject queryObject = new FeatureQueryHandlerQueryObject();
+            if (request.isSetFeatureOfInterest()){
+                List<FeatureEntity> features = new ProxyFeatureDao(session).getAllInstances(createDbQuery(request));
+                if (features == null || (features != null && features.isEmpty())) {
+                    return response;
                 }
+                queryObject.setFeatures(features.stream().map(f -> f.getDomainId()).collect(Collectors.toSet()));
+            } else if (request.isSetSpatialFilter()) {
+                queryObject.addSpatialFilter(request.getSpatialFilter());
             }
-        } else {
-            List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session);
-            HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
-            int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
-            Collection<Series> duplicated = checkAndGetDuplicatedtSeries(serieses, request);
-            for (Series series : serieses) {
-                Collection<? extends OmObservation> createSosObservationFromSeries =
-                        HibernateObservationUtilities
-                                .createSosObservationFromSeries(series, request, session);
-                OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
-                HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
-                streamingValue.setResponseFormat(request.getResponseFormat());
-                streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
-                streamingValue.setObservationTemplate(observationTemplate);
-                streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
-                observationTemplate.setValue(streamingValue);
-                result.add(observationTemplate);
+            Collection<String> features = featureQueryHandler.getFeatureIDs(queryObject);
+            if (features != null && features.isEmpty()) {
+                return response;
             }
+            request.setFeatureIdentifiers(Lists.newArrayList(features));
+            
+            dao.queryObservationData(request, response);
+            return response;
+        } catch (DataAccessException e) {
+            throw new NoApplicableCodeException().causedBy(e).withMessage(
+                    "Error while querying data for GetObservation!");
+        } finally {
+            sessionStore.returnSession(session);
         }
-        // query global response values
-        
-        ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
-        if (timeExtrema.isSetPhenomenonTimes()) {
-            response.setGlobalValues(response.new GlobalGetObservationValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
-        }
-        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
-        return result;
     }
 
+    private DbQuery createDbQuery(GetObservationRequest request) {
+        RequestSimpleParameterSet rsps = new RequestSimpleParameterSet();
+        if (request.isSetFeatureOfInterest()) {
+            rsps.addParameter(IoParameters.FEATURES, IoParameters.getJsonNodeFrom(request.getFeatureIdentifiers()));
+        }
+        rsps.addParameter(IoParameters.MATCH_DOMAIN_IDS, IoParameters.getJsonNodeFrom(true));
+        return new DbQuery(IoParameters.createFromQuery(rsps));
+    }
+    
 }

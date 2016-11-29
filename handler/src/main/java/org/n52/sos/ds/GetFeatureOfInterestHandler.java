@@ -31,6 +31,7 @@ package org.n52.sos.ds;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -107,7 +108,7 @@ public class GetFeatureOfInterestHandler extends AbstractGetFeatureOfInterestHan
             if (featureEntities == null || featureEntities.isEmpty()) {
                 return new FeatureCollection();
             }
-            queryObject.setFeatures(featureEntities);
+            queryObject.setFeatures(featureEntities.stream().map(f -> f.getDomainId()).collect(Collectors.toSet()));
         }
         return new FeatureCollection(this.featureQueryHandler.getFeatures(queryObject));
     }

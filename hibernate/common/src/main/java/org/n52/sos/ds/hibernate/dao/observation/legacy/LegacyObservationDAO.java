@@ -316,24 +316,24 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         return c;
     }
 
-    public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Set<String> features,
+    public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Collection<String> features,
             Criterion filterCriterion, Session session) throws OwsExceptionReport {
         return getObservationsFor(request, features, filterCriterion, null, session);
     }
 
-    public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Set<String> features,
+    public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Collection<String> features,
             ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
 
-    public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Set<String> features,
+    public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Collection<String> features,
             Session session) throws OwsExceptionReport {
         return getObservationsFor(request, features, null, null, session);
     }
 
     @SuppressWarnings("unchecked")
     public Collection<? extends Observation<?>> getObservationsFor(ObservationConstellation oc,
-            HashSet<String> features, GetObservationRequest request, ExtendedIndeterminateTime sosIndeterminateTime,
+            Collection<String> features, GetObservationRequest request, ExtendedIndeterminateTime sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session);
 
@@ -360,18 +360,18 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         return c.list();
     }
 
-    public ScrollableResults getStreamingObservationsFor(GetObservationRequest request, Set<String> features,
+    public ScrollableResults getStreamingObservationsFor(GetObservationRequest request, Collection<String> features,
             Criterion temporalFilterCriterion, Session session) throws HibernateException, OwsExceptionReport {
         return scroll(getObservationCriteriaFor(request, features, temporalFilterCriterion, null, session));
     }
 
-    public ScrollableResults getStreamingObservationsFor(GetObservationRequest request, Set<String> features,
+    public ScrollableResults getStreamingObservationsFor(GetObservationRequest request, Collection<String> features,
             Session session) throws HibernateException, OwsExceptionReport {
         return scroll(getObservationCriteriaFor(request, features, null, null, session));
     }
 
-    public ScrollableResults getNotMatchingSeries(Set<Long> procedureIds, Set<Long> observablePropertyIds,
-            Set<Long> featureIds, GetObservationRequest request, Set<String> features,
+    public ScrollableResults getNotMatchingSeries(Collection<Long> procedureIds, Collection<Long> observablePropertyIds,
+            Collection<Long> featureIds, GetObservationRequest request, Collection<String> features,
             Criterion temporalFilterCriterion, Session session) throws OwsExceptionReport {
         Criteria c =
                 getObservationCriteriaFor(request, features, temporalFilterCriterion, null, session);
@@ -388,7 +388,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
     }
 
-    public ScrollableResults getNotMatchingSeries(Set<Long> procedureIds, Set<Long> observablePropertyIds,
+    public ScrollableResults getNotMatchingSeries(Collection<Long> procedureIds, Collection<Long> observablePropertyIds,
             Set<Long> featureIds, GetObservationRequest request, Set<String> features, Session session) throws OwsExceptionReport {
         Criteria c = getObservationCriteriaFor(request, features, null, null, session);
         addAliasAndNotRestrictionFor(c, procedureIds, observablePropertyIds, featureIds);
@@ -406,7 +406,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         return criteria.list();
     }
 
-    private void addAliasAndNotRestrictionFor(Criteria c, Set<Long> procedureIds, Set<Long> observablePropertyIds, Set<Long> featureIds) {
+    private void addAliasAndNotRestrictionFor(Criteria c, Collection<Long> procedureIds, Collection<Long> observablePropertyIds, Collection<Long> featureIds) {
         c.createAlias(AbstractLegacyObservation.PROCEDURE, "p").createAlias(AbstractLegacyObservation.OBSERVABLE_PROPERTY, "op")
                 .createAlias(AbstractLegacyObservation.FEATURE_OF_INTEREST, "f");
         c.add(Restrictions.not(Restrictions.in("p." + Procedure.ID, procedureIds)));

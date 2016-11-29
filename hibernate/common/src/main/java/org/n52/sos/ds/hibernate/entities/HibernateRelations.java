@@ -286,6 +286,10 @@ public interface HibernateRelations {
         void setOffering(Offering offering);
 
         Offering getOffering();
+
+        default boolean isSetOffering() {
+            return getOffering() != null;
+        }
     }
 
     interface HasPhenomenonTime {

@@ -60,6 +60,8 @@ import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
 import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.request.SpatialFeatureQueryRequest;
 
+import com.google.common.collect.Lists;
+
 
 /**
  * @since 4.0.0
@@ -125,7 +127,7 @@ public class QueryHelper {
                 throw new NoApplicableCodeException()
                         .withMessage("The requested valueReference for spatial filters is not supported by this server!");
             }
-            FeatureQueryHandlerQueryObject query = new FeatureQueryHandlerQueryObject().addSpatialFilter(spatialFilter).setConnection(session);
+            FeatureQueryHandlerQueryObject query = new FeatureQueryHandlerQueryObject().addSpatialFilter(spatialFilter);
             foiIDs = new HashSet<>(featureQueryHandler.getFeatureIDs(query));
         }
 
@@ -229,31 +231,31 @@ public class QueryHelper {
     }
 
     /**
-     * Creates a criterion for GRDC ids, considers if size is > 1000 (expression
+     * Creates a criterion for objects, considers if size is > 1000 (Oracle expression
      * limit).
-     *
+     * 
      * @param propertyName
      *            Column name.
      * @param identifiers
-     *            Identifiers list
+     *            Objects list
      * @return Criterion.
      */
-    public static Criterion getCriterionForFoiIds(String propertyName, Collection<String> identifiers) {
+    public static Criterion getCriterionForObjects(String propertyName, Collection<?> identifiers) {
         if (identifiers.size() >= LIMIT_EXPRESSION_DEPTH) {
-            List<String> fois = new ArrayList<String>(identifiers);
+            List<?> identifiersList = Lists.newArrayList(identifiers);
             Criterion criterion = null;
-            List<String> ids = null;
-            for (int i = 0; i < fois.size(); i++) {
+            List<Object> ids = null;
+            for (int i = 0; i < identifiersList.size(); i++) {
                 if (i == 0 || i % (LIMIT_EXPRESSION_DEPTH - 1) == 0) {
                     if (criterion == null && i != 0) {
                         criterion = Restrictions.in(propertyName, ids);
                     } else if (criterion != null) {
                         criterion = Restrictions.or(criterion, Restrictions.in(propertyName, ids));
                     }
-                    ids = new ArrayList<String>();
-                    ids.add(fois.get(i));
+                    ids = Lists.newArrayList();
+                    ids.add(identifiersList.get(i));
                 } else {
-                    ids.add(fois.get(i));
+                    ids.add(identifiersList.get(i));
                 }
             }
             return criterion;

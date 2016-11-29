@@ -668,7 +668,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     private void checkSamplingGeometry(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
-        GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
+        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
@@ -720,7 +720,7 @@ public class InsertDAOTest extends HibernateTestCase {
     private void checkOmParameter(String offering, String procedure, String obsprop, String feature,
             DateTime obsTimeParam) throws OwsExceptionReport {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, obsTimeParam, feature);
-        GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
+        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
@@ -777,7 +777,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     private void checkHeightParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
-        GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
+        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
@@ -820,7 +820,7 @@ public class InsertDAOTest extends HibernateTestCase {
 
     private void checkDepthParameter(String offering, String procedure, String obsprop, String feature, DateTime time) throws OwsExceptionReport {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(offering, procedure, obsprop, time, feature);
-        GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
+        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);
@@ -947,7 +947,7 @@ public class InsertDAOTest extends HibernateTestCase {
             throws OwsExceptionReport {
         GetObservationRequest getObsReq = createDefaultGetObservationRequest(reqOffering, reqProcedure, reqObsProp, time,
             obsFeature);
-        GetObservationResponse getObsResponse = getObsDAO.getObservation(getObsReq);
+        GetObservationResponse getObsResponse = getObsDAO.queryObservationData(getObsReq);
         assertThat(getObsResponse, notNullValue());
         assertThat(getObsResponse.getObservationCollection().isEmpty(), is(false));
         OmObservation omObservation = getObsResponse.getObservationCollection().get(0);

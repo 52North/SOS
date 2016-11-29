@@ -39,8 +39,10 @@ import org.n52.iceland.ogc.gml.time.TimeInstant;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueTimeDAO;
+import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.values.AbstractHibernateStreamingValue;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GmlHelper;
 
@@ -58,20 +60,22 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
     protected final AbstractSeriesValueDAO seriesValueDAO;
     protected final AbstractSeriesValueTimeDAO seriesValueTimeDAO;
     protected long series;
+    private boolean duplicated;
 
     /**
      * constructor
      *
      * @param connectionProvider the connection provider
      * @param request
-     *            {@link GetObservationRequest}
+     *            {@link AbstractObservationRequest}
      * @param series
      *            Datasource series id
      * @throws CodedException
      */
-    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request, long series) throws CodedException {
+    public HibernateSeriesStreamingValue(ConnectionProvider connectionProvider, AbstractObservationRequest request, long series, boolean duplicated) throws CodedException {
         super(connectionProvider, request);
         this.series = series;
+        this.duplicated = duplicated;
         this.seriesValueDAO = (AbstractSeriesValueDAO) DaoFactory.getInstance().getValueDAO();
         this.seriesValueTimeDAO = (AbstractSeriesValueTimeDAO) DaoFactory.getInstance().getValueTimeDAO();
     }
@@ -110,6 +114,17 @@ public abstract class HibernateSeriesStreamingValue extends AbstractHibernateStr
         } finally {
             sessionHolder.returnSession(s);
         }
+    }
+    
+    protected boolean checkValue(AbstractValuedLegacyObservation value) {
+        if (isDuplicated()) {
+            return value.getOfferings() != null && value.getOfferings().size() == 1;
+        }
+        return true;
+     }
+    
+    protected boolean isDuplicated() {
+        return duplicated;
     }
 
 }

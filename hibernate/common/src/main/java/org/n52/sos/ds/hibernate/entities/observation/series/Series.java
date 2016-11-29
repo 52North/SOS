@@ -37,6 +37,7 @@ import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
+import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.Unit;
 
@@ -50,7 +51,9 @@ public class Series
         implements HasWriteableObservationContext,
                    HasDeletedFlag,
                    HasHiddenChildFlag,
-                   HasUnit, HasPublishedFlag {
+                   HasUnit, 
+                   HasPublishedFlag,
+                   HasOffering {
 
     private static final long serialVersionUID = 7838379468605356753L;
 
@@ -62,14 +65,14 @@ public class Series
 
     public static final String ALIAS = "s";
 
-    public static final String ALIAS_DOT = ALIAS + Constants.DOT_STRING;
+    public static final String ALIAS_DOT = ALIAS + ".";
 
     private long seriesId;
     private FeatureOfInterest featureOfInterest;
     private ObservableProperty observableProperty;
     private Procedure procedure;
+    private Offering offering;
     private Boolean deleted = false;
-
     private Boolean published = true;
 
     // the following values are used by the timeseries api
@@ -129,7 +132,17 @@ public class Series
     public void setProcedure(final Procedure procedure) {
         this.procedure = procedure;
     }
+    
+    @Override
+    public Offering getOffering() {
+        return offering;
+    }
 
+    @Override
+    public void setOffering(final Offering offering) {
+        this.offering = offering;
+    }
+    
     @Override
     public void setDeleted(final boolean deleted) {
         this.deleted = deleted;
@@ -271,5 +284,10 @@ public class Series
 
     public boolean isSetFirstLastTime() {
         return isSetFirstTimeStamp() && isSetLastTimeStamp();
+    }
+    
+    public boolean hasSameObservationIdentifier(Series s) {
+        return getFeatureOfInterest().equals(s.getFeatureOfInterest()) && getProcedure().equals(s.getProcedure())
+                && getObservableProperty().equals(s.getObservableProperty());
     }
 }

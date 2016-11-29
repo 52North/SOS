@@ -47,6 +47,7 @@ This project includes:
   52°North SOS - Extension REST Binding - XML under GPLv2
   52°North SOS - Flexible identifier convert module under GPLv2
   52°North SOS - GetCapabilities DAO under GPLv2
+  52°North SOS - Handler Module under GPLv2
   52°North SOS - Hibernate Common under GPLv2
   52°North SOS - Hibernate Common Datasource under GPLv2
   52°North SOS - Hibernate DAOs under GPLv2
@@ -103,7 +104,7 @@ This project includes:
   AntLR Parser Generator under BSD License
   AOP alliance under Public Domain
   Apache Commons CLI under Apache License, Version 2.0
-  Apache Commons Codec under Apache License, Version 2.0
+  Apache Commons Codec under The Apache Software License, Version 2.0
   Apache Commons Compress under Apache License, Version 2.0
   Apache Commons Logging under The Apache Software License, Version 2.0
   Apache FOP under The Apache Software License, Version 2.0
@@ -260,13 +261,17 @@ This project includes:
   Sensor Web Timeseries API - REST Binding under GNU General Public License, Version 2.0
   Sensor Web Timeseries API - SPI under GNU General Public License, Version 2.0
   Sensor Web Timeseries API - SPI Impl DAO under GNU General Public License, Version 2.0
-  servlet-api under CDDL 1.1 or GPL2 w/ CPE
+  Series REST API - DAO module under GNU General Public License, Version 2.0
+  Series REST API - IO module under GNU General Public License, Version 2.0
+  Series REST API - REST module under GNU General Public License, Version 2.0
+  Series REST API - SOS Proxy Dao Module under GNU General Public License, Version 2.0
   SLF4J API Module under MIT License
   SnakeYAML under Apache License Version 2.0
   Spatial4J under The Apache Software License, Version 2.0
   Spring AOP under The Apache Software License, Version 2.0
   Spring Beans under The Apache Software License, Version 2.0
   Spring Context under The Apache Software License, Version 2.0
+  Spring Context Support under The Apache Software License, Version 2.0
   Spring Core under The Apache Software License, Version 2.0
   Spring Expression Language (SpEL) under The Apache Software License, Version 2.0
   Spring JDBC under The Apache Software License, Version 2.0

@@ -59,6 +59,8 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      */
     private String responseMode;
 
+    private boolean checkForDuplicity = true;
+
     /**
      * Get response format
      *
@@ -145,12 +147,27 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
     public boolean isSetSrsName() {
         return StringHelper.isNotEmpty(getSrsName());
     }
-    
+
+    /**
+     * @return the checkForDuplicity
+     */
+    public boolean isCheckForDuplicity() {
+        return checkForDuplicity;
+    }
+
+    /**
+     * @param checkForDuplicity the checkForDuplicity to set
+     */
+    public void setCheckForDuplicity(boolean checkForDuplicity) {
+        this.checkForDuplicity = checkForDuplicity;
+    }
+
     public void copyOf(AbstractObservationRequest res) {
         res.setResponseFormat(this.responseFormat);
         res.setResponseMode(this.responseMode);
         res.setResultModel(this.resultModel);
         res.setSrsName(this.srsName);
+        res.setCheckForDuplicity(this.isCheckForDuplicity());
     }
 
 }

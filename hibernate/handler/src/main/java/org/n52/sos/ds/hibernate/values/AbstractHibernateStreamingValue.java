@@ -56,6 +56,7 @@ import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.ogc.om.TimeValuePair;
 import org.n52.sos.ogc.om.values.Value;
+import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.GmlHelper;
@@ -91,7 +92,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
 
     protected Session session;
 
-    protected final GetObservationRequest request;
+    protected final AbstractObservationRequest request;
 
     protected Criterion temporalFilterCriterion;
 
@@ -102,7 +103,7 @@ public abstract class AbstractHibernateStreamingValue extends StreamingValue<Abs
      *            {@link GetObservationRequest}
      * @param connectionProvider the connection provider
      */
-    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, GetObservationRequest request) {
+    public AbstractHibernateStreamingValue(ConnectionProvider connectionProvider, AbstractObservationRequest request) {
         this.request = request;
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }

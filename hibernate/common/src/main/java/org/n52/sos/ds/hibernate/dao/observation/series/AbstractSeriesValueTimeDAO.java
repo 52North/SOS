@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation.series;
 
+import java.util.Collection;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
@@ -41,10 +43,11 @@ import org.n52.iceland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
+import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
+import org.n52.sos.ds.hibernate.util.QueryHelper;
 import org.n52.sos.request.GetObservationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,6 +197,42 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
         return (TemporalReferencedSeriesObservation) getSeriesValueCriteriaFor(request, series, null, ExtendedIndeterminateTime.latest, session)
                 .uniqueResult();
     }
+    
+    @Override
+    public ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilterCriterion,
+            Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesValueCriteriaFor(series, temporalFilterCriterion, null, session);
+        addPhenomenonTimeProjection(c);
+        LOGGER.debug("QUERY getTimeExtremaForSeries(series, temporalFilter): {}",
+                HibernateHelper.getSqlString(c));
+        return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
+    }
+
+    @Override
+    public ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilterCriterion,
+            Session session) throws OwsExceptionReport {
+        Criteria c = getSeriesValueCriteriaForSeriesIds(series, temporalFilterCriterion, null, session);
+        addPhenomenonTimeProjection(c);
+        LOGGER.debug("QUERY getTimeExtremaForSeriesIds(series, temporalFilter): {}",
+                HibernateHelper.getSqlString(c));
+        return parseMinMaxPhenomenonTime((Object[]) c.uniqueResult());
+    }
+    
+    private ObservationTimeExtrema parseMinMaxPhenomenonTime(Object[] result) {
+        ObservationTimeExtrema ote = new ObservationTimeExtrema();
+        if (result != null) {
+            ote.setMinPhenomenonTime(DateTimeHelper.makeDateTime(result[0]));
+            ote.setMaxPhenomenonTime(DateTimeHelper.makeDateTime(result[1]));
+        }
+        return ote;
+    }
+
+    private void addPhenomenonTimeProjection(Criteria c) {
+        ProjectionList projectionList = Projections.projectionList();
+        projectionList.add(Projections.min(TemporalReferencedSeriesObservation.PHENOMENON_TIME_START));
+        projectionList.add(Projections.max(TemporalReferencedSeriesObservation.PHENOMENON_TIME_END));
+        c.setProjection(projectionList);
+    }
 
     /**
      * Get default {@link Criteria} for {@link Class}
@@ -275,11 +314,39 @@ public abstract class AbstractSeriesValueTimeDAO extends AbstractValueTimeDAO {
             c.add(temporalFilterCriterion);
         }
         if (sosIndeterminateTime != null) {
-            logArgs += ", sosIndeterminateTime";
-            addIndeterminateTimeRestriction(c, sosIndeterminateTime);
+            addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
         }
         addSpecificRestrictions(c, request);
         LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
         return c;
     }
+    
+    private Criteria getSeriesValueCriteriaFor(Collection<Series> series,
+            Criterion temporalFilterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            throws OwsExceptionReport {
+        final Criteria c = getDefaultObservationCriteria(session);
+
+        c.add(QueryHelper.getCriterionForObjects(SeriesObservation.SERIES, series));
+
+        String logArgs = "request, series";
+        addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
+        addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        return c;
+    }
+    
+    private Criteria getSeriesValueCriteriaForSeriesIds(Collection<Long> series,
+            Criterion temporalFilterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            throws OwsExceptionReport {
+        final Criteria c = getDefaultObservationCriteria(session).createAlias(SeriesObservation.SERIES, "s");
+
+        c.add(QueryHelper.getCriterionForObjects("s." + Series.ID, series));
+
+        String logArgs = "request, series";
+        addTemporalFilterCriterion(c, temporalFilterCriterion, logArgs);
+        addIndeterminateTimeRestriction(c, sosIndeterminateTime, logArgs);
+        LOGGER.debug("QUERY getSeriesObservationFor({}): {}", logArgs, HibernateHelper.getSqlString(c));
+        return c;
+    }
+    
 }

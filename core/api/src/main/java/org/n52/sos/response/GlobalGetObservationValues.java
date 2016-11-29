@@ -26,28 +26,43 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.observation;
+package org.n52.sos.response;
 
-import java.util.Collection;
+import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.iceland.ogc.gml.time.TimePeriod;
 
-import org.hibernate.Session;
-import org.hibernate.criterion.Criterion;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
+public class GlobalGetObservationValues {
 
-/**
- * Abstract valut time data access object
- *
- * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.3.0
- *
- */
-public abstract class AbstractValueTimeDAO extends AbstractValueDAO {
+    private Time phenomenonTime;
 
-    public abstract ObservationTimeExtrema getTimeExtremaForSeries(Collection<Series> series, Criterion temporalFilter, Session session) throws OwsExceptionReport;
+    public GlobalGetObservationValues addPhenomenonTime(Time phenomenonTime) {
+        if (isSetPhenomenonTime()) {
+            if (phenomenonTime instanceof TimeInstant) {
+                this.phenomenonTime = new TimePeriod(this.phenomenonTime, this.phenomenonTime);
+            }
+            ((TimePeriod)this.phenomenonTime).extendToContain(phenomenonTime);
+        } else {
+            this.phenomenonTime = phenomenonTime;
+        }
+        return this;
+    }
 
-    public abstract ObservationTimeExtrema getTimeExtremaForSeriesIds(Collection<Long> series, Criterion temporalFilter, Session session) throws OwsExceptionReport;
+    public GlobalGetObservationValues setPhenomenonTime(Time phenomenonTime) {
+        this.phenomenonTime = phenomenonTime;
+        return this;
+    }
 
+    public Time getPhenomenonTime() {
+        return phenomenonTime;
+    }
+
+    public boolean isSetPhenomenonTime() {
+        return getPhenomenonTime() != null && !getPhenomenonTime().isEmpty();
+    }
+
+    public boolean isEmpty() {
+        return !isSetPhenomenonTime();
+    }
 
 }

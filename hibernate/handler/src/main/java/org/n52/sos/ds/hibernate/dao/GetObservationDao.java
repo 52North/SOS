@@ -1,4 +1,32 @@
-package dao;
+/*
+ * Copyright (C) 2012-2016 52°North Initiative for Geospatial Open Source
+ * Software GmbH
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 as published
+ * by the Free Software Foundation.
+ *
+ * If the program is linked with libraries which are licensed under one of
+ * the following licenses, the combination of the program with the linked
+ * library is not considered a "derivative work" of the program:
+ *
+ *     - Apache License, version 2.0
+ *     - Apache Software License, version 1.0
+ *     - GNU Lesser General Public License, version 3
+ *     - Mozilla Public License, versions 1.0, 1.1 and 2.0
+ *     - Common Development and Distribution License (CDDL), version 1.0
+ *
+ * Therefore the distribution of the program linked with libraries licensed
+ * under the aforementioned licenses, is permitted by the copyright holders
+ * if the distribution is compliant with both the GNU General Public
+ * License version 2 and the aforementioned licenses.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
+ * Public License for more details.
+ */
+package org.n52.sos.ds.hibernate.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,21 +45,16 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ows.NoApplicableCodeException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.CollectionHelper;
 import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
-import org.n52.sos.ds.hibernate.dao.DaoFactory;
-import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesObservationDAO;
-import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
@@ -39,19 +62,19 @@ import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ds.hibernate.values.HibernateStreamingConfiguration;
-import org.n52.sos.ds.hibernate.values.HibernateStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.AbstractObservationResponse.GlobalGetObservationValues;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.response.GlobalGetObservationValues;
+import org.n52.sos.service.profile.ProfileHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
@@ -60,6 +83,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
     private ServiceMetadataRepository serviceMetadataRepository;
+    private ProfileHandler profileHandler;
 
     @Inject
     public void setServiceMetadataRepository(ServiceMetadataRepository repo) {
@@ -76,19 +100,24 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         this.featureQueryHandler = featureQueryHandler;
     }
     
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
+    
     @Override
-    public List<OmObservation> getObservation(GetObservationRequest request) throws OwsExceptionReport {
+    public GetObservationResponse queryObservationData(GetObservationRequest request, GetObservationResponse response) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
             List<OmObservation> observations = new ArrayList<>();
-            if (CollectionHelper.isEmpty(request.getFirstLatestTemporalFilter())) {
-                observations.addAll(querySeriesObservationForStreaming(request, session));
+            if (!request.hasFirstLatestTemporalFilter()) {
+                observations.addAll(querySeriesObservationForStreaming(request, response, session));
             } else {
-                AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
-                observations.addAll(querySeriesObservation(request, (AbstractSeriesObservationDAO)observationDAO, session));
+                observations.addAll(querySeriesObservation(request, session));
             }
-            return observations;
+            response.setObservationCollection(observations);
+            return response;
         } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
                     .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
@@ -99,34 +128,6 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
             sessionHolder.returnSession(session);
         }
        
-    }
-    
-    @Override
-    public GlobalGetObservationValues getGlobalValues(GetObservationRequest request) {
-        Session session = null;
-        try {
-            session = sessionHolder.getSession();
-            GlobalGetObservationValues globalValues = new GlobalGetObservationValues();
-            final Set<String> features = QueryHelper.getFeatures(request, session);
-            if (features != null && features.isEmpty()) {
-                return globalValues;
-            }
-            Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-            List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session);
-            ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
-            if (timeExtrema.isSetPhenomenonTimes()) {
-               globalValues.setPhenomenonTime(timeExtrema.getPhenomenonTime());
-            }
-            return globalValues;
-        } catch (HibernateException he) {
-            throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying observation data!")
-                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
-        } catch (ConverterException ce) {
-            throw new NoApplicableCodeException().causedBy(ce).withMessage("Error while processing observation data!")
-                    .setStatus(HTTPStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            sessionHolder.returnSession(session);
-        }
     }
     
     /**
@@ -151,13 +152,9 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         }
 
         final long start = System.currentTimeMillis();
-        // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
-        if (features != null && features.isEmpty()) {
-            return new ArrayList<OmObservation>();
-        }
+        List<String> features = request.getFeatureIdentifiers();
         // temporal filters
-        final List<SosIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
+        final List<ExtendedIndeterminateTime> extendedIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         // final List<OmObservation> result = new LinkedList<OmObservation>();
@@ -167,8 +164,8 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
             observations = observationDAO.getObservationsFor(request, features, filterCriterion, session);
         }
         // query with first/latest value filter
-        else if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            for (SosIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
+        else if (CollectionHelper.isNotEmpty(extendedIndeterminateTimeFilters)) {
+            for (ExtendedIndeterminateTime sosIndeterminateTime : extendedIndeterminateTimeFilters) {
                 if (ServiceConfiguration.getInstance().isOverallExtrema()) {
                     observations =
                             observationDAO.getObservationsFor(request, features, sosIndeterminateTime, session);
@@ -191,15 +188,15 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, request.getRequestedLocale(), session);
+        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()
+        if (profileHandler.getActiveProfile().isShowMetadataOfEmptyObservations()
                 || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
             for (OmObservation omObservation : result) {
                 timeSeries.add(omObservation.getObservationConstellation());
             }
         }
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()) {
+        if (profileHandler.getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
             for (ObservationConstellation oc : HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
@@ -237,20 +234,16 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
      * @throws ConverterException
      *             If an error occurs during sensor description creation.
      */
-    protected List<OmObservation> querySeriesObservation(GetObservationRequest request, AbstractSeriesObservationDAO observationDAO, Session session)
+    protected List<OmObservation> querySeriesObservation(GetObservationRequest request, Session session)
             throws OwsExceptionReport, ConverterException {
         if (request.isSetResultFilter()) {
             throw new NotYetSupportedException("result filtering");
         }
-
+        AbstractSeriesObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         final long start = System.currentTimeMillis();
-        // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
-        if (features != null && features.isEmpty()) {
-            return new LinkedList<>();
-        }
+        List<String> features = request.getFeatureIdentifiers();
         // temporal filters
-        final List<SosIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
+        final List<ExtendedIndeterminateTime> extendedIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         final List<OmObservation> result = new LinkedList<>();
@@ -264,8 +257,8 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
                     checkObservationsForDuplicity(observationDAO.getSeriesObservationsFor(request, features, filterCriterion, session), request);
         }
         // query with first/latest value filter
-        else if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            for (SosIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
+        else if (CollectionHelper.isNotEmpty(extendedIndeterminateTimeFilters)) {
+            for (ExtendedIndeterminateTime sosIndeterminateTime : extendedIndeterminateTimeFilters) {
                 if (ServiceConfiguration.getInstance().isOverallExtrema()) {
                     seriesObservations =
                             observationDAO.getSeriesObservationsFor(request, features,
@@ -292,7 +285,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         // TODO does this apply for indeterminate time first/latest filters?
         // Yes.
         int metadataObservationsCount = 0;
-        if (getConfigurator().getProfileHandler().getActiveProfile().isShowMetadataOfEmptyObservations()) {
+        if (profileHandler.getActiveProfile().isShowMetadataOfEmptyObservations()) {
             // create a map of series to check by id, so we don't need to fetch
             // each observation's series from the database
             Map<Long, Series> seriesToCheckMap = Maps.newHashMap();
@@ -323,58 +316,7 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<Observation<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, request.getRequestedLocale(), session));
-        return result;
-    }
-
-    /**
-     * Query the observations for streaming datasource
-     *
-     * @param request
-     *            The GetObservation request
-     * @param session
-     *            Hibernate Session
-     * @return List of internal observations
-     * @throws OwsExceptionReport
-     *             If an error occurs.
-     * @throws ConverterException
-     *             If an error occurs during sensor description creation.
-     */
-    protected List<OmObservation> queryObservationForStreaming(GetObservationRequest request, final Session session)
-            throws OwsExceptionReport, ConverterException {
-        final long start = System.currentTimeMillis();
-        final List<OmObservation> result = new LinkedList<OmObservation>();
-        // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
-        if (features != null && features.isEmpty()) {
-            return result;
-        }
-        Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
-        List<ObservationConstellation> observations = HibernateGetObservationHelper.getAndCheckObservationConstellationSize(
-                request, session);
-        HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(observations.size());
-        int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(observations.size());
-        for (ObservationConstellation oc : observations) {
-            final List<String> featureIds =
-                    HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
-            for (OmObservation observationTemplate : HibernateObservationUtilities
-                    .createSosObservationFromObservationConstellation(oc, featureIds, request, session)) {
-                AbstractFeatureOfInterest featureOfInterest =
-                        new FeatureOfInterestDAO().getFeatureOfInterest(observationTemplate
-                                .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
-                                session);
-                HibernateStreamingValue streamingValue =
-                        getStreamingValue(request, oc.getProcedure().getProcedureId(), oc.getObservableProperty()
-                                .getObservablePropertyId(), featureOfInterest.getFeatureOfInterestId());
-                streamingValue.setResponseFormat(request.getResponseFormat());
-                streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
-                streamingValue.setObservationTemplate(observationTemplate);
-                streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
-                observationTemplate.setValue(streamingValue);
-                result.add(observationTemplate);
-            }
-        }
-        LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
+        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
         return result;
     }
 
@@ -391,14 +333,10 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
      * @throws ConverterException
      *             If an error occurs during sensor description creation.
      */
-    protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request, Session session) throws OwsExceptionReport, ConverterException {
+    protected List<OmObservation> querySeriesObservationForStreaming(GetObservationRequest request, GetObservationResponse response, Session session) throws OwsExceptionReport, ConverterException {
         final long start = System.currentTimeMillis();
         final List<OmObservation> result = new LinkedList<OmObservation>();
-        // get valid featureOfInterest identifier
-        final Set<String> features = QueryHelper.getFeatures(request, session);
-        if (features != null && features.isEmpty()) {
-            return result;
-        }
+        List<String> features = request.getFeatureIdentifiers();
         Criterion temporalFilterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
         List<Series> serieses = DaoFactory.getInstance().getSeriesDAO().getSeries(request, features, session);
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
@@ -410,13 +348,18 @@ public class GetObservationDao implements org.n52.sos.ds.dao.GetObservationDao {
                     HibernateObservationUtilities
                             .createSosObservationFromSeries(series, request, session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
-            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(request, series.getSeriesId(), duplicated.contains(series));
+            HibernateSeriesStreamingValue streamingValue = new HibernateChunkSeriesStreamingValue(sessionHolder.getConnectionProvider(), request, series.getSeriesId(), duplicated.contains(series));
             streamingValue.setResponseFormat(request.getResponseFormat());
             streamingValue.setTemporalFilterCriterion(temporalFilterCriterion);
             streamingValue.setObservationTemplate(observationTemplate);
             streamingValue.setMaxNumberOfValues(maxNumberOfValuesPerSeries);
             observationTemplate.setValue(streamingValue);
             result.add(observationTemplate);
+        }
+        
+        ObservationTimeExtrema timeExtrema = DaoFactory.getInstance().getValueTimeDAO().getTimeExtremaForSeries(serieses, temporalFilterCriterion, session);
+        if (timeExtrema.isSetPhenomenonTimes()) {
+            response.setGlobalValues(new GlobalGetObservationValues().setPhenomenonTime(timeExtrema.getPhenomenonTime()));
         }
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         return result;

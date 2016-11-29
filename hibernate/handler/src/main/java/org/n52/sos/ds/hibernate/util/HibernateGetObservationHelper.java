@@ -172,7 +172,7 @@ public class HibernateGetObservationHelper {
     }
 
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-            final Set<String> featureIdentifier, final Session session) throws OwsExceptionReport {
+            final Collection<String> featureIdentifier, final Session session) throws OwsExceptionReport {
         final List<String> featuresForConstellation =
                 new FeatureOfInterestDAO().getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);

@@ -42,10 +42,10 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO {
         return AbstractValuedEReportingObservation.class;
     }
 
-        @Override
-        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
-            // add quality restrictions
-            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
-        }
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+        // add quality restrictions
+        EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+    }
 
 }

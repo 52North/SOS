@@ -32,12 +32,11 @@ import java.sql.Timestamp;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
@@ -50,7 +49,6 @@ import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.util.GeometryHandler;
 
 /**
@@ -86,6 +84,13 @@ public abstract class AbstractValueDAO extends TimeCreator {
                             request.getSpatialFilter().getGeometry())));
         }
     }
+    
+    protected void addTemporalFilterCriterion(Criteria c, Criterion temporalFilterCriterion, String logArgs) {
+        if (temporalFilterCriterion != null) {
+            logArgs += ", filterCriterion";
+            c.add(temporalFilterCriterion);
+        }
+    }
 
     /**
      * Add an indeterminate time restriction to a criteria. This allows for
@@ -93,26 +98,28 @@ public abstract class AbstractValueDAO extends TimeCreator {
      * for latest, min for first). Note: use this method *after* adding all
      * other applicable restrictions so that they will apply to the min/max
      * observation time determination.
-     *
+     * 
      * @param c
      *            Criteria to add the restriction to
      * @param sosIndeterminateTime
      *            Indeterminate time restriction to add
      * @return Modified criteria
      */
-    protected Criteria addIndeterminateTimeRestriction(Criteria c, ExtendedIndeterminateTime sosIndeterminateTime) {
-        // get extrema indeterminate time
-        c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
-        Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
-
-        // reset criteria
-        // see http://stackoverflow.com/a/1472958/193435
-        c.setProjection(null);
-        c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-
-        // get observations with exactly the extrema time
-        c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
-
+    protected Criteria addIndeterminateTimeRestriction(Criteria c, ExtendedIndeterminateTime sosIndeterminateTime, String logArgs) {
+        if (sosIndeterminateTime != null) {
+            // get extrema indeterminate time
+            c.setProjection(getIndeterminateTimeExtremaProjection(sosIndeterminateTime));
+            Timestamp indeterminateExtremaTime = (Timestamp) c.uniqueResult();
+    
+            // reset criteria
+            // see http://stackoverflow.com/a/1472958/193435
+            c.setProjection(null);
+            c.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    
+            // get observations with exactly the extrema time
+            c.add(Restrictions.eq(getIndeterminateTimeFilterProperty(sosIndeterminateTime), indeterminateExtremaTime));
+            logArgs += ", sosIndeterminateTime";
+        }
         // not really necessary to return the Criteria object, but useful if we
         // want to chain
         return c;

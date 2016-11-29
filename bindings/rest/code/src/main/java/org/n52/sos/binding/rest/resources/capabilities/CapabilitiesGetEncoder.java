@@ -33,8 +33,8 @@ import net.opengis.sosREST.x10.CapabilitiesDocument;
 import net.opengis.sosREST.x10.CapabilitiesType;
 
 import org.n52.iceland.response.ServiceResponse;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.n52.sos.binding.rest.requests.RestResponse;
 

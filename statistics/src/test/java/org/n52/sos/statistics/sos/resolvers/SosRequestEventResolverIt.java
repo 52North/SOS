@@ -29,6 +29,7 @@
 package org.n52.sos.statistics.sos.resolvers;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -37,12 +38,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import org.n52.iceland.event.events.RequestEvent;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
 import org.n52.janmayen.net.IPAddress;
-
-import com.google.common.base.Optional;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 
 import basetest.ElasticsearchAwareTest;
 

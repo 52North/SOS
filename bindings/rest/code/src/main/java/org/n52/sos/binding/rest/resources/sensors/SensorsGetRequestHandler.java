@@ -43,12 +43,12 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;

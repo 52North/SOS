@@ -28,20 +28,8 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.Boolean;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.Category;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.Count;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.CountRange;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.ObservableProperty;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.Quantity;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.QuantityRange;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.Text;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.Time;
-import static org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType.TimeRange;
 import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
@@ -57,6 +45,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

@@ -92,11 +92,11 @@ import java.net.URI;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.service.ServiceSettings;
 import org.n52.iceland.util.Validation;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.util.http.MediaType;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

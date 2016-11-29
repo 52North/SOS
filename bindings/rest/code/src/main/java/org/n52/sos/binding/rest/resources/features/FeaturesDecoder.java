@@ -37,12 +37,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.DateTimeException;
-import org.n52.shetland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;

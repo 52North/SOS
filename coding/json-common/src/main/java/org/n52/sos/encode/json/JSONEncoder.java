@@ -42,13 +42,12 @@ import java.util.stream.Collector;
 
 import javax.inject.Inject;
 
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.janmayen.stream.Streams;
 import org.n52.janmayen.exception.CompositeException;
 import org.n52.janmayen.function.ThrowingFunction;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.janmayen.stream.MoreCollectors;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.OwsCode;
@@ -58,6 +57,7 @@ import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -215,7 +215,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     protected Collector<JsonNode, ?, ArrayNode> toJsonArray() {
-        return Streams.collector(nodeFactory()::arrayNode, ArrayNode::add, (BinaryOperator<ArrayNode>) ArrayNode::addAll);
+        return MoreCollectors.collector(nodeFactory()::arrayNode, ArrayNode::add, (BinaryOperator<ArrayNode>) ArrayNode::addAll);
     }
 
     @SuppressWarnings("unchecked")
@@ -230,6 +230,6 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
                     return node;
                 };
 
-        return Streams.collector(m.supplier(), m.accumulator(), m.combiner(), m.finisher().andThen(finisher));
+        return MoreCollectors.collector(m.supplier(), m.accumulator(), m.combiner(), m.finisher().andThen(finisher));
     }
 }

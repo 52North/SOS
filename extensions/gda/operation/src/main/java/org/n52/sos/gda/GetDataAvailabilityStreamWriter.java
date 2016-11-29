@@ -38,19 +38,19 @@ import javax.xml.stream.XMLStreamException;
 
 import org.joda.time.DateTime;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.Time.TimeFormat;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlEventWriter;
 import org.n52.sos.gda.GetDataAvailabilityResponse.DataAvailability;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * GetDataAvailability response stream writer.

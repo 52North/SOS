@@ -28,8 +28,8 @@
  */
 package org.n52.sos.service.it.functional;
 
-import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.is;
+import static org.n52.sos.service.it.util.XPath.hasXPath;
 
 import java.io.IOException;
 
@@ -44,13 +44,13 @@ import org.junit.rules.ErrorCollector;
 import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
 
 import org.n52.iceland.binding.BindingRepository;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants;
-import org.n52.shetland.util.http.HTTPStatus;
-import org.n52.shetland.util.http.MediaTypes;
-import org.n52.sos.coding.json.SchemaConstants.Response;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
+import org.n52.sos.service.it.Response;
 import org.n52.sos.service.it.v2.XPaths;
 
 import com.fasterxml.jackson.core.JsonProcessingException;

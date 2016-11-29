@@ -49,28 +49,29 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapResponse;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.ExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.http.MediaType;
-import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.exception.sos.SosExceptionCode;
 import org.n52.sos.exception.swes.SwesExceptionCode;
 import org.n52.sos.ogc.sos.SosSoapConstants;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.collect.ImmutableSet;
@@ -175,7 +176,7 @@ public abstract class AbstractSoapEncoder<T, S> extends AbstractXmlEncoder<T, S>
      */
     protected XmlObject getBodyContent(SoapResponse response) throws EncodingException {
         OperationResponseEncoderKey key =
-                new OperationResponseEncoderKey(response.getBodyContent().getOperationKey(), MediaTypes.APPLICATION_XML);
+                new OperationResponseEncoderKey(new OperationKey(response.getBodyContent()), MediaTypes.APPLICATION_XML);
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);

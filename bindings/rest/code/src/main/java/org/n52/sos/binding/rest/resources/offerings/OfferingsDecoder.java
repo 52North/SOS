@@ -31,14 +31,14 @@ package org.n52.sos.binding.rest.resources.offerings;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.util.http.HTTPMethods;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Strings;
 

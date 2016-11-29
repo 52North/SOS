@@ -41,14 +41,14 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * TODO JavaDoc

@@ -53,11 +53,6 @@ import net.opengis.sos.x10.ObservationOfferingType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.oxf.xml.NcNameResolver;
 import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
@@ -66,10 +61,15 @@ import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.ogc.sos.SosCapabilities;
 import org.n52.sos.ogc.sos.SosObservationOffering;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 

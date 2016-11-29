@@ -53,11 +53,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.swe.RangeValue;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.swe.SweDataComponentVisitor;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweEnvelope;
@@ -76,6 +75,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;

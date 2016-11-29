@@ -28,26 +28,24 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
-
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 

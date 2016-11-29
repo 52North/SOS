@@ -75,9 +75,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.RangeValue;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweCoordinate;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;

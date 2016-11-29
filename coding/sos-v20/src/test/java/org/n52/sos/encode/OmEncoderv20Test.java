@@ -46,9 +46,6 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -62,6 +59,7 @@ import org.n52.shetland.ogc.om.SingleObservationValue;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
@@ -72,6 +70,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;

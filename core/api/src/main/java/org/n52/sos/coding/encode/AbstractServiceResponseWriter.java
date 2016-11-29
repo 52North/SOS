@@ -33,22 +33,23 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.response.StreamingDataResponse;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
  * {@link ResponseWriter} for {@link OwsServiceResponse}
@@ -117,7 +118,7 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
      * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
     private Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getEncodedContentType(asr));
 
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {

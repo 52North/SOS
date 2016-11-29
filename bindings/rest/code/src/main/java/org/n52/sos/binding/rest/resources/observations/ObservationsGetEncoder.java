@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.response.ServiceResponse;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.util.SosHelper;
 

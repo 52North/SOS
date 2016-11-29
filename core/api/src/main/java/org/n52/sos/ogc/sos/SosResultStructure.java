@@ -35,8 +35,8 @@ import org.apache.xmlbeans.XmlObject.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;

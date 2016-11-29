@@ -42,21 +42,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.exception.ows.concrete.ServiceOperatorNotFoundException;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
 import org.n52.iceland.service.operator.ServiceOperator;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.MediaTypes;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.binding.rest.Constants;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -131,9 +133,9 @@ public abstract class RequestHandler {
         return ObservationOfferingDocument.Factory.parse(xb_offering.newInputStream()).getObservationOffering();
     }
 
-    private ServiceOperator getServiceOperator(AbstractServiceRequest req) throws OwsExceptionReport
+    private ServiceOperator getServiceOperator(OwsServiceRequest req) throws OwsExceptionReport
     {
-        for (ServiceOperatorKey sok : req.getServiceOperatorKeys()) {
+        for (OwsServiceKey sok : req.getServiceOperatorKeys()) {
             ServiceOperator so = ServiceOperatorRepository.getInstance().getServiceOperator(sok);
             if (so != null) {
                 return so;
@@ -142,15 +144,15 @@ public abstract class RequestHandler {
         throw new ServiceOperatorNotFoundException(req);
     }
 
-    protected XmlObject executeSosRequest(AbstractServiceRequest request) throws OwsExceptionReport {
+    protected XmlObject executeSosRequest(OwsServiceRequest request) throws EncodingException, OwsExceptionReport {
         return encodeResponse(getServiceOperator(request).receiveRequest(request));
     }
 
-    private XmlObject encodeResponse(AbstractServiceResponse response)
-            throws OwsExceptionReport {
+    private XmlObject encodeResponse(OwsServiceResponse response)
+            throws EncodingException {
         OperationResponseEncoderKey key = new OperationResponseEncoderKey(
-                response.getOperationKey(), MediaTypes.TEXT_XML);
-        Encoder<XmlObject, AbstractServiceResponse> encoder =
+                new OperationKey(response), MediaTypes.TEXT_XML);
+        Encoder<XmlObject, OwsServiceResponse> encoder =
                 CodingRepository.getInstance().getEncoder(key);
         if (encoder == null) {
             throw new NoEncoderForKeyException(key);

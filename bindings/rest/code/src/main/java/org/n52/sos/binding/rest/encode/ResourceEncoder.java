@@ -39,17 +39,17 @@ import net.opengis.sosREST.x10.ResourceCollectionType;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.exception.ows.concrete.EncoderResponseUnsupportedException;
+import org.n52.iceland.coding.encode.EncoderResponseUnsupportedException;
 import org.n52.iceland.response.ServiceResponse;
+import org.n52.janmayen.http.HTTPHeaders;
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.HTTPHeaders;
-import org.n52.shetland.util.http.HTTPMethods;
-import org.n52.shetland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestResponse;
 import org.n52.sos.exception.ows.concrete.ErrorWhileSavingResponseToOutputStreamException;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -57,7 +57,7 @@ import org.n52.sos.util.XmlOptionsHelper;
  */
 public abstract class ResourceEncoder extends RestEncoder {
 
-    public  abstract ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws EncodingException;
+    public  abstract ServiceResponse encodeRestResponse(RestResponse objectToEncode) throws EncodingException, OwsExceptionReport;
 
     protected String createHrefForResourceType(String resourceType)
     {

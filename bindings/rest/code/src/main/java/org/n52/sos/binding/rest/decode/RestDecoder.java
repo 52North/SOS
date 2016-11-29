@@ -40,19 +40,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
-import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.util.http.HttpUtils;
+import org.n52.janmayen.http.HTTPHeaders;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.HTTPHeaders;
-import org.n52.shetland.util.http.HTTPStatus;
-import org.n52.shetland.util.http.MediaType;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.RestBinding;
 import org.n52.sos.binding.rest.requests.RestRequest;
@@ -62,6 +60,8 @@ import org.n52.sos.binding.rest.resources.features.FeaturesDecoder;
 import org.n52.sos.binding.rest.resources.observations.ObservationsDecoder;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsDecoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsDecoder;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
 
 import com.google.common.base.Joiner;
 

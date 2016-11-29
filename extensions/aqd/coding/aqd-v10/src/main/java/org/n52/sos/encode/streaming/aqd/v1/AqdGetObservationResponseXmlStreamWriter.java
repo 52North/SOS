@@ -43,10 +43,6 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.util.Constants;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.iso.gmd.GmdConstants;
@@ -58,6 +54,7 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.aqd.AqdConstants;
@@ -67,6 +64,9 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 

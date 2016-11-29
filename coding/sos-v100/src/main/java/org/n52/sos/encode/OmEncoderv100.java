@@ -65,7 +65,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -89,6 +88,7 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.ReferencedEnvelope;

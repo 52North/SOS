@@ -63,8 +63,6 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.junit.Test;
 
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swe.SweConstants.SweDataComponentType;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
@@ -72,9 +70,11 @@ import org.n52.shetland.ogc.sensorML.SmlContactList;
 import org.n52.shetland.ogc.sensorML.SmlPerson;
 import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 import org.n52.shetland.ogc.sensorML.System;
-import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweConstants.SweDataComponentType;
+import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;

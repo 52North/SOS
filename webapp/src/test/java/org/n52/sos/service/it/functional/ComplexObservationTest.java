@@ -39,6 +39,7 @@ import java.util.Iterator;
 import javax.xml.namespace.NamespaceContext;
 
 import net.opengis.ows.x11.ExceptionReportDocument;
+import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sos.x20.GetObservationResponseDocument;
 import net.opengis.sos.x20.InsertObservationDocument;
 import net.opengis.sos.x20.InsertObservationResponseDocument;
@@ -58,13 +59,9 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
 
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
@@ -84,9 +81,13 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
 import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
@@ -95,20 +96,20 @@ import org.n52.shetland.ogc.swe.simpleType.SweCategory;
 import org.n52.shetland.ogc.swe.simpleType.SweCount;
 import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.shetland.util.http.MediaTypes;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.ds.hibernate.H2Configuration;
 import org.n52.sos.request.operator.AbstractRequestOperator;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.service.it.AbstractComplianceSuiteTest;
+import org.n52.sos.service.it.Client;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
 
-import ch.qos.logback.core.net.server.Client;
 
 public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     private static final NamespaceContextImpl NS_CTX = new NamespaceContextImpl();
@@ -156,7 +157,7 @@ public class ComplexObservationTest extends AbstractComplianceSuiteTest {
     }
 
     private void activate() {
-        ServiceOperatorKey sok = new ServiceOperatorKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
+        OwsServiceKey sok = new OwsServiceKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION);
         RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, Sos2Constants.Operations.InsertSensor.name()), true);
         RequestOperatorRepository.getInstance().setActive(new RequestOperatorKey(sok, SosConstants.Operations.InsertObservation.name()), true);
     }

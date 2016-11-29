@@ -30,8 +30,8 @@ package org.n52.sos.binding.rest.encode;
 
 
 import org.n52.iceland.response.ServiceResponse;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.HTTPStatus;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestResponse;
 

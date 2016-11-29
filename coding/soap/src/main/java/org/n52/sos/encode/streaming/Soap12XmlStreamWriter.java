@@ -38,16 +38,16 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.w3c.soap.SoapConstants;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapResponse;
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
@@ -57,6 +57,7 @@ import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 import com.google.common.collect.Sets;
 
@@ -226,7 +227,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
     protected void writeBodyContent(OwsServiceResponse bodyResponse) throws XMLStreamException,
                                                                                  EncodingException {
         Encoder<Object, OwsServiceResponse> encoder =
-                getEncoder(new OperationResponseEncoderKey(bodyResponse.getOperationKey(), MediaTypes.APPLICATION_XML));
+                getEncoder(new OperationResponseEncoderKey(new OperationKey(bodyResponse), MediaTypes.APPLICATION_XML));
         if (encoder instanceof StreamingEncoder<?, ?>) {
             ((StreamingEncoder) encoder).encode(bodyResponse, getOutputStream(), new EncodingValues().setAsDocument(true).setEmbedded(true).setIndent(indent));
         } else {
@@ -290,7 +291,7 @@ public class Soap12XmlStreamWriter extends XmlStreamWriter<SoapResponse> {
     }
 
     protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse abstractServiceResponse) throws NoEncoderForKeyException {
-         return getEncoder(new OperationResponseEncoderKey(abstractServiceResponse.getOperationKey(), MediaTypes.APPLICATION_XML));
+         return getEncoder(new OperationResponseEncoderKey(new OperationKey(abstractServiceResponse), MediaTypes.APPLICATION_XML));
     }
 
     /**

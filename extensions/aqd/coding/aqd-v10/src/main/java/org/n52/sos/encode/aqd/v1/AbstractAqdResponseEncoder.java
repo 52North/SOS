@@ -36,19 +36,16 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
@@ -58,6 +55,10 @@ import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.ReportObligationRepository;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 import com.google.common.collect.Sets;
 
@@ -153,11 +154,10 @@ public abstract class AbstractAqdResponseEncoder<T extends OwsServiceResponse> e
      * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
     protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getContentType());
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getContentType());
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
-                    getContentType())));
+            throw new RuntimeException(new NoEncoderForKeyException(key));
         }
         return encoder;
     }

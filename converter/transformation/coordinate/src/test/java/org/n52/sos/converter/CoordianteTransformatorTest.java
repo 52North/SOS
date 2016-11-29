@@ -36,8 +36,8 @@ import javax.naming.ConfigurationException;
 import org.junit.Test;
 
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateNames;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
 
 /**
  * Test class for {@link CoordianteTransformator}

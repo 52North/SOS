@@ -36,25 +36,25 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.OwsEncodingException;
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;
 import org.n52.svalbard.AbstractDelegatingEncoder;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -148,11 +148,10 @@ public class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends Ab
      * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
     protected Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getEncodedContentType(asr));
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
-                    MediaTypes.APPLICATION_XML)));
+            throw new RuntimeException(new NoEncoderForKeyException(key));
         }
         return encoder;
     }

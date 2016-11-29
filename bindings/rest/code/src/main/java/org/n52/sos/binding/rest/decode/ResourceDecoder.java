@@ -43,11 +43,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.iceland.ogc.ows.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
@@ -57,13 +54,17 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CRSHelper;
 import org.n52.shetland.util.DateTimeException;
 import org.n52.shetland.util.DateTimeHelper;
-import org.n52.shetland.util.http.HTTPMethods;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 import org.n52.sos.util.JTSHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -75,17 +76,17 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     protected Constants bindingConstants = Constants.getInstance();
 
-    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException;
+    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException;
+    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException;
+    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException;
+    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
 
-    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException
+    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException, OwsExceptionReport
     {
         String resourceType = null;
         String pathPayload = null;
@@ -162,7 +163,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     // TODO use this to return operation not allowed response
-    protected DecodingException createHttpMethodForThisResourceNotSupportedException(final String httpMethod, final String resourceType)
+    protected OwsExceptionReport createHttpMethodForThisResourceNotSupportedException(final String httpMethod, final String resourceType)
     {
         final String exceptionText = String.format("The HTTP-%s %s \"%s\"!",
                 httpMethod,

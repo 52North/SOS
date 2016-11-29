@@ -44,21 +44,21 @@ import net.opengis.swe.x101.SimpleDataRecordType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.request.UpdateSensorRequest;

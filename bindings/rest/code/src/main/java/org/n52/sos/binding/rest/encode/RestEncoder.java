@@ -37,14 +37,11 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.HelperValues;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
-import org.n52.iceland.lifecycle.Constructable;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.shetland.util.http.MediaType;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.binding.rest.Constants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
@@ -76,6 +73,9 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.SchemaAwareEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -84,7 +84,7 @@ import com.google.common.collect.Sets;
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
  *
  */
-public class RestEncoder implements Encoder<ServiceResponse, RestResponse>, Constructable {
+public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceResponse, RestResponse> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestEncoder.class);
     @Deprecated

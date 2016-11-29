@@ -33,12 +33,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.janmayen.http.HTTPMethods;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.util.http.HTTPMethods;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -48,7 +49,7 @@ public class CapabilitiesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws DecodingException
     {
         GetCapabilitiesRequest getCapabilitiesRequest = createGetCapabilitiesRequestWithoutOperationsMetadata();
 

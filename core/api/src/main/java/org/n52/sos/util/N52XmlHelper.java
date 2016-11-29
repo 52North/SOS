@@ -40,9 +40,6 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.swe.SweConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
@@ -50,6 +47,9 @@ import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 

@@ -28,54 +28,54 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
  *
  */
-public class InsertResultRequest extends AbstractServiceRequest<InsertResultResponse> {
+public class InsertResultRequest extends OwsServiceRequest {
 
     private String templateIdentifier;
-
     private String resultValues;
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.InsertResult.name();
+    public InsertResultRequest() {
+        super(null, null, Sos2Constants.Operations.InsertResult.name());
+    }
+
+    public InsertResultRequest(String service, String version) {
+        super(service, version, Sos2Constants.Operations.InsertResult.name());
+    }
+
+    public InsertResultRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     public void setTemplateIdentifier(String templateIdentifier) {
         this.templateIdentifier = templateIdentifier;
     }
+    public String getTemplateIdentifier() {
+        return templateIdentifier;
+    }
 
     public boolean isSetTemplateIdentifier() {
-        return StringHelper.isNotEmpty(getTemplateIdentifier());
+        return !Strings.isNullOrEmpty(getTemplateIdentifier());
     }
 
     public void setResultValues(String resultValues) {
         this.resultValues = resultValues;
     }
 
-    public String getTemplateIdentifier() {
-        return templateIdentifier;
-    }
 
     public String getResultValues() {
         return resultValues;
     }
 
     public boolean isSetResultValues() {
-        return StringHelper.isNotEmpty(getResultValues());
-    }
-
-    @Override
-    public InsertResultResponse getResponse() throws OwsExceptionReport {
-        return (InsertResultResponse) new InsertResultResponse().set(this);
+        return !Strings.isNullOrEmpty(getResultValues());
     }
 
 }

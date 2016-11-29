@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
@@ -42,6 +42,7 @@ import org.n52.iceland.i18n.metadata.I18NOfferingMetadata;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

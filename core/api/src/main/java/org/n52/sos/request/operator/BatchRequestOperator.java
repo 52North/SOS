@@ -31,12 +31,12 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.sos.ds.BatchOperationHandler;
 import org.n52.sos.request.BatchRequest;
 import org.n52.sos.response.BatchResponse;
@@ -56,7 +56,7 @@ public class BatchRequestOperator extends AbstractRequestOperator<BatchOperation
 
     @Override
     protected BatchResponse receive(BatchRequest request) throws OwsExceptionReport {
-        for (AbstractServiceRequest<?> r : request) {
+        for (OwsServiceRequest r : request) {
             r.setRequestContext(request.getRequestContext());
         }
         return getOperationHandler().executeRequests(request);

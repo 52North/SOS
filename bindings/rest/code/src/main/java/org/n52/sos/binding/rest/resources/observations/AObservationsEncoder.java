@@ -37,13 +37,12 @@ import net.opengis.sosREST.x10.LinkType;
 import net.opengis.sosREST.x10.ObservationDocument;
 import net.opengis.sosREST.x10.ObservationType;
 
-
-
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.binding.rest.encode.ResourceEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.binding.rest.encode.ResourceEncoder;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

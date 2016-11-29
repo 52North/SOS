@@ -29,7 +29,8 @@
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import org.hibernate.Criteria;
-import org.n52.iceland.exception.CodedException;
+
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;

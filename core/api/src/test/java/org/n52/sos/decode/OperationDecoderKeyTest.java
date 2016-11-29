@@ -31,10 +31,11 @@ package org.n52.sos.decode;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaTypes;
+
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaTypes;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

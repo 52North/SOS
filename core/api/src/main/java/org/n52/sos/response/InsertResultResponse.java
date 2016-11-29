@@ -28,16 +28,28 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 
 /**
  * @since 4.0.0
  *
  */
-public class InsertResultResponse extends AbstractServiceResponse {
+public class InsertResultResponse extends OwsServiceResponse {
     private OmObservation observation;
+
+    public InsertResultResponse() {
+        super(null, null, Sos2Constants.Operations.InsertResult.name());
+    }
+
+    public InsertResultResponse(String service, String version) {
+        super(service, version, Sos2Constants.Operations.InsertResult.name());
+    }
+
+    public InsertResultResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public OmObservation getObservation() {
         return observation;
@@ -47,8 +59,4 @@ public class InsertResultResponse extends AbstractServiceResponse {
         this.observation = observation;
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.InsertResult.name();
-    }
 }

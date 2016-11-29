@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
+import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.sos.event.events.SosDeletionEvent;
-import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -28,17 +28,29 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetFeatureOfInterestResponse extends AbstractServiceResponse {
+public class GetFeatureOfInterestResponse extends OwsServiceResponse {
 
     private AbstractFeature abstractFeature;
+
+    public GetFeatureOfInterestResponse() {
+        super(null, null, SosConstants.Operations.GetFeatureOfInterest.name());
+    }
+
+    public GetFeatureOfInterestResponse(String service, String version) {
+        super(service, version, SosConstants.Operations.GetFeatureOfInterest.name());
+    }
+
+    public GetFeatureOfInterestResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public AbstractFeature getAbstractFeature() {
         return abstractFeature;
@@ -46,11 +58,6 @@ public class GetFeatureOfInterestResponse extends AbstractServiceResponse {
 
     public void setAbstractFeature(AbstractFeature abstractFeature) {
         this.abstractFeature = abstractFeature;
-    }
-
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetFeatureOfInterest.name();
     }
 
 }

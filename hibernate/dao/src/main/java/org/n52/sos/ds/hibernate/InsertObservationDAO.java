@@ -40,20 +40,24 @@ import org.hibernate.HibernateException;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.annotations.common.util.StringHelper;
 import org.hibernate.exception.ConstraintViolationException;
+
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.sos.ds.AbstractInsertObservationHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -63,13 +67,10 @@ import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Unit;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
@@ -268,14 +269,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     }
 
     private void checkEqualsAndThrow(String constraintName, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(constraintName)) {
+        if (!Strings.isNullOrEmpty(constraintName)) {
             String exceptionMsg = null;
             if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTITY)) {
                 exceptionMsg = "Observation with same values already contained in database";
             } else if (constraintName.equalsIgnoreCase(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY)) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
-            if(StringHelper.isNotEmpty(exceptionMsg)) {
+            if(!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }
@@ -283,14 +284,14 @@ public class InsertObservationDAO extends AbstractInsertObservationHandler  {
     }
 
     private void checkContainsAndThrow(String message, HibernateException he) throws OwsExceptionReport {
-        if (StringHelper.isNotEmpty(message)) {
+        if (!Strings.isNullOrEmpty(message)) {
             String exceptionMsg = null;
             if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation with same values already contained in database";
             } else if (message.toLowerCase().contains(CONSTRAINT_OBSERVATION_IDENTIFIER_IDENTITY.toLowerCase())) {
                 exceptionMsg = "Observation identifier already contained in database";
             }
-            if (StringHelper.isNotEmpty(exceptionMsg)) {
+            if (!Strings.isNullOrEmpty(exceptionMsg)) {
                 throw new NoApplicableCodeException().causedBy(he).withMessage(exceptionMsg)
                 .setStatus(HTTPStatus.BAD_REQUEST);
             }

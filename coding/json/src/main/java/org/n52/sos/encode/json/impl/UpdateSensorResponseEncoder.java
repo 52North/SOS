@@ -28,8 +28,7 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.sos.response.UpdateSensorResponse;
@@ -50,7 +49,7 @@ public class UpdateSensorResponseEncoder extends AbstractSosResponseEncoder<Upda
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, UpdateSensorResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, UpdateSensorResponse t) {
         json.put(JSONConstants.UPDATED_PROCEDURE, t.getUpdatedProcedure());
     }
 

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,24 +43,22 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.FeatureQueryHandlerQueryObject;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.request.SpatialFeatureQueryRequest;
-
-import com.google.common.collect.Lists;
 
 
 /**
@@ -134,8 +132,8 @@ public class QueryHelper {
         // feature of interest
         if (CollectionHelper.isNotEmpty(featureIdentifier)) {
             return (foiIDs == null)
-                    ? new HashSet<>(featureIdentifier)
-                    : featureIdentifier.stream()
+                           ? new HashSet<>(featureIdentifier)
+                           : featureIdentifier.stream()
                             .filter(foiIDs::contains)
                             .collect(Collectors.toSet());
         }
@@ -146,17 +144,20 @@ public class QueryHelper {
      * Get Criterion for DescribeSensor validTime parameter.
      *
      * @param validTime
-     *            ValidTime parameter value
+     *                  ValidTime parameter value
+     *
      * @return Criterion with temporal filters
+     *
      * @throws UnsupportedTimeException
-     *             If the time value is invalid
+     *                                            If the time value is invalid
      * @throws UnsupportedValueReferenceException
-     *             If the valueReference is not supported
+     *                                            If the valueReference is not supported
      * @throws UnsupportedOperatorException
-     *             If the temporal operator is not supported
+     *                                            If the temporal operator is not supported
      */
     public static Criterion getValidTimeCriterion(Time validTime) throws UnsupportedTimeException,
-            UnsupportedValueReferenceException, UnsupportedOperatorException {
+                                                                         UnsupportedValueReferenceException,
+                                                                         UnsupportedOperatorException {
         if (validTime instanceof TimeInstant) {
             return TemporalRestrictions.filter(getFiltersForTimeInstant((TimeInstant) validTime));
         } else if (validTime instanceof TimePeriod) {
@@ -170,41 +171,42 @@ public class QueryHelper {
      * Get temporal filters for validTime TimeInstant
      *
      * @param validTime
-     *            TimeInstant
+     *                  TimeInstant
+     *
      * @return Collection with temporal filters
      */
     private static Collection<TemporalFilter> getFiltersForTimeInstant(TimeInstant validTime) {
-        TimeIndeterminateValue indeterminateValue = Optional
+        IndeterminateValue indeterminateValue = Optional
                 .ofNullable(validTime.getIndeterminateValue())
-                .orElse(TimeIndeterminateValue.unknown);
-        switch (indeterminateValue) {
-            case after:
-                return Collections.singleton(createBeforeFilter(validTime));
-            case before:
-                return Collections.singleton(createAfterFilter(validTime));
-            case now:
-                validTime.setValue(DateTime.now());
-                return getDefaultTimeInstantFilters(validTime);
-            default:
-                return getDefaultTimeInstantFilters(validTime);
+                .orElse(IndeterminateValue.UNKNOWN);
+        if (indeterminateValue.isAfter()) {
+            return Collections.singleton(createBeforeFilter(validTime));
+        } else if (indeterminateValue.isBefore()) {
+            return Collections.singleton(createAfterFilter(validTime));
+        } else if (indeterminateValue.isNow()) {
+            validTime.setValue(DateTime.now());
+            return getDefaultTimeInstantFilters(validTime);
+        } else {
+            return getDefaultTimeInstantFilters(validTime);
         }
     }
 
     private static TemporalFilter createAfterFilter(TimeInstant validTime) {
         return new TemporalFilter(TimeOperator.TM_Before, validTime,
-                TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
+                                  TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
     }
 
     private static TemporalFilter createBeforeFilter(TimeInstant validTime) {
         return new TemporalFilter(TimeOperator.TM_After, validTime,
-                TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
+                                  TemporalRestrictions.VALID_DESCRIBE_SENSOR_TIME_VALUE_REFERENCE);
     }
 
     /**
      * Get default filters for valid TimeInstant
      *
      * @param validTime
-     *            TimeInstant
+     *                  TimeInstant
+     *
      * @return default filters
      */
     private static Collection<TemporalFilter> getDefaultTimeInstantFilters(TimeInstant validTime) {
@@ -215,7 +217,7 @@ public class QueryHelper {
      * Get temporal filters for validTime TimePeriod
      *
      * @param validTime
-     *            TimePeriod
+     *                  TimePeriod
      *
      * @return Collection with temporal filters
      */
@@ -235,9 +237,10 @@ public class QueryHelper {
      * limit).
      * 
      * @param propertyName
-     *            Column name.
+     *                     Column name.
      * @param identifiers
-     *            Objects list
+     *                     Identifiers list
+     *
      * @return Criterion.
      */
     public static Criterion getCriterionForObjects(String propertyName, Collection<?> identifiers) {

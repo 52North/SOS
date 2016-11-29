@@ -30,9 +30,14 @@ package org.n52.sos.ext.deleteobservation;
 
 import static org.n52.sos.ext.deleteobservation.DeleteObservationConstants.PARAMETER_NAME;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.SosConstants;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
@@ -53,8 +58,9 @@ public abstract class AbstractDeleteObservationHandler extends AbstractOperation
             throws OwsExceptionReport;
 
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        opsMeta.addAnyParameterValue(PARAMETER_NAME);
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return new HashSet<>(Arrays.asList(new OwsDomain(PARAMETER_NAME, OwsAnyValue.instance())));
     }
+
+
 }

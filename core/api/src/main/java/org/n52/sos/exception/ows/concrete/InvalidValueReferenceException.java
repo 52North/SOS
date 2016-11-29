@@ -28,8 +28,8 @@
  */
 package org.n52.sos.exception.ows.concrete;
 
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.filter.FilterConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

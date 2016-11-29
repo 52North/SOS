@@ -31,7 +31,7 @@ package org.n52.sos.netcdf.feature;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;

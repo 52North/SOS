@@ -31,38 +31,38 @@ package org.n52.sos.encode.json.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.om.OmConstants;
 import org.n52.iceland.util.JSONUtils;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweAbstractDataRecord;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
 import org.n52.sos.util.OMHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -82,7 +82,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
     }
 
     @Override
-    public JsonNode encodeJSON(OmObservation o) throws OwsExceptionReport {
+    public JsonNode encodeJSON(OmObservation o) throws EncodingException {
         ObjectNode json = nodeFactory().objectNode();
         encodeObservationType(o, json);
         encodeIdentifier(o, json);
@@ -108,7 +108,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         json.put(JSONConstants.PROCEDURE, o.getObservationConstellation().getProcedure().getIdentifier());
     }
 
-    private void encodeParameter(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodeParameter(OmObservation o, ObjectNode json) throws EncodingException {
         if (o.isSetParameter()) {
             if (o.getParameter().size() == 1) {
                 json.set(JSONConstants.PARAMETER, encodeNamedValue(o.getParameter().iterator().next()));
@@ -121,7 +121,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         }
     }
 
-    private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws OwsExceptionReport {
+    private JsonNode encodeNamedValue(NamedValue<?> namedValue) throws EncodingException {
         ObjectNode namedValueObject = nodeFactory().objectNode();
         namedValueObject.put(JSONConstants.NAME, namedValue.getName().getHref());
         namedValueObject.set(JSONConstants.VALUE, encodeValue(namedValue.getValue()));
@@ -135,7 +135,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
                 o.getObservationConstellation().getObservableProperty().getIdentifier());
     }
 
-    private void encodeObservationType(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodeObservationType(OmObservation o, ObjectNode json) throws EncodingException {
         json.put(JSONConstants.TYPE, getObservationType(o));
     }
 
@@ -153,32 +153,32 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         }
     }
 
-    private void encodeFeatureOfInterest(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodeFeatureOfInterest(OmObservation o, ObjectNode json) throws EncodingException {
         OmObservationConstellation oc = o.getObservationConstellation();
         json.set(JSONConstants.FEATURE_OF_INTEREST, encodeObjectToJson(oc.getFeatureOfInterest()));
     }
 
-    private void encodeResultTime(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodeResultTime(OmObservation o, ObjectNode json) throws EncodingException {
         if (o.isSetResultTime()) {
             json.set(JSONConstants.RESULT_TIME, encodeObjectToJson(o.getResultTime()));
         }
     }
 
-    private void encodeValidTime(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodeValidTime(OmObservation o, ObjectNode json) throws EncodingException {
         if (o.isSetValidTime()) {
             json.set(JSONConstants.VALID_TIME, encodeObjectToJson(o.getValidTime()));
         }
     }
 
-    private void encodePhenomenonTime(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodePhenomenonTime(OmObservation o, ObjectNode json) throws EncodingException {
         json.set(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(o.getPhenomenonTime()));
     }
 
-    private void encodeResult(OmObservation o, ObjectNode json) throws OwsExceptionReport {
+    private void encodeResult(OmObservation o, ObjectNode json) throws EncodingException {
         json.set(JSONConstants.RESULT, encodeResult(o));
     }
 
-    private JsonNode encodeResult(OmObservation o) throws OwsExceptionReport {
+    private JsonNode encodeResult(OmObservation o) throws EncodingException {
         Value<?> value = o.getValue().getValue();
         String type = getObservationType(o);
         if (value instanceof TVPValue) {
@@ -191,7 +191,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         throw new UnsupportedEncoderInputException(this, value);
     }
 
-    private JsonNode encodeValue(Value<?> value) throws OwsExceptionReport {
+    private JsonNode encodeValue(Value<?> value) throws EncodingException {
         if (value instanceof QuantityValue) {
             return encodeQualityValue(value);
         } else if (value instanceof CountValue) {
@@ -239,12 +239,12 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
                 .put(JSONConstants.VALUE, categoryValue.getValue());
     }
 
-    private JsonNode encodeGeometryValue(Value<?> value) throws OwsExceptionReport {
+    private JsonNode encodeGeometryValue(Value<?> value) throws EncodingException {
         GeometryValue geometryValue = (GeometryValue) value;
         return encodeObjectToJson(geometryValue.getValue());
     }
 
-    private JsonNode encodeComplexValue(Value<?> value) throws OwsExceptionReport {
+    private JsonNode encodeComplexValue(Value<?> value) throws EncodingException {
         ArrayNode result = nodeFactory().arrayNode();
         ComplexValue complexValue = (ComplexValue) value;
         SweAbstractDataRecord sweDataRecord = complexValue.getValue();
@@ -254,7 +254,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return result;
     }
 
-    private JsonNode encodeSweDataArrayValue(Value<?> value) throws OwsExceptionReport {
+    private JsonNode encodeSweDataArrayValue(Value<?> value) throws EncodingException {
         SweDataArrayValue sweDataArrayValue = (SweDataArrayValue) value;
         ObjectNode result = nodeFactory().objectNode();
         ArrayNode jfields = result.putArray(JSONConstants.FIELDS);
@@ -282,7 +282,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return result;
     }
 
-    private String getObservationType(OmObservation o) throws OwsExceptionReport {
+    private String getObservationType(OmObservation o) throws EncodingException {
         if (o.getObservationConstellation().isSetObservationType()) {
             return o.getObservationConstellation().getObservationType();
         } else {
@@ -290,7 +290,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         }
     }
 
-    private JsonNode encodeTVPValue(OmObservation o) throws OwsExceptionReport {
+    private JsonNode encodeTVPValue(OmObservation o) throws EncodingException {
         TVPValue tvpValue = (TVPValue) o.getValue().getValue();
         ObjectNode result = nodeFactory().objectNode();
         List<TimeValuePair> values = tvpValue.getValue();
@@ -313,7 +313,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return result;
     }
 
-    private SweField getFieldForValue(String phenomenon, Value<?> value) throws UnsupportedEncoderInputException {
+    private SweField getFieldForValue(String phenomenon, Value<?> value) throws EncodingException {
         final SweAbstractDataComponent def;
         if (value instanceof BooleanValue) {
             def = new SweBoolean();
@@ -344,7 +344,7 @@ public class ObservationEncoder extends JSONEncoder<OmObservation> {
         return new SweField(phenomenon, def);
     }
 
-    private JsonNode getTokenForValue(Value<?> value) throws OwsExceptionReport {
+    private JsonNode getTokenForValue(Value<?> value) throws EncodingException {
         if (value instanceof QuantityValue) {
             QuantityValue quantityValue = (QuantityValue) value;
             return nodeFactory().numberNode(quantityValue.getValue());

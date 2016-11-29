@@ -29,14 +29,11 @@
 package org.n52.sos.encode.sos.v1;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.sos.response.GetFeatureOfInterestResponse;
-import org.n52.sos.util.CodingHelper;
 
 /**
  * TODO JavaDoc
@@ -51,14 +48,9 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
     }
 
     @Override
-    protected XmlObject create(GetFeatureOfInterestResponse response) throws OwsExceptionReport {
-        Encoder<XmlObject, AbstractFeature> encoder =
-                CodingHelper.getEncoder(GmlConstants.NS_GML, response.getAbstractFeature());
-        if (encoder != null) {
-            return encoder.encode(response.getAbstractFeature());
-        } else {
-            throw new NoEncoderForResponseException();
-        }
+    protected XmlObject create(GetFeatureOfInterestResponse response) throws EncodingException {
+        return getEncoder(GmlConstants.NS_GML, response.getAbstractFeature())
+                .encode(response.getAbstractFeature());
 
     }
 }

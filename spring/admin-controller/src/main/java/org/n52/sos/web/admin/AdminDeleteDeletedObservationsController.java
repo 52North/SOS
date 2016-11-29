@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.sos.ds.DeleteDeletedObservationDAO;
 import org.n52.sos.web.common.ControllerConstants;

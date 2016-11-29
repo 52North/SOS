@@ -29,15 +29,15 @@
 package org.n52.sos.event.events;
 
 import org.n52.iceland.event.events.ModificationResponseEvent;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
  *
  * @since 4.0.0
  */
-public abstract class SosInsertionEvent<I extends AbstractServiceRequest<?>, O extends AbstractServiceResponse> extends
+public abstract class SosInsertionEvent<I extends OwsServiceRequest, O extends OwsServiceResponse> extends
         ModificationResponseEvent<I, O> {
 
     public SosInsertionEvent(I request, O response) {

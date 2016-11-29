@@ -28,15 +28,13 @@
  */
 package org.n52.sos.encode.json.base;
 
-import static org.n52.iceland.util.DateTimeHelper.formatDateTime2IsoString;
-import static org.n52.iceland.util.DateTimeHelper.formatDateTime2String;
+import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
+import static org.n52.shetland.util.DateTimeHelper.formatDateTime2String;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.gml.time.TimePosition;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.gml.time.TimePosition;
 import org.n52.sos.encode.json.JSONEncoder;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,9 +52,9 @@ public class TimeJSONEncoder extends JSONEncoder<Time> {
         super(Time.class);
     }
 
-    private String encodeTimePosition(TimePosition timePosition) throws DateTimeFormatException {
+    private String encodeTimePosition(TimePosition timePosition) {
         if (timePosition.isSetIndeterminateValue()) {
-            return timePosition.getIndeterminateValue().name();
+            return timePosition.getIndeterminateValue().getValue();
         } else if (timePosition.isSetTimeFormat()) {
             return formatDateTime2String(timePosition.getTime(), timePosition.getTimeFormat());
         } else if (timePosition.isSetTime()) {
@@ -67,7 +65,7 @@ public class TimeJSONEncoder extends JSONEncoder<Time> {
     }
 
     @Override
-    public JsonNode encodeJSON(Time time) throws OwsExceptionReport {
+    public JsonNode encodeJSON(Time time) {
         if (time instanceof TimeInstant) {
             TimeInstant ti = (TimeInstant) time;
             return nodeFactory().textNode(encodeTimePosition(ti.getTimePosition()));

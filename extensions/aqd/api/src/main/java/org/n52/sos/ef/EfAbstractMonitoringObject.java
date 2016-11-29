@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ef;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 
 /**
  * Class represents an AbstractMonitoringObject
@@ -39,11 +39,6 @@ import org.n52.iceland.ogc.gml.CodeWithAuthority;
  *
  */
 public abstract class EfAbstractMonitoringObject extends AbstractFeature {
-
-    /**
-     * constructor
-     */
-    private static final long serialVersionUID = -1741709013086970962L;
 
     public EfAbstractMonitoringObject() {
         this("");

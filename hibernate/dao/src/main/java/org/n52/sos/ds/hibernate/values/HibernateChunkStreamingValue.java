@@ -32,15 +32,16 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.hibernate.HibernateException;
+
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.sos.request.GetObservationRequest;
 
 /**

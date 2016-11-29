@@ -49,13 +49,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
+import org.n52.svalbard.decode.OperationDecoderKey;
 import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.ds.ProcedureFormatDAO;
 import org.n52.sos.web.common.ControllerConstants;
 

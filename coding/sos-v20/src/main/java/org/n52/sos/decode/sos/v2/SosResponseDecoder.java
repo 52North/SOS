@@ -28,18 +28,18 @@
  */
 package org.n52.sos.decode.sos.v2;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.decode.ExtensibleResponseDecoder;
 
 public interface SosResponseDecoder extends ExtensibleResponseDecoder {
 
-    default void setService(AbstractServiceResponse response) {
+    default void setService(OwsServiceResponse response) {
         response.setService(SosConstants.SOS);
     }
 
-    default void setVersions(AbstractServiceResponse response) {
+    default void setVersions(OwsServiceResponse response) {
         response.setService(Sos2Constants.SERVICEVERSION);
     }
 

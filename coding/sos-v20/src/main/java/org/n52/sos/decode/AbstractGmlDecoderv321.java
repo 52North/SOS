@@ -32,28 +32,27 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.AbstractGML;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.util.CollectionHelper;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import net.opengis.gml.x32.AbstractFeatureType;
 import net.opengis.gml.x32.AbstractGMLType;
 import net.opengis.gml.x32.CodeType;
 import net.opengis.gml.x32.CodeWithAuthorityType;
 import net.opengis.gml.x32.ReferenceType;
 
-public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.iceland.service.ConformanceClass;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.AbstractGML;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+
+public abstract class AbstractGmlDecoderv321<T, S> extends AbstractXmlDecoder<T, S> implements ConformanceClass {
 
     protected AbstractGML parseAbstractGMLType(AbstractGMLType agmlt, AbstractGML abstractGML)
-            throws OwsExceptionReport {
+            throws DecodingException {
         parseIdentifier(agmlt, abstractGML);
         parseNames(agmlt, abstractGML);
         paresDescription(agmlt, abstractGML);
@@ -62,21 +61,21 @@ public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
     }
 
     protected AbstractFeature parseAbstractFeatureType(AbstractFeatureType aft, AbstractFeature abstractFeature)
-            throws OwsExceptionReport {
+            throws DecodingException {
         parseAbstractGMLType(aft, abstractFeature);
         parseBoundedBy(aft, abstractFeature);
         parseLocation(aft, abstractFeature);
         return abstractFeature;
     }
 
-    protected AbstractGML parseIdentifier(AbstractGMLType agmlt, AbstractGML abstractGML) throws OwsExceptionReport {
+    protected AbstractGML parseIdentifier(AbstractGMLType agmlt, AbstractGML abstractGML) throws DecodingException {
         if (agmlt.isSetIdentifier()) {
             abstractGML.setIdentifier(parseCodeWithAuthorityTye(agmlt.getIdentifier()));
         }
         return abstractGML;
     }
 
-    protected AbstractGML parseNames(AbstractGMLType agmlt, AbstractGML abstractGML) throws OwsExceptionReport {
+    protected AbstractGML parseNames(AbstractGMLType agmlt, AbstractGML abstractGML) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(agmlt.getNameArray())) {
             for (CodeType ct : agmlt.getNameArray()) {
                 abstractGML.addName(parseCodeType(ct));
@@ -129,20 +128,20 @@ public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
         return null;
     }
 
-    protected org.n52.iceland.ogc.gml.CodeType parseCodeType(CodeType element) throws CodedException {
-        org.n52.iceland.ogc.gml.CodeType codeType = new org.n52.iceland.ogc.gml.CodeType(element.getStringValue());
+    protected org.n52.shetland.ogc.gml.CodeType parseCodeType(CodeType element) throws DecodingException {
+        org.n52.shetland.ogc.gml.CodeType codeType = new org.n52.shetland.ogc.gml.CodeType(element.getStringValue());
         if (element.isSetCodeSpace()) {
             try {
                 codeType.setCodeSpace(new URI(element.getCodeSpace()));
             } catch (URISyntaxException e) {
-               throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", element.getCodeSpace());
+               throw new DecodingException(e, "Error while creating URI from '{}'", element.getCodeSpace());
             }
         }
         return codeType;
     }
 
-    protected org.n52.sos.ogc.gml.ReferenceType parseReferenceType(ReferenceType rt) {
-        org.n52.sos.ogc.gml.ReferenceType referenceType = new org.n52.sos.ogc.gml.ReferenceType("UNKNOWN");
+    protected org.n52.shetland.ogc.gml.ReferenceType parseReferenceType(ReferenceType rt) {
+        org.n52.shetland.ogc.gml.ReferenceType referenceType = new org.n52.shetland.ogc.gml.ReferenceType("UNKNOWN");
         if (rt.isSetTitle() && !Strings.isNullOrEmpty(rt.getTitle())) {
             referenceType.setTitle(rt.getTitle());
         }
@@ -156,8 +155,8 @@ public abstract class AbstractGmlDecoderv321<T, S> implements Decoder<T, S> {
     }
 
 
-    protected List<org.n52.sos.ogc.gml.ReferenceType> parseReferenceType(ReferenceType[] referenceTypes) {
-        List<org.n52.sos.ogc.gml.ReferenceType> list = Lists.newArrayList();
+    protected List<org.n52.shetland.ogc.gml.ReferenceType> parseReferenceType(ReferenceType[] referenceTypes) {
+        List<org.n52.shetland.ogc.gml.ReferenceType> list = Lists.newArrayList();
         if (CollectionHelper.isNotNullOrEmpty(referenceTypes)) {
             for (ReferenceType referenceType : referenceTypes) {
                 list.add(parseReferenceType(referenceType));

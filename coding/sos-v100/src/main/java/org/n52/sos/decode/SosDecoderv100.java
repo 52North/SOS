@@ -55,22 +55,17 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.request.DescribeSensorRequest;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.request.GetObservationByIdRequest;
@@ -78,6 +73,10 @@ import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.NotYetSupportedDecodingException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -87,7 +86,7 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class SosDecoderv100 extends AbstractXmlDecoder<XmlObject, OwsServiceCommunicationObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SosDecoderv100.class);
 
@@ -111,8 +110,8 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
     }
 
     @Override
-    public AbstractServiceCommunicationObject decode(XmlObject xmlObject) throws OwsExceptionReport {
-        AbstractServiceCommunicationObject request = null;
+    public OwsServiceCommunicationObject decode(XmlObject xmlObject) throws DecodingException {
+        OwsServiceCommunicationObject request = null;
         LOGGER.debug("REQUESTTYPE:" + xmlObject.getClass());
 
         /*
@@ -174,11 +173,8 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      *            XmlBean created from the incoming request stream
      * @return Returns SosGetCapabilitiesRequest representing the request
      *
-     *
-     * @throws OwsExceptionReport
-     *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest<?> parseGetCapabilities(GetCapabilitiesDocument getCapsDoc) throws OwsExceptionReport {
+    private OwsServiceRequest parseGetCapabilities(GetCapabilitiesDocument getCapsDoc)  {
 
         GetCapabilities getCaps = getCapsDoc.getGetCapabilities();
         GetCapabilitiesRequest request = new GetCapabilitiesRequest(getCaps.getService());
@@ -205,12 +201,8 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @param descSensorDoc
      *            XmlBean created from the incoming request stream
      * @return Returns SosDescribeSensorRequest representing the request
-     *
-     *
-     * @throws OwsExceptionReport
-     *             * If parsing the XmlBean failed
      */
-    private AbstractServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc) {
+    private OwsServiceCommunicationObject parseDescribeSensor(DescribeSensorDocument descSensorDoc) {
 
         DescribeSensorRequest request = new DescribeSensorRequest();
         DescribeSensor descSensor = descSensorDoc.getDescribeSensor();
@@ -231,10 +223,10 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @return Returns SosGetObservationRequest representing the request
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * If parsing the XmlBean failed
      */
-    private AbstractServiceRequest<?> parseGetObservation(GetObservationDocument getObsDoc) throws OwsExceptionReport {
+    private OwsServiceRequest parseGetObservation(GetObservationDocument getObsDoc) throws DecodingException {
         GetObservationRequest getObsRequest = new GetObservationRequest();
 
         GetObservation getObs = getObsDoc.getGetObservation();
@@ -250,7 +242,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         if (getObs.isSetFeatureOfInterest()) {
             FeatureOfInterest featureOfInterest = getObs.getFeatureOfInterest();
             if (featureOfInterest.isSetSpatialOps()) {
-                Object filter = CodingHelper.decodeXmlElement(featureOfInterest.getSpatialOps());
+                Object filter = decodeXmlElement(featureOfInterest.getSpatialOps());
                 if (filter instanceof SpatialFilter) {
                     getObsRequest.setSpatialFilter((SpatialFilter) filter);
                 }
@@ -265,7 +257,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
 
         // TODO implement result filtering
         if (getObs.isSetResult()) {
-            throw new NotYetSupportedException("Result filtering");
+            throw new NotYetSupportedDecodingException("Result filtering");
         }
 
         // return error message
@@ -275,7 +267,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
                 // parse responseFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
                 getObsRequest.setResponseFormat(MediaType.normalizeString(responseFormat));
             } catch (UnsupportedEncodingException e) {
-                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while decoding response format!");
+                throw new DecodingException("Error while decoding response format!", e);
             }
 
         } else {
@@ -298,11 +290,10 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @return Returns SOS getFeatureOfInterest request
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest<?> parseGetFeatureOfInterest(GetFeatureOfInterestDocument getFoiDoc)
-            throws OwsExceptionReport {
+    private OwsServiceRequest parseGetFeatureOfInterest(GetFeatureOfInterestDocument getFoiDoc) throws DecodingException  {
 
         GetFeatureOfInterestRequest getFoiRequest = new GetFeatureOfInterestRequest();
         GetFeatureOfInterest getFoi = getFoiDoc.getGetFeatureOfInterest();
@@ -314,8 +305,8 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
         return getFoiRequest;
     }
 
-    private AbstractServiceRequest<?> parseGetObservationById(GetObservationByIdDocument getObsByIdDoc)
-            throws OwsExceptionReport {
+    private OwsServiceRequest parseGetObservationById(GetObservationByIdDocument getObsByIdDoc)
+            throws DecodingException {
         GetObservationByIdRequest getObsByIdRequest = new GetObservationByIdRequest();
         GetObservationById getObsById = getObsByIdDoc.getGetObservationById();
         getObsByIdRequest.setService(getObsById.getService());
@@ -326,7 +317,7 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
                 // parse responseFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
                 getObsByIdRequest.setResponseFormat(MediaType.normalizeString(responseFormat));
             } catch (UnsupportedEncodingException e) {
-                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while decoding response format!");
+                throw new DecodingException("Error while decoding response format!", e);
             }
 
         } else {
@@ -352,15 +343,13 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @return Returns SpatialFilter created from the passed foi request
      *         parameter
      *
-     *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if creation of the SpatialFilter failed
      */
-    private List<SpatialFilter> parseSpatialFilters4GetFeatureOfInterest(Location location) throws OwsExceptionReport {
-
-        List<SpatialFilter> sosSpatialFilters = new LinkedList<SpatialFilter>();
+    private List<SpatialFilter> parseSpatialFilters4GetFeatureOfInterest(Location location) throws DecodingException {
+        List<SpatialFilter> sosSpatialFilters = new LinkedList<>();
         if (location != null && location.getSpatialOps() != null) {
-            Object filter = CodingHelper.decodeXmlElement(location.getSpatialOps());
+            Object filter = decodeXmlElement(location.getSpatialOps());
             if (filter instanceof SpatialFilter) {
                 sosSpatialFilters.add((SpatialFilter) filter);
             }
@@ -378,16 +367,16 @@ public class SosDecoderv100 implements Decoder<AbstractServiceCommunicationObjec
      * @return Returns array representing the temporal filters
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if parsing of the element failed
      */
     private List<TemporalFilter> parseTemporalFilters4GetObservation(GetObservation.EventTime[] temporalFilters)
-            throws OwsExceptionReport {
+            throws DecodingException {
 
-        List<TemporalFilter> sosTemporalFilters = new LinkedList<TemporalFilter>();
+        List<TemporalFilter> sosTemporalFilters = new LinkedList<>();
 
         for (GetObservation.EventTime temporalFilter : temporalFilters) {
-            Object filter = CodingHelper.decodeXmlElement(temporalFilter.getTemporalOps());
+            Object filter = decodeXmlElement(temporalFilter.getTemporalOps());
             if (filter instanceof TemporalFilter) {
                 sosTemporalFilters.add((TemporalFilter) filter);
             }

@@ -32,7 +32,7 @@ package org.n52.sos.service;
 import org.n52.iceland.config.SettingDefinitionGroup;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Constructable;
 import org.n52.iceland.util.Validation;
 
 

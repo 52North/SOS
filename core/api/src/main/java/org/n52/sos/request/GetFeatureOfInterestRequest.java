@@ -31,20 +31,18 @@ package org.n52.sos.request;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CollectionHelper;
 
 /**
  * Sos GetFeatureOfInterst request
  *
  * @since 4.0.0
  */
-public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatureOfInterestResponse> {
+public class GetFeatureOfInterestRequest extends OwsServiceRequest {
 
     /**
      * FOI identifiers list
@@ -73,14 +71,16 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
 
     private Map<String, String> namespaces;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetFeatureOfInterest.name();
+    public GetFeatureOfInterestRequest() {
+        super(null, null, SosConstants.Operations.GetFeatureOfInterest.name());
+    }
+
+    public GetFeatureOfInterestRequest(String service, String version) {
+        super(service, version, SosConstants.Operations.GetFeatureOfInterest.name());
+    }
+
+    public GetFeatureOfInterestRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -96,7 +96,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
      * Set temporal filters
      *
      * @param temporalFilters
-     *            temporal filters
+     *                        temporal filters
      */
     public void setTemporalFilters(List<TemporalFilter> temporalFilters) {
         this.temporalFilters = temporalFilters;
@@ -115,7 +115,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
      * Set FOI identifiers
      *
      * @param featureIDs
-     *            FOI identifiers
+     *                   FOI identifiers
      */
     public void setFeatureIdentifiers(List<String> featureIDs) {
         this.featureIdentifiers = featureIDs;
@@ -134,7 +134,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
      * Set FOI observedProperties
      *
      * @param observedProperties
-     *            FOI observedProperties
+     *                           FOI observedProperties
      */
     public void setObservedProperties(List<String> observedProperties) {
         this.observedProperties = observedProperties;
@@ -153,7 +153,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
      * Set FOI procedures
      *
      * @param procedures
-     *            FOI procedures
+     *                   FOI procedures
      */
     public void setProcedures(List<String> procedures) {
         this.procedures = procedures;
@@ -172,7 +172,7 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
      * Set spatial filters
      *
      * @param spatialFilters
-     *            spatial filters
+     *                       spatial filters
      */
     public void setSpatialFilters(List<SpatialFilter> spatialFilters) {
         this.spatialFilters = spatialFilters;
@@ -215,7 +215,8 @@ public class GetFeatureOfInterestRequest extends AbstractServiceRequest<GetFeatu
     }
 
     public boolean hasNoParameter() {
-        return !isSetObservableProperties() && !isSetProcedures() && !isSetTemporalFilters() && !isSetFeatureOfInterestIdentifiers();
+        return !isSetObservableProperties() && !isSetProcedures() && !isSetTemporalFilters() &&
+               !isSetFeatureOfInterestIdentifiers();
     }
 
     public boolean hasParameter() {

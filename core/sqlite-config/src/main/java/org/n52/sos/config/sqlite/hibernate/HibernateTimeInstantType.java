@@ -31,12 +31,12 @@ package org.n52.sos.config.sqlite.hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.TypeMismatchException;
 
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.StringHelper;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
+
+import com.google.common.base.Strings;
 
 public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserType<Time> {
 
@@ -61,11 +61,11 @@ public class HibernateTimeInstantType extends AbstractStringBasedHibernateUserTy
         if (t instanceof TimeInstant) {
             return encodeTimeInstant((TimeInstant)t);
         }
-        return Constants.EMPTY_STRING;
+        return "";
     }
 
     private Time decodeTimeInstant(String s) throws DateTimeParseException {
-        if (StringHelper.isNotEmpty(s)) {
+        if (!Strings.isNullOrEmpty(s)) {
         String[] split = s.split(VALUE_SEPARATOR);
             TimeInstant time = (TimeInstant)DateTimeHelper.parseIsoString2DateTime2Time(split[0]);
             if (split.length == 2) {

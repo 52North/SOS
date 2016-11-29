@@ -28,6 +28,7 @@
  */
 package org.n52.sos.decode;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -40,28 +41,25 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.iceland.util.collections.LinkedListMultiMap;
 import org.n52.iceland.util.collections.ListMultiMap;
 import org.n52.iceland.w3c.soap.SoapHeader;
 import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
-import org.n52.sos.exception.swes.InvalidRequestException;
-import org.n52.sos.util.CodingHelper;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.util.W3cHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.collect.Lists;
 
@@ -69,7 +67,7 @@ import com.google.common.collect.Lists;
  * @author Christian Autermann <c.autermann@52north.org>
  * @since 4.0.0
  */
-public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObject> {
+public abstract class AbstractSoapDecoder extends AbstractXmlDecoder<XmlObject, SoapRequest> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSoapDecoder.class);
 
     private final Set<DecoderKey> decoderKeys;
@@ -84,15 +82,15 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
     }
 
     @Override
-    public SoapRequest decode(XmlObject xmlObject) throws OwsExceptionReport {
+    public SoapRequest decode(XmlObject xmlObject) throws DecodingException {
         try {
             return createEnvelope(xmlObject);
-        } catch (OwsExceptionReport owse) {
+        } catch (DecodingException owse) {
             return createFault(owse);
         }
     }
 
-    protected abstract SoapRequest createEnvelope(XmlObject xml) throws OwsExceptionReport;
+    protected abstract SoapRequest createEnvelope(XmlObject xml) throws DecodingException;
 
     protected abstract SoapRequest createFault(OwsExceptionReport xml);
 
@@ -105,27 +103,21 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
      * @return SOAPBody content as text
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if an error occurs.
      */
-    protected AbstractServiceRequest<?> getSOAPBodyContent(SOAPMessage message) throws OwsExceptionReport {
+    protected OwsServiceRequest getSOAPBodyContent(SOAPMessage message) throws DecodingException {
         try {
             Document bodyRequestDoc = message.getSOAPBody().extractContentAsDocument();
-            XmlOptions options = XmlOptionsHelper.getInstance().getXmlOptions();
             String xmlString = W3cHelper.nodeToXmlString(bodyRequestDoc.getDocumentElement());
-            return (AbstractServiceRequest<?>)CodingHelper.decodeXmlElement(XmlObject.Factory.parse(xmlString, options));
-        } catch (SOAPException soape) {
-            throw new InvalidRequestException().causedBy(soape).withMessage(
-                    "Error while parsing SOAPMessage body content!");
-        } catch (XmlException xmle) {
-            throw new InvalidRequestException().causedBy(xmle).withMessage(
-                    "Error while parsing SOAPMessage body content!");
+            return decodeXmlElement(XmlObject.Factory.parse(xmlString, getXmlOptions()));
+        } catch (SOAPException | XmlException | IOException e) {
+            throw new DecodingException("Error while parsing SOAPMessage body content!", e);
         }
     }
 
     protected List<SoapHeader> getSoapHeader(SOAPHeader soapHeader) {
-        ListMultiMap<String, SOAPHeaderElement> headersByNamespace =
-                new LinkedListMultiMap<String, SOAPHeaderElement>();
+        ListMultiMap<String, SOAPHeaderElement> headersByNamespace = new LinkedListMultiMap<>();
         Iterator<?> headerElements = soapHeader.extractAllHeaderElements();
         while (headerElements.hasNext()) {
             SOAPHeaderElement element = (SOAPHeaderElement) headerElements.next();
@@ -135,8 +127,7 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
         for (String namespace : headersByNamespace.keySet()) {
             try {
                 Decoder<?, List<SOAPHeaderElement>> decoder =
-                        CodingRepository.getInstance().getDecoder(
-                                new XmlNamespaceDecoderKey(namespace, SOAPHeaderElement.class));
+                        getDecoder(new XmlNamespaceDecoderKey(namespace, SOAPHeaderElement.class));
                 if (decoder != null) {
                     Object object = decoder.decode(headersByNamespace.get(namespace));
                     if (object instanceof SoapHeader) {
@@ -152,7 +143,7 @@ public abstract class AbstractSoapDecoder implements Decoder<SoapRequest, XmlObj
                     LOGGER.info("The SOAP-Header elements for namespace '{}' are not supported by this server!",
                             namespace);
                 }
-            } catch (OwsExceptionReport owse) {
+            } catch (DecodingException owse) {
                 LOGGER.debug("Requested SOAPHeader element is not supported", owse);
             }
         }

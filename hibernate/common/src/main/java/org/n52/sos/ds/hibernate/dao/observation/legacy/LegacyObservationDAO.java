@@ -44,10 +44,15 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.util.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
@@ -65,11 +70,7 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.LegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ScrollableIterable;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -216,6 +217,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public Collection<String> getObservationIdentifiers(String procedureIdentifier, Session session) {
         Criteria criteria =
                 session.createCriteria(ContextualReferencedLegacyObservation.class)
@@ -231,7 +233,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
 
     @SuppressWarnings("unchecked")
     private List<Observation<?>> getObservationsFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion filterCriterion, IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         // final Criteria c = getDefaultObservationCriteria(Observation.class,
         // session);
@@ -274,7 +276,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     }
 
     protected Criteria getObservationCriteriaFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            Criterion filterCriterion, IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session);
 
@@ -322,7 +324,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     }
 
     public Collection<Observation<?>> getObservationsFor(GetObservationRequest request, Collection<String> features,
-            ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
 
@@ -333,7 +335,7 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
 
     @SuppressWarnings("unchecked")
     public Collection<? extends Observation<?>> getObservationsFor(ObservationConstellation oc,
-            Collection<String> features, GetObservationRequest request, ExtendedIndeterminateTime sosIndeterminateTime,
+            HashSet<String> features, GetObservationRequest request, IndeterminateValue sosIndeterminateTime,
             Session session) throws OwsExceptionReport {
         final Criteria c = getDefaultObservationCriteria(session);
 
@@ -384,10 +386,6 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
         return LegacyObservationFactory.getInstance();
     }
 
-    protected static ScrollableResults scroll(Criteria c) {
-        return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
-    }
-
     public ScrollableResults getNotMatchingSeries(Collection<Long> procedureIds, Collection<Long> observablePropertyIds,
             Set<Long> featureIds, GetObservationRequest request, Set<String> features, Session session) throws OwsExceptionReport {
         Criteria c = getObservationCriteriaFor(request, features, null, null, session);
@@ -423,6 +421,9 @@ public class LegacyObservationDAO extends AbstractObservationDAO {
     @Override
     protected Criteria addAdditionalObservationIdentification(Criteria c, OmObservation sosObservation) {
         return c;
+    }
+    protected static ScrollableResults scroll(Criteria c) {
+        return c.setReadOnly(true).scroll(ScrollMode.FORWARD_ONLY);
     }
 
 }

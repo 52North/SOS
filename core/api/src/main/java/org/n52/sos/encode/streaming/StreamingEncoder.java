@@ -30,9 +30,9 @@ package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.coding.encode.EncodingValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * Generic interface for StreamingEncoders.
@@ -47,9 +47,9 @@ import org.n52.sos.coding.encode.EncodingValues;
  */
 public interface StreamingEncoder<T,S> extends Encoder<T, S> {
 
-    public void encode(S objectToEncode, OutputStream outputStream) throws OwsExceptionReport;
+    public void encode(S objectToEncode, OutputStream outputStream) throws EncodingException;
 
-    public void encode(S objectToEncode, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport;
+    public void encode(S objectToEncode, OutputStream outputStream, EncodingValues encodingValues) throws EncodingException;
 
     public boolean forceStreaming();
 

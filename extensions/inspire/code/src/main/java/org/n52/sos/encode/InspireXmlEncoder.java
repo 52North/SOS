@@ -39,20 +39,13 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireObject;
 import org.n52.sos.inspire.InspireSupportedCRS;
@@ -61,6 +54,10 @@ import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.collect.Sets;
 
@@ -71,10 +68,7 @@ import com.google.common.collect.Sets;
  * @since 4.1.0
  *
  */
-public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
-
-    @SuppressWarnings("unused")
-    private static final Logger LOGGER = LoggerFactory.getLogger(InspireXmlEncoder.class);
+public class InspireXmlEncoder extends AbstractXmlEncoder<XmlObject, Object> {
 
     private static final Set<EncoderKey> ENCODER_KEYS = Sets.union(
             CodingHelper.encoderKeysForElements(
@@ -87,23 +81,18 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
                         InspireSupportedCRS.class));
 
     @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
     public Set<EncoderKey> getKeys() {
-        return ENCODER_KEYS;
+        return Collections.unmodifiableSet(ENCODER_KEYS);
     }
 
     @Override
-    public XmlObject encode(Object objectToEncode) throws OwsExceptionReport, UnsupportedEncoderInputException {
+    public XmlObject encode(Object objectToEncode) throws EncodingException {
         return encode(objectToEncode, new EnumMap<>(HelperValues.class));
     }
 
     @Override
     public XmlObject encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport, UnsupportedEncoderInputException {
+            throws EncodingException {
         if (objectToEncode instanceof InspireObject) {
             return encodeObject((InspireObject)objectToEncode);
         } else if (objectToEncode instanceof SwesExtension<?>) {
@@ -115,29 +104,19 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
        throw new UnsupportedEncoderInputException(this, objectToEncode);
     }
 
-    private XmlObject encodeObject(InspireObject objectToEncode) throws OwsExceptionReport {
+    private XmlObject encodeObject(InspireObject objectToEncode) throws EncodingException {
         try {
             checkIfSupported(objectToEncode);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             new InspireXmlStreamWriter(objectToEncode).write(out);
             String s = out.toString("UTF8");
             return XmlObject.Factory.parse(s);
-        } catch (XMLStreamException ex) {
-            throw new NoApplicableCodeException().causedBy(ex).withMessage(
-                    "Error encoding Inspire extended capabilities!");
-        } catch (DateTimeFormatException ex) {
-            throw new NoApplicableCodeException().causedBy(ex).withMessage(
-                    "Error encoding Inspire extended capabilities!");
-        } catch (XmlException ex) {
-            throw new NoApplicableCodeException().causedBy(ex).withMessage(
-                    "Error encoding Inspire extended capabilities!");
-        } catch (UnsupportedEncodingException ex) {
-            throw new NoApplicableCodeException().causedBy(ex).withMessage(
-                    "Error encoding Inspire extended capabilities!");
+        } catch (XMLStreamException | DateTimeFormatException | XmlException | UnsupportedEncodingException ex) {
+            throw new EncodingException("Error encoding Inspire extended capabilities!", ex);
         }
     }
 
-    private void checkIfSupported(InspireObject objectToEncode) throws UnsupportedEncoderInputException {
+    private void checkIfSupported(InspireObject objectToEncode) throws EncodingException {
         if (!(objectToEncode instanceof InspireSupportedLanguages)
          && !(objectToEncode instanceof InspireSupportedCRS)
          && !(objectToEncode instanceof FullInspireExtendedCapabilities)
@@ -149,7 +128,7 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<Object> {
     @Override
     public Set<SchemaLocation> getSchemaLocations() {
         return Sets.newHashSet(InspireConstants.INSPIRE_COMMON_10_SCHEMA_LOCATION,
-                InspireConstants.INSPIRE_DLS_10_SCHEMA_LOCATION);
+                               InspireConstants.INSPIRE_DLS_10_SCHEMA_LOCATION);
     }
 
     @Override

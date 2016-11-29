@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode.xml.stream.ogc.gml;
 
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.sos.decode.xml.stream.ChoiceReader;
 
 import com.google.common.collect.ImmutableMap;

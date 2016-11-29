@@ -35,16 +35,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ogc.om.NamedValue;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -57,7 +54,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityResponse extends AbstractServiceResponse implements ResponseFormat {
+public class GetDataAvailabilityResponse extends OwsServiceResponse implements ResponseFormat {
     private final List<DataAvailability> dataAvailabilities = new LinkedList<DataAvailability>();
 
     private String responseFormat;
@@ -72,13 +69,22 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse impleme
      *            the data availabilities
      */
     public GetDataAvailabilityResponse(DataAvailability... dataAvailabilities) {
+        super(null, null, GetDataAvailabilityConstants.OPERATION_NAME);
         Collections.addAll(this.dataAvailabilities, dataAvailabilities);
     }
 
-    @Override
-    public String getOperationName() {
-        return GetDataAvailabilityConstants.OPERATION_NAME;
+    public GetDataAvailabilityResponse() {
+        super(null,null, GetDataAvailabilityConstants.OPERATION_NAME);
     }
+
+    public GetDataAvailabilityResponse(String service, String version) {
+        super(service, version, GetDataAvailabilityConstants.OPERATION_NAME);
+    }
+
+    public GetDataAvailabilityResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
 
     /**
      * @return the {@code DataAvailabilities}.
@@ -407,6 +413,9 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse impleme
         }
     }
 
+    public void setNamespace(String namespace) {
+        if (!Strings.isNullOrEmpty(namespace)) {
+            this.namespace = namespace;
     /**
      * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
      * @since 4.4.0

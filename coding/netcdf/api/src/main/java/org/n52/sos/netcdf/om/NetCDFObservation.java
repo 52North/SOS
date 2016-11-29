@@ -34,9 +34,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
-import org.n52.sos.ogc.om.OmObservableProperty;
 
 import com.google.common.collect.Lists;
 import com.vividsolutions.jts.geom.Envelope;

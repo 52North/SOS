@@ -28,17 +28,23 @@
  */
 package org.n52.sos.response;
 
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
  * @since 4.0.0
  *
  */
 public class GetObservationByIdResponse extends AbstractObservationResponse {
+    public GetObservationByIdResponse() {
+        super(null, null, SosConstants.Operations.GetObservationById.name());
+    }
 
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetObservationById.name();
+    public GetObservationByIdResponse(String service, String version) {
+        super(service, version, SosConstants.Operations.GetObservationById.name());
+    }
+
+    public GetObservationByIdResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
 }

@@ -29,14 +29,17 @@
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.StringHelper;
+
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
@@ -45,9 +48,8 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingQuality;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.EReportingHelper;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swe.SweDataArray;
+
+import com.google.common.base.Strings;
 
 public abstract class AbstractValuedEReportingObservation<T>
         extends AbstractValuedSeriesObservation<T>
@@ -126,7 +128,7 @@ public abstract class AbstractValuedEReportingObservation<T>
 
     @Override
     public boolean isSetPrimaryObservation() {
-        return StringHelper.isNotEmpty(getPrimaryObservation());
+        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
     @Override

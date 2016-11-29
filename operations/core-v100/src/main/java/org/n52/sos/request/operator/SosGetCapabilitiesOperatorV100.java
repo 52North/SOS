@@ -31,11 +31,11 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
 
 /**
@@ -64,7 +64,7 @@ public class SosGetCapabilitiesOperatorV100 extends
 
     @Override
     public GetCapabilitiesResponse receive(GetCapabilitiesRequest sosRequest) throws OwsExceptionReport {
-        return getDao().getCapabilities(sosRequest);
+        return getOperationHandler().getCapabilities(sosRequest);
     }
 
     @Override

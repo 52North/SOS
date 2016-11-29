@@ -31,6 +31,7 @@ package org.n52.sos.decode;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+
 import net.opengis.sensorml.x20.DataInterfaceType;
 import net.opengis.swe.x20.DataRecordPropertyType;
 import net.opengis.swe.x20.DataRecordType.Field;
@@ -38,10 +39,12 @@ import net.opengis.swe.x20.DataRecordType.Field;
 import org.hamcrest.CoreMatchers;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.shetland.ogc.sensorML.v20.SmlDataInterface;
+import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.AbstractBeforeAfterClassSettingsManagerTest;
-import org.n52.sos.ogc.sensorML.v20.SmlDataInterface;
-import org.n52.sos.ogc.swe.SweDataRecord;
+import org.n52.svalbard.decode.exception.DecodingException;
+
 
 
 /**
@@ -52,14 +55,14 @@ import org.n52.sos.ogc.swe.SweDataRecord;
 public class SensorMLDecoderV20Test extends AbstractBeforeAfterClassSettingsManagerTest {
 
     @Test
-    public void shouldDecodeDataInterface() throws OwsExceptionReport{
+    public void shouldDecodeDataInterface() throws DecodingException {
         DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
         SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
         assertThat(parsedDataInterface, is(notNullValue()));
     }
 
     @Test @Ignore("Activat again and extend while implementing the DataInterface decoding.")
-    public void shouldDecodeDataInterfaceData() throws OwsExceptionReport {
+    public void shouldDecodeDataInterfaceData() throws DecodingException {
         DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
         xbDataInterface.addNewData();
         SmlDataInterface parsedDataInterface = new SensorMLDecoderV20().parseDataInterfaceType(xbDataInterface);
@@ -67,7 +70,7 @@ public class SensorMLDecoderV20Test extends AbstractBeforeAfterClassSettingsMana
     }
 
     @Test @Ignore("Activate again and continue implementation here")
-    public void shouldDecodeDataInterfaceInterfaceParameters() throws OwsExceptionReport {
+    public void shouldDecodeDataInterfaceInterfaceParameters() throws DecodingException {
         DataInterfaceType xbDataInterface = DataInterfaceType.Factory.newInstance();
         DataRecordPropertyType xbInterfaceParameters = xbDataInterface.addNewInterfaceParameters();
         Field field = xbInterfaceParameters.addNewDataRecord().addNewField();

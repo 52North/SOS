@@ -28,23 +28,23 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-import static org.n52.iceland.util.DateTimeHelper.formatDateTime2IsoString;
+import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BlobObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.BooleanObservation;
@@ -56,13 +56,13 @@ import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractSimpleType;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;
@@ -124,32 +124,36 @@ public class ResultHandlingHelper {
             throws OwsExceptionReport {
         final StringBuilder builder = new StringBuilder();
         if (CollectionHelper.isNotEmpty(observations)) {
-            final String tokenSeparator = getTokenSeparator(sosResultEncoding.getEncoding());
-            final String blockSeparator = getBlockSeparator(sosResultEncoding.getEncoding());
-            final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
-            addElementCount(builder, observations.size(), blockSeparator);
-            for (final Observation<?> observation : observations) {
-                for (final Integer intger : valueOrder.keySet()) {
-                    final String definition = valueOrder.get(intger);
-                    switch (definition) {
-                        case PHENOMENON_TIME:
-                            builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
+            try {
+                final String tokenSeparator = getTokenSeparator(sosResultEncoding.getEncoding());
+                final String blockSeparator = getBlockSeparator(sosResultEncoding.getEncoding());
+                final Map<Integer, String> valueOrder = getValueOrderMap(sosResultStructure.getResultStructure());
+                addElementCount(builder, observations.size(), blockSeparator);
+                for (final Observation<?> observation : observations) {
+                    for (final Integer intger : valueOrder.keySet()) {
+                        final String definition = valueOrder.get(intger);
+                        switch (definition) {
+                            case PHENOMENON_TIME:
+                                builder.append(getTimeStringForPhenomenonTime(observation.getPhenomenonTimeStart(),
                                                                           observation.getPhenomenonTimeEnd()));
-                            break;
-                        case RESULT_TIME:
-                            builder.append(getTimeStringForResultTime(observation.getResultTime()));
-                            break;
-                        default:
-                            builder.append(getValueAsStringForObservedProperty(observation, definition));
-                            break;
+                                break;
+                            case RESULT_TIME:
+                                builder.append(getTimeStringForResultTime(observation.getResultTime()));
+                                break;
+                            default:
+                                builder.append(getValueAsStringForObservedProperty(observation, definition));
+                                break;
+                        }
+                        builder.append(tokenSeparator);
                     }
-                    builder.append(tokenSeparator);
+                    builder.delete(builder.lastIndexOf(tokenSeparator), builder.length());
+                    builder.append(blockSeparator);
                 }
-                builder.delete(builder.lastIndexOf(tokenSeparator), builder.length());
-                builder.append(blockSeparator);
-            }
-            if (builder.length() > 0) {
-                builder.delete(builder.lastIndexOf(blockSeparator), builder.length());
+                if (builder.length() > 0) {
+                    builder.delete(builder.lastIndexOf(blockSeparator), builder.length());
+                }
+            } catch (DecodingException ex) {
+                throw new NoApplicableCodeException().causedBy(ex);
             }
         }
         return builder.toString();

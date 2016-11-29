@@ -28,17 +28,18 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.request.AbstractServiceRequest;
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+
+import com.google.common.base.Strings;
 
 /**
  * SOS AbstractObservation request
  *
  * @since 4.0.0
  */
-public abstract class AbstractObservationRequest extends AbstractServiceRequest<AbstractObservationResponse> implements ResponseFormat, SrsNameRequest {
+public abstract class AbstractObservationRequest extends OwsServiceRequest
+        implements ResponseFormat, SrsNameRequest {
     /**
      * SRS name
      */
@@ -61,6 +62,17 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     private boolean checkForDuplicity = true;
 
+    public AbstractObservationRequest() {
+    }
+
+    public AbstractObservationRequest(String service, String version) {
+        super(service, version);
+    }
+
+    public AbstractObservationRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
     /**
      * Get response format
      *
@@ -75,7 +87,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * Set response format
      *
      * @param responseFormat
-     *            response format
+     *                       response format
      */
     @Override
     public void setResponseFormat(String responseFormat) {
@@ -84,7 +96,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     @Override
     public boolean isSetResponseFormat() {
-        return StringHelper.isNotEmpty(getResponseFormat());
+        return !Strings.isNullOrEmpty(getResponseFormat());
     }
 
     /**
@@ -100,14 +112,14 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * Set response mode
      *
      * @param responseMode
-     *            response mode
+     *                     response mode
      */
     public void setResponseMode(String responseMode) {
         this.responseMode = responseMode;
     }
 
     public boolean isSetResponseMode() {
-        return StringHelper.isNotEmpty(getResponseMode());
+        return !Strings.isNullOrEmpty(getResponseMode());
     }
 
     /**
@@ -123,14 +135,14 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
      * Set result model
      *
      * @param resultModel
-     *            result model
+     *                    result model
      */
     public void setResultModel(String resultModel) {
         this.resultModel = resultModel;
     }
 
     public boolean isSetResultModel() {
-        return StringHelper.isNotEmpty(getResultModel());
+        return !Strings.isNullOrEmpty(getResultModel());
     }
 
     @Override
@@ -145,7 +157,7 @@ public abstract class AbstractObservationRequest extends AbstractServiceRequest<
 
     @Override
     public boolean isSetSrsName() {
-        return StringHelper.isNotEmpty(getSrsName());
+        return !Strings.isNullOrEmpty(getSrsName());
     }
 
     /**

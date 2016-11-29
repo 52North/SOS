@@ -28,9 +28,8 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -57,7 +56,7 @@ public class DescribeSensorRequestDecoder extends AbstractSosRequestDecoder<Desc
     }
 
     @Override
-    protected DescribeSensorRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected DescribeSensorRequest decodeRequest(JsonNode node) {
         DescribeSensorRequest req = new DescribeSensorRequest();
         req.setProcedure(node.path(JSONConstants.PROCEDURE).textValue());
         req.setProcedureDescriptionFormat(node.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT).textValue());

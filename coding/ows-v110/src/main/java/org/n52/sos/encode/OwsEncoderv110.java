@@ -28,22 +28,32 @@
  */
 package org.n52.sos.encode;
 
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import net.opengis.ows.x11.AcceptVersionsType;
 import net.opengis.ows.x11.AddressType;
 import net.opengis.ows.x11.AllowedValuesDocument.AllowedValues;
 import net.opengis.ows.x11.CodeType;
 import net.opengis.ows.x11.ContactType;
-import net.opengis.ows.x11.DCPDocument;
+import net.opengis.ows.x11.DCPDocument.DCP;
+import net.opengis.ows.x11.DomainMetadataType;
 import net.opengis.ows.x11.DomainType;
 import net.opengis.ows.x11.ExceptionDocument;
 import net.opengis.ows.x11.ExceptionReportDocument;
@@ -53,74 +63,77 @@ import net.opengis.ows.x11.HTTPDocument.HTTP;
 import net.opengis.ows.x11.KeywordsType;
 import net.opengis.ows.x11.LanguageStringType;
 import net.opengis.ows.x11.MetadataType;
+import net.opengis.ows.x11.OnlineResourceType;
 import net.opengis.ows.x11.OperationDocument.Operation;
 import net.opengis.ows.x11.OperationsMetadataDocument.OperationsMetadata;
 import net.opengis.ows.x11.RangeType;
 import net.opengis.ows.x11.RequestMethodType;
 import net.opengis.ows.x11.ResponsiblePartySubsetType;
 import net.opengis.ows.x11.SectionsType;
-import net.opengis.ows.x11.ServiceIdentificationDocument;
 import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
-import net.opengis.ows.x11.ServiceProviderDocument;
 import net.opengis.ows.x11.ServiceProviderDocument.ServiceProvider;
+import net.opengis.ows.x11.TelephoneType;
+import net.opengis.ows.x11.ValuesReferenceDocument.ValuesReference;
 
 import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.ActuateType;
 import org.w3.x1999.xlink.ShowType;
-import org.w3.x1999.xlink.TypeType;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ExceptionEncoderKey;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.ogc.ows.AcceptVersions;
-import org.n52.iceland.ogc.ows.Constraint;
-import org.n52.iceland.ogc.ows.DCP;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsAllowedValues;
-import org.n52.iceland.ogc.ows.OwsAllowedValuesRange;
-import org.n52.iceland.ogc.ows.OwsAllowedValuesValue;
-import org.n52.iceland.ogc.ows.OwsAnyValue;
-import org.n52.iceland.ogc.ows.OwsDomainType;
-import org.n52.iceland.ogc.ows.OwsMetadata;
-import org.n52.iceland.ogc.ows.OwsNoValues;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
-import org.n52.iceland.ogc.ows.OwsParameterDataType;
-import org.n52.iceland.ogc.ows.OwsParameterValue;
-import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.iceland.ogc.ows.OwsParameterValueRange;
-import org.n52.iceland.ogc.ows.OwsPossibleValues;
-import org.n52.iceland.ogc.ows.OwsRange;
-import org.n52.iceland.ogc.ows.OwsServiceIdentification;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.ogc.ows.OwsValuesRererence;
-import org.n52.iceland.ogc.ows.Sections;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.http.HTTPMethods;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
+import org.n52.shetland.i18n.LocalizedString;
+import org.n52.shetland.i18n.MultilingualString;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OwsAcceptVersions;
+import org.n52.shetland.ogc.ows.OwsAddress;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsCode;
+import org.n52.shetland.ogc.ows.OwsContact;
+import org.n52.shetland.ogc.ows.OwsDCP;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsDomainMetadata;
+import org.n52.shetland.ogc.ows.OwsHttp;
+import org.n52.shetland.ogc.ows.OwsKeyword;
+import org.n52.shetland.ogc.ows.OwsLanguageString;
+import org.n52.shetland.ogc.ows.OwsMetadata;
+import org.n52.shetland.ogc.ows.OwsOnlineResource;
+import org.n52.shetland.ogc.ows.OwsOperation;
+import org.n52.shetland.ogc.ows.OwsOperationMetadataExtension;
+import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+import org.n52.shetland.ogc.ows.OwsPhone;
+import org.n52.shetland.ogc.ows.OwsPossibleValues;
+import org.n52.shetland.ogc.ows.OwsRange;
+import org.n52.shetland.ogc.ows.OwsRequestMethod;
+import org.n52.shetland.ogc.ows.OwsResponsibleParty;
+import org.n52.shetland.ogc.ows.OwsSections;
+import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.OwsValuesReference;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.xlink.Actuate;
+import org.n52.shetland.w3c.xlink.Show;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 
 
 /**
@@ -128,20 +141,24 @@ import com.google.common.collect.Sets;
  *
  */
 @Configurable
-public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
+public class OwsEncoderv110 extends AbstractXmlEncoder<XmlObject, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OwsEncoderv110.class);
 
-    private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(Sets.<EncoderKey> newHashSet(
+    private static final Set<EncoderKey> ENCODER_KEYS = CollectionHelper.union(Sets.<EncoderKey>newHashSet(
             new ExceptionEncoderKey(MediaTypes.TEXT_XML), new ExceptionEncoderKey(MediaTypes.APPLICATION_XML)),
-            CodingHelper.encoderKeysForElements(OWSConstants.NS_OWS, OwsServiceIdentification.class,
-                    OwsServiceProvider.class, OwsOperationsMetadata.class, OwsExceptionReport.class,
-                    OwsMetadata.class, OwsDomainType.class));
+                                                                               CodingHelper
+                                                                               .encoderKeysForElements(OWSConstants.NS_OWS,
+                                                                                                       OwsServiceIdentification.class,
+                                                                                                       OwsServiceProvider.class,
+                                                                                                       OwsOperationsMetadata.class,
+                                                                                                       OwsExceptionReport.class,
+                                                                                                       OwsMetadata.class,
+                                                                                                       OwsDomain.class));
 
     private boolean includeStackTraceInExceptionReport = false;
 
     public OwsEncoderv110() {
-        LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(ENCODER_KEYS));
+        LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(ENCODER_KEYS));
     }
 
     @Setting(OwsEncoderSettings.INCLUDE_STACK_TRACE_IN_EXCEPTION_REPORT)
@@ -165,8 +182,8 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+    public XmlObject encode(Object element, Map<org.n52.svalbard.HelperValues, String> additionalValues)
+            throws EncodingException {
         if (element instanceof OwsServiceIdentification) {
             return encodeServiceIdentification((OwsServiceIdentification) element);
         } else if (element instanceof OwsServiceProvider) {
@@ -179,234 +196,88 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             }
             return encodeOwsExceptionReport((OwsExceptionReport) element);
         } else if (element instanceof OwsMetadata) {
-            return encodeOwsMetadata((OwsMetadata) element);
-        } else if (element instanceof OwsDomainType) {
-            return encodeDomainType((OwsDomainType) element);
-        } else if (element instanceof AcceptVersions) {
-            return encodeAcceptVersions((AcceptVersions) element);
-        } else if (element instanceof Sections) {
-            return encodeSections((Sections) element);
+            MetadataType metadataType = MetadataType.Factory.newInstance(getXmlOptions());
+            encodeOwsMetadata((OwsMetadata) element, metadataType);
+            return metadataType;
+        } else if (element instanceof OwsDomain) {
+            DomainType domainType = DomainType.Factory.newInstance(getXmlOptions());
+            encodeOwsDomain((OwsDomain) element, domainType);
+            return domainType;
+        } else if (element instanceof OwsAcceptVersions) {
+            return encodeAcceptVersions((OwsAcceptVersions) element);
+        } else if (element instanceof OwsSections) {
+            return encodeSections((OwsSections) element);
         }
         throw new UnsupportedEncoderInputException(this, element);
     }
 
-    protected boolean isEncodeExceptionsOnly(final Map<HelperValues, String> additionalValues) {
+    protected boolean isEncodeExceptionsOnly(Map<HelperValues, String> additionalValues) {
         return additionalValues != null && !additionalValues.isEmpty()
-                && additionalValues.containsKey(org.n52.iceland.ogc.ows.OWSConstants.HelperValues.ENCODE_OWS_EXCEPTION_ONLY);
+                && additionalValues.containsKey(HelperValues.ENCODE_OWS_EXCEPTION_ONLY);
     }
 
-    /**
-     * Set the service identification information
-     *
-     * @param serviceIdentification
-     *            SOS representation of ServiceIdentification.
-     *
-     * @throws OwsExceptionReport
-     *             * if the file is invalid.
-     */
-    private XmlObject encodeServiceIdentification(final OwsServiceIdentification serviceIdentification)
-            throws OwsExceptionReport {
+    private XmlObject encodeServiceIdentification(OwsServiceIdentification serviceIdentification)
+            throws EncodingException {
         ServiceIdentification serviceIdent;
-        if (serviceIdentification.isSetServiceIdentification()) {
-            XmlObject xmlObject = XmlHelper.parseXmlString(serviceIdentification.getServiceIdentification());
-            if (xmlObject instanceof ServiceIdentificationDocument) {
-                serviceIdent =
-                        ((ServiceIdentificationDocument) xmlObject)
-                                .getServiceIdentification();
-            } else if (xmlObject instanceof ServiceIdentification) {
-                serviceIdent = (ServiceIdentification) xmlObject;
-            } else {
-                throw new NoApplicableCodeException()
-                        .withMessage("The service identification file is not a ServiceIdentificationDocument, ServiceIdentification or invalid! Check the file in the Tomcat webapps: /SOS_webapp/WEB-INF/conf/capabilities/.");
-            }
-            if (serviceIdentification.hasAbstract()) {
-                clearAbstracts(serviceIdent);
-                for (LocalizedString ls : serviceIdentification.getAbstract()) {
-                    serviceIdent.addNewAbstract().set(encodeOwsLanguageString(ls));
-                }
-            }
-            if (serviceIdentification.hasTitle()) {
-                clearTitles(serviceIdent);
-                for (LocalizedString ls : serviceIdentification.getTitle()) {
-                    serviceIdent.addNewTitle().set(encodeOwsLanguageString(ls));
-                }
-            }
-        } else {
-            /* TODO check for required fields and fail on missing ones */
-            serviceIdent = ServiceIdentification.Factory.newInstance();
-            for (String accessConstraint : serviceIdentification.getAccessConstraints()) {
-                serviceIdent.addAccessConstraints(accessConstraint);
-            }
-            if (serviceIdentification.hasFees()) {
-                serviceIdent.setFees(serviceIdentification.getFees());
-            }
-            CodeType xbServiceType = serviceIdent.addNewServiceType();
-            xbServiceType.setStringValue(serviceIdentification.getServiceType());
-            if (serviceIdentification.getServiceTypeCodeSpace() != null) {
-                xbServiceType.setCodeSpace(serviceIdentification.getServiceTypeCodeSpace());
-            }
-            if (serviceIdentification.hasAbstract()) {
-                for (LocalizedString ls : serviceIdentification.getAbstract()) {
-                    serviceIdent.addNewAbstract().set(encodeOwsLanguageString(ls));
-                }
-            }
-            if (serviceIdentification.hasTitle()) {
-                for (LocalizedString ls : serviceIdentification.getTitle()) {
-                    serviceIdent.addNewTitle().set(encodeOwsLanguageString(ls));
-                }
-            }
+        /* TODO check for required fields and fail on missing ones */
+        serviceIdent = ServiceIdentification.Factory.newInstance();
+        serviceIdentification.getAccessConstraints().forEach(serviceIdent::addAccessConstraints);
+        if (!serviceIdentification.getFees().isEmpty()) {
+            serviceIdent.setFees(serviceIdentification.getFees().iterator().next());
         }
-        // set service type versions
-        if (serviceIdentification.hasVersions()) {
-            serviceIdent.setServiceTypeVersionArray(serviceIdentification.getVersions().toArray(
-                    new String[serviceIdentification.getVersions().size()]));
+        CodeType xbServiceType = serviceIdent.addNewServiceType();
+        xbServiceType.setStringValue(serviceIdentification.getServiceType().getValue());
+        if (serviceIdentification.getServiceType().getCodeSpace().isPresent()) {
+            xbServiceType.setCodeSpace(serviceIdentification.getServiceType().getCodeSpace().get().toString());
         }
 
-        // set Profiles
-        if (serviceIdentification.hasProfiles()) {
-            serviceIdent.setProfileArray(serviceIdentification.getProfiles().toArray(
-                    new String[serviceIdentification.getProfiles().size()]));
-        }
-        // set keywords if they're not already in the service identification
-        // doc
-        if (serviceIdentification.hasKeywords() && serviceIdent.getKeywordsArray().length == 0) {
-            final KeywordsType keywordsType = serviceIdent.addNewKeywords();
-            for (final String keyword : serviceIdentification.getKeywords()) {
-                keywordsType.addNewKeyword().setStringValue(keyword.trim());
-            }
-        }
+        encodeMultilingualString(serviceIdentification.getTitle(), serviceIdent::addNewTitle);
+        encodeMultilingualString(serviceIdentification.getAbstract(), serviceIdent::addNewAbstract);
+        serviceIdentification.getServiceTypeVersion().stream().forEach(serviceIdent::addServiceTypeVersion);
+        serviceIdentification.getProfiles().stream().map(URI::toString).forEach(serviceIdent::addProfile);
+
+        serviceIdentification.getKeywords().stream()
+                .collect(groupingBy(OwsKeyword::getType, mapping(OwsKeyword::getKeyword, toList())))
+                .forEach((type, keywords) -> encodeOwsKeywords(type, keywords, serviceIdent.addNewKeywords()));
+
         return serviceIdent;
     }
 
-    private void clearTitles(ServiceIdentification serviceIdent) {
-        if (CollectionHelper.isNotNullOrEmpty(serviceIdent.getTitleArray())) {
-            for (int i = 0; i < serviceIdent.getTitleArray().length; i++) {
-                serviceIdent.removeTitle(i);
-            }
-        }
+    private void encodeMultilingualString(Optional<MultilingualString> string,
+                                          Supplier<? extends LanguageStringType> supplier) {
+        string.map(MultilingualString::stream)
+                .orElseGet(Stream::empty)
+                .map(this::encodeOwsLanguageString)
+                .forEach(t ->  supplier.get().set(t));
     }
 
-    private void clearAbstracts(ServiceIdentification serviceIdent) {
-        if (CollectionHelper.isNotNullOrEmpty(serviceIdent.getAbstractArray())) {
-            for (int i = 0; i < serviceIdent.getAbstractArray().length; i++) {
-                serviceIdent.removeAbstract(i);
-            }
-        }
+    private ServiceProvider encodeServiceProvider(OwsServiceProvider osp) {
+        /* TODO check for required fields and fail on missing ones */
+        ServiceProvider serviceProvider = ServiceProvider.Factory.newInstance();
+        serviceProvider.setProviderName(osp.getProviderName());
+        osp.getProviderSite().ifPresent(x -> encodeOnlineResource(x, serviceProvider.addNewProviderSite()));
+        encodeOwsResponsibleParty(osp.getServiceContact(), serviceProvider.addNewServiceContact());
+        return serviceProvider;
     }
 
-    /**
-     * Set the service provider information
-     *
-     * @param sosServiceProvider
-     *            SOS representation of ServiceProvider.
-     *
-     * @throws OwsExceptionReport
-     *             * if the file is invalid.
-     */
-    private XmlObject encodeServiceProvider(final OwsServiceProvider sosServiceProvider) throws OwsExceptionReport {
-        if (sosServiceProvider.isSetServiceProvider()) {
-            XmlObject xmlObject = XmlHelper.parseXmlString(sosServiceProvider.getServiceProvider());
-            if (xmlObject instanceof ServiceProviderDocument) {
-                return ((ServiceProviderDocument) xmlObject).getServiceProvider();
-            } else if (xmlObject instanceof ServiceProvider) {
-                return (ServiceProvider)xmlObject;
-            } else {
-                throw new NoApplicableCodeException()
-                        .withMessage("The service identification file is not a ServiceProviderDocument, "
-                                + "ServiceProvider or invalid! Check the file in the Tomcat webapps: "
-                                + "/SOS_webapp/WEB-INF/conf/capabilities/.");
-            }
-        } else {
-            /* TODO check for required fields and fail on missing ones */
-            final ServiceProvider serviceProvider = ServiceProvider.Factory.newInstance();
-            if (sosServiceProvider.getName() != null) {
-                serviceProvider.setProviderName(sosServiceProvider.getName());
-            }
-            if (sosServiceProvider.getSite() != null) {
-                serviceProvider.addNewProviderSite().setHref(sosServiceProvider.getSite());
-            }
-            final ResponsiblePartySubsetType responsibleParty = serviceProvider.addNewServiceContact();
-            if (sosServiceProvider.getIndividualName() != null) {
-                responsibleParty.setIndividualName(sosServiceProvider.getIndividualName());
-            }
-            if (sosServiceProvider.getPositionName() != null) {
-                responsibleParty.setPositionName(sosServiceProvider.getPositionName());
-            }
+    private OperationsMetadata encodeOperationsMetadata(OwsOperationsMetadata om)
+            throws EncodingException {
+        OperationsMetadata xom = OperationsMetadata.Factory.newInstance(getXmlOptions());
 
-            final ContactType contact = responsibleParty.addNewContactInfo();
-            if (sosServiceProvider.getPhone() != null) {
-                contact.addNewPhone().addVoice(sosServiceProvider.getPhone());
-            }
+        om.getOperations().forEach(x -> encodeOwsOperation(x, xom.addNewOperation()));
+        om.getConstraints().forEach(x -> encodeOwsDomain(x, xom.addNewConstraint()));
+        om.getParameters().forEach(x -> encodeOwsDomain(x, xom.addNewParameter()));
 
-            final AddressType address = contact.addNewAddress();
-            if (sosServiceProvider.getDeliveryPoint() != null) {
-                address.addDeliveryPoint(sosServiceProvider.getDeliveryPoint());
-            }
-            if (sosServiceProvider.getMailAddress() != null) {
-                address.addElectronicMailAddress(sosServiceProvider.getMailAddress());
-            }
-            if (sosServiceProvider.getAdministrativeArea() != null) {
-                address.setAdministrativeArea(sosServiceProvider.getAdministrativeArea());
-            }
-            if (sosServiceProvider.getCity() != null) {
-                address.setCity(sosServiceProvider.getCity());
-            }
-            if (sosServiceProvider.getCountry() != null) {
-                address.setCountry(sosServiceProvider.getCountry());
-            }
-            if (sosServiceProvider.getPostalCode() != null) {
-                address.setPostalCode(sosServiceProvider.getPostalCode());
-            }
-            return serviceProvider;
+        if (om.getExtension().isPresent()) {
+            xom.setExtendedCapabilities(encodeOwsOperationsMetadataExtension(om.getExtension().get()));
         }
-
+        return xom;
     }
 
-    /**
-     * Sets the OperationsMetadata section to the capabilities document.
-     *
-     * @param operationsMetadata
-     *            SOS metadatas for the operations
-     *
-     *
-     * @throws CompositeOwsException
-     *             * if an error occurs
-     */
-    protected OperationsMetadata encodeOperationsMetadata(final OwsOperationsMetadata operationsMetadata)
-            throws OwsExceptionReport {
-        final OperationsMetadata xbOperationMetadata =
-                OperationsMetadata.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        for (final OwsOperation operationMetadata : operationsMetadata.getOperations()) {
-            final Operation operation = xbOperationMetadata.addNewOperation();
-            // name
-            operation.setName(operationMetadata.getOperationName());
-            // dcp
-            encodeDCP(operation.addNewDCP(), operationMetadata.getDcp());
-            // parameter
-            if (operationMetadata.getParameterValues() != null) {
-                for (final String parameterName : operationMetadata.getParameterValues().keySet()) {
-                    setParameterValue(operation.addNewParameter(), parameterName, operationMetadata
-                            .getParameterValues().get(parameterName));
-                }
-            }
-        }
-        // set SERVICE and VERSION for all operations.
-        for (final String name : operationsMetadata.getCommonValues().keySet()) {
-            setParameterValue(xbOperationMetadata.addNewParameter(), name,
-                    operationsMetadata.getCommonValues().get(name));
-        }
-
-        if (operationsMetadata.isSetExtendedCapabilities()) {
-            xbOperationMetadata.setExtendedCapabilities(CodingHelper.encodeObjectToXml(operationsMetadata
-                    .getExtendedCapabilities().getNamespace(), operationsMetadata.getExtendedCapabilities()));
-        }
-        return xbOperationMetadata;
-    }
-
-    private ExceptionDocument encodeOwsException(final CodedException owsException) {
-        final ExceptionDocument exceptionDoc =
-                ExceptionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        final ExceptionType exceptionType = exceptionDoc.addNewException();
+    private ExceptionDocument encodeOwsException(CodedException owsException) {
+        ExceptionDocument exceptionDoc =
+                ExceptionDocument.Factory.newInstance(getXmlOptions());
+        ExceptionType exceptionType = exceptionDoc.addNewException();
         String exceptionCode;
         if (owsException.getCode() == null) {
             exceptionCode = OwsExceptionCode.NoApplicableCode.toString();
@@ -428,12 +299,13 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
             final String message = owsException.getCause().getMessage();
             if (localizedMessage != null && message != null) {
                 if (!message.equals(localizedMessage)) {
-                    JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+                    exceptionText.append(message).append('\n');
                 }
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-            } else {
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+                exceptionText.append(localizedMessage).append('\n');
+            } else if (localizedMessage != null) {
+                exceptionText.append(localizedMessage).append('\n');
+            } else if (message != null) {
+                exceptionText.append(message).append('\n');
             }
             if (includeStackTraceInExceptionReport) {
                 final ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -450,14 +322,15 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
         final String localizedMessage = exception.getLocalizedMessage();
         final String message = exception.getMessage();
         if (localizedMessage != null && message != null) {
-            if (!message.equals(localizedMessage)) {
-                JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
+                if (!message.equals(localizedMessage)) {
+                    exceptionText.append(message).append('\n');
+                }
+                exceptionText.append(localizedMessage).append('\n');
+            } else if (localizedMessage != null) {
+                exceptionText.append(localizedMessage).append('\n');
+            } else if (message != null) {
+                exceptionText.append(message).append('\n');
             }
-            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-        } else {
-            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, localizedMessage);
-            JavaHelper.appendTextToStringBuilderWithLineBreak(exceptionText, message);
-        }
 
         //recurse cause if necessary
         if (exception.getCause() != null) {
@@ -476,250 +349,186 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<Object> {
     }
 
     private ExceptionReportDocument encodeOwsExceptionReport(final OwsExceptionReport owsExceptionReport) {
-        final ExceptionReportDocument erd =
-                ExceptionReportDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        final ExceptionReport er = erd.addNewExceptionReport();
+        ExceptionReportDocument erd = ExceptionReportDocument.Factory.newInstance(getXmlOptions());
+        ExceptionReport er = erd.addNewExceptionReport();
         // er.setLanguage("en");
         er.setVersion(owsExceptionReport.getVersion());
-        final List<ExceptionType> exceptionTypes =
-                new ArrayList<ExceptionType>(owsExceptionReport.getExceptions().size());
-        for (final CodedException e : owsExceptionReport.getExceptions()) {
-            exceptionTypes.add(encodeOwsException(e).getException());
-        }
+        List<ExceptionType> exceptionTypes = new ArrayList<>(owsExceptionReport.getExceptions().size());
+        owsExceptionReport.getExceptions().stream()
+                .map(this::encodeOwsException)
+                .map(ExceptionDocument::getException)
+                .forEach(exceptionTypes::add);
         er.setExceptionArray(exceptionTypes.toArray(new ExceptionType[exceptionTypes.size()]));
         N52XmlHelper.setSchemaLocationsToDocument(erd,
                 Collections.singletonList(N52XmlHelper.getSchemaLocationForOWS110()));
         return erd;
     }
 
-    private void encodeDCP(final DCPDocument.DCP xbDcp, final Map<String, ? extends Collection<DCP>> supportedDcp)
-            throws OwsExceptionReport {
-        final HTTP http = xbDcp.addNewHTTP();
-        if (supportedDcp.containsKey(HTTPMethods.GET)) {
-            List<DCP> getDcps = Lists.newArrayList(supportedDcp.get(HTTPMethods.GET));
-            Collections.sort(getDcps);
-            for (DCP dcp : getDcps) {
-                RequestMethodType get = http.addNewGet();
-                get.setHref(dcp.getUrl());
-                addConstraints(get, dcp);
-
-            }
-        }
-        if (supportedDcp.containsKey(HTTPMethods.POST)) {
-            List<DCP> postDcps = Lists.newArrayList(supportedDcp.get(HTTPMethods.POST));
-            Collections.sort(postDcps);
-            for (DCP dcp : postDcps) {
-                RequestMethodType post = http.addNewPost();
-                post.setHref(dcp.getUrl());
-                addConstraints(post, dcp);
-            }
-        }
-        // TODO add if ows supports more than get and post
-    }
-
-    /**
-     * Encode OWS DomainType
-     *
-     * @param owsDomainType
-     *            Service OWS DomainType
-     * @return XML OWS DomainType
-     */
-    private DomainType encodeDomainType(OwsDomainType owsDomainType) {
-        DomainType domainType = DomainType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        domainType.setName(owsDomainType.getName());
-        addPossibleValues(domainType, owsDomainType.getValue());
-        if (owsDomainType.isSetDefaultValue()) {
-            domainType.addNewDefaultValue().setStringValue(owsDomainType.getDefaultValue());
-        }
-        return domainType;
-    }
-
-    /**
-     * Add XML OWS PossibleValues to XML OWS DomainType
-     *
-     * @param domainType
-     *            XML OWS DomainType
-     * @param value
-     *            Service OWS PossibleValues to add
-     */
-    private void addPossibleValues(DomainType domainType, OwsPossibleValues value) {
-        if (value instanceof OwsAnyValue) {
-            domainType.addNewAnyValue();
-        } else if (value instanceof OwsNoValues) {
-            domainType.addNewNoValues();
-        } else if (value instanceof OwsAllowedValues) {
-            addAllowedValues(domainType, (OwsAllowedValues) value);
-        } else if (value instanceof OwsValuesRererence) {
-            OwsValuesRererence owsValueReference = (OwsValuesRererence) value;
-            domainType.addNewValuesReference().setReference(owsValueReference.getReference());
-        }
-    }
-
-    /**
-     * Add XML OWS AllowedValues to XML OWS DomainType
-     *
-     * @param domainType
-     *            XML OWS DomainType
-     * @param value
-     *            Service OWS AllowedValues to add
-     */
-    private void addAllowedValues(DomainType domainType, OwsAllowedValues value) {
-        AllowedValues allowedValues = domainType.addNewAllowedValues();
-        if (value instanceof OwsAllowedValuesValue) {
-            for (String stringValue : ((OwsAllowedValuesValue) value).getValues()) {
-                allowedValues.addNewValue().setStringValue(stringValue);
-            }
-        } else if (value instanceof OwsAllowedValuesRange) {
-            for (OwsRange owsRange : ((OwsAllowedValuesRange) value).getValues()) {
-                RangeType range = allowedValues.addNewRange();
-                if (owsRange.isSetMinValue()) {
-                    range.addNewMinimumValue().setStringValue(owsRange.getMinValue());
-                }
-                if (owsRange.isSetMaxValue()) {
-                    range.addNewMaximumValue().setStringValue(owsRange.getMaxValue());
-                }
-                if (owsRange.isSetSpacing()) {
-                    range.addNewSpacing().setStringValue(owsRange.getSpacing());
-                }
-            }
-        }
-    }
-
-    private void setParameterValue(DomainType domainType, String name, Collection<OwsParameterValue> values)
-            throws OwsExceptionReport {
-        domainType.setName(name);
-        if (CollectionHelper.isEmptyOrNull(values)) {
-            domainType.addNewNoValues();
-        } else {
-            for (OwsParameterValue value : values) {
-                if (value instanceof OwsParameterValuePossibleValues) {
-                    setParamList(domainType, (OwsParameterValuePossibleValues) value);
-                } else if (value instanceof OwsParameterValueRange) {
-                    setParamRange(domainType, (OwsParameterValueRange) value);
-                } else if (value instanceof OwsParameterDataType) {
-                    setParamDataType(domainType, (OwsParameterDataType) value);
-                }
-            }
-        }
-    }
-
-    /**
-     * Sets operation parameters to AnyValue, NoValues or AllowedValues.
-     *
-     * @param domainType
-     *            Paramter.
-     * @param parameterValue
-     *            .getValues() List of values.
-     */
-    private void setParamList(final DomainType domainType, final OwsParameterValuePossibleValues parameterValue) {
-        if (parameterValue.getValues() != null) {
-            if (!parameterValue.getValues().isEmpty()) {
-                AllowedValues allowedValues = null;
-                for (final String value : parameterValue.getValues()) {
-                    if (value == null) {
-                        domainType.addNewNoValues();
-                        break;
-                    } else {
-                        if (allowedValues == null) {
-                            allowedValues = domainType.addNewAllowedValues();
-                        }
-                        allowedValues.addNewValue().setStringValue(value);
-                    }
-                }
-            } else {
-                domainType.addNewAnyValue();
-            }
-        } else {
-            domainType.addNewNoValues();
-        }
-    }
-
-    private void setParamDataType(final DomainType domainType, final OwsParameterDataType parameterValue) {
-        if (parameterValue.getReference() != null && !parameterValue.getReference().isEmpty()) {
-            domainType.addNewDataType().setReference(parameterValue.getReference());
-        } else {
-            domainType.addNewNoValues();
-        }
-
-    }
-
-    /**
-     * Sets the EventTime parameter.
-     *
-     * @param domainType
-     *            Parameter.
-     * @param parameterValue
-     *
-     *
-     * @throws CompositeOwsException
-     */
-    private void setParamRange(final DomainType domainType, final OwsParameterValueRange parameterValue)
-            throws OwsExceptionReport {
-        if (parameterValue.getMinValue() != null && parameterValue.getMaxValue() != null) {
-            if (!parameterValue.getMinValue().isEmpty() && !parameterValue.getMaxValue().isEmpty()) {
-                final RangeType range = domainType.addNewAllowedValues().addNewRange();
-                range.addNewMinimumValue().setStringValue(parameterValue.getMinValue());
-                range.addNewMaximumValue().setStringValue(parameterValue.getMaxValue());
-            } else {
-                domainType.addNewAnyValue();
-            }
-        } else {
-            domainType.addNewNoValues();
-        }
-    }
-
-    private void addConstraints(RequestMethodType method, DCP dcp) throws OwsExceptionReport {
-        for (Constraint c : dcp.getConstraints()) {
-            setParameterValue(method.addNewConstraint(), c.getName(), c.getValues());
-        }
-    }
-
-    /**
-     * Encode OwsMetadata element
-     *
-     * @param owsMeatadata
-     *            SOS OwsMetadata object
-     * @return XML OwsMetadata object
-     */
-    private XmlObject encodeOwsMetadata(OwsMetadata owsMeatadata) {
-        MetadataType xbMetadata = MetadataType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
-        if (owsMeatadata.isSetActuate()) {
-            xbMetadata.setActuate(ActuateType.Enum.forString(owsMeatadata.getActuate().name()));
-        } else if (owsMeatadata.isSetArcrole()) {
-            xbMetadata.setArcrole(owsMeatadata.getArcrole());
-        } else if (owsMeatadata.isSetHref()) {
-            xbMetadata.setHref(owsMeatadata.getHref());
-        } else if (owsMeatadata.isSetRole()) {
-            xbMetadata.setRole(owsMeatadata.getRole());
-        } else if (owsMeatadata.isSetShow()) {
-            xbMetadata.setShow(ShowType.Enum.forString(owsMeatadata.getShow().toString()));
-        } else if (owsMeatadata.isSetTitle()) {
-            xbMetadata.setTitle(owsMeatadata.getTitle());
-        }
-        xbMetadata.setType(TypeType.Enum.forString(owsMeatadata.getType().name()));
-        return xbMetadata;
-    }
-
     private LanguageStringType encodeOwsLanguageString(LocalizedString ls) {
-        LanguageStringType lst = LanguageStringType.Factory.newInstance();
+        LanguageStringType lst = LanguageStringType.Factory.newInstance(getXmlOptions());
         lst.setStringValue(ls.getText());
         lst.setLang(LocaleHelper.toString(ls.getLang()));
         return lst;
     }
 
-    private AcceptVersionsType encodeAcceptVersions(AcceptVersions acceptVersions) {
+    private AcceptVersionsType encodeAcceptVersions(OwsAcceptVersions acceptVersions) {
         AcceptVersionsType avt = AcceptVersionsType.Factory.newInstance(getXmlOptions());
-        for (String acceptVersion : acceptVersions.getAcceptVersions()) {
-            avt.addVersion(acceptVersion);
-        }
+        acceptVersions.getAcceptVersions().forEach(avt::addVersion);
         return avt;
     }
 
-    private SectionsType encodeSections(Sections sections) {
+    private SectionsType encodeSections(OwsSections sections) {
         SectionsType st = SectionsType.Factory.newInstance(getXmlOptions());
-        for (String section : sections.getSections()) {
-            st.addSection(section);
-        }
+        sections.getSections().forEach(st::addSection);
         return st;
+    }
+
+    private void encodeOnlineResource(OwsOnlineResource site, OnlineResourceType xsite) {
+        site.getHref().map(URI::toString).ifPresent(xsite::setHref);
+        site.getTitle().ifPresent(xsite::setTitle);
+        site.getActuate().map(Actuate::toString).map(ActuateType.Enum::forString).ifPresent(xsite::setActuate);
+        site.getArcrole().map(URI::toString).ifPresent(xsite::setArcrole);
+        site.getRole().map(URI::toString).ifPresent(xsite::setRole);
+        site.getShow().map(Show::toString).map(ShowType.Enum::forString).ifPresent(xsite::setShow);
+    }
+
+    private void encodeOwsDomain(OwsDomain domain, DomainType xdomain) {
+        xdomain.setName(domain.getName());
+        domain.getDefaultValue().ifPresent(value -> xdomain.addNewDefaultValue().setStringValue(value.getValue()));
+        domain.getDataType().ifPresent(domainMetadata -> encodeOwsDomainMetadata(domainMetadata, xdomain.addNewDataType()));
+        domain.getMeaning().ifPresent(domainMetadata -> encodeOwsDomainMetadata(domainMetadata, xdomain.addNewMeaning()));
+        domain.getMetadata().forEach(metadata -> encodeOwsMetadata(metadata, xdomain.addNewMetadata()));
+        domain.getMetadata().forEach(metadata -> encodeOwsMetadata(metadata, xdomain.addNewMetadata()));
+        domain.getValuesUnit().ifPresent(x -> {
+            if (x.isReferenceSystem()) {
+                encodeOwsDomainMetadata(x.asReferenceSystem(), xdomain.addNewReferenceSystem());
+            } else if (x.isUOM()) {
+                encodeOwsDomainMetadata(x.asUOM(), xdomain.addNewUOM());
+            }
+        });
+        encodeOwsPossibleValues(domain.getPossibleValues(), xdomain);
+     }
+
+    private void encodeOwsMetadata(OwsMetadata metadata, MetadataType xmetadata) {
+        metadata.getHref().map(URI::toString).ifPresent(xmetadata::setHref);
+        metadata.getTitle().ifPresent(xmetadata::setTitle);
+        metadata.getActuate().map(Actuate::toString).map(ActuateType.Enum::forString).ifPresent(xmetadata::setActuate);
+        metadata.getArcrole().map(URI::toString).ifPresent(xmetadata::setArcrole);
+        metadata.getRole().map(URI::toString).ifPresent(xmetadata::setRole);
+        metadata.getShow().map(Show::toString).map(ShowType.Enum::forString).ifPresent(xmetadata::setShow);
+        metadata.getAbout().map(URI::toString).ifPresent(xmetadata::setAbout);
+    }
+
+    private void encodeOwsDomainMetadata(OwsDomainMetadata domainMetadata, DomainMetadataType xdomainMetadata) {
+        domainMetadata.getReference().map(URI::toString).ifPresent(xdomainMetadata::setReference);
+        domainMetadata.getValue().ifPresent(xdomainMetadata::setStringValue);
+    }
+
+    private void encodeOwsAddress(OwsAddress address, AddressType xaddress) {
+        address.getAdministrativeArea().ifPresent(xaddress::setAdministrativeArea);
+        address.getCity().ifPresent(xaddress::setCity);
+        address.getCountry().ifPresent(xaddress::setCountry);
+        address.getPostalCode().ifPresent(xaddress::setPostalCode);
+        address.getDeliveryPoint().forEach(xaddress::addDeliveryPoint);
+        address.getElectronicMailAddress().forEach(xaddress::addElectronicMailAddress);
+    }
+
+    private void encodeOwsPhone(OwsPhone phone, TelephoneType xphone) {
+        phone.getVoice().forEach(xphone::addVoice);
+        phone.getFacsimile().forEach(xphone::addFacsimile);
+    }
+
+    private void encodeOwsCode(OwsCode role, CodeType xrole) {
+        role.getCodeSpace().map(URI::toString).ifPresent(xrole::setCodeSpace);
+        xrole.setStringValue(role.getValue());
+    }
+
+    private void encodeOwsOperation(OwsOperation operation, Operation xoperation) {
+        xoperation.setName(operation.getName());
+        operation.getConstraints().forEach(x -> encodeOwsDomain(x, xoperation.addNewConstraint()));
+        operation.getMetadata().forEach(x -> encodeOwsMetadata(x, xoperation.addNewMetadata()));
+        operation.getParameters().forEach(x -> encodeOwsDomain(x, xoperation.addNewParameter()));
+        operation.getDCP().forEach(x -> encodeOwsDCP(x, xoperation.addNewDCP()));
+    }
+
+    private void encodeOwsContact(OwsContact contact, ContactType xcontact) {
+        contact.getOnlineResource().ifPresent(site -> encodeOnlineResource(site, xcontact.addNewOnlineResource()));
+        contact.getContactInstructions().ifPresent(xcontact::setContactInstructions);
+        contact.getHoursOfService().ifPresent(xcontact::setHoursOfService);
+        contact.getPhone().ifPresent(x -> encodeOwsPhone(x, xcontact.addNewPhone()));
+        contact.getAddress().ifPresent(x -> encodeOwsAddress(x, xcontact.addNewAddress()));
+    }
+
+    private void encodeOwsResponsibleParty(OwsResponsibleParty responsibleParty, ResponsiblePartySubsetType xresponsibleParty) {
+        responsibleParty.getIndividualName().ifPresent(xresponsibleParty::setIndividualName);
+        responsibleParty.getPositionName().ifPresent(xresponsibleParty::setPositionName);
+        responsibleParty.getContactInfo().ifPresent(x -> encodeOwsContact(x, xresponsibleParty.addNewContactInfo()));
+        responsibleParty.getRole().ifPresent(x -> encodeOwsCode(x, xresponsibleParty.addNewRole()));
+    }
+
+    private void encodeOwsDCP(OwsDCP dcp, DCP xdcp) {
+        if (dcp.isHTTP()) {
+            HTTP xhttp = xdcp.addNewHTTP();
+            OwsHttp http = dcp.asHTTP();
+
+            SortedSet<OwsRequestMethod> requestMethods = http.getRequestMethods();
+            requestMethods.forEach(method -> {
+                RequestMethodType xmethod;
+                switch (method.getHttpMethod()) {
+                    case HTTPMethods.GET:
+                        xmethod = xhttp.addNewGet();
+                        break;
+                    case HTTPMethods.POST:
+                        xmethod = xhttp.addNewPost();
+                        break;
+                    default:
+                        return;
+                }
+                encodeOnlineResource(method, xmethod);
+                method.getConstraints().forEach(x -> encodeOwsDomain(x, xmethod.addNewConstraint()));
+            });
+        }
+    }
+
+    private void encodeOwsLanguageString(OwsLanguageString languageString, LanguageStringType xlanguageString) {
+        xlanguageString.setStringValue(languageString.getValue());
+        languageString.getLang().ifPresent(xlanguageString::setLang);
+    }
+
+    private void encodeOwsKeywords(Optional<OwsCode> type, List<OwsLanguageString> keywords, KeywordsType xkeywords) {
+        type.ifPresent(x -> encodeOwsCode(x, xkeywords.addNewType()));
+        keywords.forEach(x ->  encodeOwsLanguageString(x, xkeywords.addNewKeyword()));
+    }
+
+    private void encodeOwsPossibleValues(OwsPossibleValues possibleValues, DomainType xdomain) {
+        if (possibleValues.isAnyValue()) {
+            xdomain.addNewAnyValue();
+        } else if (possibleValues.isNoValues()) {
+            xdomain.addNewNoValues();
+        } else if (possibleValues.isValuesReference()) {
+            OwsValuesReference vr = possibleValues.asValuesReference();
+            ValuesReference xvr = xdomain.addNewValuesReference();
+            xvr.setReference(vr.getReference().toString());
+            xvr.setStringValue(vr.getValue());
+        } else if (possibleValues.isAllowedValues()) {
+            OwsAllowedValues av = possibleValues.asAllowedValues();
+            AllowedValues xav = xdomain.addNewAllowedValues();
+            av.getRestrictions().forEach(restriction -> {
+                if (restriction.isRange()) {
+                    OwsRange range = restriction.asRange();
+                    RangeType xrange = xav.addNewRange();
+                    range.getLowerBound().map(OwsValue::getValue).ifPresent(v -> xrange.addNewMinimumValue().setStringValue(v));
+                    range.getUpperBound().map(OwsValue::getValue).ifPresent(v -> xrange.addNewMaximumValue().setStringValue(v));
+                    range.getSpacing().map(OwsValue::getValue).ifPresent(v -> xrange.addNewSpacing().setStringValue(v));
+                    xrange.setRangeClosure(Collections.singletonList(range.getType()));
+                } else if (restriction.isValue()) {
+                    xav.addNewValue().setStringValue(restriction.asValue().getValue());
+                }
+            });
+        }
+    }
+
+    private XmlObject encodeOwsOperationsMetadataExtension(OwsOperationMetadataExtension extension) throws EncodingException {
+        return encodeObjectToXml(extension.getNamespace(), extension);
     }
 }

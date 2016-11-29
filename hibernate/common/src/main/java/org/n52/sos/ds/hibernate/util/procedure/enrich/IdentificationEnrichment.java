@@ -28,16 +28,18 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import java.util.Locale;
+
 import org.n52.iceland.i18n.I18NDAO;
 import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.ogc.OGCConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.i18n.LocalizedString;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
 
 import com.google.common.base.Optional;
 
@@ -79,7 +81,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
         if (isSetI18NProcedure() && shortName.isPresent()) {
             SmlIdentifier smlIdentifier = shortName.get();
             Optional<LocalizedString> localization
-                    = i18n.getShortName().getLocalizationOrDefault(getLocale());
+                    = i18n.getShortName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
             if (localization.isPresent()) {
                 smlIdentifier.setValue(localization.get().getText());
             }
@@ -94,7 +96,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
         if (isSetI18NProcedure() && longName.isPresent()) {
             SmlIdentifier smlIdentifier = longName.get();
             Optional<LocalizedString> localization
-                    = i18n.getLongName().getLocalizationOrDefault(getLocale());
+                    = i18n.getLongName().getLocalizationOrDefault(getLocale(), getDefaultLocale());
             if (localization.isPresent()) {
                 smlIdentifier.setValue(localization.get().getText());
             }
@@ -104,7 +106,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     private String getLongName() {
         if (isSetI18NProcedure()) {
             Optional<LocalizedString> longName = i18n.getLongName()
-                    .getLocalizationOrDefault(getLocale());
+                    .getLocalizationOrDefault(getLocale(), getDefaultLocale());
             if (longName.isPresent()) {
                 return longName.get().getText();
             }
@@ -115,7 +117,7 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     private String getShortName() {
         if (isSetI18NProcedure()) {
             Optional<LocalizedString> longName = i18n.getShortName()
-                    .getLocalizationOrDefault(getLocale());
+                    .getLocalizationOrDefault(getLocale(), getDefaultLocale());
             if (longName.isPresent()) {
                 return longName.get().getText();
             }
@@ -159,7 +161,11 @@ public class IdentificationEnrichment extends SensorMLEnrichment {
     }
 
     private boolean isNotDefaultLocale() {
-        return isSetLocale() && !getLocale().equals(ServiceConfiguration.getInstance().getDefaultLanguage());
+        return isSetLocale() && !getLocale().equals(getDefaultLocale());
+    }
+
+    private Locale getDefaultLocale() {
+        return ServiceConfiguration.getInstance().getDefaultLanguage();
     }
 
 }

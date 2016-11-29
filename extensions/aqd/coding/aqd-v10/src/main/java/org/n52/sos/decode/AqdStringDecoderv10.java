@@ -31,15 +31,11 @@ package org.n52.sos.decode;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.coding.decode.AbstractStringRequestDecoder;
 import org.n52.sos.util.CodingHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
 
 /**
  * {@link String} decoder for AQD e-Reporting requests
@@ -48,7 +44,6 @@ import com.google.common.base.Joiner;
  *
  */
 public class AqdStringDecoderv10 extends AbstractStringRequestDecoder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AqdStringDecoderv10.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CollectionHelper.union(
             CodingHelper.xmlStringDecoderKeysForOperationAndMediaType(
@@ -60,9 +55,6 @@ public class AqdStringDecoderv10 extends AbstractStringRequestDecoder {
                     AqdConstants.AQD, null,
                     AqdConstants.Operations.GetCapabilities));
 
-    public AqdStringDecoderv10() {
-        LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ").join(DECODER_KEYS));
-    }
 
     @Override
     public Set<DecoderKey> getKeys() {

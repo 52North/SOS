@@ -29,25 +29,25 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorML20Constants;
-import org.n52.sos.ogc.sensorML.v20.AbstractPhysicalProcess;
-import org.n52.sos.ogc.sensorML.v20.AbstractProcessV20;
-import org.n52.sos.ogc.sensorML.v20.PhysicalSystem;
-import org.n52.sos.ogc.sensorML.v20.SimpleProcess;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.SensorML20Constants;
+import org.n52.shetland.ogc.sensorML.v20.AbstractPhysicalProcess;
+import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.shetland.ogc.sensorML.v20.SimpleProcess;
 
 import com.google.common.base.Joiner;
 

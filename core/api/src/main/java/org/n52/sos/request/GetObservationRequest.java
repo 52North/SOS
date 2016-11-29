@@ -28,28 +28,33 @@
  */
 package org.n52.sos.request;
 
-import java.util.LinkedList;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.filter.Filter;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.janmayen.function.Functions;
+import org.n52.shetland.ogc.filter.Filter;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * SOS GetObservation request
@@ -100,15 +105,16 @@ public class GetObservationRequest extends AbstractObservationRequest implements
 
     private boolean mergeObservationValues = false;
 
+    public GetObservationRequest() {
+        super(null, null, SosConstants.Operations.GetObservation.name());
+    }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see org.n52.sos.request.AbstractSosRequest#getOperationName()
-     */
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetObservation.name();
+    public GetObservationRequest(String service, String version) {
+        super(service, version, SosConstants.Operations.GetObservation.name());
+    }
+
+    public GetObservationRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -124,7 +130,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set temporal filters
      *
      * @param temporalFilters
-     *            temporal filters
+     *                        temporal filters
      */
     public void setTemporalFilters(List<TemporalFilter> temporalFilters) {
         this.temporalFilters = temporalFilters;
@@ -144,7 +150,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set FOI identifiers
      *
      * @param featureIdentifiers
-     *            FOI identifiers
+     *                           FOI identifiers
      */
     @Override
     public void setFeatureIdentifiers(List<String> featureIdentifiers) {
@@ -164,7 +170,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set observedProperties
      *
      * @param observedProperties
-     *            observedProperties
+     *                           observedProperties
      */
     public void setObservedProperties(List<String> observedProperties) {
         this.observedProperties = observedProperties;
@@ -183,7 +189,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set offerings
      *
      * @param offerings
-     *            offerings
+     *                  offerings
      */
     public void setOfferings(List<String> offerings) {
         this.offerings = offerings;
@@ -202,7 +208,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set procedures
      *
      * @param procedures
-     *            procedures
+     *                   procedures
      */
     public void setProcedures(List<String> procedures) {
         this.procedures = procedures;
@@ -221,8 +227,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     /**
      * Add result filter(s)
      *
-     * @param result
-     *            result filter(s)
+     * @param resultFilter
+     *                     result filter(s)
      */
     @SuppressWarnings("rawtypes")
     public void setResultFilter(Filter resultFilter) {
@@ -252,7 +258,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set request as String
      *
      * @param requestString
-     *            request as String
+     *                      request as String
      */
     public void setRequestString(String requestString) {
         this.requestString = requestString;
@@ -272,7 +278,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Set spatial filter
      *
      * @param resultSpatialFilter
-     *            spatial filter
+     *                            spatial filter
      */
     @Override
     public void setSpatialFilter(SpatialFilter resultSpatialFilter) {
@@ -283,7 +289,8 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * Create a copy of this request with defined observableProperties
      *
      * @param obsProps
-     *            defined observableProperties
+     *                 defined observableProperties
+     *
      * @return SOS GetObservation request copy
      */
     public GetObservationRequest copyOf(List<String> obsProps) {
@@ -313,87 +320,63 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     public boolean isSetOffering() {
-        if (offerings != null && !offerings.isEmpty()) {
-            return true;
-        }
-        return false;
+        return offerings != null && !offerings.isEmpty();
     }
 
     public boolean isSetObservableProperty() {
-        if (observedProperties != null && !observedProperties.isEmpty()) {
-            return true;
-        }
-        return false;
+        return observedProperties != null && !observedProperties.isEmpty();
     }
 
     public boolean isSetProcedure() {
-        if (procedures != null && !procedures.isEmpty()) {
-            return true;
-        }
-        return false;
+        return procedures != null && !procedures.isEmpty();
     }
 
     @Override
     public boolean isSetFeatureOfInterest() {
-        if (featureIdentifiers != null && !featureIdentifiers.isEmpty()) {
-            return true;
-        }
-        return false;
+        return featureIdentifiers != null && !featureIdentifiers.isEmpty();
     }
 
     public boolean isSetTemporalFilter() {
-        if (temporalFilters != null && !temporalFilters.isEmpty()) {
-            return true;
-        }
-        return false;
+        return temporalFilters != null && !temporalFilters.isEmpty();
     }
 
     @Override
     public boolean isSetSpatialFilter() {
-        if (spatialFilter != null) {
-            return true;
-        }
-        return false;
+        return spatialFilter != null;
     }
 
     public boolean hasFirstLatestTemporalFilter() {
-        for (TemporalFilter temporalFilter : temporalFilters) {
-            if (temporalFilter.getTime() instanceof TimeInstant) {
-                TimeInstant ti = (TimeInstant) temporalFilter.getTime();
-                if (ti.isSetSosIndeterminateTime()) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return temporalFilters.stream()
+                .map(TemporalFilter::getTime)
+                .filter(Functions.instanceOf(TimeInstant.class))
+                .map(Functions.cast(TimeInstant.class))
+                .map(TimeInstant::getIndeterminateValue)
+                .anyMatch(this::isFirstLatest);
     }
 
-    public List<ExtendedIndeterminateTime> getFirstLatestTemporalFilter() {
-        List<ExtendedIndeterminateTime> tf = new LinkedList<ExtendedIndeterminateTime>();
-        for (TemporalFilter temporalFilter : temporalFilters) {
-            if (temporalFilter.getTime() instanceof TimeInstant) {
-                TimeInstant ti = (TimeInstant) temporalFilter.getTime();
-                if (ti.isSetSosIndeterminateTime()) {
-                    tf.add(ti.getSosIndeterminateTime());
-                }
-            }
-        }
-        return tf;
+    public List<IndeterminateValue> getFirstLatestTemporalFilter() {
+        return temporalFilters.stream()
+                .map(TemporalFilter::getTime)
+                .filter(Functions.instanceOf(TimeInstant.class))
+                .map(Functions.cast(TimeInstant.class))
+                .map(TimeInstant::getIndeterminateValue)
+                .filter(Objects::nonNull)
+                .filter(this::isFirstLatest)
+                .collect(toList());
     }
 
     public List<TemporalFilter> getNotFirstLatestTemporalFilter() {
-        List<TemporalFilter> tf = new LinkedList<TemporalFilter>();
-        for (TemporalFilter temporalFilter : temporalFilters) {
+        return temporalFilters.stream().map(temporalFilter -> {
             if (temporalFilter.getTime() instanceof TimeInstant) {
-                TimeInstant ti = (TimeInstant) temporalFilter.getTime();
-                if (!ti.isSetSosIndeterminateTime()) {
-                    tf.add(temporalFilter);
+                if (!isFirstLatest(((TimeInstant) temporalFilter.getTime()).getIndeterminateValue())) {
+                    return temporalFilter;
+                } else {
+                    return null;
                 }
             } else {
-                tf.add(temporalFilter);
+                return temporalFilter;
             }
-        }
-        return tf;
+        }).collect(toList());
     }
 
     public boolean hasTemporalFilters() {
@@ -401,18 +384,22 @@ public class GetObservationRequest extends AbstractObservationRequest implements
     }
 
     public boolean isEmpty() {
-        return !isSetOffering() && !isSetObservableProperty() && !isSetProcedure() && !isSetFeatureOfInterest()
-                && !isSetTemporalFilter() && !isSetSpatialFilter();
+        return !isSetOffering() &&
+               !isSetObservableProperty() &&
+               !isSetProcedure() &&
+               !isSetFeatureOfInterest() &&
+               !isSetTemporalFilter() &&
+               !isSetSpatialFilter();
     }
 
     @Override
     public boolean hasSpatialFilteringProfileSpatialFilter() {
         return isSetSpatialFilter() && getSpatialFilter().getValueReference()
-                .equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
+               .equals(Sos2Constants.VALUE_REFERENCE_SPATIAL_FILTERING_PROFILE);
     }
 
     public boolean isSetRequestString() {
-        return StringHelper.isNotEmpty(getRequestString());
+        return !Strings.isNullOrEmpty(getRequestString());
     }
 
     public boolean isSetNamespaces() {
@@ -439,14 +426,7 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      *         {@link Filter}
      */
     public boolean isSetFesFilterExtension() {
-        if (isSetExtensions()) {
-            for (Extension<?> extension : getExtensions().getExtensions()) {
-                if (isFesFilterExtension(extension)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return isSetExtensions() && getExtensions().getExtensions().stream().anyMatch(this::isFesFilterExtension);
     }
 
     /**
@@ -455,18 +435,19 @@ public class GetObservationRequest extends AbstractObservationRequest implements
      * @return All {@link SwesExtensions} with {@link Filter}
      */
     public Set<Extension<?>> getFesFilterExtensions() {
-        Set<Extension<?>> set = Sets.newHashSet();
-        if (isSetExtensions()) {
-            for (Extension<?> extension : getExtensions().getExtensions()) {
-                if (isFesFilterExtension(extension)) {
-                    set.add(extension);
-                }
-            }
-        }
-        return set;
+        return Optional.ofNullable(getExtensions())
+                .map(Extensions::getExtensions)
+                .orElseGet(Collections::emptySet)
+                .stream()
+                .filter(this::isFesFilterExtension)
+                .collect(toSet());
     }
 
     private boolean isFesFilterExtension(Extension<?> extension) {
         return extension.getValue() instanceof Filter<?>;
+    }
+
+    private boolean isFirstLatest(IndeterminateValue v) {
+        return v != null && (v.equals(ExtendedIndeterminateTime.FIRST) || v.equals(ExtendedIndeterminateTime.LATEST));
     }
 }

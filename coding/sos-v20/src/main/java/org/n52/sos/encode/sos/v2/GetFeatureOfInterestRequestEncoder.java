@@ -30,21 +30,22 @@ package org.n52.sos.encode.sos.v2;
 
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.encode.swes.ExtensibleRequestEncoder;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-
-import com.google.common.collect.Sets;
-
 import net.opengis.fes.x20.SpatialOpsDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestDocument;
 import net.opengis.sos.x20.GetFeatureOfInterestType;
+
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.encode.swes.ExtensibleRequestEncoder;
+import org.n52.sos.request.GetFeatureOfInterestRequest;
+
+import com.google.common.collect.Sets;
 
 /**
  * XML {@link Decoder} for {@link GetFeatureOfInterestRequest}
@@ -65,7 +66,7 @@ public class GetFeatureOfInterestRequestEncoder extends AbstractSosRequestEncode
     }
 
     @Override
-    protected XmlObject create(GetFeatureOfInterestRequest request) throws OwsExceptionReport {
+    protected XmlObject create(GetFeatureOfInterestRequest request) throws EncodingException {
         GetFeatureOfInterestDocument doc = GetFeatureOfInterestDocument.Factory.newInstance(getXmlOptions());
         GetFeatureOfInterestType gfoit = doc.addNewGetFeatureOfInterest();
         addService(gfoit, request);
@@ -80,28 +81,22 @@ public class GetFeatureOfInterestRequestEncoder extends AbstractSosRequestEncode
 
     private void addProcedure(GetFeatureOfInterestType gfoit, GetFeatureOfInterestRequest request) {
         if (request.isSetProcedures()) {
-            for (String procedure : request.getProcedures()) {
-                gfoit.addProcedure(procedure);
-            }
+            request.getProcedures().forEach(gfoit::addProcedure);
         }
     }
     private void addObservedProperty(GetFeatureOfInterestType gfoit, GetFeatureOfInterestRequest request) {
         if (request.isSetObservableProperties()) {
-            for (String observedProperty : request.getObservedProperties()) {
-                gfoit.addObservedProperty(observedProperty);
-            }
+            request.getObservedProperties().forEach(gfoit::addObservedProperty);
         }
     }
 
     private void addFeatureOfInterest(GetFeatureOfInterestType gfoit, GetFeatureOfInterestRequest request) {
         if (request.isSetFeatureOfInterestIdentifiers()) {
-            for (String featureOfInterest : request.getFeatureIdentifiers()) {
-                gfoit.addFeatureOfInterest(featureOfInterest);
-            }
+            request.getFeatureIdentifiers().forEach(gfoit::addFeatureOfInterest);
         }
     }
 
-    private void addSpatialFilters(GetFeatureOfInterestType got, GetFeatureOfInterestRequest request) throws OwsExceptionReport {
+    private void addSpatialFilters(GetFeatureOfInterestType got, GetFeatureOfInterestRequest request) throws EncodingException {
         if (request.isSetSpatialFilters()) {
             for (SpatialFilter spatialFilter : request.getSpatialFilters()) {
                 // TODO fixme

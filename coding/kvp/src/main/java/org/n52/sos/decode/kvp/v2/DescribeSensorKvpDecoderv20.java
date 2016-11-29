@@ -28,92 +28,31 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.MissingProcedureDescriptionFormatException;
-import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.sos.request.DescribeSensorRequest;
 
 /**
  * @since 4.0.0
  *
  */
-public class DescribeSensorKvpDecoderv20 extends AbstractKvpDecoder {
+public class DescribeSensorKvpDecoderv20 extends AbstractSosKvpDecoder<DescribeSensorRequest> {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, SosConstants.Operations.DescribeSensor, MediaTypes.APPLICATION_KVP);
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public DescribeSensorKvpDecoderv20() {
+        super(DescribeSensorRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              SosConstants.Operations.DescribeSensor);
     }
 
     @Override
-    public DescribeSensorRequest decode(Map<String, String> element) throws OwsExceptionReport {
-
-        DescribeSensorRequest request = new DescribeSensorRequest();
-        CompositeOwsException exceptions = new CompositeOwsException();
-
-        for (String parameterName : element.keySet()) {
-            String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                        if (parameterName.equalsIgnoreCase(SosConstants.DescribeSensorParams.procedure.name())) {
-                        request.setProcedure(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    } // procedureDescriptionFormat
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat
-                            .name())) {
-                        request.setProcedureDescriptionFormat(KvpHelper.checkParameterSingleValue(parameterValues,
-                                parameterName));
-                    } // valid time (optional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.DescribeSensorParams.validTime.name())) {
-                        try {
-                            request.setValidTime(parseValidTime(parameterValues, parameterName));
-                        } catch (OwsExceptionReport e) {
-                            exceptions.add(new InvalidParameterValueException(parameterName, parameterValues).causedBy(e));
-                        }
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(parameterName));
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (!request.isSetProcedure()) {
-            exceptions.add(new MissingProcedureParameterException());
-        }
-
-        if (!request.isSetProcedureDescriptionFormat()) {
-            exceptions.add(new MissingProcedureDescriptionFormatException());
-        }
-
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
+    protected void getRequestParameterDefinitions(Builder<DescribeSensorRequest> builder) {
+        builder.add(SosConstants.DescribeSensorParams.procedure,
+                    DescribeSensorRequest::setProcedure);
+        builder.add(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat,
+                    DescribeSensorRequest::setProcedureDescriptionFormat);
+        builder.add(Sos2Constants.DescribeSensorParams.validTime,
+                    decodeTime(DescribeSensorRequest::setValidTime));
     }
 }

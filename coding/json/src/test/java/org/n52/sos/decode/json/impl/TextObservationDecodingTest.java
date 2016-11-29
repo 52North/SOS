@@ -35,7 +35,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
-import static org.n52.iceland.util.DateTimeHelper.parseIsoString2DateTime;
+import static org.n52.shetland.util.DateTimeHelper.parseIsoString2DateTime;
 
 import java.io.IOException;
 
@@ -44,15 +44,16 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.OmConstants;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.TextValue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -82,7 +83,7 @@ public class TextObservationDecodingTest {
     }
 
     @Before
-    public void before() throws OwsExceptionReport {
+    public void before() throws DecodingException {
         this.decoder = new ObservationDecoder();
         this.observation = decoder.decodeJSON(json, true);
     }

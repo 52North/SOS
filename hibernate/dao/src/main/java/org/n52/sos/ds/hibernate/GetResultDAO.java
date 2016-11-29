@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.n52.iceland.util.CollectionHelper.isEmpty;
-import static org.n52.iceland.util.CollectionHelper.isNotEmpty;
-import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.shetland.util.CollectionHelper.isEmpty;
+import static org.n52.shetland.util.CollectionHelper.isNotEmpty;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,15 +46,16 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -97,6 +98,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private final EntitiyHelper entitiyHelper = new EntitiyHelper();
 
     public GetResultDAO() {
         super(SosConstants.SOS);
@@ -122,13 +124,14 @@ public class GetResultDAO extends AbstractGetResultHandler {
             response.setVersion(request.getVersion());
             final Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
             final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
+            try {
             if (isNotEmpty(resultTemplates)) {
-                final SosResultEncoding sosResultEncoding =
-                        new SosResultEncoding(resultTemplates.get(0).getResultEncoding());
-                final SosResultStructure sosResultStructure =
-                        new SosResultStructure(resultTemplates.get(0).getResultStructure());
-                final List<Observation<?>> observations;
-                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+
+                SosResultEncoding sosResultEncoding = new SosResultEncoding(resultTemplates.get(0).getResultEncoding());
+                SosResultStructure sosResultStructure = new SosResultStructure(resultTemplates.get(0).getResultStructure());
+                List<Observation<?>> observations;
+
+                if (entitiyHelper.isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 } else {
                     observations = queryObservation(request, featureIdentifier, session);
@@ -137,8 +140,11 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations,
                         sosResultEncoding, sosResultStructure));
             }
+            } catch (DecodingException ex) {
+                throw new NoApplicableCodeException().causedBy(ex);
+            }
             return response;
-        } catch (final HibernateException he) {
+        } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
                     .setStatus(INTERNAL_SERVER_ERROR);
         } finally {
@@ -334,8 +340,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 criteria.add(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                request.getSpatialFilter().getGeometry())));
+                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
         }
     }
 }

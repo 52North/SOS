@@ -28,14 +28,14 @@
  */
 package org.n52.sos.inspire.capabilities;
 
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilities;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
 import org.n52.sos.inspire.InspireObject;
 import org.n52.sos.inspire.InspireSupportedLanguages;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesResponseLanguage;
 import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapabilitiesSupportedLanguage;
+import org.n52.shetland.ogc.ows.OwsOperationMetadataExtension;
 
 /**
  * Abstract service internal representation of INSPIRE  ExtendedCapabilities.
@@ -44,7 +44,7 @@ import org.n52.sos.inspire.capabilities.InspireCapabilities.InspireExtendedCapab
  * @since 4.1.0
  *
  */
-public abstract class InspireExtendedCapabilities implements OwsExtendedCapabilities,
+public abstract class InspireExtendedCapabilities implements OwsOperationMetadataExtension,
         InspireExtendedCapabilitiesSupportedLanguage, InspireExtendedCapabilitiesResponseLanguage, InspireObject {
 
     private String inspireId;

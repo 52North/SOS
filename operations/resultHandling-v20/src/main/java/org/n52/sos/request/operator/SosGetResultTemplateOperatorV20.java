@@ -31,11 +31,11 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.AbstractGetResultTemplateHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -68,7 +68,7 @@ public class SosGetResultTemplateOperatorV20 extends AbstractV2RequestOperator<A
 
     @Override
     public GetResultTemplateResponse receive(GetResultTemplateRequest request) throws OwsExceptionReport {
-        return getDao().getResultTemplate(request);
+        return getOperationHandler().getResultTemplate(request);
     }
 
     @Override

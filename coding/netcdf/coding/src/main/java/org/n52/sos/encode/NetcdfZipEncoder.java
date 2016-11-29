@@ -40,20 +40,22 @@ import java.util.zip.ZipOutputStream;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.coding.encode.EncoderKey;
+
+import org.n52.svalbard.encode.EncoderKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.netcdf.NetcdfConstants;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.om.NetCDFObservation;
 import org.n52.sos.response.BinaryAttachmentResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -126,14 +128,19 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
         return Collections.emptySet();
     }
 
+    @Override
     protected BinaryAttachmentResponse encodeNetCDFObsToNetcdf(List<NetCDFObservation> netCDFObsList, Version version)
-            throws OwsExceptionReport {
+            throws EncodingException {
         File tempDir = Files.createTempDir();
 
         for (NetCDFObservation netCDFObs : netCDFObsList) {
             for (AbstractSensorDataset sensorDataset : netCDFObs.getSensorDatasets()) {
-                File netcdfFile = new File(tempDir, getFilename(sensorDataset));
-                encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
+                try {
+                    File netcdfFile = new File(tempDir, getFilename(sensorDataset));
+                    encodeSensorDataToNetcdf(netcdfFile, sensorDataset, version);
+                } catch (IOException ex) {
+                    throw new EncodingException(ex);
+                }
             }
         }
 
@@ -143,7 +150,7 @@ public class NetcdfZipEncoder extends AbstractBasicNetcdfEncoder {
                     new BinaryAttachmentResponse(zipBoas.toByteArray(), getContentType(), String.format(
                             DOWNLOAD_FILENAME_FORMAT, makeDateSafe(new DateTime(DateTimeZone.UTC))));
         } catch (IOException e) {
-            throw new NoApplicableCodeException().causedBy(e).withMessage("Couldn't create netCDF zip file");
+            throw new EncodingException("Couldn't create netCDF zip file", e);
         } finally {
             tempDir.delete();
         }

@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,21 +41,29 @@ import javax.inject.Inject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NotYetSupportedException;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -80,13 +89,9 @@ import org.n52.sos.ds.hibernate.values.series.HibernateChunkSeriesStreamingValue
 import org.n52.sos.ds.hibernate.values.series.HibernateScrollableSeriesStreamingValue;
 import org.n52.sos.ds.hibernate.values.series.HibernateSeriesStreamingValue;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -218,10 +223,10 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         // get valid featureOfInterest identifier
         final Set<String> features = getFeatures(request, session);
         if (features != null && features.isEmpty()) {
-            return new ArrayList<OmObservation>();
+            return new ArrayList<>();
         }
         // temporal filters
-        final List<ExtendedIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
+        final List<IndeterminateValue> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         // final List<OmObservation> result = new LinkedList<OmObservation>();
@@ -232,10 +237,9 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         }
         // query with first/latest value filter
         else if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            for (ExtendedIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
+            for (IndeterminateValue sosIndeterminateTime : sosIndeterminateTimeFilters) {
                 if (ServiceConfiguration.getInstance().isOverallExtrema()) {
-                    observations =
-                            observationDAO.getObservationsFor(request, features, sosIndeterminateTime, session);
+                    observations = observationDAO.getObservationsFor(request, features, sosIndeterminateTime, session);
                 } else {
                     for (ObservationConstellation oc : HibernateGetObservationHelper
                             .getAndCheckObservationConstellationSize(request, session)) {
@@ -255,7 +259,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
 
         int metadataObservationsCount = 0;
 
-        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session);
+        List<OmObservation> result = HibernateGetObservationHelper.toSosObservation(observations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), session);
         Set<OmObservationConstellation> timeSeries = Sets.newHashSet();
         if (ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations()
                 || ServiceConfiguration.getInstance().getMaxNumberOfReturnedTimeSeries() > 0) {
@@ -269,7 +273,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
                 final List<String> featureIds =
                         HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
                 for (OmObservation omObservation : HibernateObservationUtilities.createSosObservationFromObservationConstellation(oc,
-                        featureIds, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session)) {
+                        featureIds, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), session)) {
                     if (!timeSeries.contains(omObservation.getObservationConstellation())) {
                         result.add(omObservation);
                         timeSeries.add(omObservation.getObservationConstellation());
@@ -312,7 +316,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             return new LinkedList<>();
         }
         // temporal filters
-        final List<ExtendedIndeterminateTime> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
+        final List<IndeterminateValue> sosIndeterminateTimeFilters = request.getFirstLatestTemporalFilter();
         final Criterion filterCriterion = HibernateGetObservationHelper.getTemporalFilterCriterion(request);
 
         final List<OmObservation> result = new LinkedList<>();
@@ -327,7 +331,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         }
         // query with first/latest value filter
         else if (CollectionHelper.isNotEmpty(sosIndeterminateTimeFilters)) {
-            for (ExtendedIndeterminateTime sosIndeterminateTime : sosIndeterminateTimeFilters) {
+            for (IndeterminateValue sosIndeterminateTime : sosIndeterminateTimeFilters) {
                 if (ServiceConfiguration.getInstance().isOverallExtrema()) {
                     seriesObservations =
                             observationDAO.getSeriesObservationsFor(request, features,
@@ -372,7 +376,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             metadataObservationsCount = seriesToCheckMap.size();
             for (Series series : seriesToCheckMap.values()) {
                 result.addAll(HibernateObservationUtilities.createSosObservationFromSeries(series,
-                        request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
+                        request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), session));
             }
         }
         HibernateGetObservationHelper
@@ -382,7 +386,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         LOGGER.debug("Time to query observations needs {} ms!", (System.currentTimeMillis() - start));
         Collection<Observation<?>> abstractObservations = Lists.newArrayList();
         abstractObservations.addAll(seriesObservations);
-        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session));
+        result.addAll(HibernateGetObservationHelper.toSosObservation(abstractObservations, request, this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), session));
         return result;
     }
 
@@ -417,7 +421,7 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
             final List<String> featureIds =
                     HibernateGetObservationHelper.getAndCheckFeatureOfInterest(oc, features, session);
             for (OmObservation observationTemplate : HibernateObservationUtilities
-                    .createSosObservationFromObservationConstellation(oc, featureIds, request,this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session)) {
+                    .createSosObservationFromObservationConstellation(oc, featureIds, request,this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), LocaleHelper.fromString(request.getRequestedLanguage()), session)) {
                 FeatureOfInterest featureOfInterest =
                         new FeatureOfInterestDAO().getFeatureOfInterest(observationTemplate
                                 .getObservationConstellation().getFeatureOfInterest().getIdentifier(),
@@ -464,9 +468,13 @@ public class GetObservationDAO extends AbstractGetObservationHandler {
         HibernateGetObservationHelper.checkMaxNumberOfReturnedSeriesSize(serieses.size());
         int maxNumberOfValuesPerSeries = HibernateGetObservationHelper.getMaxNumberOfValuesPerSeries(serieses.size());
         for (Series series : serieses) {
+            Locale locale = LocaleHelper.fromString(request.getRequestedLanguage());
+            String service = request.getService();
+            LocalizedProducer<OwsServiceProvider> serviceProviderFactory
+                    = this.serviceMetadataRepository.getServiceProviderFactory(service);
             Collection<? extends OmObservation> createSosObservationFromSeries =
                     HibernateObservationUtilities
-                            .createSosObservationFromSeries(series, request,this.serviceMetadataRepository.getServiceProviderFactory(request.getService()), request.getRequestedLocale(), session);
+                            .createSosObservationFromSeries(series, request, serviceProviderFactory, locale, session);
             OmObservation observationTemplate = createSosObservationFromSeries.iterator().next();
             HibernateSeriesStreamingValue streamingValue = getSeriesStreamingValue(request, series.getSeriesId());
             streamingValue.setResponseFormat(request.getResponseFormat());

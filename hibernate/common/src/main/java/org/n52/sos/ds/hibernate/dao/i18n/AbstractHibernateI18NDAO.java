@@ -42,11 +42,12 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.LocalizedString;
 import org.n52.iceland.i18n.metadata.AbstractI18NMetadata;
+import org.n52.shetland.i18n.LocalizedString;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.i18n.AbstractHibernateI18NMetadata;

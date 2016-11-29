@@ -28,7 +28,7 @@
  */
 package org.n52.sos.inspire.aqd;
 
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.sos.util.Nillable;
 import org.n52.sos.util.Referenceable;
 

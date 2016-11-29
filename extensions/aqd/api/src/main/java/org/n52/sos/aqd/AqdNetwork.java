@@ -39,6 +39,5 @@ import org.n52.sos.ef.EfEnvironmentalMonitoringNetwork;
  */
 public class AqdNetwork extends EfEnvironmentalMonitoringNetwork {
 
-    private static final long serialVersionUID = -1389787928974429048L;
 
 }

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.inspire.aqd.InspireID;
@@ -46,7 +46,7 @@ public class EReportingHeaderJSONDecoder extends AbstractJSONDecoder<EReportingH
 
     @Override
     public EReportingHeader decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         EReportingHeader header = new EReportingHeader();
         header.setChange(decodeJsonToObject(node.path(AQDJSONConstants.CHANGE), EReportingChange.class));
         header.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), InspireID.class));

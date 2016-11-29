@@ -29,7 +29,8 @@
 package org.n52.sos.inspire;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+
+import org.n52.shetland.ogc.gml.time.TimeInstant;
 
 /**
  * Service internal representation of INSPIRE date of publication

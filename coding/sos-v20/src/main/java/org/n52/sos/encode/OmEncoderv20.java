@@ -47,50 +47,48 @@ import org.apache.xmlbeans.XmlString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.om.AbstractObservationValue;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.HrefAttributeValue;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.ReferenceValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.HrefAttributeValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.ReferenceValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.visitor.ValueVisitor;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SweHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -196,8 +194,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
-            UnsupportedEncoderInputException {
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
         if (element instanceof ObservationValue) {
             return encodeResult((ObservationValue<?>)element);
         }
@@ -206,13 +203,13 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
                 new OmV20XmlStreamWriter().write((OmObservation)objectToEncode, outputStream, encodingValues);
             } catch (XMLStreamException xmlse) {
-                throw new NoApplicableCodeException().causedBy(xmlse).withMessage("Error while writing element to stream!");
+                throw new EncodingException("Error while writing element to stream!", xmlse);
             }
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
@@ -220,7 +217,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     }
 
     @Override
-    protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
+    protected XmlObject createResult(OmObservation sosObservation) throws EncodingException {
         ObservationValue<?> value = sosObservation.getValue();
         // TODO if OM_SWEArrayObservation and get ResultEncoding and
         // ResultStructure exists,
@@ -236,7 +233,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
 
     @Override
-    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
+    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws EncodingException {
         if (observationValue instanceof SingleObservationValue) {
             return createSingleObservationToResult((SingleObservationValue<?>)observationValue);
         } else if (observationValue instanceof MultiObservationValues) {
@@ -247,7 +244,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
     @Override
     protected void addObservationType(OMObservationType xbObservation, String observationType) {
-        if (StringHelper.isNotEmpty(observationType)) {
+        if (!Strings.isNullOrEmpty(observationType)) {
             xbObservation.addNewType().setHref(observationType);
         }
     }
@@ -267,7 +264,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         return false;
     }
 
-    private XmlObject createSingleObservationToResult(final SingleObservationValue<?> observationValue) throws OwsExceptionReport {
+    private XmlObject createSingleObservationToResult(final SingleObservationValue<?> observationValue) throws EncodingException {
         final String observationType;
         if (observationValue.isSetObservationType()) {
             observationType = observationValue.getObservationType();
@@ -276,7 +273,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         }
         if (observationType.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
             SweDataArray dataArray = SweHelper.createSosSweDataArray(observationValue);
-            Map<HelperValues, String> additionalValues = new EnumMap<>(SosConstants.HelperValues.class);
+            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
             additionalValues.put(HelperValues.FOR_OBSERVATION, null);
             return encodeSWE(dataArray, additionalValues);
         }
@@ -284,39 +281,44 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         return observationValue.getValue().accept(new ResultValueVisitor(observationType, observationValue.getObservationID()));
     }
 
-    private XmlObject createMultiObservationValueToResult(MultiObservationValues<?> observationValue) throws OwsExceptionReport {
+    private XmlObject createMultiObservationValueToResult(MultiObservationValues<?> observationValue) throws EncodingException {
         // TODO create SosSweDataArray
         SweDataArray dataArray = SweHelper.createSosSweDataArray(observationValue);
-        Map<HelperValues, String> additionalValues = new EnumMap<>(SosConstants.HelperValues.class);
+        Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        Object encodedObj = CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, additionalValues);
+        Object encodedObj = encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, additionalValues);
         if (encodedObj instanceof XmlObject) {
             return (XmlObject) encodedObj;
         } else {
-            throw new NoApplicableCodeException().withMessage(
+            throw new EncodingException(
                     "Encoding of observation value of type \"%s\" failed. Result: %s",
                     observationValue.getValue() != null ? observationValue.getValue().getClass().getName()
                             : observationValue.getValue(), encodedObj != null ? encodedObj.getClass().getName()
                             : encodedObj);
         }
     }
-    protected static XmlObject encodeSWE(Object o) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o);
-    }
-    protected static XmlObject encodeSWE(Object o, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, o, additionalValues);
-    }
+
     protected XmlString createXmlString() {
         return XmlString.Factory.newInstance(getXmlOptions());
     }
+
     protected XmlInteger createXmlInteger() {
         return XmlInteger.Factory.newInstance(getXmlOptions());
     }
+
     protected XmlBoolean createXmlBoolean() {
         return XmlBoolean.Factory.newInstance(getXmlOptions());
     }
 
-    private class ResultValueVisitor implements ValueVisitor<XmlObject> {
+    protected XmlObject encodeSWE(Object o) throws EncodingException {
+        return encodeObjectToXml(SweConstants.NS_SWE_20, o);
+    }
+
+    protected XmlObject encodeSWE(Object o, Map<HelperValues, String> additionalValues) throws EncodingException {
+        return encodeObjectToXml(SweConstants.NS_SWE_20, o, additionalValues);
+    }
+
+    private class ResultValueVisitor implements ValueVisitor<XmlObject, EncodingException> {
         private final String observationType;
         private final String observationId;
 
@@ -328,7 +330,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(BooleanValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_TRUTH_OBSERVATION)){
                 XmlBoolean xbBoolean = createXmlBoolean();
                 if (value.isSetValue()) {
@@ -344,7 +346,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(CategoryValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)){
                 if (value.isSetValue() && !value.getValue().isEmpty()) {
                     Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
@@ -357,7 +359,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(ComplexValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
 
             if (observationType.equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)) {
                 if (value.isSetValue()) {
@@ -371,7 +373,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(CountValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
                 XmlInteger xbInteger = createXmlInteger();
                 if (value.isSetValue() && value.getValue() != Integer.MIN_VALUE) {
@@ -387,7 +389,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(GeometryValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION)) {
                 if (value.isSetValue()) {
                     Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
@@ -404,19 +406,19 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(HrefAttributeValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return null;
         }
 
         @Override
         public XmlObject visit(NilTemplateValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return null;
         }
 
         @Override
         public XmlObject visit(QuantityValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)) {
                 return encodeGML(value);
             } else {
@@ -426,13 +428,13 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(ReferenceValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return null;
         }
 
         @Override
         public XmlObject visit(SweDataArrayValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
             additionalValues.put(HelperValues.FOR_OBSERVATION, null);
             return encodeSWE(value.getValue(), additionalValues);
@@ -440,13 +442,13 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(TVPValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return null;
         }
 
         @Override
         public XmlObject visit(TextValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_TEXT_OBSERVATION)) {
                 XmlString xbString = createXmlString();
                 if (value.isSetValue()) {
@@ -462,7 +464,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
         @Override
         public XmlObject visit(UnknownValue value)
-                throws OwsExceptionReport {
+                throws EncodingException {
             return null;
         }
     }

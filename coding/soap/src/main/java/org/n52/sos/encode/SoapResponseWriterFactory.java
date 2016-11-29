@@ -33,7 +33,7 @@ import javax.xml.soap.SOAPMessage;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.iceland.component.SingleTypeComponentFactory;
+import org.n52.janmayen.component.SingleTypeComponentFactory;
 /**
  * {@link ResponseWriterFactory} implementation for {@link SOAPMessage} and
  * {@link SoapResponseWriter}

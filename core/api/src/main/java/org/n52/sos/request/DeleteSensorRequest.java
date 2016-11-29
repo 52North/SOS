@@ -28,26 +28,32 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 
 /**
  * @since 4.0.0
  *
  */
-public class DeleteSensorRequest extends AbstractServiceRequest<DeleteSensorResponse> {
+public class DeleteSensorRequest extends OwsServiceRequest {
 
     private String procedureIdentifier;
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.DeleteSensor.name();
+    public DeleteSensorRequest() {
+        super(null, null, Sos2Constants.Operations.DeleteSensor.name());
+    }
+
+    public DeleteSensorRequest(String service, String version) {
+        super(service, version, Sos2Constants.Operations.DeleteSensor.name());
+    }
+
+    public DeleteSensorRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
      * @param procedureIdentifier
-     *            the procedureIdentifier to set
+     *                            the procedureIdentifier to set
      */
     public void setProcedureIdentifier(String procedureIdentifier) {
         this.procedureIdentifier = procedureIdentifier;
@@ -58,11 +64,6 @@ public class DeleteSensorRequest extends AbstractServiceRequest<DeleteSensorResp
      */
     public String getProcedureIdentifier() {
         return procedureIdentifier;
-    }
-
-    @Override
-    public DeleteSensorResponse getResponse() {
-        return (DeleteSensorResponse ) new DeleteSensorResponse().set(this);
     }
 
 }

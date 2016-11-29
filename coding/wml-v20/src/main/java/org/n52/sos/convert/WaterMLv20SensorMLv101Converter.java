@@ -29,22 +29,20 @@
 package org.n52.sos.convert;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.convert.Converter;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.ProcessModel;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-import org.n52.sos.ogc.sensorML.System;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.ProcessModel;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 
@@ -60,19 +58,18 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
     /*
      * TODO - Add function to read mapping information
      */
-
     private static final Logger LOGGER = LoggerFactory.getLogger(WaterMLv20SensorMLv101Converter.class);
 
     private static final Set<ConverterKey> CONVERTER_KEY_TYPES = ImmutableSet.<ConverterKey>builder()
             .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL))
             .add(new ConverterKey(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING, SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
-            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
-            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE,WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
+            .add(new ConverterKey(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE, WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
             .build();
 
     public WaterMLv20SensorMLv101Converter() {
         LOGGER.debug("Converter for the following keys initialized successfully: {}!",
-                Joiner.on(", ").join(CONVERTER_KEY_TYPES));
+                     Joiner.on(", ").join(CONVERTER_KEY_TYPES));
     }
 
     @Override
@@ -84,8 +81,8 @@ public class WaterMLv20SensorMLv101Converter extends AbstractWaterMLv20SensorMLC
     public SosProcedureDescription convert(final SosProcedureDescription objectToConvert) throws ConverterException {
         if (objectToConvert.getDescriptionFormat().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)) {
             return convertWML2ObservationProcessToSensorML101(objectToConvert);
-        } else if (objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL)
-                || objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
+        } else if (objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_URL) ||
+                   objectToConvert.getDescriptionFormat().equals(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
             return convertSensorML101ToWML2ObservationProcess(objectToConvert);
         }
         return null;

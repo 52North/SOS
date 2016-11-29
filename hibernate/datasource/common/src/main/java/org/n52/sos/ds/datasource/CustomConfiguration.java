@@ -47,7 +47,6 @@ import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.IdentifierGeneratorAggregator;
 import org.hibernate.id.PersistentIdentifierGenerator;
 import org.hibernate.id.SequenceGenerator;
-import org.hibernate.internal.util.StringHelper;
 import org.hibernate.internal.util.collections.ArrayHelper;
 import org.hibernate.mapping.AuxiliaryDatabaseObject;
 import org.hibernate.mapping.Collection;
@@ -64,6 +63,8 @@ import org.hibernate.tool.hbm2ddl.IndexMetadata;
 import org.hibernate.tool.hbm2ddl.SchemaUpdateScript;
 import org.hibernate.tool.hbm2ddl.TableMetadata;
 import org.hibernate.tool.hbm2ddl.UniqueConstraintSchemaUpdateStrategy;
+
+import com.google.common.base.Strings;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -215,7 +216,7 @@ public class CustomConfiguration extends Configuration {
                         // won't work since most Dialects use Constraints.
                         // However,
                         // keep it for the few that do use Indexes.
-                        if (tableInfo != null && StringHelper.isNotEmpty(uniqueKey.getName())) {
+                        if (tableInfo != null && !Strings.isNullOrEmpty(uniqueKey.getName())) {
                             final IndexMetadata meta = tableInfo.getIndexMetadata(uniqueKey.getName());
                             if (meta != null) {
                                 continue;
@@ -237,7 +238,7 @@ public class CustomConfiguration extends Configuration {
                 while (subIter.hasNext()) {
                     final Index index = (Index) subIter.next();
                     // Skip if index already exists
-                    if (tableInfo != null && StringHelper.isNotEmpty(index.getName())) {
+                    if (tableInfo != null && !Strings.isNullOrEmpty(index.getName())) {
                         final IndexMetadata meta = tableInfo.getIndexMetadata(index.getName());
                         if (meta != null) {
                             continue;

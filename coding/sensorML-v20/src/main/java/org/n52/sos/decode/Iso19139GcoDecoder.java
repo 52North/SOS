@@ -36,14 +36,12 @@ import org.isotc211.x2005.gco.CodeListValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.ogc.sensorML.Role;
 import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;
@@ -74,7 +72,7 @@ public class Iso19139GcoDecoder implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Object decode(XmlObject element) throws OwsExceptionReport, UnsupportedDecoderInputException {
+    public Object decode(XmlObject element) throws DecodingException {
         if (element instanceof CodeListValueType) {
             return encodeCodeListValue((CodeListValueType) element);
         } else {

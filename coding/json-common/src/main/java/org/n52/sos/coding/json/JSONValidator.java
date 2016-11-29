@@ -38,9 +38,9 @@ import java.net.URL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.decode.json.JSONDecodingException;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -61,134 +61,117 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
  *
  * @since 4.0.0
  */
-public final class JSONValidator {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(JSONValidator.class);
-
-    private static class LazyHolder {
-        private static final JSONValidator INSTANCE = new JSONValidator();
-
-        private LazyHolder() {
-        }
-    }
-
+public class JSONValidator {
+    private static final Logger LOG = LoggerFactory.getLogger(JSONValidator.class);
 
     private final JsonSchemaFactory jsonSchemaFactory = JsonSchemaFactory
             .newBuilder()
-            .setLoadingConfiguration(
-                    LoadingConfiguration.newBuilder()
+            .setLoadingConfiguration(LoadingConfiguration.newBuilder()
                     .addScheme("http", new ResourceRedirect()).freeze())
             .freeze();
 
     private JSONValidator() {
     }
 
-    public static JSONValidator getInstance() {
-        return LazyHolder.INSTANCE;
-    }
-
     public JsonSchemaFactory getJsonSchemaFactory() {
         return jsonSchemaFactory;
     }
 
-    public ProcessingReport validate(final String json, final String schema)
-            throws IOException {
+    public ProcessingReport validate(String json, String schema) throws IOException {
         return validate(JSONUtils.loadString(json), schema);
     }
 
-    public boolean isValid(final String json, final String schema)
-            throws IOException {
+    public boolean isValid(String json, String schema) throws IOException {
         return isValid(JSONUtils.loadString(json), schema);
     }
 
-    public ProcessingReport validate(final URL url, final String schema)
-            throws IOException {
+    public ProcessingReport validate(URL url, String schema) throws IOException {
         return validate(JSONUtils.loadURL(url), schema);
     }
 
-    public boolean isValid(final URL url, final String schema)
-            throws IOException {
+    public boolean isValid(URL url, String schema) throws IOException {
         return isValid(JSONUtils.loadURL(url), schema);
     }
 
-    public ProcessingReport validate(final File file, final String schema)
-            throws IOException {
+    public ProcessingReport validate(File file, String schema) throws IOException {
         return validate(JSONUtils.loadFile(file), schema);
     }
 
-    public boolean isValid(final File file, final String schema)
-            throws IOException {
+    public boolean isValid(File file, String schema) throws IOException {
         return isValid(JSONUtils.loadFile(file), schema);
     }
 
-    public ProcessingReport validate(final InputStream is, final String schema)
-            throws IOException {
+    public ProcessingReport validate(InputStream is, String schema) throws IOException {
         return validate(JSONUtils.loadStream(is), schema);
     }
 
-    public boolean isValid(final InputStream is, final String schema)
-            throws IOException {
+    public boolean isValid(InputStream is, String schema) throws IOException {
         return isValid(JSONUtils.loadStream(is), schema);
     }
 
-    public ProcessingReport validate(final Reader reader, final String schema)
-            throws IOException {
+    public ProcessingReport validate(Reader reader, String schema) throws IOException {
         return validate(JSONUtils.loadReader(reader), schema);
     }
 
-    public boolean isValid(final Reader reader, final String schema)
-            throws IOException {
+    public boolean isValid(Reader reader, String schema) throws IOException {
         return isValid(JSONUtils.loadReader(reader), schema);
     }
 
-    public ProcessingReport validate(final JsonNode node, final String schema) {
+    public boolean isValid(JsonNode node, String schema) {
+        return validate(node, schema).isSuccess();
+    }
+
+    public ProcessingReport validate(JsonNode node, String schema) {
         JsonSchema jsonSchema;
         try {
             jsonSchema = getJsonSchemaFactory().getJsonSchema(schema);
-        } catch (final ProcessingException ex) {
+        } catch (ProcessingException ex) {
             throw new IllegalArgumentException("Unknown schema: " + schema, ex);
         }
         return jsonSchema.validateUnchecked(node);
     }
 
-    public boolean isValid(final JsonNode node, final String schema) {
-        return validate(node, schema).isSuccess();
-    }
-
-    public String encode(final ProcessingReport report, final JsonNode instance) {
-        final ObjectNode objectNode = JSONUtils.nodeFactory().objectNode();
+    public String encode(ProcessingReport report, JsonNode instance) {
+        ObjectNode objectNode = JSONUtils.nodeFactory().objectNode();
         objectNode.set(JSONConstants.INSTANCE, instance);
-        final ArrayNode errors = objectNode.putArray(JSONConstants.ERRORS);
-        for (final ProcessingMessage m : report) {
+        ArrayNode errors = objectNode.putArray(JSONConstants.ERRORS);
+        for (ProcessingMessage m : report) {
             errors.add(m.asJson());
         }
         return JSONUtils.print(objectNode);
     }
 
-    public void validateAndThrow(final JsonNode instance, final String schema)
-            throws OwsExceptionReport {
-        final ProcessingReport report = JSONValidator.getInstance()
+    public void validateAndThrow(JsonNode instance, String schema) throws DecodingException {
+        ProcessingReport report = JSONValidator.getInstance()
                 .validate(instance, schema);
         if (!report.isSuccess()) {
-            final String message = encode(report, instance);
+            String message = encode(report, instance);
             LOG.info("Invalid JSON instance:\n{}", message);
             throw new JSONDecodingException(message);
         }
     }
 
+    public static JSONValidator getInstance() {
+        return LazyHolder.INSTANCE;
+    }
+
+    private static class LazyHolder {
+        private static JSONValidator INSTANCE = new JSONValidator();
+
+        private LazyHolder() {
+        }
+    }
+
     private class ResourceRedirect implements URIDownloader {
-        private final URIDownloader resource = ResourceURIDownloader
-                .getInstance();
+        private final URIDownloader resource = ResourceURIDownloader.getInstance();
 
         @Override
-        public InputStream fetch(final URI source)
-                throws IOException {
+        public InputStream fetch(URI source) throws IOException {
             return resource.fetch(URI.create(toResource(source)));
         }
 
-        protected String toResource(final URI source) {
-            return String.format("resource://%s.json", source.getPath()
-                                 .replace("/json", ""));
+        protected String toResource(URI source) {
+            return String.format("resource://%s.json", source.getPath().replace("/json", ""));
         }
     }
 }

@@ -39,23 +39,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.cache.WritableContentCache;
-import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.i18n.MultilingualString;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.collections.SetMultiMap;
-import org.n52.sos.cache.SosContentCache.ComponentAggregation;
-import org.n52.sos.cache.SosContentCache.TypeInstance;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.util.collections.SetMultiMap;
+import org.n52.shetland.i18n.LocalizedString;
+import org.n52.shetland.i18n.MultilingualString;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.ReferencedEnvelope;
+import org.n52.sos.cache.SosContentCache.ComponentAggregation;
+import org.n52.sos.cache.SosContentCache.TypeInstance;
+import org.n52.sos.request.ProcedureRequestSettingProvider;
+
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -91,7 +91,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     private final SetMultiMap<String, String> relatedFeaturesForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> resultTemplatesForOfferings = newSynchronizedSetMultiMap();
     private final SetMultiMap<String, String> rolesForRelatedFeatures = newSynchronizedSetMultiMap();
-    private final Map<String, SosEnvelope> envelopeForOfferings = newSynchronizedMap();
+    private final Map<String, ReferencedEnvelope> envelopeForOfferings = newSynchronizedMap();
     private final Map<String, String> nameForOfferings = newSynchronizedMap();
     private final Map<String, MultilingualString> i18nNameForOfferings = newSynchronizedMap();
     private final Map<String, MultilingualString> i18nDescriptionForOfferings = newSynchronizedMap();
@@ -102,7 +102,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     private final Set<String> offerings = newSynchronizedSet();
     private final TimePeriod globalPhenomenonTimeEnvelope = new TimePeriod();
     private final TimePeriod globalResultTimeEnvelope = new TimePeriod();
-    private final Map<String, SosEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
+    private final Map<String, ReferencedEnvelope> spatialFilteringProfileEnvelopeForOfferings = newSynchronizedMap();
     private final Set<Locale> supportedLanguages = newSynchronizedSet();
     private final Map<String, String> featureOfInterestIdentifierForHumanReadableName = newSynchronizedMap();
     private final Map<String, String> featureOfInterestHumanReadableNameForIdentifier = newSynchronizedMap();
@@ -119,7 +119,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     private final SetMultiMap<String,String> compositePhenomenonForObservableProperty = newSynchronizedSetMultiMap();
     private Set<String> requestableProcedureDescriptionFormats = newSynchronizedSet();
     private int defaultEpsgCode = 4326;
-    private SosEnvelope globalEnvelope = new SosEnvelope(null, defaultEpsgCode);
+    private ReferencedEnvelope globalEnvelope = new ReferencedEnvelope(null, defaultEpsgCode);
     private Map<TypeInstance, Set<String>> typeInstanceProcedures = newSynchronizedMap();
     private Map<ComponentAggregation, Set<String>> componentAggregationProcedures = newSynchronizedMap();
     private Map<String, Set<String>> typeOfProcedures = newSynchronizedMap();
@@ -128,7 +128,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
      * @param envelope
      *            the new global spatial envelope
      */
-    protected void setGlobalSpatialEnvelope(SosEnvelope envelope) {
+    protected void setGlobalSpatialEnvelope(ReferencedEnvelope envelope) {
         if (envelope == null) {
             throw new NullPointerException();
         }
@@ -316,7 +316,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
-    public SosEnvelope getGlobalEnvelope() {
+    public ReferencedEnvelope getGlobalEnvelope() {
         return copyOf(this.globalEnvelope);
     }
 
@@ -371,7 +371,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
-    public SosEnvelope getEnvelopeForOffering(final String offering) {
+    public ReferencedEnvelope getEnvelopeForOffering(final String offering) {
         return copyOf(this.envelopeForOfferings.get(offering));
     }
 
@@ -633,7 +633,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public boolean hasEnvelopeForOffering(final String offering) {
-        final SosEnvelope e = getEnvelopeForOffering(offering);
+        final ReferencedEnvelope e = getEnvelopeForOffering(offering);
         return e != null && e.isSetEnvelope();
     }
 
@@ -649,7 +649,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public boolean hasGlobalEnvelope() {
-        final SosEnvelope e = getGlobalEnvelope();
+        final ReferencedEnvelope e = getGlobalEnvelope();
         return e != null && e.isSetEnvelope();
     }
 
@@ -701,13 +701,13 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
-    public SosEnvelope getSpatialFilteringProfileEnvelopeForOffering(String offering) {
+    public ReferencedEnvelope getSpatialFilteringProfileEnvelopeForOffering(String offering) {
         return copyOf(this.spatialFilteringProfileEnvelopeForOfferings.get(offering));
     }
 
     @Override
     public boolean hasSpatialFilteringProfileEnvelopeForOffering(String offering) {
-        final SosEnvelope e = getSpatialFilteringProfileEnvelopeForOffering(offering);
+        final ReferencedEnvelope e = getSpatialFilteringProfileEnvelopeForOffering(offering);
         return e != null && e.isSetEnvelope();
     }
 
@@ -1079,7 +1079,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
-    public void setEnvelopeForOffering(final String offering, final SosEnvelope envelope) {
+    public void setEnvelopeForOffering(final String offering, final ReferencedEnvelope envelope) {
         LOG.trace("Setting Envelope for Offering {} to {}", offering, envelope);
         this.envelopeForOfferings.put(offering, copyOf(envelope));
     }
@@ -1555,10 +1555,10 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
-    public void setGlobalEnvelope(final SosEnvelope globalEnvelope) {
+    public void setGlobalEnvelope(final ReferencedEnvelope globalEnvelope) {
         LOG.trace("Global envelope now: '{}'", this.globalEnvelope);
         if (globalEnvelope == null) {
-            setGlobalSpatialEnvelope(new SosEnvelope(null, getDefaultEPSGCode()));
+            setGlobalSpatialEnvelope(new ReferencedEnvelope(null, getDefaultEPSGCode()));
         } else {
             setGlobalSpatialEnvelope(globalEnvelope);
         }
@@ -1631,11 +1631,11 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
         notNullOrEmpty(OFFERING, offering);
         notNull(ENVELOPE, envelope);
         if (hasEnvelopeForOffering(offering)) {
-            final SosEnvelope offeringEnvelope = this.envelopeForOfferings.get(offering);
+            final ReferencedEnvelope offeringEnvelope = this.envelopeForOfferings.get(offering);
             LOG.trace("Expanding envelope {} for offering {} to include {}", offeringEnvelope, offering, envelope);
             offeringEnvelope.expandToInclude(envelope);
         } else {
-            setEnvelopeForOffering(offering, new SosEnvelope(envelope, getDefaultEPSGCode()));
+            setEnvelopeForOffering(offering, new ReferencedEnvelope(envelope, getDefaultEPSGCode()));
         }
     }
 
@@ -1659,7 +1659,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
             LOG.trace("Expanding envelope {} to include {}", this.globalEnvelope, envelope);
             this.globalEnvelope.expandToInclude(envelope);
         } else {
-            setGlobalEnvelope(new SosEnvelope(new Envelope(envelope), getDefaultEPSGCode()));
+            setGlobalEnvelope(new ReferencedEnvelope(new Envelope(envelope), getDefaultEPSGCode()));
         }
     }
 
@@ -1698,14 +1698,14 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     @Override
     public void recalculateGlobalEnvelope() {
         LOG.trace("Recalculating global spatial envelope based on offerings");
-        SosEnvelope globalEnvelope = null;
+        ReferencedEnvelope globalEnvelope = null;
         if (!getOfferings().isEmpty()) {
             for (final String offering : getOfferings()) {
-                final SosEnvelope e = getEnvelopeForOffering(offering);
+                final ReferencedEnvelope e = getEnvelopeForOffering(offering);
                 if (e != null) {
                     if (globalEnvelope == null) {
                         if (e.isSetEnvelope()) {
-                            globalEnvelope = new SosEnvelope(new Envelope(e.getEnvelope()), e.getSrid());
+                            globalEnvelope = new ReferencedEnvelope(new Envelope(e.getEnvelope()), e.getSrid());
                             LOG.trace("First envelope '{}' used as starting point", globalEnvelope);
                         }
                     } else {
@@ -1718,7 +1718,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
                 LOG.error("Global envelope could not be resetted");
             }
         } else {
-            globalEnvelope = new SosEnvelope(null, getDefaultEPSGCode());
+            globalEnvelope = new ReferencedEnvelope(null, getDefaultEPSGCode());
         }
         setGlobalEnvelope(globalEnvelope);
         LOG.trace("Spatial envelope finally set to '{}'", getGlobalEnvelope());
@@ -2060,7 +2060,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
     }
 
     @Override
-    public void setSpatialFilteringProfileEnvelopeForOffering(String offering, SosEnvelope envelope) {
+    public void setSpatialFilteringProfileEnvelopeForOffering(String offering, ReferencedEnvelope envelope) {
         LOG.trace("Setting Spatial Filtering Profile Envelope for Offering {} to {}", offering, envelope);
         this.spatialFilteringProfileEnvelopeForOfferings.put(offering, copyOf(envelope));
     }
@@ -2070,12 +2070,12 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
         notNullOrEmpty(OFFERING, offering);
         notNull(ENVELOPE, envelope);
         if (hasSpatialFilteringProfileEnvelopeForOffering(offering)) {
-            final SosEnvelope offeringEnvelope = this.spatialFilteringProfileEnvelopeForOfferings.get(offering);
+            final ReferencedEnvelope offeringEnvelope = this.spatialFilteringProfileEnvelopeForOfferings.get(offering);
             LOG.trace("Expanding Spatial Filtering Profile envelope {} for offering {} to include {}",
                     offeringEnvelope, offering, envelope);
             offeringEnvelope.expandToInclude(envelope);
         } else {
-            setSpatialFilteringProfileEnvelopeForOffering(offering, new SosEnvelope(envelope, getDefaultEPSGCode()));
+            setSpatialFilteringProfileEnvelopeForOffering(offering, new ReferencedEnvelope(envelope, getDefaultEPSGCode()));
         }
     }
 
@@ -2161,7 +2161,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public void addFeatureOfInterestIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+        if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
             if (!featureOfInterestIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 featureOfInterestIdentifierForHumanReadableName.put(humanReadableName, identifier);
             }
@@ -2173,7 +2173,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public void addObservablePropertyIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+        if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
             if (!observablePropertyIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 observablePropertyIdentifierForHumanReadableName.put(humanReadableName, identifier);
             }
@@ -2185,7 +2185,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public void addProcedureIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+        if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
             if (!procedureIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 procedureIdentifierForHumanReadableName.put(humanReadableName, identifier);
             }
@@ -2197,7 +2197,7 @@ public class InMemoryCacheImpl extends AbstractSosContentCache implements SosWri
 
     @Override
     public void addOfferingIdentifierHumanReadableName(String identifier, String humanReadableName) {
-        if (StringHelper.isNotEmpty(identifier) && StringHelper.isNotEmpty(humanReadableName)) {
+        if (!Strings.isNullOrEmpty(identifier) && !Strings.isNullOrEmpty(humanReadableName)) {
             if (!offeringIdentifierForHumanReadableName.containsKey(humanReadableName)) {
                 offeringIdentifierForHumanReadableName.put(humanReadableName, identifier);
             }

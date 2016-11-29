@@ -28,28 +28,32 @@
  */
 package org.n52.sos.request;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.response.DummyResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos1Constants;
 
 /**
  * SOS GetFeatureOfInterestTime request
  *
  * @since 4.0.0
  */
-public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<AbstractServiceResponse> {
-
-    /**
-     * GetFeatureOfInterestTime operation name
-     */
-    private final String operationName = Sos1Constants.Operations.GetFeatureOfInterestTime.name();
+public class SosGetFeatureOfInterestTimeRequest extends OwsServiceRequest {
 
     /**
      * FOI identifier
      */
     private String featureIdentifier;
+
+    public SosGetFeatureOfInterestTimeRequest() {
+        super(null, null, Sos1Constants.Operations.GetFeatureOfInterestTime.name());
+    }
+
+    public SosGetFeatureOfInterestTimeRequest(String service, String version) {
+        super(service, version, Sos1Constants.Operations.GetFeatureOfInterestTime.name());
+    }
+
+    public SosGetFeatureOfInterestTimeRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     /**
      * Get FOI identifier
@@ -64,19 +68,9 @@ public class SosGetFeatureOfInterestTimeRequest extends AbstractServiceRequest<A
      * Set FOI identifier
      *
      * @param featureIdentifier
-     *            FOI identifier
+     *                          FOI identifier
      */
     public void setFeatureIdentifier(String featureIdentifier) {
         this.featureIdentifier = featureIdentifier;
-    }
-
-    @Override
-    public String getOperationName() {
-        return operationName;
-    }
-
-    @Override
-    public AbstractServiceResponse getResponse() throws OwsExceptionReport {
-        return (AbstractServiceResponse) new DummyResponse().setOperationName(getOperationName()).set(this).setVersion(getVersion());
     }
 }

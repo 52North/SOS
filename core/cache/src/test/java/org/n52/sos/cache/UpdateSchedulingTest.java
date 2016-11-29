@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.GenericThrowableWrapperException;
 import org.n52.iceland.util.GroupedAndNamedThreadFactory;
 

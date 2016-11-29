@@ -33,12 +33,19 @@ import java.util.Date;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.Extensions;
+
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -47,13 +54,6 @@ import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedO
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swes.SwesExtensions;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.OMHelper;
 
@@ -211,7 +211,7 @@ public abstract class AbstractValuedLegacyObservation<T>
         namedValue.setName(referenceType);
         // TODO add lat/long version
         Geometry geometry = samplingGeometry;
-        namedValue.setValue(new org.n52.sos.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
+        namedValue.setValue(new org.n52.shetland.ogc.om.values.GeometryValue(GeometryHandler.getInstance()
                 .switchCoordinateAxisFromToDatasourceIfNeeded(geometry)));
         return namedValue;
     }

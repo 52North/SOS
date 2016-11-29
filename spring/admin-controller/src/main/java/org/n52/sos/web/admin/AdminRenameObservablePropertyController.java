@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.exception.ows.concrete.NoImplementationFoundException;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.RenameDAO;

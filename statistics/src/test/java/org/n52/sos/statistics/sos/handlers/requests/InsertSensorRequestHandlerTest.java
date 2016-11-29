@@ -37,10 +37,11 @@ import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+
 import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
@@ -58,7 +59,7 @@ public class InsertSensorRequestHandlerTest extends HandlerBaseTest {
         request.setAssignedOfferings(Arrays.asList(new SosOffering("p")));
         request.setAssignedProcedureIdentifier("proc");
         request.setObservableProperty(Arrays.asList("op1", "op2"));
-        request.setProcedureDescription(new SosProcedureDescriptionUnknowType("id", "format", "xml"));
+        request.setProcedureDescription(new SosProcedureDescriptionUnknownType("id", "format", "xml"));
         request.setProcedureDescriptionFormat("solo-format");
         request.setMetadata(new SosInsertionMetadata());
         request.getMetadata().setFeatureOfInterestTypes(Arrays.asList("foi1", "foi2"));

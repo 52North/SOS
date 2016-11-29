@@ -32,19 +32,22 @@ import java.util.Locale;
 
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Procedure;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Strings;
 
 /**
  * Strategy to create the {@link SosProcedureDescription} from a XML string.
  */
-public class XmlStringDescriptionCreationStrategy implements
-        DescriptionCreationStrategy {
+public class XmlStringDescriptionCreationStrategy
+        implements DescriptionCreationStrategy {
+
     @Override
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
@@ -61,7 +64,7 @@ public class XmlStringDescriptionCreationStrategy implements
     }
 
     protected SosProcedureDescription readXml(String xml)
-            throws OwsExceptionReport {
+            throws DecodingException {
         XmlObject parsed = XmlHelper.parseXmlString(xml);
         return (SosProcedureDescription) CodingHelper.decodeXmlElement(parsed);
     }

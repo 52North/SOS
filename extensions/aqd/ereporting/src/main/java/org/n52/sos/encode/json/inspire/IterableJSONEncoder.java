@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.sos.encode.json.JSONEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -47,7 +47,7 @@ public class IterableJSONEncoder extends JSONEncoder<Iterable<?>> {
 
     @Override
     public JsonNode encodeJSON(Iterable<?> iterable)
-            throws OwsExceptionReport {
+            throws EncodingException {
         ArrayNode node = nodeFactory().arrayNode();
         for (Object t : iterable) {
             node.add(encodeObjectToJson(t));

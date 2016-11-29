@@ -33,22 +33,23 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.iceland.w3c.xlink.W3CHrefAttribute;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.HrefAttribute;
 
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.W3CConstants;
+import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
+
 import com.google.common.base.Joiner;
 
-public class XlinkEncoderv1999 extends AbstractXmlEncoder<Object> {
+public class XlinkEncoderv1999 extends AbstractXmlEncoder<XmlObject, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(XlinkEncoderv1999.class);
 
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(W3CConstants.NS_XLINK,
@@ -59,6 +60,7 @@ public class XlinkEncoderv1999 extends AbstractXmlEncoder<Object> {
                 .join(ENCODER_KEYS));
     }
 
+
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
@@ -66,7 +68,7 @@ public class XlinkEncoderv1999 extends AbstractXmlEncoder<Object> {
 
     @Override
     public XmlObject encode(Object element, Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport, UnsupportedEncoderInputException {
+            throws EncodingException {
         XmlObject encodedObject = null;
         if (element instanceof W3CHrefAttribute) {
             encodedObject = encodeHrefAttribute((W3CHrefAttribute) element);
@@ -77,9 +79,14 @@ public class XlinkEncoderv1999 extends AbstractXmlEncoder<Object> {
     }
 
     private XmlObject encodeHrefAttribute(W3CHrefAttribute hrefAttribute) {
-        HrefAttribute xmlHrefAttribute = HrefAttribute.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        HrefAttribute xmlHrefAttribute = HrefAttribute.Factory.newInstance(getXmlOptions());
         xmlHrefAttribute.setHref(hrefAttribute.getHref());
         return xmlHrefAttribute;
+    }
+
+    @Override
+    public Set<SchemaLocation> getSchemaLocations() {
+        return Collections.singleton(W3CConstants.XLINK_SCHEMA_LOCATION);
     }
 
 }

@@ -29,13 +29,13 @@
 package org.n52.sos.ds.hibernate.entities.observation.legacy;
 
 import org.hibernate.Session;
+
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.sos.ogc.swes.SwesExtensions;
 
 /**
  * Extension of {@link ValuedObservation} for the legacy observation concept,

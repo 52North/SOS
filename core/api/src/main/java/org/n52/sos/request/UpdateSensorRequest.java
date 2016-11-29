@@ -31,38 +31,41 @@ package org.n52.sos.request;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.response.UpdateSensorResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.util.CollectionHelper;
+
+import com.google.common.base.Strings;
 
 /**
  * class represents a updateSensor request
  *
  * @since 4.0.0
  */
-public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResponse> {
-
+public class UpdateSensorRequest extends OwsServiceRequest {
     private String procedureIdentifier;
 
     private String procedureDescriptionFormat;
 
-    /** SOS SensorML description */
-    private List<SosProcedureDescription> procedureDescriptions;
+    /**
+     * SOS SensorML description
+     */
+    private List<SosProcedureDescription<?>> procedureDescriptions;
 
     /**
      * default constructor
      */
     public UpdateSensorRequest() {
-        super();
+        super(null, null, Sos2Constants.Operations.UpdateSensorDescription.name());
     }
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.UpdateSensorDescription.name();
+    public UpdateSensorRequest(String service, String version) {
+        super(service, version, Sos2Constants.Operations.UpdateSensorDescription.name());
+    }
+
+    public UpdateSensorRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     /**
@@ -74,14 +77,14 @@ public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResp
 
     /**
      * @param procedureIdentifier
-     *            the procedureIdentifier to set
+     *                            the procedureIdentifier to set
      */
     public void setProcedureIdentifier(String procedureIdentifier) {
         this.procedureIdentifier = procedureIdentifier;
     }
 
     public boolean isSetProcedureIdentifier() {
-        return StringHelper.isNotEmpty(getProcedureIdentifier());
+        return !Strings.isNullOrEmpty(getProcedureIdentifier());
     }
 
     public String getProcedureDescriptionFormat() {
@@ -93,20 +96,20 @@ public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResp
     }
 
     public boolean isSetProcedureDescriptionFormat() {
-        return StringHelper.isNotEmpty(getProcedureDescriptionFormat());
+        return !Strings.isNullOrEmpty(getProcedureDescriptionFormat());
     }
 
-    public List<SosProcedureDescription> getProcedureDescriptions() {
+    public List<SosProcedureDescription<?>> getProcedureDescriptions() {
         return procedureDescriptions;
     }
 
-    public void setProcedureDescriptions(List<SosProcedureDescription> procedureDescriptions) {
+    public void setProcedureDescriptions(List<SosProcedureDescription<?>> procedureDescriptions) {
         this.procedureDescriptions = procedureDescriptions;
     }
 
-    public void addProcedureDescriptionString(SosProcedureDescription procedureDescription) {
+    public void addProcedureDescriptionString(SosProcedureDescription<?> procedureDescription) {
         if (procedureDescriptions == null) {
-            procedureDescriptions = new ArrayList<SosProcedureDescription>();
+            procedureDescriptions = new ArrayList<>();
         }
         procedureDescriptions.add(procedureDescription);
     }
@@ -115,8 +118,4 @@ public class UpdateSensorRequest extends AbstractServiceRequest<UpdateSensorResp
         return CollectionHelper.isNotEmpty(getProcedureDescriptions());
     }
 
-    @Override
-    public UpdateSensorResponse getResponse() throws OwsExceptionReport {
-        return (UpdateSensorResponse) new UpdateSensorResponse().set(this);
-    }
 }

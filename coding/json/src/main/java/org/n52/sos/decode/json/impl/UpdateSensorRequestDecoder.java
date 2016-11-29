@@ -31,18 +31,15 @@ package org.n52.sos.decode.json.impl;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.UpdateSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -66,7 +63,7 @@ public class UpdateSensorRequestDecoder extends AbstractSosRequestDecoder<Update
     }
 
     @Override
-    protected UpdateSensorRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected UpdateSensorRequest decodeRequest(JsonNode node) throws DecodingException {
         UpdateSensorRequest req = new UpdateSensorRequest();
         req.setProcedureIdentifier(node.path(JSONConstants.PROCEDURE).textValue());
         String pdf = node.path(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT).textValue();
@@ -82,11 +79,11 @@ public class UpdateSensorRequestDecoder extends AbstractSosRequestDecoder<Update
         return req;
     }
 
-    private SosProcedureDescription decodeProcedureDescription(JsonNode node, String pdf) throws OwsExceptionReport {
+    private SosProcedureDescription<?> decodeProcedureDescription(JsonNode node, String pdf) throws DecodingException {
         if (node.isTextual()) {
             return parseProcedureDesciption(node.textValue(), pdf);
         } else {
-            SosProcedureDescription pd =
+            SosProcedureDescription<?> pd =
                     parseProcedureDesciption(node.path(JSONConstants.DESCRIPTION).textValue(), pdf);
             if (node.has(JSONConstants.VALID_TIME)) {
                 pd.setValidTime(parseTime(node.path(JSONConstants.VALID_TIME)));
@@ -95,19 +92,18 @@ public class UpdateSensorRequestDecoder extends AbstractSosRequestDecoder<Update
         }
     }
 
-    private SosProcedureDescription parseProcedureDesciption(String xml, String pdf) throws OwsExceptionReport {
+    private SosProcedureDescription<?> parseProcedureDesciption(String xml, String pdf) throws DecodingException {
         try {
             final XmlObject xb = XmlObject.Factory.parse(xml);
-            Decoder<?, XmlObject> decoder =
-                    CodingRepository.getInstance().getDecoder(new XmlNamespaceDecoderKey(pdf, xb.getClass()));
+            Decoder<?, XmlObject> decoder = getDecoder(new XmlNamespaceDecoderKey(pdf, xb.getClass()));
             if (decoder == null) {
-                throw new InvalidParameterValueException().at(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT).withMessage(
-                        "The requested %s is not supported!", JSONConstants.PROCEDURE_DESCRIPTION_FORMAT);
+                throw new DecodingException(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT,
+                                            "The requested %s is not supported!",
+                                            JSONConstants.PROCEDURE_DESCRIPTION_FORMAT);
             }
             return (SosProcedureDescription) decoder.decode(xb);
-        } catch (final XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                    "Error while parsing procedure description of InsertSensor request!");
+        } catch (XmlException xmle) {
+            throw new DecodingException("Error while parsing procedure description of InsertSensor request!", xmle);
         }
     }
 }

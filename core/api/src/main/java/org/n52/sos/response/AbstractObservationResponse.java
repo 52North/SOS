@@ -32,10 +32,11 @@ import java.util.Collections;
 import java.util.List;
 
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.request.AbstractObservationRequest;
+
+import com.google.common.base.Strings;
 
 /**
  * TODO JavaDoc
@@ -44,12 +45,23 @@ import org.n52.sos.request.AbstractObservationRequest;
  *
  * @since 4.0.0
  */
-public abstract class AbstractObservationResponse extends AbstractServiceResponse implements ResponseFormat {
+public abstract class AbstractObservationResponse extends OwsServiceResponse implements ResponseFormat {
     private List<OmObservation> observationCollection;
     private String responseFormat;
     private String resultModel;
     private boolean mergeObservation = false;
     private GlobalGetObservationValues globalValues;
+
+    public AbstractObservationResponse() {
+    }
+
+    public AbstractObservationResponse(String service, String version) {
+        super(service, version);
+    }
+
+    public AbstractObservationResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     public List<OmObservation> getObservationCollection() {
         return Collections.unmodifiableList(observationCollection);
@@ -80,7 +92,7 @@ public abstract class AbstractObservationResponse extends AbstractServiceRespons
 
     @Override
     public boolean isSetResponseFormat() {
-        return StringHelper.isNotEmpty(getResponseFormat());
+        return !Strings.isNullOrEmpty(getResponseFormat());
     }
 
     public AbstractObservationResponse setResultModel(final String resultModel) {

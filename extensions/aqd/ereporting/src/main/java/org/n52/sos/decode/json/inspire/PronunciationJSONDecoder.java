@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.Functions;
@@ -43,7 +43,7 @@ public class PronunciationJSONDecoder extends AbstractJSONDecoder<Pronunciation>
 
     @Override
     public Pronunciation decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         Pronunciation pronunciation = new Pronunciation();
         pronunciation
                 .setIPA(parseNillableString(node.path(AQDJSONConstants.IPA)));

@@ -31,14 +31,15 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.janmayen.http.HTTPStatus;
 import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.collect.Sets;

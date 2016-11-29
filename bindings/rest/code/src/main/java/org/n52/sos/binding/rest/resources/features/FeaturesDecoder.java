@@ -34,19 +34,20 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeException;
-import org.n52.iceland.util.http.HTTPMethods;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.DateTimeException;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.ogc.filter.SpatialFilter;
 import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

@@ -31,11 +31,12 @@ package org.n52.sos.ds.hibernate.entities.i18n;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDescription;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasLocale;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasName;
+
+import com.google.common.base.Strings;
 
 /**
  * Abstract feature I18N entity
@@ -106,7 +107,7 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
 
     @Override
     public boolean isSetName() {
-        return StringHelper.isNotEmpty(getName());
+        return !Strings.isNullOrEmpty(getName());
     }
 
     @Override
@@ -121,7 +122,7 @@ public abstract class AbstractHibernateI18NMetadata implements Serializable, Has
 
     @Override
     public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
+        return !Strings.isNullOrEmpty(getDescription());
     }
 
     @Override

@@ -29,15 +29,17 @@
 package org.n52.sos.converter.util;
 
 
+import java.util.Optional;
+
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.util.JavaHelper;
 
 @Configurable
 public class FlexibleIdentifierHelper implements Constructable {
@@ -119,24 +121,30 @@ public class FlexibleIdentifierHelper implements Constructable {
 
     public boolean checkIsReturnHumanReadableIdentifierFlagExtensionSet(Extensions extensions)
             throws InvalidParameterValueException {
-        if (extensions != null && extensions.containsExtension(RETURN_HUMAN_READABLE_IDENTIFIER)) {
-           Extension<?> extension = extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
-            if (extension.getValue() instanceof SweBoolean) {
-                return true;
-            } else {
-                throw new InvalidParameterValueException(RETURN_HUMAN_READABLE_IDENTIFIER,
-                        JavaHelper.asString(extension.getValue()));
+        Optional<Extension<?>> extension = extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
+        if (extension.isPresent()) {
+            Object value = extension.get().getValue();
+            if (!(value instanceof SweBoolean)) {
+                throw new InvalidParameterValueException(RETURN_HUMAN_READABLE_IDENTIFIER, JavaHelper.asString(value));
             }
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     public boolean checkForReturnHumanReadableIdentifierFlagExtension(Extensions extensions)
             throws InvalidParameterValueException {
-        if (checkIsReturnHumanReadableIdentifierFlagExtensionSet(extensions)) {
-            return ((SweBoolean) extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER).getValue()).getValue();
+        Optional<Extension<?>> extension = extensions.getExtension(RETURN_HUMAN_READABLE_IDENTIFIER);
+        if (extension.isPresent()) {
+            Object value = extension.get().getValue();
+            if (!(value instanceof SweBoolean)) {
+                throw new InvalidParameterValueException(RETURN_HUMAN_READABLE_IDENTIFIER, JavaHelper.asString(value));
+            }
+            return ((SweBoolean) value).getValue();
+        } else {
+            return false;
         }
-        return false;
     }
 
 }

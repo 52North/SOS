@@ -28,10 +28,14 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.ereporting;
 
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.EReportingValues;
-import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.*;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasEReportingSeries;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasPrimaryObservation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasValidation;
+import org.n52.sos.ds.hibernate.entities.observation.ereporting.HiberanteEReportingRelations.HasVerification;
 import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSeriesObservation;
+
+import com.google.common.base.Strings;
 
 public class TemporalReferencedEReportingObservation
         extends TemporalReferencedSeriesObservation
@@ -102,7 +106,7 @@ public class TemporalReferencedEReportingObservation
 
     @Override
     public boolean isSetPrimaryObservation() {
-        return StringHelper.isNotEmpty(getPrimaryObservation());
+        return !Strings.isNullOrEmpty(getPrimaryObservation());
     }
 
 }

@@ -28,9 +28,8 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -57,7 +56,7 @@ public class GetResultTemplateRequestDecoder extends AbstractSosRequestDecoder<G
     }
 
     @Override
-    protected GetResultTemplateRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected GetResultTemplateRequest decodeRequest(JsonNode node) {
         GetResultTemplateRequest req = new GetResultTemplateRequest();
         req.setObservedProperty(node.path(JSONConstants.OBSERVED_PROPERTY).textValue());
         req.setOffering(node.path(JSONConstants.OFFERING).textValue());

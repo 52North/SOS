@@ -28,8 +28,9 @@
  */
 package org.n52.sos.encode;
 
+import static java.util.stream.Collectors.toList;
+
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -49,42 +50,40 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.service.ServiceConstants.ObservationType;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gmlcov.GmlCoverageConstants;
+import org.n52.shetland.ogc.om.AbstractObservationValue;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.MultiObservationValues;
+import org.n52.shetland.ogc.om.ObservationType;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.TimeValuePair;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.TVPValue;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.WmlTDREncoderv20XmlStreamWriter;
-import org.n52.sos.ogc.gmlcov.GmlCoverageConstants;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.MultiObservationValues;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.TimeValuePair;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.TVPValue;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
 import org.n52.sos.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -123,13 +122,6 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     public WmlTDREncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
                 .join(ENCODER_KEYS));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Set<EncoderKey> createEncoderKeys() {
-        return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
-                WaterMLConstants.NS_WML_20_DR, GetObservationResponse.class, OmObservation.class,
-                AbstractFeature.class, SingleObservationValue.class, MultiObservationValues.class));
     }
 
     @Override
@@ -179,28 +171,24 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
-            UnsupportedEncoderInputException {
-        XmlObject encodedObject = null;
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
         if (element instanceof ObservationValue) {
-            encodedObject = encodeResult((ObservationValue<?>) element);
+            return encodeResult((ObservationValue<?>) element);
         } else {
-            encodedObject = super.encode(element, additionalValues);
+            return super.encode(element, additionalValues);
         }
-        return encodedObject;
     }
 
     @Override
     public void encode(Object objectToEncode, OutputStream outputStream, EncodingValues encodingValues)
-            throws OwsExceptionReport {
+            throws EncodingException {
         encodingValues.setEncoder(this);
         if (objectToEncode instanceof OmObservation) {
             try {
                 new WmlTDREncoderv20XmlStreamWriter().write((OmObservation) objectToEncode, outputStream,
                         encodingValues);
             } catch (XMLStreamException xmlse) {
-                throw new NoApplicableCodeException().causedBy(xmlse).withMessage(
-                        "Error while writing element to stream!");
+                throw new EncodingException("Error while writing element to stream!", xmlse);
             }
         } else {
             super.encode(objectToEncode, outputStream, encodingValues);
@@ -208,18 +196,18 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    protected XmlObject createResult(OmObservation sosObservation) throws OwsExceptionReport {
+    protected XmlObject createResult(OmObservation sosObservation) throws EncodingException {
         return createMeasurementDomainRange(sosObservation);
     }
 
     @Override
-    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws OwsExceptionReport {
+    protected XmlObject encodeResult(ObservationValue<?> observationValue) throws EncodingException {
         return createMeasurementDomainRange((AbstractObservationValue<?>) observationValue);
     }
 
     @Override
     protected void addObservationType(OMObservationType xbObservation, String observationType) {
-        if (StringHelper.isNotEmpty(observationType)) {
+        if (!Strings.isNullOrEmpty(observationType)) {
             if (observationType.equals(OmConstants.OBS_TYPE_MEASUREMENT)
                     || observationType.equals(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR)) {
                 xbObservation.addNewType().setHref(WaterMLConstants.OBSERVATION_TYPE_MEASURMENT_TDR);
@@ -237,10 +225,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
      * @param sosObservation
      *            SOS observation
      * @return XML MeasurementTimeseriesDomainRange object for om:result
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private XmlObject createMeasurementDomainRange(OmObservation sosObservation) throws OwsExceptionReport {
+    private XmlObject createMeasurementDomainRange(OmObservation sosObservation) throws EncodingException {
         if (!sosObservation.getObservationConstellation().isSetObservationType()
                 || (sosObservation.getObservationConstellation().isSetObservationType() && isInvalidObservationType(sosObservation
                         .getObservationConstellation().getObservationType()))) {
@@ -296,10 +284,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
      * @param sosObservation
      *            SOS observation
      * @return XML DataRecord object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private XmlObject createDataRecord(OmObservation sosObservation) throws OwsExceptionReport {
+    private XmlObject createDataRecord(OmObservation sosObservation) throws EncodingException {
         AbstractPhenomenon observableProperty = sosObservation.getObservationConstellation().getObservableProperty();
         SweDataRecord dataRecord = new SweDataRecord();
         dataRecord.setIdentifier("datarecord_" + sosObservation.getObservationID());
@@ -314,7 +302,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         dataRecord.addField(field);
         Map<HelperValues, String> additionalValues = Maps.newEnumMap(HelperValues.class);
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
+        return encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
     }
 
     /**
@@ -323,10 +311,10 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
      * @param sosObservation
      *            SOS observation
      * @return XML TimePositionList object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private TimePositionListDocument getTimePositionList(OmObservation sosObservation) throws OwsExceptionReport {
+    private TimePositionListDocument getTimePositionList(OmObservation sosObservation) throws EncodingException {
         TimePositionListDocument timePositionListDoc = TimePositionListDocument.Factory.newInstance();
         TimePositionListType timePositionList = timePositionListDoc.addNewTimePositionList();
         timePositionList.setId("timepositionList_" + sosObservation.getObservationID());
@@ -344,17 +332,12 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
      * @param sosObservationValues
      *            SOS multi value observation object
      * @return List with string representations of time values
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private List<String> getTimeArray(MultiObservationValues<?> sosObservationValues) throws OwsExceptionReport {
-        TVPValue tvpValue = (TVPValue) sosObservationValues.getValue();
-        List<TimeValuePair> timeValuePairs = tvpValue.getValue();
-        List<String> toList = Lists.newArrayListWithCapacity(timeValuePairs.size());
-        for (TimeValuePair timeValuePair : timeValuePairs) {
-            toList.add(getTimeString(timeValuePair.getTime()));
-        }
-        return toList;
+    private List<String> getTimeArray(MultiObservationValues<?> sosObservationValues) throws EncodingException {
+        return ((TVPValue) sosObservationValues.getValue()).getValue().stream()
+                .map(TimeValuePair::getTime).map(this::getTimeString).collect(toList());
     }
 
     /**
@@ -363,24 +346,23 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
      * @param timeValuePairs
      *            SOS TimeValuePair objects
      * @return List with value objects
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private List<Object> getValueList(List<TimeValuePair> timeValuePairs) throws OwsExceptionReport {
-        ArrayList<Object> values = new ArrayList<Object>(timeValuePairs.size());
-        for (TimeValuePair timeValuePair : timeValuePairs) {
-            if (timeValuePair.getValue() != null
-                    && (timeValuePair.getValue() instanceof CountValue || timeValuePair.getValue() instanceof QuantityValue)) {
-                values.add(timeValuePair.getValue().getValue());
+    private List<Object> getValueList(List<TimeValuePair> timeValuePairs) throws EncodingException {
+        return timeValuePairs.stream()
+                .map(TimeValuePair::getValue)
+                .map(value -> {
+            if (value != null && (value instanceof CountValue || value instanceof QuantityValue)) {
+                return value.getValue();
             } else {
-                values.add("");
+                return "";
             }
-        }
-        return values;
+        }).collect(toList());
     }
 
     private XmlObject createMeasurementDomainRange(AbstractObservationValue<?> observationValue)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (!observationValue.isSetObservationType()
                 || (observationValue.isSetObservationType() && isInvalidObservationType(observationValue
                         .getObservationType()))) {
@@ -437,7 +419,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     private XmlObject createDataRecord(AbstractObservationValue<?> observationValue, String unit)
-            throws OwsExceptionReport {
+            throws EncodingException {
         // AbstractPhenomenon observableProperty =
         // sosObservation.getObservationConstellation().getObservableProperty();
         SweDataRecord dataRecord = new SweDataRecord();
@@ -449,15 +431,20 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         dataRecord.addField(field);
         Map<HelperValues, String> additionalValues = Maps.newEnumMap(HelperValues.class);
         additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        return CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
+        return encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
     }
 
     private TimePositionListDocument getTimePositionList(AbstractObservationValue<?> observationValue)
-            throws OwsExceptionReport {
+            throws EncodingException {
         TimePositionListDocument timePositionListDoc = TimePositionListDocument.Factory.newInstance();
         TimePositionListType timePositionList = timePositionListDoc.addNewTimePositionList();
         timePositionList.setId("timepositionList_" + observationValue.getObservationID());
         timePositionList.setTimePositionList(getTimeArray((MultiObservationValues<?>) observationValue));
         return timePositionListDoc;
+    }
+    private static Set<EncoderKey> createEncoderKeys() {
+        return CollectionHelper.union(getDefaultEncoderKeys(), CodingHelper.encoderKeysForElements(
+                WaterMLConstants.NS_WML_20_DR, GetObservationResponse.class, OmObservation.class,
+                                                                             AbstractFeature.class, SingleObservationValue.class, MultiObservationValues.class));
     }
 }

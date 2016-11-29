@@ -38,12 +38,14 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
@@ -64,7 +66,7 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
     }
 
     @Test
-    public void basic() throws OwsExceptionReport {
+    public void basic() throws DecodingException {
         GetCapabilitiesRequest req = decoder.decode(createMap());
         assertThat(req, is(notNullValue()));
         assertThat(req.getOperationName(), is(SosConstants.Operations.GetCapabilities.name()));
@@ -72,7 +74,7 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
     }
 
     @Test
-    public void acceptVersions() throws OwsExceptionReport {
+    public void acceptVersions() throws DecodingException {
         final Map<String, String> map = createMap();
         map.put(GetCapabilitiesParams.AcceptVersions.name(), ACCEPT_VERSIONS);
         GetCapabilitiesRequest req = decoder.decode(map);
@@ -83,14 +85,14 @@ public class GetCapabilitiesKvpDecoderTest extends DeleteSensorKvpDecoderv20 {
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void additionalParameter() throws OwsExceptionReport {
+    public void additionalParameter() throws DecodingException {
         final Map<String, String> map = createMap();
         map.put(ADDITIONAL_PARAMETER, ADDITIONAL_PARAMETER);
         decoder.decode(map);
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void emptyParam() throws OwsExceptionReport {
+    public void emptyParam() throws DecodingException {
         final Map<String, String> map = createMap();
         map.put(GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
         decoder.decode(map);

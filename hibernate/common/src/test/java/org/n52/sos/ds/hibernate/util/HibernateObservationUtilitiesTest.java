@@ -35,11 +35,14 @@ import java.util.List;
 import org.hibernate.Session;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.ds.hibernate.HibernateTestCase;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
@@ -53,8 +56,6 @@ import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.full.LegacyNumericObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.swe.SweDataArray;
 import org.n52.sos.request.GetObservationByIdRequest;
 
 /**

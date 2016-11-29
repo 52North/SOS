@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.ReportObligation;
@@ -50,7 +50,7 @@ public class ReportObligationJSONEncoder extends JSONEncoder<ReportObligation> {
 
     @Override
     public JsonNode encodeJSON(ReportObligation header)
-            throws OwsExceptionReport {
+            throws EncodingException {
         ObjectNode j = JSONUtils.nodeFactory().objectNode();
         j.set(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
         j.set(AQDJSONConstants.INSPIRE_ID, encodeObjectToJson(header.getInspireID()));

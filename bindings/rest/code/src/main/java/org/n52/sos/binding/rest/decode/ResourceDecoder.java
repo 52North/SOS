@@ -40,29 +40,31 @@ import java.util.RandomAccess;
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeException;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.http.HTTPMethods;
-import org.n52.sos.binding.rest.Constants;
-import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CRSHelper;
+import org.n52.shetland.util.DateTimeException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
+import org.n52.sos.util.JTSHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -74,17 +76,17 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     protected Constants bindingConstants = Constants.getInstance();
 
-    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport, DateTimeException;
+    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
+    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
+    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
+    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
 
-    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
+    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException, OwsExceptionReport
     {
         String resourceType = null;
         String pathPayload = null;
@@ -92,7 +94,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         if (httpRequest != null && httpRequest.getPathInfo() != null) {
 
             final String resourceTypeWithOrWithoutId = getResourceTypeFromPathInfoWithWorkingUrl(httpRequest.getPathInfo());
-            final int indexOfPotentialSecondSlash = resourceTypeWithOrWithoutId.indexOf("/");
+            final int indexOfPotentialSecondSlash = resourceTypeWithOrWithoutId.indexOf('/');
 
             if (indexOfPotentialSecondSlash > 1) {
                 resourceType = resourceTypeWithOrWithoutId.substring(0,indexOfPotentialSecondSlash);
@@ -184,7 +186,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     protected String checkParameterSingleValue(final String parameterValue, final String parameterName)
-            throws OwsExceptionReport {
+            throws DecodingException {
         if (!parameterValue.isEmpty() && (parameterValue.split(",").length == 1)) {
             return parameterValue;
         } else {
@@ -245,7 +247,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         if (times.length == 1) {
             final TimeInstant ti = new TimeInstant();
             if (ExtendedIndeterminateTime.contains(times[0])) {
-                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
+                ti.setIndeterminateValue(ExtendedIndeterminateTime.getEnumForString(times[0]));
             } else {
                 final DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
                 ti.setValue(instant);
@@ -274,7 +276,7 @@ public abstract class ResourceDecoder extends RestDecoder {
      * TODO move to KVP map decoder to share code
      */
     protected SpatialFilter parseSpatialFilter(List<String> parameterValues, final String parameterName)
-            throws OwsExceptionReport {
+            throws DecodingException {
         if (!parameterValues.isEmpty()) {
             if (!(parameterValues instanceof RandomAccess)) {
                 parameterValues = new ArrayList<String>(parameterValues);
@@ -289,7 +291,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             if (parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefixSosV2())
                     || parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefix())) {
                 hasSrid = true;
-                srid = SosHelper.parseSrsName(parameterValues.get(parameterValues.size() - 1));
+                srid = CRSHelper.parseSrsName(parameterValues.get(parameterValues.size() - 1));
             }
 
             List<String> coordinates;
@@ -322,7 +324,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
 
-    protected boolean isContentOfPostRequestValid(final HttpServletRequest httpRequest) throws OwsExceptionReport
+    protected boolean isContentOfPostRequestValid(final HttpServletRequest httpRequest) throws DecodingException
     {
         if ((httpRequest == null) || (httpRequest.getContentType() == null))
         {

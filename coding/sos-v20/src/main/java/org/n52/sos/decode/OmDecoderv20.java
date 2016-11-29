@@ -32,65 +32,61 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import net.opengis.om.x20.NamedValuePropertyType;
+import net.opengis.om.x20.OMObservationDocument;
+import net.opengis.om.x20.OMObservationType;
+import net.opengis.om.x20.TimeObjectPropertyType;
+
 import org.apache.xmlbeans.XmlBoolean;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlInteger;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.Time.NilReason;
-import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.Constants;
-import org.n52.sos.ogc.gml.AbstractGeometry;
-import org.n52.sos.ogc.gml.GmlMeasureType;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.NilTemplateValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.util.CodingHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ogc.sos.ConformanceClasses;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.AbstractGeometry;
+import org.n52.shetland.ogc.gml.GmlMeasureType;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.Time.NilReason;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.NilTemplateValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
-
-import net.opengis.om.x20.NamedValuePropertyType;
-import net.opengis.om.x20.OMObservationDocument;
-import net.opengis.om.x20.OMObservationType;
-import net.opengis.om.x20.TimeObjectPropertyType;
 
 /**
  * @since 4.0.0
@@ -130,7 +126,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
 
     public OmDecoderv20() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(DECODER_KEYS));
+                     .join(DECODER_KEYS));
     }
 
     @Override
@@ -145,14 +141,14 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
 
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
     }
 
     @Override
-    public Object decode(Object object) throws OwsExceptionReport {
+    public Object decode(Object object) throws DecodingException {
         // validate document
         // XmlHelper.validateDocument((XmlObject) object);
         if (object instanceof OMObservationDocument) {
@@ -165,7 +161,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         return super.decode(object);
     }
 
-    private OmObservation parseOmObservation(OMObservationType omObservation) throws OwsExceptionReport {
+    private OmObservation parseOmObservation(OMObservationType omObservation) throws DecodingException {
         Map<String, AbstractFeature> featureMap = Maps.newHashMap();
         OmObservation sosObservation = new OmObservation();
         // parse identifier, description
@@ -178,26 +174,10 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             sosObservation.setParameter(parseNamedValueTypeArray(omObservation.getParameterArray()));
         }
         sosObservation.setValue(getObservationValue(omObservation));
-        try {
-            Object decodeXmlElement = CodingHelper.decodeXmlElement(omObservation.getFeatureOfInterest());
-            if (decodeXmlElement instanceof AbstractFeature) {
-                AbstractFeature featureOfInterest = (AbstractFeature) decodeXmlElement;
-                observationConstallation.setFeatureOfInterest(checkFeatureWithMap(featureOfInterest, featureMap));
-            }
-        } catch (OwsExceptionReport e) {
-            if (sosObservation.getValue() != null && sosObservation.getValue().getPhenomenonTime() != null
-                    && sosObservation.getPhenomenonTime().isSetNilReason()
-                    && sosObservation.getValue().getPhenomenonTime().getNilReason().equals(NilReason.template)) {
-                for (CodedException exception : e.getExceptions()) {
-                    if (exception.getCode().equals(OwsExceptionCode.InvalidParameterValue)) {
-                        throw new InvalidParameterValueException().at(exception.getLocator()).withMessage(
-                                exception.getMessage());
-                    } else if (exception.getCode().equals(OwsExceptionCode.MissingParameterValue)) {
-                        throw new MissingParameterValueException(exception.getLocator());
-                    }
-                }
-            }
-            throw e;
+        Object decodeXmlElement = decodeXmlElement(omObservation.getFeatureOfInterest());
+        if (decodeXmlElement instanceof AbstractFeature) {
+            AbstractFeature featureOfInterest = (AbstractFeature) decodeXmlElement;
+            observationConstallation.setFeatureOfInterest(checkFeatureWithMap(featureOfInterest, featureMap));
         }
         // TODO: later for spatial filtering profile
         // omObservation.getParameterArray();
@@ -206,7 +186,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
     }
 
     private OmObservationConstellation getObservationConstellation(OMObservationType omObservation)
-            throws OwsExceptionReport {
+            throws DecodingException {
         OmObservationConstellation observationConstellation = new OmObservationConstellation();
         observationConstellation.setObservationType(getObservationType(omObservation));
         observationConstellation.setProcedure(createProcedure(getProcedure(omObservation)));
@@ -235,34 +215,32 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         return null;
     }
 
-    private Time getPhenomenonTime(OMObservationType omObservation) throws OwsExceptionReport {
+    private Time getPhenomenonTime(OMObservationType omObservation) throws DecodingException {
         TimeObjectPropertyType phenomenonTime = omObservation.getPhenomenonTime();
-        if (phenomenonTime.isSetHref() && phenomenonTime.getHref().startsWith(Constants.NUMBER_SIGN_STRING)) {
+        if (phenomenonTime.isSetHref() && phenomenonTime.getHref().startsWith("#")) {
             TimeInstant timeInstant = new TimeInstant();
             timeInstant.setGmlId(phenomenonTime.getHref());
             return timeInstant;
-        } else if (phenomenonTime.isSetNilReason() && phenomenonTime.getNilReason() instanceof String
-                && ((String) phenomenonTime.getNilReason()).equals(TimeIndeterminateValue.template.name())) {
-            TimeInstant timeInstant = new TimeInstant();
-            timeInstant.setIndeterminateValue(TimeIndeterminateValue.getEnumForString((String) phenomenonTime
-                    .getNilReason()));
-            return timeInstant;
+        } else if (phenomenonTime.isSetNilReason() &&
+                   phenomenonTime.getNilReason() instanceof String &&
+                 ((String) phenomenonTime.getNilReason()).equals(IndeterminateValue.TEMPLATE.getValue())) {
+            return new TimeInstant(IndeterminateValue.TEMPLATE);
         } else if (phenomenonTime.isSetAbstractTimeObject()) {
-            Object decodedObject = CodingHelper.decodeXmlObject(phenomenonTime.getAbstractTimeObject());
+            Object decodedObject = decodeXmlObject(phenomenonTime.getAbstractTimeObject());
             if (decodedObject instanceof Time) {
                 return (Time) decodedObject;
             }
             // FIXME else
         }
-        throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
+        throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
                 "The requested phenomenonTime type is not supported by this service!");
     }
 
-    private TimeInstant getResultTime(OMObservationType omObservation) throws OwsExceptionReport {
+    private TimeInstant getResultTime(OMObservationType omObservation) throws DecodingException {
         if (omObservation.getResultTime().isSetHref()) {
             TimeInstant timeInstant = new TimeInstant();
             timeInstant.setGmlId(omObservation.getResultTime().getHref());
-            if (omObservation.getResultTime().getHref().charAt(0) == Constants.NUMBER_SIGN_CHAR) {
+            if (omObservation.getResultTime().getHref().charAt(0) == '#') {
                 // document internal link
                 // TODO parse linked element
                 timeInstant.setReference(Sos2Constants.EN_PHENOMENON_TIME);
@@ -270,44 +248,44 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
                 timeInstant.setReference(omObservation.getResultTime().getHref());
             }
             return timeInstant;
-        } else if (omObservation.getResultTime().isSetNilReason()
-                && omObservation.getResultTime().getNilReason() instanceof String
-                && NilReason.template.equals(NilReason.getEnumForString((String) omObservation.getResultTime()
-                        .getNilReason()))) {
+        } else if (omObservation.getResultTime().isSetNilReason() &&
+                 omObservation.getResultTime().getNilReason() instanceof String &&
+                 NilReason.template.equals(NilReason.getEnumForString((String) omObservation.getResultTime()
+                           .getNilReason()))) {
             TimeInstant timeInstant = new TimeInstant();
             timeInstant
                     .setNilReason(NilReason.getEnumForString((String) omObservation.getResultTime().getNilReason()));
             return timeInstant;
         } else if (omObservation.getResultTime().isSetTimeInstant()) {
-            Object decodedObject = CodingHelper.decodeXmlObject(omObservation.getResultTime().getTimeInstant());
+            Object decodedObject = decodeXmlObject(omObservation.getResultTime().getTimeInstant());
             if (decodedObject instanceof TimeInstant) {
                 return (TimeInstant) decodedObject;
             }
-            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
-                    .withMessage("The requested resultTime type is not supported by this service!");
+            throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
+                    "The requested resultTime type is not supported by this service!");
         } else {
-            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
-                    .withMessage("The requested resultTime type is not supported by this service!");
+            throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
+                    "The requested resultTime type is not supported by this service!");
         }
     }
 
-    private TimePeriod getValidTime(OMObservationType omObservation) throws OwsExceptionReport {
+    private TimePeriod getValidTime(OMObservationType omObservation) throws DecodingException {
         if (omObservation.isSetValidTime()) {
-            Object decodedObject = CodingHelper.decodeXmlObject(omObservation.getValidTime().getTimePeriod());
+            Object decodedObject = decodeXmlObject(omObservation.getValidTime().getTimePeriod());
             if (decodedObject instanceof TimePeriod) {
                 return (TimePeriod) decodedObject;
             }
-            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
-                    .withMessage("The requested validTime type is not supported by this service!");
+            throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
+                    "The requested validTime type is not supported by this service!");
         }
         return null;
     }
 
-    private ObservationValue<?> getObservationValue(OMObservationType omObservation) throws OwsExceptionReport {
+    private ObservationValue<?> getObservationValue(OMObservationType omObservation) throws DecodingException {
         Time phenomenonTime = getPhenomenonTime(omObservation);
         ObservationValue<?> observationValue;
-        if (!omObservation.getResult().getDomNode().hasChildNodes() && phenomenonTime.isSetNilReason()
-                && phenomenonTime.getNilReason().equals(NilReason.template)) {
+        if (!omObservation.getResult().getDomNode().hasChildNodes() && phenomenonTime.isSetNilReason() &&
+                 phenomenonTime.getNilReason().equals(NilReason.template)) {
             observationValue = new SingleObservationValue<>(new NilTemplateValue());
         } else {
             observationValue = getResult(omObservation);
@@ -316,7 +294,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         return observationValue;
     }
 
-    private ObservationValue<?> getResult(OMObservationType omObservation) throws OwsExceptionReport {
+    private ObservationValue<?> getResult(OMObservationType omObservation) throws DecodingException {
         XmlObject xbResult = omObservation.getResult();
 
         if (xbResult.schemaType() == XmlAnyTypeImpl.type) {
@@ -341,22 +319,19 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             XmlBoolean xbBoolean = (XmlBoolean) xbResult;
             BooleanValue booleanValue = new BooleanValue(xbBoolean.getBooleanValue());
             return new SingleObservationValue<>(booleanValue);
-        }
-        // CountObservation
+        } // CountObservation
         else if (xbResult.schemaType() == XmlInteger.type) {
             XmlInteger xbInteger = (XmlInteger) xbResult;
             CountValue countValue = new CountValue(Integer.parseInt(xbInteger.getBigIntegerValue().toString()));
             return new SingleObservationValue<>(countValue);
-        }
-        // TextObservation
+        } // TextObservation
         else if (xbResult.schemaType() == XmlString.type) {
             XmlString xbString = (XmlString) xbResult;
             TextValue stringValue = new TextValue(xbString.getStringValue());
             return new SingleObservationValue<>(stringValue);
-        }
-        // result elements with other encoding like SWE_ARRAY_OBSERVATION
+        } // result elements with other encoding like SWE_ARRAY_OBSERVATION
         else {
-            Object decodedObject = CodingHelper.decodeXmlObject(xbResult);
+            Object decodedObject = decodeXmlObject(xbResult);
             if (decodedObject instanceof ObservationValue) {
                 return (ObservationValue<?>) decodedObject;
             } else if (decodedObject instanceof GmlMeasureType) {
@@ -368,7 +343,7 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             } else if (decodedObject instanceof Geometry) {
                 return new SingleObservationValue<>(new GeometryValue((Geometry) decodedObject));
             } else if (decodedObject instanceof AbstractGeometry) {
-                SingleObservationValue<Geometry> result = new SingleObservationValue<Geometry>();
+                SingleObservationValue<Geometry> result = new SingleObservationValue<>();
                 result.setValue(new GeometryValue(((AbstractGeometry) decodedObject).getGeometry()));
                 return result;
             } else if (decodedObject instanceof SweDataArray) {
@@ -376,13 +351,13 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
             } else if (decodedObject instanceof SweDataRecord) {
                 return new SingleObservationValue<>(new ComplexValue((SweDataRecord) decodedObject));
             }
-            throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
-                    .withMessage("The requested result type '{}' is not supported by this service!", decodedObject.getClass().getSimpleName());
+            throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
+                    "The requested result type '{}' is not supported by this service!", decodedObject.getClass().getSimpleName());
         }
     }
 
     private AbstractFeature checkFeatureWithMap(AbstractFeature featureOfInterest,
-            Map<String, AbstractFeature> featureMap) {
+                                                Map<String, AbstractFeature> featureMap) {
         if (featureOfInterest.getGmlId() != null && !featureOfInterest.getGmlId().isEmpty()) {
             if (featureMap.containsKey(featureOfInterest.getGmlId())) {
                 return featureMap.get(featureOfInterest.getGmlId());
@@ -393,10 +368,8 @@ public class OmDecoderv20 extends AbstractOmDecoderv20 {
         return featureOfInterest;
     }
 
-    private SosProcedureDescription createProcedure(String procedureIdentifier) {
-        SensorML procedure = new SensorML();
-        procedure.setIdentifier(procedureIdentifier);
-        return procedure;
+    private SosProcedureDescription<?> createProcedure(String procedureIdentifier) {
+        return new SosProcedureDescriptionUnknownType(procedureIdentifier);
     }
 
 }

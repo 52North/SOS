@@ -28,21 +28,30 @@
  */
 package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.sos.iso.CodeList;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.Role;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.iso.CodeList;
+import org.n52.shetland.ogc.ows.OwsAddress;
+import org.n52.shetland.ogc.ows.OwsContact;
+import org.n52.shetland.ogc.ows.OwsOnlineResource;
+import org.n52.shetland.ogc.ows.OwsPhone;
+import org.n52.shetland.ogc.ows.OwsResponsibleParty;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.Role;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 
 /**
  * TODO JavaDoc
@@ -100,44 +109,29 @@ public class ContactsEnrichment extends SensorMLEnrichment {
         }
         SmlResponsibleParty rp = new SmlResponsibleParty();
         OwsServiceProvider sp = serviceProvider.get();
-        if (sp.hasIndividualName()) {
-            rp.setIndividualName(sp.getIndividualName());
-        }
-        if (sp.hasName()) {
-            rp.setOrganizationName(sp.getName());
-        }
-        if (sp.hasSite()) {
-            rp.addOnlineResource(sp.getSite());
-        }
-        if (sp.hasPositionName()) {
-            rp.setPositionName(sp.getPositionName());
-        }
-        if (sp.hasDeliveryPoint()) {
-            rp.addDeliveryPoint(sp.getDeliveryPoint());
-        }
-        if (sp.hasPhone()) {
-            rp.addPhoneVoice(sp.getPhone());
-        }
-        if (sp.hasCity()) {
-            rp.setCity(sp.getCity());
-        }
-        if (sp.hasCountry()) {
-            rp.setCountry(sp.getCountry());
-        }
-        if (sp.hasPostalCode()) {
-            rp.setPostalCode(sp.getPostalCode());
-        }
-        if (sp.hasMailAddress()) {
-            rp.setEmail(sp.getMailAddress());
-        }
+        OwsResponsibleParty serviceContact = sp.getServiceContact();
+        java.util.Optional<OwsContact> contactInfo = serviceContact.getContactInfo();
+        java.util.Optional<OwsAddress> address = contactInfo.flatMap(OwsContact::getAddress);
+        serviceContact.getIndividualName().ifPresent(rp::setIndividualName);
+        serviceContact.getOrganisationName().ifPresent(rp::setOrganizationName);
+        serviceContact.getPositionName().ifPresent(rp::setPositionName);
+        contactInfo.flatMap(OwsContact::getOnlineResource).flatMap(OwsOnlineResource::getHref).map(URI::toString).map(Collections::singletonList).ifPresent(rp::setOnlineResource);
+        address.flatMap(OwsAddress::getAdministrativeArea).ifPresent(rp::setAdministrativeArea);
+        address.flatMap(OwsAddress::getCity).ifPresent(rp::setCity);
+        address.flatMap(OwsAddress::getCountry).ifPresent(rp::setCountry);
+        address.flatMap(OwsAddress::getPostalCode).ifPresent(rp::setPostalCode);
+        address.map(OwsAddress::getElectronicMailAddress).map(it -> Iterables.getFirst(it, null)).ifPresent(rp::setEmail);
+        address.map(OwsAddress::getDeliveryPoint).ifPresent(rp::setDeliveryPoint);
+        contactInfo.flatMap(OwsContact::getContactInstructions).ifPresent(rp::setContactInstructions);
+        contactInfo.flatMap(OwsContact::getHoursOfService).ifPresent(rp::setHoursOfService);
+        contactInfo.flatMap(OwsContact::getPhone).map(OwsPhone::getFacsimile).map(ArrayList::new).ifPresent(rp::setPhoneFax);
+        contactInfo.flatMap(OwsContact::getPhone).map(OwsPhone::getVoice).map(ArrayList::new).ifPresent(rp::setPhoneVoice);
         rp.setRole(createRole());
         return Optional.of(rp);
     }
 
     private Role createRole() {
-        Role role =
-                new Role("Point of Contact").setCodeList(CodeList.CI_ROLE_CODE_URL)
-                        .setCodeListValue(CodeList.CiRoleCodes.CI_RoleCode_pointOfContact.name());
-        return role;
+        return new Role("Point of Contact").setCodeList(CodeList.CI_ROLE_CODE_URL)
+                .setCodeListValue(CodeList.CiRoleCodes.CI_RoleCode_pointOfContact.name());
     }
 }

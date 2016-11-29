@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 
 import org.n52.iceland.coding.encode.ResponseFormatKey;
 import org.n52.iceland.config.json.AbstractJsonActivationDao;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatKey;
 import org.n52.sos.config.SosActivationDao;
 
@@ -55,11 +55,11 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
     protected static final String PROCEDURE_DESCRIPTION_FORMATS
             = "procedureDescriptionFormats";
     protected static final String FORMAT = "format";
-    private static final Function<ProcedureDescriptionFormatKey, ServiceOperatorKey> PDF_SOK
+    private static final Function<ProcedureDescriptionFormatKey, OwsServiceKey> PDF_SOK
             = ProcedureDescriptionFormatKey::getServiceOperatorKey;
     private static final Function<ProcedureDescriptionFormatKey, String> PDF_FORMAT
             = ProcedureDescriptionFormatKey::getProcedureDescriptionFormat;
-    private static final Function<ResponseFormatKey, ServiceOperatorKey> RF_SOK
+    private static final Function<ResponseFormatKey, OwsServiceKey> RF_SOK
             = ResponseFormatKey::getServiceOperatorKey;
     private static final Function<ResponseFormatKey, String> RF_FORMAT
             = ResponseFormatKey::getResponseFormat;
@@ -97,7 +97,7 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
     }
 
     protected <K> Function<JsonNode, K> createFormatDecoder(
-            BiFunction<ServiceOperatorKey, String, K> fun) {
+            BiFunction<OwsServiceKey, String, K> fun) {
         Objects.requireNonNull(fun);
         return n -> fun.apply(decodeServiceOperatorKey(n),
                               n.path(FORMAT).textValue());
@@ -105,22 +105,22 @@ public class SosJsonActivationDao extends AbstractJsonActivationDao
 
     protected <K> Supplier<ObjectNode> createFormatEncoder(
             Supplier<ObjectNode> supplier, K key,
-            Function<K, ServiceOperatorKey> sokFun,
+            Function<K, OwsServiceKey> sokFun,
             Function<K, String> formatFun) {
         Objects.requireNonNull(supplier);
         Objects.requireNonNull(sokFun);
         Objects.requireNonNull(formatFun);
         return () -> {
-            ServiceOperatorKey sok = key == null ? null : sokFun.apply(key);
+            OwsServiceKey sok = key == null ? null : sokFun.apply(key);
             String format = key == null ? null : formatFun.apply(key);
             return encode(supplier, sok).get().put(FORMAT, format);
         };
     }
 
     protected <K> Predicate<JsonNode> matches(K key,
-                                              Function<K, ServiceOperatorKey> sokFun,
+                                              Function<K, OwsServiceKey> sokFun,
                                               Function<K, String> formatFun) {
-        ServiceOperatorKey sok = key == null ? null : sokFun.apply(key);
+        OwsServiceKey sok = key == null ? null : sokFun.apply(key);
         String responseFormat = key == null ? null : formatFun.apply(key);
         return matches(sok).and(matchesFormat(responseFormat));
     }

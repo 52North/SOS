@@ -28,92 +28,93 @@
  */
 package org.n52.sos.converter;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import org.n52.iceland.coding.CodingRepository;
+import javax.inject.Inject;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.RequestResponseModifier;
 import org.n52.iceland.convert.RequestResponseModifierFacilitator;
 import org.n52.iceland.convert.RequestResponseModifierKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.om.AbstractPhenomenon;
+import org.n52.shetland.ogc.om.ObservationValue;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractUomType;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.sos.ogc.om.AbstractPhenomenon;
-import org.n52.sos.ogc.om.ObservationValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweAbstractUomType;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.response.InsertObservationResponse;
-import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class SplitMergeObservations implements RequestResponseModifier {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(SplitMergeObservations.class);
+    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = Stream.of(SosConstants.SOS)
+                .flatMap(service -> Stream.of(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION)
+                .flatMap(version -> Stream.of(
+                new RequestResponseModifierKey(service, version, new GetObservationRequest()),
+                new RequestResponseModifierKey(service, version, new GetObservationRequest(), new GetObservationResponse()),
+                new RequestResponseModifierKey(service, version, new InsertObservationRequest()),
+                new RequestResponseModifierKey(service, version, new InsertObservationRequest(), new InsertObservationResponse()))))
+                .collect(toSet());
+    private EncoderRepository encoderRepository;
+    private ProfileHandler profileHandler;
 
-    private static final Set<RequestResponseModifierKey> REQUEST_RESPONSE_MODIFIER_KEY_TYPES = getKeyTypes();
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
 
-    /**
-     * Get the keys
-     *
-     * @return Set of keys
-     */
-    private static Set<RequestResponseModifierKey> getKeyTypes() {
-        Set<String> services = Sets.newHashSet(SosConstants.SOS);
-        Set<String> versions = Sets.newHashSet(Sos1Constants.SERVICEVERSION, Sos2Constants.SERVICEVERSION);
-        Map<AbstractServiceRequest<?>, AbstractServiceResponse> requestResponseMap = Maps.newHashMap();
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
+    }
 
-        requestResponseMap.put(new GetObservationRequest(), new GetObservationResponse());
-        requestResponseMap.put(new InsertObservationRequest(), new InsertObservationResponse());
-        Set<RequestResponseModifierKey> keys = Sets.newHashSet();
-        for (String service : services) {
-            for (String version : versions) {
-                for (AbstractServiceRequest<?> request : requestResponseMap.keySet()) {
-                    keys.add(new RequestResponseModifierKey(service, version, request));
-                    keys.add(new RequestResponseModifierKey(service, version, request, requestResponseMap
-                            .get(request)));
-                }
-            }
-        }
-        return keys;
+    @Override
+    public RequestResponseModifierFacilitator getFacilitator() {
+        // TODO Auto-generated method stub
+        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
     }
 
     @Override
@@ -122,7 +123,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public AbstractServiceRequest<?> modifyRequest(AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    public OwsServiceRequest modifyRequest(OwsServiceRequest request) throws OwsExceptionReport {
         if (request instanceof InsertObservationRequest) {
             splitObservations((InsertObservationRequest) request);
         }
@@ -211,19 +212,19 @@ public class SplitMergeObservations implements RequestResponseModifier {
         ObservationValue<?> value = null;
 
         if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_TRUTH_OBSERVATION)) {
-            value = new SingleObservationValue<Boolean>(new BooleanValue(Boolean.parseBoolean(valueString)));
+            value = new SingleObservationValue<>(new BooleanValue(Boolean.parseBoolean(valueString)));
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_COUNT_OBSERVATION)) {
-            value = new SingleObservationValue<Integer>(new CountValue(Integer.parseInt(valueString)));
+            value = new SingleObservationValue<>(new CountValue(Integer.parseInt(valueString)));
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_MEASUREMENT)) {
             final QuantityValue quantity = new QuantityValue(Double.parseDouble(valueString));
             quantity.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<Double>(quantity);
+            value = new SingleObservationValue<>(quantity);
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)) {
             final CategoryValue cat = new CategoryValue(valueString);
             cat.setUnit(getUom(resultDefinitionField));
-            value = new SingleObservationValue<String>(cat);
+            value = new SingleObservationValue<>(cat);
         } else if (observationType.equalsIgnoreCase(OmConstants.OBS_TYPE_TEXT_OBSERVATION)) {
-            value = new SingleObservationValue<String>(new TextValue(valueString));
+            value = new SingleObservationValue<>(new TextValue(valueString));
         }
         // TODO Check for missing types
         if (value != null) {
@@ -273,7 +274,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     @Override
-    public AbstractServiceResponse modifyResponse(AbstractServiceRequest<?> request, AbstractServiceResponse response) throws OwsExceptionReport{
+    public OwsServiceResponse modifyResponse(OwsServiceRequest request, OwsServiceResponse response) throws OwsExceptionReport{
         if (request instanceof GetObservationRequest && response instanceof GetObservationResponse) {
             return  mergeObservations((GetObservationRequest) request, (GetObservationResponse) response);
         } else  if (response instanceof GetObservationResponse) {
@@ -326,26 +327,22 @@ public class SplitMergeObservations implements RequestResponseModifier {
         }
     }
 
+
     private boolean checkEncoderForMergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         if (response.isSetResponseFormat()) {
+            EncoderKey key = new XmlEncoderKey(response.getResponseFormat(), OmObservation.class);
             // check for XML encoder
-            ObservationEncoder<Object, Object> encoder =
-                    (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
-                            new XmlEncoderKey(response.getResponseFormat(), new OmObservation().getClass()));
+            ObservationEncoder<Object, Object> encoder = (ObservationEncoder<Object, Object>) encoderRepository.getEncoder(key);
             // check for response contentType
             if (encoder == null && response.isSetContentType()) {
-                encoder =
-                        (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
-                                new OperationResponseEncoderKey(response.getService(), response.getVersion(), response
-                                        .getOperationName(), response.getContentType()));
+                key = new OperationResponseEncoderKey(response.getService(), response.getVersion(), response.getOperationName(), response.getContentType());
+                encoder = (ObservationEncoder<Object, Object>) encoderRepository.getEncoder(key);
             }
             // check for responseFormat as MediaType
             if (encoder == null && response.isSetResponseFormat()) {
                 try {
-                    encoder =
-                            (ObservationEncoder<Object, Object>) CodingRepository.getInstance().getEncoder(
-                                    new OperationResponseEncoderKey(response.getService(), response.getVersion(), response
-                                            .getOperationName(), MediaType.parse(response.getResponseFormat())));
+                    key = new OperationResponseEncoderKey(response.getService(), response.getVersion(), response.getOperationName(), MediaType.parse(response.getResponseFormat()));
+                    encoder = (ObservationEncoder<Object, Object>) encoderRepository.getEncoder(key);
                 } catch (IllegalArgumentException iae) {
                     LOGGER.debug("ResponseFormat isNot a XML response format");
                 }
@@ -359,7 +356,7 @@ public class SplitMergeObservations implements RequestResponseModifier {
         return false;
     }
 
-    private AbstractServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
+    private OwsServiceResponse mergeObservations(GetObservationResponse response) throws OwsExceptionReport {
         boolean checkEncoderForMergeObservations = checkEncoderForMergeObservations(response);
         if (checkEncoderForMergeObservations && !response.hasStreamingData()) {
             if (!response.hasStreamingData()) {
@@ -371,25 +368,12 @@ public class SplitMergeObservations implements RequestResponseModifier {
     }
 
     private boolean checkForMergeObservationsInResponse(GetObservationRequest sosRequest) {
-        if (getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest)) {
-            return true;
-        }
-        return false;
+        return this.profileHandler.getActiveProfile().isMergeValues() || isSetExtensionMergeObservationsToSweDataArray(sosRequest);
     }
 
     private boolean isSetExtensionMergeObservationsToSweDataArray(final GetObservationRequest sosRequest) {
         return sosRequest.isSetExtensions() && sosRequest.getExtensions()
                 .isBooleanExtensionSet(Sos2Constants.Extensions.MergeObservationsIntoDataArray.name());
-    }
-
-    protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
-    }
-
-    @Override
-    public RequestResponseModifierFacilitator getFacilitator() {
-        // TODO Auto-generated method stub
-        return new RequestResponseModifierFacilitator().setMerger(true).setSplitter(true);
     }
 
 }

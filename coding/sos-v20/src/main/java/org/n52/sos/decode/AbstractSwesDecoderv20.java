@@ -28,29 +28,30 @@
  */
 package org.n52.sos.decode;
 
+
 import net.opengis.swes.x20.ExtensibleRequestType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.shetland.ogc.swes.SwesExtensions;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
-public class AbstractSwesDecoderv20 {
+public abstract class AbstractSwesDecoderv20<S> extends AbstractXmlDecoder<XmlObject, S> {
 
-    protected SwesExtensions parseExtensibleRequest(ExtensibleRequestType extensibleRequestType) throws OwsExceptionReport {
+    protected SwesExtensions parseExtensibleRequest(ExtensibleRequestType extensibleRequestType) throws DecodingException {
         return parseExtensibleRequestExtension(extensibleRequestType.getExtensionArray());
     }
 
-    protected SwesExtensions parseExtensibleRequestExtension(XmlObject[] extensionArray) throws OwsExceptionReport {
+    protected SwesExtensions parseExtensibleRequestExtension(XmlObject[] extensionArray) throws DecodingException {
         if (CollectionHelper.isNotNullOrEmpty(extensionArray)) {
             final SwesExtensions extensions = new SwesExtensions();
             for (final XmlObject xbSwesExtension : extensionArray) {
 
-                final Object obj = CodingHelper.decodeXmlElement(xbSwesExtension);
+                final Object obj = decodeXmlElement(xbSwesExtension);
                 if (obj instanceof SwesExtension<?>) {
                     extensions.addExtension((SwesExtension<?>) obj);
                 } else {

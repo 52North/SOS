@@ -1,55 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
-		<groupId>org.n52.sensorweb.sos</groupId>
-		<artifactId>core</artifactId>
-		<version>5.0.0-SNAPSHOT</version>
-	</parent>
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>api</artifactId>
-	<packaging>jar</packaging>
-	<name>52°North SOS - SOS API Module</name>
-	<description>52°North SOS - API module</description>
-	<dependencies>
-		<dependency>
-	        <groupId>org.n52.iceland</groupId>
-	        <artifactId>iceland</artifactId>
-         </dependency>
-         <!-- <dependency>
-            <groupId>org.n52.series-api</groupId>
-            <artifactId>proxy</artifactId>
-        </dependency> -->
-		 <dependency>
+    <parent>
+        <groupId>org.n52.sensorweb.sos</groupId>
+        <artifactId>core</artifactId>
+        <version>5.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>api</artifactId>
+    <packaging>jar</packaging>
+    <name>52°North SOS - SOS API Module</name>
+    <description>52°North SOS - API module</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.n52.iceland</groupId>
+            <artifactId>iceland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.shetland</groupId>
+            <artifactId>shetland</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>test</artifactId>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>test</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.vividsolutions</groupId>
-			<artifactId>jts</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>stax</groupId>
             <artifactId>stax-api</artifactId>
@@ -66,32 +70,32 @@
         <dependency>
             <groupId>se.jiderhamn</groupId>
             <artifactId>classloader-leak-prevention</artifactId>
-             <scope>runtime</scope>
+            <scope>runtime</scope>
         </dependency>
-		<dependency>
-			<groupId>org.apache.xmlbeans</groupId>
-			<artifactId>xmlbeans</artifactId>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
-                   <artifactId>stax-api</artifactId>
+                    <artifactId>stax-api</artifactId>
                 </exclusion>
             </exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.google.guava</groupId>
-			<artifactId>guava</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-epsg-hsql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-epsg-hsql</artifactId>
             <scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-referencing</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-referencing</artifactId>
             <scope>compile</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>org.geotools</groupId>
             <artifactId>gt-metadata</artifactId>
@@ -102,16 +106,16 @@
             <artifactId>gt-opengis</artifactId>
             <scope>compile</scope>
         </dependency>
-		<dependency>
-			<groupId>org.geotools</groupId>
-			<artifactId>gt-api</artifactId>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-api</artifactId>
             <scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>java3d</groupId>
-			<artifactId>vecmath</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>java3d</groupId>
+            <artifactId>vecmath</artifactId>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -132,29 +136,29 @@
             <artifactId>hamcrest-all</artifactId>
             <scope>compile</scope>
         </dependency>
-	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-						<configuration>
-							<classifier>without</classifier>
-							<excludes>
-								<exclude>**/*Test.*</exclude>
-								<exclude>**/*$.*</exclude>
-								<exclude>**/decode/*</exclude>
-								<exclude>**/encode/*</exclude>
-							</excludes>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>without</classifier>
+                            <excludes>
+                                <exclude>**/*Test.*</exclude>
+                                <exclude>**/*$.*</exclude>
+                                <exclude>**/decode/*</exclude>
+                                <exclude>**/encode/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

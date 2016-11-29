@@ -18,12 +18,16 @@
         <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -31,7 +35,7 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
-          <dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
@@ -40,13 +44,13 @@
             <artifactId>api-netcdf</artifactId>
         </dependency>
         <dependency>
-	        <groupId>com.axiomalaska</groupId>
-	        <artifactId>cf4j</artifactId>
-      	</dependency>
-		<dependency>
-			<groupId>edu.ucar</groupId>
-			<artifactId>netcdf</artifactId>
-		</dependency>   
+            <groupId>com.axiomalaska</groupId>
+            <artifactId>cf4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf</artifactId>
+        </dependency>   
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

@@ -32,18 +32,20 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject.Factory;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.swe.encoding.SweAbstractEncoding;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.decode.exception.DecoderResponseUnsupportedException;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
+
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -61,12 +63,12 @@ public class SosResultEncoding {
     public SosResultEncoding() {
     }
 
-    public SosResultEncoding(String resultEncoding) throws OwsExceptionReport {
+    public SosResultEncoding(String resultEncoding) throws DecodingException {
         this.xml = resultEncoding;
         encoding = parseResultEncoding();
     }
 
-    public String getXml() throws OwsExceptionReport {
+    public String getXml() throws EncodingException, DecodingException {
         if (!isSetXml() && encoding != null) {
             if (encoding.isSetXml()) {
                 setXml(encoding.getXml());
@@ -82,7 +84,7 @@ public class SosResultEncoding {
         return this;
     }
 
-    public SweAbstractEncoding getEncoding() throws OwsExceptionReport {
+    public SweAbstractEncoding getEncoding() throws DecodingException {
         if (encoding == null && xml != null && !xml.isEmpty()) {
             encoding = parseResultEncoding();
         }
@@ -94,7 +96,7 @@ public class SosResultEncoding {
         return this;
     }
 
-    private SweAbstractEncoding parseResultEncoding() throws OwsExceptionReport {
+    private SweAbstractEncoding parseResultEncoding() throws DecodingException {
         try {
             Object decodedObject = CodingHelper.decodeXmlObject(Factory.parse(xml));
             if (decodedObject instanceof SweAbstractEncoding) {
@@ -107,7 +109,7 @@ public class SosResultEncoding {
         }
     }
 
-    private String encodeResultEncoding() throws OwsExceptionReport {
+    private String encodeResultEncoding() throws DecodingException, EncodingException {
         Map<HelperValues, String> map = Maps.newEnumMap(HelperValues.class);
         map.put(HelperValues.DOCUMENT, null);
         return CodingHelper.encodeObjectToXmlText(SweConstants.NS_SWE_20, getEncoding(), map);
@@ -123,11 +125,11 @@ public class SosResultEncoding {
         }
         final SosResultEncoding other = (SosResultEncoding) obj;
         try {
-            if (this.getEncoding() != other.getEncoding()
-                    && (this.getEncoding() == null || !this.getEncoding().equals(other.getEncoding()))) {
+            if (this.getEncoding() != other.getEncoding() &&
+                     (this.getEncoding() == null || !this.getEncoding().equals(other.getEncoding()))) {
                 return false;
             }
-        } catch (OwsExceptionReport ex) {
+        } catch (DecodingException ex) {
             return false;
         }
         return true;
@@ -137,18 +139,18 @@ public class SosResultEncoding {
     public int hashCode() {
         try {
             return getEncoding().hashCode();
-        } catch (OwsExceptionReport e) {
+        } catch (DecodingException e) {
             LOGGER.error("Error while parsing resultStructure", e);
         }
         return super.hashCode();
     }
 
     public boolean isEmpty() {
-        return StringHelper.isNotEmpty(xml);
+        return !Strings.isNullOrEmpty(xml);
     }
 
     public boolean isSetXml() {
-        return StringHelper.isNotEmpty(this.xml);
+        return !Strings.isNullOrEmpty(this.xml);
     }
 
 }

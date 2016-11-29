@@ -28,122 +28,40 @@
  */
 package org.n52.sos.decode.kvp;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.n52.iceland.binding.kvp.AbstractKvpDecoder;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.svalbard.decode.OperationDecoderKey;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder {
+public class GetCapabilitiesKvpDecoder extends AbstractKvpDecoder<GetCapabilitiesRequest> {
 
-    private static final Set<DecoderKey> KVP_DECODER_KEY_TYPE = Sets.<DecoderKey> newHashSet(new OperationDecoderKey(
-            SosConstants.SOS, null, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION,
-                    SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(null, Sos2Constants.SERVICEVERSION,
-                    SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
-            new OperationDecoderKey(null, null, SosConstants.Operations.GetCapabilities.name(),
-                    MediaTypes.APPLICATION_KVP), new OperationDecoderKey(SosConstants.SOS,
-                    Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(),
-                    MediaTypes.APPLICATION_KVP), new OperationDecoderKey(null, Sos1Constants.SERVICEVERSION,
-                    SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.unmodifiableSet(KVP_DECODER_KEY_TYPE);
+
+    public GetCapabilitiesKvpDecoder() {
+        super(GetCapabilitiesRequest::new,
+            new OperationDecoderKey(SosConstants.SOS, null,                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(SosConstants.SOS, Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+            new OperationDecoderKey(null,             Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP),
+            // FIXME isn't this the only one needed?
+            new OperationDecoderKey(null,             null,                         SosConstants.Operations.GetCapabilities.name(), MediaTypes.APPLICATION_KVP));
     }
 
-    /**
-     * parses the String representing the getCapabilities request and creates a
-     * SosGetCapabilities request
-     *
-     * @param element
-     *            Map with getCapabilities parameters
-     *
-     * @return Returns SosGetCapabilitiesRequest representing the request
-     *
-     * @throws OwsExceptionReport
-     *             If parsing the String failed
-     */
     @Override
-    public GetCapabilitiesRequest decode(Map<String, String> element) throws OwsExceptionReport {
+    protected void getRequestParameterDefinitions(Builder<GetCapabilitiesRequest> builder) {
 
-        GetCapabilitiesRequest request = new GetCapabilitiesRequest(SosConstants.SOS);
-        CompositeOwsException exceptions = new CompositeOwsException();
-
-        boolean isV100 = false;
-
-        for (String parameterName : element.keySet()) {
-            String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                    if (parameterName
-                            .equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions
-                                    .name())) {
-                        List<String> acceptVersions =
-                                KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
-                        request.setAcceptVersions(acceptVersions);
-                        if (CollectionHelper.isNotEmpty(acceptVersions)
-                                && Sos1Constants.SERVICEVERSION.equals(acceptVersions.get(0))) {
-                            isV100 = true;
-                        }
-                    } // acceptFormats (optional)
-                    else if (parameterName
-                            .equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptFormats
-                                    .name())) {
-                        request.setAcceptFormats(KvpHelper
-                                .checkParameterMultipleValues(parameterValues, parameterName));
-                    } // updateSequence (optional)
-                    else if (parameterName
-                            .equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.updateSequence
-                                    .name())) {
-                        request.setUpdateSequence(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    } // sections (optional)
-                    else if (parameterName
-                            .equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Sections
-                                    .name())) {
-                        request.setSections(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                    } // capabilitiesId (optional; non-standard)
-                    else if (parameterName
-                            .equalsIgnoreCase(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.CapabilitiesId
-                                    .name())) {
-                        request.setCapabilitiesId(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(parameterName));
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (isV100 && !request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException().at(OWSConstants.RequestParams.service));
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
-
+        builder.add(GetCapabilitiesParams.Sections, decodeList(GetCapabilitiesRequest::setSections));
+        builder.add(GetCapabilitiesParams.updateSequence, GetCapabilitiesRequest::setUpdateSequence);
+        builder.add(GetCapabilitiesParams.AcceptFormats, decodeList(GetCapabilitiesRequest::setAcceptFormats));
+        builder.add(GetCapabilitiesParams.AcceptVersions, decodeList(GetCapabilitiesRequest::setAcceptVersions));
+        builder.add(GetCapabilitiesParams.CapabilitiesId, GetCapabilitiesRequest::setCapabilitiesId);
     }
+
 }

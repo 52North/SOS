@@ -36,11 +36,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.n52.iceland.ogc.ows.Extensions;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.request.GetCapabilitiesRequest;
+
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.iceland.statistics.api.mappings.ServiceEventDataMapping;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.swes.SwesExtension;
 
 import basetest.HandlerBaseTest;
 
@@ -63,10 +64,10 @@ public class AbstractSosRequestHandlerTest extends HandlerBaseTest {
         request.setRequestContext(requestContext);
 
         Extensions extensions = new Extensions();
-        SwesExtension<String> ext = new SwesExtension<String>("value1");
+        SwesExtension<String> ext = new SwesExtension<>("value1");
         extensions.addExtension(ext);
 
-        SwesExtension<String> ext2 = new SwesExtension<String>("value2");
+        SwesExtension<String> ext2 = new SwesExtension<>("value2");
         ext2.setDefinition("def2");
         ext2.setIdentifier("id2");
         extensions.addExtension(ext2);

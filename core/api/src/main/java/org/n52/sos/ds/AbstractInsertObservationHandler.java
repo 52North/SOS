@@ -28,11 +28,20 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import java.net.URI;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsDomainMetadata;
+import org.n52.shetland.ogc.ows.OwsPossibleValues;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.InsertObservationParams;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.response.InsertObservationResponse;
 
@@ -48,16 +57,22 @@ public abstract class AbstractInsertObservationHandler extends AbstractOperation
         super(service, SosConstants.Operations.InsertObservation.name());
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        addOfferingParameter(opsMeta);
-        opsMeta.addAnyParameterValue(Sos2Constants.InsertObservationParams.observation);
-        opsMeta.addDataTypeParameter(Sos2Constants.InsertObservationParams.observation,
-                OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION);
-    }
-
     public abstract InsertObservationResponse insertObservation(InsertObservationRequest request)
             throws OwsExceptionReport;
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return new HashSet<>(Arrays.asList(
+                getObservationParameter(service, version),
+                getOfferingParameter(service, version)
+        ));
+    }
+
+    private OwsDomain getObservationParameter(String service, String version) {
+        InsertObservationParams name = Sos2Constants.InsertObservationParams.observation;
+        OwsDomainMetadata dataType = new OwsDomainMetadata(URI.create(OmConstants.SCHEMA_LOCATION_URL_OM_20_OM_OBSERVATION));
+        OwsPossibleValues possibleValues = OwsAnyValue.instance();
+        return new OwsDomain(name, possibleValues, null, null, dataType, null, null);
+    }
 
 }

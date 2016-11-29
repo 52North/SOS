@@ -35,31 +35,29 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import org.n52.iceland.i18n.I18NDAO;
+import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.i18n.LocalizedString;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.service.ProcedureDescriptionSettings;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.sos.cache.SosContentCache;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.i18n.I18NDAO;
-import org.n52.iceland.i18n.I18NDAORepository;
-import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.i18n.metadata.I18NProcedureMetadata;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.service.Configurator;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.sos.service.ProcedureDescriptionSettings;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
@@ -105,7 +103,7 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
      *
      * @param procedure
      *            Hibernate procedure entity
-     * @param abstractProcess
+     * @param feature
      *            SensorML process
      * @param session
      *            the session
@@ -212,14 +210,14 @@ public abstract class AbstractHibernateProcedureDescriptionGenerator {
      *             If an error occurs.
      */
     @VisibleForTesting
-    AbstractObservation getExampleObservation(String identifier, String observableProperty, Session session)
+    AbstractObservation<?> getExampleObservation(String identifier, String observableProperty, Session session)
             throws OwsExceptionReport {
         AbstractObservationDAO observationDAO = DaoFactory.getInstance().getObservationDAO();
         final Criteria c = observationDAO.getObservationCriteriaFor(identifier, observableProperty, session);
         c.setMaxResults(1);
         LOGGER.debug("QUERY getExampleObservation(identifier, observableProperty): {}",
                 HibernateHelper.getSqlString(c));
-        final AbstractObservation example = (AbstractObservation) c.uniqueResult();
+        final AbstractObservation<?> example = (AbstractObservation) c.uniqueResult();
         if (example == null) {
             LOGGER.debug(
                     "Could not receive example observation from database for procedure '{}' observing property '{}'.",

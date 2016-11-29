@@ -34,14 +34,15 @@ import static org.n52.sos.coding.json.JSONConstants.LOCATOR;
 import static org.n52.sos.coding.json.JSONConstants.TEXT;
 import static org.n52.sos.coding.json.JSONConstants.VERSION;
 
-import org.n52.iceland.coding.encode.ExceptionEncoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncodingException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

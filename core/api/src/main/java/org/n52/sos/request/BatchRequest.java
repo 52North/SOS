@@ -32,9 +32,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.sos.response.BatchResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.sos.util.BatchConstants;
 
 /**
@@ -44,31 +44,26 @@ import org.n52.sos.util.BatchConstants;
  *
  * @since 4.0.0
  */
-@SuppressWarnings("rawtypes")
-public class BatchRequest extends AbstractServiceRequest<BatchResponse> implements Iterable<AbstractServiceRequest> {
-    private final List<AbstractServiceRequest> requests;
+public class BatchRequest extends OwsServiceRequest implements Iterable<OwsServiceRequest> {
+    private final List<OwsServiceRequest> requests;
 
     private boolean stopAtFailure = false;
 
-    public BatchRequest(List<AbstractServiceRequest> requests) {
-        this.requests = checkNotNull(requests);
+    public BatchRequest(List<OwsServiceRequest> requests) {
+        super(null, null, BatchConstants.OPERATION_NAME);
+        this.requests = Objects.requireNonNull(requests);
     }
 
     public BatchRequest() {
-        this(new LinkedList<AbstractServiceRequest>());
+        this(new LinkedList<OwsServiceRequest>());
     }
 
-    @Override
-    public String getOperationName() {
-        return BatchConstants.OPERATION_NAME;
-    }
-
-    public List<AbstractServiceRequest> getRequests() {
+    public List<OwsServiceRequest> getRequests() {
         return Collections.unmodifiableList(requests);
     }
 
-    public void add(AbstractServiceRequest request) {
-        this.requests.add(checkNotNull(request));
+    public void add(OwsServiceRequest request) {
+        this.requests.add(Objects.requireNonNull(request));
     }
 
     public boolean isEmpty() {
@@ -76,15 +71,8 @@ public class BatchRequest extends AbstractServiceRequest<BatchResponse> implemen
     }
 
     @Override
-    public Iterator<AbstractServiceRequest> iterator() {
+    public Iterator<OwsServiceRequest> iterator() {
         return getRequests().iterator();
-    }
-
-    private static <T> T checkNotNull(T t) {
-        if (t == null) {
-            throw new NullPointerException();
-        }
-        return t;
     }
 
     public boolean isStopAtFailure() {
@@ -95,8 +83,4 @@ public class BatchRequest extends AbstractServiceRequest<BatchResponse> implemen
         this.stopAtFailure = stopAtFailure;
     }
 
-    @Override
-    public BatchResponse getResponse() {
-        return (BatchResponse) new BatchResponse().set(this);
-    }
 }

@@ -28,6 +28,13 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Contains;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_During;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Equals;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Meets;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_MetBy;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Overlaps;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -35,9 +42,10 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.iceland.ogc.gml.time.Time;
+
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;

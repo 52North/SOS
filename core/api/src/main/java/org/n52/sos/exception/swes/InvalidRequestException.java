@@ -28,7 +28,7 @@
  */
 package org.n52.sos.exception.swes;
 
-import static org.n52.iceland.util.http.HTTPStatus.BAD_REQUEST;
+import static org.n52.janmayen.http.HTTPStatus.BAD_REQUEST;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.om.OmObservation;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -37,7 +37,7 @@ import org.n52.sos.ogc.om.OmObservation;
  *
  * @since 1.0.0
  */
-public class DeleteObservationResponse extends AbstractServiceResponse {
+public class DeleteObservationResponse extends OwsServiceResponse {
     private OmObservation deletedObservation;
 
     private String observationIdentifier;
@@ -56,10 +56,5 @@ public class DeleteObservationResponse extends AbstractServiceResponse {
 
     public OmObservation getDeletedObservation() {
         return deletedObservation;
-    }
-
-    @Override
-    public String getOperationName() {
-        return DeleteObservationConstants.Operations.DeleteObservation.name();
     }
 }

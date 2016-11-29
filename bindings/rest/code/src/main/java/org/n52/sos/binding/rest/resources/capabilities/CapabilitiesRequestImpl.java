@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.capabilities;
 
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

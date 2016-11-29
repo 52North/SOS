@@ -34,8 +34,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import net.opengis.fes.x20.BBOXDocument;
 import net.opengis.fes.x20.BBOXType;
 import net.opengis.fes.x20.BinaryTemporalOpType;
@@ -44,7 +42,6 @@ import net.opengis.fes.x20.ConformanceType;
 import net.opengis.fes.x20.DuringDocument;
 import net.opengis.fes.x20.FilterCapabilitiesDocument.FilterCapabilities;
 import net.opengis.fes.x20.GeometryOperandsType;
-import net.opengis.fes.x20.IdCapabilitiesType;
 import net.opengis.fes.x20.ScalarCapabilitiesType;
 import net.opengis.fes.x20.SpatialCapabilitiesType;
 import net.opengis.fes.x20.SpatialOperatorType;
@@ -60,28 +57,28 @@ import net.opengis.fes.x20.impl.SpatialOperatorNameTypeImpl;
 import net.opengis.fes.x20.impl.TemporalOperatorNameTypeImpl;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.ows.OwsDomainType;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.iceland.service.ConformanceClass;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -90,15 +87,11 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  *
  */
-public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
+public class FesEncoderv20 extends AbstractXmlEncoder<XmlObject, Object> implements ConformanceClass {
     private static final Logger LOGGER = LoggerFactory.getLogger(FesEncoderv20.class);
 
-    private static final String FALSE = Boolean.FALSE.toString();
-
-    private static final String TRUE = Boolean.TRUE.toString();
-
     private static final Set<EncoderKey> ENCODER_KEYS = CodingHelper.encoderKeysForElements(FilterConstants.NS_FES_2,
-            TemporalFilter.class, org.n52.sos.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
+            TemporalFilter.class, org.n52.shetland.ogc.filter.FilterCapabilities.class, SpatialFilter.class);
 
     public FesEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -111,7 +104,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public void addNamespacePrefixToMap(final Map<String, String> nameSpacePrefixMap) {
+    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
         if (nameSpacePrefixMap != null) {
             nameSpacePrefixMap.put(FilterConstants.NS_FES_2, FilterConstants.NS_FES_2_PREFIX);
         }
@@ -123,11 +116,11 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
-            throws OwsExceptionReport {
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues)
+            throws EncodingException {
         XmlObject encodedObject = null;
-        if (element instanceof org.n52.sos.ogc.filter.FilterCapabilities) {
-            encodedObject = encodeFilterCapabilities((org.n52.sos.ogc.filter.FilterCapabilities) element);
+        if (element instanceof org.n52.shetland.ogc.filter.FilterCapabilities) {
+            encodedObject = encodeFilterCapabilities((org.n52.shetland.ogc.filter.FilterCapabilities) element);
             // LOGGER.debug("Encoded object {} is valid: {}",
             // encodedObject.schemaType().toString(),
             // XmlHelper.validateDocument(encodedObject));
@@ -142,61 +135,60 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
 
     }
 
-    private XmlObject encodeTemporalFilter(final TemporalFilter temporalFilter) throws OwsExceptionReport {
-        if (temporalFilter.getOperator().equals(TimeOperator.TM_During)) {
-            return encodeTemporalFilterDuring(temporalFilter);
-        } else if (temporalFilter.getOperator().equals(TimeOperator.TM_Equals)) {
-            return encodeTemporalFilterEquals(temporalFilter);
-        } else {
-            throw new UnsupportedEncoderInputException(this, temporalFilter);
+    private XmlObject encodeTemporalFilter(TemporalFilter temporalFilter) throws EncodingException {
+        switch (temporalFilter.getOperator()) {
+            case TM_During:
+                return encodeTemporalFilterDuring(temporalFilter);
+            case TM_Equals:
+                return encodeTemporalFilterEquals(temporalFilter);
+            default:
+                throw new UnsupportedEncoderInputException(this, temporalFilter);
         }
     }
 
-    private XmlObject encodeTemporalFilterDuring(final TemporalFilter temporalFilter) throws OwsExceptionReport {
+    private XmlObject encodeTemporalFilterDuring(TemporalFilter temporalFilter) throws EncodingException {
         final DuringDocument duringDoc =
-                DuringDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                DuringDocument.Factory.newInstance(getXmlOptions());
         final BinaryTemporalOpType during = duringDoc.addNewDuring();
         if (temporalFilter.getTime() instanceof TimePeriod) {
-            final Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+            final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
             additionalValues.put(HelperValues.DOCUMENT, "");
-            during.set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(),
-                    additionalValues));
+            during.set(encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(), additionalValues));
         } else {
-            throw new NoApplicableCodeException().withMessage("The temporal filter value is not a TimePeriod!");
+            throw new EncodingException("The temporal filter value is not a TimePeriod!");
         }
         checkAndAddValueReference(during, temporalFilter);
         return duringDoc;
     }
 
-    private XmlObject encodeTemporalFilterEquals(final TemporalFilter temporalFilter) throws OwsExceptionReport {
+    private XmlObject encodeTemporalFilterEquals(TemporalFilter temporalFilter) throws EncodingException {
         final TEqualsDocument equalsDoc =
-                TEqualsDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                TEqualsDocument.Factory.newInstance(getXmlOptions());
         final BinaryTemporalOpType equals = equalsDoc.addNewTEquals();
         if (temporalFilter.getTime() instanceof TimeInstant) {
-            final Map<HelperValues, String> additionalValues = new EnumMap<HelperValues, String>(HelperValues.class);
+            final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
             additionalValues.put(HelperValues.DOCUMENT, "");
-            equals.set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(),
-                    additionalValues));
+            equals.set(encodeObjectToXml(GmlConstants.NS_GML_32, temporalFilter.getTime(), additionalValues));
         } else {
-            throw new NoApplicableCodeException().withMessage("The temporal filter value is not a TimeInstant!");
+            throw new EncodingException("The temporal filter value is not a TimeInstant!");
         }
         checkAndAddValueReference(equals, temporalFilter);
         return equalsDoc;
     }
 
-    private XmlObject encodeExpression(final Object object) throws OwsExceptionReport {
-        return CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, object);
+    private XmlObject encodeExpression(Object object) throws EncodingException {
+        return encodeObjectToXml(GmlConstants.NS_GML_32, object);
     }
 
-    private void checkAndAddValueReference(final BinaryTemporalOpType binaryTemporalOp,
+    private void checkAndAddValueReference(BinaryTemporalOpType binaryTemporalOp,
             final TemporalFilter temporalFilter) {
         if (temporalFilter.hasValueReference()) {
             binaryTemporalOp.setValueReference(temporalFilter.getValueReference());
         }
     }
 
-    private XmlObject encodeSpatialFilter(final SpatialFilter spatialFilter) throws OwsExceptionReport {
-        final BBOXDocument bboxDoc = BBOXDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+    private XmlObject encodeSpatialFilter(SpatialFilter spatialFilter) throws EncodingException {
+        final BBOXDocument bboxDoc = BBOXDocument.Factory.newInstance(getXmlOptions());
         final BBOXType bbox = bboxDoc.addNewBBOX();
         if (spatialFilter.hasValueReference()) {
             bbox.set(encodeReferenceValue(spatialFilter.getValueReference()));
@@ -206,17 +198,17 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
         return bbox;
     }
 
-    private XmlObject encodeReferenceValue(final String sosValueReference) {
+    private XmlObject encodeReferenceValue(String sosValueReference) {
         final ValueReferenceDocument valueReferenceDoc =
-                ValueReferenceDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                ValueReferenceDocument.Factory.newInstance(getXmlOptions());
         valueReferenceDoc.setValueReference(sosValueReference);
         return valueReferenceDoc;
     }
 
-    private XmlObject encodeFilterCapabilities(final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps)
-            throws OwsExceptionReport {
+    private XmlObject encodeFilterCapabilities(org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps)
+            throws EncodingException {
         final FilterCapabilities filterCapabilities =
-                FilterCapabilities.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                FilterCapabilities.Factory.newInstance(getXmlOptions());
         if (sosFilterCaps.isSetCoinformance()) {
             setConformance(filterCapabilities.addNewConformance(), sosFilterCaps.getConformance());
 //        } else {
@@ -243,14 +235,14 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            XML FES conformence
      * @param sosConformance
      *            Service conformance
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private void setConformance(final ConformanceType conformance, Collection<OwsDomainType> sosConformance)
-            throws OwsExceptionReport {
+    private void setConformance(final ConformanceType conformance, Collection<OwsDomain> sosConformance)
+            throws EncodingException {
 
-        for (OwsDomainType owsDomainType : sosConformance) {
-            XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, owsDomainType);
+        for (OwsDomain owsDomainType : sosConformance) {
+            XmlObject encodeObjectToXml = encodeObjectToXml(OWSConstants.NS_OWS, owsDomainType);
             conformance.addNewConstraint().set(encodeObjectToXml);
         }
     }
@@ -264,29 +256,28 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            FES SpatialCapabilities.
      * @param sosFilterCaps
      *            SOS spatial filter information
+     * @throws org.n52.svalbard.encode.exception.EncodingException
      */
     private void setSpatialFilterCapabilities(final SpatialCapabilitiesType spatialCapabilitiesType,
-            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) throws EncodingException {
 
         // set GeometryOperands
         if (sosFilterCaps.getSpatialOperands() != null && !sosFilterCaps.getSpatialOperands().isEmpty()) {
-            final GeometryOperandsType spatialOperands = spatialCapabilitiesType.addNewGeometryOperands();
-            for (final QName operand : sosFilterCaps.getSpatialOperands()) {
-                spatialOperands.addNewGeometryOperand().setName(operand);
-            }
+            GeometryOperandsType spatialOperands = spatialCapabilitiesType.addNewGeometryOperands();
+            sosFilterCaps.getSpatialOperands()
+                    .forEach(operand -> spatialOperands.addNewGeometryOperand().setName(operand));
         }
 
         // set SpatialOperators
         if (sosFilterCaps.getSpatialOperators() != null && !sosFilterCaps.getSpatialOperators().isEmpty()) {
-            final SpatialOperatorsType spatialOps = spatialCapabilitiesType.addNewSpatialOperators();
-            final Set<SpatialOperator> keys = sosFilterCaps.getSpatialOperators().keySet();
-            for (final SpatialOperator spatialOperator : keys) {
-                final SpatialOperatorType operator = spatialOps.addNewSpatialOperator();
+            SpatialOperatorsType spatialOps = spatialCapabilitiesType.addNewSpatialOperators();
+            Set<SpatialOperator> keys = sosFilterCaps.getSpatialOperators().keySet();
+            for (SpatialOperator spatialOperator : keys) {
+                SpatialOperatorType operator = spatialOps.addNewSpatialOperator();
                 operator.setName(getEnum4SpatialOperator(spatialOperator));
-                final GeometryOperandsType geomOps = operator.addNewGeometryOperands();
-                for (final QName operand : sosFilterCaps.getSpatialOperators().get(spatialOperator)) {
-                    geomOps.addNewGeometryOperand().setName(operand);
-                }
+                GeometryOperandsType geomOps = operator.addNewGeometryOperands();
+                sosFilterCaps.getSpatialOperators().get(spatialOperator)
+                        .forEach(operand -> geomOps.addNewGeometryOperand().setName(operand));
             }
         }
     }
@@ -300,29 +291,27 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            FES TemporalCapabilities.
      * @param sosFilterCaps
      *            SOS temporal filter information
+     * @throws org.n52.svalbard.encode.exception.EncodingException
      */
-    private void setTemporalFilterCapabilities(final TemporalCapabilitiesType temporalCapabilitiesType,
-            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+    private void setTemporalFilterCapabilities(TemporalCapabilitiesType temporalCapabilitiesType,
+            org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) throws EncodingException {
 
         // set TemporalOperands
         if (sosFilterCaps.getTemporalOperands() != null && !sosFilterCaps.getTemporalOperands().isEmpty()) {
-            final TemporalOperandsType tempOperands = temporalCapabilitiesType.addNewTemporalOperands();
-            for (final QName operand : sosFilterCaps.getTemporalOperands()) {
-                tempOperands.addNewTemporalOperand().setName(operand);
-            }
+            TemporalOperandsType tempOperands = temporalCapabilitiesType.addNewTemporalOperands();
+            sosFilterCaps.getTemporalOperands().forEach(operand -> tempOperands.addNewTemporalOperand().setName(operand));
         }
 
         // set TemporalOperators
-        if (sosFilterCaps.getTempporalOperators() != null && !sosFilterCaps.getTempporalOperators().isEmpty()) {
-            final TemporalOperatorsType temporalOps = temporalCapabilitiesType.addNewTemporalOperators();
-            final Set<TimeOperator> keys = sosFilterCaps.getTempporalOperators().keySet();
-            for (final TimeOperator temporalOperator : keys) {
-                final TemporalOperatorType operator = temporalOps.addNewTemporalOperator();
+        if (sosFilterCaps.getTemporalOperators() != null && !sosFilterCaps.getTemporalOperators().isEmpty()) {
+            TemporalOperatorsType temporalOps = temporalCapabilitiesType.addNewTemporalOperators();
+            Set<TimeOperator> keys = sosFilterCaps.getTemporalOperators().keySet();
+            for (TimeOperator temporalOperator : keys) {
+                TemporalOperatorType operator = temporalOps.addNewTemporalOperator();
                 operator.setName(getEnum4TemporalOperator(temporalOperator));
-                final TemporalOperandsType bboxGeomOps = operator.addNewTemporalOperands();
-                for (final QName operand : sosFilterCaps.getTempporalOperators().get(temporalOperator)) {
-                    bboxGeomOps.addNewTemporalOperand().setName(operand);
-                }
+                TemporalOperandsType bboxGeomOps = operator.addNewTemporalOperands();
+                sosFilterCaps.getTemporalOperators().get(temporalOperator)
+                        .forEach(operand -> bboxGeomOps.addNewTemporalOperand().setName(operand));
             }
         }
     }
@@ -336,32 +325,21 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
      *            FES ScalarCapabilities.
      * @param sosFilterCaps
      *            SOS scalar filter information
+     * @throws org.n52.svalbard.encode.exception.EncodingException
      */
     private void setScalarFilterCapabilities(final ScalarCapabilitiesType scalarCapabilitiesType,
-            final org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) throws UnsupportedEncoderInputException {
+            final org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) throws EncodingException {
 
         if (sosFilterCaps.getComparisonOperators() != null && !sosFilterCaps.getComparisonOperators().isEmpty()) {
             final ComparisonOperatorsType scalarOps = scalarCapabilitiesType.addNewComparisonOperators();
-            for (final ComparisonOperator operator : sosFilterCaps.getComparisonOperators()) {
+            for (ComparisonOperator operator : sosFilterCaps.getComparisonOperators()) {
                 scalarOps.addNewComparisonOperator().setName(getEnum4ComparisonOperator(operator));
             }
         }
     }
 
-    /**
-     * Set the IdFilterCapabilities.
-     *
-     * !!! Modify method addicted to your implementation !!!
-     *
-     * @param idCapabilitiesType
-     *            FES IdCapabilities.
-     */
-    private void setIdFilterCapabilities(final IdCapabilitiesType idCapabilitiesType) {
-        idCapabilitiesType.addNewResourceIdentifier();
-    }
-
     private String getEnum4SpatialOperator(final SpatialOperator spatialOperator)
-            throws UnsupportedEncoderInputException {
+            throws EncodingException {
         switch (spatialOperator) {
         case BBOX:
             return SpatialOperatorNameTypeImpl.BBOX.toString();
@@ -391,7 +369,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     private String getEnum4TemporalOperator(final TimeOperator temporalOperator)
-            throws UnsupportedEncoderInputException {
+            throws EncodingException {
         switch (temporalOperator) {
         case TM_After:
             return TemporalOperatorNameTypeImpl.AFTER.toString();
@@ -425,7 +403,7 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
     }
 
     private String getEnum4ComparisonOperator(final ComparisonOperator comparisonOperator)
-            throws UnsupportedEncoderInputException {
+            throws EncodingException {
         switch (comparisonOperator) {
         case PropertyIsBetween:
             return ComparisonOperatorNameTypeImpl.PROPERTY_IS_BETWEEN.toString();
@@ -451,4 +429,5 @@ public class FesEncoderv20 extends AbstractXmlEncoder<Object> {
             throw new UnsupportedEncoderInputException(this, comparisonOperator);
         }
     }
+
 }

@@ -30,12 +30,12 @@ package org.n52.sos.ds.hibernate.entities.observation.series;
 
 import java.util.Date;
 
-import org.n52.iceland.util.Constants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasDeletedFlag;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasHiddenChildFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasPublishedFlag;
 import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasUnit;
-import org.n52.sos.ds.hibernate.entities.HibernateRelations.*;
+import org.n52.sos.ds.hibernate.entities.HibernateRelations.HasWriteableObservationContext;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.Procedure;

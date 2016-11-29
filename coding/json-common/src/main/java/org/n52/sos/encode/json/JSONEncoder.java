@@ -28,29 +28,42 @@
  */
 package org.n52.sos.encode.json;
 
+import java.net.URI;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collector;
 
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
+import javax.inject.Inject;
+
 import org.n52.iceland.util.JSONUtils;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.janmayen.exception.CompositeException;
+import org.n52.janmayen.function.ThrowingFunction;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.janmayen.stream.MoreCollectors;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.sos.coding.json.JSONConstants;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -67,6 +80,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     public static final String CONTENT_TYPE = "application/json";
 
     private final Set<EncoderKey> encoderKeys;
+    private EncoderRepository encoderRepository;
 
     public JSONEncoder(Class<? super T> type, EncoderKey... additionalKeys) {
         Builder<EncoderKey> set = ImmutableSet.builder();
@@ -75,19 +89,14 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
         this.encoderKeys = set.build();
     }
 
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = Objects.requireNonNull(encoderRepository);
+    }
+
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(encoderKeys);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-        /* noop */
     }
 
     @Override
@@ -96,65 +105,131 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public JsonNode encode(T objectToEncode, Map<HelperValues, String> v) throws OwsExceptionReport {
+    public JsonNode encode(T objectToEncode, Map<HelperValues, String> v) throws EncodingException {
         return encode(objectToEncode);
     }
 
     @Override
-    public JsonNode encode(T objectToEncode) throws OwsExceptionReport {
-        try {
-            if (objectToEncode == null) {
-                return nodeFactory().nullNode();
-            }
-            return encodeJSON(objectToEncode);
-        } catch (JSONEncodingException ex) {
-            throw new NoApplicableCodeException().causedBy(ex);
+    public JsonNode encode(T objectToEncode) throws EncodingException {
+        if (objectToEncode == null) {
+            return nodeFactory().nullNode();
         }
+        return encodeJSON(objectToEncode);
     }
 
-    public abstract JsonNode encodeJSON(T t) throws OwsExceptionReport;
+    public abstract JsonNode encodeJSON(T t) throws EncodingException;
 
-    protected JsonNode encodeObjectToJson(Object o) throws OwsExceptionReport {
+    protected JsonNode encodeObjectToJson(Object o) throws EncodingException {
         if (o == null) {
             return nodeFactory().nullNode();
         }
         JSONEncoderKey key = new JSONEncoderKey(o.getClass());
-        Encoder<JsonNode, Object> encoder = CodingRepository.getInstance().getEncoder(key);
-        if (encoder == null) {
-            throw new NoEncoderForKeyException(key);
-        }
-        return encoder.encode(o);
+        Encoder<JsonNode, Object> encoder = this.encoderRepository.getEncoder(key);
+        return Optional.ofNullable(encoder).orElseThrow(() -> new NoEncoderForKeyException(key)).encode(o);
     }
 
     protected JsonNodeFactory nodeFactory() {
         return JSONUtils.nodeFactory();
     }
 
-    protected JsonNode encodeCodeType(CodeType codeType) {
-        if (codeType.isSetCodeSpace()) {
-            return nodeFactory().objectNode().put(JSONConstants.CODESPACE, codeType.getCodeSpace().toString())
-                    .put(JSONConstants.VALUE, codeType.getValue());
-        } else {
-            return nodeFactory().textNode(codeType.getValue());
+    protected <T> void encodeOptional(ObjectNode json, String name, Optional<T> obj, Function<T, JsonNode> encoder) {
+        obj.map(encoder).ifPresent(node -> json.set(name, node));
+    }
+
+    protected <T, X extends Exception> void encodeOptionalChecked(ObjectNode json, String name, Optional<T> obj, ThrowingFunction<T, JsonNode, X> encoder) throws X {
+        if (obj.isPresent()) {
+            Optional.ofNullable(encoder.apply(obj.get())).ifPresent(node -> json.set(name, node));
         }
     }
 
-    protected JsonNode encodeCodeWithAuthority(CodeWithAuthority cwa) {
-        if (cwa.isSetCodeSpace()) {
-            return nodeFactory().objectNode().put(JSONConstants.CODESPACE, cwa.getCodeSpace())
-                    .put(JSONConstants.VALUE, cwa.getValue());
-        } else {
-            return nodeFactory().textNode(cwa.getValue());
+    protected <T> void encodeList(ObjectNode json, String name, Collection<T> collection, Function<T, JsonNode> encoder) {
+        if (!collection.isEmpty()) {
+            json.set(name, collection.stream().map(encoder).collect(toJsonArray()));
         }
+    }
+
+    protected <T, X extends Exception> void encodeListChecked(ObjectNode json, String name, Collection<T> collection, ThrowingFunction<T, JsonNode, X> encoder) throws CompositeException {
+        if (!collection.isEmpty()) {
+            CompositeException exceptions = new CompositeException();
+            json.set(name, collection.stream().map(exceptions.wrap(encoder)).map(o -> o.orElseGet(nodeFactory()::nullNode)).collect(toJsonArray()));
+            if (!exceptions.isEmpty()) {
+                throw exceptions;
+            }
+        }
+    }
+
+    protected <T> void encodeOptional(ArrayNode json, Optional<T> obj, Function<T, JsonNode> encoder) {
+        obj.map(encoder).ifPresent(json::add);
+    }
+
+    protected <T, X extends Exception> void encodeOptionalChecked(ArrayNode json, Optional<T> obj, ThrowingFunction<T, JsonNode, X> encoder) throws X {
+        if (obj.isPresent()) {
+            Optional.ofNullable(encoder.apply(obj.get())).ifPresent(json::add);
+        }
+    }
+
+    protected <T> void encode(ObjectNode json, String name, T obj, Function<T, JsonNode> encoder) {
+        json.set(name, encoder.apply(obj));
+    }
+
+    protected <T, X extends Exception> void encodeChecked(ObjectNode json, String name, T obj, ThrowingFunction<T, JsonNode, X> encoder) throws X {
+        json.set(name, encoder.apply(obj));
+    }
+
+    protected <T> void encode(ArrayNode json, T obj, Function<T, JsonNode> encoder) {
+        json.add(encoder.apply(obj));
+    }
+
+    protected <T, X extends Exception> void encodeChecked(ArrayNode json, T obj, ThrowingFunction<T, JsonNode, X> encoder) throws X {
+        json.add(encoder.apply(obj));
+    }
+
+    protected <T> JsonNode encodeAsString(T t) {
+        return (t == null) ? nodeFactory().nullNode() : nodeFactory().textNode(t.toString());
+    }
+
+    protected JsonNode encodeURI(URI uri) {
+        return encodeAsString(uri);
+    }
+
+    protected JsonNode encodeCodeType(CodeType codeType) {
+        return encodeCodeType(Optional.ofNullable(codeType.getCodeSpace()).map(URI::toString), codeType.getValue());
+    }
+
+    protected JsonNode encodeOwsCode(OwsCode codeType) {
+        return encodeCodeType(codeType.getCodeSpace().map(URI::toString), codeType.getValue());
+    }
+
+    protected JsonNode encodeCodeWithAuthority(CodeWithAuthority cwa) {
+        return encodeCodeType(Optional.ofNullable(Strings.emptyToNull(cwa.getCodeSpace())), cwa.getValue());
+    }
+
+    protected JsonNode encodeCodeType(Optional<String> codeSpace, String value) {
+        if (codeSpace.isPresent()) {
+            return nodeFactory().objectNode()
+                    .put(JSONConstants.CODESPACE, codeSpace.get())
+                    .put(JSONConstants.VALUE, value);
+        } else {
+            return nodeFactory().textNode(value);
+        }
+    }
+
+    protected Collector<JsonNode, ?, ArrayNode> toJsonArray() {
+        return MoreCollectors.collector(nodeFactory()::arrayNode, ArrayNode::add, (BinaryOperator<ArrayNode>) ArrayNode::addAll);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> Collector<T, ?, ObjectNode> toJsonObject(Collector<T, ?, ? extends Map<String, ? extends JsonNode>> mapper) {
+
+        Collector<T, Object, Map<String, ? extends JsonNode>> m = (Collector<T, Object, Map<String, ? extends JsonNode>>) mapper;
+
+        Function<Map<String, ? extends JsonNode>, ObjectNode> finisher
+                = map -> {
+                    ObjectNode node = nodeFactory().objectNode();
+                    node.setAll(map);
+                    return node;
+                };
+
+        return MoreCollectors.collector(m.supplier(), m.accumulator(), m.combiner(), m.finisher().andThen(finisher));
     }
 }

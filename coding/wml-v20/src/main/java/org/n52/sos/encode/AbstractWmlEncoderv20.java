@@ -35,52 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.GDuration;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.joda.time.DateTime;
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.ProcedureEncoder;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeFormatException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.features.FeatureCollection;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.sos.ogc.wml.WaterMLConstants;
-import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.vividsolutions.jts.geom.Geometry;
-
 import net.opengis.om.x20.OMObservationDocument;
 import net.opengis.om.x20.OMObservationType;
 import net.opengis.samplingSpatial.x20.ShapeType;
@@ -90,6 +44,51 @@ import net.opengis.waterml.x20.MonitoringPointDocument;
 import net.opengis.waterml.x20.MonitoringPointType;
 import net.opengis.waterml.x20.ObservationProcessDocument;
 import net.opengis.waterml.x20.ObservationProcessType;
+
+import org.apache.xmlbeans.GDuration;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.iceland.coding.encode.ProcedureEncoder;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.features.FeatureCollection;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeFormatException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.JavaHelper;
+import org.n52.janmayen.http.MediaType;
+import org.n52.sos.ogc.wml.ObservationProcess;
+import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.SosHelper;
+import org.n52.sos.util.XmlHelper;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Abstract encoder class for WaterML 2.0
@@ -110,10 +109,6 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             ImmutableMap.of(SosConstants.SOS, ImmutableMap.<String, Set<String>> builder()
                     .put(Sos2Constants.SERVICEVERSION, ImmutableSet.of(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING))
                     .build());
-
-    protected static Set<EncoderKey> getDefaultEncoderKeys() {
-        return Collections.unmodifiableSet(DEFAULT_ENCODER_KEYS);
-    }
 
     @Override
     protected boolean convertEncodedProcedure() {
@@ -145,7 +140,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
         if (element instanceof ObservationProcess) {
             return createObservationProcess((ObservationProcess) element, additionalValues);
         } else if (element instanceof AbstractFeature) {
@@ -155,7 +150,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
         }
     }
 
-    private XmlObject encodeAbstractFeature(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues) throws UnsupportedEncoderInputException, OwsExceptionReport {
+    private XmlObject encodeAbstractFeature(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues) throws EncodingException {
         if (abstractFeature instanceof OmObservation) {
             return super.encode(abstractFeature, additionalValues);
         } else {
@@ -186,10 +181,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @param getObservationResonse
      *            SOS GetObservationResponse
      * @return Encoded response
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    protected XmlObject createWmlGetObservationResponse(GetObservationResponse getObservationResonse) throws OwsExceptionReport {
+    protected XmlObject createWmlGetObservationResponse(GetObservationResponse getObservationResonse) throws EncodingException {
         // TODO: set schemaLocation if final
         Map<CodeWithAuthority, String> gmlID4sfIdentifier = Maps.newHashMap();
         int sfIdCounter = 1;
@@ -198,9 +193,9 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             Collection<OmObservation> sosObservations = getObservationResonse.getObservationCollection();
             if (sosObservations.size() == 1) {
                 OMObservationDocument omObservationDoc =
-                        OMObservationDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                        OMObservationDocument.Factory.newInstance(getXmlOptions());
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
+                    Map<HelperValues, String> foiHelper = new EnumMap<>(HelperValues.class);
                     String gmlId = "sf_" + sfIdCounter;
                     foiHelper.put(HelperValues.GMLID, gmlId);
                     omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
@@ -208,10 +203,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 return omObservationDoc;
             } else {
                 CollectionDocument xmlCollectionDoc =
-                        CollectionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                        CollectionDocument.Factory.newInstance(getXmlOptions());
                 CollectionType wmlCollection = xmlCollectionDoc.addNewCollection();
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(SosConstants.HelperValues.class);
+                    Map<HelperValues, String> foiHelper = new EnumMap<>(HelperValues.class);
                     String gmlId;
                     // FIXME CodeWithAuthority VS. String keys
                     if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
@@ -234,7 +229,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
         } else {
             // TODO: HydrologieProfile-Exception
-            throw new NoApplicableCodeException().withMessage("Combination does not exists!");
+            throw new EncodingException("Combination does not exists!");
         }
     }
 
@@ -244,11 +239,11 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @param absFeature
      *            SOS feature
      * @return WaterML 2.0 MonitoringPoint XML object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     protected XmlObject createMonitoringPoint(AbstractFeature absFeature)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (absFeature instanceof SamplingFeature) {
             SamplingFeature sampFeat = (SamplingFeature) absFeature;
             StringBuilder builder = new StringBuilder();
@@ -257,7 +252,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             absFeature.setGmlId(builder.toString());
 
             MonitoringPointDocument monitoringPointDoc =
-                    MonitoringPointDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                    MonitoringPointDocument.Factory.newInstance(getXmlOptions());
             if (sampFeat.getXmlDescription() != null) {
                 try {
                     XmlObject feature = XmlObject.Factory.parse(sampFeat.getXmlDescription());
@@ -271,8 +266,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         return monitoringPointDoc;
                     }
                 } catch (XmlException xmle) {
-                    throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                            "Error while encoding GetFeatureOfInterest response, invalid samplingFeature description!");
+                    throw new EncodingException("Error while encoding GetFeatureOfInterest response, invalid samplingFeature description!", xmle);
                 }
             }
             MonitoringPointType monitoringPoint = monitoringPointDoc.addNewMonitoringPoint();
@@ -282,7 +276,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             if (sampFeat.isSetIdentifier()
                 && SosHelper.checkFeatureOfInterestIdentifierForSosV2(sampFeat.getIdentifierCodeWithAuthority().getValue(),
                                                                           Sos2Constants.SERVICEVERSION)) {
-                XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifierCodeWithAuthority());
+                XmlObject xmlObject = encodeObjectToXml(GmlConstants.NS_GML_32, sampFeat.getIdentifierCodeWithAuthority());
                 if (xmlObject != null) {
                     monitoringPoint.addNewIdentifier().set(xmlObject);
                 }
@@ -290,7 +284,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
             if (sampFeat.isSetName()) {
                 for (CodeType sosName : sampFeat.getName()) {
-                    monitoringPoint.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
+                    monitoringPoint.addNewName().set(encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
                 }
             }
 
@@ -302,7 +296,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             // TODO: CHECK
             if (sampFeat.getSampledFeatures() != null && !sampFeat.getSampledFeatures().isEmpty()) {
                 if (sampFeat.getSampledFeatures().size() == 1) {
-                    XmlObject encodeObjectToXml = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32,
+                    XmlObject encodeObjectToXml = encodeObjectToXml(GmlConstants.NS_GML_32,
                             sampFeat.getSampledFeatures().get(0));
                     monitoringPoint.addNewSampledFeature().set(encodeObjectToXml);
                 } else {
@@ -312,7 +306,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         featureCollection.addMember(sampledFeature);
                     }
                     XmlObject encodeObjectToXml =
-                            CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
+                            encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
                     monitoringPoint.addNewSampledFeature().set(encodeObjectToXml);
                 }
             } else {
@@ -325,8 +319,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
 
             // set position
             ShapeType xbShape = monitoringPoint.addNewShape();
-            Encoder<XmlObject, Geometry> encoder = CodingRepository.getInstance()
-                    .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
+            Encoder<XmlObject, Geometry> encoder = getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
             if (encoder != null) {
                 Map<HelperValues, String> gmlAdditionalValues = new EnumMap<>(HelperValues.class);
                 gmlAdditionalValues.put(HelperValues.GMLID, absFeature.getGmlId());
@@ -334,8 +327,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 xbShape.addNewAbstractGeometry().set(xmlObject);
                 XmlHelper.substituteElement(xbShape.getAbstractGeometry(), xmlObject);
             } else {
-                throw new NoApplicableCodeException()
-                        .withMessage("Error while encoding geometry for feature, needed encoder is missing!");
+                throw new EncodingException("Error while encoding geometry for feature, needed encoder is missing!");
             }
             return monitoringPointDoc;
         }
@@ -351,59 +343,51 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @param additionalValues
      *            Additional values
      * @return WaterML 2.0 ObservationProcess XML object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure, Map<HelperValues, String> additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
-        try {
-            if (procedure.isSetSensorDescriptionXmlString()) {
-                encodedObject = XmlObject.Factory.parse(procedure.getSensorDescriptionXmlString());
-                checkAndAddIdentifier(procedure, ((ObservationProcessDocument) encodedObject).getObservationProcess());
+        if (procedure.isSetSensorDescriptionXmlString()) {
+            encodedObject = XmlObject.Factory.parse(procedure.getSensorDescriptionXmlString());
+            checkAndAddIdentifier(procedure, ((ObservationProcessDocument) encodedObject).getObservationProcess());
+        } else {
+            encodedObject = ObservationProcessDocument.Factory.newInstance();
+            ObservationProcessType observationProcess =
+                    ((ObservationProcessDocument) encodedObject).addNewObservationProcess();
+            if (additionalValues.containsKey(HelperValues.GMLID)) {
+                observationProcess.setId("process." + additionalValues.get(HelperValues.GMLID));
             } else {
-                encodedObject = ObservationProcessDocument.Factory.newInstance();
-                ObservationProcessType observationProcess =
-                        ((ObservationProcessDocument) encodedObject).addNewObservationProcess();
-                if (additionalValues.containsKey(HelperValues.GMLID)) {
-                    observationProcess.setId("process." + additionalValues.get(HelperValues.GMLID));
-                } else {
-                    observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
-                }
-
-                if (procedure.isSetName()) {
-                    for (final CodeType sosName : procedure.getName()) {
-                        observationProcess.addNewName()
-                                .set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
-                    }
-                }
-                addProcessType(observationProcess, procedure);
-                addOriginatingProcess(observationProcess, procedure);
-                addAggregatingDuration(observationProcess, procedure);
-                addVerticalDatum(observationProcess, procedure);
-                addComment(observationProcess, procedure);
-                addProcessReference(observationProcess, procedure);
-                addInput(observationProcess, procedure);
-                addParameter(observationProcess, procedure);
+                observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
             }
-        } catch (final XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle);
+
+            if (procedure.isSetName()) {
+                for (final CodeType sosName : procedure.getName()) {
+                    observationProcess.addNewName().set(encodeObjectToXml(GmlConstants.NS_GML_32, sosName));
+                }
+            }
+            addProcessType(observationProcess, procedure);
+            addOriginatingProcess(observationProcess, procedure);
+            addAggregatingDuration(observationProcess, procedure);
+            addVerticalDatum(observationProcess, procedure);
+            addComment(observationProcess, procedure);
+            addProcessReference(observationProcess, procedure);
+            addInput(observationProcess, procedure);
+            addParameter(observationProcess, procedure);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        XmlHelper.validateDocument(encodedObject, EncodingException::new);
         return (ObservationProcessDocument) encodedObject;
     }
 
-    private void checkAndAddIdentifier(ObservationProcess op, ObservationProcessType opt) throws OwsExceptionReport {
+    private void checkAndAddIdentifier(ObservationProcess op, ObservationProcessType opt) throws EncodingException {
         if (op.isSetIdentifier() && !opt.isSetIdentifier()) {
             CodeWithAuthority codeWithAuthority = op.getIdentifierCodeWithAuthority();
-            Encoder<?, CodeWithAuthority> encoder = CodingRepository.getInstance()
-                    .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, codeWithAuthority));
+            Encoder<?, CodeWithAuthority> encoder = getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, codeWithAuthority));
             if (encoder != null) {
                 XmlObject xmlObject = (XmlObject) encoder.encode(codeWithAuthority);
                 opt.addNewIdentifier().set(xmlObject);
             } else {
-                throw new NoApplicableCodeException()
-                        .withMessage("Error while encoding geometry value, needed encoder is missing!");
+                throw new EncodingException("Error while encoding geometry value, needed encoder is missing!");
             }
         }
     }
@@ -415,17 +399,17 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
      *            SOS ObservationProcess
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private void addProcessType(ObservationProcessType observationProcess, ObservationProcess procedure) throws OwsExceptionReport {
+    private void addProcessType(ObservationProcessType observationProcess, ObservationProcess procedure) throws EncodingException {
         if (procedure.isSetProcessType() && procedure.getProcessType().isSetHref()) {
             XmlObject referenceType = encodeReferenceType(procedure.getProcessType());
             if (referenceType != null) {
                 observationProcess.addNewProcessType().set(referenceType);
             }
         } else {
-            throw new NoApplicableCodeException().withMessage("Missing processType definition");
+            throw new EncodingException("Missing processType definition");
         }
     }
 
@@ -437,11 +421,11 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
      *            SOS ObservationProcess
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     private void addOriginatingProcess(ObservationProcessType observationProcess, ObservationProcess procedure)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (procedure.isSetOriginatingProcess()) {
             XmlObject referenceType = encodeReferenceType(procedure.getOriginatingProcess());
             if (referenceType != null) {
@@ -472,10 +456,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
      *            SOS ObservationProcess
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private void addVerticalDatum(ObservationProcessType observationProcess, ObservationProcess procedure) throws OwsExceptionReport {
+    private void addVerticalDatum(ObservationProcessType observationProcess, ObservationProcess procedure) throws EncodingException {
         if (procedure.isSetVerticalDatum()) {
             XmlObject referenceType = encodeReferenceType(procedure.getVerticalDatum());
             if (referenceType != null) {
@@ -494,11 +478,9 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      */
     private void addComment(ObservationProcessType observationProcess, ObservationProcess procedure) {
         if (procedure.isSetComments()) {
-            for (String comment : procedure.getComments()) {
-                if (comment != null && !comment.isEmpty()) {
-                    observationProcess.addComment(comment);
-                }
-            }
+            procedure.getComments().stream()
+                    .filter(s ->  !Strings.isNullOrEmpty(s))
+                    .forEachOrdered(observationProcess::addComment);
         }
     }
 
@@ -509,10 +491,10 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
      *            SOS ObservationProcess
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
-    private void addProcessReference(ObservationProcessType observationProcess, ObservationProcess procedure) throws OwsExceptionReport {
+    private void addProcessReference(ObservationProcessType observationProcess, ObservationProcess procedure) throws EncodingException {
         if (procedure.isSetProcessReference()) {
             XmlObject referenceType = encodeReferenceType(procedure.getProcessReference());
             if (referenceType != null) {
@@ -528,13 +510,13 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
      *            SOS ObservationProcess
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     private void addInput(ObservationProcessType observationProcess, ObservationProcess procedure)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (procedure.isSetInputs()) {
-            for (org.n52.sos.ogc.gml.ReferenceType sosReferenceType : procedure.getInputs()) {
+            for (org.n52.shetland.ogc.gml.ReferenceType sosReferenceType : procedure.getInputs()) {
                 XmlObject referenceType = encodeReferenceType(sosReferenceType);
                 if (referenceType != null) {
                     observationProcess.addNewInput().set(referenceType);
@@ -550,11 +532,11 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 ObservationProcess XML object
      * @param procedure
      *            SOS ObservationProcess
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     private void addParameter(ObservationProcessType observationProcess, ObservationProcess procedure)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (procedure.isSetParameters()) {
             List<NamedValue<?>> parameters = procedure.getParameters();
             for (NamedValue<?> sosNamedValue : parameters) {
@@ -572,18 +554,16 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @param sosReferenceType
      *            SOS ReferenceType object
      * @return XML ReferenceType object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     private XmlObject encodeReferenceType(ReferenceType sosReferenceType)
-            throws OwsExceptionReport {
-        Encoder<XmlObject, ReferenceType> encoder = CodingRepository.getInstance()
-                .getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sosReferenceType));
+            throws EncodingException {
+        Encoder<XmlObject, ReferenceType> encoder = getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sosReferenceType));
         if (encoder != null) {
             return encoder.encode(sosReferenceType);
         } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("Error while encoding referenceType, needed encoder is missing!");
+            throw new EncodingException("Error while encoding referenceType, needed encoder is missing!");
         }
 
     }
@@ -596,11 +576,11 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      *            WaterML 2.0 XML MonitoringPoint object
      * @param sampFeat
      *            SosSamplingFeature
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs
      */
     private void addParameter(MonitoringPointType monitoringPoint, SamplingFeature sampFeat)
-            throws OwsExceptionReport {
+            throws EncodingException {
         for (NamedValue<?> namedValue : sampFeat.getParameters()) {
             XmlObject encodeObjectToXml = createNamedValue(namedValue);
             if (encodeObjectToXml != null) {
@@ -642,6 +622,9 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             }
         }
         return new DateTime().minusYears(1000);
+    }
+    protected static Set<EncoderKey> getDefaultEncoderKeys() {
+        return Collections.unmodifiableSet(DEFAULT_ENCODER_KEYS);
     }
 
 }

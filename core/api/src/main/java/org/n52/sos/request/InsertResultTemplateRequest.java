@@ -29,34 +29,36 @@
 package org.n52.sos.request;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.om.OmObservationConstellation;
+
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.response.InsertResultTemplateResponse;
 
 import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
  */
-public class InsertResultTemplateRequest extends AbstractServiceRequest<InsertResultTemplateResponse> {
+public class InsertResultTemplateRequest extends OwsServiceRequest {
 
     private String identifier;
-
     private OmObservationConstellation observationTemplate;
-
     private SosResultStructure resultStructure;
-
     private SosResultEncoding resultEncoding;
 
-    @Override
-    public String getOperationName() {
-        return Sos2Constants.Operations.InsertResultTemplate.name();
+    public InsertResultTemplateRequest() {
+        super(null, null, Sos2Constants.Operations.InsertResultTemplate.name());
+    }
+
+    public InsertResultTemplateRequest(String service, String version) {
+        super(service, version, Sos2Constants.Operations.InsertResultTemplate.name());
+    }
+
+    public InsertResultTemplateRequest(String service, String version, String operationName) {
+        super(service, version, operationName);
     }
 
     public String getIdentifier() {
@@ -74,7 +76,7 @@ public class InsertResultTemplateRequest extends AbstractServiceRequest<InsertRe
     }
 
     public boolean isSetIdentifier() {
-        return StringHelper.isNotEmpty(getIdentifier());
+        return !Strings.isNullOrEmpty(getIdentifier());
     }
 
     public OmObservationConstellation getObservationTemplate() {
@@ -111,11 +113,6 @@ public class InsertResultTemplateRequest extends AbstractServiceRequest<InsertRe
 
     public boolean isSetResultEncoding() {
         return getResultEncoding() != null && !getResultEncoding().isEmpty();
-    }
-
-    @Override
-    public InsertResultTemplateResponse getResponse() throws OwsExceptionReport {
-        return (InsertResultTemplateResponse) new InsertResultTemplateResponse().set(this);
     }
 
 }

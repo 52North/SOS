@@ -40,9 +40,9 @@ import org.n52.iceland.cache.ContentCacheController;
 import org.n52.iceland.cache.ContentCacheUpdate;
 import org.n52.iceland.event.ServiceEvent;
 import org.n52.iceland.event.ServiceEventListener;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandler;
-import org.n52.sos.ogc.om.OmObservation;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

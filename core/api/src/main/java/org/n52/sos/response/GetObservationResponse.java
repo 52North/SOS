@@ -30,9 +30,9 @@ package org.n52.sos.response;
 
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ogc.sos.AbstractStreaming;
 
 import com.google.common.collect.Lists;
@@ -41,7 +41,18 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse{
+public class GetObservationResponse extends AbstractObservationResponse implements StreamingDataResponse {
+    public GetObservationResponse() {
+        super(null, null, SosConstants.Operations.GetObservation.name());
+    }
+
+    public GetObservationResponse(String service, String version) {
+        super(service, version, SosConstants.Operations.GetObservation.name());
+    }
+
+    public GetObservationResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
 
     /*
      * TODO uncomment when WaterML support is activated public
@@ -64,19 +75,10 @@ public class GetObservationResponse extends AbstractObservationResponse implemen
      * true; break; } } } if (!combined) { combinedObsCol.add(sosObservation); }
      * } } return combinedObsCol; }
      */
-
-    @Override
-    public String getOperationName() {
-        return SosConstants.Operations.GetObservation.name();
-    }
-
     @Override
     public boolean hasStreamingData() {
         OmObservation observation = getFirstObservation();
-        if (observation != null) {
-            return observation.getValue() instanceof AbstractStreaming;
-        }
-        return false;
+        return observation != null && observation.getValue() instanceof AbstractStreaming;
     }
 
     @Override

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2005.x08.addressing.ActionDocument;
@@ -41,15 +42,11 @@ import org.w3.x2005.x08.addressing.RelatesToDocument;
 import org.w3.x2005.x08.addressing.ReplyToDocument;
 import org.w3.x2005.x08.addressing.ToDocument;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
 import org.n52.iceland.w3c.wsa.WsaHeader;
@@ -57,11 +54,12 @@ import org.n52.iceland.w3c.wsa.WsaMessageIDHeader;
 import org.n52.iceland.w3c.wsa.WsaRelatesToHeader;
 import org.n52.iceland.w3c.wsa.WsaReplyToHeader;
 import org.n52.iceland.w3c.wsa.WsaToHeader;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
 
 /**
  * @since 4.0.0
@@ -85,37 +83,17 @@ public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
     }
 
     @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public Set<String> getConformanceClasses(String service, String version) {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public void addNamespacePrefixToMap(Map<String, String> nameSpacePrefixMap) {
-    }
-
-    @Override
     public MediaType getContentType() {
         return MediaTypes.TEXT_XML;
     }
 
     @Override
-    public Set<SchemaLocation> getSchemaLocations() {
-        // TODO return valid schemaLocation
-        return Sets.newHashSet();
-    }
-
-    @Override
-    public XmlObject encode(WsaHeader wsaHeader) throws OwsExceptionReport {
+    public XmlObject encode(WsaHeader wsaHeader) throws EncodingException {
         return encode(wsaHeader, null);
     }
 
     @Override
-    public XmlObject encode(WsaHeader wsaHeader, Map<HelperValues, String> additionalValues) throws OwsExceptionReport {
+    public XmlObject encode(WsaHeader wsaHeader, Map<HelperValues, String> additionalValues) throws EncodingException {
         if (wsaHeader == null) {
             throw new UnsupportedEncoderInputException(this, wsaHeader);
         }
@@ -139,35 +117,39 @@ public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
 
     private XmlObject encodeReplyToHeader(WsaReplyToHeader wsaHeader) {
         ReplyToDocument replyToDoc =
-                ReplyToDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                ReplyToDocument.Factory.newInstance(getXmlOptions());
         replyToDoc.addNewReplyTo().addNewAddress().setStringValue(wsaHeader.getValue());
         return replyToDoc;
     }
 
     private XmlObject encodeRelatesToHeader(WsaRelatesToHeader wsaHeader) {
         RelatesToDocument relatesToDoc =
-                RelatesToDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                RelatesToDocument.Factory.newInstance(getXmlOptions());
         relatesToDoc.addNewRelatesTo().setStringValue(wsaHeader.getValue());
         return relatesToDoc;
     }
 
     private XmlObject encodeMessageIDHeader(WsaMessageIDHeader wsaHeader) {
         MessageIDDocument messageIDDoc =
-                MessageIDDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                MessageIDDocument.Factory.newInstance(getXmlOptions());
         messageIDDoc.addNewMessageID().setStringValue(wsaHeader.getValue());
         return null;
     }
 
     private XmlObject encodeActionHeader(WsaActionHeader wsaHeader) {
-        ActionDocument actionDoc = ActionDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        ActionDocument actionDoc = ActionDocument.Factory.newInstance(getXmlOptions());
         actionDoc.addNewAction().setStringValue(wsaHeader.getValue());
         return actionDoc;
     }
 
     private XmlObject encodeToHeader(WsaToHeader wsaHeader) {
-        ToDocument toDoc = ToDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        ToDocument toDoc = ToDocument.Factory.newInstance(getXmlOptions());
         toDoc.addNewTo().setStringValue(wsaHeader.getValue());
         return toDoc;
+    }
+
+    private static XmlOptions getXmlOptions() {
+        return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 
 }

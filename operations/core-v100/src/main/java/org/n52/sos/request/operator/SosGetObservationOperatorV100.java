@@ -36,17 +36,18 @@ import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.iceland.coding.encode.Encoder;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
+import org.n52.sos.coding.encode.ResponseFormatRepository;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -55,9 +56,9 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
+import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
@@ -93,7 +94,7 @@ public class SosGetObservationOperatorV100 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest sosRequest) throws OwsExceptionReport {
-        GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
+        GetObservationResponse sosResponse = getOperationHandler().getObservation(sosRequest);
         if (sosRequest.isSetResponseFormat()) {
             setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         }
@@ -254,7 +255,12 @@ public class SosGetObservationOperatorV100 extends
 
     // TODO check for SOS 1.0.0
     private boolean checkForObservationAndMeasurementV20Type(String responseFormat) throws OwsExceptionReport {
-        Encoder<XmlObject, OmObservation> encoder = CodingHelper.getEncoder(responseFormat, new OmObservation());
+        Encoder<XmlObject, OmObservation> encoder;
+        try {
+            encoder = CodingHelper.getEncoder(responseFormat, new OmObservation());
+        } catch (EncodingException ex) {
+            return false;
+        }
         if (encoder instanceof ObservationEncoder) {
             return ((ObservationEncoder) encoder).isObservationAndMeasurmentV20Type();
         }

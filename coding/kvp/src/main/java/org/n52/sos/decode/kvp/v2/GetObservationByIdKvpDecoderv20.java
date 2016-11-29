@@ -28,22 +28,9 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.sos.request.GetObservationByIdRequest;
 
 /**
@@ -53,47 +40,18 @@ import org.n52.sos.request.GetObservationByIdRequest;
  * @since 4.1.0
  *
  */
-public class GetObservationByIdKvpDecoderv20 extends AbstractKvpDecoder {
+public class GetObservationByIdKvpDecoderv20 extends AbstractSosKvpDecoder<GetObservationByIdRequest> {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservationById, MediaTypes.APPLICATION_KVP);
-
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public GetObservationByIdKvpDecoderv20() {
+        super(GetObservationByIdRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              SosConstants.Operations.GetObservationById);
     }
 
     @Override
-    public AbstractServiceRequest<?> decode(Map<String, String> element) throws OwsExceptionReport {
-        final GetObservationByIdRequest request = new GetObservationByIdRequest();
-        final CompositeOwsException exceptions = new CompositeOwsException();
-
-        for (final String parameterName : element.keySet()) {
-            final String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                    // observation identifier(s) (mandatory)
-                    if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationByIdParams.observation.name())) {
-                        request.setObservationIdentifier(KvpHelper.checkParameterMultipleValues(parameterValues,
-                                parameterName));
-                    }
-                }
-            } catch (final OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
+    protected void getRequestParameterDefinitions(Builder<GetObservationByIdRequest> builder) {
+        builder.add(Sos2Constants.GetObservationByIdParams.observation,
+                    decodeList(GetObservationByIdRequest::setObservationIdentifier));
     }
 
 }

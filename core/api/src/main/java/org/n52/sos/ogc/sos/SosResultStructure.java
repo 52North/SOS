@@ -32,18 +32,20 @@ import java.util.Map;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject.Factory;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.sos.exception.ows.concrete.XmlDecodingException;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.SosHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.decode.exception.DecoderResponseUnsupportedException;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
+
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
@@ -61,12 +63,12 @@ public class SosResultStructure {
     public SosResultStructure() {
     }
 
-    public SosResultStructure(String resultStructure) throws OwsExceptionReport {
+    public SosResultStructure(String resultStructure) throws DecodingException {
         this.xml = resultStructure;
         this.resultStructure = parseResultStructure();
     }
 
-    public String getXml() throws OwsExceptionReport {
+    public String getXml() throws DecodingException, EncodingException {
         if (!isSetXml() && resultStructure != null) {
             if (resultStructure.isSetXml()) {
                 setXml(resultStructure.getXml());
@@ -82,7 +84,7 @@ public class SosResultStructure {
         return this;
     }
 
-    public SweAbstractDataComponent getResultStructure() throws OwsExceptionReport {
+    public SweAbstractDataComponent getResultStructure() throws DecodingException {
         if (resultStructure == null && xml != null && !xml.isEmpty()) {
             resultStructure = parseResultStructure();
         }
@@ -94,7 +96,7 @@ public class SosResultStructure {
         return this;
     }
 
-    private SweAbstractDataComponent parseResultStructure() throws OwsExceptionReport {
+    private SweAbstractDataComponent parseResultStructure() throws DecodingException {
         try {
             Object decodedObject = CodingHelper.decodeXmlObject(Factory.parse(xml));
             if (decodedObject instanceof SweAbstractDataComponent) {
@@ -107,7 +109,7 @@ public class SosResultStructure {
         }
     }
 
-    private String encodeResultStructure() throws OwsExceptionReport {
+    private String encodeResultStructure() throws DecodingException, EncodingException {
         Map<HelperValues, String> map = Maps.newEnumMap(HelperValues.class);
         map.put(HelperValues.DOCUMENT, null);
         return CodingHelper.encodeObjectToXmlText(SweConstants.NS_SWE_20, getResultStructure(), map);
@@ -123,7 +125,7 @@ public class SosResultStructure {
                 } else if (getResultStructure() != null) {
                     return getResultStructure().equals(other.getResultStructure());
                 }
-            } catch (OwsExceptionReport ex) {
+            } catch (DecodingException ex) {
                 return false;
             }
         }
@@ -134,17 +136,17 @@ public class SosResultStructure {
     public int hashCode() {
         try {
             return getResultStructure().hashCode();
-        } catch (OwsExceptionReport e) {
+        } catch (DecodingException e) {
             LOGGER.error("Error while parsing resultStructure", e);
         }
         return super.hashCode();
     }
 
     public boolean isEmpty() {
-        return StringHelper.isNotEmpty(xml);
+        return !Strings.isNullOrEmpty(xml);
     }
 
     public boolean isSetXml() {
-        return StringHelper.isNotEmpty(xml);
+        return !Strings.isNullOrEmpty(xml);
     }
 }

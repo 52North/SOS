@@ -33,34 +33,34 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
+import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
 import org.n52.iceland.request.ResponseFormat;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.response.StreamingDataResponse;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
- * {@link ResponseWriter} for {@link AbstractServiceResponse}
+ * {@link ResponseWriter} for {@link OwsServiceResponse}
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  * @since 4.0.2
  *
  */
-public class AbstractServiceResponseWriter extends AbstractResponseWriter<AbstractServiceResponse> {
+public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsServiceResponse> {
     private static final ResponseWriterKey KEY
-            = new ResponseWriterKey(AbstractServiceResponse.class);
+            = new ResponseWriterKey(OwsServiceResponse.class);
 
     private final ResponseWriterRepository responseWriterRepository;
     private final EncoderRepository encoderRepository;
@@ -79,12 +79,12 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     }
 
     @Override
-    public void write(AbstractServiceResponse asr, OutputStream out, ResponseProxy responseProxy)
-            throws IOException, OwsExceptionReport {
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+    public void write(OwsServiceResponse asr, OutputStream out, ResponseProxy responseProxy)
+            throws IOException, EncodingException {
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
         if (encoder != null) {
             if (isStreaming(asr)) {
-                ((StreamingEncoder<?, AbstractServiceResponse>) encoder).encode(asr, out);
+                ((StreamingEncoder<?, OwsServiceResponse>) encoder).encode(asr, out);
             } else {
                 if (asr instanceof StreamingDataResponse && ((StreamingDataResponse) asr).hasStreamingData()
                         && !(encoder instanceof StreamingDataEncoder)) {
@@ -105,41 +105,29 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
     }
 
     @Override
-    public boolean supportsGZip(AbstractServiceResponse asr) {
+    public boolean supportsGZip(OwsServiceResponse asr) {
         return !isStreaming(asr);
     }
 
     /**
-     * Get the {@link Encoder} for the {@link AbstractServiceResponse} and the
+     * Get the {@link Encoder} for the {@link OwsServiceResponse} and the
      * requested contentType
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to get {@link Encoder} for
-     * @return {@link Encoder} for the {@link AbstractServiceResponse}
+     *            {@link OwsServiceResponse} to get {@link Encoder} for
+     * @return {@link Encoder} for the {@link OwsServiceResponse}
      */
-    private Encoder<Object, AbstractServiceResponse> getEncoder(AbstractServiceResponse asr) {
-        OperationResponseEncoderKey key = new OperationResponseEncoderKey(asr.getOperationKey(), getEncodedContentType(asr));
+    private Encoder<Object, OwsServiceResponse> getEncoder(OwsServiceResponse asr) {
+        OperationResponseEncoderKey key = new OperationResponseEncoderKey(new OperationKey(asr), getEncodedContentType(asr));
 
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(key);
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(key);
         if (encoder == null) {
-            throw new RuntimeException(new NoEncoderForKeyException(new OperationResponseEncoderKey(asr.getOperationKey(),
-                    getContentType())));
+            throw new RuntimeException(new NoEncoderForKeyException(key));
         }
         return encoder;
     }
 
-     /**
-     * Getter for encoder, encapsulates the instance call
-     *
-     * @param key
-     *            Encoder key
-     * @return Matching encoder
-     */
-    protected <D, S> Encoder<D, S> getEncoder(EncoderKey key) {
-        return this.encoderRepository.getEncoder(key);
-    }
-
-    private MediaType getEncodedContentType(AbstractServiceResponse asr) {
+    private MediaType getEncodedContentType(OwsServiceResponse asr) {
         if (asr instanceof ResponseFormat) {
             return getEncodedContentType((ResponseFormat) asr);
         }
@@ -148,17 +136,17 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<Abstra
 
     /**
      * Check if streaming encoding is forced and the {@link Encoder} for the
-     * {@link AbstractServiceResponse} is a {@link StreamingEncoder}
+     * {@link OwsServiceResponse} is a {@link StreamingEncoder}
      *
      * @param asr
-     *            {@link AbstractServiceResponse} to check the {@link Encoder}
+     *            {@link OwsServiceResponse} to check the {@link Encoder}
      *            for
      * @return <code>true</code>, if streaming encoding is forced and the
-     *         {@link Encoder} for the {@link AbstractServiceResponse} is a
+     *         {@link Encoder} for the {@link OwsServiceResponse} is a
      *         {@link StreamingEncoder}
      */
-    private boolean isStreaming(AbstractServiceResponse asr) {
-        Encoder<Object, AbstractServiceResponse> encoder = getEncoder(asr);
+    private boolean isStreaming(OwsServiceResponse asr) {
+        Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);
         if (encoder instanceof StreamingEncoder) {
             StreamingEncoder<?, ?> sencoder = (StreamingEncoder<?, ?>) getEncoder(asr);
             return this.forceStreamingEncoding || sencoder.forceStreaming();

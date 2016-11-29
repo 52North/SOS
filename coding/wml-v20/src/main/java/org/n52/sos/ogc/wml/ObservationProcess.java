@@ -33,18 +33,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.sos.ogc.gml.ReferenceType;
-import org.n52.sos.ogc.om.NamedValue;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.om.NamedValue;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0
  *
  */
 public class ObservationProcess extends SosProcedureDescription {
-
-    private static final long serialVersionUID = -2211664623972369575L;
 
     /*
      * Multiplicity: 1 A defintion of the type of process used in the

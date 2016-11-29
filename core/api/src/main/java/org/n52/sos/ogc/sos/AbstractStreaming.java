@@ -33,15 +33,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.AdditionalRequestParams;
+import org.n52.iceland.exception.ConfigurationError;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.om.AbstractObservationValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.OWSConstants.AdditionalRequestParams;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.om.AbstractObservationValue;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.values.Value;
 import org.n52.sos.service.profile.ProfileHandler;
 
 import com.google.common.base.Strings;
@@ -146,7 +147,7 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
 
     public String getResponseFormat() {
         if (Strings.isNullOrEmpty(responseFormat)) {
-            this.responseFormat = ProfileHandler.getInstance().getActiveProfile().getObservationResponseFormat();
+            this.responseFormat = getProfileHandler().getActiveProfile().getObservationResponseFormat();
         }
         return responseFormat;
     }
@@ -173,13 +174,17 @@ public abstract class AbstractStreaming extends AbstractObservationValue<Value<O
      * @throws CodedException
      *             If the size limit is exceeded
      */
-    protected void checkMaxNumberOfReturnedValues(int size) throws CodedException {
+    protected void checkMaxNumberOfReturnedValues(int size) throws OwsExceptionReport {
         if (ServiceConfiguration.getInstance().getMaxNumberOfReturnedValues() > 0) {
             currentNumberOfValues += size;
             if (currentNumberOfValues > getMaxNumberOfValues()) {
                 throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
             }
         }
+    }
+
+    private static ProfileHandler getProfileHandler() throws ConfigurationError {
+        return ProfileHandler.getInstance();
     }
 
 }

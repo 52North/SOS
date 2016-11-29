@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities;
 
-import org.n52.iceland.util.StringHelper;
+import com.google.common.base.Strings;
 
 /**
  * @since 4.0.0
@@ -56,7 +56,7 @@ public abstract class AbstractIdentifierNameDescriptionEntity
 
     @Override
     public boolean isSetIdentifier() {
-        return StringHelper.isNotEmpty(getIdentifier());
+        return !Strings.isNullOrEmpty(getIdentifier());
     }
 
     @Override
@@ -86,7 +86,7 @@ public abstract class AbstractIdentifierNameDescriptionEntity
 
     @Override
     public boolean isSetName() {
-        return StringHelper.isNotEmpty(name);
+        return !Strings.isNullOrEmpty(name);
     }
 
     @Override
@@ -116,7 +116,7 @@ public abstract class AbstractIdentifierNameDescriptionEntity
 
     @Override
     public boolean isSetDescription() {
-        return StringHelper.isNotEmpty(getDescription());
+        return !Strings.isNullOrEmpty(getDescription());
     }
 
     @Override

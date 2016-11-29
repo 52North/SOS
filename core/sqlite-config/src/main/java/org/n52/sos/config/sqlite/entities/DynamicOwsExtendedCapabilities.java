@@ -30,7 +30,7 @@ package org.n52.sos.config.sqlite.entities;
 
 import javax.persistence.Entity;
 
-import org.n52.iceland.ogc.ows.OwsExtendedCapabilitiesProviderKey;
+import org.n52.iceland.ogc.ows.extension.OwsExtendedCapabilitiesProviderKey;
 
 /**
  * Entity to store the active/inactive dynamic OWS ExtendedCapabilities extensions

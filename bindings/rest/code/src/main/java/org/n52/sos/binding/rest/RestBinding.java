@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest;
 
-import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,30 +48,23 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingKey;
 import org.n52.iceland.binding.PathBindingKey;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.coding.encode.ExceptionEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.event.ServiceEventBus;
 import org.n52.iceland.event.events.ExceptionEvent;
-import org.n52.iceland.exception.CodedException;
 import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.response.ServiceResponse;
-import org.n52.iceland.util.Producer;
-import org.n52.iceland.util.http.HTTPStatus;
 import org.n52.iceland.util.http.HttpUtils;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.Producer;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.binding.rest.decode.RestDecoder;
 import org.n52.sos.binding.rest.encode.RestEncoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
@@ -92,6 +85,15 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsRequest;
 import org.n52.sos.binding.rest.resources.offerings.OfferingsRequestHandler;
 import org.n52.sos.binding.rest.resources.sensors.ISensorsRequest;
 import org.n52.sos.binding.rest.resources.sensors.SensorsRequestHandler;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 import com.google.common.collect.Sets;
 
@@ -227,10 +229,10 @@ public class RestBinding extends Binding implements Constructable {
     }
 
     @Override
-    public ServiceResponse handleOwsExceptionReport(HttpServletRequest request, HttpServletResponse response,
-            OwsExceptionReport oer) throws HTTPException {
+    public ServiceResponse handleEncodingException(HttpServletRequest request, HttpServletResponse response,
+            EncodingException oer) throws HTTPException {
         try {
-             return encodeOwsExceptionReport(oer);
+             return encodeOwsExceptionReport(new NoApplicableCodeException().causedBy(oer));
         } catch (IOException e) {
             throw new HTTPException(HTTPStatus.INTERNAL_SERVER_ERROR, e);
         }
@@ -277,7 +279,7 @@ public class RestBinding extends Binding implements Constructable {
             encoded.save(baos, getXmlOptions());
             baos.flush();
             return new ServiceResponse(null, MediaTypes.TEXT_XML, getResponseCode(oer));
-        } catch (OwsExceptionReport ex) {
+        } catch (EncodingException ex) {
             throw new HTTPException(INTERNAL_SERVER_ERROR, ex);
         }
     }
@@ -293,7 +295,7 @@ public class RestBinding extends Binding implements Constructable {
                owsE.getMessage().contains(bindingConstants.getHttpOperationNotAllowedForResourceTypeMessagePart());
     }
 
-    private RestRequest decodeHttpRequest(final HttpServletRequest request) throws OwsExceptionReport
+    private RestRequest decodeHttpRequest(final HttpServletRequest request) throws OwsExceptionReport, DecodingException
     {
         final Decoder<RestRequest, HttpServletRequest> decoder = getDecoder();
 

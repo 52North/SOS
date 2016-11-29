@@ -34,21 +34,20 @@ import java.util.Set;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
 import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;
@@ -69,7 +68,7 @@ public class SosGetObservationOperatorV20 extends
             .singleton(ConformanceClasses.SOS_V2_CORE_PROFILE);
 
     private static final TemporalFilter TEMPORAL_FILTER_LATEST = new TemporalFilter(TimeOperator.TM_Equals,
-            new TimeInstant(ExtendedIndeterminateTime.latest), "phenomenonTime");
+            new TimeInstant(ExtendedIndeterminateTime.LATEST), "phenomenonTime");
 
     private boolean blockRequestsWithoutRestriction;
 
@@ -86,14 +85,14 @@ public class SosGetObservationOperatorV20 extends
     }
 
     @Override
-    public GetObservationResponse receive(final GetObservationRequest sosRequest) throws OwsExceptionReport {
-        final GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
+    public GetObservationResponse receive(GetObservationRequest sosRequest) throws OwsExceptionReport {
+        final GetObservationResponse sosResponse = getOperationHandler().getObservation(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         return sosResponse;
     }
 
     @Override
-    protected void checkParameters(final GetObservationRequest sosRequest) throws OwsExceptionReport {
+    protected void checkParameters(GetObservationRequest sosRequest) throws OwsExceptionReport {
         final CompositeOwsException exceptions = new CompositeOwsException();
         try {
             checkServiceParameter(sosRequest.getService());
@@ -200,22 +199,22 @@ public class SosGetObservationOperatorV20 extends
      */
     private void checkOfferingId(final List<String> offeringIds) throws OwsExceptionReport {
         if (offeringIds != null) {
-            final Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
-            final CompositeOwsException exceptions = new CompositeOwsException();
-            for (final String offeringId : offeringIds) {
+            Set<String> offerings = getCache().getOfferings();
+            CompositeOwsException exceptions = new CompositeOwsException();
+            offeringIds.forEach((offeringId) -> {
                 if (offeringId == null || offeringId.isEmpty()) {
                     exceptions.add(new MissingOfferingParameterException());
                 } else if (offeringId.contains(SosConstants.SEPARATOR_4_OFFERINGS)) {
                     final String[] offArray = offeringId.split(SosConstants.SEPARATOR_4_OFFERINGS);
                     if (!offerings.contains(offArray[0])
-                            || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
+                        || !getCache().getProceduresForOffering(offArray[0]).contains(offArray[1])) {
                         exceptions.add(new InvalidOfferingParameterException(offeringId));
                     }
 
                 } else if (!offerings.contains(offeringId)) {
                     exceptions.add(new InvalidOfferingParameterException(offeringId));
                 }
-            }
+            });
             exceptions.throwIfNotEmpty();
         }
     }

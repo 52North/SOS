@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.xml.stream.inspire.aqd;
 
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.sos.decode.xml.stream.XmlReader;
 import org.n52.sos.decode.xml.stream.ogc.gml.TimeReader;
 import org.n52.sos.decode.xml.stream.w3c.xlink.ReferenceableReader;

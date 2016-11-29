@@ -28,7 +28,7 @@
  */
 package org.n52.sos.exception.swes;
 
-import org.n52.iceland.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

@@ -41,8 +41,9 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeType;
+
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.inspire.aqd.GeographicalName;
 import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.util.Nillable;

@@ -28,152 +28,58 @@
  */
 package org.n52.sos.decode.kvp.v1;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.sos.request.GetObservationRequest;
-
-import com.google.common.base.Strings;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetObservationKvpDecoderv100 extends AbstractKvpDecoder {
+public class GetObservationKvpDecoderv100 extends AbstractSosKvpDecoder<GetObservationRequest> {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos1Constants.SERVICEVERSION, SosConstants.Operations.GetObservation.name(), MediaTypes.APPLICATION_KVP);
+    private static final Pattern SPATIAL_FILTER_REGEX = Pattern
+            .compile("^om:featureOfInterest.*(,\\s*[-+]?\\d*\\.?\\d+){4}(,.*)?$");
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public GetObservationKvpDecoderv100() {
+        super(GetObservationRequest::new,
+              Sos1Constants.SERVICEVERSION,
+              SosConstants.Operations.GetObservation);
     }
 
     @Override
-    public GetObservationRequest decode(Map<String, String> element) throws OwsExceptionReport {
+    protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
+        builder.add(SosConstants.GetObservationParams.responseMode, GetObservationRequest::setResponseMode);
+        builder.add(SosConstants.GetObservationParams.resultModel, GetObservationRequest::setResultModel);
+        builder.add(SosConstants.GetObservationParams.responseFormat, normalizeMediaType(GetObservationRequest::setResponseFormat));
+        builder.add(SosConstants.GetObservationParams.observedProperty, decodeList(GetObservationRequest::setObservedProperties));
+        builder.add(SosConstants.GetObservationParams.procedure, decodeList(GetObservationRequest::setProcedures));
+        builder.add(SosConstants.GetObservationParams.offering, decodeList(GetObservationRequest::setOfferings));
+        builder.add(SosConstants.GetObservationParams.featureOfInterest, this::decodeFeatureOfInterest);
+        builder.add(Sos1Constants.GetObservationParams.eventTime,
+                    decodeList(decodeTemporalFilter(asList(GetObservationRequest::setTemporalFilters)))
+                            .mapThird(this::sanitizeTemporalFilter));
+    }
 
-        final GetObservationRequest request = new GetObservationRequest();
-        final CompositeOwsException exceptions = new CompositeOwsException();
-
-        boolean foundOffering = false;
-        boolean foundObservedProperty = false;
-        boolean foundResponseFormat = false;
-
-        for (String parameterName : element.keySet()) {
-            String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                    if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.offering.name())) {
-                        request.setOfferings(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                        foundOffering = true;
-                    }
-
-                    // eventTime (optional)
-                    else if (parameterName.equalsIgnoreCase(Sos1Constants.GetObservationParams.eventTime.name())) {
-                        if (!parameterValues.contains(",")) {
-                            // for v1, prepend om:phenomenonTime if not present
-                            parameterValues = "om:phenomenonTime," + parameterValues;
-                        }
-                        try {
-                            request.setTemporalFilters(parseTemporalFilter(
-                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
-                        } catch (OwsExceptionReport e) {
-                            exceptions.add(new InvalidParameterValueException(parameterName, parameterValues).causedBy(e));
-                        }
-                    }
-
-                    // procedure (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.procedure.name())) {
-                        request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                    }
-
-                    // observedProperty (mandatory)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.observedProperty.name())) {
-                        request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
-                                parameterName));
-                        foundObservedProperty = true;
-                    }
-
-                    // featureOfInterest (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
-                        // try to detect spatial filter bbox. should this be
-                        // different for v100?
-                        if (Pattern.matches("^om:featureOfInterest.*(,\\s*[-+]?\\d*\\.?\\d+){4}(,.*)?$", parameterValues)) {
-                            request.setSpatialFilter(parseSpatialFilter(
-                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
-                        } else {
-                            request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
-                                    parameterName));
-                        }
-                    }
-
-                    // responseFormat (mandatory)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())
-                            && !Strings.isNullOrEmpty(parameterValues)) {
-                     // parse responseFormat through MediaType to ensure it's a mime type and eliminate whitespace variations
-                        request.setResponseFormat(KvpHelper.checkParameterSingleValue(
-                                MediaType.normalizeString(parameterValues), parameterName));
-                        foundResponseFormat = true;
-                    }
-
-                    // resultModel (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.resultModel.name())) {
-                        request.setResultModel(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    }
-
-                    // responseMode (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseMode.name())) {
-                        request.setResponseMode(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(parameterName));
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
+    private String sanitizeTemporalFilter(String value) {
+        // for v1, prepend om:phenomenonTime if not present
+        if (!value.contains(",")) {
+            return "om:phenomenonTime," + value;
+        } else {
+            return value;
         }
+    }
 
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
+    private void decodeFeatureOfInterest(GetObservationRequest request, String name, String value)
+            throws DecodingException {
+        if (SPATIAL_FILTER_REGEX.matcher(value).matches()) {
+            request.setSpatialFilter(decodeSpatialFilter(name, decodeList(value)));
+        } else {
+            request.setFeatureIdentifiers(decodeList(value));
         }
-
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        if (!foundOffering) {
-            exceptions.add(new MissingOfferingParameterException());
-        }
-
-        if (!foundObservedProperty) {
-            exceptions.add(new MissingObservedPropertyParameterException());
-        }
-
-        if (!foundResponseFormat) {
-            exceptions.add(new MissingResponseFormatParameterException());
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
     }
 }

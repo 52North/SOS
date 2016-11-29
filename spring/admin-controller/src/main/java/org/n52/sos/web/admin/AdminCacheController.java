@@ -38,9 +38,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.n52.iceland.cache.ContentCacheController;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.sos.ogc.sos.SosEnvelope;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.ReferencedEnvelope;
 import org.n52.sos.web.common.AbstractController;
 import org.n52.sos.web.common.ControllerConstants;
 
@@ -91,7 +91,7 @@ public class AdminCacheController extends AbstractController {
         SimpleModule module = new SimpleModule("CacheSerializerModule", new Version(1, 0, 0, null, null, null));
         module.addSerializer(DateTime.class, new ToStringSerializer());
         module.addSerializer(TimePeriod.class, new ToStringSerializer());
-        module.addSerializer(SosEnvelope.class, new ToStringSerializer());
+        module.addSerializer(ReferencedEnvelope.class, new ToStringSerializer());
         om.registerModule(module);
 
         //set property visibility

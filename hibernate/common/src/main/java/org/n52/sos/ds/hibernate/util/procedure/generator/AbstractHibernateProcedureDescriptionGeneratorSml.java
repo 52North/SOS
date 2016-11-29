@@ -39,16 +39,26 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.ogc.swe.SweConstants.SweCoordinateName;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.JavaHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweConstants.SweCoordinateNames;
+import org.n52.shetland.ogc.swe.SweCoordinate;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.EntitiyHelper;
@@ -64,21 +74,11 @@ import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.sensorML.AbstractProcess;
-import org.n52.sos.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.sensorML.elements.SmlPosition;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweCoordinate;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
 import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GeometryHandler;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -205,14 +205,14 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
                 if (OmConstants.OBS_TYPE_MEASUREMENT.equals(observationType)) {
                     final SweQuantity quantity = new SweQuantity();
                     quantity.setDefinition(observableProperty);
-                    if (StringHelper.isNotEmpty(unit)) {
+                    if (!Strings.isNullOrEmpty(unit)) {
                         quantity.setUom(unit);
                     }
                     return new SmlIo<>(quantity);
                 } else if (OmConstants.OBS_TYPE_CATEGORY_OBSERVATION.equals(observationType)) {
                     final SweCategory category = new SweCategory();
                     category.setDefinition(observableProperty);
-                    if (StringHelper.isNotEmpty(unit)) {
+                    if (!Strings.isNullOrEmpty(unit)) {
                         category.setUom(unit);
                     }
                     return new SmlIo<>(category);
@@ -392,9 +392,9 @@ public abstract class AbstractHibernateProcedureDescriptionGeneratorSml extends
         SweQuantity zq = createSweQuantity(altitude, SweConstants.Z_AXIS, procedureSettings().getAltitudeUom());
         // TODO add Integer: Which SweSimpleType to use?
         return Lists.<SweCoordinate<Double>> newArrayList(
-                new SweCoordinate<>(SweCoordinateName.northing.name(), yq),
-                new SweCoordinate<>(SweCoordinateName.easting.name(), xq),
-                new SweCoordinate<>(SweCoordinateName.altitude.name(), zq));
+                new SweCoordinate<>(SweCoordinateNames.NORTHING, yq),
+                new SweCoordinate<>(SweCoordinateNames.EASTING, xq),
+                new SweCoordinate<>(SweCoordinateNames.ALTITUDE, zq));
     }
 
     /**

@@ -32,9 +32,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.sos.response.BatchResponse.ExceptionOrResponse;
 import org.n52.sos.util.BatchConstants;
 
@@ -45,27 +46,26 @@ import org.n52.sos.util.BatchConstants;
  *
  * @since 4.0.0
  */
-public class BatchResponse extends AbstractServiceResponse implements Iterable<ExceptionOrResponse> {
+public class BatchResponse extends OwsServiceResponse implements Iterable<ExceptionOrResponse> {
     private final List<ExceptionOrResponse> responses;
 
-    public BatchResponse(List<ExceptionOrResponse> responses) {
-        this.responses = checkNotNull(responses);
-    }
-
     public BatchResponse() {
-        this(new LinkedList<ExceptionOrResponse>());
+        this(new LinkedList<>());
     }
 
-    private static <T> T checkNotNull(T t) {
-        if (t == null) {
-            throw new NullPointerException();
-        }
-        return t;
+    public BatchResponse(List<ExceptionOrResponse> responses) {
+        super(null, null, BatchConstants.OPERATION_NAME);
+        this.responses = responses;
     }
 
-    @Override
-    public String getOperationName() {
-        return BatchConstants.OPERATION_NAME;
+    public BatchResponse(String service, String version, List<ExceptionOrResponse> responses) {
+        super(service, version, BatchConstants.OPERATION_NAME);
+        this.responses = responses;
+    }
+
+    public BatchResponse(String service, String version, String operationName, List<ExceptionOrResponse> responses) {
+        super(service, version, operationName);
+        this.responses = responses;
     }
 
     public List<ExceptionOrResponse> getResponses() {
@@ -76,12 +76,12 @@ public class BatchResponse extends AbstractServiceResponse implements Iterable<E
         this.responses.add(new ExceptionOrResponse(e));
     }
 
-    public void add(AbstractServiceResponse r) {
+    public void add(OwsServiceResponse r) {
         this.responses.add(new ExceptionOrResponse(r));
     }
 
     public void add(ExceptionOrResponse eor) {
-        this.responses.add(checkNotNull(eor));
+        this.responses.add(Objects.requireNonNull(eor));
     }
 
     public boolean isEmpty() {
@@ -96,19 +96,19 @@ public class BatchResponse extends AbstractServiceResponse implements Iterable<E
     public static class ExceptionOrResponse {
         private final OwsExceptionReport exception;
 
-        private final AbstractServiceResponse response;
+        private final OwsServiceResponse response;
 
-        private ExceptionOrResponse(OwsExceptionReport exception, AbstractServiceResponse response) {
+        private ExceptionOrResponse(OwsExceptionReport exception, OwsServiceResponse response) {
             this.exception = exception;
             this.response = response;
         }
 
-        public ExceptionOrResponse(AbstractServiceResponse response) {
-            this(null, checkNotNull(response));
+        public ExceptionOrResponse(OwsServiceResponse response) {
+            this(null, Objects.requireNonNull(response));
         }
 
         public ExceptionOrResponse(OwsExceptionReport exception) {
-            this(checkNotNull(exception), null);
+            this(Objects.requireNonNull(exception), null);
         }
 
         public boolean isException() {
@@ -119,7 +119,7 @@ public class BatchResponse extends AbstractServiceResponse implements Iterable<E
             return exception;
         }
 
-        public AbstractServiceResponse getResponse() {
+        public OwsServiceResponse getResponse() {
             return response;
         }
     }

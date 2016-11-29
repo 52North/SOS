@@ -31,10 +31,10 @@ package org.n52.sos.inspire;
 import java.util.Collection;
 import java.util.Set;
 
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.janmayen.http.MediaType;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 /**
@@ -81,7 +81,7 @@ public class InspireResourceLocator {
      * @return <code>true</code>, if the URL is set
      */
     public boolean isSetUrl() {
-        return StringHelper.isNotEmpty(getURL());
+        return !Strings.isNullOrEmpty(getURL());
     }
 
     /**

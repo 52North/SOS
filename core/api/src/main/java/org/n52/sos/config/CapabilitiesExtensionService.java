@@ -31,9 +31,9 @@ package org.n52.sos.config;
 import java.util.List;
 import java.util.Map;
 
-import org.n52.iceland.ogc.ows.OfferingExtension;
-import org.n52.iceland.ogc.ows.StaticCapabilities;
-import org.n52.iceland.ogc.ows.StringBasedCapabilitiesExtension;
+import org.n52.iceland.ogc.ows.extension.OfferingExtension;
+import org.n52.iceland.ogc.ows.extension.StaticCapabilities;
+import org.n52.iceland.ogc.ows.extension.StringBasedCapabilitiesExtension;
 import org.n52.sos.exception.NoSuchExtensionException;
 import org.n52.sos.exception.NoSuchOfferingException;
 

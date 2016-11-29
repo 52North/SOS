@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.inspire.aqd.EReportingChange;
 import org.n52.sos.inspire.aqd.InspireID;
 import org.n52.sos.inspire.aqd.ReportObligation;
@@ -45,7 +45,7 @@ public class ReportObligationJSONDecoder extends AbstractJSONDecoder<ReportOblig
 
     @Override
     public ReportObligation decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         ReportObligation reportObligation = new ReportObligation();
         reportObligation.setChange(decodeJsonToObject(node.path(AQDJSONConstants.CHANGE), EReportingChange.class));
         reportObligation.setInspireID(decodeJsonToObject(node.path(AQDJSONConstants.INSPIRE_ID), InspireID.class));

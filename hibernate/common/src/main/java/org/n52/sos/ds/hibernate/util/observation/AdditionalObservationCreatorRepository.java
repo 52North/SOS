@@ -35,9 +35,10 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.n52.iceland.component.AbstractComponentRepository;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.util.Producer;
+import org.n52.janmayen.component.AbstractComponentRepository;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.janmayen.Producer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

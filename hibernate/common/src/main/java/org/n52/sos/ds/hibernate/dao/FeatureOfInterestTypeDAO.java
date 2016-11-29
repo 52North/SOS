@@ -37,10 +37,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.ogc.OGCConstants;
+
+import org.n52.shetland.ogc.OGCConstants;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

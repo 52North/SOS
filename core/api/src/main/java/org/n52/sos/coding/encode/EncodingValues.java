@@ -30,11 +30,11 @@ package org.n52.sos.coding.encode;
 
 import java.util.Map;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.shetland.util.CollectionHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 public class EncodingValues {
@@ -48,23 +48,14 @@ public class EncodingValues {
     private String version;
 
     private String type;
-
     private boolean asDocument = false;
-
     private boolean asPropertyType = false;
-
     private boolean encode = false;
-
     private String encodingNamespace;
-
     private boolean encodeOwsExceptionOnly = false;
-
     private boolean addSchemaLocation = false;
-
     private int indent = 0;
-
     private boolean embedded = false;
-
     private Encoder<?, ?> encoder;
 
     public EncodingValues() {
@@ -110,7 +101,7 @@ public class EncodingValues {
     }
 
     public boolean isSetGmlId() {
-        return StringHelper.isNotEmpty(getGmlId());
+        return !Strings.isNullOrEmpty(getGmlId());
     }
 
     /**
@@ -144,7 +135,7 @@ public class EncodingValues {
     }
 
     public boolean isSetVersion() {
-        return StringHelper.isNotEmpty(getVersion());
+        return !Strings.isNullOrEmpty(getVersion());
     }
 
     /**
@@ -163,7 +154,7 @@ public class EncodingValues {
     }
 
     public boolean isSetType() {
-        return StringHelper.isNotEmpty(getType());
+        return !Strings.isNullOrEmpty(getType());
     }
 
     /**
@@ -222,7 +213,7 @@ public class EncodingValues {
     }
 
     public boolean isSetEncodingNamespace() {
-        return StringHelper.isNotEmpty(getEncodingNamespace());
+        return !Strings.isNullOrEmpty(getEncodingNamespace());
     }
 
     /**

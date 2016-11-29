@@ -36,11 +36,17 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.CollectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
@@ -50,8 +56,6 @@ import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ogc.sos.SosResultEncoding;
 import org.n52.sos.ogc.sos.SosResultStructure;
 import org.n52.sos.request.InsertResultTemplateRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
@@ -205,50 +209,54 @@ public class ResultTemplateDAO {
      * @throws OwsExceptionReport
      *             If the requested structure/encoding is invalid
      */
-    public void checkOrInsertResultTemplate(final InsertResultTemplateRequest request,
-            final ObservationConstellation observationConstellation, final FeatureOfInterest featureOfInterest,
-            final Session session) throws OwsExceptionReport {
-        final List<ResultTemplate> resultTemplates =
-                getResultTemplateObject(observationConstellation.getOffering().getIdentifier(),
-                        observationConstellation.getObservableProperty().getIdentifier(), null, session);
-        if (CollectionHelper.isEmpty(resultTemplates)) {
-            createAndSaveResultTemplate(request, observationConstellation, featureOfInterest, session);
-        } else {
-            final List<String> storedIdentifiers = new ArrayList<String>(0);
-            for (final ResultTemplate storedResultTemplate : resultTemplates) {
-                storedIdentifiers.add(storedResultTemplate.getIdentifier());
-                final SosResultStructure storedStructure =
-                        new SosResultStructure(storedResultTemplate.getResultStructure());
-                final SosResultStructure newStructure = new SosResultStructure(request.getResultStructure().getXml());
+    public void checkOrInsertResultTemplate(InsertResultTemplateRequest request,
+                                            ObservationConstellation observationConstellation,
+                                            FeatureOfInterest featureOfInterest,
+                                            Session session) throws OwsExceptionReport {
+        try {
+            String offering = observationConstellation.getOffering().getIdentifier();
+            String observableProperty = observationConstellation.getObservableProperty().getIdentifier();
+            String procedure = observationConstellation.getProcedure().getIdentifier();
 
-                if (!storedStructure.equals(newStructure)) {
-                    throw new InvalidParameterValueException().at(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate).withMessage(
-                            "The requested resultStructure is different from already inserted result template "
-                                    + "for procedure (%s) observedProperty (%s) and offering (%s)!",
-                            observationConstellation.getProcedure().getIdentifier(),
-                            observationConstellation.getObservableProperty().getIdentifier(),
-                            observationConstellation.getOffering().getIdentifier());
-                }
-                final SosResultEncoding storedEncoding =
-                        new SosResultEncoding(storedResultTemplate.getResultEncoding());
-                final SosResultEncoding newEndoding = new SosResultEncoding(request.getResultEncoding().getXml());
-                if (!storedEncoding.equals(newEndoding)) {
-                    throw new InvalidParameterValueException().at(
-                            Sos2Constants.InsertResultTemplateParams.proposedTemplate).withMessage(
-                            "The requested resultEncoding is different from already inserted result template "
-                                    + "for procedure (%s) observedProperty (%s) and offering (%s)!",
-                            observationConstellation.getProcedure().getIdentifier(),
-                            observationConstellation.getObservableProperty().getIdentifier(),
-                            observationConstellation.getOffering().getIdentifier());
-                }
-            }
-            if (request.getIdentifier() != null && !storedIdentifiers.contains(request.getIdentifier())) {
-                /* save it only if the identifier is different */
+
+            List<ResultTemplate> resultTemplates = getResultTemplateObject(offering, observableProperty, null, session);
+            if (CollectionHelper.isEmpty(resultTemplates)) {
                 createAndSaveResultTemplate(request, observationConstellation, featureOfInterest, session);
+            } else {
+                List<String> storedIdentifiers = new ArrayList<>(0);
+
+
+                for (ResultTemplate storedResultTemplate : resultTemplates) {
+                        storedIdentifiers.add(storedResultTemplate.getIdentifier());
+                        SosResultStructure storedStructure = new SosResultStructure(storedResultTemplate.getResultStructure());
+                        SosResultEncoding storedEncoding = new SosResultEncoding(storedResultTemplate.getResultEncoding());
+
+                        if (!storedStructure.equals(request.getResultStructure())) {
+                            throw new InvalidParameterValueException()
+                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                    .withMessage("The requested resultStructure is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
+                                                 procedure, observableProperty, offering);
+                        }
+
+
+                        if (!storedEncoding.equals(request.getResultEncoding())) {
+                            throw new InvalidParameterValueException()
+                                    .at(Sos2Constants.InsertResultTemplateParams.proposedTemplate)
+                                    .withMessage("The requested resultEncoding is different from already inserted result template for procedure (%s) observedProperty (%s) and offering (%s)!",
+                                                 procedure, observableProperty, offering);
+                        }
+                }
+                if (request.getIdentifier() != null && !storedIdentifiers.contains(request.getIdentifier())) {
+                    /* save it only if the identifier is different */
+                    createAndSaveResultTemplate(request, observationConstellation, featureOfInterest, session);
+                }
+
             }
+        } catch (EncodingException | DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
         }
     }
+
 
     /**
      * Insert result template
@@ -265,7 +273,7 @@ public class ResultTemplateDAO {
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
             final ObservationConstellation observationConstellation, final FeatureOfInterest featureOfInterest,
-            final Session session) throws OwsExceptionReport {
+            final Session session) throws EncodingException, DecodingException {
         final ResultTemplate resultTemplate = new ResultTemplate();
         resultTemplate.setIdentifier(request.getIdentifier());
         resultTemplate.setProcedure(observationConstellation.getProcedure());

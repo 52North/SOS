@@ -28,10 +28,14 @@
  */
 package org.n52.sos.gda;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.sos.ds.AbstractOperationHandler;
 
 /**
@@ -45,7 +49,6 @@ import org.n52.sos.ds.AbstractOperationHandler;
  */
 @Configurable
 public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperationHandler {
-
     public static final String INCLUDE_RESULT_TIMES = "IncludeResultTimes";
     public static final String SHOW_COUNT = "ShowCount";
     private boolean forceValueCount = false;
@@ -55,26 +58,17 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
         super(service, GetDataAvailabilityConstants.OPERATION_NAME);
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation operation, String service, String version)
-            throws OwsExceptionReport {
-        addQueryableProcedureParameter(operation);
-        addObservablePropertyParameter(operation);
-        addFeatureOfInterestParameter(operation, version);
-        addOfferingParameter(operation);
-        // TODO Add responseFormat
-    }
-
     /**
      * Get the DataAvailability out of the Database.
      *
      * @param sosRequest
-     *            the <code>GetDataAvailabilityRequest</code>
+     *                   the <code>GetDataAvailabilityRequest</code>
+     *
      * @return the <code>GetDataAvailabilityResponse</code>
      *
      *
      * @throws OwsExceptionReport
-     *             if an error occurs
+     *                            if an error occurs
      */
     public abstract GetDataAvailabilityResponse getDataAvailability(GetDataAvailabilityRequest sosRequest)
             throws OwsExceptionReport;
@@ -92,6 +86,14 @@ public abstract class AbstractGetDataAvailabilityHandler extends AbstractOperati
     @Setting(GetDataAvailabilitySettings.FORCE_GDA_VALUE_COUNT)
     public void setForceValueCount(boolean forceValueCount) {
         this.forceValueCount = forceValueCount;
+    }
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return new HashSet<>(Arrays.asList(getQueryableProcedureParameter(service, version),
+                                           getObservablePropertyParameter(service, version),
+                                           getFeatureOfInterestParameter(service, version)));
+    // TODO add responseFormat
     }
     
     /**

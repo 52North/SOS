@@ -30,10 +30,10 @@ package org.n52.sos.decode.json.inspire;
 
 import java.net.URI;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.time.Time;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.util.DateTimeParseException;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.Nillable;
@@ -42,7 +42,6 @@ import org.n52.sos.util.Referenceable;
 import org.n52.sos.util.ThrowableFunction;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.base.Function;
 
 public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
 
@@ -51,33 +50,20 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
     }
 
     protected Nillable<String> parseNillableString(JsonNode node) {
-        return parseNillable(node).transform(new Function<JsonNode, String>() {
-            @Override
-            public String apply(JsonNode input) {
-                return input.textValue();
-            }
-        });
+        return parseNillable(node).transform(JsonNode::textValue);
     }
 
     protected Nillable<JsonNode> parseNillable(JsonNode node) {
         if (node.isMissingNode() || node.isNull()) {
             return Nillable.absent();
-        } else if (node.isObject() && node.path(AQDJSONConstants.NIL)
-                   .asBoolean()) {
+        } else if (node.isObject() && node.path(AQDJSONConstants.NIL).asBoolean()) {
             return Nillable.nil(node.path(AQDJSONConstants.REASON).textValue());
         }
         return Nillable.of(node);
     }
 
     protected Nillable<Reference> parseNillableReference(JsonNode node) {
-        return parseNillable(node)
-                .transform(new Function<JsonNode, Reference>() {
-
-                    @Override
-                    public Reference apply(JsonNode node) {
-                        return parseReference(node);
-                    }
-                });
+        return parseNillable(node).transform(this::parseReference);
     }
 
     protected Referenceable<JsonNode> parseReferenceable(JsonNode node) {
@@ -108,40 +94,27 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
     }
 
     protected Referenceable<Time> parseReferenceableTime(JsonNode node) {
-        return parseReferenceable(node)
-                .transform(new Function<JsonNode, Time>() {
-
-                    @Override
-                    public Time apply(JsonNode node) {
-                        try {
-                            return parseTime(node);
-                        } catch (DateTimeParseException ex) {
-                            throw new RuntimeException(ex);
-                        }
-                    }
-
-                });
+        return parseReferenceable(node).transform(node1 -> {
+            try {
+                return parseTime(node1);
+            }catch (DateTimeParseException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
     }
 
     protected Nillable<CodeType> parseNillableCodeType(JsonNode node) {
-        return parseNillable(node)
-                .transform(new Function<JsonNode, CodeType>() {
-
-                    @Override
-                    public CodeType apply(JsonNode node) {
-                        return parseCodeType(node);
-                    }
-                });
+        return parseNillable(node).transform(this::parseCodeType);
     }
 
     protected <T> Nillable<T> decodeJsonToNillable(JsonNode node, final Class<T> type)
-            throws OwsExceptionReport {
+            throws DecodingException {
         ThrowableFunction<JsonNode, T> fun
                 = new ThrowableFunction<JsonNode, T>() {
 
                     @Override
                     protected T applyThrowable(JsonNode input)
-                            throws OwsExceptionReport {
+                            throws DecodingException {
                         return decodeJsonToObject(input, type);
                     }
                 };
@@ -149,19 +122,18 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
         Nillable<T> result = parseNillable(node).transform(fun);
 
         if (fun.hasErrors()) {
-            fun.propagateIfPossible(OwsExceptionReport.class);
+            fun.propagateIfPossible(DecodingException.class);
         }
         return result;
     }
 
     protected <T> Referenceable<T> decodeJsonToReferencable(JsonNode node, final Class<T> type)
-            throws OwsExceptionReport {
-        ThrowableFunction<JsonNode, T> fun
-                = new ThrowableFunction<JsonNode, T>() {
+            throws DecodingException {
+        ThrowableFunction<JsonNode, T> fun = new ThrowableFunction<JsonNode, T>() {
 
                     @Override
                     protected T applyThrowable(JsonNode input)
-                            throws OwsExceptionReport {
+                            throws DecodingException {
                         return decodeJsonToObject(input, type);
                     }
                 };
@@ -169,7 +141,7 @@ public abstract class AbstractJSONDecoder<T> extends JSONDecoder<T> {
         Referenceable<T> result = parseReferenceable(node).transform(fun);
 
         if (fun.hasErrors()) {
-            fun.propagateIfPossible(OwsExceptionReport.class);
+            fun.propagateIfPossible(DecodingException.class);
         }
         return result;
     }

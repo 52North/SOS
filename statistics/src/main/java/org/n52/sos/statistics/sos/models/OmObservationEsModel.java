@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.om.OmObservation;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.om.OmObservation;
 
 public class OmObservationEsModel extends AbstractElasticsearchModel {
 

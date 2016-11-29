@@ -28,105 +28,37 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.InvalidTemporalFilterParameterException;
-import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
 import org.n52.sos.request.GetResultRequest;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetResultKvpDecoderv20 extends AbstractKvpDecoder {
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetResult, MediaTypes.APPLICATION_KVP);
+public class GetResultKvpDecoderv20 extends AbstractSosKvpDecoder<GetResultRequest> {
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public GetResultKvpDecoderv20() {
+        super(GetResultRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              SosConstants.Operations.GetResult);
     }
 
     @Override
-    public GetResultRequest decode(Map<String, String> element) throws OwsExceptionReport {
-        GetResultRequest request = new GetResultRequest();
-        CompositeOwsException exceptions = new CompositeOwsException();
-
-        boolean foundOffering = false;
-        boolean foundObservedProperty = false;
-
-        for (String parameterName : element.keySet()) {
-            String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                        if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.offering.name())) {
-                        request.setOffering(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                        foundOffering = true;
-                    } // observedProperty (mandatory)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.observedProperty.name())) {
-                        request.setObservedProperty(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                        foundObservedProperty = true;
-                    } // featureOfInterest (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
-                        request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
-                                parameterName));
-                    } // eventTime (optional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.temporalFilter.name())) {
-                        try {
-                            request.setTemporalFilter(parseTemporalFilter(
-                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
-                        } catch (OwsExceptionReport e) {
-                            throw new InvalidTemporalFilterParameterException(parameterValues).causedBy(e);
-                        }
-
-                    } // spatialFilter (optional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.spatialFilter.name())) {
-                        request.setSpatialFilter(parseSpatialFilter(
-                                KvpHelper.checkParameterMultipleValues(parameterValues, parameterName), parameterName));
-                    } // xmlWrapper (default = false) (optional)
-                      // namespaces (conditional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
-                        request.setNamespaces(parseNamespaces(parameterValues));
-                    } else {
-                        throw new ParameterNotSupportedException(parameterName);
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        if (!foundOffering) {
-            exceptions.add(new MissingOfferingParameterException());
-        }
-
-        if (!foundObservedProperty) {
-            exceptions.add(new MissingObservedPropertyParameterException());
-        }
-        exceptions.throwIfNotEmpty();
-        return request;
+    protected void getRequestParameterDefinitions(Builder<GetResultRequest> builder) {
+        builder.add(Sos2Constants.GetResultParams.offering,
+                    GetResultRequest::setOffering);
+        builder.add(Sos2Constants.GetResultParams.observedProperty,
+                    GetResultRequest::setObservedProperty);
+        builder.add(Sos2Constants.GetResultParams.featureOfInterest,
+                    decodeList(GetResultRequest::setFeatureIdentifiers));
+        builder.add(Sos2Constants.GetResultParams.temporalFilter,
+                    decodeList(decodeTemporalFilter(asList(GetResultRequest::setTemporalFilter))));
+        builder.add(Sos2Constants.GetResultParams.spatialFilter,
+                    decodeList(decodeSpatialFilter(GetResultRequest::setSpatialFilter)));
+        builder.add(Sos2Constants.GetObservationParams.namespaces,
+                    decodeNamespaces(GetResultRequest::setNamespaces));
     }
+
 }

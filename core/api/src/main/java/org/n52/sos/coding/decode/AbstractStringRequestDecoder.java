@@ -29,18 +29,36 @@
 package org.n52.sos.coding.decode;
 
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
-import org.n52.sos.util.CodingHelper;
+import javax.inject.Inject;
 
-public abstract class AbstractStringRequestDecoder implements Decoder<AbstractServiceCommunicationObject, String> {
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.exception.DecodingException;
+
+public abstract class AbstractStringRequestDecoder implements Decoder<OwsServiceCommunicationObject, String> {
+
+    private DecoderRepository decoderRepository;
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
 
     @Override
-    public AbstractServiceCommunicationObject decode(String xmlString) throws OwsExceptionReport,
-            UnsupportedDecoderInputException {
-        return (AbstractServiceCommunicationObject) CodingHelper.decodeXmlObject(xmlString);
+    public OwsServiceCommunicationObject decode(String string) throws DecodingException {
+        XmlObject xml = CodingHelper.readXML(string);
+        DecoderKey key = CodingHelper.getDecoderKey(xml);
+        Decoder<OwsServiceCommunicationObject, XmlObject> decoder = decoderRepository.getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xml);
     }
 
 }

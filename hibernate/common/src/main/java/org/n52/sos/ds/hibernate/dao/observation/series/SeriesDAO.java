@@ -33,7 +33,8 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.n52.iceland.exception.CodedException;
+
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.request.GetObservationRequest;

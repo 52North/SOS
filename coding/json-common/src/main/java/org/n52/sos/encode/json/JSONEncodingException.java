@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * TODO JavaDoc
@@ -37,22 +37,19 @@ import org.n52.iceland.exception.ows.NoApplicableCodeException;
  *
  * @since 4.0.0
  */
-public class JSONEncodingException extends NoApplicableCodeException {
+public class JSONEncodingException extends EncodingException {
 
     private static final long serialVersionUID = 43255040132887078L;
 
-    public JSONEncodingException() {
-    }
-
     public JSONEncodingException(String message) {
-        withMessage(message);
+        super(message);
     }
 
     public JSONEncodingException(String message, Throwable cause) {
-        withMessage(message).causedBy(cause);
+        super(message, cause);
     }
 
     public JSONEncodingException(Throwable cause) {
-        causedBy(cause);
+        super(null, cause);
     }
 }

@@ -28,7 +28,7 @@
  */
 package org.n52.sos.decode.xml.stream.ogc.ows;
 
-import org.n52.iceland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.sos.decode.xml.stream.NillableReader;
 import org.n52.sos.decode.xml.stream.XmlReader;
 

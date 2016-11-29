@@ -31,11 +31,11 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.request.GetResultRequest;
 import org.n52.sos.response.GetResultResponse;
@@ -65,7 +65,7 @@ public class SosGetResultOperatorV20 extends AbstractV2RequestOperator<AbstractG
     @Override
     public GetResultResponse receive(GetResultRequest request)
             throws OwsExceptionReport {
-        return getDao().getResult(request);
+        return getOperationHandler().getResult(request);
     }
 
     @Override

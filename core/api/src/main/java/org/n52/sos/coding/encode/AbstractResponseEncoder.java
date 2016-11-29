@@ -32,18 +32,17 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.coding.OperationKey;
+import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -57,8 +56,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse> extends AbstractEncoder<T>
-        implements StreamingEncoder<XmlObject, T>  {
+public abstract class AbstractResponseEncoder<T extends OwsServiceResponse>  extends AbstractXmlResponseEncoder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 
@@ -117,12 +115,12 @@ public abstract class AbstractResponseEncoder<T extends AbstractServiceResponse>
     }
 
     @Override
-    public void encode(T element, OutputStream outputStream) throws OwsExceptionReport {
+    public void encode(T element, OutputStream outputStream) throws EncodingException {
         encode(element, outputStream, new EncodingValues());
     }
 
     @Override
-    public void encode(T response, OutputStream outputStream, EncodingValues encodingValues) throws OwsExceptionReport {
+    public void encode(T response, OutputStream outputStream, EncodingValues encodingValues) throws EncodingException {
         if (response == null) {
             throw new UnsupportedEncoderInputException(this, response);
         }

@@ -55,7 +55,7 @@ import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.DateTimeParseException;
-import org.n52.janmayen.Streams;
+import org.n52.janmayen.stream.Streams;
 import org.n52.janmayen.exception.CompositeException;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.svalbard.AbstractDelegatingDecoder;

@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.shetland.ogc.swes.SwesExtensions;
-import org.n52.janmayen.Streams;
+import org.n52.janmayen.stream.Streams;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONValidator;
 

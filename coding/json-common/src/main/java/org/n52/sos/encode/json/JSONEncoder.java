@@ -44,7 +44,7 @@ import javax.inject.Inject;
 
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.util.JSONUtils;
-import org.n52.janmayen.Streams;
+import org.n52.janmayen.stream.Streams;
 import org.n52.janmayen.exception.CompositeException;
 import org.n52.janmayen.function.ThrowingFunction;
 import org.n52.janmayen.http.MediaType;

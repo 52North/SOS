@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.janmayen.Streams;
+import org.n52.janmayen.stream.Streams;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;

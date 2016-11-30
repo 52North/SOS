@@ -38,6 +38,7 @@ import org.hibernate.Session;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.sos.service.Configurator;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.shetland.ogc.sos.SosOffering;

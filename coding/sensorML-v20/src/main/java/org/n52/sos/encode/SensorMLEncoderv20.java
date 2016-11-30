@@ -184,12 +184,11 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                               .put(Sos1Constants.SERVICEVERSION, ImmutableSet
                                    .of(SensorML20Constants.SENSORML_20_OUTPUT_FORMAT_MIME_TYPE)).build());
 
-    @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
-            encoderKeysForElements(SensorML20Constants.NS_SML_20, SosProcedureDescription.class,
+            encoderKeysForElements(SensorML20Constants.NS_SML_20,
                                    AbstractSensorML.class, DescribedObject.class),
             encoderKeysForElements(SensorML20Constants.SENSORML_20_CONTENT_TYPE.toString(),
-                                   SosProcedureDescription.class, AbstractSensorML.class, DescribedObject.class));
+                                   AbstractSensorML.class, DescribedObject.class));
 
     public SensorMLEncoderv20() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -233,12 +232,12 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             throws EncodingException {
         XmlObject encodedObject = null;
         try {
-            if (objectToEncode instanceof SosProcedureDescription) {
-                SosProcedureDescription description = (SosProcedureDescription) objectToEncode;
-                if (description.isSetSensorDescriptionXmlString()) {
+            if (objectToEncode instanceof AbstractSensorML) {
+                AbstractSensorML description = (AbstractSensorML) objectToEncode;
+                if (description.isSetXml()) {
                     encodedObject = XmlObject.Factory
-                            .parse(((SosProcedureDescription) objectToEncode).getSensorDescriptionXmlString());
-                    addValuesToXmlObject(encodedObject, (SosProcedureDescription) objectToEncode);
+                            .parse(((AbstractSensorML) objectToEncode).getXml());
+                    addValuesToXmlObject(encodedObject, (AbstractSensorML) objectToEncode);
                     encodedObject = checkForAdditionalValues(encodedObject, additionalValues);
                 } else {
                     encodedObject = encodeDescription(description, additionalValues);
@@ -364,9 +363,8 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         return element;
     }
 
-    private void addValuesToXmlObject(XmlObject element, SosProcedureDescription<?> descriptionWrapper)
+    private void addValuesToXmlObject(XmlObject element, AbstractSensorML description)
             throws EncodingException {
-        AbstractFeature description = descriptionWrapper.getProcedureDescription();
         if (element instanceof PhysicalSystemDocument) {
             addPhysicalSystemValues(((PhysicalSystemDocument) element).getPhysicalSystem(), (PhysicalSystem) description);
         } else if (element instanceof PhysicalSystemPropertyType) {
@@ -386,15 +384,15 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
     }
 
-    private XmlObject encodeDescription(SosProcedureDescription<?> description,
+    private XmlObject encodeDescription(AbstractSensorML description,
                                         Map<HelperValues, String> additionalValues) throws EncodingException {
         XmlObject absProc = null;
-        if (description.getProcedureDescription() instanceof AbstractPhysicalProcess) {
-            absProc = encodeAbstractPhysicalProcess((AbstractPhysicalProcess) description.getProcedureDescription(), additionalValues);
-        } else if (description.getProcedureDescription() instanceof SimpleProcess) {
-            absProc = encodeSimpleProcess((SimpleProcess) description.getProcedureDescription(), additionalValues);
-        } else if (description.getProcedureDescription() instanceof AggregateProcess) {
-            absProc = encodeAggregateProcess((AggregateProcess) description.getProcedureDescription(), additionalValues);
+        if (description instanceof AbstractPhysicalProcess) {
+            absProc = encodeAbstractPhysicalProcess((AbstractPhysicalProcess) description, additionalValues);
+        } else if (description instanceof SimpleProcess) {
+            absProc = encodeSimpleProcess((SimpleProcess) description, additionalValues);
+        } else if (description instanceof AggregateProcess) {
+            absProc = encodeAggregateProcess((AggregateProcess) description, additionalValues);
         } else {
             throw new UnsupportedEncoderInputException(this, description);
         }
@@ -442,7 +440,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         addAbstractProcessValues(apt, abstractProcess);
         addDescribedObjectValues(apt, abstractProcess);
         // set components
-        if (abstractProcess.isSetComponents() || abstractProcess.isSetChildProcedures()) {
+        if (abstractProcess.isSetComponents()) {
             List<SmlComponent> smlComponents = checkForComponents(abstractProcess);
             if (!smlComponents.isEmpty()) {
                 ComponentListPropertyType clpt = createComponents(smlComponents);
@@ -515,7 +513,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         addDescribedObjectValues(pst, abstractPhysicalProcess);
         addAbstractPhysicalProcessValues(pst, abstractPhysicalProcess);
         // set components
-        if (abstractPhysicalProcess.isSetComponents() || abstractPhysicalProcess.isSetChildProcedures()) {
+        if (abstractPhysicalProcess.isSetComponents()) {
             List<SmlComponent> smlComponents = checkForComponents(abstractPhysicalProcess);
             if (!smlComponents.isEmpty()) {
                 ComponentListPropertyType clpt = createComponents(smlComponents);
@@ -530,7 +528,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
 
     private void addDescribedObjectValues(DescribedObjectType dot, DescribedObject describedObject)
             throws EncodingException {
-        if (!describedObject.isSetGmlId()) {
+        if (!describedObject.isSetGmlID()) {
             describedObject.setGmlId("do_" + JavaHelper.generateID(describedObject.toString()));
         }
         dot.setId(describedObject.getGmlId());
@@ -548,14 +546,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
 
-        // merge offerings if set
-        if (describedObject.isSetOfferings()) {
-            final Set<SweText> offeringsSet = convertOfferingsToSet(describedObject.getOfferings());
-            mergeCapabilities(describedObject, SensorMLConstants.ELEMENT_NAME_OFFERINGS,
-                              SensorMLConstants.OFFERING_FIELD_DEFINITION, null, offeringsSet);
-        }
         // set capabilities
-        // TODO remove parentProcedure from capabilities
         if (describedObject.isSetCapabilities()) {
             final Capabilities[] existing = dot.getCapabilitiesArray();
             final Set<String> names = Sets.newHashSetWithExpectedSize(existing.length);
@@ -618,13 +609,15 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // set validTime
         if (describedObject.isSetValidTime() && CollectionHelper.isNullOrEmpty(dot.getValidTimeArray())) {
-            final Time time = describedObject.getValidTime();
-            final XmlObject xbtime = encodeObjectToXmlGml32(time);
-            if (time instanceof TimeInstant) {
-                dot.addNewValidTime().addNewTimeInstant().set(xbtime);
-            } else if (time instanceof TimePeriod) {
-                dot.addNewValidTime().addNewTimePeriod().set(xbtime);
+            for (Time time : describedObject.getValidTime()) {
+                final XmlObject xbtime = encodeObjectToXmlGml32(time);
+                if (time instanceof TimeInstant) {
+                    dot.addNewValidTime().addNewTimeInstant().set(xbtime);
+                } else if (time instanceof TimePeriod) {
+                    dot.addNewValidTime().addNewTimePeriod().set(xbtime);
+                }
             }
+            
             // } else {
             // TODO remove or
             // remove existing validTime element
@@ -697,7 +690,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         }
         // set outputs
         if (abstractProcess.isSetOutputs()) {
-            extendOutputs(abstractProcess);
             apt.setOutputs(createOutputs(abstractProcess.getOutputs()));
         }
         // set parameters
@@ -733,15 +725,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
         List<SmlComponent> smlComponents = Lists.newArrayList();
         if (abstractProcess instanceof HasComponents<?> && ((HasComponents<?>) abstractProcess).isSetComponents()) {
             smlComponents.addAll(((HasComponents<?>) abstractProcess).getComponents());
-        }
-        if (abstractProcess.isSetChildProcedures()) {
-            smlComponents.addAll(createComponentsForChildProcedures(abstractProcess.getChildProcedures()));
-        }
-        if (!smlComponents.isEmpty()) {
-            // TODO check for duplicated outputs
-            abstractProcess.getOutputs().addAll(getOutputsFromChilds(smlComponents));
-            // TODO check if necessary
-            // system.addFeatureOfInterest(getFeaturesFromChild(smlComponents));
         }
         return smlComponents;
     }
@@ -981,17 +964,6 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
             }
         }
         return xbCapabilities;
-    }
-
-    private void extendOutputs(AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetPhenomenon()) {
-            for (SmlIo<?> output : abstractProcess.getOutputs()) {
-                if (abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition())) {
-                    output.getIoValue()
-                            .setName(abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName());
-                }
-            }
-        }
     }
 
     private ProcessMethodType createProcessMethod(HasProcessMethod processMethod) {
@@ -1356,14 +1328,14 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                 additionalValues.put(HelperValues.TYPE, null);
                 XmlObject xmlObject = encode(sosSMLComponent.getProcess(), additionalValues);
                 // if
-                // (sosSMLComponent.getProcess().getSensorDescriptionXmlString()
+                // (sosSMLComponent.getProcess().getXml()
                 // != null
                 // &&
-                // !sosSMLComponent.getProcess().getSensorDescriptionXmlString().isEmpty())
+                // !sosSMLComponent.getProcess().getXml().isEmpty())
                 // {
                 // try {
                 // xmlObject =
-                // XmlObject.Factory.parse(sosSMLComponent.getProcess().getSensorDescriptionXmlString());
+                // XmlObject.Factory.parse(sosSMLComponent.getProcess().getXml());
                 //
                 // } catch (final XmlException xmle) {
                 // throw new

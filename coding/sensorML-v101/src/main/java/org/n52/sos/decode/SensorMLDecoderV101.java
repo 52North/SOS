@@ -38,7 +38,55 @@ import java.util.stream.Collectors;
 
 import javax.xml.namespace.QName;
 
-import net.opengis.gml.CodeType;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.sensorML.AbstractComponent;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.ProcessMethod;
+import org.n52.shetland.ogc.sensorML.ProcessModel;
+import org.n52.shetland.ogc.sensorML.RulesDefinition;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.SmlContact;
+import org.n52.shetland.ogc.sensorML.SmlContactList;
+import org.n52.shetland.ogc.sensorML.SmlPerson;
+import org.n52.shetland.ogc.sensorML.SmlReferencedContact;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sensorML.elements.AbstractSmlDocumentation;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.elements.SmlCharacteristics;
+import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlComponent;
+import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
+import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.DataRecord;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.sos.encode.AbstractSensorMLDecoder;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import com.vividsolutions.jts.geom.Point;
+
 import net.opengis.sensorML.x101.AbstractComponentType;
 import net.opengis.sensorML.x101.AbstractDerivableComponentType;
 import net.opengis.sensorML.x101.AbstractProcessType;
@@ -72,65 +120,12 @@ import net.opengis.sensorML.x101.PositionDocument.Position;
 import net.opengis.sensorML.x101.ProcessModelType;
 import net.opengis.sensorML.x101.ResponsiblePartyDocument.ResponsibleParty;
 import net.opengis.sensorML.x101.SensorMLDocument;
-import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
 import net.opengis.sensorML.x101.SmlLocation.SmlLocation2;
 import net.opengis.sensorML.x101.SystemDocument;
 import net.opengis.sensorML.x101.SystemType;
 import net.opengis.sensorML.x101.TermDocument.Term;
 import net.opengis.sensorML.x101.ValidTimeDocument.ValidTime;
-
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.shetland.ogc.SupportedType;
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.sensorML.AbstractComponent;
-import org.n52.shetland.ogc.sensorML.AbstractProcess;
-import org.n52.shetland.ogc.sensorML.AbstractSensorML;
-import org.n52.shetland.ogc.sensorML.ProcessMethod;
-import org.n52.shetland.ogc.sensorML.ProcessModel;
-import org.n52.shetland.ogc.sensorML.RulesDefinition;
-import org.n52.shetland.ogc.sensorML.SensorMLConstants;
-import org.n52.shetland.ogc.sensorML.SmlContact;
-import org.n52.shetland.ogc.sensorML.SmlContactList;
-import org.n52.shetland.ogc.sensorML.SmlPerson;
-import org.n52.shetland.ogc.sensorML.SmlReferencedContact;
-import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
-import org.n52.shetland.ogc.sensorML.System;
-import org.n52.shetland.ogc.sensorML.elements.AbstractSmlDocumentation;
-import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
-import org.n52.shetland.ogc.sensorML.elements.SmlCharacteristics;
-import org.n52.shetland.ogc.sensorML.elements.SmlClassifier;
-import org.n52.shetland.ogc.sensorML.elements.SmlComponent;
-import org.n52.shetland.ogc.sensorML.elements.SmlIdentifier;
-import org.n52.shetland.ogc.sensorML.elements.SmlIo;
-import org.n52.shetland.ogc.sensorML.elements.SmlPosition;
-import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.swe.DataRecord;
-import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
-import org.n52.shetland.ogc.swe.SweField;
-import org.n52.shetland.ogc.swe.simpleType.SweText;
-import org.n52.sos.encode.AbstractSensorMLDecoder;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.vividsolutions.jts.geom.Point;
 
 /**
  * @since 4.0.0
@@ -233,7 +228,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
                         "The process of a member of the SensorML Document is null (%s)!", xbMember.getProcess());
             }
         }
-        sensorML.setSensorDescriptionXmlString(xbSensorML.xmlText(getXmlOptions()));
+        sensorML.setXml(xbSensorML.xmlText(getXmlOptions()));
         return sensorML;
     }
 
@@ -338,7 +333,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
             checkAndRemoveEmptyComponents(xbSystemType);
         }
         final String xmlDescription = addSensorMLWrapperForXmlDescription(xbSystemType);
-        system.setSensorDescriptionXmlString(xmlDescription);
+        system.setXml(xmlDescription);
         return system;
     }
 
@@ -350,7 +345,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         if (componentType.isSetPosition()) {
             component.setPosition(parsePosition(componentType.getPosition()));
         }
-        component.setSensorDescriptionXmlString(addSensorMLWrapperForXmlDescription(componentType));
+        component.setXml(addSensorMLWrapperForXmlDescription(componentType));
         return component;
     }
 
@@ -361,7 +356,7 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
         if (xbProcessModel.getMethod() != null) {
             processModel.setMethod(parseProcessMethod(xbProcessModel.getMethod()));
         }
-        processModel.setSensorDescriptionXmlString(addSensorMLWrapperForXmlDescription(xbProcessModel));
+        processModel.setXml(addSensorMLWrapperForXmlDescription(xbProcessModel));
         return processModel;
     }
 
@@ -510,14 +505,6 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
                  if (o instanceof DataRecord) {
                      final DataRecord record = (DataRecord) o;
                      caps.setDataRecord(record).setName(xbcaps.getName());
-                     // check if this capabilities is insertion metadata
-                     if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {
-                         abstractProcess.addOfferings(SosOffering.fromSet(caps.getDataRecord().getSweAbstractSimpleTypeFromFields(SweText.class)));
-                     } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(caps.getName())) {
-                         abstractProcess.addParentProcedures(parseCapabilitiesMetadata(caps, xbcaps).keySet());
-                     } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(caps.getName())) {
-                         abstractProcess.addFeaturesOfInterest(parseCapabilitiesMetadata(caps, xbcaps).keySet());
-                     }
                  } else {
                      throw new DecodingException(XmlHelper.getLocalName(xbcaps),
                              "Error while parsing the capabilities of the SensorML (the capabilities data record "
@@ -533,38 +520,6 @@ public class SensorMLDecoderV101 extends AbstractSensorMLDecoder {
                 abstractProcess.addCapabilities(caps);
             }
         }
-    }
-
-    /**
-     * Process standard formatted capabilities insertion metadata into a map
-     * (key=identifier, value=name)
-     *
-     * @param dataRecord
-     *            The DataRecord to examine
-     * @param xbCapabilities
-     *            The original capabilites xml object, used for exception
-     *            throwing
-     * @return Map of insertion metadata (key=identifier, value=name)
-     * @throws DecodingException
-     *             thrown if the DataRecord fields are in an incorrect format
-     */
-    private Map<String, String> parseCapabilitiesMetadata(SmlCapabilities caps, Capabilities xbCapabilities)
-            throws DecodingException {
-        final Map<String, String> map = Maps.newHashMapWithExpectedSize(caps.getDataRecord().getFields().size());
-        for (final SweField sosSweField : caps.getDataRecord().getFields()) {
-            if (sosSweField.getElement() instanceof SweText) {
-                final SweText sosSweText = (SweText) sosSweField.getElement();
-                if (sosSweText.isSetValue()) {
-                    map.put(sosSweText.getValue(), sosSweField.getName().getValue());
-                } else {
-                    throw new DecodingException("Removable capabilities element %s contains a field with no value", xbCapabilities.getName());
-                }
-            } else {
-                throw new DecodingException("Removable capabilities element %s contains a non-Text field", xbCapabilities.getName());
-            }
-
-        }
-        return map;
     }
 
     /**

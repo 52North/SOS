@@ -252,14 +252,24 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
             Q request = requestType.cast(abstractRequest);
+            preProcessRequest(request);
             checkForModifierAndProcess(request);
             checkParameters(request);
             A response = receive(request);
             this.serviceEventBus.submit(new ResponseEvent(response));
+            postProcessResponse(response);
             return checkForModifierAndProcess(request, response);
         } else {
             throw new OperationNotSupportedException(abstractRequest.getOperationName());
         }
+    }
+
+    protected void preProcessRequest(Q request) {
+        // nothing to do
+    }
+
+    protected OwsServiceResponse postProcessResponse(A response) {
+        return response;
     }
 
     private void checkForModifierAndProcess(OwsServiceRequest request) throws OwsExceptionReport {

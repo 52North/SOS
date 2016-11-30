@@ -73,7 +73,7 @@ public class KeywordEnrichment extends SensorMLEnrichment {
         return Lists.newArrayList(keywords);
     }
 
-    private void addLongName(AbstractSensorML description,Set<String> keywords) {
+    private void addLongName(AbstractSensorML description, Set<String> keywords) {
         Optional<SmlIdentifier> longName = description
                 .findIdentification(longNamePredicate());
         if (longName.isPresent()) {
@@ -81,7 +81,7 @@ public class KeywordEnrichment extends SensorMLEnrichment {
         }
     }
 
-    private void addShortName(AbstractSensorML description,Set<String> keywords) {
+    private void addShortName(AbstractSensorML description, Set<String> keywords) {
         Optional<SmlIdentifier> shortName = description
                 .findIdentification(shortNamePredicate());
         if (shortName.isPresent()) {
@@ -89,10 +89,10 @@ public class KeywordEnrichment extends SensorMLEnrichment {
         }
     }
 
-    private void addFeatures(AbstractSensorML description,Set<String> keywords) {
+    private void addFeatures(AbstractSensorML description, Set<String> keywords) {
         if (procedureSettings().isEnrichWithFeatures() &&
-            description.isSetFeaturesOfInterest()) {
-            keywords.addAll(description.getFeaturesOfInterest());
+                getDescription().isSetFeaturesOfInterest()) {
+            keywords.addAll(getDescription().getFeaturesOfInterest());
         }
     }
 
@@ -121,7 +121,7 @@ public class KeywordEnrichment extends SensorMLEnrichment {
                 .getObservablePropertiesForProcedure(getIdentifier()));
     }
 
-    private void addExisting(AbstractSensorML description,Set<String> keywords) {
+    private void addExisting(AbstractSensorML description, Set<String> keywords) {
         if (description.isSetKeywords()) {
             keywords.addAll(description.getKeywords());
         }

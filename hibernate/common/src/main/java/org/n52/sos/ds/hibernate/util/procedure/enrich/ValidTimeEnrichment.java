@@ -30,6 +30,7 @@ package org.n52.sos.ds.hibernate.util.procedure.enrich;
 
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 
 /**
@@ -43,10 +44,13 @@ public class ValidTimeEnrichment extends SensorMLEnrichment {
     @Override
     protected void enrich(AbstractSensorML description)
             throws OwsExceptionReport {
-        if (description.getValidTime() != null) {
-            validTime.extendToContain(description.getValidTime());
+        if (description instanceof AbstractProcess) {
+            AbstractProcess abstractProcess =  (AbstractProcess)description;
+            if (abstractProcess.getValidTime() != null) {
+                validTime.extendToContain(abstractProcess.getValidTime());
+            }
+            abstractProcess.setValidTime(validTime);
         }
-        description.setValidTime(validTime);
     }
 
     @Override

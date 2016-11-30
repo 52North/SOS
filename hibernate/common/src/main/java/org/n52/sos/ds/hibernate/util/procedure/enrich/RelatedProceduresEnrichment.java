@@ -37,6 +37,9 @@ import java.util.Set;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
@@ -85,8 +88,10 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
     @Override
     public void enrich() throws OwsExceptionReport {
         Set<String> parentProcedures = getParentProcedures();
-        getDescription().setParentProcedures(parentProcedures);
-        Set<SosProcedureDescription> childProcedures = getChildProcedures();
+        if (parentProcedures != null) {
+            getDescription().setParentProcedure(new ReferenceType(parentProcedures.iterator().next()));
+        }
+        Set<AbstractSensorML> childProcedures = getChildProcedures();
         if (CollectionHelper.isNotEmpty(childProcedures)) {
             getDescription().addChildProcedures(childProcedures);
         }
@@ -111,7 +116,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
      * @throws ConverterException
      *             If creation of child procedure description fails
      */
-    private Set<SosProcedureDescription> getChildProcedures()
+    private Set<AbstractSensorML> getChildProcedures()
             throws OwsExceptionReport {
 
         final Collection<String> childIdentfiers =
@@ -125,7 +130,7 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
             procedureCache = createProcedureCache();
         }
 
-        Set<SosProcedureDescription> childProcedures = Sets.newHashSet();
+        Set<AbstractSensorML> childProcedures = Sets.newHashSet();
         for (String childId : childIdentfiers) {
             Procedure child = procedureCache.get(childId);
 
@@ -161,7 +166,9 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 SosProcedureDescription childDescription =
                         converter.createSosProcedureDescriptionFromValidProcedureTime(
                                 child, procedureDescriptionFormat, childVpt, getVersion(), getLocale(), getSession());
-                childProcedures.add(childDescription);
+                if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
+                    childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
+                }
             } else  if  (child != null) {
                 //no matching child validProcedureTime, generate the procedure description
                 SosProcedureDescription childDescription = converter.createSosProcedureDescription(
@@ -170,7 +177,9 @@ public class RelatedProceduresEnrichment extends ProcedureDescriptionEnrichment 
                 // createSosProcedureDescription()
                 // addValuesToSensorDescription(childProcID,childProcedureDescription,
                 // version, outputFormat, session);
-                childProcedures.add(childDescription);
+                if (childDescription.getProcedureDescription() instanceof AbstractSensorML) {
+                    childProcedures.add((AbstractSensorML)childDescription.getProcedureDescription());
+                }
             }
         }
         return childProcedures;

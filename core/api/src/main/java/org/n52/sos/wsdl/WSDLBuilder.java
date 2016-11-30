@@ -34,6 +34,7 @@ import java.net.URI;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
 import org.slf4j.Logger;
@@ -369,7 +370,7 @@ public class WSDLBuilder {
             } else {
                 return getDefault();
             }
-        } catch (DecodingException | IOException ex) {
+        } catch (XmlException | IOException ex) {
             LOGGER.error("Error while loading WSDL file!", ex);
             return getDefault();
         }
@@ -385,7 +386,7 @@ public class WSDLBuilder {
         return Configurator.getInstance().getClass().getResourceAsStream(filename);
     }
 
-    private XmlObject read(String path) throws DecodingException, IOException {
+    private XmlObject read(String path) throws XmlException, IOException {
         try (InputStream stream = getDocumentAsStream(path)) {
             String string = StringHelper.convertStreamToString(stream);
             return XmlHelper.parseXmlString(string);

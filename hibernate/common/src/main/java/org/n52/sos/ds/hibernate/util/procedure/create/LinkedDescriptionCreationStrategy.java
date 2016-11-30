@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Scanner;
 
+import org.apache.xmlbeans.XmlException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
             scanner = new Scanner(is,"UTF-8");
             String inputStreamString = scanner.useDelimiter("\\A").next();
             return checkXml(inputStreamString);
-        } catch (IOException|DecodingException e) {
+        } catch (IOException|XmlException e) {
            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while querying sensor description from:{}", descriptionFile);
         } finally {
             if (scanner != null) {
@@ -93,7 +94,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
         }
     }
 
-    private String checkXml(String xml) throws DecodingException {
+    private String checkXml(String xml) throws XmlException {
         XmlHelper.parseXmlString(xml);
         if (xml.startsWith("<?xml")) {
             return xml.substring(xml.indexOf(">")+1);

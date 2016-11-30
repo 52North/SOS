@@ -34,11 +34,13 @@ import net.opengis.swes.x20.DescribeSensorResponseDocument;
 import net.opengis.swes.x20.DescribeSensorResponseType;
 import net.opengis.swes.x20.SensorDescriptionType;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
@@ -69,7 +71,7 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
         dsr.setProcedureDescriptionFormat(response.getOutputFormat());
         for (SosProcedureDescription<?> sosProcedureDescription : response.getProcedureDescriptions()) {
             SensorDescriptionType sensorDescription = dsr.addNewDescription().addNewSensorDescription();
-            sensorDescription.addNewData().set(getSensorDescription(response, sosProcedureDescription ));
+            sensorDescription.addNewData().set(getSensorDescription(response, sosProcedureDescription.getProcedureDescription()));
             if (sosProcedureDescription.isSetValidTime()) {
                 XmlObject xmlObjectValidtime =
                         encodeObjectToXml(GmlConstants.NS_GML_32, sosProcedureDescription.getValidTime());
@@ -89,11 +91,15 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
         return doc;
     }
 
-    private XmlObject getSensorDescription(DescribeSensorResponse response, SosProcedureDescription sosProcedureDescription) throws EncodingException {
-        if (sosProcedureDescription instanceof SosProcedureDescriptionUnknownType && sosProcedureDescription.isSetSensorDescriptionXmlString()) {
-            return  XmlHelper.parseXmlString(sosProcedureDescription.getSensorDescriptionXmlString());
+    private XmlObject getSensorDescription(DescribeSensorResponse response, AbstractFeature abstractFeature) throws EncodingException {
+        if (abstractFeature instanceof SosProcedureDescriptionUnknownType && abstractFeature.isSetXml()) {
+            try {
+                return  XmlHelper.parseXmlString(abstractFeature.getXml());
+            } catch (XmlException xmle) {
+                throw new EncodingException("An xml error occured when parsing the request!", xmle);
+            }
         }
-        return encodeObjectToXml(response.getOutputFormat(), sosProcedureDescription);
+        return encodeObjectToXml(response.getOutputFormat(), abstractFeature);
     }
 
     @Override

@@ -47,6 +47,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
@@ -256,16 +257,16 @@ private HibernateSessionHolder sessionHolder;
      *            Procedure description
      * @return SensorDescription String
      */
-    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription procedureDescription ) {
-        if (procedureDescription instanceof SensorML) {
-            final SensorML sensorML = (SensorML) procedureDescription;
+    private String getSensorDescriptionFromProcedureDescription(SosProcedureDescription<?> procedureDescription ) {
+        if (procedureDescription.getProcedureDescription() instanceof SensorML) {
+            final SensorML sensorML = (SensorML) procedureDescription.getProcedureDescription();
             // if SensorML is not a wrapper
             if (!sensorML.isWrapper()) {
-                return sensorML.getSensorDescriptionXmlString();
+                return sensorML.getXml();
             }
             // if SensorML is a wrapper and member size is 1
             else if (sensorML.isWrapper() && sensorML.getMembers().size() == 1) {
-                return sensorML.getMembers().get(0).getSensorDescriptionXmlString();
+                return sensorML.getMembers().get(0).getXml();
             } else {
                 // TODO: get sensor description for procedure identifier
                 return "";
@@ -273,7 +274,7 @@ private HibernateSessionHolder sessionHolder;
         }
         // if procedureDescription not SensorML
         else {
-            return procedureDescription.getSensorDescriptionXmlString();
+            return procedureDescription.getXml();
         }
     }
 

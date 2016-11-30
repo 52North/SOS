@@ -33,20 +33,37 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.n52.iceland.config.annotation.Configurable;
-import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.service.MiscSettings;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.ProcessChain;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sensorML.System;
+import org.n52.shetland.ogc.sensorML.elements.SmlCapabilities;
+import org.n52.shetland.ogc.sensorML.v20.AbstractPhysicalProcess;
+import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
+import org.n52.shetland.ogc.sensorML.v20.AggregateProcess;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalSystem;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.swe.DataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.sos.cache.SosContentCache;
@@ -55,15 +72,15 @@ import org.n52.sos.event.events.SensorInsertion;
 import org.n52.sos.exception.ows.concrete.InvalidFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingFeatureOfInterestTypeException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.request.InsertSensorRequest;
 import org.n52.sos.response.InsertSensorResponse;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -77,37 +94,15 @@ public class SosInsertSensorOperatorV20 extends
     private static final Set<String> CONFORMANCE_CLASSES = Sets
             .newHashSet(ConformanceClasses.SOS_V2_INSERTION_CAPABILITIES, ConformanceClasses.SOS_V2_SENSOR_INSERTION);
 
-    private String defaultOfferingPrefix;
-
-    private String defaultProcedurePrefix;
-
     private static SosOffering sensorTypeDummyOffering = new SosOffering("sensorTypeDummyOffering", "");
 
     public SosInsertSensorOperatorV20() {
         super(Sos2Constants.Operations.InsertSensor.name(), InsertSensorRequest.class);
     }
 
-    public String getDefaultOfferingPrefix() {
-        return this.defaultOfferingPrefix;
-    }
-
-    @Setting(MiscSettings.DEFAULT_OFFERING_PREFIX)
-    public void setDefaultOfferingPrefix(String prefix) {
-        this.defaultOfferingPrefix = prefix;
-    }
-
-    public String getDefaultProcedurePrefix() {
-        return this.defaultProcedurePrefix;
-    }
-
-    @Setting(MiscSettings.DEFAULT_PROCEDURE_PREFIX)
-    public void setDefaultProcedurePrefix(String prefix) {
-        this.defaultProcedurePrefix = prefix;
-    }
-
     @Override
     public Set<String> getConformanceClasses(String service, String version) {
-        if(SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
+        if (SosConstants.SOS.equals(service) && Sos2Constants.SERVICEVERSION.equals(version)) {
             return Collections.unmodifiableSet(CONFORMANCE_CLASSES);
         }
         return Collections.emptySet();
@@ -140,8 +135,8 @@ public class SosInsertSensorOperatorV20 extends
             exceptions.add(owse);
         }
         try {
-            SosHelper.checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(),
-                    request.getService(), request.getVersion());
+            SosHelper.checkProcedureDescriptionFormat(request.getProcedureDescriptionFormat(), request.getService(),
+                    request.getVersion());
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
@@ -169,7 +164,8 @@ public class SosInsertSensorOperatorV20 extends
                 exceptions.add(owse);
             }
             try {
-                checkParentChildProcedures(request.getProcedureDescription(), request.getAssignedProcedureIdentifier());
+                checkParentChildProcedures(request.getProcedureDescription(),
+                        request.getAssignedProcedureIdentifier());
             } catch (OwsExceptionReport owse) {
                 exceptions.add(owse);
             }
@@ -191,10 +187,137 @@ public class SosInsertSensorOperatorV20 extends
                 }
             } else {
                 exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.observationType));
-                exceptions.add(new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
+                exceptions.add(
+                        new MissingParameterValueException(Sos2Constants.InsertSensorParams.featureOfInterestType));
             }
         }
         exceptions.throwIfNotEmpty();
+    }
+
+    @Override
+    protected void preProcessRequest(InsertSensorRequest request) {
+        if (request.isSetProcedureDescription()) {
+            SosProcedureDescription<?> procedureDescription = request.getProcedureDescription();
+            if (request.isSetExtensions()) {
+                if (request.hasExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS)) {
+                    Optional<Extension<?>> extension = request.getExtension(SensorMLConstants.ELEMENT_NAME_OFFERINGS);
+                    if (extension.isPresent()) {
+                        if (extension.get().getValue() instanceof DataRecord) {
+                            procedureDescription
+                                    .addOfferings(SosOffering.fromSet(((DataRecord) extension.get().getValue())
+                                            .getSweAbstractSimpleTypeFromFields(SweText.class)));
+                        } else if (extension.get().getValue() instanceof SweText) {
+                            procedureDescription.addOffering(SosOffering.from((SweText) extension.get().getValue()));
+                        }
+                    }
+                }
+                if (request.hasExtension(SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES)) {
+                    Optional<Extension<?>> extension =
+                            request.getExtension(SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES);
+                    if (extension.isPresent()) {
+                        if (extension.get().getValue() instanceof SweText) {
+                            SweText sweText = (SweText) extension.get().getValue();
+                            if (sweText.isSetName()) {
+                                procedureDescription.setParentProcedure(
+                                        new ReferenceType(sweText.getValue(), sweText.getName().getValue()));
+                            } else {
+                                procedureDescription.setParentProcedure(new ReferenceType(sweText.getValue()));
+                            }
+                        }
+                    }
+                }
+                if (request.hasExtension(SensorMLConstants.INSITU)) {
+                    procedureDescription
+                            .setInsitu(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.INSITU));
+                } else if (request.hasExtension(SensorMLConstants.REMOTE)) {
+                    procedureDescription
+                            .setInsitu(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.REMOTE));
+                }
+                if (request.hasExtension(SensorMLConstants.MOBILE)) {
+                    procedureDescription
+                            .setMobile(request.getExtensions().isBooleanExtensionSet(SensorMLConstants.MOBILE));
+                } else if (request.hasExtension(SensorMLConstants.FIXED)) {
+                    procedureDescription
+                            .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.FIXED));
+                } else if (request.hasExtension(SensorMLConstants.STATIONARY)) {
+                    procedureDescription
+                            .setMobile(!request.getExtensions().isBooleanExtensionSet(SensorMLConstants.STATIONARY));
+                }
+            }
+            if (request.getProcedureDescription().getProcedureDescription() instanceof AbstractSensorML) {
+                AbstractSensorML abstractSensorML =
+                        (AbstractSensorML) request.getProcedureDescription().getProcedureDescription();
+                if (abstractSensorML instanceof SensorML && ((SensorML) abstractSensorML).isWrapper()) {
+                    for (AbstractProcess abstractProcess : ((SensorML) abstractSensorML).getMembers()) {
+                        checkCapabilities(request.getProcedureDescription(), abstractProcess);
+                        checkForMobileAndInsitu(request.getProcedureDescription(), abstractProcess);
+                    }
+                } else {
+                    checkCapabilities(request.getProcedureDescription(), abstractSensorML);
+                    checkForMobileAndInsitu(request.getProcedureDescription(), abstractSensorML);
+                }
+
+                if (abstractSensorML instanceof AbstractProcessV20) {
+                    AbstractProcessV20 abstractProcessV20 = (AbstractProcessV20) abstractSensorML;
+                    if (abstractProcessV20.isSetTypeOf()) {
+                        request.getProcedureDescription().setTypeOf(abstractProcessV20.getTypeOf());
+                    }
+                    if (abstractProcessV20 instanceof AbstractPhysicalProcess
+                            && ((AbstractPhysicalProcess) abstractProcessV20).isSetAttachedTo()) {
+                        procedureDescription
+                                .setParentProcedure(((AbstractPhysicalProcess) abstractProcessV20).getAttachedTo());
+                    }
+                    if (abstractProcessV20.isSetSmlFeatureOfInterest()) {
+                        if (abstractProcessV20.getSmlFeatureOfInterest().isSetFeaturesOfInterest()) {
+                            procedureDescription.addFeaturesOfInterest(
+                                    abstractProcessV20.getSmlFeatureOfInterest().getFeaturesOfInterest());
+                        }
+                        if (abstractProcessV20.getSmlFeatureOfInterest().isSetFeaturesOfInterestMap()) {
+                            procedureDescription.addFeaturesOfInterestMap(
+                                    abstractProcessV20.getSmlFeatureOfInterest().getFeaturesOfInterestMap());
+                        }
+                    }
+                }
+                if (abstractSensorML instanceof System || abstractSensorML instanceof ProcessChain
+                        || abstractSensorML instanceof PhysicalSystem
+                        || abstractSensorML instanceof AggregateProcess) {
+                    procedureDescription.setIsAggregation(true);
+                }
+            }
+        }
+        super.preProcessRequest(request);
+    }
+
+    private void checkForMobileAndInsitu(SosProcedureDescription<?> procedureDescription,
+            AbstractSensorML abstractSensorML) {
+        if (abstractSensorML.isSetMobile()) {
+            procedureDescription.setMobile(abstractSensorML.getMobile());
+        }
+        if (abstractSensorML.isSetInsitu()) {
+            procedureDescription.setInsitu(abstractSensorML.getInsitu());
+        }
+    }
+
+    private void checkCapabilities(SosProcedureDescription<?> procedureDescription,
+            AbstractSensorML abstractSensorML) {
+        if (abstractSensorML.isSetCapabilities()) {
+            for (SmlCapabilities caps : abstractSensorML.getCapabilities()) {
+                if (SensorMLConstants.ELEMENT_NAME_OFFERINGS.equals(caps.getName())) {
+                    if (caps.isSetAbstractDataRecord()) {
+                        procedureDescription.addOfferings(SosOffering
+                                .fromSet(caps.getDataRecord().getSweAbstractSimpleTypeFromFields(SweText.class)));
+                    } else if (caps.isSetAbstractDataComponents()) {
+                        procedureDescription.addOfferings(
+                                SosOffering.fromSet(caps.getSweAbstractSimpleTypeFromFields(SweText.class)));
+                    }
+                } else if (SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES.equals(caps.getName())) {
+                    procedureDescription.setParentProcedure(
+                            new ReferenceType(parseCapabilitiesMetadata(caps).keySet().iterator().next()));
+                } else if (SensorMLConstants.ELEMENT_NAME_FEATURES_OF_INTEREST.equals(caps.getName())) {
+                    procedureDescription.addFeaturesOfInterest(parseCapabilitiesMetadata(caps).keySet());
+                }
+            }
+        }
     }
 
     private void checkObservableProperty(List<String> observableProperty) throws OwsExceptionReport {
@@ -209,12 +332,11 @@ public class SosInsertSensorOperatorV20 extends
     private void checkFeatureOfInterestTypes(Set<String> featureOfInterestTypes) throws OwsExceptionReport {
         if (featureOfInterestTypes != null) {
             CompositeOwsException exceptions = new CompositeOwsException();
-            Collection<String> validFeatureOfInterestTypes =
-                    getCache().getFeatureOfInterestTypes();
+            Collection<String> validFeatureOfInterestTypes = getCache().getFeatureOfInterestTypes();
             for (String featureOfInterestType : featureOfInterestTypes) {
                 if (featureOfInterestType.isEmpty()) {
                     exceptions.add(new MissingFeatureOfInterestTypeException());
-                } else  if (!validFeatureOfInterestTypes.contains(featureOfInterestType)) {
+                } else if (!validFeatureOfInterestTypes.contains(featureOfInterestType)) {
                     exceptions.add(new InvalidFeatureOfInterestTypeException(featureOfInterestType));
                 }
             }
@@ -241,7 +363,7 @@ public class SosInsertSensorOperatorV20 extends
             request.setAssignedProcedureIdentifier(request.getProcedureDescription().getIdentifier());
         } else {
             request.setAssignedProcedureIdentifier(
-                    getDefaultProcedurePrefix() + JavaHelper.generateID(request.getProcedureDescription().toString()));
+                    JavaHelper.generateID(request.getProcedureDescription().toString()));
         }
         // check for reserved character
         checkReservedCharacter(request.getAssignedProcedureIdentifier(),
@@ -253,9 +375,9 @@ public class SosInsertSensorOperatorV20 extends
         SosContentCache cache = getCache();
 
         // add parent procedure offerings
-        if (request.getProcedureDescription().isSetParentProcedures()) {
+        if (request.getProcedureDescription().isSetParentProcedure()) {
             Set<String> allParentProcedures = cache.getParentProcedures(
-                    request.getProcedureDescription().getParentProcedures(), true, true);
+                    request.getProcedureDescription().getParentProcedure().getTitleOrFromHref(), true, true);
             for (String parentProcedure : allParentProcedures) {
                 for (String offering : cache.getOfferingsForProcedure(parentProcedure)) {
                     // TODO I18N
@@ -272,7 +394,7 @@ public class SosInsertSensorOperatorV20 extends
         // if no offerings are assigned, generate one
         if (CollectionHelper.isEmpty(sosOfferings)) {
             sosOfferings = new HashSet<>(0);
-            sosOfferings.add(new SosOffering(getDefaultOfferingPrefix() + request.getAssignedProcedureIdentifier()));
+            sosOfferings.add(new SosOffering(request.getAssignedProcedureIdentifier()));
         }
         // check for reserved character
         for (SosOffering offering : sosOfferings) {
@@ -302,9 +424,10 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void checkParentChildProcedures(SosProcedureDescription <?>procedureDescription, String assignedIdentifier) throws CodedException {
+    private void checkParentChildProcedures(SosProcedureDescription<?> procedureDescription, String assignedIdentifier)
+            throws CodedException {
         if (procedureDescription.isSetChildProcedures()) {
-            for (SosProcedureDescription<?> child : procedureDescription.getChildProcedures()) {
+            for (AbstractSensorML child : procedureDescription.getChildProcedures()) {
                 if (child.getIdentifier().equalsIgnoreCase(assignedIdentifier)) {
                     throw new InvalidParameterValueException().at("childProcdureIdentifier").withMessage(
                             "The procedure with the identifier '%s' is linked to itself as child procedure !",
@@ -312,7 +435,7 @@ public class SosInsertSensorOperatorV20 extends
                 }
             }
         }
-        if (procedureDescription.isSetParentProcedures()) {
+        if (procedureDescription.isSetParentProcedure()) {
             if (procedureDescription.getParentProcedures().contains(assignedIdentifier)) {
                 throw new InvalidParameterValueException().at("parentProcdureIdentifier").withMessage(
                         "The procedure with the identifier '%s' is linked to itself as parent procedure !",
@@ -347,11 +470,29 @@ public class SosInsertSensorOperatorV20 extends
         }
     }
 
-    private void getChildProcedures() {
-        // TODO implement
-        // add parent offerings
-        // insert if not exist and proc is encoded, else Exception
-        // insert as hidden child
-        // set relation in sensor_system
+    /**
+     * Process standard formatted capabilities insertion metadata into a map
+     * (key=identifier, value=name)
+     *
+     * @param dataRecord
+     *            The DataRecord to examine
+     * @param xbCapabilities
+     *            The original capabilites xml object, used for exception
+     *            throwing
+     * @return Map of insertion metadata (key=identifier, value=name)
+     * @throws DecodingException
+     *             thrown if the DataRecord fields are in an incorrect format
+     */
+    private Map<String, String> parseCapabilitiesMetadata(SmlCapabilities caps) {
+        final Map<String, String> map = Maps.newHashMapWithExpectedSize(caps.getDataRecord().getFields().size());
+        for (final SweField sosSweField : caps.getDataRecord().getFields()) {
+            if (sosSweField.getElement() instanceof SweText) {
+                final SweText sosSweText = (SweText) sosSweField.getElement();
+                if (sosSweText.isSetValue()) {
+                    map.put(sosSweText.getValue(), sosSweField.getName().getValue());
+                }
+            }
+        }
+        return map;
     }
 }

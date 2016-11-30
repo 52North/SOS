@@ -63,7 +63,7 @@ public class FeatureOfInterestEnrichment extends ProcedureDescriptionEnrichment 
     public void enrich() throws OwsExceptionReport {
         Collection<String> featureOfInterestIDs = getFeatureOfInterestIDs();
         getDescription().addFeaturesOfInterest(featureOfInterestIDs);
-        getDescription().addFeaturesOfInterest(getAbstractFeaturesMap(featureOfInterestIDs));
+        getDescription().addFeaturesOfInterestMap(getAbstractFeaturesMap(featureOfInterestIDs));
     }
 
     @Override

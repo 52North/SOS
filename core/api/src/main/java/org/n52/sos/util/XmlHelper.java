@@ -149,12 +149,9 @@ public final class XmlHelper {
         throw new DecodingException("No request parameter forund for HTTP-Post!");
     }
 
-    public static XmlObject parseXmlString(String xmlString) throws DecodingException {
-        try {
-            return XmlObject.Factory.parse(xmlString);
-        } catch (final XmlException xmle) {
-            throw new DecodingException("An xml error occured when parsing the request!", xmle);
-        }
+    public static XmlObject parseXmlString(String xmlString) throws XmlException {
+        return XmlObject.Factory.parse(xmlString);
+//        throw new DecodingException("An xml error occured when parsing the request!", xmle);
     }
 
     /**

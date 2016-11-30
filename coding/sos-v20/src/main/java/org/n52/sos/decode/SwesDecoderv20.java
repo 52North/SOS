@@ -35,6 +35,44 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.ogc.sos.SosInsertionMetadata;
+import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.sos.request.InsertSensorRequest;
+import org.n52.sos.request.UpdateSensorRequest;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecoderResponseUnsupportedException;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
+
 import net.opengis.gml.x32.FeaturePropertyType;
 import net.opengis.sos.x20.SosInsertionMetadataPropertyType;
 import net.opengis.sos.x20.SosInsertionMetadataType;
@@ -50,45 +88,6 @@ import net.opengis.swes.x20.SensorDescriptionType;
 import net.opengis.swes.x20.UpdateSensorDescriptionDocument;
 import net.opengis.swes.x20.UpdateSensorDescriptionType;
 import net.opengis.swes.x20.UpdateSensorDescriptionType.Description;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
-import org.n52.shetland.ogc.OGCConstants;
-import org.n52.shetland.ogc.gml.CodeType;
-import org.n52.shetland.ogc.gml.CodeWithAuthority;
-import org.n52.shetland.ogc.gml.time.Time;
-import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
-import org.n52.shetland.util.CollectionHelper;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.SosHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.decode.Decoder;
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
-import org.n52.svalbard.decode.exception.DecoderResponseUnsupportedException;
-import org.n52.svalbard.decode.exception.DecodingException;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 
 /**
  * @since 4.0.0
@@ -192,23 +191,13 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicati
                     getDecoder(
                             new XmlNamespaceDecoderKey(xbInsertSensor.getProcedureDescriptionFormat(),
                                     xbProcedureDescription.getClass()));
-            if (decoder == null) {
-                SosHelper.checkProcedureDescriptionFormat(xbInsertSensor.getProcedureDescriptionFormat(),
-                        request.getService(), request.getVersion());
-                // if
-                // (StringHelper.isNullOrEmpty(xbInsertSensor.getProcedureDescriptionFormat()))
-                // {
-                //
-                // } else {
-                // throw new InvalidParameterValueException().at(
-                // Sos2Constants.InsertSensorParams.procedureDescriptionFormat).withMessage(
-                // "The requested %s is not supported!",
-                // Sos2Constants.InsertSensorParams.procedureDescriptionFormat.name());
-                // }
-            }
-            final Object decodedProcedureDescription = decoder.decode(xbProcedureDescription);
-            if (decodedProcedureDescription instanceof SosProcedureDescription) {
-                request.setProcedureDescription((SosProcedureDescription) decodedProcedureDescription);
+            if (decoder != null) {
+                final Object decodedProcedureDescription = decoder.decode(xbProcedureDescription);
+                if (decodedProcedureDescription instanceof SosProcedureDescription) {
+                    request.setProcedureDescription((SosProcedureDescription) decodedProcedureDescription);
+                } else if (decodedProcedureDescription instanceof AbstractFeature) {
+                    request.setProcedureDescription(new SosProcedureDescription<AbstractFeature>((AbstractFeature)decodedProcedureDescription));
+                }
             }
         } catch (final XmlException xmle) {
             throw new DecodingException("Error while parsing procedure description of InsertSensor request!", xmle);

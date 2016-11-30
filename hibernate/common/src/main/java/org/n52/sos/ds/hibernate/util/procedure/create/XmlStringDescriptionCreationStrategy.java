@@ -30,9 +30,11 @@ package org.n52.sos.ds.hibernate.util.procedure.create;
 
 import java.util.Locale;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
-
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
@@ -51,7 +53,7 @@ public class XmlStringDescriptionCreationStrategy
     @Override
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
-        SosProcedureDescription desc = readXml(p.getDescriptionFile());
+        SosProcedureDescription desc = new SosProcedureDescription<AbstractFeature>(readXml(p.getDescriptionFile()));
         desc.setIdentifier(p.getIdentifier());
         desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
         return desc;
@@ -63,9 +65,14 @@ public class XmlStringDescriptionCreationStrategy
                p.getDescriptionFile().startsWith("<");
     }
 
-    protected SosProcedureDescription readXml(String xml)
-            throws DecodingException {
-        XmlObject parsed = XmlHelper.parseXmlString(xml);
-        return (SosProcedureDescription) CodingHelper.decodeXmlElement(parsed);
+    protected AbstractFeature readXml(String xml)
+            throws OwsExceptionReport {
+        try {
+            XmlObject parsed = XmlHelper.parseXmlString(xml);
+            return (AbstractFeature) CodingHelper.decodeXmlElement(parsed);
+        } catch (XmlException| DecodingException e) {
+           throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating procedure description from XML string");
+        }
+        
     }
 }

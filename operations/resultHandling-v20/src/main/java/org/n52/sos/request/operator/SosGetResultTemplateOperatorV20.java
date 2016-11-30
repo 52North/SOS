@@ -41,8 +41,8 @@ import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.request.GetResultTemplateRequest;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 

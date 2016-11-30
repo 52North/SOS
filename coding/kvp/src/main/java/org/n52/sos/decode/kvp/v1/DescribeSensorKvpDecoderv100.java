@@ -32,7 +32,7 @@ package org.n52.sos.decode.kvp.v1;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
-import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 
 /**
  * @since 4.0.0

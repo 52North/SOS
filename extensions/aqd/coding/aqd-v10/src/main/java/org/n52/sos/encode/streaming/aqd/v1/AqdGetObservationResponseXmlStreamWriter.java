@@ -61,7 +61,7 @@ import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.XmlStreamWriter;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
-import org.n52.sos.ogc.sos.AbstractStreaming;
+import org.n52.shetland.ogc.sos.AbstractStreaming;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.svalbard.HelperValues;

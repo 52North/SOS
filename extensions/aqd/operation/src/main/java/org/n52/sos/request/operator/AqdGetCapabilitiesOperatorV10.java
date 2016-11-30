@@ -57,8 +57,8 @@ import org.n52.janmayen.http.HTTPMethods;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.ds.AbstractGetCapabilitiesHandler;
-import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
 
 
 public class AqdGetCapabilitiesOperatorV10 extends

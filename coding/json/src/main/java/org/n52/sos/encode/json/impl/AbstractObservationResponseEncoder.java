@@ -35,7 +35,7 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

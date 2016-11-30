@@ -43,8 +43,8 @@ import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultDAO

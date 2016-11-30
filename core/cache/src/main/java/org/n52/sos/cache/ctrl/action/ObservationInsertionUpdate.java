@@ -44,7 +44,7 @@ import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.sos.cache.InMemoryCacheImpl;
-import org.n52.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;

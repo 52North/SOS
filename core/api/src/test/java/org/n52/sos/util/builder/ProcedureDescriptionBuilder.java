@@ -31,7 +31,7 @@ package org.n52.sos.util.builder;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 
 import com.google.common.base.Strings;
 

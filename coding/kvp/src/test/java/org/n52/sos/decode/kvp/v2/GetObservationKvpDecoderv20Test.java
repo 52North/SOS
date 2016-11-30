@@ -38,7 +38,7 @@ import java.util.Map;
 import org.junit.Test;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Maps;

@@ -48,8 +48,8 @@ import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.sos.v2.GetObservationResponseXmlStreamWriter;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.sos.AbstractStreaming;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.AbstractStreaming;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
 

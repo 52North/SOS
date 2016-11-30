@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.encode.swes.ExtensibleRequestEncoder;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 
 import com.google.common.collect.Sets;
 

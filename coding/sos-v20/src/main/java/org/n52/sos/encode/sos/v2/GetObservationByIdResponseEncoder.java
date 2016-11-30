@@ -47,7 +47,7 @@ import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 

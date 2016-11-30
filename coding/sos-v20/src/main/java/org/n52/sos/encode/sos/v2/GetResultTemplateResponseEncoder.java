@@ -44,9 +44,9 @@ import org.apache.xmlbeans.XmlObject;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 import org.n52.svalbard.HelperValues;

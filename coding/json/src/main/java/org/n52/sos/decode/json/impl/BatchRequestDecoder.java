@@ -39,8 +39,8 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.request.BatchRequest;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.BatchConstants;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

@@ -32,7 +32,7 @@ import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.janmayen.component.SingleTypeComponentFactory;
-import org.n52.sos.response.BinaryAttachmentResponse;
+import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 
 /**
  * {@link ResponseWriterFactory} implementation for

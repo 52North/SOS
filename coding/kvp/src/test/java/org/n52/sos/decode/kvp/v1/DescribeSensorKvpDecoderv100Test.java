@@ -44,7 +44,7 @@ import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
-import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

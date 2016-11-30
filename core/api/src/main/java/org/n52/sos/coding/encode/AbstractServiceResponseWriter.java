@@ -40,14 +40,13 @@ import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.iceland.request.ResponseFormat;
 import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.ResponseFormat;
+import org.n52.shetland.ogc.sos.response.StreamingDataResponse;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
-import org.n52.sos.response.StreamingDataResponse;
 import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
@@ -63,14 +62,11 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
             = new ResponseWriterKey(OwsServiceResponse.class);
 
     private final ResponseWriterRepository responseWriterRepository;
-    private final EncoderRepository encoderRepository;
     private final boolean forceStreamingEncoding;
 
     public AbstractServiceResponseWriter(ResponseWriterRepository responseWriterRepository,
-                                         EncoderRepository encoderRepository,
                                          boolean forceStreamingEncoding) {
         this.responseWriterRepository = responseWriterRepository;
-        this.encoderRepository = encoderRepository;
         this.forceStreamingEncoding = forceStreamingEncoding;
     }
 

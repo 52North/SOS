@@ -205,7 +205,7 @@ public class EXIBinding extends SimpleBinding {
         } catch (TransformerException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage(
                     "Error while transforming request! Message: %s", ex.getMessage());
-        } catch (XmlException ex) {
+        } catch (DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex).withMessage(
                     "Error while parsing request! Message: %s", ex.getMessage());
         }

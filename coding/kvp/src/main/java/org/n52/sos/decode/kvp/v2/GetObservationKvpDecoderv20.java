@@ -157,21 +157,17 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
     }
 
     public Extension<?> parseExtensionParameter(String value) throws DecodingException {
-        try {
-            XmlObject xml = XmlHelper.parseXmlString(value);
-            DecoderKey key = CodingHelper.getDecoderKey(xml);
-            Decoder<Object, XmlObject> decoder = decoderRepository.getDecoder(key);
-            if (decoder == null) {
-                throw new NoDecoderForKeyException(key);
-            }
-            Object obj = decoder.decode(xml);
-            if (obj instanceof Extension) {
-                return (Extension<?>) obj;
-            } else {
-                return new SwesExtension<>().setValue(obj);
-            }
-        } catch (XmlException xmle) {
-            throw new DecodingException("An xml error occured when parsing the request!", xmle);
+        XmlObject xml = XmlHelper.parseXmlString(value);
+        DecoderKey key = CodingHelper.getDecoderKey(xml);
+        Decoder<Object, XmlObject> decoder = decoderRepository.getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        Object obj = decoder.decode(xml);
+        if (obj instanceof Extension) {
+            return (Extension<?>) obj;
+        } else {
+            return new SwesExtension<>().setValue(obj);
         }
     }
 

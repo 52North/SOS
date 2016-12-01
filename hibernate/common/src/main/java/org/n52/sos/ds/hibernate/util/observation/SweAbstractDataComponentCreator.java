@@ -148,7 +148,7 @@ public class SweAbstractDataComponentCreator
         try {
             XmlObject xml = XmlHelper.parseXmlString(o.getValue());
             return (SweDataArray) CodingHelper.decodeXmlElement(xml);
-        } catch (DecodingException | XmlException ex) {
+        } catch (DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
     }

@@ -95,8 +95,8 @@ public class DescribeSensorResponseEncoder extends AbstractSwesResponseEncoder<D
         if (abstractFeature instanceof SosProcedureDescriptionUnknownType && abstractFeature.isSetXml()) {
             try {
                 return  XmlHelper.parseXmlString(abstractFeature.getXml());
-            } catch (XmlException xmle) {
-                throw new EncodingException("An xml error occured when parsing the request!", xmle);
+            } catch (DecodingException de) {
+                throw new EncodingException("An xml error occured when parsing the request!", de);
             }
         }
         return encodeObjectToXml(response.getOutputFormat(), abstractFeature);

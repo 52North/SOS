@@ -78,7 +78,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
             scanner = new Scanner(is,"UTF-8");
             String inputStreamString = scanner.useDelimiter("\\A").next();
             return checkXml(inputStreamString);
-        } catch (IOException|XmlException e) {
+        } catch (IOException|DecodingException e) {
            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while querying sensor description from:{}", descriptionFile);
         } finally {
             if (scanner != null) {
@@ -94,7 +94,7 @@ public class LinkedDescriptionCreationStrategy implements DescriptionCreationStr
         }
     }
 
-    private String checkXml(String xml) throws XmlException {
+    private String checkXml(String xml) throws DecodingException {
         XmlHelper.parseXmlString(xml);
         if (xml.startsWith("<?xml")) {
             return xml.substring(xml.indexOf(">")+1);

@@ -131,7 +131,7 @@ public class ObservationValueCreator implements ValuedObservationVisitor<Value<?
             XmlObject xml = XmlHelper.parseXmlString(o.getValue());
             SweDataArray array = CodingHelper.decodeXmlElement(xml);
             return new SweDataArrayValue(array);
-        } catch (DecodingException | XmlException ex) {
+        } catch (DecodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
 

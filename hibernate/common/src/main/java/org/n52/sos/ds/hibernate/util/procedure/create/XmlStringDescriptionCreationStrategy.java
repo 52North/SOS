@@ -70,7 +70,7 @@ public class XmlStringDescriptionCreationStrategy
         try {
             XmlObject parsed = XmlHelper.parseXmlString(xml);
             return (AbstractFeature) CodingHelper.decodeXmlElement(parsed);
-        } catch (XmlException| DecodingException e) {
+        } catch (DecodingException e) {
            throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating procedure description from XML string");
         }
         

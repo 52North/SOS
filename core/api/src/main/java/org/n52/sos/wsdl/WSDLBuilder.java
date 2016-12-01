@@ -370,7 +370,7 @@ public class WSDLBuilder {
             } else {
                 return getDefault();
             }
-        } catch (XmlException | IOException ex) {
+        } catch (DecodingException | IOException ex) {
             LOGGER.error("Error while loading WSDL file!", ex);
             return getDefault();
         }
@@ -386,7 +386,7 @@ public class WSDLBuilder {
         return Configurator.getInstance().getClass().getResourceAsStream(filename);
     }
 
-    private XmlObject read(String path) throws XmlException, IOException {
+    private XmlObject read(String path) throws DecodingException, IOException {
         try (InputStream stream = getDocumentAsStream(path)) {
             String string = StringHelper.convertStreamToString(stream);
             return XmlHelper.parseXmlString(string);

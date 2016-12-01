@@ -42,6 +42,9 @@ import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 import org.n52.sos.ds.AbstractUpdateSensorDescriptionHandler;
 import org.n52.sos.ds.hibernate.dao.ProcedureDAO;
 import org.n52.sos.ds.hibernate.dao.ProcedureDescriptionFormatDAO;
@@ -50,9 +53,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.TProcedure;
 import org.n52.sos.ds.hibernate.entities.ValidProcedureTime;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.response.UpdateSensorResponse;
 
 /**
  * Implementation of the abstract class AbstractUpdateSensorDescriptionHandler

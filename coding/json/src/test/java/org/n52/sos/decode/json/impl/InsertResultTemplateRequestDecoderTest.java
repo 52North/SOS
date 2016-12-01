@@ -44,6 +44,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
 import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
@@ -51,7 +52,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -79,8 +79,10 @@ public class InsertResultTemplateRequestDecoderTest {
     public void resultEncoding() throws IOException, DecodingException {
         InsertResultTemplateRequest req = load();
         assertThat(req.getResultEncoding(), is(notNullValue()));
-        assertThat(req.getResultEncoding().getEncoding(), is(instanceOf(SweTextEncoding.class)));
-        SweTextEncoding encoding = (SweTextEncoding) req.getResultEncoding().getEncoding();
+        assertThat(req.getResultEncoding().isDecoded(), is(true));
+        assertThat(req.getResultEncoding().isEncoded(), is(false));
+        assertThat(req.getResultEncoding().get().get(), is(instanceOf(SweTextEncoding.class)));
+        SweTextEncoding encoding = (SweTextEncoding) req.getResultEncoding().get().get();
         errors.checkThat(encoding.getTokenSeparator(), is(","));
         errors.checkThat(encoding.getBlockSeparator(), is("#"));
     }
@@ -89,8 +91,10 @@ public class InsertResultTemplateRequestDecoderTest {
     public void resultStructure() throws IOException, DecodingException {
         InsertResultTemplateRequest req = load();
         assertThat(req.getResultStructure(), is(notNullValue()));
-        assertThat(req.getResultStructure().getResultStructure(), is(instanceOf(SweDataRecord.class)));
-        SweDataRecord structure = (SweDataRecord) req.getResultStructure().getResultStructure();
+        assertThat(req.getResultStructure().isDecoded(), is(true));
+        assertThat(req.getResultStructure().isEncoded(), is(false));
+        assertThat(req.getResultStructure().get().get(), is(instanceOf(SweDataRecord.class)));
+        SweDataRecord structure = (SweDataRecord) req.getResultStructure().get().get();
         assertThat(structure.getFields(), is(notNullValue()));
         assertThat(structure.getFields(), hasSize(3));
 

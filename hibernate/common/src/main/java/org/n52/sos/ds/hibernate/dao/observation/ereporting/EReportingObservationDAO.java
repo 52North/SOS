@@ -48,9 +48,9 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.ReferenceValue;
 import org.n52.shetland.ogc.om.values.Value;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdConstants.AssessmentType;
@@ -72,7 +72,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries
 import org.n52.sos.ds.hibernate.entities.observation.series.AbstractSeriesObservation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -137,7 +136,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
 
     @Override
     protected void addSpecificRestrictions(Criteria c, GetObservationRequest request)
-            throws CodedException {
+            throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E2A.equals(flow)) {
@@ -164,7 +163,7 @@ public class EReportingObservationDAO extends AbstractSeriesObservationDAO {
 
     @Override
     protected void addObservationContextToObservation(ObservationContext ctx,
-            Observation<?> observation, Session session) throws CodedException {
+            Observation<?> observation, Session session) throws OwsExceptionReport {
         AbstractSeriesDAO seriesDAO = DaoFactory.getInstance().getSeriesDAO();
         Series series = seriesDAO.getOrInsertSeries(ctx, session);
         ((AbstractSeriesObservation) observation).setSeries(series);

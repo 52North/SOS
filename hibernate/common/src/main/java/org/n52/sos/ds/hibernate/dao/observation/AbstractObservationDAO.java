@@ -56,7 +56,6 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
@@ -81,11 +80,12 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.swe.SweAbstractDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.util.CollectionHelper;
@@ -122,7 +122,6 @@ import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 
 import com.google.common.collect.Iterables;
@@ -154,11 +153,11 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param session
      *                               Hibernate session
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     protected abstract void addObservationContextToObservation(ObservationContext observationIdentifiers,
                                                                Observation<?> observation, Session session) throws
-            CodedException;
+            OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for querying observations with parameters
@@ -203,10 +202,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return Hibernate Criteria to query observations
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Criteria getObservationCriteriaForProcedure(String procedure, Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for observation with restriction
@@ -218,10 +217,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return Hibernate Criteria to query observations
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Criteria getObservationCriteriaForObservableProperty(String observableProperty, Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for observation with restriction featureOfInterest
@@ -232,10 +231,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return Hibernate Criteria to query observations
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Criteria getObservationCriteriaForFeatureOfInterest(String featureOfInterest, Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for observation with restrictions procedure and
@@ -248,10 +247,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return Hibernate Criteria to query observations
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Criteria getObservationCriteriaFor(String procedure, String observableProperty, Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
     /**
      * Get Hibernate Criteria for observation with restrictions procedure,
@@ -265,10 +264,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return Hibernate Criteria to query observations
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Criteria getObservationCriteriaFor(String procedure, String observableProperty,
-                                                       String featureOfInterest, Session session) throws CodedException;
+                                                       String featureOfInterest, Session session) throws OwsExceptionReport;
 
     /**
      * Get all observation identifiers for a procedure.
@@ -289,10 +288,10 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      *
      * @return Hibernate Criteria to query observations
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Criteria getTemoralReferencedObservationCriteriaFor(OmObservation observation, Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
     /**
      * Query observation by identifier
@@ -1002,7 +1001,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param resultTime
      *                       SOS result Time
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      *                        If an error occurs
      */
     protected void addPhenomeonTimeAndResultTimeToObservation(Observation<?> observation, Time phenomenonTime,
@@ -1018,7 +1017,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
      * @param observation
      *                       Observation object
      *
-     * @throws CodedException
+     * @throws OwsExceptionReport
      *                        If an error occurs
      */
     protected void addTime(OmObservation sosObservation, Observation<?> observation) throws OwsExceptionReport {
@@ -1292,7 +1291,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
     }
 
     private TemporalFilter getResultTimeFilter(Criteria c, TimeInstant resultTime, Time phenomenonTime) throws
-            CodedException {
+            OwsExceptionReport {
         String valueReferencep = Sos2Constants.EN_RESULT_TIME;
         if (resultTime != null) {
             if (resultTime.getValue() != null) {
@@ -1335,7 +1334,7 @@ public abstract class AbstractObservationDAO extends AbstractIdentifierNameDescr
         return (Long) criteria.uniqueResult() > 0;
     }
 
-    public TimeExtrema getObservationTimeExtrema(Session session) throws CodedException {
+    public TimeExtrema getObservationTimeExtrema(Session session) throws OwsExceptionReport {
         if (HibernateHelper.isNamedQuerySupported(SQL_QUERY_OBSERVATION_TIME_EXTREMA, session)) {
             Query namedQuery = session.getNamedQuery(SQL_QUERY_OBSERVATION_TIME_EXTREMA);
             LOGGER.debug("QUERY getObservationTimeExtrema() with NamedQuery: {}", SQL_QUERY_OBSERVATION_TIME_EXTREMA);

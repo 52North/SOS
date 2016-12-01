@@ -561,9 +561,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicatio
         final Object decodedObject = decodeXmlElement(resultStructure);
         if (decodedObject instanceof SweAbstractDataComponent) {
             final SweAbstractDataComponent sosSweData = (SweAbstractDataComponent) decodedObject;
-            final SosResultStructure sosResultStructure = new SosResultStructure();
-            sosResultStructure.setResultStructure(sosSweData);
-            return sosResultStructure;
+            return new SosResultStructure(sosSweData);
         } else {
             throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
                                         "The requested result structure (%s) is not supported by this server!",
@@ -575,9 +573,7 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicatio
         final Object decodedObject = decodeXmlElement(resultEncoding);
         if (decodedObject instanceof SweAbstractEncoding) {
             final SweAbstractEncoding sosSweEncoding = (SweAbstractEncoding) decodedObject;
-            final SosResultEncoding encoding = new SosResultEncoding();
-            encoding.setEncoding(sosSweEncoding);
-            return encoding;
+            return new SosResultEncoding(sosSweEncoding);
         } else {
             throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
                                         "The requested result encoding (%s) is not supported by this server!",

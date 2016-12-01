@@ -30,20 +30,31 @@ package org.n52.sos.encode.json.impl;
 
 
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -58,9 +69,17 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder<GetResultTemplateResponse> {
     private static final Logger LOG = LoggerFactory.getLogger(GetResultTemplateResponseEncoder.class);
 
+    private DecoderRepository decoderRepository;
+
     public GetResultTemplateResponseEncoder() {
         super(GetResultTemplateResponse.class, Sos2Constants.Operations.GetResultTemplate);
     }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
 
     @Override
     protected void encodeResponse(ObjectNode json, GetResultTemplateResponse t) throws EncodingException {
@@ -71,10 +90,20 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
     private void encodeResultStructure(GetResultTemplateResponse t, ObjectNode json) throws EncodingException {
         ObjectNode jrs = json.putObject(JSONConstants.RESULT_STRUCTURE);
         SweAbstractDataComponent structure;
-        try {
-            structure = t.getResultStructure().getResultStructure();
-        } catch (DecodingException ex) {
-            throw new EncodingException(ex.getMessage(), ex);
+        SosResultStructure rs = t.getResultStructure();
+        if (rs.isDecoded()) {
+            structure = t.getResultStructure().get().get();
+        } else {
+            try {
+                XmlNamespaceDecoderKey key = new XmlNamespaceDecoderKey(SweConstants.NS_SWE_20, SweAbstractDataComponent.class);
+                Decoder<SweAbstractDataComponent, XmlObject> decoder = this.decoderRepository.getDecoder(key);
+                if (decoder == null) {
+                    throw new NoDecoderForKeyException(key);
+                }
+                structure = decoder.decode(XmlObject.Factory.parse(rs.getXml().get()));
+            } catch (XmlException | DecodingException ex) {
+                throw new EncodingException(ex);
+            }
         }
         if (structure instanceof SweDataRecord) {
             encodeSweDataRecord(structure, jrs);
@@ -85,12 +114,24 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
 
     private void encodeResultEncoding(GetResultTemplateResponse t, ObjectNode json) throws EncodingException {
         ObjectNode jre = json.putObject(JSONConstants.RESULT_ENCODING);
-        SweAbstractEncoding encoding;
-        try {
-            encoding = t.getResultEncoding().getEncoding();
-        } catch (DecodingException ex) {
-            throw new EncodingException(ex.getMessage(), ex);
+        SweAbstractEncoding encoding = null;
+        SosResultEncoding re = t.getResultEncoding();
+
+        if (re.isDecoded()) {
+            encoding = t.getResultEncoding().get().get();
+        } else {
+            try {
+                XmlNamespaceDecoderKey key = new XmlNamespaceDecoderKey(SweConstants.NS_SWE_20, SweAbstractEncoding.class);
+                Decoder<SweAbstractEncoding, XmlObject> decoder = this.decoderRepository.getDecoder(key);
+                if (decoder == null) {
+                    throw new NoDecoderForKeyException(key);
+                }
+                encoding = decoder.decode(XmlObject.Factory.parse(re.getXml().get()));
+            } catch (XmlException | DecodingException ex) {
+                throw new EncodingException(ex);
+            }
         }
+
         if (encoding instanceof SweTextEncoding) {
             encodeSweTextEncoding(encoding, jre);
         } else {
@@ -121,4 +162,6 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
             fields.add(encodeObjectToJson(field));
         }
     }
+
+
 }

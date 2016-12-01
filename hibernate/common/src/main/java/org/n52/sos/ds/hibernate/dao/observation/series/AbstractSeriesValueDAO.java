@@ -42,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -51,7 +52,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeries
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
-import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Abstract value data access object class for {@link SeriesValue}
@@ -206,8 +206,6 @@ public abstract class AbstractSeriesValueDAO extends AbstractValueDAO {
     /**
      * Get default {@link Criteria} for {@link Class}
      *
-     * @param clazz
-     *            {@link Class} to get default {@link Criteria} for
      * @param session
      *            Hibernate Session
      * @return Default {@link Criteria}

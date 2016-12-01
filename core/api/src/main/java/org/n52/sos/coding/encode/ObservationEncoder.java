@@ -62,7 +62,7 @@ public interface ObservationEncoder<S, T> extends ConformanceClass, Encoder<S, T
     /**
      * Indicator whether the {@link ObservationEncoder} supports streaming for
      * merged values.
-     * 
+     *
      * @return Supports streaming for merged values
      */
     boolean supportsResultStreamingForMergedValues();
@@ -79,10 +79,10 @@ public interface ObservationEncoder<S, T> extends ConformanceClass, Encoder<S, T
      * @return the response formats
      */
     Set<String> getSupportedResponseFormats(String service, String version);
-    
+
     /**
      * Get the supported observation type for the supported response formats
-     * 
+     *
      * @return the observation types for the supported response formats
      */
     Map<String, Set<String>> getSupportedResponseFormatObservationTypes();

@@ -40,13 +40,14 @@ import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsNoValues;
+import org.n52.shetland.ogc.ows.OwsOperation;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 
 /**
  * interface for getting procedure description for a passed DescribeSensor
@@ -67,12 +68,14 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
     @Inject
     public void setDescriptionFormatRepository(ProcedureDescriptionFormatRepository descriptionFormatRepository) {
         this.descriptionFormatRepository = descriptionFormatRepository;
+    }
+    
     @Override
     protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
             throws OwsExceptionReport {
         addProcedureParameter(opsMeta);
         opsMeta.addAnyParameterValue(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
-        
+
 //        Set<String> pdfs = getCache().getRequestableProcedureDescriptionFormat();
 //        if (version.equals(Sos1Constants.SERVICEVERSION)) {
 //            pdfs.addAll(ProcedureDescriptionFormatRepository.getInstance().getSupportedProcedureDescriptionFormats(SosConstants.SOS, Sos1Constants.SERVICEVERSION));

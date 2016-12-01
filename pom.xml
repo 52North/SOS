@@ -92,7 +92,7 @@
         <iceland.version>2-SNAPSHOT</iceland.version>
         <shetland.version>1-SNAPSHOT</shetland.version>
         <svalbard.version>1-SNAPSHOT</svalbard.version>
-        <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version
+        <dataset.api.version>2.0.0-SNAPSHOT</dataset.api.version>
         <n52.common.xml.version>2.2.0</n52.common.xml.version>
         <org.springframework.security.version>4.0.3.RELEASE</org.springframework.security.version>
         <org.springframework.version>4.2.3.RELEASE</org.springframework.version>
@@ -254,6 +254,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>gc-dao</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>handler</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

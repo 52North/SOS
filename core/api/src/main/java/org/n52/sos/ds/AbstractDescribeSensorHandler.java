@@ -69,7 +69,6 @@ public abstract class AbstractDescribeSensorHandler extends AbstractOperationHan
         this.descriptionFormatRepository = descriptionFormatRepository;
     }
 
-
     /**
      * Get the procedure description for a procedure
      *

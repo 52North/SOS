@@ -41,6 +41,7 @@ import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
 import org.n52.janmayen.http.MediaType;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.ogc.ows.service.ResponseFormat;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
@@ -84,7 +85,11 @@ public class AbstractServiceResponseWriter extends AbstractResponseWriter<OwsSer
             } else {
                 if (asr instanceof StreamingDataResponse && ((StreamingDataResponse) asr).hasStreamingData()
                         && !(encoder instanceof StreamingDataEncoder)) {
-                    ((StreamingDataResponse) asr).mergeStreamingData();
+                    try {
+                        ((StreamingDataResponse) asr).mergeStreamingData();
+                    } catch (OwsExceptionReport owse) {
+                        throw new EncodingException(owse);
+                    }
                 }
                 // use encoded Object specific writer, e.g. XmlResponseWriter
                 Object encode = encoder.encode(asr);

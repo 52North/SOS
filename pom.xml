@@ -91,6 +91,7 @@
         <iceland.version>2-SNAPSHOT</iceland.version>
         <shetland.version>1-SNAPSHOT</shetland.version>
         <svalbard.version>1-SNAPSHOT</svalbard.version>
+        <janmayen.version>1-SNAPSHOT</janmayen.version>
         <n52.common.xml.version>2.1.0</n52.common.xml.version>
         <!-- Remove third party ncname resolver from SOS and use OXF instead -->
         <!-- <n52.oxf.version>2.0.0-alpha.4</n52.oxf.version> -->
@@ -114,7 +115,12 @@
             <dependency>
                 <groupId>org.n52.svalbard</groupId>
                 <artifactId>svalbard</artifactId>
-                <version>1-SNAPSHOT</version>
+                <version>${svalbard.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.n52.janmayen</groupId>
+                <artifactId>janmayen</artifactId>
+                <version>${janmayen.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.n52.iceland</groupId>

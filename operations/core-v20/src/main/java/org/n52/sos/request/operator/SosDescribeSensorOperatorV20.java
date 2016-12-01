@@ -151,7 +151,7 @@ public class SosDescribeSensorOperatorV20 extends
     public WSDLOperation getSosOperationDefinition() {
         return WSDLConstants.Operations.DESCRIBE_SENSOR;
     }
-    
+
     @Override
     protected OwsServiceResponse postProcessResponse(DescribeSensorResponse response) {
         return super.postProcessResponse(postProcessor.process(response));
@@ -163,7 +163,7 @@ public class SosDescribeSensorOperatorV20 extends
                     sosRequest.getService(), sosRequest.getVersion());
         }
     }
-    
+
     private class PostProcessor {
 
         public DescribeSensorResponse process(DescribeSensorResponse response) {
@@ -202,7 +202,7 @@ public class SosDescribeSensorOperatorV20 extends
                                     if (procedureDescription.isSetFeaturesOfInterestMap()) {
                                         smlFeatureOfInterest.addFeaturesOfInterest(procedureDescription.getFeaturesOfInterestMap());
                                     }
-                                    
+
                                 }
                             }
                         }
@@ -221,7 +221,7 @@ public class SosDescribeSensorOperatorV20 extends
             }
             return response;
         }
-        
+
         /**
          * Add special capabilities to abstract process:
          * <ul>
@@ -230,7 +230,7 @@ public class SosDescribeSensorOperatorV20 extends
          * <li>parentProcedures</li>
          * </ul>
          * but only, if available.
-         * @param procedureDescription 
+         * @param procedureDescription
          *
          * @param abstractProcess
          *            SOS abstract process.

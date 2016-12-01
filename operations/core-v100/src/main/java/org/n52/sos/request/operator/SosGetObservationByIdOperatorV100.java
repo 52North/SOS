@@ -40,8 +40,8 @@ import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.AbstractGetObservationByIdHandler;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 
 /**
  * @since 4.0.0

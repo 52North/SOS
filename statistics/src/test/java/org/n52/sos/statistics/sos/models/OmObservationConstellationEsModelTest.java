@@ -38,7 +38,7 @@ import org.n52.iceland.statistics.api.parameters.ObjectEsParameterFactory;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 
 public class OmObservationConstellationEsModelTest {
 

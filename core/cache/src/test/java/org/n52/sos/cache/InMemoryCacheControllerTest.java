@@ -81,12 +81,12 @@ import org.n52.sos.cache.ctrl.action.ResultTemplateInsertionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorDeletionUpdate;
 import org.n52.sos.cache.ctrl.action.SensorInsertionUpdate;
 import org.n52.sos.ds.MockCacheFeederDAO;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.sos.util.builder.DeleteSensorRequestBuilder;
 
 import com.vividsolutions.jts.geom.Coordinate;

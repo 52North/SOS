@@ -42,8 +42,8 @@ import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.request.UpdateSensorRequest;
-import org.n52.sos.response.UpdateSensorResponse;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 
 /**
  * Renamed, in version 4.x called AbstractUpdateSensorDescriptionDAO

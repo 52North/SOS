@@ -66,7 +66,7 @@ import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.exception.sos.SosExceptionCode;
 import org.n52.sos.exception.swes.SwesExceptionCode;
-import org.n52.sos.ogc.sos.SosSoapConstants;
+import org.n52.shetland.ogc.sos.SosSoapConstants;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;

@@ -38,8 +38,8 @@ import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.http.MediaType;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 
 /**

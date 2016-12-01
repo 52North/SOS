@@ -72,15 +72,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.n52.svalbard.decode.Decoder;
-import org.n52.svalbard.decode.DecoderKey;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
+import org.n52.janmayen.exception.CompositeException;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -89,26 +81,34 @@ import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.janmayen.exception.CompositeException;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.request.GetResultTemplateRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.GetResultResponse;
-import org.n52.sos.response.GetResultTemplateResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 
@@ -370,20 +370,17 @@ public class SosDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicatio
 
     private OwsServiceRequest parseInsertResultTemplate(final InsertResultTemplateDocument insertResultTemplateDoc)
             throws DecodingException {
-        final InsertResultTemplateRequest sosInsertResultTemplate = new InsertResultTemplateRequest();
-        final InsertResultTemplateType insertResultTemplate = insertResultTemplateDoc.getInsertResultTemplate();
+        InsertResultTemplateRequest sosInsertResultTemplate = new InsertResultTemplateRequest();
+        InsertResultTemplateType insertResultTemplate = insertResultTemplateDoc.getInsertResultTemplate();
         sosInsertResultTemplate.setService(insertResultTemplate.getService());
         sosInsertResultTemplate.setVersion(insertResultTemplate.getVersion());
-        final ResultTemplateType resultTemplate = insertResultTemplate.getProposedTemplate().getResultTemplate();
+        ResultTemplateType resultTemplate = insertResultTemplate.getProposedTemplate().getResultTemplate();
         sosInsertResultTemplate.setIdentifier(resultTemplate.getIdentifier());
-        final OmObservationConstellation sosObservationConstellation =
-                parseObservationTemplate(resultTemplate.getObservationTemplate());
+        OmObservationConstellation sosObservationConstellation = parseObservationTemplate(resultTemplate.getObservationTemplate());
         sosObservationConstellation.addOffering(resultTemplate.getOffering());
         sosInsertResultTemplate.setObservationTemplate(sosObservationConstellation);
-        sosInsertResultTemplate.setResultStructure(parseResultStructure(resultTemplate.getResultStructure()
-                .getAbstractDataComponent()));
-        sosInsertResultTemplate.setResultEncoding(parseResultEncoding(resultTemplate.getResultEncoding()
-                .getAbstractEncoding()));
+        sosInsertResultTemplate.setResultStructure(parseResultStructure(resultTemplate.getResultStructure().getAbstractDataComponent()));
+        sosInsertResultTemplate.setResultEncoding(parseResultEncoding(resultTemplate.getResultEncoding().getAbstractEncoding()));
         sosInsertResultTemplate.setExtensions(parseExtensibleRequest(insertResultTemplate));
         return sosInsertResultTemplate;
     }

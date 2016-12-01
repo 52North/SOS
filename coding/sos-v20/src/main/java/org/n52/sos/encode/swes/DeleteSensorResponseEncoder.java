@@ -39,7 +39,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;

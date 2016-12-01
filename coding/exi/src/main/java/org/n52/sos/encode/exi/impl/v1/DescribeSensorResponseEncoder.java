@@ -30,7 +30,7 @@ package org.n52.sos.encode.exi.impl.v1;
 
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.encode.exi.AbstractSosV1ResponseEncoder;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 
 /**
  * Response encoder for {@link DescribeSensorResponse}

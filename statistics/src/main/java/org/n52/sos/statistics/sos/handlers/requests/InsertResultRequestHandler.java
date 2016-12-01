@@ -28,7 +28,7 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import org.n52.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class InsertResultRequestHandler extends AbstractSosRequestHandler<InsertResultRequest> {

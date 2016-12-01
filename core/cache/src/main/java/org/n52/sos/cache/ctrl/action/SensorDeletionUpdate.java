@@ -35,7 +35,7 @@ import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.util.action.Action;
 import org.n52.sos.ds.CacheFeederHandler;
-import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -30,7 +30,7 @@ package org.n52.sos.encode.exi.impl;
 
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.encode.exi.AbstractSosV2ResponseEncoder;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 
 /**
  * Response encoder for {@link GetResultTemplateResponse}

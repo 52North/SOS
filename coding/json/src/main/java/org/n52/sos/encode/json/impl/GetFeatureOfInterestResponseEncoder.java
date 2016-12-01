@@ -32,7 +32,7 @@ import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

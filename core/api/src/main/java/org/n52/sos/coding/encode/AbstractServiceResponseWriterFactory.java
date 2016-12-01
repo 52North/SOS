@@ -30,15 +30,14 @@ package org.n52.sos.coding.encode;
 
 import javax.inject.Inject;
 
-import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.iceland.coding.encode.ResponseWriter;
 import org.n52.iceland.coding.encode.ResponseWriterFactory;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
 import org.n52.iceland.coding.encode.ResponseWriterRepository;
-import org.n52.janmayen.component.SingleTypeComponentFactory;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.service.StreamingSettings;
+import org.n52.janmayen.component.SingleTypeComponentFactory;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
 /**
  * {@link ResponseWriterFactory} implementation for
@@ -56,13 +55,7 @@ public class AbstractServiceResponseWriterFactory
             = new ResponseWriterKey(OwsServiceResponse.class);
 
     private ResponseWriterRepository responseWriterRepository;
-    private EncoderRepository encoderRepository;
     private boolean forceStreamingEncoding;
-
-    @Inject
-    public void setEncoderRepository(EncoderRepository encoderRepository) {
-        this.encoderRepository = encoderRepository;
-    }
 
     @Inject
     public void setResponseWriterRepository(ResponseWriterRepository responseWriterRepository) {
@@ -82,7 +75,6 @@ public class AbstractServiceResponseWriterFactory
     @Override
     public AbstractServiceResponseWriter create() {
         return new AbstractServiceResponseWriter(this.responseWriterRepository,
-                                                 this.encoderRepository,
                                                  this.forceStreamingEncoding);
     }
 }

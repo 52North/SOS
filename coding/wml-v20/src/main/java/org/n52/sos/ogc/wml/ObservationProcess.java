@@ -31,18 +31,17 @@ package org.n52.sos.ogc.wml;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 /**
  * @since 4.0.0
  *
  */
-public class ObservationProcess extends SosProcedureDescription {
+public class ObservationProcess extends AbstractFeature {
 
     /*
      * Multiplicity: 1 A defintion of the type of process used in the
@@ -100,25 +99,16 @@ public class ObservationProcess extends SosProcedureDescription {
     private final List<NamedValue<?>> parameters = new ArrayList<NamedValue<?>>(0);
 
 
-    @Override
-    public Set<SosOffering> getOfferings() {
-        return super.getOfferings();
+    public ObservationProcess(String identifier) {
+        super(identifier);
+    }
+    
+    public ObservationProcess(CodeWithAuthority featureIdentifier) {
+        super(featureIdentifier);
     }
 
-    public ObservationProcess setOfferingIdentifiers(final Set<SosOffering> offeringIdentifiers) {
-        addOfferings(offeringIdentifiers);
-        return this;
-    }
-
-    @Override
-    public boolean isSetOfferings() {
-        return super.isSetOfferings();
-    }
-
-    @Override
-    public ObservationProcess setIdentifier(final String procedureIdentifier) {
-        super.setIdentifier(procedureIdentifier);
-        return this;
+    public ObservationProcess(CodeWithAuthority featureIdentifier, String gmlId) {
+        super(featureIdentifier, gmlId);
     }
 
     public ReferenceType getProcessType() {

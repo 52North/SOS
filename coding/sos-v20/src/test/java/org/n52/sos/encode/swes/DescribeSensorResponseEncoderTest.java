@@ -37,24 +37,24 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
 
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.http.MediaTypes;
-import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.collect.Maps;
 
@@ -121,6 +121,6 @@ public class DescribeSensorResponseEncoderTest {
     public void should_return_exception_if_received_null() throws OwsExceptionReport, EncodingException {
         new DescribeSensorResponseEncoder().encode(null);
         new DescribeSensorResponseEncoder().encode(null, new ByteArrayOutputStream());
-        new DescribeSensorResponseEncoder().encode(null, new HashMap<>());
+        new DescribeSensorResponseEncoder().encode(null, EncodingContext.empty());
     }
 }

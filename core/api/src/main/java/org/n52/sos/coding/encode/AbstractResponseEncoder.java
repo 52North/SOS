@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -56,7 +56,7 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractResponseEncoder<T extends OwsServiceResponse>  extends AbstractXmlResponseEncoder<T> {
+public abstract class AbstractResponseEncoder<T extends OwsServiceResponse> extends AbstractXmlResponseEncoder<T> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractResponseEncoder.class);
 

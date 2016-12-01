@@ -88,7 +88,8 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -143,12 +144,12 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
         if (element instanceof Time) {
             encodedObject = createTime((Time) element, additionalValues);
         } else if (element instanceof Geometry) {
-            encodedObject = createPosition((Geometry) element, additionalValues.get(HelperValues.GMLID));
+            encodedObject = createPosition((Geometry) element, additionalValues.get(SosHelperValues.GMLID));
         } else if (element instanceof CategoryValue) {
             encodedObject = createReferenceTypeForCategroyValue((CategoryValue) element);
         } else if (element instanceof org.n52.shetland.ogc.gml.ReferenceType) {
@@ -170,16 +171,16 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<XmlObject, Object> {
         return encodedObject;
     }
 
-    private XmlObject createTime(Time time, Map<HelperValues, String> additionalValues) throws EncodingException {
+    private XmlObject createTime(Time time, EncodingContext additionalValues) throws EncodingException {
         if (time != null) {
             if (time instanceof TimeInstant) {
-                if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                     return createTimeInstantDocument((TimeInstant) time);
                 } else {
                     return createTimeInstantType((TimeInstant) time, null);
                 }
             } else if (time instanceof TimePeriod) {
-                if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+                if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                     return createTimePeriodDocument((TimePeriod) time);
                 } else {
                     return createTimePeriodType((TimePeriod) time, null);

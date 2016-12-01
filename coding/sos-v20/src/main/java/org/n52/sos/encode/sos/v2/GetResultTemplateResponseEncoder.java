@@ -28,8 +28,6 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x20.GetResultTemplateResponseDocument;
@@ -48,7 +46,8 @@ import org.n52.shetland.ogc.sos.SosResultStructure;
 import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
@@ -85,9 +84,7 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                 throw new EncodingException("ResultEncoding element encoding is not supported!", ex);
             }
         } else {
-            Map<HelperValues, String> helperValues = new HashMap<>(1);
-            helperValues.put(HelperValues.DOCUMENT, null);
-            XmlObject xml = encodeSwe(helperValues, resultEncoding.get().get());
+            XmlObject xml = encodeSwe(EncodingContext.of(SosHelperValues.DOCUMENT), resultEncoding.get().get());
             if (xml instanceof TextEncodingDocument) {
                 xbEncoding = (TextEncodingDocument) xml;
             } else {
@@ -111,9 +108,7 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
                 throw new EncodingException("ResultStructure element encoding is not supported!", ex);
             }
         } else {
-            Map<HelperValues, String> helperValues = new HashMap<>(1);
-            helperValues.put(HelperValues.DOCUMENT, null);
-            XmlObject xml = encodeSwe(helperValues, resultStructure.get().get());
+            XmlObject xml = encodeSwe(EncodingContext.of(SosHelperValues.DOCUMENT), resultStructure.get().get());
             if (xml instanceof DataRecordDocument) {
                 dataRecordDoc = (DataRecordDocument) xml;
             } else {

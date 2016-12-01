@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.exception.HTTPException;
 import org.n52.iceland.exception.ows.concrete.ContentTypeNotSupportedException;
 import org.n52.iceland.util.http.HttpUtils;
@@ -62,6 +61,8 @@ import org.n52.sos.binding.rest.resources.offerings.OfferingsDecoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsDecoder;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 
@@ -70,7 +71,7 @@ import com.google.common.base.Joiner;
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
  *
  */
-public class RestDecoder implements Decoder<RestRequest, HttpServletRequest>, Constructable {
+public class RestDecoder extends AbstractXmlDecoder<HttpServletRequest, RestRequest> implements Decoder<RestRequest, HttpServletRequest>, Constructable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestDecoder.class);
 

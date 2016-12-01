@@ -62,8 +62,8 @@ import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -112,7 +112,7 @@ public class SensorsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         if (isContentOfPostRequestValid(httpRequest))
         {
@@ -243,15 +243,15 @@ public class SensorsDecoder extends ResourceDecoder {
         return xb_system.isSetInputs() && xb_system.getInputs().isSetInputList() && xb_system.getInputs().getInputList().getInputArray().length > 0;
     }
 
-    private AbstractSensorML createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws OwsExceptionReport
+    private AbstractSensorML createSosProcedureDescriptionFromSmlSystem(SystemType xb_system) throws DecodingException
     {
         // TODO add some error handling
-        Object decodedObject = CodingHelper.decodeXmlObject(xb_system);
+        Object decodedObject = decodeXmlObject(xb_system);
         if (decodedObject instanceof AbstractSensorML)
         {
             return (AbstractSensorML) decodedObject;
         }
-        throw new NoApplicableCodeException().causedBy(
+        throw new DecodingException(
                 new IllegalArgumentException(
                         String.format("SystemType '%s' could not be decoded",
                                 decodedObject!=null?decodedObject.getClass().getName():"null")));
@@ -259,7 +259,7 @@ public class SensorsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         if (pathPayload != null) {
             UpdateSensorRequest updateSensorRequest = new UpdateSensorRequest();

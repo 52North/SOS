@@ -29,18 +29,16 @@
 package org.n52.sos.util;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.NoDecoderForKeyException;
@@ -51,8 +49,7 @@ import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
-
-import com.google.common.collect.Maps;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org> TODO implement
@@ -67,12 +64,12 @@ public final class CodingHelper {
 
     @Deprecated
     public static <T> XmlObject encodeObjectToXml(String namespace, T o,
-            Map<HelperValues, String> helperValues) throws EncodingException {
+                                                  EncodingContext helperValues) throws EncodingException {
         return getEncoder(namespace, o).encode(o, helperValues);
     }
 
     @Deprecated
-    public static <T> Encoder<XmlObject, T> getEncoder(final String namespace, final T o) throws EncodingException {
+    public static <T> Encoder<XmlObject, T> getEncoder(String namespace,  T o) throws EncodingException {
         final EncoderKey key = getEncoderKey(namespace, o);
         final Encoder<XmlObject, T> encoder = CodingRepository.getInstance().getEncoder(key);
         if (encoder == null) {
@@ -82,27 +79,27 @@ public final class CodingHelper {
     }
 
     @Deprecated
-    public static XmlObject encodeObjectToXml(final String namespace, final Object o) throws EncodingException {
-        return encodeObjectToXml(namespace, o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+    public static XmlObject encodeObjectToXml(String namespace, Object o) throws EncodingException {
+        return encodeObjectToXml(namespace, o, EncodingContext.empty());
     }
 
     @Deprecated
-    public static String encodeObjectToXmlText(final String namespace, final Object o) throws EncodingException {
-        return encodeObjectToXml(namespace, o, Maps.<HelperValues, String> newEnumMap(HelperValues.class)).xmlText(
-                XmlOptionsHelper.getInstance().getXmlOptions());
+    public static String encodeObjectToXmlText(String namespace, Object o) throws EncodingException {
+        return encodeObjectToXml(namespace, o, EncodingContext.empty()).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
     }
 
     @Deprecated
-    public static String encodeObjectToXmlText(final String namespace, final Object o,
-            Map<HelperValues, String> additionalValues) throws EncodingException {
+    public static String encodeObjectToXmlText(String namespace, Object o, EncodingContext additionalValues) throws EncodingException {
         return encodeObjectToXml(namespace, o, additionalValues).xmlText(
                 XmlOptionsHelper.getInstance().getXmlOptions());
     }
-  @Deprecated
-    public static <T> T decodeXmlElement(final XmlObject x) throws DecodingException {
+
+    @Deprecated
+    public static <T> T decodeXmlElement(XmlObject x) throws DecodingException {
         return decodeXmlObject(x);
     }
-    public static Set<DecoderKey> decoderKeysForElements(final String namespace, final Class<?>... elements) {
+
+    public static Set<DecoderKey> decoderKeysForElements(String namespace, Class<?>... elements) {
         final HashSet<DecoderKey> keys = new HashSet<>(elements.length);
         for (final Class<?> x : elements) {
             keys.add(new XmlNamespaceDecoderKey(namespace, x));

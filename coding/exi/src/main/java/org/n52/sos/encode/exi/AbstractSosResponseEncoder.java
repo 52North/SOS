@@ -29,7 +29,6 @@
 package org.n52.sos.encode.exi;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -39,17 +38,17 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.coding.OperationKey;
 import org.n52.iceland.coding.encode.OperationResponseEncoderKey;
 import org.n52.iceland.coding.encode.OwsEncodingException;
-import org.n52.shetland.ogc.ows.service.ResponseFormat;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.ows.service.ResponseFormat;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.exi.EXIObject;
 import org.n52.sos.response.StreamingDataResponse;
 import org.n52.svalbard.AbstractDelegatingEncoder;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -105,7 +104,7 @@ public class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends Ab
     }
 
     @Override
-    public EXIObject encode(T objectToEncode, Map<HelperValues, String> additionalValues)
+    public EXIObject encode(T objectToEncode, EncodingContext additionalValues)
             throws EncodingException {
         OwsServiceResponse asr = objectToEncode;
         Encoder<Object, OwsServiceResponse> encoder = getEncoder(asr);

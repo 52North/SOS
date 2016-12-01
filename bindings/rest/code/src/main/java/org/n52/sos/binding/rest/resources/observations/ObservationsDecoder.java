@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
@@ -60,7 +61,6 @@ import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
 
@@ -74,7 +74,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodeGetRequest(HttpServletRequest httpRequest,
-                                           String pathPayload) throws DecodingException {
+                                           String pathPayload) throws DecodingException, OwsExceptionReport {
         // 0 variables
         RestRequest result = null;
 
@@ -125,7 +125,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-                                            String pathPayload) throws DecodingException {
+                                            String pathPayload) throws DecodingException, OwsExceptionReport {
         if (isContentOfPostRequestValid(httpRequest) && pathPayload == null) {
             // 0 read xml encoded post content
             XmlObject requestDoc = XmlHelper.parseXmlRequest(httpRequest);
@@ -145,11 +145,11 @@ public class ObservationsDecoder extends ResourceDecoder {
 
                 // 2 get offering link
                 LinkType[] xb_links = xb_ObservationRest.getLinkArray();
-                List<String> offeringIds = new ArrayList<String>();
+                List<String> offeringIds = new ArrayList<>(xb_links.length);
                 for (LinkType xb_Link : xb_links) {
                     if (isOfferingLink(xb_Link)) {
                         String href = xb_Link.getHref();
-                        int lastSlashIndex = href.lastIndexOf("/");
+                        int lastSlashIndex = href.lastIndexOf('/');
                         String offeringId = href.substring(lastSlashIndex + 1);
                         offeringIds.add(offeringId);
                     }
@@ -210,7 +210,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePutRequest(HttpServletRequest httpRequest,
-                                           String pathPayload) throws DecodingException {
+                                           String pathPayload) throws DecodingException, OwsExceptionReport {
         throw new OperationNotSupportedException(String.format("HTTP-PUT + '%s'",
                                                                bindingConstants.getResourceObservations()));
     }
@@ -291,7 +291,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     private GetObservationByIdRequest buildGetObservationByIdRequest(String observationId) {
         GetObservationByIdRequest request = new GetObservationByIdRequest();
-        ArrayList<String> observationIds = new ArrayList<String>(1);
+        ArrayList<String> observationIds = new ArrayList<>(1);
         observationIds.add(observationId);
         request.setObservationIdentifier(observationIds);
         request.setService(bindingConstants.getSosService());
@@ -315,7 +315,7 @@ public class ObservationsDecoder extends ResourceDecoder {
 
     private OmObservation createSosObservationFromOMObservation(OMObservationType omObservation) throws
             DecodingException {
-        Object decodedObject = CodingHelper.decodeXmlObject(omObservation);
+        Object decodedObject = decodeXmlObject(omObservation);
         if (decodedObject != null && decodedObject instanceof OmObservation) {
             OmObservation sosObservation = (OmObservation) decodedObject;
             return sosObservation;

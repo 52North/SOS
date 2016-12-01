@@ -28,12 +28,11 @@
  */
 package org.n52.sos.encode;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
@@ -54,7 +53,7 @@ public class TestAbstractSensorMLEncoder extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public XmlObject encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
+    public XmlObject encode(Object objectToEncode, EncodingContext additionalValues)
             throws EncodingException, UnsupportedEncoderInputException {
         // TODO Auto-generated method stub
         return null;

@@ -70,10 +70,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.MinMax;
 import org.n52.shetland.ogc.OGCConstants;
@@ -101,6 +97,11 @@ import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -155,7 +156,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     @Override
-    public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
+    public XmlObject encode(final Object element, final EncodingContext additionalValues)
             throws EncodingException {
         XmlObject encodedObject = null;
         if (element instanceof Time) {
@@ -188,31 +189,33 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     private XmlObject createFeaturePropertyType(final AbstractFeature feature,
-            final Map<HelperValues, String> additionalValues) throws EncodingException {
+                                                EncodingContext additionalValues) throws EncodingException {
         if (feature instanceof FeatureCollection) {
             return createFeatureCollection((FeatureCollection) feature, additionalValues);
         } else if (feature instanceof SamplingFeature) {
             return createFeature(feature, additionalValues);
         } else if (feature instanceof AbstractFeature && feature.isSetDefaultElementEncoding()) {
             return encodeObjectToXml(feature.getDefaultElementEncoding(), feature);
-        } else if (feature instanceof AbstractFeature && additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
-            return encodeObjectToXml(additionalValues.get(HelperValues.ENCODE_NAMESPACE), feature, additionalValues);
+        } else if (feature instanceof AbstractFeature && additionalValues.has(SosHelperValues.ENCODE_NAMESPACE)) {
+
+            return encodeObjectToXml(additionalValues.get(SosHelperValues.ENCODE_NAMESPACE), feature, additionalValues);
         } else {
             throw new UnsupportedEncoderInputException(this, feature);
         }
     }
 
-    private XmlObject createFeatureCollection(final FeatureCollection element,
-            final Map<HelperValues, String> additionalValues) throws EncodingException {
+    private XmlObject createFeatureCollection(FeatureCollection element, EncodingContext additionalValues) throws EncodingException {
         final FeatureCollectionDocument featureCollectionDoc =
                 FeatureCollectionDocument.Factory.newInstance(getXmlOptions());
         final FeatureCollectionType featureCollection = featureCollectionDoc.addNewFeatureCollection();
         featureCollection.setId(element.getGmlId());
-        boolean document = checkAndPrepareHelperValues(additionalValues);
+        boolean document = additionalValues.has(SosHelperValues.DOCUMENT);
+        EncodingContext ctx = additionalValues.with(SosHelperValues.PROPERTY_TYPE).without(SosHelperValues.DOCUMENT);
+
         if (element.isSetMembers()) {
             for (final AbstractFeature abstractFeature : element.getMembers().values()) {
                 featureCollection.addNewFeatureMember().set(
-                        createFeaturePropertyType(abstractFeature, additionalValues));
+                        createFeaturePropertyType(abstractFeature, ctx));
             }
         }
         if (document) {
@@ -225,22 +228,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         // return featureCollection;
     }
 
-    private boolean checkAndPrepareHelperValues(Map<HelperValues, String> additionalValues) {
-        // add propertyType flag
-        additionalValues.put(HelperValues.PROPERTY_TYPE, null);
-        // check for document flag and remove flag from values if contained
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
-            additionalValues.remove(HelperValues.DOCUMENT);
-            return true;
-        }
-        return false;
-    }
-
-    private XmlObject createFeature(final AbstractFeature feature, final Map<HelperValues, String> additionalValues)
+    private XmlObject createFeature(final AbstractFeature feature, final EncodingContext additionalValues)
             throws EncodingException {
         final FeaturePropertyType featurePropertyType =
                 FeaturePropertyType.Factory.newInstance(getXmlOptions());
-        if (isNotSamplingFeature(feature) || additionalValues.containsKey(HelperValues.REFERENCED)) {
+        if (isNotSamplingFeature(feature) || additionalValues.has(SosHelperValues.REFERENCED)) {
             featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
             return featurePropertyType;
         } else {
@@ -249,8 +241,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                 featurePropertyType.setHref("#" + samplingFeature.getGmlId());
                 return featurePropertyType;
             } else {
-                if (additionalValues.containsKey(HelperValues.ENCODE)
-                        && additionalValues.get(HelperValues.ENCODE).equals("false") || !samplingFeature.isEncode()) {
+                if (additionalValues.has(SosHelperValues.ENCODE) && !additionalValues.getBoolean(SosHelperValues.ENCODE) || !samplingFeature.isEncode()) {
                     featurePropertyType.setHref(feature.getIdentifierCodeWithAuthority().getValue());
                     if (feature instanceof SamplingFeature && samplingFeature.isSetName()) {
                         featurePropertyType.setTitle(samplingFeature.getFirstName().getValue());
@@ -272,8 +263,8 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     return featurePropertyType;
                 } else {
                     String namespace;
-                    if (additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
-                        namespace = additionalValues.get(HelperValues.ENCODE_NAMESPACE);
+                    if (additionalValues.has(SosHelperValues.ENCODE_NAMESPACE)) {
+                        namespace = additionalValues.get(SosHelperValues.ENCODE_NAMESPACE);
                     } else {
                         namespace = OMHelper.getNamespaceForFeatureType(samplingFeature.getFeatureType());
                     }
@@ -318,7 +309,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         return envelopeType;
     }
 
-    private XmlObject createTime(Time time, Map<HelperValues, String> additionalValues)
+    private XmlObject createTime(Time time, EncodingContext additionalValues)
             throws EncodingException {
         if (time == null) {
             return null;
@@ -327,11 +318,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         if (time instanceof TimeInstant) {
             TimeInstant instant = (TimeInstant) time;
 
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 return createTimeInstantDocument(instant);
             }
 
-            if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
                 return createTimeInstantPropertyType(instant);
             }
 
@@ -341,11 +332,11 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         if (time instanceof TimePeriod) {
             TimePeriod period = (TimePeriod) time;
 
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 return createTimePeriodDocument(period);
             }
 
-            if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
                 return createTimePeriodPropertyType(period);
             }
 
@@ -412,7 +403,6 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
      * @param timeInstant
      *            SOS time object
      * @param timeInstantType
-     * @return XML TimeInstant
      *
      *
      * @throws EncodingException
@@ -453,7 +443,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         return xbTimePosition;
     }
 
-    private XmlObject createGeomteryPropertyType(AbstractGeometry element, Map<HelperValues, String> additionalValues)
+    private XmlObject createGeomteryPropertyType(AbstractGeometry element, EncodingContext additionalValues)
             throws EncodingException {
         GeometryPropertyType geometryPropertyType = GeometryPropertyType.Factory.newInstance();
         if (element.isReferenced()) {
@@ -468,7 +458,7 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     private AbstractGeometryType createAbstractGeometry(AbstractGeometry element,
-            Map<HelperValues, String> additionalValues) throws EncodingException {
+            EncodingContext additionalValues) throws EncodingException {
         XmlObject xbGeometry = createPosition(element.getGeometry(), additionalValues);
         AbstractGeometryType abstractGeometryType = null;
         if (xbGeometry instanceof AbstractGeometryType) {
@@ -493,19 +483,19 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
         return abstractGeometryType;
     }
 
-    private XmlObject createPosition(Geometry geom, Map<HelperValues, String> additionalValues)
+    private XmlObject createPosition(Geometry geom, EncodingContext additionalValues)
             throws EncodingException {
-        String foiId = additionalValues.get(HelperValues.GMLID);
+        String foiId = additionalValues.get(SosHelperValues.GMLID);
         if (geom instanceof Point) {
             final PointType xbPoint = PointType.Factory.newInstance(getXmlOptions());
             xbPoint.setId("point_" + foiId);
             createPointFromJtsGeometry((Point) geom, xbPoint);
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 PointDocument xbPointDoc =
                         PointDocument.Factory.newInstance(getXmlOptions());
                 xbPointDoc.setPoint(xbPoint);
                 return xbPointDoc;
-            } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
                 GeometryPropertyType geometryPropertyType =
                         GeometryPropertyType.Factory.newInstance(getXmlOptions());
                 geometryPropertyType.setAbstractGeometry(xbPoint);
@@ -520,12 +510,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     LineStringType.Factory.newInstance(getXmlOptions());
             xbLineString.setId("lineString_" + foiId);
             createLineStringFromJtsGeometry((LineString) geom, xbLineString);
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 LineStringDocument xbLineStringDoc =
                         LineStringDocument.Factory.newInstance(getXmlOptions());
                 xbLineStringDoc.setLineString(xbLineString);
                 return xbLineStringDoc;
-            } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
                 GeometryPropertyType geometryPropertyType =
                         GeometryPropertyType.Factory.newInstance(getXmlOptions());
                 geometryPropertyType.setAbstractGeometry(xbLineString);
@@ -541,12 +531,12 @@ public class GmlEncoderv321 extends AbstractXmlEncoder<XmlObject, Object> {
                     PolygonType.Factory.newInstance(getXmlOptions());
             xbPolygon.setId("polygon_" + foiId);
             createPolygonFromJtsGeometry((Polygon) geom, xbPolygon);
-            if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+            if (additionalValues.has(SosHelperValues.DOCUMENT)) {
                 PolygonDocument xbPolygonDoc =
                         PolygonDocument.Factory.newInstance(getXmlOptions());
                 xbPolygonDoc.setPolygon(xbPolygon);
                 return xbPolygonDoc;
-            } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+            } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
                 GeometryPropertyType geometryPropertyType =
                         GeometryPropertyType.Factory.newInstance(getXmlOptions());
                 geometryPropertyType.setAbstractGeometry(xbPolygon);

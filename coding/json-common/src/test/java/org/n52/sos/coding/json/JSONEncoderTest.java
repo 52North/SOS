@@ -36,8 +36,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.n52.sos.coding.json.matchers.JSONMatchers.equalTo;
 
-import java.util.EnumMap;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,10 +44,8 @@ import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
-
-import com.google.common.collect.Maps;
 
 /**
  * TODO JavaDoc
@@ -91,8 +87,7 @@ public class JSONEncoderTest {
 
     @Test
     public void testEncodeWithHelperValues() throws EncodingException {
-        final EnumMap<HelperValues, String> vals = Maps.newEnumMap(HelperValues.class);
-        assertThat(encoder.encode("test", vals), equalTo("test"));
+        assertThat(encoder.encode("test", EncodingContext.empty()), equalTo("test"));
     }
 
     @Test

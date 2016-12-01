@@ -108,7 +108,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.NotYetSupportedEncodingException;
@@ -154,7 +154,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<XmlObject, Object> 
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
         if (element instanceof SweAbstractSimpleType) {
             encodedObject = createSimpleType((SweAbstractSimpleType<?>)element, additionalValues);
@@ -201,7 +201,7 @@ public class SweCommonEncoderv101 extends AbstractXmlEncoder<XmlObject, Object> 
         return createSimpleType(sosSimpleType, null);
     }
 
-    private AbstractDataComponentType createSimpleType(SweAbstractSimpleType<?> sosSimpleType, Map<HelperValues, String> additionalValues)
+    private AbstractDataComponentType createSimpleType(SweAbstractSimpleType<?> sosSimpleType, EncodingContext additionalValues)
             throws EncodingException {
         AbstractDataComponentType abstractDataComponentType = null;
         if (sosSimpleType instanceof SweBoolean) {

@@ -31,7 +31,6 @@ package org.n52.sos.encode;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -83,7 +82,8 @@ import org.n52.sos.encode.streaming.OmV20XmlStreamWriter;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SweHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 
@@ -194,7 +194,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException {
         if (element instanceof ObservationValue) {
             return encodeResult((ObservationValue<?>)element);
         }
@@ -273,9 +273,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         }
         if (observationType.equals(OmConstants.OBS_TYPE_SWE_ARRAY_OBSERVATION)) {
             SweDataArray dataArray = SweHelper.createSosSweDataArray(observationValue);
-            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-            additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-            return encodeSWE(dataArray, additionalValues);
+            return encodeSWE(dataArray, EncodingContext.of(SosHelperValues.FOR_OBSERVATION));
         }
 
         return observationValue.getValue().accept(new ResultValueVisitor(observationType, observationValue.getObservationID()));
@@ -284,9 +282,8 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
     private XmlObject createMultiObservationValueToResult(MultiObservationValues<?> observationValue) throws EncodingException {
         // TODO create SosSweDataArray
         SweDataArray dataArray = SweHelper.createSosSweDataArray(observationValue);
-        Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-        additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        Object encodedObj = encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, additionalValues);
+
+        Object encodedObj = encodeObjectToXml(SweConstants.NS_SWE_20, dataArray, EncodingContext.of(SosHelperValues.FOR_OBSERVATION));
         if (encodedObj instanceof XmlObject) {
             return (XmlObject) encodedObj;
         } else {
@@ -314,7 +311,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected XmlObject encodeSWE(Object o, Map<HelperValues, String> additionalValues) throws EncodingException {
+    protected XmlObject encodeSWE(Object o, EncodingContext additionalValues) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o, additionalValues);
     }
 
@@ -349,9 +346,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_CATEGORY_OBSERVATION)){
                 if (value.isSetValue() && !value.getValue().isEmpty()) {
-                    Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
-                    additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId);
-                    return encodeGML(value, additionalValue);
+                    return encodeGML(value, EncodingContext.of(SosHelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId));
                 }
             }
             return null;
@@ -363,9 +358,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
 
             if (observationType.equals(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION)) {
                 if (value.isSetValue()) {
-                    Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
-                    additionalValue.put(HelperValues.FOR_OBSERVATION, null);
-                    return encodeSWE(value.getValue(), additionalValue);
+                    return encodeSWE(value.getValue(), EncodingContext.of(SosHelperValues.FOR_OBSERVATION));
                 }
             }
             return null;
@@ -392,10 +385,9 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
                 throws EncodingException {
             if (observationType.equals(OmConstants.OBS_TYPE_GEOMETRY_OBSERVATION)) {
                 if (value.isSetValue()) {
-                    Map<HelperValues, String> additionalValue = new EnumMap<>(HelperValues.class);
-                    additionalValue.put(HelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId);
-                    additionalValue.put(HelperValues.PROPERTY_TYPE, null);
-                    return encodeGML(value.getValue(), additionalValue);
+                    return encodeGML(value.getValue(), EncodingContext.empty()
+                        .with(SosHelperValues.GMLID, SosConstants.OBS_ID_PREFIX + this.observationId)
+                        .with(SosHelperValues.PROPERTY_TYPE));
                 } else {
                     return null;
                 }
@@ -435,9 +427,7 @@ public class OmEncoderv20 extends AbstractOmEncoderv20 {
         @Override
         public XmlObject visit(SweDataArrayValue value)
                 throws EncodingException {
-            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-            additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-            return encodeSWE(value.getValue(), additionalValues);
+            return encodeSWE(value.getValue(), EncodingContext.of(SosHelperValues.FOR_OBSERVATION));
         }
 
         @Override

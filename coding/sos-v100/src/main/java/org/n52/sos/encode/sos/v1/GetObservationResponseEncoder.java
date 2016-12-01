@@ -31,7 +31,7 @@ package org.n52.sos.encode.sos.v1;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 

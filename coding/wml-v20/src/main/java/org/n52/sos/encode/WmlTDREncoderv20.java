@@ -78,7 +78,7 @@ import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.WmlTDREncoderv20XmlStreamWriter;
 import org.n52.sos.ogc.wml.WaterMLConstants;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.HelperValues;
 import org.n52.svalbard.encode.EncoderKey;

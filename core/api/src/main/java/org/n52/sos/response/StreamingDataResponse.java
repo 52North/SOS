@@ -26,27 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.encode.exi.impl.v1;
+package org.n52.sos.response;
 
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.encode.exi.AbstractSosV1ResponseEncoder;
-import org.n52.sos.response.GetObservationResponse;
-
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.response.AbstractStreaming;
 
 /**
- * Response encoder for {@link GetObservationResponse}
+ * Interface to indicate that the response may contain streaming data.
  *
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
- * @since 4.2.0
+ * @since 4.3.0
  *
  */
-public class GetObservationResponseEncoder extends AbstractSosV1ResponseEncoder<GetObservationResponse> {
+public interface StreamingDataResponse {
 
     /**
-     * Constructor
+     *  Check if the response contains streaming data {@link AbstractStreaming}
+     *
+     * @return <code>true</code> if the response contains streaming data
      */
-    public GetObservationResponseEncoder() {
-        super(GetObservationResponse.class, SosConstants.Operations.GetObservation);
-    }
+    boolean hasStreamingData();
 
+    /**
+     * Merge the streaming data.
+     *
+     * @throws OwsExceptionReport If an error occurs.
+     */
+    void mergeStreamingData() throws OwsExceptionReport;
 }

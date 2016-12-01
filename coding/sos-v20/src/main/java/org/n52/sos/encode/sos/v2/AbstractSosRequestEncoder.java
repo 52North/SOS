@@ -30,7 +30,6 @@ package org.n52.sos.encode.sos.v2;
 
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -44,7 +43,7 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractRequestEncoder;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 
@@ -71,32 +70,32 @@ public abstract class AbstractSosRequestEncoder<T extends OwsServiceRequest> ext
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    protected XmlObject encodeGml(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
-        return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
+    protected XmlObject encodeGml(EncodingContext context, Object o) throws EncodingException {
+        return encodeObjectToXml(GmlConstants.NS_GML_32, o, context);
     }
 
     protected XmlObject encodeOws(Object o) throws EncodingException {
         return encodeObjectToXml(OWSConstants.NS_OWS, o);
     }
 
-    protected XmlObject encodeOws(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
-        return encodeObjectToXml(OWSConstants.NS_OWS, o, helperValues);
+    protected XmlObject encodeOws(EncodingContext context, Object o) throws EncodingException {
+        return encodeObjectToXml(OWSConstants.NS_OWS, o, context);
     }
 
     protected XmlObject encodeFes(Object o) throws EncodingException {
         return encodeObjectToXml(FilterConstants.NS_FES_2, o);
     }
 
-    protected XmlObject encodeFes(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
-        return encodeObjectToXml(FilterConstants.NS_FES_2, o, helperValues);
+    protected XmlObject encodeFes(EncodingContext context, Object o) throws EncodingException {
+        return encodeObjectToXml(FilterConstants.NS_FES_2, o, context);
     }
 
     protected XmlObject encodeSwe(Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected XmlObject encodeSwe(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
-        return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
+    protected XmlObject encodeSwe(EncodingContext context, Object o) throws EncodingException {
+        return encodeObjectToXml(SweConstants.NS_SWE_20, o, context);
     }
 
 }

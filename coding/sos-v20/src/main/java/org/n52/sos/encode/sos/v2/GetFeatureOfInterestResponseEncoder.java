@@ -28,8 +28,6 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x20.GetFeatureOfInterestResponseDocument;
@@ -37,17 +35,18 @@ import net.opengis.sos.x20.GetFeatureOfInterestResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 
@@ -82,13 +81,12 @@ public class GetFeatureOfInterestResponseEncoder extends AbstractSosResponseEnco
 
     private void addFeatureOfInterest(AbstractFeature feature, GetFeatureOfInterestResponseType response)
             throws EncodingException {
-        Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
+        EncodingContext codingContext = EncodingContext.empty();
         Profile activeProfile = getActiveProfile();
         if (activeProfile.isSetEncodeFeatureOfInterestNamespace()) {
-            additionalValues.put(HelperValues.ENCODE_NAMESPACE,
-                    activeProfile.getEncodingNamespaceForFeatureOfInterest());
+            codingContext = codingContext.with(SosHelperValues.ENCODE_NAMESPACE, activeProfile.getEncodingNamespaceForFeatureOfInterest());
         }
-        XmlObject encodeObjectToXml = encodeGml(additionalValues, feature);
+        XmlObject encodeObjectToXml = encodeGml(codingContext, feature);
         response.addNewFeatureMember().set(encodeObjectToXml);
     }
 

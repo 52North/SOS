@@ -29,7 +29,6 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
@@ -42,11 +41,6 @@ import org.w3.x2005.x08.addressing.RelatesToDocument;
 import org.w3.x2005.x08.addressing.ReplyToDocument;
 import org.w3.x2005.x08.addressing.ToDocument;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
 import org.n52.iceland.w3c.wsa.WsaHeader;
@@ -58,6 +52,11 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 
@@ -89,11 +88,11 @@ public class WsaEncoder implements Encoder<XmlObject, WsaHeader> {
 
     @Override
     public XmlObject encode(WsaHeader wsaHeader) throws EncodingException {
-        return encode(wsaHeader, null);
+        return encode(wsaHeader, EncodingContext.empty());
     }
 
     @Override
-    public XmlObject encode(WsaHeader wsaHeader, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(WsaHeader wsaHeader, EncodingContext additionalValues) throws EncodingException {
         if (wsaHeader == null) {
             throw new UnsupportedEncoderInputException(this, wsaHeader);
         }

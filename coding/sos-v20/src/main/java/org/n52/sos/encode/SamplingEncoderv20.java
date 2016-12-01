@@ -29,7 +29,6 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,14 +41,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.SupportedType;
@@ -60,17 +52,24 @@ import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.sos.FeatureType;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.LineString;
@@ -136,7 +135,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<XmlObject, AbstractFe
     }
 
     @Override
-    public XmlObject encode(final AbstractFeature abstractFeature, final Map<HelperValues, String> additionalValues)
+    public XmlObject encode(final AbstractFeature abstractFeature, final EncodingContext ctx)
             throws EncodingException {
         final XmlObject encodedObject = createFeature(abstractFeature);
         // LOGGER.debug("Encoded object {} is valid: {}",
@@ -195,10 +194,9 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<XmlObject, AbstractFe
             // set sampledFeatures
             // TODO: CHECK
             if (sampFeat.isSetSampledFeatures()) {
-                Map<HelperValues, String> additionalValues = Maps.newHashMap();
-                additionalValues.put(HelperValues.REFERENCED, null);
+                EncodingContext ctx = EncodingContext.of(SosHelperValues.REFERENCED);
                 for (AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
-                    XmlObject encodeObjectToXml = encodeObjectToXml(GmlConstants.NS_GML_32, sampledFeature, additionalValues);
+                    XmlObject encodeObjectToXml = encodeObjectToXml(GmlConstants.NS_GML_32, sampledFeature, ctx);
                     xbSampFeature.addNewSampledFeature().set(encodeObjectToXml);
                 }
                 // // Old version before schema was fixed. Now sampledFeatures
@@ -252,9 +250,7 @@ public class SamplingEncoderv20 extends AbstractXmlEncoder<XmlObject, AbstractFe
     private void encodeShape(ShapeType xbShape, SamplingFeature sampFeat) throws EncodingException {
         Encoder<XmlObject, Geometry> encoder = getEncoder(GmlConstants.NS_GML_32, sampFeat.getGeometry());
         if (encoder != null) {
-            Map<HelperValues, String> gmlAdditionalValues = new EnumMap<>(HelperValues.class);
-            gmlAdditionalValues.put(HelperValues.GMLID, sampFeat.getGmlId());
-            XmlObject xmlObject = encoder.encode(sampFeat.getGeometry(), gmlAdditionalValues);
+            XmlObject xmlObject = encoder.encode(sampFeat.getGeometry(), EncodingContext.of(SosHelperValues.GMLID, sampFeat.getGmlId()));
             if (xbShape.isSetAbstractGeometry()) {
                 xbShape.getAbstractGeometry().set(xmlObject);
             } else {

@@ -31,7 +31,6 @@ package org.n52.sos.encode;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +39,6 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.swes.SwesExtension;
@@ -54,9 +52,10 @@ import org.n52.sos.inspire.capabilities.FullInspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.InspireExtendedCapabilities;
 import org.n52.sos.inspire.capabilities.MinimalInspireExtendedCapabilities;
 import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.collect.Sets;
@@ -87,11 +86,11 @@ public class InspireXmlEncoder extends AbstractXmlEncoder<XmlObject, Object> {
 
     @Override
     public XmlObject encode(Object objectToEncode) throws EncodingException {
-        return encode(objectToEncode, new EnumMap<>(HelperValues.class));
+        return encode(objectToEncode, EncodingContext.empty());
     }
 
     @Override
-    public XmlObject encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
+    public XmlObject encode(Object objectToEncode, EncodingContext additionalValues)
             throws EncodingException {
         if (objectToEncode instanceof InspireObject) {
             return encodeObject((InspireObject)objectToEncode);

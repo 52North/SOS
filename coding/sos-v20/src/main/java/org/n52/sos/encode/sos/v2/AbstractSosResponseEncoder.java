@@ -28,8 +28,9 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
@@ -44,7 +45,7 @@ import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
@@ -60,9 +61,21 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends AbstractResponseEncoder<T> {
+
+    private ProfileHandler profileHandler;
+
     public AbstractSosResponseEncoder(String operation, Class<T> responseType) {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation, Sos2Constants.NS_SOS_20,
-                SosConstants.NS_SOS_PREFIX, responseType);
+        super(SosConstants.SOS,
+              Sos2Constants.SERVICEVERSION,
+              operation,
+              Sos2Constants.NS_SOS_20,
+              SosConstants.NS_SOS_PREFIX,
+              responseType);
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     @Override
@@ -71,14 +84,14 @@ public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> e
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return this.profileHandler.getActiveProfile();
     }
 
     protected XmlObject encodeGml(Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    protected XmlObject encodeGml(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
+    protected XmlObject encodeGml(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
 
@@ -86,7 +99,7 @@ public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> e
         return encodeObjectToXml(OWSConstants.NS_OWS, o);
     }
 
-    protected XmlObject encodeOws(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
+    protected XmlObject encodeOws(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(OWSConstants.NS_OWS, o, helperValues);
     }
 
@@ -94,7 +107,7 @@ public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> e
         return encodeObjectToXml(FilterConstants.NS_FES_2, o);
     }
 
-    protected XmlObject encodeFes(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
+    protected XmlObject encodeFes(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(FilterConstants.NS_FES_2, o, helperValues);
     }
 
@@ -102,7 +115,8 @@ public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> e
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected XmlObject encodeSwe(Map<HelperValues, String> helperValues, Object o) throws EncodingException {
+    protected XmlObject encodeSwe(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
+
 }

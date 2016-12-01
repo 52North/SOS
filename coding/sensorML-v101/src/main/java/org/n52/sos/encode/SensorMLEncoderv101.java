@@ -134,6 +134,7 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.shetland.ogc.swe.AbstractOptionalSweDataComponentVisitor;
 import org.n52.shetland.ogc.swe.AbstractVoidSweDataComponentVisitor;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
@@ -157,9 +158,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -234,7 +234,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     }
 
     @Override
-    public XmlObject encode(final Object response, final Map<HelperValues, String> additionalValues)
+    public XmlObject encode(final Object response, final EncodingContext additionalValues)
             throws EncodingException {
         XmlObject encodedObject = null;
         if (response instanceof AbstractSensorML) {

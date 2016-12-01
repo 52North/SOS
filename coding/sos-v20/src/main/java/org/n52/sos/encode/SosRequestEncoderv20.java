@@ -29,7 +29,6 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,21 +42,22 @@ import org.apache.xmlbeans.XmlObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.filter.FilterConstants;
-import org.n52.shetland.ogc.filter.TemporalFilter;
-import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.shetland.ogc.sos.request.GetResultRequest;
-import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -95,13 +95,11 @@ public class SosRequestEncoderv20 extends AbstractXmlEncoder<XmlObject, OwsServi
 
     @Override
     public XmlObject encode(OwsServiceRequest communicationObject) throws EncodingException {
-        final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-        additionalValues.put(HelperValues.VERSION, Sos2Constants.SERVICEVERSION);
-        return encode(communicationObject, additionalValues);
+        return encode(communicationObject, EncodingContext.of(SosHelperValues.VERSION, Sos2Constants.SERVICEVERSION));
     }
 
     @Override
-    public XmlObject encode(OwsServiceRequest request, Map<HelperValues, String> additionalValues)
+    public XmlObject encode(OwsServiceRequest request, EncodingContext additionalValues)
             throws EncodingException {
         XmlObject encodedObject = encodeRequests(request);
         XmlHelper.validateDocument(encodedObject, EncodingException::new);

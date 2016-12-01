@@ -30,11 +30,9 @@ package org.n52.sos.encode;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -55,10 +53,6 @@ import org.w3.x2003.x05.soapEnvelope.Subcode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.w3c.soap.SoapConstants;
 import org.n52.iceland.w3c.soap.SoapFault;
 import org.n52.iceland.w3c.soap.SoapHeader;
@@ -80,6 +74,11 @@ import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.OwsHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -116,7 +115,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object>
     }
 
     @Override
-    public XmlObject encode(final Object element, final Map<HelperValues, String> additionalValues)
+    public XmlObject encode(final Object element, EncodingContext additionalValues)
             throws EncodingException {
         if (element instanceof SoapResponse) {
             return createSOAP12Envelope((SoapResponse) element, additionalValues);
@@ -148,8 +147,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object>
         }
     }
 
-    private XmlObject createSOAP12Envelope(final SoapResponse response,
-            final Map<HelperValues, String> additionalValues) throws EncodingException {
+    private XmlObject createSOAP12Envelope(final SoapResponse response, EncodingContext additionalValues) throws EncodingException {
         String action = null;
         final EnvelopeDocument envelopeDoc = EnvelopeDocument.Factory.newInstance();
         final Envelope envelope = envelopeDoc.addNewEnvelope();
@@ -265,9 +263,7 @@ public class Soap12Encoder extends AbstractSoapEncoder<XmlObject, Object>
             addNewText.setLang(Locale.ENGLISH.getLanguage());
             addNewText.setStringValue(SoapHelper.getSoapFaultReasonText(firstException.getCode()));
 
-            fault.addNewDetail().set(
-                    encodeObjectToXml(OWSConstants.NS_OWS, firstException, CollectionHelper
-                            .map(new AbstractMap.SimpleEntry<>(HelperValues.ENCODE_OWS_EXCEPTION_ONLY, ""))));
+            fault.addNewDetail().set(encodeObjectToXml(OWSConstants.NS_OWS, firstException, EncodingContext.of(SosHelperValues.ENCODE_OWS_EXCEPTION_ONLY)));
         }
         return faultDoc;
     }

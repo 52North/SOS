@@ -33,7 +33,6 @@ import static java.util.stream.Collectors.toMap;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -45,17 +44,18 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
 import org.n52.iceland.coding.encode.SchemaRepository;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.iceland.service.ServiceSettings;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 /**
@@ -67,7 +67,8 @@ import org.n52.svalbard.xml.AbstractXmlEncoder;
  */
 public abstract class AbstractXmlResponseEncoder<T>
         extends AbstractXmlEncoder<XmlObject, T>
-        implements StreamingEncoder<XmlObject, T>, ConformanceClass {
+        implements StreamingEncoder<XmlObject, T>,
+                   ConformanceClass {
 
     private final String namespace;
     private final String prefix;
@@ -148,13 +149,11 @@ public abstract class AbstractXmlResponseEncoder<T>
         if (response == null) {
             throw new UnsupportedEncoderInputException(this, response);
         }
-        final Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-        additionalValues.put(HelperValues.VERSION, this.version);
-        return encode(response, additionalValues);
+        return encode(response, EncodingContext.of(SosHelperValues.VERSION, this.version));
     }
 
     @Override
-    public XmlObject encode(T response, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(T response, EncodingContext additionalValues) throws EncodingException {
         if (response == null) {
             throw new UnsupportedEncoderInputException(this, response);
         }

@@ -29,9 +29,7 @@
 package org.n52.sos.encode.streaming;
 
 import java.io.OutputStream;
-import java.util.EnumMap;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -44,12 +42,9 @@ import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.exception.ConfigurationError;
+import org.n52.janmayen.function.Functions;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.Time;
@@ -62,7 +57,6 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.janmayen.function.Functions;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.ObservationEncoder;
@@ -73,9 +67,13 @@ import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
 /**
  * Abstract implementation of {@link XmlStreamWriter} for writing
@@ -426,19 +424,15 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
             EncodingException {
         if (encodingValues.isSetEncoder() && encodingValues.getEncoder() instanceof AbstractOmEncoderv20) {
             AbstractOmEncoderv20 encoder = (AbstractOmEncoderv20) encodingValues.getEncoder();
-            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
             Profile activeProfile = getActiveProfile();
-            additionalValues.put(HelperValues.ENCODE,
-                    Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
-            if (!Strings.isNullOrEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
-                additionalValues.put(HelperValues.ENCODE_NAMESPACE,
-                        activeProfile.getEncodingNamespaceForFeatureOfInterest());
-            } else {
-                additionalValues.put(HelperValues.ENCODE_NAMESPACE, encoder.getDefaultFeatureEncodingNamespace());
-            }
-            XmlObject xmlObject =
-                    CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, observation.getObservationConstellation()
-                            .getFeatureOfInterest(), additionalValues);
+            Object namespace = !Strings.isNullOrEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())
+                               ? activeProfile.getEncodingNamespaceForFeatureOfInterest()
+                               : encoder.getDefaultFeatureEncodingNamespace();
+            boolean encodeFoi = activeProfile.isEncodeFeatureOfInterestInObservations();
+
+            EncodingContext codingContext = EncodingContext.of(SosHelperValues.ENCODE, encodeFoi)
+                    .with(SosHelperValues.ENCODE_NAMESPACE, namespace);
+            XmlObject xmlObject = CodingHelper.encodeObjectToXml(GmlConstants.NS_GML_32, observation.getObservationConstellation().getFeatureOfInterest(), codingContext);
             writeXmlObject(xmlObject, OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
         } else {
             empty(OmConstants.QN_OM_20_FEATURE_OF_INTEREST);
@@ -507,10 +501,8 @@ public abstract class AbstractOmV20XmlStreamWriter extends XmlStreamWriter<OmObs
      *
      * @return
      */
-    protected Map<HelperValues, String> getDocumentAdditionalHelperValues() {
-        Map<HelperValues, String> additionalValues = Maps.newHashMap();
-        additionalValues.put(HelperValues.DOCUMENT, null);
-        return additionalValues;
+    protected EncodingContext getDocumentAdditionalHelperValues() {
+        return EncodingContext.of(SosHelperValues.DOCUMENT);
     }
 
     /**

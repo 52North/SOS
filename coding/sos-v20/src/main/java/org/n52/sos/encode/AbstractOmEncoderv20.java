@@ -31,7 +31,6 @@ package org.n52.sos.encode;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -85,7 +84,6 @@ import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.UnknownValue;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.om.values.visitor.ValueVisitor;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.JavaHelper;
@@ -97,15 +95,14 @@ import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 
 
 public abstract class AbstractOmEncoderv20
@@ -167,7 +164,7 @@ public abstract class AbstractOmEncoderv20
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
         if (element instanceof OmObservation) {
             encodedObject = encodeOmObservation((OmObservation) element, additionalValues);
@@ -220,13 +217,13 @@ public abstract class AbstractOmEncoderv20
      *
      * @param sosObservation
      *            SosObservation to be encoded
-     * @param additionalValues
+     * @param context
      *            Additional values which are used during the encoding
      * @return XmlBeans representation of O&M 2.0 observation
      * @throws EncodingException
      *             If an error occurs
      */
-    protected XmlObject encodeOmObservation(OmObservation sosObservation, Map<HelperValues, String> additionalValues)
+    protected XmlObject encodeOmObservation(OmObservation sosObservation, EncodingContext context)
             throws EncodingException {
         OMObservationType xbObservation = createOmObservationType();
 
@@ -257,9 +254,9 @@ public abstract class AbstractOmEncoderv20
         setResultQualities(xbObservation, sosObservation);
         setResult(sosObservation, xbObservation);
 
-        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+        if (context.has(SosHelperValues.PROPERTY_TYPE)) {
             return createObservationPropertyType(xbObservation);
-        } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+        } else if (context.has(SosHelperValues.DOCUMENT)) {
             return createObservationDocument(xbObservation);
         } else {
             return xbObservation;
@@ -524,16 +521,19 @@ public abstract class AbstractOmEncoderv20
      *             If an error occurs.
      */
     private XmlObject encodeFeatureOfInterest(AbstractFeature feature) throws EncodingException {
-        Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
+
+
         Profile activeProfile = ProfileHandler.getInstance().getActiveProfile();
-        additionalValues.put(HelperValues.ENCODE,
-                Boolean.toString(activeProfile.isEncodeFeatureOfInterestInObservations()));
-        if (!Strings.isNullOrEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())) {
-            additionalValues.put(HelperValues.ENCODE_NAMESPACE,
-                    activeProfile.getEncodingNamespaceForFeatureOfInterest());
-        } else {
-            additionalValues.put(HelperValues.ENCODE_NAMESPACE, getDefaultFeatureEncodingNamespace());
-        }
+        boolean encode = activeProfile.isEncodeFeatureOfInterestInObservations();
+
+        String namespace = !Strings.isNullOrEmpty(activeProfile.getEncodingNamespaceForFeatureOfInterest())
+                            ? activeProfile.getEncodingNamespaceForFeatureOfInterest()
+                            : getDefaultFeatureEncodingNamespace();
+
+        EncodingContext additionalValues = EncodingContext.empty()
+                .with(SosHelperValues.ENCODE, encode)
+                .with(SosHelperValues.ENCODE_NAMESPACE, namespace);
+
         return encodeGML(feature, additionalValues);
     }
 
@@ -568,7 +568,7 @@ public abstract class AbstractOmEncoderv20
      * @param value
      *            SOS value object
      * @return XmlBeans object
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an error occurs.
      */
     private XmlObject getNamedValueValue(Value<?> value) throws EncodingException {
@@ -592,7 +592,7 @@ public abstract class AbstractOmEncoderv20
             throws EncodingException {
         for (OmResultQuality quality : resultQuality) {
             AbstractDQElementDocument encodedQuality = (AbstractDQElementDocument) encodeObjectToXml(null,
-                    quality, ImmutableMap.of(HelperValues.DOCUMENT, "true"));
+                    quality, EncodingContext.of(SosHelperValues.DOCUMENT));
             DQElementPropertyType addNewResultQuality = xbObservation.addNewResultQuality();
             addNewResultQuality.setAbstractDQElement(encodedQuality.getAbstractDQElement());
             XmlHelper.substituteElement(addNewResultQuality.getAbstractDQElement(),
@@ -613,24 +613,24 @@ public abstract class AbstractOmEncoderv20
         return encodeObjectToXml(W3CConstants.NS_XLINK, o);
     }
 
-    protected XmlObject encodeXLINK(Object o, Map<HelperValues, String> helperValues) throws EncodingException {
-        return encodeObjectToXml(W3CConstants.NS_XLINK, o, helperValues);
+    protected XmlObject encodeXLINK(Object o, EncodingContext context) throws EncodingException {
+        return encodeObjectToXml(W3CConstants.NS_XLINK, o, context);
     }
 
     protected XmlObject encodeGML(Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    protected XmlObject encodeGML(Object o, Map<HelperValues, String> helperValues) throws EncodingException {
-        return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
+    protected XmlObject encodeGML(Object o, EncodingContext context) throws EncodingException {
+        return encodeObjectToXml(GmlConstants.NS_GML_32, o, context);
     }
 
     protected XmlObject encodeSweCommon(Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected XmlObject encodeSweCommon(Object o, Map<HelperValues, String> helperValues) throws EncodingException {
-        return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
+    protected XmlObject encodeSweCommon(Object o, EncodingContext context) throws EncodingException {
+        return encodeObjectToXml(SweConstants.NS_SWE_20, o, context);
     }
     private static OMObservationType createOmObservationType() {
         return OMObservationType.Factory.newInstance();
@@ -716,11 +716,9 @@ public abstract class AbstractOmEncoderv20
             return defaultValue(value);
         }
 
-        private Map<HelperValues, String> createHelperValues(Value<?> value) {
-            Map<HelperValues, String> helperValues = Maps.newHashMap();
-            helperValues.put(HelperValues.PROPERTY_TYPE, null);
-            helperValues.put(HelperValues.GMLID, JavaHelper.generateID(value.toString()));
-            return helperValues;
+        private EncodingContext createHelperValues(Value<?> value) {
+            return EncodingContext.of(SosHelperValues.PROPERTY_TYPE)
+                    .with(SosHelperValues.GMLID, JavaHelper.generateID(value.toString()));
         }
 
         private XmlObject defaultValue(Value<?> value) {

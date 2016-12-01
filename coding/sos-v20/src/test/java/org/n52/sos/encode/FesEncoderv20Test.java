@@ -36,7 +36,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,20 +44,20 @@ import net.opengis.fes.x20.BBOXType;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.filter.FilterConstants;
 import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
 import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Envelope;
@@ -129,7 +128,7 @@ public class FesEncoderv20Test {
     public final void should_return_exception_if_received_null() throws OwsExceptionReport, EncodingException {
         fesEncoder.encode(null);
         fesEncoder.encode(null, null);
-        fesEncoder.encode(null, new EnumMap<>(HelperValues.class));
+        fesEncoder.encode(null, EncodingContext.empty());
     }
 
     // @Test

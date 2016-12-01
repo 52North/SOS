@@ -34,8 +34,6 @@ import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
 import java.net.URI;
-import java.util.AbstractMap;
-import java.util.Map;
 
 import net.opengis.ows.x11.ExceptionDocument;
 import net.opengis.ows.x11.ExceptionReportDocument;
@@ -44,15 +42,15 @@ import net.opengis.ows.x11.ServiceIdentificationDocument.ServiceIdentification;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.ows.OWSConstants;
 import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.shetland.ogc.ows.OwsServiceIdentification;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
-import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -79,9 +77,8 @@ public class OwsEncoderv110Test {
     // see
     // http://www.angelikalanger.com/GenericsFAQ/FAQSections/ProgrammingIdioms.html#FAQ300
     // for more details
-    private Map<HelperValues, String> encodeInObservationMap() {
-        return CollectionHelper.map(new AbstractMap.SimpleEntry<>(
-                HelperValues.ENCODE_OWS_EXCEPTION_ONLY, ""));
+    private EncodingContext encodeInObservationMap() {
+        return EncodingContext.of(SosHelperValues.ENCODE_OWS_EXCEPTION_ONLY);
     }
 
     private NoApplicableCodeException generateException() {

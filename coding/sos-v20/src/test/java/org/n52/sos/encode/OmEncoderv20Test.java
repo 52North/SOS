@@ -30,9 +30,7 @@ package org.n52.sos.encode;
 
 import static org.hamcrest.Matchers.containsString;
 
-import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.namespace.NamespaceContext;
 
@@ -70,7 +68,8 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.ImmutableBiMap;
@@ -80,18 +79,12 @@ public class OmEncoderv20Test {
 
     private static final String PROCEDURE = "procedure";
     private static final String OFFERING = "offering";
-    private static final String PARENT_OBSERVABLE_PROPERTY
-            = "http://example.tld/phenomenon/parent";
-    private static final String CHILD_OBSERVABLE_PROPERTY_5
-            = "http://example.tld/phenomenon/child/5";
-    private static final String CHILD_OBSERVABLE_PROPERTY_4
-            = "http://example.tld/phenomenon/child/4";
-    private static final String CHILD_OBSERVABLE_PROPERTY_3
-            = "http://example.tld/phenomenon/child/3";
-    private static final String CHILD_OBSERVABLE_PROPERTY_2
-            = "http://example.tld/phenomenon/child/2";
-    private static final String CHILD_OBSERVABLE_PROPERTY_1
-            = "http://example.tld/phenomenon/child/1";
+    private static final String PARENT_OBSERVABLE_PROPERTY = "http://example.tld/phenomenon/parent";
+    private static final String CHILD_OBSERVABLE_PROPERTY_5 = "http://example.tld/phenomenon/child/5";
+    private static final String CHILD_OBSERVABLE_PROPERTY_4 = "http://example.tld/phenomenon/child/4";
+    private static final String CHILD_OBSERVABLE_PROPERTY_3 = "http://example.tld/phenomenon/child/3";
+    private static final String CHILD_OBSERVABLE_PROPERTY_2 = "http://example.tld/phenomenon/child/2";
+    private static final String CHILD_OBSERVABLE_PROPERTY_1 = "http://example.tld/phenomenon/child/1";
     private static final String CODE_SPACE = "codespace";
 
     private static final String TOKEN_SEPERATOR = "##";
@@ -110,10 +103,7 @@ public class OmEncoderv20Test {
     public void testComplexObservation()
             throws EncodingException {
         OmObservation observation = createComplexObservation();
-        Map<HelperValues, String> helperValues
-                = new EnumMap<>(HelperValues.class);
-        helperValues.put(HelperValues.DOCUMENT, "true");
-        XmlObject xb = CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, observation, helperValues);
+        XmlObject xb = CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, observation, EncodingContext.of(SosHelperValues.DOCUMENT));
         Node node = xb.getDomNode();
         Checker checker = new Checker(new NamespaceContextImpl());
         System.out.println(xb.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));

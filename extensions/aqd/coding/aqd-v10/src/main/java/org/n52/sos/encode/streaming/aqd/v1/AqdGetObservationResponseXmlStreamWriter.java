@@ -30,7 +30,6 @@ package org.n52.sos.encode.streaming.aqd.v1;
 
 import java.io.OutputStream;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,12 +37,12 @@ import java.util.TimerTask;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.util.Constants;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.iso.gmd.GmdConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
@@ -64,7 +63,8 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.exception.EncodingException;
 
@@ -100,7 +100,7 @@ public class AqdGetObservationResponseXmlStreamWriter
     /**
      * constructor
      *
-     * @param observation
+     * @param featureCollection
      *            {@link FeatureCollection} to write to stream
      */
     public AqdGetObservationResponseXmlStreamWriter(FeatureCollection featureCollection) {
@@ -267,8 +267,7 @@ public class AqdGetObservationResponseXmlStreamWriter
     private String prepareObservation(OmObservation omObservation, Encoder<XmlObject, AbstractFeature> encoder,
             EncodingValues encodingValues) throws EncodingException, XMLStreamException {
 
-        String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
-                .getInstance().getXmlOptions());
+        String xmlText = (encoder.encode(omObservation, encodingValues.getAdditionalValues())).xmlText(getXmlOptions());
         // TODO check for better solutions
         xmlText = xmlText.replace("ns:ReferenceType", "gml:ReferenceType");
         xmlText = xmlText.replace(":ns=\"http://www.opengis.net/gml/3.2\"", ":gml=\"http://www.opengis.net/gml/3.2\"");
@@ -287,8 +286,7 @@ public class AqdGetObservationResponseXmlStreamWriter
         // encoder).encode(abstractFeature, getOutputStream(),
         // encodingValues.setAsDocument(true).setEmbedded(true).setIndent(indent));
         // } else {
-        writeMember((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(XmlOptionsHelper
-                .getInstance().getXmlOptions()));
+        writeMember((encoder.encode(abstractFeature, encodingValues.getAdditionalValues())).xmlText(getXmlOptions()));
         // }
     }
 
@@ -300,12 +298,11 @@ public class AqdGetObservationResponseXmlStreamWriter
         indent++;
     }
 
-    private Encoder<XmlObject, AbstractFeature> getEncoder(AbstractFeature feature,
-            Map<HelperValues, String> additionalValues) throws EncodingException {
+    private Encoder<XmlObject, AbstractFeature> getEncoder(AbstractFeature feature, EncodingContext additionalValues) throws EncodingException {
         if (feature instanceof AbstractFeature && feature.isSetDefaultElementEncoding()) {
             return CodingHelper.getEncoder(feature.getDefaultElementEncoding(), feature);
-        } else if (feature instanceof AbstractFeature && additionalValues.containsKey(HelperValues.ENCODE_NAMESPACE)) {
-            return CodingHelper.getEncoder(additionalValues.get(HelperValues.ENCODE_NAMESPACE), feature);
+        } else if (feature instanceof AbstractFeature && additionalValues.has(SosHelperValues.ENCODE_NAMESPACE)) {
+            return CodingHelper.getEncoder(additionalValues.get(SosHelperValues.ENCODE_NAMESPACE), feature);
         }
         return null;
     }
@@ -353,6 +350,11 @@ public class AqdGetObservationResponseXmlStreamWriter
         }
     }
 
+    private static XmlOptions getXmlOptions() {
+        return XmlOptionsHelper
+                .getInstance().getXmlOptions();
+    }
+
     /**
      * {@link TimerTask} to write blank strings to the {@link OutputStream} to
      * avoid conncetion timeout after 1000 ms
@@ -365,7 +367,7 @@ public class AqdGetObservationResponseXmlStreamWriter
         @Override
         public void run() {
             try {
-                chars(Constants.BLANK_STRING);
+                chars("");
                 flush();
             } catch (XMLStreamException xmlse) {
                 cleanup();

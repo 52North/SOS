@@ -36,13 +36,10 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.SchemaAwareEncoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2StreamingConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
@@ -52,9 +49,12 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.shetland.ogc.sos.Sos2StreamingConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.SchemaAwareEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 
@@ -140,7 +140,7 @@ public class GetObservationResponseXmlStreamWriter extends XmlStreamWriter<GetOb
         namespace(Sos2StreamingConstants.NS_SOS_PREFIX, Sos2StreamingConstants.NS_SOS_20);
         // get observation encoder
         ObservationEncoder<XmlObject, OmObservation> encoder = findObservationEncoder(response.getResponseFormat());
-        encodingValues.getAdditionalValues().put(HelperValues.DOCUMENT, null);
+        encodingValues.getAdditionalValues().put(SosHelperValues.DOCUMENT, null);
         encodingValues.setEncodingNamespace(response.getResponseFormat());
         // write schemaLocation
         schemaLocation(getSchemaLocation(encodingValues, encoder));

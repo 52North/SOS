@@ -31,7 +31,6 @@ package org.n52.sos.encode;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -46,12 +45,6 @@ import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
@@ -60,6 +53,8 @@ import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.AqdConstants;
@@ -74,6 +69,11 @@ import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.Referenceable;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -133,7 +133,7 @@ public class AqdEncoder extends AbstractXmlEncoder<XmlObject, Object> implements
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException,
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         if (element instanceof GetObservationResponse) {
             return encodeGetObservationResponse((GetObservationResponse) element);
@@ -177,10 +177,10 @@ public class AqdEncoder extends AbstractXmlEncoder<XmlObject, Object> implements
             if (!timePeriod.isEmpty()) {
                 eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
             }
-            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-            additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
-            additionalValues.put(HelperValues.DOCUMENT, null);
-            return encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection, additionalValues);
+            EncodingContext ctx = EncodingContext.empty()
+                            .with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2)
+                            .with(SosHelperValues.DOCUMENT, null);
+            return encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection, ctx);
         } catch (OwsExceptionReport ex) {
             throw new EncodingException(ex);
         }

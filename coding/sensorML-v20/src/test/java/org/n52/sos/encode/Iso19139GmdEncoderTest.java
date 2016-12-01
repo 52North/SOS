@@ -43,9 +43,6 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.w3c.dom.Node;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.iso.gmd.GmdConformanceResult;
 import org.n52.shetland.iso.gmd.GmdConstants;
@@ -55,16 +52,15 @@ import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.NamespaceContextBuilder;
 import org.n52.sos.util.XmlHelper;
-
-import com.google.common.collect.ImmutableMap;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 public class Iso19139GmdEncoderTest {
-    private static final ImmutableMap<HelperValues, String> TYPE
-            = ImmutableMap.of(HelperValues.TYPE, "true");
-    private static final ImmutableMap<HelperValues, String> PROPERTY_TYPE
-            = ImmutableMap.of(HelperValues.PROPERTY_TYPE, "true");
-    private static final ImmutableMap<HelperValues, String> DOCUMENT_TYPE
-            = ImmutableMap.of(HelperValues.DOCUMENT, "true");
+    private static final EncodingContext TYPE = EncodingContext.of(SosHelperValues.TYPE);
+    private static final EncodingContext PROPERTY_TYPE = EncodingContext.of(SosHelperValues.PROPERTY_TYPE);
+    private static final EncodingContext DOCUMENT_TYPE = EncodingContext.of(SosHelperValues.DOCUMENT);
     private static final NamespaceContext NS_CTX = new NamespaceContextBuilder()
             .add(GmlConstants.NS_GML_32, GmlConstants.NS_GML_PREFIX)
             .add(GcoConstants.NS_GCO, GcoConstants.NS_GCO_PREFIX)

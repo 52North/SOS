@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -100,7 +99,7 @@ import org.n52.sos.netcdf.data.subsensor.BinProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.ProfileSubSensor;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
 import org.n52.sos.netcdf.om.NetCDFObservation;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
@@ -192,11 +191,11 @@ public abstract class AbstractNetcdfEncoder implements ObservationEncoder<Binary
 
     @Override
     public BinaryAttachmentResponse encode(Object element) throws EncodingException {
-        return encode(element, new EnumMap<>(HelperValues.class));
+        return encode(element, EncodingContext.empty());
     }
 
     @Override
-    public BinaryAttachmentResponse encode(Object objectToEncode, Map<HelperValues, String> additionalValues)
+    public BinaryAttachmentResponse encode(Object objectToEncode, EncodingContext additionalValues)
             throws EncodingException {
         if (objectToEncode instanceof AbstractObservationResponse) {
             AbstractObservationResponse aor = (AbstractObservationResponse) objectToEncode;

@@ -64,10 +64,6 @@ import org.isotc211.x2005.gmd.DQResultPropertyType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.iso.gmd.GmdCitationDate;
 import org.n52.shetland.iso.gmd.GmdConformanceResult;
@@ -82,6 +78,11 @@ import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -142,7 +143,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException,
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         // try {
@@ -165,7 +166,7 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     private XmlObject encodeResponsibleParty(SmlResponsibleParty responsibleParty,
-            Map<HelperValues, String> additionalValues) throws EncodingException {
+            EncodingContext additionalValues) throws EncodingException {
         if (responsibleParty.isSetHref()) {
             CIResponsiblePartyPropertyType cirppt =
                     CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
@@ -193,12 +194,12 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
         encodeContact(cirpt.addNewContactInfo().addNewCIContact(), responsibleParty);
         // set role
         encodeRole(cirpt.addNewRole(), responsibleParty.getRoleObject());
-        if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+        if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
             CIResponsiblePartyPropertyType cirppt =
                     CIResponsiblePartyPropertyType.Factory.newInstance(getXmlOptions());
             cirppt.setCIResponsibleParty(cirpt);
             return cirppt;
-        } else if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+        } else if (additionalValues.has(SosHelperValues.DOCUMENT)) {
             CIResponsiblePartyDocument cirpd =
                     CIResponsiblePartyDocument.Factory.newInstance(getXmlOptions());
             cirpd.setCIResponsibleParty(cirpt);
@@ -264,14 +265,14 @@ public class Iso19139GmdEncoder extends AbstractXmlEncoder<XmlObject, Object> {
         }
     }
 
-    private XmlObject encodeGmdDomainConsistency(GmdDomainConsistency element, Map<HelperValues, String> additionalValues) throws EncodingException {
-        if (additionalValues.containsKey(HelperValues.DOCUMENT)) {
+    private XmlObject encodeGmdDomainConsistency(GmdDomainConsistency element, EncodingContext additionalValues) throws EncodingException {
+        if (additionalValues.has(SosHelperValues.DOCUMENT)) {
             DQDomainConsistencyDocument document =
                     DQDomainConsistencyDocument.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = document.addNewDQDomainConsistency().addNewResult();
             encodeGmdDomainConsistency(addNewResult, element);
             return document;
-        } else if (additionalValues.containsKey(HelperValues.PROPERTY_TYPE)) {
+        } else if (additionalValues.has(SosHelperValues.PROPERTY_TYPE)) {
             DQDomainConsistencyPropertyType propertyType =
                     DQDomainConsistencyPropertyType.Factory.newInstance(getXmlOptions());
             DQResultPropertyType addNewResult = propertyType.addNewDQDomainConsistency().addNewResult();

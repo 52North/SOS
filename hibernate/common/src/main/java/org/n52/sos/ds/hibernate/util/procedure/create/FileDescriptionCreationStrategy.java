@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Session;
 import org.slf4j.Logger;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.StringHelper;
@@ -54,7 +56,7 @@ import com.google.common.base.Strings;
 /**
  * Strategy to create the {@link SosProcedureDescription} from a file.
  */
-public class FileDescriptionCreationStrategy implements DescriptionCreationStrategy {
+public class FileDescriptionCreationStrategy extends XmlStringDescriptionCreationStrategy {
 
     private static final Logger LOGGER = LoggerFactory
             .getLogger(FileDescriptionCreationStrategy.class);
@@ -63,12 +65,11 @@ public class FileDescriptionCreationStrategy implements DescriptionCreationStrat
     public SosProcedureDescription create(Procedure p, String descriptionFormat, Locale i18n, Session s)
             throws OwsExceptionReport {
         try {
-            XmlObject xml = read(p.getDescriptionFile());
-            SosProcedureDescription desc = decode(xml);
+            SosProcedureDescription desc = new SosProcedureDescription<AbstractFeature>(readXml(read(p.getDescriptionFile())));
             desc.setIdentifier(p.getIdentifier());
             desc.setDescriptionFormat(p.getProcedureDescriptionFormat().getProcedureDescriptionFormat());
             return desc;
-        } catch (IOException | DecodingException ex) {
+        } catch (IOException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
     }
@@ -88,17 +89,10 @@ public class FileDescriptionCreationStrategy implements DescriptionCreationStrat
                 getResourceAsStream(builder.toString());
     }
 
-    private SosProcedureDescription decode(XmlObject xml)
-            throws DecodingException {
-        return (SosProcedureDescription) CodingHelper.decodeXmlElement(xml);
-    }
-
-    private XmlObject read(String path)
-            throws IOException, DecodingException {
+    private String read(String path)
+            throws IOException {
         InputStream stream = getDocumentAsStream(path);
-        String string = StringHelper.convertStreamToString(stream);
-        XmlObject xml = XmlHelper.parseXmlString(string);
-        return xml;
+        return StringHelper.convertStreamToString(stream);
     }
 
     @Override

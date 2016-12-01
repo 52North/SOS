@@ -872,7 +872,7 @@ public class ProcedureDAO extends AbstractIdentifierNameDescriptionDAO implement
             SosProcedureDescription procedureDescription, boolean isType, Session session) {
         return getOrInsertProcedure(identifier, procedureDescriptionFormat,
                 procedureDescription.getParentProcedures(), procedureDescription.getTypeOf(), isType,
-                procedureDescription.isAggragation(), session);
+                procedureDescription.isAggregation(), session);
     }
 
     private Procedure getOrInsertProcedure(String identifier, ProcedureDescriptionFormat procedureDescriptionFormat,

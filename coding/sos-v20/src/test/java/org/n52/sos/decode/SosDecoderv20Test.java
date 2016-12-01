@@ -43,7 +43,7 @@ import org.junit.Test;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

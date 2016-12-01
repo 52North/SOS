@@ -61,20 +61,15 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlRuntimeException;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
-import org.opengis.temporal.IndeterminateValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.service.ServiceConfiguration;
 import org.n52.iceland.util.MinMax;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -93,6 +88,11 @@ import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.JTSHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -262,7 +262,7 @@ public class GmlEncoderv311 extends AbstractXmlEncoder<XmlObject, Object> {
             if (timePosition.isSetIndeterminateValue()) {
                 xbTimePosition.setIndeterminatePosition(TimeIndeterminateValueType.Enum.forString(timePosition.getIndeterminateValue().getValue()));
             } else {
-                xbTimePosition.setIndeterminatePosition(TimeIndeterminateValueType.Enum.forString(IndeterminateValue.UNKNOWN.name()));
+                xbTimePosition.setIndeterminatePosition(TimeIndeterminateValueType.Enum.forString(IndeterminateValue.UNKNOWN.getValue()));
             }
         } else {
             final String endString =

@@ -45,6 +45,8 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
 import org.n52.janmayen.http.HTTPStatus;
 import org.n52.sos.ds.hibernate.dao.HibernateSqlQueryConstants;
 import org.n52.sos.ds.hibernate.entities.DescriptionXmlEntity;
@@ -328,14 +330,15 @@ public class HibernateProcedureConverter implements HibernateSqlQueryConstants {
                         .setValidTime(validTime)
                         .setProcedureCache(cache)
                         .setConverter(this);
-        if (procedure.isSetTypeOf()) {
+        if (procedure.isSetTypeOf() && desc.getProcedureDescription() instanceof AbstractProcessV20) {
             Procedure typeOf = procedure.getTypeOf();
             enrichments.setTypeOfIdentifier(typeOf.getIdentifier()).setTypeOfFormat(format);
         }
-        if (desc instanceof SensorML && ((SensorML) desc).isWrapper()) {
+        if (desc.getProcedureDescription() instanceof SensorML && ((SensorML) desc.getProcedureDescription()).isWrapper()) {
             enrichments.setDescription(desc).createValidTimeEnrichment().enrich();
-            for (AbstractProcess abstractProcess : ((SensorML) desc).getMembers()) {
-                enrichments.setDescription(abstractProcess).enrichAll();
+            for (AbstractProcess abstractProcess : ((SensorML) desc.getProcedureDescription()).getMembers()) {
+                SosProcedureDescription<AbstractProcess> sosProcedureDescription = new SosProcedureDescription<>(abstractProcess);
+                enrichments.setDescription(sosProcedureDescription).enrichAll();
             }
         } else {
             enrichments.enrichAll();

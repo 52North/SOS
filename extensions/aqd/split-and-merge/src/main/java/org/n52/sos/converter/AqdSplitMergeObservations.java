@@ -42,9 +42,9 @@ import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.aqd.AqdConstants;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 

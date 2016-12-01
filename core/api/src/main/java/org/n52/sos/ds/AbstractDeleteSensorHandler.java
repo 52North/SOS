@@ -34,8 +34,8 @@ import java.util.Set;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.response.DeleteSensorResponse;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 
 /**
  * Renamed, in version 4.x called AbstractDeleteSensorDAO

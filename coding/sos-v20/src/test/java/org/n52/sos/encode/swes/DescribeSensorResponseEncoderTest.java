@@ -54,7 +54,7 @@ import org.n52.iceland.ogc.swes.SwesConstants;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 
 import com.google.common.collect.Maps;
 

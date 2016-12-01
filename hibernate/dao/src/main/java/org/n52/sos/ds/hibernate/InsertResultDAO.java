@@ -62,6 +62,7 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
@@ -307,10 +308,10 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      *            Procedure entity
      * @return Internal ProcedureDescription
      */
-    private SosProcedureDescription createProcedure(final Procedure hProcedure) {
+    private SosProcedureDescription<?> createProcedure(final Procedure hProcedure) {
         final SensorML procedure = new SensorML();
         procedure.setIdentifier(hProcedure.getIdentifier());
-        return procedure;
+        return new SosProcedureDescription<AbstractFeature>(procedure);
     }
 
     /**

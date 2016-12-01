@@ -76,7 +76,6 @@ import net.opengis.sensorML.x101.ProcessModelDocument;
 import net.opengis.sensorML.x101.ProcessModelType;
 import net.opengis.sensorML.x101.ResponsiblePartyDocument.ResponsibleParty;
 import net.opengis.sensorML.x101.SensorMLDocument;
-import net.opengis.sensorML.x101.SensorMLDocument.SensorML;
 import net.opengis.sensorML.x101.SensorMLDocument.SensorML.Member;
 import net.opengis.sensorML.x101.SmlLocation.SmlLocation2;
 import net.opengis.sensorML.x101.SystemDocument;
@@ -112,6 +111,7 @@ import org.n52.shetland.ogc.sensorML.AbstractProcess;
 import org.n52.shetland.ogc.sensorML.AbstractSensorML;
 import org.n52.shetland.ogc.sensorML.ProcessMethod;
 import org.n52.shetland.ogc.sensorML.ProcessModel;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorMLConstants;
 import org.n52.shetland.ogc.sensorML.SmlContact;
 import org.n52.shetland.ogc.sensorML.SmlContactList;
@@ -157,7 +157,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.HelperValues;
 import org.n52.svalbard.encode.Encoder;
@@ -190,11 +189,9 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                             .put(Sos1Constants.SERVICEVERSION, ImmutableSet.of(SensorMLConstants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
                             .build());
 
-    @SuppressWarnings("unchecked")
     private static final Set<EncoderKey> ENCODER_KEYS = union(
-            encoderKeysForElements(SensorMLConstants.NS_SML, SosProcedureDescription.class, AbstractSensorML.class),
-            encoderKeysForElements(SensorMLConstants.SENSORML_CONTENT_TYPE.toString(), SosProcedureDescription.class,
-                    AbstractSensorML.class));
+            encoderKeysForElements(SensorMLConstants.NS_SML, AbstractSensorML.class),
+            encoderKeysForElements(SensorMLConstants.SENSORML_CONTENT_TYPE.toString(), AbstractSensorML.class));
 
     public SensorMLEncoderv101() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!",
@@ -239,14 +236,14 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         XmlObject encodedObject = null;
         if (response instanceof AbstractSensorML) {
             encodedObject = createSensorDescription((AbstractSensorML) response);
-        }
+//        }
         // FIXME workaround? if of type UnknowProcedureType try to parse the
         // description string, UNIT is missing "NOT_DEFINED"?!
-        else if (response instanceof SosProcedureDescriptionUnknownType) {
-            final String procDescXMLString = ((SosProcedureDescription) response).getSensorDescriptionXmlString();
-            final AbstractSensorML sensorDesc = new AbstractSensorML();
-            sensorDesc.setSensorDescriptionXmlString(procDescXMLString);
-            encodedObject = createSensorDescriptionFromString(sensorDesc);
+//        else if (response instanceof SosProcedureDescriptionUnknownType) {
+//            final String procDescXMLString = ((SosProcedureDescription) response).getXml();
+//            final AbstractSensorML sensorDesc = new AbstractSensorML();
+//            sensorDesc.setXml(procDescXMLString);
+//            encodedObject = createSensorDescriptionFromString(sensorDesc);
         } else {
             throw new UnsupportedEncoderInputException(this, response);
         }
@@ -269,7 +266,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
      * @throws OwsExceptionReport
      */
     private XmlObject createSensorDescription(final AbstractSensorML sensorDesc) throws EncodingException {
-        if (sensorDesc.isSetSensorDescriptionXmlString()) {
+        if (sensorDesc.isSetXml()) {
             return createSensorDescriptionFromString(sensorDesc);
         } else {
             return createSensorDescriptionFromObject(sensorDesc);
@@ -279,7 +276,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     protected XmlObject createSensorDescriptionFromString(final AbstractSensorML sensorDesc)
             throws EncodingException {
         try {
-            final XmlObject xmlObject = XmlObject.Factory.parse(sensorDesc.getSensorDescriptionXmlString());
+            final XmlObject xmlObject = XmlObject.Factory.parse(sensorDesc.getXml());
             if (xmlObject instanceof SensorMLDocument) {
                 final SensorMLDocument sensorML = (SensorMLDocument) xmlObject;
                 for (final Member member : sensorML.getSensorML().getMemberArray()) {
@@ -528,11 +525,10 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
     // TODO refactor/rename
     private void addAbstractProcessValues(final AbstractProcessType abstractProcess,
             final AbstractProcess sosAbstractProcess) throws EncodingException {
-        if (sosAbstractProcess.isSetGmlId()) {
+        if (sosAbstractProcess.isSetGmlID()) {
             abstractProcess.setId(sosAbstractProcess.getGmlId());
         }
 
-        addSpecialCapabilities(sosAbstractProcess);
         if (sosAbstractProcess.isSetCapabilities()) {
             final Capabilities[] existing = abstractProcess.getCapabilitiesArray();
             final Set<String> names = Sets.newHashSetWithExpectedSize(existing.length);
@@ -602,7 +598,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                 newCursor.removeXml();
                 newCursor.dispose();
             }
-            final Time time = sosAbstractProcess.getValidTime();
+            final Time time = sosAbstractProcess.getMergedValidTime();
             final XmlObject xbtime = encodeObjectToXml(GmlConstants.NS_GML, time);
             if (time instanceof TimeInstant) {
                 abstractProcess.addNewValidTime().addNewTimeInstant().set(xbtime);
@@ -726,12 +722,9 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         }
         // set components
         final List<SmlComponent> smlComponents = Lists.newArrayList();
-        if (system.isSetComponents() || system.isSetChildProcedures()) {
+        if (system.isSetComponents()) {
             if (system.isSetComponents()) {
                 smlComponents.addAll(system.getComponents());
-            }
-            if (system.isSetChildProcedures()) {
-                smlComponents.addAll(createComponentsForChildProcedures(system.getChildProcedures()));
             }
             if (!smlComponents.isEmpty()) {
                 final Components components = createComponents(smlComponents);
@@ -741,15 +734,8 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                 }
             }
         }
-        if (!smlComponents.isEmpty()) {
-            // TODO check for duplicated outputs
-            system.getOutputs().addAll(getOutputsFromChilds(smlComponents));
-            // TODO check if necessary
-            // system.addFeatureOfInterest(getFeaturesFromChild(smlComponents));
-        }
         // set outputs
         if (system.isSetOutputs()) {
-            extendOutputs(system);
             xbSystem.setOutputs(createOutputs(system.getOutputs()));
         }
     }
@@ -769,16 +755,7 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         }
         // set outputs
         if (component.isSetOutputs()) {
-            extendOutputs(component);
             ct.setOutputs(createOutputs(component.getOutputs()));
-        }
-    }
-
-    private void extendOutputs(AbstractProcess abstractProcess) {
-        if (abstractProcess.isSetPhenomenon()) {
-            abstractProcess.getOutputs().stream()
-                    .filter(output -> abstractProcess.hasPhenomenonFor(output.getIoValue().getDefinition()))
-                    .forEach(output -> output.getIoValue().setName(abstractProcess.getPhenomenonFor(output.getIoValue().getDefinition()).getName()));
         }
     }
 
@@ -790,7 +767,6 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
         }
         // set outputs
         if (sosProcessModel.isSetOutputs()) {
-            extendOutputs(sosProcessModel);
             processModel.setOutputs(createOutputs(sosProcessModel.getOutputs()));
         }
         // set method
@@ -1121,11 +1097,11 @@ public class SensorMLEncoderv101 extends AbstractSensorMLEncoder {
                 }
             } else if (sosSMLComponent.getProcess() != null) {
                 XmlObject xmlObject = null;
-                if (sosSMLComponent.getProcess().getSensorDescriptionXmlString() != null
-                        && !sosSMLComponent.getProcess().getSensorDescriptionXmlString().isEmpty()) {
+                if (sosSMLComponent.getProcess().getXml() != null
+                        && !sosSMLComponent.getProcess().getXml().isEmpty()) {
                     try {
                         xmlObject =
-                                XmlObject.Factory.parse(sosSMLComponent.getProcess().getSensorDescriptionXmlString());
+                                XmlObject.Factory.parse(sosSMLComponent.getProcess().getXml());
 
                     } catch (final XmlException xmle) {
                         throw new EncodingException("Error while encoding SensorML child procedure description "

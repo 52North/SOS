@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.sos.Sos2Constants.DeleteSensorParams;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 /**

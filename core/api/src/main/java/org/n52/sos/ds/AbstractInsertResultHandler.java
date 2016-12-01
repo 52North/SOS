@@ -39,8 +39,8 @@ import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsValue;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.InsertResultParams;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertResultDAO

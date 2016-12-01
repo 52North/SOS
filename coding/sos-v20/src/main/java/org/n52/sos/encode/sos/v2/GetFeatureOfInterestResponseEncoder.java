@@ -45,7 +45,7 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.util.XmlHelper;
 

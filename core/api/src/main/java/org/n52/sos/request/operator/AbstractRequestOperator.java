@@ -80,8 +80,8 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 
@@ -252,14 +252,24 @@ public abstract class AbstractRequestOperator<D extends OperationHandler, Q exte
         this.serviceEventBus.submit(new RequestEvent(abstractRequest));
         if (requestType.isAssignableFrom(abstractRequest.getClass())) {
             Q request = requestType.cast(abstractRequest);
+            preProcessRequest(request);
             checkForModifierAndProcess(request);
             checkParameters(request);
             A response = receive(request);
             this.serviceEventBus.submit(new ResponseEvent(response));
+            postProcessResponse(response);
             return checkForModifierAndProcess(request, response);
         } else {
             throw new OperationNotSupportedException(abstractRequest.getOperationName());
         }
+    }
+
+    protected void preProcessRequest(Q request) {
+        // nothing to do
+    }
+
+    protected OwsServiceResponse postProcessResponse(A response) {
+        return response;
     }
 
     private void checkForModifierAndProcess(OwsServiceRequest request) throws OwsExceptionReport {

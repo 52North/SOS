@@ -29,7 +29,7 @@
 package org.n52.sos.encode.json.impl;
 
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 
 /**
  * TODO JavaDoc

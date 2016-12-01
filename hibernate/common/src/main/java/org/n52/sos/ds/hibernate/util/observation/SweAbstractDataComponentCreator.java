@@ -31,6 +31,7 @@ package org.n52.sos.ds.hibernate.util.observation;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.oxf.xml.NcNameResolver;

@@ -51,7 +51,7 @@ import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;

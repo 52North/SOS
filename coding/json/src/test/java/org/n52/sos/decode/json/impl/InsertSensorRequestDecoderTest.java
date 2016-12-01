@@ -45,7 +45,7 @@ import org.junit.Test;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;

@@ -36,8 +36,8 @@ import java.util.Set;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.GetResultTemplateRequest;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultTemplateDAO

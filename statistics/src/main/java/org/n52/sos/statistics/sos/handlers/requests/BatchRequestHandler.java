@@ -28,7 +28,7 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import org.n52.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
 
 public class BatchRequestHandler extends AbstractSosRequestHandler<BatchRequest> {
 

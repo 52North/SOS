@@ -31,7 +31,7 @@ package org.n52.sos.encode.json.impl;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.UpdateSensorResponse;
+import org.n52.shetland.ogc.sos.response.UpdateSensorResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

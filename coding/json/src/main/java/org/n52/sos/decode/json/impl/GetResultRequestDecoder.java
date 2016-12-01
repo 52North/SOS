@@ -38,7 +38,7 @@ import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

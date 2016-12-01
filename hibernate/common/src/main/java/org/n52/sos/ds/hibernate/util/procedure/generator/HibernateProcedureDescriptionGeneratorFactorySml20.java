@@ -35,6 +35,7 @@ import java.util.Set;
 import org.hibernate.Session;
 
 import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
@@ -84,28 +85,28 @@ public class HibernateProcedureDescriptionGeneratorFactorySml20 implements Hiber
                 // 2.1 if position is available -> system -> own class <- should
                 // be compliant with SWE lightweight profile
                 if (hasChildProcedure(procedure.getIdentifier())) {
-                    return createPhysicalSystem(procedure, session);
+                    return new SosProcedureDescription<AbstractFeature>(createPhysicalSystem(procedure, session));
                 } else {
-                    return createPhysicalComponent(procedure, session);
+                    return new SosProcedureDescription<AbstractFeature>(createPhysicalComponent(procedure, session));
                 }
             } else {
                 // 2.2 if no position is available -> SimpleProcess -> own class
 //                if (hasChildProcedure(procedure.getIdentifier())) {
 //                    return createAggregateProcess(procedure, session);
 //                } else {
-                    return createSimpleProcess(procedure, session);
+                return new SosProcedureDescription<AbstractFeature>(createSimpleProcess(procedure, session));
 //                }
             }
         }
 
-        private SosProcedureDescription createPhysicalComponent(Procedure procedure, Session session) throws OwsExceptionReport {
+        private PhysicalComponent createPhysicalComponent(Procedure procedure, Session session) throws OwsExceptionReport {
             PhysicalComponent physicalComponent = new PhysicalComponent();
             setIdentifier(physicalComponent, procedure);
             setCommonValues(procedure, physicalComponent, session);
             return physicalComponent;
         }
 
-        private SosProcedureDescription createPhysicalSystem(Procedure procedure, Session session) throws OwsExceptionReport {
+        private PhysicalSystem createPhysicalSystem(Procedure procedure, Session session) throws OwsExceptionReport {
             PhysicalSystem physicalSystem = new PhysicalSystem();
             setIdentifier(physicalSystem, procedure);
             setCommonValues(procedure, physicalSystem, session);
@@ -113,14 +114,14 @@ public class HibernateProcedureDescriptionGeneratorFactorySml20 implements Hiber
             return physicalSystem;
         }
 
-        private SosProcedureDescription createSimpleProcess(Procedure procedure, Session session) throws OwsExceptionReport {
+        private SimpleProcess createSimpleProcess(Procedure procedure, Session session) throws OwsExceptionReport {
             SimpleProcess simpleProcess = new SimpleProcess();
             setIdentifier(simpleProcess, procedure);
             setCommonValues(procedure, simpleProcess, session);
             return simpleProcess;
         }
 
-        private SosProcedureDescription createAggregateProcess(Procedure procedure, Session session) throws OwsExceptionReport {
+        private AggregateProcess createAggregateProcess(Procedure procedure, Session session) throws OwsExceptionReport {
             AggregateProcess aggregateProcess = new AggregateProcess();
             setIdentifier(aggregateProcess, procedure);
             setCommonValues(procedure, aggregateProcess, session);

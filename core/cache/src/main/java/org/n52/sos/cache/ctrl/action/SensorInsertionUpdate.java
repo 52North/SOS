@@ -39,8 +39,8 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations

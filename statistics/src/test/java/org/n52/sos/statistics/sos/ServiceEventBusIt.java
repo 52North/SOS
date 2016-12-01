@@ -46,8 +46,8 @@ import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 import org.n52.iceland.statistics.impl.AbstractStatisticsServiceEventListener;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.net.IPAddress;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

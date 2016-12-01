@@ -35,6 +35,7 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Scanner;
 
+import org.apache.xmlbeans.XmlException;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

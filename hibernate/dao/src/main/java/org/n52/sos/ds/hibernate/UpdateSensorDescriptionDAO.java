@@ -105,7 +105,7 @@ private HibernateSessionHolder sessionHolder;
                         }
                     }
                     validProcedureTimeDAO.insertValidProcedureTime(procedure, procedureDescriptionFormat,
-                            procedureDescription.getSensorDescriptionXmlString(), currentTime, session);
+                            procedureDescription.getXml(), currentTime, session);
                 }
             }
             session.flush();

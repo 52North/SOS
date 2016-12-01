@@ -45,8 +45,8 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 
 /**
  * interface for getting procedure description for a passed DescribeSensor

@@ -38,8 +38,8 @@ import org.n52.shetland.ogc.om.AbstractPhenomenon;
 import org.n52.shetland.ogc.om.OmCompositePhenomenon;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.sos.cache.SosWritableContentCache;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 /**
  * When executing this &auml;ction (see {@link Action}), the following relations

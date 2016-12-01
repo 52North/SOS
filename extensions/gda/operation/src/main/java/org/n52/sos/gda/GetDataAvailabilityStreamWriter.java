@@ -158,7 +158,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         if (da.getFeatureOfInterest().isSetTitle()) {
             attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getFeatureOfInterest().getTitle());
         } else {
-            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getFeatureOfInterest().getTitleFromHref());
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getFeatureOfInterest().getTitleOrFromHref());
         }
         end(GetDataAvailabilityConstants.GDA_FEATURE_OF_INTEREST);
     }
@@ -169,7 +169,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         if (da.getProcedure().isSetTitle()) {
             attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getProcedure().getTitle());
         } else {
-            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getProcedure().getTitleFromHref());
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getProcedure().getTitleOrFromHref());
         }
         end(GetDataAvailabilityConstants.GDA_PROCEDURE);
     }
@@ -180,7 +180,7 @@ public class GetDataAvailabilityStreamWriter extends XmlEventWriter<List<DataAva
         if (da.getObservedProperty().isSetTitle()) {
             attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getObservedProperty().getTitle());
         } else {
-            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getObservedProperty().getTitleFromHref());
+            attr(GetDataAvailabilityConstants.XLINK_TITLE, da.getObservedProperty().getTitleOrFromHref());
         }
         end(GetDataAvailabilityConstants.GDA_OBSERVED_PROPERTY);
     }

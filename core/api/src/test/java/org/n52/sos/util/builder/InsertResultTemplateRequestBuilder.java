@@ -30,7 +30,7 @@ package org.n52.sos.util.builder;
 
 import static org.n52.sos.util.builder.ObservationConstellationBuilder.anObservationConstellation;
 
-import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

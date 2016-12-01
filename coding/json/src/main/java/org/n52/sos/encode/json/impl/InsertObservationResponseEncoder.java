@@ -30,7 +30,7 @@ package org.n52.sos.encode.json.impl;
 
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 

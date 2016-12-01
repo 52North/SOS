@@ -42,9 +42,9 @@ import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.request.BatchRequest;
-import org.n52.sos.response.BatchResponse;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.response.BatchResponse;
+import org.n52.shetland.ogc.sos.BatchConstants;
 
 /**
  * TODO JavaDoc

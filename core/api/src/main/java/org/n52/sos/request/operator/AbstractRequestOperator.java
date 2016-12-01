@@ -80,8 +80,8 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.exception.ows.concrete.InvalidValueReferenceException;
 import org.n52.sos.exception.ows.concrete.MissingProcedureParameterException;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.response.AbstractObservationResponse;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.response.AbstractObservationResponse;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
 

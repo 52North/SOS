@@ -28,6 +28,8 @@
  */
 package org.n52.sos.request;
 
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static org.hamcrest.Matchers.is;

@@ -40,8 +40,8 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ds.AbstractInsertResultHandler;
 import org.n52.sos.event.events.ResultInsertion;
 import org.n52.sos.exception.ows.concrete.MissingResultValuesParameterException;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
 

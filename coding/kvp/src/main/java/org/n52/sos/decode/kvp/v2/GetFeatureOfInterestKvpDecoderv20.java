@@ -31,7 +31,7 @@ package org.n52.sos.decode.kvp.v2;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 
 /**
  * @since 4.0.0

@@ -55,8 +55,8 @@ import org.n52.sos.exception.ows.concrete.InvalidObservationTypeForOfferingExcep
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingObservationParameterException;
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;

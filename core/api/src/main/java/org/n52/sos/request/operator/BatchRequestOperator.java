@@ -38,9 +38,9 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.sos.ds.BatchOperationHandler;
-import org.n52.sos.request.BatchRequest;
-import org.n52.sos.response.BatchResponse;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.response.BatchResponse;
+import org.n52.shetland.ogc.sos.BatchConstants;
 
 /**
  * TODO JavaDoc

@@ -57,8 +57,8 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.sos.SosConstants.GetObservationParams;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.util.SosHelper;
 
 /**

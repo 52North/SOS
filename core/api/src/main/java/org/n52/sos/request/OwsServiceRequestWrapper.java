@@ -26,37 +26,58 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.response;
+package org.n52.sos.request;
 
-import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
-import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 
 /**
- * @since 4.0.0
+ * Parsed SOS request, used for GetResult requests
  *
+ * @since 4.0.0
  */
-public class UpdateSensorResponse extends OwsServiceResponse {
+public class OwsServiceRequestWrapper extends OwsServiceRequest {
 
-    private String updatedProcedure;
+    private OwsServiceRequest request;
 
-    public UpdateSensorResponse() {
-        super(null, null, Sos2Constants.Operations.UpdateSensorDescription.name());
+    public OwsServiceRequestWrapper(OwsServiceRequest request) {
+        super(request.getService(),
+              request.getVersion(),
+              request.getOperationName());
+        this.request = request;
     }
 
-    public UpdateSensorResponse(String service, String version) {
-        super(service, version, Sos2Constants.Operations.UpdateSensorDescription.name());
+    public OwsServiceRequestWrapper() {
     }
 
-    public UpdateSensorResponse(String service, String version, String operationName) {
-        super(service, version, operationName);
+    /**
+     * Get the SOS request
+     *
+     * @return SOS request
+     */
+    public OwsServiceRequest getRequest() {
+        return request;
     }
 
-    public void setUpdatedProcedure(String updatedProcedure) {
-        this.updatedProcedure = updatedProcedure;
+    /**
+     * Set the SOS request
+     *
+     * @param request
+     *            SOS request
+     */
+    public void setRequest(OwsServiceRequest request) {
+        this.request = request;
     }
 
-    public String getUpdatedProcedure() {
-        return updatedProcedure;
+    @Override
+    public String getOperationName() {
+        return request.getOperationName();
     }
+
+    @Override
+    public void setOperationName(String operationName) {
+        request.setOperationName(operationName);
+    }
+
+
 
 }

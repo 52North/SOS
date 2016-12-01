@@ -66,8 +66,8 @@ import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosObservationOffering;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.svalbard.encode.exception.EncodingException;
 

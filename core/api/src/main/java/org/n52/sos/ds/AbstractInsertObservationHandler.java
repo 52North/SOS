@@ -42,8 +42,8 @@ import org.n52.shetland.ogc.ows.OwsPossibleValues;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.InsertObservationParams;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.response.InsertObservationResponse;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertObservationDAO

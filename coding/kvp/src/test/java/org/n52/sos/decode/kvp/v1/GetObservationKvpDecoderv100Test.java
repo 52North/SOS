@@ -49,7 +49,7 @@ import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
 import org.n52.janmayen.http.MediaType;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>

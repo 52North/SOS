@@ -43,7 +43,7 @@ import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
 import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

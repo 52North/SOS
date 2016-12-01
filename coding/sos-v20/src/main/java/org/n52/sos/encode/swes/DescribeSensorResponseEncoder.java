@@ -44,8 +44,8 @@ import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.GmlConstants;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.XmlHelper;
 

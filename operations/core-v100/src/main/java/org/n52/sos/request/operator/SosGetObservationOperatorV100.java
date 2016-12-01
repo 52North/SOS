@@ -56,8 +56,8 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationResponse;
 import org.n52.sos.service.Configurator;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;

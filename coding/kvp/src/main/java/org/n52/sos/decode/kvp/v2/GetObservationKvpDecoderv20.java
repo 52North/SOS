@@ -37,13 +37,13 @@ import javax.inject.Inject;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
-import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
-import org.n52.shetland.ogc.ows.extension.Extension;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.Decoder;

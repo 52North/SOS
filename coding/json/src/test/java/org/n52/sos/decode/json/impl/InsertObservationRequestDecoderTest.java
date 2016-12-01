@@ -46,7 +46,7 @@ import org.junit.rules.ErrorCollector;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;

@@ -31,7 +31,7 @@ package org.n52.sos.decode.kvp.v2;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
-import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 
 /**
  * KVP decoder implementation for SOS 2.0 GetObservationById operation

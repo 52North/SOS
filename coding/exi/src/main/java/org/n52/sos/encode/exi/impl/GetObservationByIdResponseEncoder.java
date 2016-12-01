@@ -30,7 +30,7 @@ package org.n52.sos.encode.exi.impl;
 
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.encode.exi.AbstractSosV2ResponseEncoder;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 
 /**
  * Response encoder for {@link GetObservationByIdResponse}

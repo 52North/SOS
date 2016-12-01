@@ -42,8 +42,8 @@ import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
-import org.n52.sos.response.GetFeatureOfInterestResponse;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
+import org.n52.shetland.ogc.sos.response.GetFeatureOfInterestResponse;
 import org.n52.sos.util.SosHelper;
 
 /**

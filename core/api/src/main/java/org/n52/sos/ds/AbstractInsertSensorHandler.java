@@ -46,8 +46,8 @@ import org.n52.shetland.ogc.sos.Sos1Constants.RegisterSensorParams;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.InsertSensorParams;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertSensorDAO

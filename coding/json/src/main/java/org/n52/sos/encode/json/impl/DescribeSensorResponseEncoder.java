@@ -37,8 +37,8 @@ import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.AbstractSosResponseEncoder;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknownType;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
 

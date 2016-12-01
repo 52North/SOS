@@ -28,7 +28,7 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class GetObservationByIdRequestHandler extends AbstractSosRequestHandler<GetObservationByIdRequest> {

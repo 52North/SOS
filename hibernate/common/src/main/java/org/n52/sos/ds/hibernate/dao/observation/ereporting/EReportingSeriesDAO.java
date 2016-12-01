@@ -35,8 +35,9 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OptionNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.aqd.AqdHelper;
 import org.n52.sos.aqd.ReportObligationType;
@@ -46,7 +47,6 @@ import org.n52.sos.ds.hibernate.entities.ereporting.EReportingAssessmentType;
 import org.n52.sos.ds.hibernate.entities.ereporting.EReportingSamplingPoint;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.request.GetObservationRequest;
 
 public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
@@ -57,7 +57,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws CodedException {
+    public List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session) throws OwsExceptionReport {
         return getSeriesCriteria(request, features, session).list();
     }
 
@@ -81,7 +81,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    public EReportingSeries getOrInsertSeries(ObservationContext identifiers, Session session) throws CodedException {
+    public EReportingSeries getOrInsertSeries(ObservationContext identifiers, Session session) throws OwsExceptionReport {
         return (EReportingSeries) super.getOrInsert(identifiers, session);
     }
 
@@ -123,7 +123,7 @@ public class EReportingSeriesDAO extends AbstractSeriesDAO {
     }
 
     @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
         if (request.isSetResponseFormat() && AqdConstants.NS_AQD.equals(request.getResponseFormat())) {
             ReportObligationType flow = AqdHelper.getInstance().getFlow(request.getExtensions());
             if (ReportObligationType.E1A.equals(flow) || ReportObligationType.E2A.equals(flow)) {

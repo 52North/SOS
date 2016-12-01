@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.util.LocalizedProducer;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -58,13 +57,14 @@ import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;
 import org.n52.sos.ds.hibernate.entities.parameter.ValuedParameterVisitor;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.AbstractObservationRequest;
 import org.n52.sos.util.SosHelper;
 
 import com.google.common.base.Strings;

@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueTimeDAO;
@@ -51,7 +52,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.TemporalReferencedSe
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationTimeExtrema;
 import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
-import org.n52.sos.request.GetObservationRequest;
 
 /**
  * Abstract value time data access object class for {@link SeriesValueTime}

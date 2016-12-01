@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.shetland.ogc.SupportedType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -55,13 +54,14 @@ import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.HrefAttributeValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.shetland.w3c.xlink.W3CHrefAttribute;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
 import org.n52.sos.decode.json.JSONDecodingException;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ImmutableSet;

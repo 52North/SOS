@@ -55,6 +55,7 @@ import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.extension.Extensions;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
@@ -66,7 +67,6 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
 import org.n52.sos.ds.hibernate.entities.observation.legacy.valued.SweDataArrayValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.observation.ObservationValueCreator;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 import org.n52.sos.util.GmlHelper;
 import org.n52.sos.util.OMHelper;

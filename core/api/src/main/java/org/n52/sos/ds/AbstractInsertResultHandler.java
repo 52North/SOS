@@ -32,11 +32,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.ows.OwsAllowedValues;
 import org.n52.shetland.ogc.ows.OwsAnyValue;
 import org.n52.shetland.ogc.ows.OwsDomain;
 import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants.InsertResultParams;
 import org.n52.shetland.ogc.sos.request.InsertResultRequest;

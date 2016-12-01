@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;

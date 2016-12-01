@@ -206,7 +206,7 @@ public abstract class ResourceDecoder extends RestDecoder {
      * {@link org.n52.sos.decode.SosKvpDecoderv20#parseNamespaces(String)}
      */
     protected Map<String, String> parseNamespaces(final String values) {
-        final Map<String, String> namespaces = new HashMap<String, String>();
+        final Map<String, String> namespaces = new HashMap<>();
         final List<String> array =
                 Arrays.asList(values.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("));
         for (final String string : array) {
@@ -223,10 +223,10 @@ public abstract class ResourceDecoder extends RestDecoder {
      * TODO move to KVP map decoder to share code
      */
     protected List<TemporalFilter> parseTemporalFilter(final List<String> parameterValues)
-            throws DateTimeException, InvalidParameterValueException {
-        final List<TemporalFilter> filterList = new ArrayList<TemporalFilter>(1);
+            throws DateTimeException, DecodingException {
+        final List<TemporalFilter> filterList = new ArrayList<>(1);
         if (parameterValues.size() != 2) {
-            throw new InvalidParameterValueException(
+            throw new DecodingException(
                     bindingConstants.getHttpGetParameterNameTemporalFilter(),
                     Arrays.toString(parameterValues.toArray()));
         }
@@ -239,7 +239,7 @@ public abstract class ResourceDecoder extends RestDecoder {
      * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#createTemporalFilterFromValue(String, String)}
      * TODO move to KVP map decoder to share code
      */
-    private TemporalFilter createTemporalFilterFromValue(final String value, final String valueReference) throws DateTimeException, InvalidParameterValueException {
+    private TemporalFilter createTemporalFilterFromValue(final String value, final String valueReference) throws DateTimeException, DecodingException {
         final TemporalFilter temporalFilter = new TemporalFilter();
         temporalFilter.setValueReference(valueReference);
         final String[] times = value.split("/");
@@ -266,7 +266,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             temporalFilter.setOperator(TimeOperator.TM_During);
             temporalFilter.setTime(tp);
         } else {
-            throw new InvalidParameterValueException(bindingConstants.getHttpGetParameterNameTemporalFilter(),value);
+            throw new DecodingException(bindingConstants.getHttpGetParameterNameTemporalFilter(),"The value '%s' of the parameter '%s' is invalid", value);
         }
         return temporalFilter;
     }
@@ -279,7 +279,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             throws DecodingException {
         if (!parameterValues.isEmpty()) {
             if (!(parameterValues instanceof RandomAccess)) {
-                parameterValues = new ArrayList<String>(parameterValues);
+                parameterValues = new ArrayList<>(parameterValues);
             }
             final SpatialFilter spatialFilter = new SpatialFilter();
 
@@ -302,9 +302,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             }
 
             if (coordinates.size() != 4) {
-                throw new InvalidParameterValueException().
-                at(parameterName).
-                withMessage("The parameter value of '%s' is not valid!", parameterName);
+                throw new DecodingException(parameterName, "The parameter value of '%s' is not valid!", parameterName);
             }
             final String lowerCorner = String.format(Locale.US, "%f %f", new Float(coordinates.get(0)), new Float(coordinates.get(1)));
             final String upperCorner = String.format(Locale.US, "%f %f", new Float(coordinates.get(2)), new Float(coordinates.get(3)));
@@ -339,8 +337,7 @@ public abstract class ResourceDecoder extends RestDecoder {
                     httpRequest.getContentType(),
                     bindingConstants.getContentTypeDefault());
             LOGGER.debug(errorMessage);
-            throw new InvalidParameterValueException("Content-Type", httpRequest.getContentType()).
-                withMessage(errorMessage);
+            throw new DecodingException("Content-Type", errorMessage);
         }
         return true;
     }

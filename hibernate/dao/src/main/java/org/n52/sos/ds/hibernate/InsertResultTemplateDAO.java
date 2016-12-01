@@ -35,13 +35,19 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -50,13 +56,6 @@ import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
-import org.n52.shetland.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.shetland.ogc.swe.SweDataRecord;
-import org.n52.shetland.ogc.swe.SweField;
-import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertResultTemplateDAO
@@ -83,7 +82,7 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
         InsertResultTemplateResponse response = new InsertResultTemplateResponse();
         response.setService(request.getService());
         response.setVersion(request.getVersion());
-        response.setAcceptedTemplate(request.getIdentifier());
+        response.setAcceptedTemplate(request.getIdentifier().getValue());
         Session session = null;
         Transaction transaction = null;
         try {
@@ -130,38 +129,34 @@ public class InsertResultTemplateDAO extends AbstractInsertResultTemplateHandler
 
     private void checkResultStructure(SosResultStructure resultStructure, String observedProperty)
             throws OwsExceptionReport {
-        try {
-            // TODO modify or remove if complex field elements are supported
-            final SweDataRecord record = setRecordFrom(resultStructure.getResultStructure());
+        // TODO modify or remove if complex field elements are supported
+        final SweDataRecord record = setRecordFrom(resultStructure.get().get());
 
-            for (final SweField swefield : record.getFields()) {
+        for (final SweField swefield : record.getFields()) {
 
-                if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>)
-                  || (swefield.getElement() instanceof SweDataRecord))) {
-                    throw new NoApplicableCodeException().withMessage(
-                            "The swe:Field element of type %s is not yet supported!",
-                        swefield.getElement().getClass().getName());
-                }
+            if (!((swefield.getElement() instanceof SweAbstractSimpleType<?>)
+              || (swefield.getElement() instanceof SweDataRecord))) {
+                throw new NoApplicableCodeException().withMessage(
+                        "The swe:Field element of type %s is not yet supported!",
+                    swefield.getElement().getClass().getName());
             }
-            if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
-                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                        .withMessage("Missing swe:Time or swe:TimeRange with definition %s", OmConstants.PHENOMENON_TIME);
-            }
-            if (ResultHandlingHelper.checkFields(record.getFields(), observedProperty) == -1) {
-                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                        .withMessage("Missing swe:field content with element definition %s", observedProperty);
-            }
-            if ((ResultHandlingHelper.hasResultTime(record) > -1 && record.getFields().size() > 3)
-            || (ResultHandlingHelper.hasResultTime(record) == -1 && record.getFields().size() > 2)) {
-                throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
-                        .withMessage(
-                                "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition %s, "
-                                        + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
-                                        + "with element definition %s",
-                            OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty);
-            }
-        } catch (DecodingException ex) {
-            throw new NoApplicableCodeException().causedBy(ex);
+        }
+        if (ResultHandlingHelper.hasPhenomenonTime(record) == -1) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:Time or swe:TimeRange with definition %s", OmConstants.PHENOMENON_TIME);
+        }
+        if (ResultHandlingHelper.checkFields(record.getFields(), observedProperty) == -1) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage("Missing swe:field content with element definition %s", observedProperty);
+        }
+        if ((ResultHandlingHelper.hasResultTime(record) > -1 && record.getFields().size() > 3)
+        || (ResultHandlingHelper.hasResultTime(record) == -1 && record.getFields().size() > 2)) {
+            throw new NoApplicableCodeException().at(Sos2Constants.InsertResultTemplateParams.resultStructure)
+                    .withMessage(
+                            "Supported resultStructure is swe:field content swe:Time or swe:TimeRange with element definition %s, "
+                                    + " optional swe:Time with element definition %s and swe:field content swe:AbstractSimpleComponent or swe:DataRecord "
+                                    + "with element definition %s",
+                        OmConstants.PHENOMENON_TIME, OmConstants.RESULT_TIME, observedProperty);
         }
     }
 

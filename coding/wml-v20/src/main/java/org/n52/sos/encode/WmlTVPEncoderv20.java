@@ -73,8 +73,8 @@ import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.WmlTVPEncoderv20XmlStreamWriter;
 import org.n52.sos.ogc.wml.ConformanceClassesWML2;
-import org.n52.sos.ogc.wml.WaterMLConstants;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 
 import com.google.common.base.Joiner;

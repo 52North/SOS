@@ -40,8 +40,8 @@ import org.hibernate.criterion.Restrictions;
 
 import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.shetland.ogc.gml.time.IndeterminateValue;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.TimeCreator;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractObservation;
 import org.n52.sos.ds.hibernate.entities.observation.AbstractTemporalReferencedObservation;
@@ -50,7 +50,6 @@ import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacy
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
 import org.n52.sos.ds.hibernate.util.SpatialRestrictions;
 import org.n52.sos.ogc.ows.ExtendedIndeterminateTime;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.util.GeometryHandler;
 
 /**
@@ -204,6 +203,6 @@ public abstract class AbstractValueDAO extends TimeCreator {
         return ObservationSettingProvider.getInstance().isIncludeChildObservableProperties();
     }
 
-    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport;
 
 }

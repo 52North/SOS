@@ -33,8 +33,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.OmObservationConstellation;
 import org.n52.shetland.ogc.om.SingleObservationValue;
@@ -42,17 +41,17 @@ import org.n52.shetland.ogc.om.values.ComplexValue;
 import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
-import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.ds.AbstractInsertResultTemplateHandler;
 import org.n52.sos.event.events.ResultTemplateInsertion;
 import org.n52.sos.exception.ows.concrete.DuplicateIdentifierException;
-import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
-import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
-import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @since 4.0.0
@@ -196,23 +195,23 @@ public class SosInsertResultTemplateOperatorV20
     }
 
     private void createCompositePhenomenons(InsertResultTemplateRequest request) throws OwsExceptionReport {
-        try {
-            if (request.getResultStructure().getResultStructure() instanceof SweDataRecord) {
-                SweDataRecord record = (SweDataRecord) request.getResultStructure().getResultStructure();
-                String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
-                if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
-                    if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
-                        ComplexValue cv = new ComplexValue((SweDataRecord)record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
-                        OmObservation observation = new OmObservation();
-                        observation.setObservationConstellation(request.getObservationTemplate());
-                        observation.setValue(new SingleObservationValue<>(cv));
-                        createCompositePhenomenon(observation);
-                    }
+        if (request.getResultStructure().isDecoded() && request.getResultStructure().get().get() instanceof SweDataRecord) {
+            SweDataRecord record = (SweDataRecord) request.getResultStructure().get().get();
+            String observablePropertyIdentifier = request.getObservationTemplate().getObservablePropertyIdentifier();
+            if (record.existsFieldForIdentifier(observablePropertyIdentifier)) {
+                if (record.getFieldByIdentifier(observablePropertyIdentifier).getElement() instanceof SweDataRecord) {
+                    ComplexValue cv = new ComplexValue((SweDataRecord)record.getFieldByIdentifier(observablePropertyIdentifier).getElement());
+                    OmObservation observation = new OmObservation();
+                    observation.setObservationConstellation(request.getObservationTemplate());
+                    observation.setValue(new SingleObservationValue<>(cv));
+                    createCompositePhenomenon(observation);
                 }
             }
-        } catch (DecodingException ex) {
-            throw new NoApplicableCodeException().causedBy(ex);
         }
+    }
+
+    private void checkResultTemplateIdentifier(CodeWithAuthority identifier) throws OwsExceptionReport {
+        checkResultTemplateIdentifier(identifier.getValue());
     }
 
     private void checkResultTemplateIdentifier(String identifier) throws OwsExceptionReport {
@@ -233,7 +232,7 @@ public class SosInsertResultTemplateOperatorV20
                     Sos2Constants.InsertResultTemplateParams.observationType.name());
         }
 
-        Set<String> validObservationTypesForOffering = new HashSet<String>(0);
+        Set<String> validObservationTypesForOffering = new HashSet<>(0);
         for (String offering : observationConstellation.getOfferings()) {
             validObservationTypesForOffering.addAll(getCache()
                     .getAllowedObservationTypesForOffering(offering));

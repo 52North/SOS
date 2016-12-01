@@ -28,7 +28,6 @@
  */
 package org.n52.sos.ds.hibernate.util;
 
-
 import static java.util.stream.Collectors.toSet;
 
 import java.util.Collection;
@@ -49,7 +48,6 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.encode.Encoder;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.util.LocalizedProducer;
@@ -65,6 +63,8 @@ import org.n52.shetland.ogc.ows.OwsServiceProvider;
 import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestDAO;
@@ -76,8 +76,7 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.request.AbstractObservationRequest;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.base.Strings;
 
@@ -99,12 +98,14 @@ public class HibernateGetObservationHelper {
      * Get ObservationConstellations and check if size limit is exceeded
      *
      * @param request
-     *            GetObservation request
+     *                GetObservation request
      * @param session
-     *            Hibernate session
+     *                Hibernate session
+     *
      * @return List of {@link ObservationConstellation}
+     *
      * @throws CodedException
-     *             If the size limit is exceeded
+     *                        If the size limit is exceeded
      */
     public static List<ObservationConstellation> getAndCheckObservationConstellationSize(
             GetObservationRequest request, Session session) throws CodedException {
@@ -117,15 +118,16 @@ public class HibernateGetObservationHelper {
      * Check if the max number of returned time series is exceeded
      *
      * @param seriesObservations
-     *            Observations to check
+     *                                  Observations to check
      * @param metadataObservationsCount
-     *            Count of metadata observations
+     *                                  Count of metadata observations
+     *
      * @throws CodedException
-     *             If the size limit is exceeded
+     *                        If the size limit is exceeded
      */
     @SuppressWarnings("rawtypes")
     public static void checkMaxNumberOfReturnedTimeSeries(Collection<? extends SeriesObservation<?>> seriesObservations,
-            int metadataObservationsCount) throws CodedException {
+                                                          int metadataObservationsCount) throws CodedException {
         if (getMaxNumberOfReturnedTimeSeriess() > 0) {
             Set<Long> seriesIds = seriesObservations.stream()
                     .map(SeriesObservation::getSeries).map(Series::getSeriesId).collect(toSet());
@@ -137,9 +139,10 @@ public class HibernateGetObservationHelper {
      * Check if the size limit is exceeded
      *
      * @param size
-     *            The size limit to check
+     *             The size limit to check
+     *
      * @throws CodedException
-     *             If the size limit is exceeded
+     *                        If the size limit is exceeded
      */
     public static void checkMaxNumberOfReturnedSeriesSize(int size) throws CodedException {
         // FIXME refactor profile handling
@@ -152,13 +155,14 @@ public class HibernateGetObservationHelper {
      * Check if the max number of returned values is exceeded
      *
      * @param size
-     *            Max number count
+     *             Max number count
+     *
      * @throws CodedException
-     *             If the size limit is exceeded
+     *                        If the size limit is exceeded
      */
     public static void checkMaxNumberOfReturnedValues(int size) throws CodedException {
         // FIXME refactor profile handling
-        if (getMaxNumberOfReturnedValues() > 0 &&  size > getMaxNumberOfReturnedValues()) {
+        if (getMaxNumberOfReturnedValues() > 0 && size > getMaxNumberOfReturnedValues()) {
             throw new ResponseExceedsSizeLimitException().at("maxNumberOfReturnedValues");
         }
     }
@@ -171,9 +175,10 @@ public class HibernateGetObservationHelper {
     }
 
     public static List<String> getAndCheckFeatureOfInterest(final ObservationConstellation observationConstellation,
-            final Set<String> featureIdentifier, final Session session) throws OwsExceptionReport {
-        final List<String> featuresForConstellation =
-                new FeatureOfInterestDAO().getFeatureOfInterestIdentifiersForObservationConstellation(
+                                                            final Set<String> featureIdentifier, final Session session)
+            throws OwsExceptionReport {
+        final List<String> featuresForConstellation = new FeatureOfInterestDAO()
+                .getFeatureOfInterestIdentifiersForObservationConstellation(
                         observationConstellation, session);
         if (featureIdentifier == null) {
             return featuresForConstellation;
@@ -183,27 +188,30 @@ public class HibernateGetObservationHelper {
     }
 
     public static List<OmObservation> toSosObservation(final Collection<Observation<?>> observations,
-            final AbstractObservationRequest request, final LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language, final Session session) throws OwsExceptionReport,
-            ConverterException {
+                                                       final AbstractObservationRequest request,
+                                                       final LocalizedProducer<OwsServiceProvider> serviceProvider,
+                                                       Locale language, final Session session) throws OwsExceptionReport,
+                                                                                                      ConverterException {
         if (!observations.isEmpty()) {
             final long startProcess = System.currentTimeMillis();
-            List<OmObservation> sosObservations =
-                        HibernateObservationUtilities.createSosObservationsFromObservations(
-                                new HashSet<>(observations), request, serviceProvider, language, session);
-
+            List<OmObservation> sosObservations = HibernateObservationUtilities.createSosObservationsFromObservations(
+                    new HashSet<>(observations), request, serviceProvider, language, session);
 
             LOGGER.debug("Time to process {} observations needs {} ms!", observations.size(),
-                    (System.currentTimeMillis() - startProcess));
+                         (System.currentTimeMillis() - startProcess));
             return sosObservations;
         } else {
             return Collections.emptyList();
         }
     }
 
-    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,final Session session) throws OwsExceptionReport, ConverterException {
+    public static OmObservation toSosObservation(Observation<?> observation, final AbstractObservationRequest request,
+                                                 LocalizedProducer<OwsServiceProvider> serviceProvider, Locale language,
+                                                 final Session session) throws OwsExceptionReport, ConverterException {
         if (observation != null) {
             final long startProcess = System.currentTimeMillis();
-            OmObservation sosObservation = HibernateObservationUtilities.createSosObservationFromObservation(observation, request, serviceProvider, language, session);
+            OmObservation sosObservation = HibernateObservationUtilities
+                    .createSosObservationFromObservation(observation, request, serviceProvider, language, session);
             LOGGER.debug("Time to process one observation needs {} ms!", (System.currentTimeMillis() - startProcess));
             return sosObservation;
         }
@@ -214,11 +222,12 @@ public class HibernateGetObservationHelper {
      * Add a result filter to the Criteria
      *
      * @param c
-     *            Hibernate criteria
+     *                     Hibernate criteria
      * @param resultFilter
-     *            Result filter to add
+     *                     Result filter to add
+     *
      * @throws CodedException
-     *             If the requested filter is not supported!
+     *                        If the requested filter is not supported!
      */
     @SuppressWarnings("rawtypes")
     public static void addResultFilterToCriteria(Criteria c, Filter resultFilter) throws CodedException {
@@ -258,20 +267,22 @@ public class HibernateGetObservationHelper {
      * Get the Hibernate Criterion for the requested result filter
      *
      * @param resultFilter
-     *            Requested result filter
+     *                     Requested result filter
+     *
      * @return Hibernate Criterion
+     *
      * @throws CodedException
-     *             If the requested result filter is not supported
+     *                        If the requested result filter is not supported
      */
     public static Criterion getCriterionForComparisonFilter(ComparisonFilter resultFilter) throws CodedException {
         if (ComparisonOperator.PropertyIsLike.equals(resultFilter.getOperator())) {
             checkValueReferenceForResultFilter(resultFilter.getValueReference());
             if (resultFilter.isSetEscapeString()) {
                 return HibernateCriterionHelper.getLikeExpression(AbstractLegacyObservation.DESCRIPTION,
-                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
+                                                                  checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE, '$', true);
             } else {
                 return Restrictions.like(AbstractLegacyObservation.DESCRIPTION,
-                        checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
+                                         checkValueForWildcardSingleCharAndEscape(resultFilter), MatchMode.ANYWHERE);
             }
         } else {
             throw new NoApplicableCodeException().withMessage(
@@ -286,7 +297,8 @@ public class HibernateGetObservationHelper {
      * default values.
      *
      * @param resultFilter
-     *            Requested result filter
+     *                     Requested result filter
+     *
      * @return Modified request string with default character.
      */
     public static String checkValueForWildcardSingleCharAndEscape(ComparisonFilter resultFilter) {
@@ -307,17 +319,18 @@ public class HibernateGetObservationHelper {
      * Check if the requested value reference is supported.
      *
      * @param valueReference
-     *            Requested value reference
+     *                       Requested value reference
+     *
      * @throws CodedException
-     *             If the requested value reference is not supported.
+     *                        If the requested value reference is not supported.
      */
     public static void checkValueReferenceForResultFilter(String valueReference) throws CodedException {
         if (Strings.isNullOrEmpty(valueReference)) {
             throw new NoApplicableCodeException().withMessage(
                     "The requested valueReference is missing! The valueReference should be %s/%s!",
                     OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
-        } else if (!valueReference.startsWith(OmConstants.VALUE_REF_OM_OBSERVATION)
-                && !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION)) {
+        } else if (!valueReference.startsWith(OmConstants.VALUE_REF_OM_OBSERVATION) &&
+                 !valueReference.contains(GmlConstants.VALUE_REF_GML_DESCRIPTION)) {
             throw new NoApplicableCodeException().withMessage(
                     "The requested valueReference is not supported! Currently only %s/%s is supported",
                     OmConstants.VALUE_REF_OM_OBSERVATION, GmlConstants.VALUE_REF_GML_DESCRIPTION);
@@ -328,25 +341,29 @@ public class HibernateGetObservationHelper {
      * Get ObervationConstellation from requested parameters
      *
      * @param session
-     *            Hibernate session
+     *                Hibernate session
      * @param request
-     *            GetObservation request
+     *                GetObservation request
+     *
      * @return Resulting ObservationConstellation entities
      */
     public static List<ObservationConstellation> getObservationConstellations(final Session session,
-            final GetObservationRequest request) {
+                                                                              final GetObservationRequest request) {
         return new ObservationConstellationDAO().getObservationConstellations(request.getProcedures(),
-                request.getObservedProperties(), request.getOfferings(), session);
+                                                                              request.getObservedProperties(), request
+                                                                              .getOfferings(), session);
     }
 
     /**
      * Get Hibernate Criterion from requested temporal filters
      *
      * @param request
-     *            GetObservation request
+     *                GetObservation request
+     *
      * @return Hibernate Criterion from requested temporal filters
+     *
      * @throws OwsExceptionReport
-     *             If a temporal filter is not supported
+     *                            If a temporal filter is not supported
      */
     public static Criterion getTemporalFilterCriterion(final GetObservationRequest request) throws OwsExceptionReport {
 
@@ -363,7 +380,8 @@ public class HibernateGetObservationHelper {
      * observations with the same timeseries.
      *
      * @param responseFormat
-     *            Response format
+     *                       Response format
+     *
      * @return <code>true</code>, if the {@link ObservationEncoder} demands for
      *         merging of observations with the same timeseries.
      */

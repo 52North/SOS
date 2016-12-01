@@ -54,7 +54,7 @@ import org.n52.shetland.ogc.sos.ProcedureDescriptionFormat;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.ogc.sos.SosOffering;
 import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.sos.util.CodingHelper;
 
 import com.google.common.annotations.VisibleForTesting;

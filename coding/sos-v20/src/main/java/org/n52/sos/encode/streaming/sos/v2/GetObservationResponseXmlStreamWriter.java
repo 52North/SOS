@@ -53,7 +53,7 @@ import org.n52.sos.encode.streaming.StreamingEncoder;
 import org.n52.sos.ogc.om.StreamingObservation;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.sos.Sos2StreamingConstants;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.XmlOptionsHelper;
 
 import com.google.common.collect.Sets;

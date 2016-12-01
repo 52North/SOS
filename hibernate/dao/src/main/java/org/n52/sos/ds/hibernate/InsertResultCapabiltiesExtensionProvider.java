@@ -40,10 +40,10 @@ import org.n52.iceland.ogc.sos.CapabilitiesExtensionProvider;
 import org.n52.shetland.ogc.ows.OwsCapabilitiesExtension;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosInsertionCapabilities;
 import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.sos.cache.SosContentCache;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
-import org.n52.sos.ogc.sos.SosInsertionCapabilities;
 
 /**
  * TODO JavaDoc

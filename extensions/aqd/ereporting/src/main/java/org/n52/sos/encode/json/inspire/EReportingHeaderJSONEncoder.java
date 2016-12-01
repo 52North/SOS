@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.EReportingHeader;
@@ -45,7 +45,7 @@ public class EReportingHeaderJSONEncoder extends JSONEncoder<EReportingHeader> {
 
     @Override
     public JsonNode encodeJSON(EReportingHeader header)
-            throws OwsExceptionReport {
+            throws EncodingException {
         ObjectNode j = JSONUtils.nodeFactory().objectNode();
         j.set(AQDJSONConstants.CHANGE, encodeObjectToJson(header.getChange()));
         j.set(AQDJSONConstants.DELETE, encodeObjectToJson(header.getDelete()));

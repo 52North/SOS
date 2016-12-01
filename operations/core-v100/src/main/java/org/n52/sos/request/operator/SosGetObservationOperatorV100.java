@@ -34,19 +34,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
+import javax.inject.Inject;
 
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.sos.coding.encode.ObservationEncoder;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
 import org.n52.sos.ds.AbstractGetObservationHandler;
 import org.n52.sos.exception.ows.concrete.InvalidObservedPropertyParameterException;
 import org.n52.sos.exception.ows.concrete.InvalidOfferingParameterException;
@@ -55,10 +53,7 @@ import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterExcept
 import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.response.GetObservationResponse;
-import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.OMHelper;
 import org.n52.sos.util.SosHelper;
 
@@ -79,8 +74,19 @@ public class SosGetObservationOperatorV100 extends
     private static final Set<String> CONFORMANCE_CLASSES = Collections
             .singleton("http://www.opengis.net/spec/SOS/1.0/conf/core");
 
+    private ResponseFormatRepository responseFormatRepository;
+
     public SosGetObservationOperatorV100() {
         super(OPERATION_NAME, GetObservationRequest.class);
+    }
+
+    private ResponseFormatRepository getResponseFormatRepository() {
+        return this.responseFormatRepository;
+    }
+
+    @Inject
+    public void setResponseFormatRepository(ResponseFormatRepository responseFormatRepository) {
+        this.responseFormatRepository = responseFormatRepository;
     }
 
     @Override
@@ -93,7 +99,7 @@ public class SosGetObservationOperatorV100 extends
 
     @Override
     public GetObservationResponse receive(GetObservationRequest sosRequest) throws OwsExceptionReport {
-        GetObservationResponse sosResponse = getDao().getObservation(sosRequest);
+        GetObservationResponse sosResponse = getOperationHandler().getObservation(sosRequest);
         if (sosRequest.isSetResponseFormat()) {
             setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         }
@@ -166,16 +172,10 @@ public class SosGetObservationOperatorV100 extends
         } catch (OwsExceptionReport owse) {
             exceptions.add(owse);
         }
-        if (sosRequest.isSetResultModel()) {
-            for (String offering : sosRequest.getOfferings()) {
-                Collection<String> observationTypesForResultModel = getCache().getObservationTypesForOffering(offering);
-                if (!observationTypesForResultModel.contains(sosRequest.getResultModel())) {
-                    exceptions.add(new InvalidParameterValueException().at(
-                            Sos1Constants.GetObservationParams.resultModel).withMessage(
-                            "The value '%s' is invalid for the requested offering!",
-                            OMHelper.getEncodedResultModelFor(sosRequest.getResultModel())));
-                }
-            }
+        if (sosRequest.isSetResultModel() && sosRequest.getOfferings().stream().map(getCache()::getObservationTypesForOffering)
+                    .anyMatch(observationTypes -> !observationTypes.contains(sosRequest.getResultModel()))) {
+            exceptions.add(new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.resultModel)
+                    .withMessage("The value '%s' is invalid for the requested offering!", OMHelper.getEncodedResultModelFor(sosRequest.getResultModel())));
         }
 
         exceptions.throwIfNotEmpty();
@@ -199,7 +199,7 @@ public class SosGetObservationOperatorV100 extends
                 throw new MissingObservedPropertyParameterException();
             }
             Collection<String> validObservedProperties =
-                    Configurator.getInstance().getCache().getObservableProperties();
+                    getCache().getObservableProperties();
             for (String obsProp : observedProperties) {
                 if (obsProp.isEmpty()) {
                     throw new MissingObservedPropertyParameterException();
@@ -218,6 +218,7 @@ public class SosGetObservationOperatorV100 extends
      *
      * @param offeringIds
      *            the offeringIds to be checked
+     * @return the checked offering ids
      *
      * @throws OwsExceptionReport
      *             if the passed offeringId is not supported
@@ -227,7 +228,7 @@ public class SosGetObservationOperatorV100 extends
         List<String> validOfferings = Lists.newLinkedList();
         if (offeringIds != null) {
 
-            Set<String> offerings = Configurator.getInstance().getCache().getOfferings();
+            Set<String> offerings = getCache().getOfferings();
             Map<String, String> ncOfferings = SosHelper.getNcNameResolvedOfferings(offerings);
             CompositeOwsException exceptions = new CompositeOwsException();
 
@@ -252,15 +253,6 @@ public class SosGetObservationOperatorV100 extends
         return validOfferings;
     }
 
-    // TODO check for SOS 1.0.0
-    private boolean checkForObservationAndMeasurementV20Type(String responseFormat) throws OwsExceptionReport {
-        Encoder<XmlObject, OmObservation> encoder = CodingHelper.getEncoder(responseFormat, new OmObservation());
-        if (encoder instanceof ObservationEncoder) {
-            return ((ObservationEncoder) encoder).isObservationAndMeasurmentV20Type();
-        }
-        return false;
-    }
-
     // TODO check for SOS 1.0.0 one / mandatory
     private boolean checkResponseFormat(GetObservationRequest request) throws OwsExceptionReport {
         boolean zipCompression = false;
@@ -269,8 +261,9 @@ public class SosGetObservationOperatorV100 extends
         } else if (request.getResponseFormat() != null && request.getResponseFormat().isEmpty()) {
             throw new MissingResponseFormatParameterException();
         } else {
+
             Collection<String> supportedResponseFormats =
-                    ResponseFormatRepository.getInstance().getSupportedResponseFormats(request.getService(),
+                    getResponseFormatRepository().getSupportedResponseFormats(request.getService(),
                             request.getVersion());
             if (!supportedResponseFormats.contains(request.getResponseFormat())) {
                 throw new InvalidResponseFormatParameterException(request.getResponseFormat());

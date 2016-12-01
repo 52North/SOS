@@ -33,8 +33,9 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.request.InsertResultTemplateRequest;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 import basetest.HandlerBaseTest;

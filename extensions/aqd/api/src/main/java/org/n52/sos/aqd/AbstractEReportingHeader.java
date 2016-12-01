@@ -28,7 +28,7 @@
  */
 package org.n52.sos.aqd;
 
-import org.n52.iceland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 
 /**
  * Abstract class for AQD e-Reporting header. Required to use defined method in
@@ -40,12 +40,9 @@ import org.n52.iceland.ogc.gml.AbstractFeature;
  */
 public abstract class AbstractEReportingHeader extends AbstractFeature {
 
-    private static final long serialVersionUID = -2137816965044579356L;
-
-    public abstract AbstractEReportingHeader addContent(AbstractFeature content);
-
     public AbstractEReportingHeader() {
         super("");
     }
 
+    public abstract AbstractEReportingHeader addContent(AbstractFeature content);
 }

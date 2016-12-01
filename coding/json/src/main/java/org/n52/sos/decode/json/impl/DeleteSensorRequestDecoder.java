@@ -28,13 +28,12 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -57,7 +56,7 @@ public class DeleteSensorRequestDecoder extends AbstractSosRequestDecoder<Delete
     }
 
     @Override
-    protected DeleteSensorRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected DeleteSensorRequest decodeRequest(JsonNode node) {
         DeleteSensorRequest req = new DeleteSensorRequest();
         req.setProcedureIdentifier(node.path(JSONConstants.PROCEDURE).textValue());
         return req;

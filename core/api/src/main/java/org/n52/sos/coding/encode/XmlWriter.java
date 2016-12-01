@@ -39,18 +39,17 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePosition;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.iceland.w3c.W3CConstants;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePosition;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.N52XmlHelper;
 import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.StandardSystemProperty;
+import com.google.common.base.Strings;
 
 /**
  * Abstract XML writer class
@@ -66,13 +65,12 @@ import com.google.common.base.StandardSystemProperty;
  */
 public abstract class XmlWriter<T, S> {
 
-    protected final String XML_VERSION = "1.0";
+    protected static final String XML_VERSION = "1.0";
+    protected static final String ENCODING = "UTF-8";
+    protected static final String XML_FRAGMENT = "xml-fragment";
 
     protected int indent = 0;
-
     protected OutputStream out;
-
-    protected static String XML_FRAGMENT = "xml-fragment";
 
     private final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
 
@@ -83,10 +81,10 @@ public abstract class XmlWriter<T, S> {
      *            OutputStream to write the encoded element
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an encoding error occurs
      */
-    public abstract void write(OutputStream out) throws XMLStreamException, OwsExceptionReport;
+    public abstract void write(OutputStream out) throws XMLStreamException, EncodingException;
 
     /**
      * Encode and write element to the {@link OutputStream}
@@ -97,11 +95,11 @@ public abstract class XmlWriter<T, S> {
      *            {@link EncodingValues} with additional information
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an encoding error occurs
      */
     public abstract void write(OutputStream out, EncodingValues encodingValues) throws XMLStreamException,
-            OwsExceptionReport;
+            EncodingException;
 
     /**
      * Encode and write the elementToStream to the {@link OutputStream}
@@ -112,10 +110,10 @@ public abstract class XmlWriter<T, S> {
      *            OutputStream to write the encoded element
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an encoding error occurs
      */
-    public abstract void write(S elementToStream, OutputStream out) throws XMLStreamException, OwsExceptionReport;
+    public abstract void write(S elementToStream, OutputStream out) throws XMLStreamException, EncodingException;
 
     /**
      * Encode and write the elementToStream to the {@link OutputStream}
@@ -128,11 +126,11 @@ public abstract class XmlWriter<T, S> {
      *            {@link EncodingValues} with additional information
      * @throws XMLStreamException
      *             If an error occurs when writing to {@link OutputStream}
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             If an encoding error occurs
      */
     public abstract void write(S elementToStream, OutputStream out, EncodingValues encodingValues)
-            throws XMLStreamException, OwsExceptionReport;
+            throws XMLStreamException, EncodingException;
 
     /**
      * Initialize this XML stream writer
@@ -324,9 +322,9 @@ public abstract class XmlWriter<T, S> {
      */
     protected String getReplacement(QName qname) {
         StringBuilder builder = new StringBuilder();
-        if (StringHelper.isNotEmpty(qname.getPrefix())) {
+        if (!Strings.isNullOrEmpty(qname.getPrefix())) {
             builder.append(qname.getPrefix());
-            builder.append(Constants.COLON_CHAR);
+            builder.append(':');
         }
         builder.append(qname.getLocalPart());
         return builder.toString();
@@ -371,7 +369,7 @@ public abstract class XmlWriter<T, S> {
      */
     protected void schemaLocation(Set<SchemaLocation> schemaLocations) throws XMLStreamException {
         String merged = N52XmlHelper.mergeSchemaLocationsToString(schemaLocations);
-        if (StringHelper.isNotEmpty(merged)) {
+        if (!Strings.isNullOrEmpty(merged)) {
             namespace(W3CConstants.NS_XSI_PREFIX, W3CConstants.NS_XSI);
             attr(W3CConstants.NS_XSI, W3CConstants.SCHEMA_LOCATION, merged);
         }
@@ -402,7 +400,7 @@ public abstract class XmlWriter<T, S> {
      *             If an error occurs when initializing the writer
      */
     protected void init(OutputStream out) throws XMLStreamException {
-        init(out, Constants.DEFAULT_ENCODING);
+        init(out, ENCODING);
     }
 
     /**
@@ -417,7 +415,7 @@ public abstract class XmlWriter<T, S> {
      *             If an error occurs when initializing the writer
      */
     protected void init(OutputStream out, EncodingValues encodingValues) throws XMLStreamException {
-        init(out, Constants.DEFAULT_ENCODING, encodingValues);
+        init(out, ENCODING, encodingValues);
     }
 
     /**

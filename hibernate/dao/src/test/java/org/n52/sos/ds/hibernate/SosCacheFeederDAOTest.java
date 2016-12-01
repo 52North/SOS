@@ -36,7 +36,7 @@ import org.junit.Test;
 import org.n52.sos.cache.InMemoryCacheImpl;
 
 import org.n52.sos.cache.SosWritableContentCache;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk

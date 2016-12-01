@@ -31,7 +31,7 @@ package org.n52.sos.inspire.capabilities;
 import java.util.Collection;
 import java.util.Set;
 
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.inspire.InspireConstants;
 import org.n52.sos.inspire.InspireLanguageISO6392B;
 import org.n52.sos.inspire.InspireSupportedCRS;

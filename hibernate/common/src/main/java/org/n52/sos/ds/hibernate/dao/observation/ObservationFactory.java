@@ -28,6 +28,9 @@
  */
 package org.n52.sos.ds.hibernate.dao.observation;
 
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.ContextualReferencedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.TemporalReferencedObservation;
@@ -40,9 +43,6 @@ import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.NumericObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.SweDataArrayObservation;
 import org.n52.sos.ds.hibernate.entities.observation.full.TextObservation;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.om.OmConstants;
 
 
 public abstract class ObservationFactory {

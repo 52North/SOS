@@ -38,10 +38,14 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Offering;
@@ -51,9 +55,6 @@ import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractValuedLegacyObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.observation.ExtensionFesFilterCriteriaAdder;
-import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link AbstractValueDAO} for old concept

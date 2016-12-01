@@ -32,7 +32,7 @@ import javax.persistence.Entity;
 
 import org.n52.iceland.config.SettingType;
 import org.n52.iceland.config.SettingValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>

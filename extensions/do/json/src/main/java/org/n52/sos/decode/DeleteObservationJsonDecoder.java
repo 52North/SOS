@@ -28,9 +28,8 @@
  */
 package org.n52.sos.decode;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
@@ -39,6 +38,7 @@ import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+
 /**
  * TODO JavaDoc
  *
@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  */
 public class DeleteObservationJsonDecoder
         extends AbstractSosRequestDecoder<DeleteObservationRequest> {
+
     public DeleteObservationJsonDecoder() {
         super(DeleteObservationRequest.class,
               SosConstants.SOS,
@@ -59,8 +60,7 @@ public class DeleteObservationJsonDecoder
     }
 
     @Override
-    protected DeleteObservationRequest decodeRequest(JsonNode node)
-            throws OwsExceptionReport {
+    protected DeleteObservationRequest decodeRequest(JsonNode node)  {
         DeleteObservationRequest req = new DeleteObservationRequest();
         req.setObservationIdentifier(node.path(JSONConstants.OBSERVATION)
                 .textValue());

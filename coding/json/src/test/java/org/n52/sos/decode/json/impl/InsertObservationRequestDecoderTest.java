@@ -42,10 +42,11 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
@@ -72,7 +73,7 @@ public class InsertObservationRequestDecoderTest {
     }
 
     @Test
-    public void singleObservation() throws IOException, OwsExceptionReport {
+    public void singleObservation() throws IOException, DecodingException {
         final JsonNode json =
                 JsonLoader.fromResource("/examples/sos/InsertObservationRequest-single-observation.json");
         final InsertObservationRequest req = decoder.decodeJSON(json, true);
@@ -89,7 +90,7 @@ public class InsertObservationRequestDecoderTest {
     }
 
     @Test
-    public void multipleObservation() throws IOException, OwsExceptionReport {
+    public void multipleObservation() throws IOException, DecodingException {
         final JsonNode json =
                 JsonLoader.fromResource("/examples/sos/InsertObservationRequest-multiple-observations.json");
         final InsertObservationRequest req = decoder.decodeJSON(json, true);
@@ -110,7 +111,7 @@ public class InsertObservationRequestDecoderTest {
     }
 
     @Test
-    public void singleOffering() throws IOException, OwsExceptionReport {
+    public void singleOffering() throws IOException, DecodingException {
         final JsonNode json = JsonLoader.fromResource("/examples/sos/InsertObservationRequest-single-offering.json");
         final InsertObservationRequest req = decoder.decodeJSON(json, true);
         errors.checkThat(req.getService(), is(equalTo("SOS")));
@@ -126,7 +127,7 @@ public class InsertObservationRequestDecoderTest {
     }
 
     @Test
-    public void multipleOfferings() throws IOException, OwsExceptionReport {
+    public void multipleOfferings() throws IOException, DecodingException {
         final JsonNode json =
                 JsonLoader.fromResource("/examples/sos/InsertObservationRequest-multiple-offerings.json");
         final InsertObservationRequest req = decoder.decodeJSON(json, true);

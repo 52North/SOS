@@ -29,31 +29,27 @@
 package org.n52.sos.util;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
-import org.n52.iceland.coding.decode.XmlStringOperationDecoderKey;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.coding.encode.EncoderKey;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoDecoderForKeyException;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForKeyException;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.exception.ows.concrete.XmlDecodingException;
-
-import com.google.common.collect.Maps;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.XmlStringOperationDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org> TODO implement
@@ -63,17 +59,17 @@ import com.google.common.collect.Maps;
  *
  */
 public final class CodingHelper {
-
-    public static Object decodeXmlElement(final XmlObject x) throws OwsExceptionReport {
-        return decodeXmlObject(x);
+    private CodingHelper() {
     }
 
+    @Deprecated
     public static <T> XmlObject encodeObjectToXml(String namespace, T o,
-            Map<OWSConstants.HelperValues, String> helperValues) throws OwsExceptionReport {
+                                                  EncodingContext helperValues) throws EncodingException {
         return getEncoder(namespace, o).encode(o, helperValues);
     }
 
-    public static <T> Encoder<XmlObject, T> getEncoder(final String namespace, final T o) throws OwsExceptionReport {
+    @Deprecated
+    public static <T> Encoder<XmlObject, T> getEncoder(String namespace,  T o) throws EncodingException {
         final EncoderKey key = getEncoderKey(namespace, o);
         final Encoder<XmlObject, T> encoder = CodingRepository.getInstance().getEncoder(key);
         if (encoder == null) {
@@ -82,23 +78,29 @@ public final class CodingHelper {
         return encoder;
     }
 
-    public static XmlObject encodeObjectToXml(final String namespace, final Object o) throws OwsExceptionReport {
-        return encodeObjectToXml(namespace, o, Maps.<HelperValues, String> newEnumMap(HelperValues.class));
+    @Deprecated
+    public static XmlObject encodeObjectToXml(String namespace, Object o) throws EncodingException {
+        return encodeObjectToXml(namespace, o, EncodingContext.empty());
     }
 
-    public static String encodeObjectToXmlText(final String namespace, final Object o) throws OwsExceptionReport {
-        return encodeObjectToXml(namespace, o, Maps.<HelperValues, String> newEnumMap(HelperValues.class)).xmlText(
-                XmlOptionsHelper.getInstance().getXmlOptions());
+    @Deprecated
+    public static String encodeObjectToXmlText(String namespace, Object o) throws EncodingException {
+        return encodeObjectToXml(namespace, o, EncodingContext.empty()).xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
     }
 
-    public static String encodeObjectToXmlText(final String namespace, final Object o,
-            Map<OWSConstants.HelperValues, String> additionalValues) throws OwsExceptionReport {
+    @Deprecated
+    public static String encodeObjectToXmlText(String namespace, Object o, EncodingContext additionalValues) throws EncodingException {
         return encodeObjectToXml(namespace, o, additionalValues).xmlText(
                 XmlOptionsHelper.getInstance().getXmlOptions());
     }
 
-    public static Set<DecoderKey> decoderKeysForElements(final String namespace, final Class<?>... elements) {
-        final HashSet<DecoderKey> keys = new HashSet<DecoderKey>(elements.length);
+    @Deprecated
+    public static <T> T decodeXmlElement(XmlObject x) throws DecodingException {
+        return decodeXmlObject(x);
+    }
+
+    public static Set<DecoderKey> decoderKeysForElements(String namespace, Class<?>... elements) {
+        final HashSet<DecoderKey> keys = new HashSet<>(elements.length);
         for (final Class<?> x : elements) {
             keys.add(new XmlNamespaceDecoderKey(namespace, x));
         }
@@ -106,7 +108,7 @@ public final class CodingHelper {
     }
 
     public static Set<DecoderKey> xmlDecoderKeysForOperation(String service, String version, Enum<?>... operations) {
-        final HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
+        final HashSet<DecoderKey> set = new HashSet<>(operations.length);
         for (final Enum<?> o : operations) {
             set.add(new OperationDecoderKey(service, version, o.name(), MediaTypes.TEXT_XML));
             set.add(new OperationDecoderKey(service, version, o.name(), MediaTypes.APPLICATION_XML));
@@ -115,7 +117,7 @@ public final class CodingHelper {
     }
 
     public static Set<DecoderKey> xmlDecoderKeysForOperation(String service, String version, String... operations) {
-        HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
+        HashSet<DecoderKey> set = new HashSet<>(operations.length);
         for (String o : operations) {
             set.add(new OperationDecoderKey(service, version, o, MediaTypes.TEXT_XML));
             set.add(new OperationDecoderKey(service, version, o, MediaTypes.APPLICATION_XML));
@@ -124,7 +126,7 @@ public final class CodingHelper {
     }
 
     public static Set<DecoderKey> xmlStringDecoderKeysForOperationAndMediaType(String service, String version, Enum<?>... operations) {
-        final HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
+        final HashSet<DecoderKey> set = new HashSet<>(operations.length);
         for (final Enum<?> o : operations) {
             set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.TEXT_XML));
             set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.APPLICATION_XML));
@@ -133,7 +135,7 @@ public final class CodingHelper {
     }
 
     public static Set<DecoderKey> xmlStringDecoderKeysForOperationAndMediaType(String service, String version, String... operations) {
-        HashSet<DecoderKey> set = new HashSet<DecoderKey>(operations.length);
+        HashSet<DecoderKey> set = new HashSet<>(operations.length);
         for (String o : operations) {
             set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.TEXT_XML));
             set.add(new XmlStringOperationDecoderKey(service, version, o, MediaTypes.APPLICATION_XML));
@@ -149,7 +151,7 @@ public final class CodingHelper {
         return keys;
     }
 
-    public static EncoderKey getEncoderKey(final String namespace, final Object o) {
+    public static EncoderKey getEncoderKey(String namespace, Object o) {
         return new XmlEncoderKey(namespace, o.getClass());
     }
 
@@ -161,16 +163,18 @@ public final class CodingHelper {
         return new XmlNamespaceDecoderKey(XmlHelper.getNamespace(doc[0]), doc.getClass());
     }
 
-    public static Object decodeXmlObject(final XmlObject xbObject) throws OwsExceptionReport {
+    @Deprecated
+    public static <T> T decodeXmlObject(final XmlObject xbObject) throws DecodingException {
         final DecoderKey key = getDecoderKey(xbObject);
-        final Decoder<?, XmlObject> decoder = CodingRepository.getInstance().getDecoder(key);
+        final Decoder<T, XmlObject> decoder = CodingRepository.getInstance().getDecoder(key);
         if (decoder == null) {
             throw new NoDecoderForKeyException(key);
         }
         return decoder.decode(xbObject);
     }
 
-    public static Object decodeXmlObject(final String xmlString) throws OwsExceptionReport {
+    @Deprecated
+    public static Object decodeXmlObject(final String xmlString) throws DecodingException {
         try {
             return decodeXmlObject(XmlObject.Factory.parse(xmlString));
         } catch (final XmlException e) {
@@ -178,6 +182,11 @@ public final class CodingHelper {
         }
     }
 
-    private CodingHelper() {
+    public static XmlObject readXML(String string) throws XmlDecodingException {
+        try {
+            return XmlObject.Factory.parse(string);
+        } catch (XmlException e) {
+            throw new XmlDecodingException("XML string", string, e);
+        }
     }
 }

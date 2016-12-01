@@ -16,18 +16,23 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.n52.sensorweb.sos</groupId>
             <artifactId>api</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.n52.svalbard</groupId>
+            <artifactId>svalbard</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.n52.iceland</groupId>
             <artifactId>iceland</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
@@ -60,7 +65,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>stax</groupId>
-                   <artifactId>stax-api</artifactId>
+                    <artifactId>stax-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -76,7 +81,7 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>cache</artifactId>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
@@ -110,10 +115,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
             <scope>test</scope>
-		</dependency>
+        </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>coding-sensorML-v101</artifactId>
@@ -125,13 +130,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.n52.sensorweb</groupId>
-        	<artifactId>52n-xml-sensorML-v101</artifactId>
-        	<scope>test</scope>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sensorML-v101</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
-        	<groupId>org.n52.sensorweb</groupId>
-        	<artifactId>52n-xml-sweCommon-v20</artifactId>
+            <groupId>org.n52.sensorweb</groupId>
+            <artifactId>52n-xml-sweCommon-v20</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -32,8 +32,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.inspire.InspireConformity;
 import org.n52.sos.inspire.InspireKeyword;
 import org.n52.sos.inspire.InspireLanguageISO6392B;

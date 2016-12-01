@@ -28,8 +28,8 @@
  */
 package org.n52.sos.util;
 
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.ogc.swes.SwesConstants;
 
 public interface XPathConstants {

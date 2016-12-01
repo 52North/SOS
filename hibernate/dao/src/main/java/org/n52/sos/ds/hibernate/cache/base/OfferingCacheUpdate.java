@@ -42,10 +42,9 @@ import org.hibernate.internal.util.collections.CollectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.AbstractQueueingDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;

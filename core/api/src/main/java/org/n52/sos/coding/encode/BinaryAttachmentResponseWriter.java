@@ -37,7 +37,7 @@ import java.util.zip.GZIPOutputStream;
 import org.n52.iceland.coding.encode.AbstractResponseWriter;
 import org.n52.iceland.coding.encode.ResponseProxy;
 import org.n52.iceland.coding.encode.ResponseWriterKey;
-import org.n52.sos.response.BinaryAttachmentResponse;
+import org.n52.shetland.ogc.sos.response.BinaryAttachmentResponse;
 
 import com.google.common.base.Strings;
 

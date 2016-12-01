@@ -36,12 +36,15 @@ import org.hibernate.Session;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.n52.iceland.exception.CodedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationContext;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.StringHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.Procedure;
@@ -51,9 +54,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.TimeExtrema;
-import org.n52.sos.request.GetObservationRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
@@ -73,10 +73,10 @@ public abstract class AbstractSeriesDAO {
      * @param session
      *            Hibernate session
      * @return Series that fit
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract List<Series> getSeries(GetObservationRequest request, Collection<String> features, Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
     /**
      * Query series for observedProiperty and featuresOfInterest
@@ -132,14 +132,14 @@ public abstract class AbstractSeriesDAO {
      * @param session
      *            Hibernate session
      * @return Series object
-     * @throws CodedException
+     * @throws OwsExceptionReport
      */
     public abstract Series getOrInsertSeries(ObservationContext identifiers, final Session session)
-            throws CodedException;
+            throws OwsExceptionReport;
 
-    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException;
+    protected abstract void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport;
 
-    protected Series getOrInsert(ObservationContext identifiers, final Session session) throws CodedException {
+    protected Series getOrInsert(ObservationContext identifiers, final Session session) throws OwsExceptionReport {
         Criteria criteria = getDefaultAllSeriesCriteria(session);
         identifiers.addIdentifierRestrictionsToCritera(criteria);
         LOGGER.debug("QUERY getOrInsertSeries(feature, observableProperty, procedure): {}",
@@ -162,7 +162,7 @@ public abstract class AbstractSeriesDAO {
         return series;
     }
 
-    private Series getSeriesImpl() throws CodedException {
+    private Series getSeriesImpl() throws OwsExceptionReport {
         try {
             return (Series) getSeriesClass().newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -172,7 +172,7 @@ public abstract class AbstractSeriesDAO {
     }
 
     public Criteria getSeriesCriteria(GetObservationRequest request, Collection<String> features, Session session)
-            throws CodedException {
+            throws OwsExceptionReport {
         final Criteria c =
                 createCriteriaFor(request.getProcedures(), request.getObservedProperties(), features, session);
         addSpecificRestrictions(c, request);
@@ -193,7 +193,7 @@ public abstract class AbstractSeriesDAO {
         if (CollectionHelper.isNotEmpty(features)) {
             addFeatureOfInterestToCriteria(c, features);
         }
-        if (StringHelper.isNotEmpty(observedProperty)) {
+        if (!Strings.isNullOrEmpty(observedProperty)) {
             addObservablePropertyToCriteria(c, observedProperty);
         }
         return c;

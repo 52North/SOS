@@ -31,7 +31,7 @@ package org.n52.sos.decode.xml.stream;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * TODO JavaDoc

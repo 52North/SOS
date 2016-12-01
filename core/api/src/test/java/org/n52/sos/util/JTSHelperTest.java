@@ -41,8 +41,9 @@ import static org.n52.sos.util.JTSHelperForTesting.randomCoordinates;
 import static org.n52.sos.util.ReverseOf.reverseOf;
 
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.Constants;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -62,27 +63,27 @@ public class JTSHelperTest extends JTSHelper {
 
     @Test
     public void factoryFromSridShouldSetSrid() {
-        GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        GeometryFactory factory = getGeometryFactoryForSRID(4326);
         assertThat(factory, is(notNullValue()));
         Geometry g = factory.createPoint(new Coordinate(1, 2));
         assertThat(g, is(notNullValue()));
-        assertThat(g.getSRID(), is(Constants.EPSG_WGS84));
+        assertThat(g.getSRID(), is(4326));
     }
 
     @Test
     public void factoryFromGeometryShouldSetSrid() {
-        GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        GeometryFactory factory = getGeometryFactoryForSRID(4326);
         assertThat(factory, is(notNullValue()));
         Geometry g = factory.createPoint(new Coordinate(1, 2));
         factory = getGeometryFactory(g);
         assertThat(factory, is(notNullValue()));
         g = factory.createPoint(new Coordinate(1, 2));
         assertThat(g, is(notNullValue()));
-        assertThat(g.getSRID(), is(Constants.EPSG_WGS84));
+        assertThat(g.getSRID(), is(4326));
     }
 
     @Test
-    public void shouldPointWKTString() throws OwsExceptionReport {
+    public void shouldPointWKTString() throws OwsExceptionReport, DecodingException {
         String coordinates = "52.0 7.0";
         StringBuilder builder = new StringBuilder();
         builder.append(WKT_POINT);
@@ -90,28 +91,28 @@ public class JTSHelperTest extends JTSHelper {
         builder.append(coordinates);
         builder.append(")");
         assertEquals(builder.toString(), createWKTPointFromCoordinateString(coordinates));
-        assertEquals(createGeometryFromWKT(builder.toString(), Constants.EPSG_WGS84),
-                createGeometryFromWKT(createWKTPointFromCoordinateString(coordinates), Constants.EPSG_WGS84));
+        assertEquals(createGeometryFromWKT(builder.toString(), 4326),
+                createGeometryFromWKT(createWKTPointFromCoordinateString(coordinates), 4326));
     }
 
     @Test
     public void shouldReverseLinearRing() throws OwsExceptionReport {
-        testReverse(getGeometryFactoryForSRID(Constants.EPSG_WGS84).createLinearRing(randomCoordinateRing(10)));
+        testReverse(getGeometryFactoryForSRID(4326).createLinearRing(randomCoordinateRing(10)));
     }
 
     @Test
     public void shouldReversePoint() throws OwsExceptionReport {
-        testReverse(getGeometryFactoryForSRID(Constants.EPSG_WGS84).createPoint(randomCoordinate()));
+        testReverse(getGeometryFactoryForSRID(4326).createPoint(randomCoordinate()));
     }
 
     @Test
     public void shouldReverseLineString() throws OwsExceptionReport {
-        testReverse(getGeometryFactoryForSRID(Constants.EPSG_WGS84).createLineString(randomCoordinates(10)));
+        testReverse(getGeometryFactoryForSRID(4326).createLineString(randomCoordinates(10)));
     }
 
     @Test
     public void shouldReversePolygon() throws OwsExceptionReport {
-        final GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        final GeometryFactory factory = getGeometryFactoryForSRID(4326);
         testReverse(factory.createPolygon(
                 factory.createLinearRing(randomCoordinateRing(10)),
                 new LinearRing[] { factory.createLinearRing(randomCoordinateRing(10)),
@@ -121,13 +122,13 @@ public class JTSHelperTest extends JTSHelper {
 
     @Test
     public void shouldReverseMultiPoint() throws OwsExceptionReport {
-        final GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        final GeometryFactory factory = getGeometryFactoryForSRID(4326);
         testReverse(factory.createMultiPoint(randomCoordinates(20)));
     }
 
     @Test
     public void shouldReverseMultiLineString() throws OwsExceptionReport {
-        final GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        final GeometryFactory factory = getGeometryFactoryForSRID(4326);
         testReverse(factory.createMultiLineString(new LineString[] {
                 factory.createLineString(randomCoordinateRing(21)),
                 factory.createLineString(randomCoordinateRing(21)),
@@ -136,7 +137,7 @@ public class JTSHelperTest extends JTSHelper {
 
     @Test
     public void shouldReverseMultiPolygon() throws OwsExceptionReport {
-        final GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        final GeometryFactory factory = getGeometryFactoryForSRID(4326);
         testReverse(factory.createMultiPolygon(new Polygon[] {
                 factory.createPolygon(
                         factory.createLinearRing(randomCoordinateRing(13)),
@@ -157,7 +158,7 @@ public class JTSHelperTest extends JTSHelper {
 
     @Test
     public void shouldReverseGeometryCollection() throws OwsExceptionReport {
-        final GeometryFactory factory = getGeometryFactoryForSRID(Constants.EPSG_WGS84);
+        final GeometryFactory factory = getGeometryFactoryForSRID(4326);
         testReverse(factory.createGeometryCollection(new Geometry[] {
                 factory.createMultiPolygon(new Polygon[] {
                         factory.createPolygon(
@@ -183,13 +184,13 @@ public class JTSHelperTest extends JTSHelper {
                         new LinearRing[] { factory.createLinearRing(randomCoordinateRing(10)),
                                 factory.createLinearRing(randomCoordinateRing(41)),
                                 factory.createLinearRing(randomCoordinateRing(13)) }),
-                getGeometryFactoryForSRID(Constants.EPSG_WGS84).createLineString(randomCoordinates(10)),
-                getGeometryFactoryForSRID(Constants.EPSG_WGS84).createLineString(randomCoordinates(10)) }));
+                getGeometryFactoryForSRID(4326).createLineString(randomCoordinates(10)),
+                getGeometryFactoryForSRID(4326).createLineString(randomCoordinates(10)) }));
     }
 
     @Test
     public void shouldReverseUnknownGeometry() throws OwsExceptionReport {
-        testReverse(new UnknownGeometry(getGeometryFactoryForSRID(Constants.EPSG_WGS84).createLineString(randomCoordinates(5))));
+        testReverse(new UnknownGeometry(getGeometryFactoryForSRID(4326).createLineString(randomCoordinates(5))));
     }
 
     protected void testReverse(Geometry geometry) throws OwsExceptionReport {

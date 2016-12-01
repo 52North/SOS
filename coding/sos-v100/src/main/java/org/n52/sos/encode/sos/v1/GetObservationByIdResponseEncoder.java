@@ -29,12 +29,10 @@
 package org.n52.sos.encode.sos.v1;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.response.GetObservationByIdResponse;
-import org.n52.sos.util.CodingHelper;
+
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * TODO JavaDoc
@@ -49,13 +47,7 @@ public class GetObservationByIdResponseEncoder extends AbstractSosResponseEncode
     }
 
     @Override
-    protected XmlObject create(GetObservationByIdResponse response) throws OwsExceptionReport {
-        Encoder<XmlObject, GetObservationByIdResponse> encoder =
-                CodingHelper.getEncoder(response.getResponseFormat(), response);
-        if (encoder != null) {
-            return encoder.encode(response);
-        } else {
-            throw new NoEncoderForResponseException();
-        }
+    protected XmlObject create(GetObservationByIdResponse response) throws EncodingException {
+        return getEncoder(response.getResponseFormat(), response).encode(response);
     }
 }

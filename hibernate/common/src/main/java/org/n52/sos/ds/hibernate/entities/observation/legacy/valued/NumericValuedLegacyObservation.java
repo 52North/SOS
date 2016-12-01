@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ds.hibernate.entities.observation.legacy.valued;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;

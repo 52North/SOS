@@ -31,10 +31,10 @@ package org.n52.sos.decode.kvp;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.OperationDecoderKey;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.sos.decode.kvp.v2.DescribeSensorKvpDecoderv20;
 

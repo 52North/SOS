@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.util.CollectionHelper;
 
 /**
  *

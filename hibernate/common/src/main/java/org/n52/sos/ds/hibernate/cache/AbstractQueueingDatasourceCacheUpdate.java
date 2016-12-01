@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.util.action.CompositeParallelAction;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.ThreadLocalSessionFactory;
 
 /**

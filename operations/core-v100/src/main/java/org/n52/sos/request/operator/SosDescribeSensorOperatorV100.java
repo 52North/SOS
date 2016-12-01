@@ -31,15 +31,15 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 
 /**
@@ -70,7 +70,7 @@ public class SosDescribeSensorOperatorV100 extends
 
     @Override
     public DescribeSensorResponse receive(DescribeSensorRequest sosRequest) throws OwsExceptionReport {
-        DescribeSensorResponse response = getDao().getSensorDescription(sosRequest);
+        DescribeSensorResponse response = getOperationHandler().getSensorDescription(sosRequest);
         response.setOutputFormat(MediaType.normalizeString(sosRequest.getProcedureDescriptionFormat()));
         return response;
     }

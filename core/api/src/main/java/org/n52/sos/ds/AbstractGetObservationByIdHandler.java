@@ -28,12 +28,16 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
+import java.util.Collections;
+import java.util.Set;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetObservationByIdDAO
@@ -46,12 +50,13 @@ public abstract class AbstractGetObservationByIdHandler extends AbstractOperatio
         super(service, SosConstants.Operations.GetObservationById.name());
     }
 
-    @Override
-    public void setOperationsMetadata(OwsOperation opsMeta, String service, String version) throws OwsExceptionReport {
-            opsMeta.addAnyParameterValue(Sos2Constants.GetObservationByIdParams.observation);
-    }
-
     public abstract GetObservationByIdResponse getObservationById(GetObservationByIdRequest request)
             throws OwsExceptionReport;
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return Collections.singleton(new OwsDomain(Sos2Constants.GetObservationByIdParams.observation, OwsAnyValue.instance()));
+    }
+
 
 }

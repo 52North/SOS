@@ -28,11 +28,15 @@
  */
 package org.n52.sos.ds;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.response.InsertResultTemplateResponse;
+import java.util.Collections;
+import java.util.Set;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsAnyValue;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 /**
  * Renamed, in version 4.x called AbstractInsertResultTemplateDAO
@@ -45,12 +49,11 @@ public abstract class AbstractInsertResultTemplateHandler extends AbstractResult
         super(service, Sos2Constants.Operations.InsertResultTemplate.name());
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        opsMeta.addAnyParameterValue(Sos2Constants.InsertResultTemplateParams.proposedTemplate);
-    }
-
     public abstract InsertResultTemplateResponse insertResultTemplate(InsertResultTemplateRequest request)
             throws OwsExceptionReport;
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return Collections.singleton(new OwsDomain(Sos2Constants.InsertResultTemplateParams.proposedTemplate, OwsAnyValue.instance()));
+    }
 }

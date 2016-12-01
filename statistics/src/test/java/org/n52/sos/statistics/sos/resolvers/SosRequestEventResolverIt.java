@@ -29,19 +29,19 @@
 package org.n52.sos.statistics.sos.resolvers;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
 import org.elasticsearch.action.search.SearchResponse;
 import org.junit.Assert;
 import org.junit.Test;
-import org.n52.iceland.event.events.RequestEvent;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.request.RequestContext;
-import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
-import org.n52.iceland.util.net.IPAddress;
 
-import com.google.common.base.Optional;
+import org.n52.iceland.event.events.RequestEvent;
+import org.n52.iceland.statistics.api.interfaces.datahandler.IStatisticsDataHandler;
+import org.n52.janmayen.net.IPAddress;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
 
 import basetest.ElasticsearchAwareTest;
 
@@ -57,7 +57,7 @@ public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
     @Test
     public void persistExceptionToDb() throws InterruptedException {
 
-        RequestContext ctx = new RequestContext();
+        OwsServiceRequestContext ctx = new OwsServiceRequestContext();
         ctx.setIPAddress(new IPAddress("172.168.22.53"));
         ctx.setToken("asdf-asdf-asdf");
         GetCapabilitiesRequest r = new GetCapabilitiesRequest("SOS");
@@ -68,7 +68,7 @@ public class SosRequestEventResolverIt extends ElasticsearchAwareTest {
         r.setAcceptVersions(Arrays.asList("1.0", "1.1"));
 
         resolve.setEvent(new RequestEvent(r));
-        new RequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.53")));
+        new OwsServiceRequestContext().setIPAddress(Optional.<IPAddress> of(new IPAddress("172.168.22.53")));
 
         dataHandler.persist(resolve.resolve());
         // eventually realtime should be enough

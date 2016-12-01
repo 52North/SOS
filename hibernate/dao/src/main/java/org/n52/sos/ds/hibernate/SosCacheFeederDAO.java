@@ -39,19 +39,20 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormat;
+
 import org.n52.iceland.cache.WritableContentCache;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
 import org.n52.iceland.ds.ConnectionProvider;
 import org.n52.iceland.exception.ConfigurationError;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.i18n.I18NDAORepository;
 import org.n52.iceland.i18n.I18NSettings;
 import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.ogc.ows.ServiceMetadataRepository;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.iceland.util.Validation;
 import org.n52.sos.cache.SosWritableContentCache;
 import org.n52.sos.ds.CacheFeederHandler;
@@ -59,6 +60,7 @@ import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.cache.InitialCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.base.OfferingCacheUpdate;
 import org.n52.sos.ds.hibernate.util.ObservationSettingProvider;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

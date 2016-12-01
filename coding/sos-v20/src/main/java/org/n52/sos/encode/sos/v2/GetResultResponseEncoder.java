@@ -35,11 +35,12 @@ import net.opengis.sos.x20.GetResultResponseType;
 
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlString;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.response.GetResultResponse;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
 
 import com.google.common.collect.Sets;
 
@@ -56,7 +57,7 @@ public class GetResultResponseEncoder extends AbstractSosResponseEncoder<GetResu
     }
 
     @Override
-    protected XmlObject create(GetResultResponse response) throws OwsExceptionReport {
+    protected XmlObject create(GetResultResponse response) throws EncodingException {
         GetResultResponseDocument doc = GetResultResponseDocument.Factory.newInstance(getXmlOptions());
         GetResultResponseType gtr = doc.addNewGetResultResponse();
         XmlObject resultValues = gtr.addNewResultValues();

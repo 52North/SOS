@@ -48,6 +48,7 @@ import javax.servlet.SessionCookieConfig;
 import javax.servlet.SessionTrackingMode;
 import javax.servlet.descriptor.JspConfigDescriptor;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class MockServletContext implements ServletContext {
 
     @Override
@@ -145,6 +146,7 @@ public class MockServletContext implements ServletContext {
     }
 
     @Override
+    @Deprecated
     public Servlet getServlet(String arg0) throws ServletException {
         // TODO Auto-generated method stub
         return null;
@@ -157,12 +159,14 @@ public class MockServletContext implements ServletContext {
     }
 
     @Override
+    @Deprecated
     public Enumeration getServletNames() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
+    @Deprecated
     public Enumeration getServlets() {
         // TODO Auto-generated method stub
         return null;
@@ -175,6 +179,7 @@ public class MockServletContext implements ServletContext {
     }
 
     @Override
+    @Deprecated
     public void log(Exception arg0, String arg1) {
         // TODO Auto-generated method stub
 

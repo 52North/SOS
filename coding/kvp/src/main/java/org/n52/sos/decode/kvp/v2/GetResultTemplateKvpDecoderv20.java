@@ -28,84 +28,25 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.exception.ows.concrete.MissingObservedPropertyParameterException;
-import org.n52.sos.exception.ows.concrete.MissingOfferingParameterException;
-import org.n52.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetResultTemplateKvpDecoderv20 extends AbstractKvpDecoder {
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, Sos2Constants.Operations.GetResultTemplate, MediaTypes.APPLICATION_KVP);
+public class GetResultTemplateKvpDecoderv20 extends AbstractSosKvpDecoder<GetResultTemplateRequest> {
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    public GetResultTemplateKvpDecoderv20() {
+        super(GetResultTemplateRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              Sos2Constants.Operations.GetResultTemplate);
     }
 
     @Override
-    public GetResultTemplateRequest decode(Map<String, String> element) throws OwsExceptionReport {
-        GetResultTemplateRequest request = new GetResultTemplateRequest();
-        CompositeOwsException exceptions = new CompositeOwsException();
-
-        boolean foundOffering = false;
-        boolean foundObservedProperty = false;
-
-        for (String parameterName : element.keySet()) {
-            String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                        if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.offering.name())) {
-                        request.setOffering(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                        foundOffering = true;
-                    } // observedProperty (mandatory)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetResultTemplateParams.observedProperty.name())) {
-                        request.setObservedProperty(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                        foundObservedProperty = true;
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(parameterName));
-                    }
-                }
-            } catch (OwsExceptionReport owse) {
-                exceptions.add(owse);
-            }
-        }
-
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        if (!foundOffering) {
-            exceptions.add(new MissingOfferingParameterException());
-        }
-
-        if (!foundObservedProperty) {
-            exceptions.add(new MissingObservedPropertyParameterException());
-        }
-        exceptions.throwIfNotEmpty();
-
-        return request;
+    protected void getRequestParameterDefinitions(Builder<GetResultTemplateRequest> builder) {
+        builder.add(Sos2Constants.GetResultTemplateParams.offering, GetResultTemplateRequest::setOffering);
+        builder.add(Sos2Constants.GetResultTemplateParams.observedProperty, GetResultTemplateRequest::setObservedProperty);
     }
 }

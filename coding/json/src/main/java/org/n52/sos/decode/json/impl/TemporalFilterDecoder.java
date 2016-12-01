@@ -28,14 +28,13 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.TemporalFilter;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.ogc.filter.TemporalFilter;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -52,7 +51,7 @@ public class TemporalFilterDecoder extends JSONDecoder<TemporalFilter> {
     }
 
     @Override
-    public TemporalFilter decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public TemporalFilter decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (node == null || node.isNull() || node.isMissingNode()) {
             return null;
         }
@@ -66,7 +65,7 @@ public class TemporalFilterDecoder extends JSONDecoder<TemporalFilter> {
         }
     }
 
-    protected TemporalFilter parseTemporalFilter(JsonNode node) throws DateTimeParseException {
+    protected TemporalFilter parseTemporalFilter(JsonNode node) throws DecodingException {
         if (node.isObject()) {
             final String oName = node.fields().next().getKey();
             final TOp o = TOp.valueOf(oName);

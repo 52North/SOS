@@ -31,15 +31,16 @@ package org.n52.sos.ds.hibernate.values;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
+
+import org.n52.iceland.ds.ConnectionProvider;
+import org.n52.iceland.util.LocalizedProducer;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.legacy.LegacyObservationDAO;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
-import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.util.LocalizedProducer;
-import org.n52.iceland.util.http.HTTPStatus;
-import org.n52.sos.request.GetObservationRequest;
 
 import com.google.common.collect.Sets;
 
@@ -63,9 +64,10 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
      * constructor
      *
      * @param request
-     *            {@link GetObservationRequest}
+     *                {@link GetObservationRequest}
      */
-    public HibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request, LocalizedProducer<OwsServiceProvider> serviceProvider) {
+    public HibernateStreamingObservation(ConnectionProvider connectionProvider, GetObservationRequest request,
+                                         LocalizedProducer<OwsServiceProvider> serviceProvider) {
         super(connectionProvider, request, serviceProvider);
     }
 
@@ -89,9 +91,8 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
                 // query with temporal filter
                 if (temporalFilterCriterion != null) {
                     setResult(observationDAO.getStreamingObservationsFor(request, features, temporalFilterCriterion,
-                            session));
-                }
-                // query without temporal or indeterminate filters
+                                                                         session));
+                } // query without temporal or indeterminate filters
                 else {
                     setResult(observationDAO.getStreamingObservationsFor(request, features, session));
                 }
@@ -100,12 +101,11 @@ public class HibernateStreamingObservation extends AbstractHibernateStreamingObs
             if (!observationNotQueried && showMetadataOfEmptyObservation) {
                 if (temporalFilterCriterion != null) {
                     setResult(observationDAO.getNotMatchingSeries(procedureIds, observablePropertyIds, featureIds,
-                            request, features, temporalFilterCriterion, session));
-                }
-                // query without temporal or indeterminate filters
+                                                                  request, features, temporalFilterCriterion, session));
+                } // query without temporal or indeterminate filters
                 else {
                     setResult(observationDAO.getNotMatchingSeries(procedureIds, observablePropertyIds, featureIds,
-                            request, features, session));
+                                                                  request, features, session));
                 }
 
             }

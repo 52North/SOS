@@ -28,30 +28,38 @@
  */
 package org.n52.sos.encode;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import javax.inject.Inject;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.sos.iso.CodeList.CiRoleCodes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.iso.CodeList.CiRoleCodes;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.ows.OwsAddress;
+import org.n52.shetland.ogc.ows.OwsContact;
+import org.n52.shetland.ogc.ows.OwsOnlineResource;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SmlResponsibleParty;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.netcdf.data.dataset.AbstractSensorDataset;
 import org.n52.sos.netcdf.oceansites.OceanSITESConstants;
 import org.n52.sos.netcdf.oceansites.OceanSITESHelper;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.sensorML.AbstractSensorML;
-import org.n52.sos.ogc.sensorML.SmlResponsibleParty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.axiomalaska.cf4j.constants.ACDDConstants;
 import com.axiomalaska.cf4j.constants.CFConstants;
 import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import ucar.ma2.DataType;
@@ -73,13 +81,16 @@ import ucar.nc2.constants.CF.FeatureType;
  */
 public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(AbstractOceanSITESEncoder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractOceanSITESEncoder.class);
 
     private static final DateTime DT_1950 = new DateTime(1950, 1, 1, 0, 0, DateTimeZone.UTC);
 
+
+    private OceanSITESHelper oceanSITESHelper;
+
     @Override
     protected void addProfileSpecificGlobalAttributes(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset)
-            throws OwsExceptionReport {
+            throws EncodingException {
         // site_code (RECOMMENDED)
         addSiteCode(writer, sensorDataset);
         // data_mode (RECOMMENDED)
@@ -122,20 +133,20 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     @Override
     protected String getConventionsValue() {
-        return Joiner.on(Constants.COMMA_CHAR).join(CFConstants.CF_1_6, OceanSITESConstants.OCEANSITES_VERSION,
+        return Joiner.on(',').join(CFConstants.CF_1_6, OceanSITESConstants.OCEANSITES_VERSION,
                 OceanSITESConstants.ACCD_VERSION);
     }
 
     @Override
     protected String getLicenseValue() {
-        if (OceanSITESHelper.getInstance().isSetLicense()) {
-            return OceanSITESHelper.getInstance().getLicense();
+        if (getOceanSITEHelper().isSetLicense()) {
+            return getOceanSITEHelper().getLicense();
         }
         return OceanSITESConstants.LICENSE_DEFAULT_TEXT;
     }
 
     @Override
-    protected double getTimeValue(Time time) throws CodedException {
+    protected double getTimeValue(Time time) throws EncodingException {
         return DateTimeHelper.getDaysSinceWithPrecision(DT_1950, getDateTime(time));
     }
 
@@ -204,8 +215,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addSiteCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
-                    .getInstance().getSiteDefinition(), OceanSITESConstants.SITE_CODE);
+            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), getOceanSITEHelper().getSiteDefinition(), OceanSITESConstants.SITE_CODE);
             if (exists) {
                 return getAttribute(writer, OceanSITESConstants.SITE_CODE);
             }
@@ -217,8 +227,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     protected CDMNode addPlatform(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         // platform_code (RECOMMENDED)
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
-                    .getInstance().getPlatformDefinition(), OceanSITESConstants.PLATFORM_CODE);
+            boolean exists = addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), getOceanSITEHelper().getPlatformDefinition(), OceanSITESConstants.PLATFORM_CODE);
             if (exists) {
                 return getAttribute(writer, OceanSITESConstants.PLATFORM_CODE);
             }
@@ -229,10 +238,10 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     protected CDMNode addDataMode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
             if (!addAttributeIfClassifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
-                    OceanSITESHelper.getInstance().getDataModeDefinition(), OceanSITESConstants.DATA_MODE)) {
+                    getOceanSITEHelper().getDataModeDefinition(), OceanSITESConstants.DATA_MODE)) {
                 String dataModeText = OceanSITESConstants.DataMode.R.toString();
-                if (OceanSITESHelper.getInstance().isSetDataMode()) {
-                    dataModeText = OceanSITESHelper.getInstance().getDataMode().name();
+                if (getOceanSITEHelper().isSetDataMode()) {
+                    dataModeText = getOceanSITEHelper().getDataMode().name();
                 }
                 writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.DATA_MODE, dataModeText));
             }
@@ -246,8 +255,7 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     }
 
     protected CDMNode addFormatVersion(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
-        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL, OceanSITESHelper
-                .getInstance().getFormatVersion()));
+        return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.UPDATE_INTERVAL, getOceanSITEHelper().getFormatVersion()));
     }
 
     protected CDMNode addUpdateInterval(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
@@ -257,16 +265,14 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addWmoCode(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
-                    .getInstance().getWmoPlatformCodeDefinition(), OceanSITESConstants.WMO_PLATFORM_CODE);
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), getOceanSITEHelper().getWmoPlatformCodeDefinition(), OceanSITESConstants.WMO_PLATFORM_CODE);
         }
         return getAttribute(writer, OceanSITESConstants.WMO_PLATFORM_CODE);
     }
 
     protected CDMNode addAcknowledge(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
-                    .getInstance().getAcknowledgement(), ACDDConstants.ACKNOWLEDGEMENT);
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), getOceanSITEHelper().getAcknowledgement(), ACDDConstants.ACKNOWLEDGEMENT);
 
         }
         return getAttribute(writer, ACDDConstants.ACKNOWLEDGEMENT);
@@ -276,15 +282,14 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     protected boolean addArray(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
             return addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
-                    OceanSITESHelper.getInstance().getArrayDefinition(), OceanSITESConstants.ARRAY);
+                    getOceanSITEHelper().getArrayDefinition(), OceanSITESConstants.ARRAY);
         }
         return false;
     }
 
     protected CDMNode addNetwork(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
-                    .getInstance().getNetworkDefinition(), OceanSITESConstants.NETWORK);
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), getOceanSITEHelper().getNetworkDefinition(), OceanSITESConstants.NETWORK);
 
         }
         return getAttribute(writer, OceanSITESConstants.NETWORK);
@@ -293,10 +298,9 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     protected CDMNode addProject(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
             if (addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(),
-                    OceanSITESHelper.getInstance().getProjectDefinition(), ACDDConstants.PROJECT)) {
-                if (OceanSITESHelper.getInstance().isSetProject()) {
-                    return writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROJECT, OceanSITESHelper
-                            .getInstance().getProject()));
+                    getOceanSITEHelper().getProjectDefinition(), ACDDConstants.PROJECT)) {
+                if (getOceanSITEHelper().isSetProject()) {
+                    return writer.addGroupAttribute(null, new Attribute(ACDDConstants.PROJECT, getOceanSITEHelper().getProject()));
                 }
             }
         }
@@ -304,15 +308,14 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     }
 
     @Override
-    protected CDMNode addId(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) throws OwsExceptionReport {
+    protected CDMNode addId(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) throws EncodingException {
         return writer.addGroupAttribute(null,
                 new Attribute(ACDDConstants.ID, getFilename(sensorDataset).replace(".nc", "")));
     }
 
     protected CDMNode addArea(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         if (sensorDataset.getSensor().isSetSensorDescription()) {
-            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), OceanSITESHelper
-                    .getInstance().getAreaDefinition(), OceanSITESConstants.AREA);
+            addAttributeIfIdentifierExists(writer, sensorDataset.getSensor().getSensorDescritpion(), getOceanSITEHelper().getAreaDefinition(), OceanSITESConstants.AREA);
 
         }
         return getAttribute(writer, OceanSITESConstants.AREA);
@@ -320,8 +323,8 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
 
     protected CDMNode addCitation(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
         String citationText = OceanSITESConstants.CITATION_DEFAULT_TEXT;
-        if (OceanSITESHelper.getInstance().isSetCitation()) {
-            citationText = OceanSITESHelper.getInstance().getCitation();
+        if (getOceanSITEHelper().isSetCitation()) {
+            citationText = getOceanSITEHelper().getCitation();
         }
         return writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.CITATION, citationText));
     }
@@ -347,8 +350,8 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     }
 
     protected CDMNode addReferences(NetcdfFileWriter writer, AbstractSensorDataset sensorDataset) {
-        if (OceanSITESHelper.getInstance().isSetReferences()) {
-            return writer.addGroupAttribute(null, new Attribute(CFConstants.REFERENCES, OceanSITESHelper.getInstance()
+        if (getOceanSITEHelper().isSetReferences()) {
+            return writer.addGroupAttribute(null, new Attribute(CFConstants.REFERENCES, getOceanSITEHelper()
                     .getReferences()));
         }
         return null;
@@ -387,12 +390,14 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
             }
             return true;
         } else {
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.PRINCIPAL_INVESTIGATOR,
-                    getServiceProvider().getName()));
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.PRINCIPAL_INVESTIGATOR_EMAIL,
-                    getServiceProvider().getMailAddress()));
-            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.PRINCIPAL_INVESTIGATOR_URL,
-                    getServiceProvider().getSite()));
+            String mail = getServiceProvider().getServiceContact().getContactInfo().flatMap(OwsContact::getAddress)
+                    .map(OwsAddress::getElectronicMailAddress).map(l -> Iterables.getFirst(l, null)).orElse(null);
+            String name = getServiceProvider().getProviderName();
+            String url = getServiceProvider().getProviderSite().flatMap(OwsOnlineResource::getHref).map(URI::toString)
+                    .orElse(null);
+            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.PRINCIPAL_INVESTIGATOR, name));
+            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.PRINCIPAL_INVESTIGATOR_EMAIL, mail));
+            writer.addGroupAttribute(null, new Attribute(OceanSITESConstants.PRINCIPAL_INVESTIGATOR_URL, url));
             return true;
         }
     }
@@ -473,25 +478,34 @@ public abstract class AbstractOceanSITESEncoder extends AbstractNetcdfEncoder {
     }
 
     @Override
-    protected String getFilename(AbstractSensorDataset sensorDataset) throws OwsExceptionReport {
+    protected String getFilename(AbstractSensorDataset sensorDataset) throws EncodingException {
         List<Time> times = Lists.newArrayList(sensorDataset.getTimes());
         Collections.sort(times);
         DateTime firstTime = getDateTime(times.get(0));
         DateTime lastTime = getDateTime(times.get(times.size() - 1));
         // prefix
-        StringBuffer pathBuffer = new StringBuffer("OS_");
+        StringBuilder pathBuffer = new StringBuilder("OS_");
         // platform code
-        pathBuffer.append("_" + getPrefixlessIdentifier(sensorDataset.getSensorIdentifier()));
+        pathBuffer.append("_").append(getPrefixlessIdentifier(sensorDataset.getSensorIdentifier()));
         // deployment code
-        pathBuffer.append("_" + makeDateSafe(new DateTime(DateTimeZone.UTC)));
+        pathBuffer.append("_").append(makeDateSafe(new DateTime(DateTimeZone.UTC)));
         // data mode
-        pathBuffer.append("_" + OceanSITESHelper.getInstance().getDataMode().name());
+        pathBuffer.append("_").append(getOceanSITEHelper().getDataMode().name());
         // partx/times
-        pathBuffer.append("_" + makeDateSafe(firstTime) + "-" + makeDateSafe(lastTime));
+        pathBuffer.append("_").append(makeDateSafe(firstTime)).append("-").append(makeDateSafe(lastTime));
         // todo
-        pathBuffer.append("_" + Long.toString(java.lang.System.nanoTime()) + ".nc");
+        pathBuffer.append("_").append(Long.toString(java.lang.System.nanoTime())).append(".nc");
         return pathBuffer.toString();
         // return super.getFilename(sensorDataset);
+    }
+
+    @Inject
+    public void setOceanSITESHelper(OceanSITESHelper oceanSITESHelper) {
+        this.oceanSITESHelper = Objects.requireNonNull(oceanSITESHelper);
+    }
+
+    private OceanSITESHelper getOceanSITEHelper() {
+        return this.oceanSITESHelper;
     }
 
 }

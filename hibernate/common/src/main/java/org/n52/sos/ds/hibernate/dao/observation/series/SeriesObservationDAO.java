@@ -34,14 +34,15 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
+
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.observation.ObservationFactory;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.GetObservationRequest;
 
 
 public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
@@ -97,7 +98,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<SeriesObservation<?>> getSeriesObservationForSosIndeterminateTimeFilter(Series series,
-            List<String> offerings, ExtendedIndeterminateTime sosIndeterminateTime, Session session) {
+            List<String> offerings, IndeterminateValue sosIndeterminateTime, Session session) {
         return getSeriesObservationCriteriaForSosIndeterminateTimeFilter(series, offerings, sosIndeterminateTime, session).list();
     }
 
@@ -158,7 +159,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
      */
     @Override
     public List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request,
-            Collection<String> features, ExtendedIndeterminateTime sosIndeterminateTime, Session session)
+            Collection<String> features, IndeterminateValue sosIndeterminateTime, Session session)
             throws OwsExceptionReport {
         return getSeriesObservationsFor(request, features, null, sosIndeterminateTime, session);
     }
@@ -186,7 +187,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     @SuppressWarnings("unchecked")
     @Override
     protected List<SeriesObservation<?>> getSeriesObservationsFor(GetObservationRequest request, Collection<String> features,
-            Criterion filterCriterion, ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            Criterion filterCriterion, IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(request, features, filterCriterion, sosIndeterminateTime, session).list();
     }
 
@@ -194,7 +195,7 @@ public class SeriesObservationDAO extends AbstractSeriesObservationDAO {
     @SuppressWarnings("unchecked")
     @Override
     public List<SeriesObservation<?>> getSeriesObservationsFor(Series series, GetObservationRequest request,
-            ExtendedIndeterminateTime sosIndeterminateTime, Session session) throws OwsExceptionReport {
+            IndeterminateValue sosIndeterminateTime, Session session) throws OwsExceptionReport {
         return getSeriesObservationCriteriaFor(series, request, sosIndeterminateTime, session).list();
 
     }

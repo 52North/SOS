@@ -36,6 +36,30 @@ package org.n52.sos.coding.json;
  * @since 4.0.0
  */
 public interface JSONConstants {
+    String ONLINE_RESOURCE = "onlineResource";
+    String HOURS_OF_SERVICE = "hoursOfService";
+    String CONTACT_INSTRUCTIONS = "contactInstructions";
+    String SERVICE_CONTACT = "serviceContact";
+    String CONTACT_INFO = "contactInfo";
+    String POSITION_NAME = "positionName";
+    String INDIVIDUAL_NAME = "individualName";
+    String ORGANISATION_NAME = "organisationName";
+    String SPACING = "spacing";
+    String REFERENCE = "reference";
+    String METADATA = "metadata";
+    String ABOUT = "about";
+    String SHOW = "show";
+    String ARCROLE = "arcrole";
+    String ACTUATE = "actuate";
+    String MEANING = "meaning";
+    String POSSIBLE_VALUES = "possibleValues";
+    String VALUES_UNIT = "valuesUnit";
+    String REFERENCE_SYSTEM = "referenceSystem";
+    String HTTP_TYPE = "HTTP";
+    String METHODS = "methods";
+    String VOICE = "voice";
+    String FACSIMILE = "facsimile";
+
     String $REF = "$ref";
 
     String ABSTRACT = "abstract";
@@ -179,6 +203,8 @@ public interface JSONConstants {
     String KEYWORDS = "keywords";
 
     String LABEL = "label";
+
+    String LANG = "lang";
 
     String LINE_STRING = "LineString";
 
@@ -379,5 +405,7 @@ public interface JSONConstants {
     String PARAMETER = "parameter";
 
     String NAMED_VALUE = "NamedValue";
+
+    String INDETERMINATE_VALUE = "indeterminateValue";
 
 }

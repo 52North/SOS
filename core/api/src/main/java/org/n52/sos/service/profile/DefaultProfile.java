@@ -33,7 +33,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.n52.iceland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmConstants;
 
 /**
  * @since 4.0.0

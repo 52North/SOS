@@ -33,31 +33,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.SosHelper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time.TimeIndeterminateValue;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-
-import com.google.common.base.Joiner;
-import com.vividsolutions.jts.geom.Geometry;
-
 import net.opengis.gml.CodeType;
 import net.opengis.gml.CoordinatesType;
 import net.opengis.gml.DirectPositionType;
@@ -69,6 +44,28 @@ import net.opengis.gml.TimeInstantType;
 import net.opengis.gml.TimePeriodDocument;
 import net.opengis.gml.TimePeriodType;
 import net.opengis.gml.TimePositionType;
+
+import org.apache.xmlbeans.XmlObject;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.CRSHelper;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
+import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.JTSHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+
+import com.google.common.base.Joiner;
+import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * @since 4.0.0
@@ -82,14 +79,12 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
             TimePeriodDocument.class, CodeType.class, PointType.class);
 
     private static final String CS = ",";
-
     private static final String DECIMAL = ".";
-
     private static final String TS = " ";
 
     public GmlDecoderv311() {
-        LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(DECODER_KEYS));
+        LOGGER.debug("Decoder for the following keys initialized successfully: {}!",
+                     Joiner.on(", ").join(DECODER_KEYS));
     }
 
     @Override
@@ -98,7 +93,7 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Object decode(XmlObject xmlObject) throws OwsExceptionReport {
+    public Object decode(XmlObject xmlObject) throws DecodingException {
         if (xmlObject instanceof EnvelopeDocument) {
             return getGeometry4BBOX((EnvelopeDocument) xmlObject);
         } else if (xmlObject instanceof TimeInstantType) {
@@ -118,25 +113,24 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
         }
     }
 
-    private Geometry getGeometry4BBOX(EnvelopeDocument xbBbox) throws OwsExceptionReport {
+    private Geometry getGeometry4BBOX(EnvelopeDocument xbBbox) throws DecodingException {
         EnvelopeType xbEnvelope = xbBbox.getEnvelope();
         // parse srid; if not set, throw exception!
-        int srid = SosHelper.parseSrsName(xbEnvelope.getSrsName());
+        int srid = CRSHelper.parseSrsName(xbEnvelope.getSrsName());
         String lower = xbEnvelope.getLowerCorner().getStringValue();
         String upper = xbEnvelope.getUpperCorner().getStringValue();
         String geomWKT = String.format("MULTIPOINT(%s, %s)", lower, upper);
         return JTSHelper.createGeometryFromWKT(geomWKT, srid).getEnvelope();
     }
 
-    private Object parseTimePeriod(TimePeriodType xbTimePeriod) throws OwsExceptionReport {
+    private Object parseTimePeriod(TimePeriodType xbTimePeriod) throws DecodingException {
         // begin position
         TimePositionType xbBeginTPT = xbTimePeriod.getBeginPosition();
         TimeInstant begin = null;
         if (xbBeginTPT != null) {
             begin = parseTimePosition(xbBeginTPT);
         } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("gml:TimePeriod must contain gml:beginPosition Element with valid ISO:8601 String!");
+            throw new DecodingException("gml:TimePeriod must contain gml:beginPosition Element with valid ISO:8601 String!");
         }
 
         // end position
@@ -145,62 +139,62 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
         if (xbEndTPT != null) {
             end = parseTimePosition(xbEndTPT);
         } else {
-            throw new NoApplicableCodeException()
-                    .withMessage("gml:TimePeriod must contain gml:endPosition Element with valid ISO:8601 String!");
+            throw new DecodingException("gml:TimePeriod must contain gml:endPosition Element with valid ISO:8601 String!");
         }
         TimePeriod timePeriod = new TimePeriod(begin, end);
         timePeriod.setGmlId(xbTimePeriod.getId());
         return timePeriod;
     }
 
-    private Object parseTimeInstant(TimeInstantType xbTimeIntant) throws OwsExceptionReport {
+    private Object parseTimeInstant(TimeInstantType xbTimeIntant) throws DecodingException {
         TimeInstant ti = parseTimePosition(xbTimeIntant.getTimePosition());
         ti.setGmlId(xbTimeIntant.getId());
         return ti;
     }
 
-    private TimeInstant parseTimePosition(TimePositionType xbTimePosition) throws OwsExceptionReport {
+    private TimeInstant parseTimePosition(TimePositionType xbTimePosition) throws DecodingException {
         TimeInstant ti = new TimeInstant();
         String timeString = xbTimePosition.getStringValue();
         if (timeString != null && !timeString.isEmpty()) {
-            if ((ExtendedIndeterminateTime.contains(timeString))) {
-                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(timeString));
-            } else {
-                ti.setValue(DateTimeHelper.parseIsoString2DateTime(timeString));
+            try {
+                // TODO better differnetiate between ISO8601 and an indeterminate value
+                DateTime dateTime = DateTimeHelper.parseIsoString2DateTime(timeString);
+                ti.setValue(dateTime);
                 ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(timeString));
+            } catch (DateTimeParseException ex) {
+                ti.setIndeterminateValue(new IndeterminateValue(timeString));
             }
         }
         if (xbTimePosition.getIndeterminatePosition() != null) {
-            ti.setIndeterminateValue(TimeIndeterminateValue.getEnumForString(xbTimePosition.getIndeterminatePosition()
-                    .toString()));
+            ti.setIndeterminateValue(new IndeterminateValue(xbTimePosition.getIndeterminatePosition().toString()));
         }
 
         return ti;
     }
 
-    private org.n52.iceland.ogc.gml.CodeType parseCodeType(CodeType element) throws CodedException {
-        org.n52.iceland.ogc.gml.CodeType codeType = new org.n52.iceland.ogc.gml.CodeType(element.getStringValue());
+    private org.n52.shetland.ogc.gml.CodeType parseCodeType(CodeType element) throws DecodingException {
+        org.n52.shetland.ogc.gml.CodeType codeType = new org.n52.shetland.ogc.gml.CodeType(element.getStringValue());
         if (element.isSetCodeSpace()) {
             try {
                 codeType.setCodeSpace(new URI(element.getCodeSpace()));
             } catch (URISyntaxException e) {
-                throw new NoApplicableCodeException().causedBy(e).withMessage("Error while creating URI from '{}'", element.getCodeSpace());
+                throw new DecodingException(e, "Error while creating URI from '{}'", element.getCodeSpace());
             }
         }
         return codeType;
     }
 
-    private Object parsePointType(PointType xbPointType) throws OwsExceptionReport {
+    private Object parsePointType(PointType xbPointType) throws DecodingException {
         String geomWKT = null;
         int srid = -1;
         if (xbPointType.getSrsName() != null) {
-            srid = SosHelper.parseSrsName(xbPointType.getSrsName());
+            srid = CRSHelper.parseSrsName(xbPointType.getSrsName());
         }
 
         if (xbPointType.getPos() != null) {
             DirectPositionType xbPos = xbPointType.getPos();
             if (srid == -1 && xbPos.getSrsName() != null) {
-                srid = SosHelper.parseSrsName(xbPos.getSrsName());
+                srid = CRSHelper.parseSrsName(xbPos.getSrsName());
             }
             String directPosition = getString4Pos(xbPos);
             geomWKT = JTSHelper.createWKTPointFromCoordinateString(directPosition);
@@ -209,13 +203,12 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
             String directPosition = getString4Coordinates(xbCoords);
             geomWKT = JTSHelper.createWKTPointFromCoordinateString(directPosition);
         } else {
-            throw new NoApplicableCodeException().withMessage("For geometry type 'gml:Point' only elements "
-                    + "'gml:pos' and 'gml:coordinates' are allowed");
+            throw new DecodingException("For geometry type 'gml:Point' only elements 'gml:pos' and 'gml:coordinates' are allowed");
         }
 
         checkSrid(srid);
         if (srid == -1) {
-            throw new NoApplicableCodeException().withMessage("No SrsName ist specified for geometry!");
+            throw new DecodingException("No SrsName ist specified for geometry!");
         }
 
         return JTSHelper.createGeometryFromWKT(geomWKT, srid);
@@ -257,9 +250,9 @@ public class GmlDecoderv311 implements Decoder<Object, XmlObject> {
         return coordinateString;
     }
 
-    private void checkSrid(int srid) throws OwsExceptionReport {
+    private void checkSrid(int srid) throws DecodingException {
         if (srid == 0 || srid == -1) {
-            throw new NoApplicableCodeException().withMessage("No SrsName is specified for geometry!");
+            throw new DecodingException("No SrsName is specified for geometry!");
         }
     }
 }

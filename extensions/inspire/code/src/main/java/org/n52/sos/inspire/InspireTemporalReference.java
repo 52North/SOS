@@ -31,8 +31,8 @@ package org.n52.sos.inspire;
 import java.util.Collection;
 import java.util.List;
 
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.collect.Lists;
 

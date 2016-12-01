@@ -31,16 +31,17 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.ds.AbstractGetObservationByIdHandler;
-import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.response.GetObservationByIdResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.ds.AbstractGetObservationByIdHandler;
+import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 
 /**
  * @since 4.0.0
@@ -103,7 +104,7 @@ public class SosGetObservationByIdOperatorV100
 
     @Override
     protected GetObservationByIdResponse receive(GetObservationByIdRequest sosRequest) throws OwsExceptionReport {
-        GetObservationByIdResponse sosResponse = getDao().getObservationById(sosRequest);
+        GetObservationByIdResponse sosResponse = getOperationHandler().getObservationById(sosRequest);
         setObservationResponseResponseFormatAndContentType(sosRequest, sosResponse);
         return sosResponse;
     }

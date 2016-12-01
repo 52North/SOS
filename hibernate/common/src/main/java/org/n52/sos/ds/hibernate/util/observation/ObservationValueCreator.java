@@ -29,7 +29,22 @@
 package org.n52.sos.ds.hibernate.util.observation;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.om.values.BooleanValue;
+import org.n52.shetland.ogc.om.values.CategoryValue;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.om.values.CountValue;
+import org.n52.shetland.ogc.om.values.GeometryValue;
+import org.n52.shetland.ogc.om.values.QuantityValue;
+import org.n52.shetland.ogc.om.values.SweDataArrayValue;
+import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.om.values.UnknownValue;
+import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.swe.SweDataArray;
+import org.n52.shetland.ogc.swe.SweDataRecord;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.ValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.valued.BlobValuedObservation;
@@ -41,18 +56,6 @@ import org.n52.sos.ds.hibernate.entities.observation.valued.GeometryValuedObserv
 import org.n52.sos.ds.hibernate.entities.observation.valued.NumericValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.SweDataArrayValuedObservation;
 import org.n52.sos.ds.hibernate.entities.observation.valued.TextValuedObservation;
-import org.n52.sos.ogc.om.values.BooleanValue;
-import org.n52.sos.ogc.om.values.CategoryValue;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.om.values.CountValue;
-import org.n52.sos.ogc.om.values.GeometryValue;
-import org.n52.sos.ogc.om.values.QuantityValue;
-import org.n52.sos.ogc.om.values.SweDataArrayValue;
-import org.n52.sos.ogc.om.values.TextValue;
-import org.n52.sos.ogc.om.values.UnknownValue;
-import org.n52.sos.ogc.om.values.Value;
-import org.n52.sos.ogc.swe.SweDataArray;
-import org.n52.sos.ogc.swe.SweDataRecord;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 
@@ -61,8 +64,7 @@ import org.n52.sos.util.XmlHelper;
  *
  * @author Christian Autermann
  */
-public class ObservationValueCreator
-        implements ValuedObservationVisitor<Value<?>> {
+public class ObservationValueCreator implements ValuedObservationVisitor<Value<?>> {
 
     @Override
     public QuantityValue visit(NumericValuedObservation o) {
@@ -121,10 +123,17 @@ public class ObservationValueCreator
     }
 
     @Override
-    public SweDataArrayValue visit(SweDataArrayValuedObservation o) throws OwsExceptionReport {
-        XmlObject xml = XmlHelper.parseXmlString(o.getValue());
-        SweDataArray array = (SweDataArray) CodingHelper.decodeXmlElement(xml);
-        return new SweDataArrayValue(array);
+    public SweDataArrayValue visit(SweDataArrayValuedObservation o)
+            throws OwsExceptionReport {
+
+        try {
+            XmlObject xml = XmlHelper.parseXmlString(o.getValue());
+            SweDataArray array = CodingHelper.decodeXmlElement(xml);
+            return new SweDataArrayValue(array);
+        } catch (DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
+        }
+
     }
 
     protected void addUnit(ValuedObservation<?> o, Value<?> v) {

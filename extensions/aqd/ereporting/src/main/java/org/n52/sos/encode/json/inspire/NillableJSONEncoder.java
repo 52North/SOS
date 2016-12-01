@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.Nillable;
@@ -48,7 +48,7 @@ public class NillableJSONEncoder extends JSONEncoder<Nillable<?>> {
 
     @Override
     public JsonNode encodeJSON(Nillable<?> t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         if (t.isAbsent()) {
             return nodeFactory().nullNode();
         } else if (t.isNil()) {

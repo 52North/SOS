@@ -53,45 +53,39 @@ import net.opengis.swes.x20.UpdateSensorDescriptionType.Description;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-
-import org.n52.iceland.coding.CodingRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DecoderResponseUnsupportedException;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.service.AbstractServiceCommunicationObject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.coding.decode.XmlNamespaceDecoderKey;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants.UpdateSensorDescriptionParams;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.iceland.ogc.swes.SwesConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceCommunicationObject;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.sos.SosInsertionMetadata;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.swes.SwesFeatureRelationship;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.request.UpdateSensorRequest;
+import org.n52.shetland.ogc.sos.SosInsertionMetadata;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.request.UpdateSensorRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecoderResponseUnsupportedException;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
@@ -100,7 +94,7 @@ import com.google.common.collect.Lists;
  * @since 4.0.0
  *
  */
-public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<AbstractServiceCommunicationObject, XmlObject> {
+public class SwesDecoderv20 extends AbstractSwesDecoderv20<OwsServiceCommunicationObject> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SwesDecoderv20.class);
 
@@ -123,7 +117,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
     }
 
     @Override
-    public AbstractServiceRequest<?> decode(final XmlObject xmlObject) throws OwsExceptionReport {
+    public OwsServiceRequest decode(XmlObject xmlObject) throws DecodingException {
         LOGGER.debug("REQUESTTYPE:" + xmlObject.getClass());
         XmlHelper.validateDocument(xmlObject);
         if (xmlObject instanceof DescribeSensorDocument) {
@@ -148,11 +142,11 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
      * @return Returns SOS describeSensor request
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if validation of the request failed
      */
-    private AbstractServiceRequest<?> parseDescribeSensor(final DescribeSensorDocument xbDescSenDoc)
-            throws OwsExceptionReport {
+    private OwsServiceRequest parseDescribeSensor(final DescribeSensorDocument xbDescSenDoc)
+            throws DecodingException {
         final DescribeSensorRequest descSensorRequest = new DescribeSensorRequest();
         final DescribeSensorType xbDescSensor = xbDescSenDoc.getDescribeSensor();
         descSensorRequest.setService(xbDescSensor.getService());
@@ -167,8 +161,8 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
         return descSensorRequest;
     }
 
-    private AbstractServiceRequest<?> parseInsertSensor(final InsertSensorDocument xbInsSensDoc)
-            throws OwsExceptionReport {
+    private OwsServiceRequest parseInsertSensor(final InsertSensorDocument xbInsSensDoc)
+            throws DecodingException {
         final InsertSensorRequest request = new InsertSensorRequest();
         final InsertSensorType xbInsertSensor = xbInsSensDoc.getInsertSensor();
         request.setService(xbInsertSensor.getService());
@@ -195,7 +189,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                             .getChildNodes()));
 
             final Decoder<?, XmlObject> decoder =
-                    CodingRepository.getInstance().getDecoder(
+                    getDecoder(
                             new XmlNamespaceDecoderKey(xbInsertSensor.getProcedureDescriptionFormat(),
                                     xbProcedureDescription.getClass()));
             if (decoder == null) {
@@ -217,13 +211,12 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                 request.setProcedureDescription((SosProcedureDescription) decodedProcedureDescription);
             }
         } catch (final XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                    "Error while parsing procedure description of InsertSensor request!");
+            throw new DecodingException("Error while parsing procedure description of InsertSensor request!", xmle);
         }
         return request;
     }
 
-    private AbstractServiceRequest<?> parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) throws OwsExceptionReport {
+    private OwsServiceRequest parseDeleteSensor(final DeleteSensorDocument xbDelSenDoc) throws DecodingException {
         final DeleteSensorRequest request = new DeleteSensorRequest();
         DeleteSensorType deleteSensor = xbDelSenDoc.getDeleteSensor();
         request.setService(deleteSensor.getService());
@@ -242,11 +235,11 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
      * @return SOS UpdateSensor request
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if an error occurs.
      */
-    private AbstractServiceRequest<?> parseUpdateSensorDescription(final UpdateSensorDescriptionDocument xbUpSenDoc)
-            throws OwsExceptionReport {
+    private OwsServiceRequest parseUpdateSensorDescription(final UpdateSensorDescriptionDocument xbUpSenDoc)
+            throws DecodingException {
         final UpdateSensorRequest request = new UpdateSensorRequest();
         final UpdateSensorDescriptionType xbUpdateSensor = xbUpSenDoc.getUpdateSensorDescription();
         request.setService(xbUpdateSensor.getService());
@@ -263,31 +256,28 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                 final XmlObject xmlObject =
                         XmlObject.Factory.parse(getNodeFromNodeList(sensorDescription.getData().getDomNode()
                                 .getChildNodes()));
-                final Decoder<?, XmlObject> decoder =
-                        CodingRepository.getInstance().getDecoder(CodingHelper.getDecoderKey(xmlObject));
+                Decoder<?, XmlObject> decoder = getDecoder(getDecoderKey(xmlObject));
                 if (decoder == null) {
-                    throw new InvalidParameterValueException().at(
-                            UpdateSensorDescriptionParams.procedureDescriptionFormat).withMessage(
+                    throw new DecodingException(UpdateSensorDescriptionParams.procedureDescriptionFormat,
                             "The requested procedureDescritpionFormat is not supported!");
                 }
 
                 final Object decodedObject = decoder.decode(xmlObject);
                 if (decodedObject instanceof SosProcedureDescription) {
-                    SosProcedureDescription sosProcedureDescription = (SosProcedureDescription) decodedObject;
+                    SosProcedureDescription<?> sosProcedureDescription = (SosProcedureDescription) decodedObject;
                     if (sensorDescription.isSetValidTime()) {
                         sosProcedureDescription.setValidTime(getValidTime(sensorDescription.getValidTime()));
                     }
                     request.addProcedureDescriptionString(sosProcedureDescription);
                 }
             } catch (final XmlException xmle) {
-                throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                        "Error while parsing procedure description of UpdateSensor request!");
+                throw new DecodingException("Error while parsing procedure description of UpdateSensor request!", xmle);
             }
         }
         return request;
     }
 
-    private SosInsertionMetadata parseMetadata(final Metadata[] metadataArray) throws OwsExceptionReport {
+    private SosInsertionMetadata parseMetadata(final Metadata[] metadataArray) throws DecodingException {
 
         final SosInsertionMetadata sosMetadata = new SosInsertionMetadata();
         try {
@@ -318,16 +308,14 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                 }
             }
         } catch (final XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                    "An error occurred while parsing the metadata in the http post request");
+            throw new DecodingException("An error occurred while parsing the metadata in the http post request", xmle);
         }
         return sosMetadata;
     }
 
     private List<SwesFeatureRelationship> parseRelatedFeature(final RelatedFeature[] relatedFeatureArray)
-            throws OwsExceptionReport {
-        final List<SwesFeatureRelationship> sosRelatedFeatures =
-                new ArrayList<SwesFeatureRelationship>(relatedFeatureArray.length);
+            throws DecodingException {
+        List<SwesFeatureRelationship> sosRelatedFeatures = new ArrayList<>(relatedFeatureArray.length);
         for (final RelatedFeature relatedFeature : relatedFeatureArray) {
             final SwesFeatureRelationship sosFeatureRelationship = new SwesFeatureRelationship();
 
@@ -344,7 +332,7 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
                 feature.setFeatureType(OGCConstants.UNKNOWN);
                 sosFeatureRelationship.setFeature(feature);
             } else {
-                final Object decodedObject = CodingHelper.decodeXmlElement(fpt);
+                final Object decodedObject = decodeXmlElement(fpt);
                 if (decodedObject instanceof SamplingFeature) {
                     sosFeatureRelationship.setFeature((SamplingFeature) decodedObject);
                 } else {
@@ -372,26 +360,26 @@ public class SwesDecoderv20 extends AbstractSwesDecoderv20 implements Decoder<Ab
         return null;
     }
 
-    private Time getValidTime(net.opengis.swes.x20.DescribeSensorType.ValidTime validTime) throws OwsExceptionReport {
-        Object decodeXmlElement = CodingHelper.decodeXmlElement(validTime.getAbstractTimeGeometricPrimitive());
+    private Time getValidTime(net.opengis.swes.x20.DescribeSensorType.ValidTime validTime) throws DecodingException {
+        Object decodeXmlElement = decodeXmlElement(validTime.getAbstractTimeGeometricPrimitive());
         if (decodeXmlElement instanceof Time) {
             return (Time) decodeXmlElement;
         } else {
-            throw new InvalidParameterValueException().at(Sos2Constants.DescribeSensorParams.validTime).withMessage(
+            throw new DecodingException(Sos2Constants.DescribeSensorParams.validTime,
                     "The validTime element ({}) is not supported",
                     validTime.getAbstractTimeGeometricPrimitive().schemaType());
         }
     }
 
     private Time getValidTime(net.opengis.swes.x20.SensorDescriptionType.ValidTime validTime)
-            throws OwsExceptionReport {
-        Object decodeXmlElement = CodingHelper.decodeXmlElement(validTime.getAbstractTimeGeometricPrimitive());
+            throws DecodingException {
+        Object decodeXmlElement = decodeXmlElement(validTime.getAbstractTimeGeometricPrimitive());
         if (decodeXmlElement instanceof Time) {
             return (Time) decodeXmlElement;
         } else {
-            throw new InvalidParameterValueException().at(Sos2Constants.UpdateSensorDescriptionParams.validTime)
-                    .withMessage("The validTime element ({}) is not supported",
-                            validTime.getAbstractTimeGeometricPrimitive().schemaType());
+            throw new DecodingException(Sos2Constants.UpdateSensorDescriptionParams.validTime,
+                                        "The validTime element ({}) is not supported",
+                                        validTime.getAbstractTimeGeometricPrimitive().schemaType());
         }
     }
 }

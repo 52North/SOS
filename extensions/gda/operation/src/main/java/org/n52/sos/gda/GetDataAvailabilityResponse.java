@@ -33,13 +33,13 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.gml.ReferenceType;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.util.CollectionHelper;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
 /**
@@ -49,7 +49,7 @@ import com.google.common.collect.Lists;
  *
  * @since 4.0.0
  */
-public class GetDataAvailabilityResponse extends AbstractServiceResponse {
+public class GetDataAvailabilityResponse extends OwsServiceResponse {
     private final List<DataAvailability> dataAvailabilities = new LinkedList<DataAvailability>();
 
     private String namespace = GetDataAvailabilityConstants.NS_GDA;
@@ -62,13 +62,22 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
      *            the data availabilities
      */
     public GetDataAvailabilityResponse(DataAvailability... dataAvailabilities) {
+        super(null, null, GetDataAvailabilityConstants.OPERATION_NAME);
         Collections.addAll(this.dataAvailabilities, dataAvailabilities);
     }
 
-    @Override
-    public String getOperationName() {
-        return GetDataAvailabilityConstants.OPERATION_NAME;
+    public GetDataAvailabilityResponse() {
+        super(null,null, GetDataAvailabilityConstants.OPERATION_NAME);
     }
+
+    public GetDataAvailabilityResponse(String service, String version) {
+        super(service, version, GetDataAvailabilityConstants.OPERATION_NAME);
+    }
+
+    public GetDataAvailabilityResponse(String service, String version, String operationName) {
+        super(service, version, operationName);
+    }
+
 
     /**
      * @return the {@code DataAvailabilities}.
@@ -231,7 +240,7 @@ public class GetDataAvailabilityResponse extends AbstractServiceResponse {
     }
 
     public void setNamespace(String namespace) {
-        if (StringHelper.isNotEmpty(namespace)) {
+        if (!Strings.isNullOrEmpty(namespace)) {
             this.namespace = namespace;
         }
     }

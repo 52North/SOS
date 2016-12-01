@@ -45,7 +45,7 @@ import org.n52.iceland.ds.ConnectionProviderException;
 import org.n52.iceland.exception.JSONException;
 import org.n52.iceland.request.operator.RequestOperatorKey;
 import org.n52.iceland.request.operator.RequestOperatorRepository;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.web.common.ControllerConstants;
 import org.n52.sos.web.common.JSONConstants;
@@ -112,7 +112,7 @@ public class AdminOperationController extends AbstractAdminController {
         String operation = json.path(JSONConstants.OPERATION_KEY).asText();
         boolean active = json.path(JSONConstants.ACTIVE_KEY).asBoolean();
 
-        ServiceOperatorKey sokt = new ServiceOperatorKey(service, version);
+        OwsServiceKey sokt = new OwsServiceKey(service, version);
         RequestOperatorKey rokt = new RequestOperatorKey(sokt, operation);
         this.requestOperatorRepository.setActive(rokt, active);
     }

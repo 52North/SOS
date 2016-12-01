@@ -28,128 +28,83 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import static org.n52.sos.coding.json.JSONConstants.$REF;
-import static org.n52.sos.coding.json.JSONConstants.ABSTRACT;
-import static org.n52.sos.coding.json.JSONConstants.ACCESS_CONSTRAINTS;
-import static org.n52.sos.coding.json.JSONConstants.ADDRESS;
-import static org.n52.sos.coding.json.JSONConstants.ADMINISTRATIVE_AREA;
-import static org.n52.sos.coding.json.JSONConstants.AFTER;
-import static org.n52.sos.coding.json.JSONConstants.ALLOWED_VALUES;
-import static org.n52.sos.coding.json.JSONConstants.ANY;
-import static org.n52.sos.coding.json.JSONConstants.BBOX;
-import static org.n52.sos.coding.json.JSONConstants.BEFORE;
-import static org.n52.sos.coding.json.JSONConstants.BEGINS;
-import static org.n52.sos.coding.json.JSONConstants.BEGUN_BY;
-import static org.n52.sos.coding.json.JSONConstants.BEYOND;
-import static org.n52.sos.coding.json.JSONConstants.CITY;
-import static org.n52.sos.coding.json.JSONConstants.COMMON_PARAMETERS;
-import static org.n52.sos.coding.json.JSONConstants.CONSTRAINTS;
-import static org.n52.sos.coding.json.JSONConstants.CONTACT;
-import static org.n52.sos.coding.json.JSONConstants.CONTAINS;
-import static org.n52.sos.coding.json.JSONConstants.CONTENTS;
-import static org.n52.sos.coding.json.JSONConstants.COUNTRY;
-import static org.n52.sos.coding.json.JSONConstants.CROSSES;
-import static org.n52.sos.coding.json.JSONConstants.CRS;
-import static org.n52.sos.coding.json.JSONConstants.DATA_TYPE;
-import static org.n52.sos.coding.json.JSONConstants.DCP;
-import static org.n52.sos.coding.json.JSONConstants.DELIVERY_POINT;
-import static org.n52.sos.coding.json.JSONConstants.DISJOINT;
-import static org.n52.sos.coding.json.JSONConstants.DURING;
-import static org.n52.sos.coding.json.JSONConstants.D_WITHIN;
-import static org.n52.sos.coding.json.JSONConstants.EMAIL;
-import static org.n52.sos.coding.json.JSONConstants.ENDED_BY;
-import static org.n52.sos.coding.json.JSONConstants.ENDS;
-import static org.n52.sos.coding.json.JSONConstants.EQUALS;
-import static org.n52.sos.coding.json.JSONConstants.FEATURE_OF_INTEREST;
-import static org.n52.sos.coding.json.JSONConstants.FEATURE_OF_INTEREST_TYPE;
-import static org.n52.sos.coding.json.JSONConstants.FEES;
-import static org.n52.sos.coding.json.JSONConstants.FILTER_CAPABILITIES;
-import static org.n52.sos.coding.json.JSONConstants.HREF;
-import static org.n52.sos.coding.json.JSONConstants.IDENTIFIER;
-import static org.n52.sos.coding.json.JSONConstants.INTERSECTS;
-import static org.n52.sos.coding.json.JSONConstants.KEYWORDS;
-import static org.n52.sos.coding.json.JSONConstants.LINK;
-import static org.n52.sos.coding.json.JSONConstants.LOWER_LEFT;
-import static org.n52.sos.coding.json.JSONConstants.MAX;
-import static org.n52.sos.coding.json.JSONConstants.MEETS;
-import static org.n52.sos.coding.json.JSONConstants.METHOD;
-import static org.n52.sos.coding.json.JSONConstants.MET_BY;
-import static org.n52.sos.coding.json.JSONConstants.MIN;
-import static org.n52.sos.coding.json.JSONConstants.NAME;
-import static org.n52.sos.coding.json.JSONConstants.NONE;
-import static org.n52.sos.coding.json.JSONConstants.OBSERVABLE_PROPERTY;
-import static org.n52.sos.coding.json.JSONConstants.OBSERVATION_TYPE;
-import static org.n52.sos.coding.json.JSONConstants.OBSERVED_AREA;
-import static org.n52.sos.coding.json.JSONConstants.OPERANDS;
-import static org.n52.sos.coding.json.JSONConstants.OPERATIONS;
-import static org.n52.sos.coding.json.JSONConstants.OPERATION_METADATA;
-import static org.n52.sos.coding.json.JSONConstants.OPERATORS;
-import static org.n52.sos.coding.json.JSONConstants.OVERLAPPEDBY;
-import static org.n52.sos.coding.json.JSONConstants.OVERLAPS;
-import static org.n52.sos.coding.json.JSONConstants.PARAMETERS;
-import static org.n52.sos.coding.json.JSONConstants.PHENOMENON_TIME;
-import static org.n52.sos.coding.json.JSONConstants.PHONE;
-import static org.n52.sos.coding.json.JSONConstants.POSITION;
-import static org.n52.sos.coding.json.JSONConstants.POSTAL_CODE;
-import static org.n52.sos.coding.json.JSONConstants.PROCEDURE;
-import static org.n52.sos.coding.json.JSONConstants.PROCEDURE_DESCRIPTION_FORMAT;
-import static org.n52.sos.coding.json.JSONConstants.PROFILES;
-import static org.n52.sos.coding.json.JSONConstants.PROPERTIES;
-import static org.n52.sos.coding.json.JSONConstants.RELATED_FEATURE;
-import static org.n52.sos.coding.json.JSONConstants.RESPONSE_FORMAT;
-import static org.n52.sos.coding.json.JSONConstants.RESULT_TIME;
-import static org.n52.sos.coding.json.JSONConstants.ROLE;
-import static org.n52.sos.coding.json.JSONConstants.SCALAR;
-import static org.n52.sos.coding.json.JSONConstants.SERVICE_IDENTIFICATION;
-import static org.n52.sos.coding.json.JSONConstants.SERVICE_PROVIDER;
-import static org.n52.sos.coding.json.JSONConstants.SERVICE_TYPE;
-import static org.n52.sos.coding.json.JSONConstants.SITE;
-import static org.n52.sos.coding.json.JSONConstants.SPATIAL;
-import static org.n52.sos.coding.json.JSONConstants.TEMPORAL;
-import static org.n52.sos.coding.json.JSONConstants.TITLE;
-import static org.n52.sos.coding.json.JSONConstants.TOUCHES;
-import static org.n52.sos.coding.json.JSONConstants.TYPE;
-import static org.n52.sos.coding.json.JSONConstants.UPDATE_SEQUENCE;
-import static org.n52.sos.coding.json.JSONConstants.UPPER_RIGHT;
-import static org.n52.sos.coding.json.JSONConstants.VERSIONS;
-import static org.n52.sos.coding.json.JSONConstants.WITHIN;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Beyond;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Contains;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Crosses;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.DWithin;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Disjoint;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Equals;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Intersects;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Overlaps;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Touches;
+import static org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator.Within;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_After;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Before;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Begins;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_BegunBy;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Contains;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_During;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_EndedBy;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Ends;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Equals;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Meets;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_MetBy;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_OverlappedBy;
+import static org.n52.shetland.ogc.filter.FilterConstants.TimeOperator.TM_Overlaps;
 import static org.n52.sos.encode.json.impl.GeoJSONEncoder.SRID_LINK_PREFIX;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.SortedSet;
 
 import javax.xml.namespace.QName;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.i18n.LocaleHelper;
-import org.n52.iceland.i18n.LocalizedString;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.ows.Constraint;
-import org.n52.iceland.ogc.ows.DCP;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.ows.OwsOperationsMetadata;
-import org.n52.iceland.ogc.ows.OwsParameterDataType;
-import org.n52.iceland.ogc.ows.OwsParameterValue;
-import org.n52.iceland.ogc.ows.OwsParameterValuePossibleValues;
-import org.n52.iceland.ogc.ows.OwsParameterValueRange;
-import org.n52.iceland.ogc.ows.OwsServiceIdentification;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.sos.coding.json.SchemaConstants;
-import org.n52.sos.encode.json.AbstractSosResponseEncoder;
-import org.n52.sos.ogc.filter.FilterCapabilities;
-import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.ogc.sos.SosOffering;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.i18n.MultilingualString;
+import org.n52.shetland.ogc.filter.FilterCapabilities;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.ows.OwsAddress;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsContact;
+import org.n52.shetland.ogc.ows.OwsDCP;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsDomainMetadata;
+import org.n52.shetland.ogc.ows.OwsHttp;
+import org.n52.shetland.ogc.ows.OwsKeyword;
+import org.n52.shetland.ogc.ows.OwsLanguageString;
+import org.n52.shetland.ogc.ows.OwsMetadata;
+import org.n52.shetland.ogc.ows.OwsOnlineResource;
+import org.n52.shetland.ogc.ows.OwsOperation;
+import org.n52.shetland.ogc.ows.OwsOperationMetadataExtension;
+import org.n52.shetland.ogc.ows.OwsOperationsMetadata;
+import org.n52.shetland.ogc.ows.OwsPhone;
+import org.n52.shetland.ogc.ows.OwsPossibleValues;
+import org.n52.shetland.ogc.ows.OwsRange;
+import org.n52.shetland.ogc.ows.OwsRequestMethod;
+import org.n52.shetland.ogc.ows.OwsResponsibleParty;
+import org.n52.shetland.ogc.ows.OwsServiceIdentification;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.OwsValueRestriction;
+import org.n52.shetland.ogc.ows.OwsValuesReference;
+import org.n52.shetland.ogc.ows.OwsValuesUnit;
+import org.n52.shetland.w3c.xlink.Link;
+import org.n52.sos.coding.json.JSONConstants;
+import org.n52.sos.coding.json.SchemaConstants;
+import org.n52.sos.encode.json.AbstractSosResponseEncoder;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
+import org.n52.shetland.ogc.sos.SosOffering;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -171,141 +126,94 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     }
 
     @Override
-    protected void encodeResponse(ObjectNode json, GetCapabilitiesResponse t) throws OwsExceptionReport {
+    protected void encodeResponse(ObjectNode json, GetCapabilitiesResponse t) throws EncodingException {
         SosCapabilities caps = (SosCapabilities) t.getCapabilities();
-        encodeServiceIdentification(json, caps);
-        encodeServiceProvider(json, caps);
-        encodeUpdateSequence(json, caps);
-        encodeOperationMetadata(json, caps);
-        encodeContents(json, caps);
+
+        encodeOptional(json, JSONConstants.UPDATE_SEQUENCE, caps.getUpdateSequence(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.SERVICE_IDENTIFICATION, caps.getServiceIdentification(), this::encodeServiceIdentification);
+        encodeOptional(json, JSONConstants.SERVICE_PROVIDER, caps.getServiceProvider(), this::encodeServiceProvider);
+        encodeOptional(json, JSONConstants.OPERATION_METADATA, caps.getOperationsMetadata(), this::encodeOperationMetadata);
+        encodeOptionalChecked(json, JSONConstants.CONTENTS, caps.getContents(), this::encodeContents);
         encodeExtensions(json, caps);
-        encodeFilterCapabilities(json, caps);
+        encodeOptional(json, JSONConstants.FILTER_CAPABILITIES, caps.getFilterCapabilities(), this::encodeFilterCapabilities);
     }
 
-    private void encodeServiceIdentification(ObjectNode json, SosCapabilities caps) {
-
-        if (caps.isSetServiceIdentification()) {
-            OwsServiceIdentification si = caps.getServiceIdentification();
-            ObjectNode jsi = json.putObject(SERVICE_IDENTIFICATION);
-
-            if (si.hasTitle()) {
-                ObjectNode title = jsi.putObject(TITLE);
-                for (LocalizedString ls : si.getTitle()) {
-                    title.put(LocaleHelper.toString(ls.getLang()), ls.getText());
-                }
-            }
-            if (si.hasAbstract()) {
-                ObjectNode abstrakt = jsi.putObject(ABSTRACT);
-                for (LocalizedString ls : si.getAbstract()) {
-                    abstrakt.put(LocaleHelper.toString(ls.getLang()), ls.getText());
-                }
-            }
-            if (si.hasAccessConstraints()) {
-                ArrayNode constraints = jsi.putArray(ACCESS_CONSTRAINTS);
-                for (String constraint : si.getAccessConstraints()) {
-                    constraints.add(constraint);
-                }
-            }
-            if (si.hasFees()) {
-                jsi.put(FEES, si.getFees());
-            }
-            if (si.hasServiceType()) {
-                jsi.put(SERVICE_TYPE, si.getServiceType());
-                // TODO si.getServiceTypeCodeSpace();
-            }
-            if (si.hasKeywords()) {
-                ArrayNode keywords = jsi.putArray(KEYWORDS);
-                for (String keyword : si.getKeywords()) {
-                    keywords.add(keyword);
-                }
-            }
-            if (si.hasProfiles()) {
-                ArrayNode profiles = jsi.putArray(PROFILES);
-                for (String profile : si.getProfiles()) {
-                    profiles.add(profile);
-                }
-            }
-            if (si.hasVersions()) {
-                ArrayNode versions = jsi.putArray(VERSIONS);
-                for (String version : si.getVersions()) {
-                    versions.add(version);
-                }
-            }
-        }
+    private void encodeMultilingualString(ObjectNode json, String name, Optional<MultilingualString> string) {
+        string.ifPresent(t -> {
+            ObjectNode title = json.putObject(name);
+            t.forEach(ls -> json.put(LocaleHelper.toString(ls.getLang()), ls.getText()));
+        });
     }
 
-    private void encodeServiceProvider(ObjectNode json, SosCapabilities caps) {
-
-        if (caps.isSetServiceProvider()) {
-            OwsServiceProvider sp = caps.getServiceProvider();
-            ObjectNode jsp = json.putObject(SERVICE_PROVIDER);
-            if (sp.hasName()) {
-                jsp.put(NAME, sp.getName());
-            }
-            if (sp.hasSite()) {
-                jsp.put(SITE, sp.getSite());
-            }
-            encodeContact(jsp, sp);
-        }
+    public void encodeOwsLanguageString(ObjectNode json, OwsLanguageString ls) {
+        json.put(JSONConstants.VALUE, ls.getValue());
+        ls.getLang().ifPresent(lang -> json.put(JSONConstants.LANG, lang));
     }
 
-    private void encodeAdress(OwsServiceProvider sp, ObjectNode contact) {
-        ObjectNode address = contact.objectNode();
-        if (sp.hasDeliveryPoint()) {
-            address.put(DELIVERY_POINT, sp.getDeliveryPoint());
-        }
-        if (sp.hasCity()) {
-            address.put(CITY, sp.getCity());
-        }
-        if (sp.hasAdministrativeArea()) {
-            address.put(ADMINISTRATIVE_AREA, sp.getAdministrativeArea());
-        }
-        if (sp.hasPostalCode()) {
-            address.put(POSTAL_CODE, sp.getPostalCode());
-        }
-        if (sp.hasCountry()) {
-            address.put(COUNTRY, sp.getCountry());
-        }
-        if (sp.hasMailAddress()) {
-            address.put(EMAIL, sp.getMailAddress());
-        }
-        if (address.size() > 0) {
-            contact.set(ADDRESS, address);
-        }
+    public ObjectNode encodeOwsKeyword(OwsKeyword keyword) {
+        ObjectNode json = nodeFactory().objectNode();
+        encodeOptional(json, JSONConstants.TYPE, keyword.getType(), this::encodeOwsCode);
+        encodeOwsLanguageString(json, keyword.getKeyword());
+        return json;
     }
 
-    private void encodeContact(ObjectNode jsp, OwsServiceProvider sp) {
-        ObjectNode contact = jsp.objectNode();
-        if (sp.hasIndividualName()) {
-            contact.put(NAME, sp.getIndividualName());
-        }
-        if (sp.hasPositionName()) {
-            contact.put(POSITION, sp.getPositionName());
-        }
-        if (sp.hasPhone()) {
-            contact.put(PHONE, sp.getPhone());
-        }
-        encodeAdress(sp, contact);
-        if (contact.size() > 0) {
-            jsp.set(CONTACT, contact);
-        }
+    private ObjectNode encodeServiceProvider(OwsServiceProvider serviceProvider) {
+        ObjectNode json = nodeFactory().objectNode();
+        json.put(JSONConstants.NAME, serviceProvider.getProviderName());
+        encodeOptional(json, JSONConstants.SITE, serviceProvider.getProviderSite(), this::encodeOnlineResource);
+        encode(json, JSONConstants.SERVICE_CONTACT, serviceProvider.getServiceContact(), this::encodeResponsibleParty);
+        return json;
     }
 
-    private void encodeUpdateSequence(ObjectNode json, SosCapabilities caps) {
-        if (caps.isSetUpdateSequence()) {
-            json.put(UPDATE_SEQUENCE, caps.getUpdateSequence());
-        }
+    private JsonNode encodeResponsibleParty(OwsResponsibleParty responsibleParty) {
+        ObjectNode json = nodeFactory().objectNode();
+        encodeOptional(json, JSONConstants.INDIVIDUAL_NAME, responsibleParty.getIndividualName(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.ORGANISATION_NAME, responsibleParty.getOrganisationName(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.POSITION_NAME, responsibleParty.getPositionName(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.ROLE, responsibleParty.getRole(), this::encodeOwsCode);
+        encodeOptional(json, JSONConstants.CONTACT_INFO, responsibleParty.getContactInfo(), this::encodeContact);
+        return json;
     }
 
-    private void encodeFilterCapabilities(ObjectNode json, SosCapabilities caps) {
-        if (caps.isSetFilterCapabilities()) {
-            FilterCapabilities fc = caps.getFilterCapabilities();
-            ObjectNode jfc = json.putObject(FILTER_CAPABILITIES);
-            encodeFilterConformances(jfc, fc);
-            encodeScalarCapabilities(jfc, fc);
-            encodeSpatialCapabilities(jfc, fc);
-            encodeTemporalCapabilities(jfc, fc);
-        }
+    private JsonNode encodeOnlineResource(OwsOnlineResource resource) {
+        return encodeLink(resource);
+    }
+
+    private ObjectNode encodeAddress(OwsAddress address) {
+        ObjectNode json = nodeFactory().objectNode();
+        encodeList(json, JSONConstants.DELIVERY_POINT, address.getDeliveryPoint(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.CITY, address.getCity(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.POSTAL_CODE, address.getPostalCode(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.ADMINISTRATIVE_AREA, address.getAdministrativeArea(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.COUNTRY, address.getCountry(), nodeFactory()::textNode);
+        encodeList(json, JSONConstants.EMAIL, address.getElectronicMailAddress(), nodeFactory()::textNode);
+        return json;
+    }
+
+    private JsonNode encodePhone(OwsPhone phone) {
+        ObjectNode node = nodeFactory().objectNode();
+        encodeList(node, JSONConstants.VOICE, phone.getVoice(), nodeFactory()::textNode);
+        encodeList(node, JSONConstants.FACSIMILE, phone.getFacsimile(), nodeFactory()::textNode);
+        return node;
+    }
+
+    private ObjectNode encodeContact(OwsContact sp) {
+        ObjectNode json = nodeFactory().objectNode();
+        encodeOptional(json, JSONConstants.CONTACT_INSTRUCTIONS, sp.getContactInstructions(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.HOURS_OF_SERVICE, sp.getHoursOfService(), nodeFactory()::textNode);
+        encodeOptional(json, JSONConstants.ADDRESS, sp.getAddress(), this::encodeAddress);
+        encodeOptional(json, JSONConstants.ONLINE_RESOURCE, sp.getOnlineResource(), this::encodeOnlineResource);
+        encodeOptional(json, JSONConstants.PHONE, sp.getPhone(), this::encodePhone);
+        return json;
+    }
+
+    private ObjectNode encodeFilterCapabilities(FilterCapabilities fc) {
+        ObjectNode jfc = nodeFactory().objectNode();
+        encodeFilterConformances(jfc, fc);
+        encodeScalarCapabilities(jfc, fc);
+        encode(jfc, JSONConstants.SPATIAL, fc, this::encodeSpatialCapabilities);
+        encode(jfc, JSONConstants.TEMPORAL, fc, this::encodeTemporalCapabilities);
+        return jfc;
     }
 
     private void encodeFilterConformances(ObjectNode jfc, FilterCapabilities fc) {
@@ -317,16 +225,9 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     }
 
     private ArrayNode encodeOperands(SortedSet<QName> so) {
-        ArrayNode operands = nodeFactory().arrayNode();
-        for (QName qn : so) {
-            String schema = qnameToSchema(qn);
-            if (schema != null) {
-                operands.addObject().put($REF, schema);
-            } else {
-                LOG.warn("Can not transform QName {} to JSON Schema URI", qn);
-            }
-        }
-        return operands;
+        return so.stream().map(this::qnameToSchema).filter(Objects::nonNull)
+                .map(schema -> nodeFactory().objectNode().put(JSONConstants.$REF, schema))
+                .collect(nodeFactory()::arrayNode, ArrayNode::add, ArrayNode::addAll);
     }
 
     private String qnameToSchema(QName qn) {
@@ -341,117 +242,91 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         }
     }
 
-    private void encodeSpatialCapabilities(ObjectNode jfc, FilterCapabilities fc) {
-        ObjectNode sfc = jfc.objectNode();
-        encodeSpatialOperands(fc, sfc);
-        encodeSpatialOperators(fc, sfc);
-        if (sfc.size() > 0) {
-            jfc.set(SPATIAL, sfc);
-        }
+    private ObjectNode encodeSpatialCapabilities(FilterCapabilities fc) {
+        ObjectNode json = nodeFactory().objectNode();
+        encode(json, JSONConstants.OPERANDS, fc.getSpatialOperands(), this::encodeOperands);
+        encode(json, JSONConstants.OPERATORS, fc.getSpatialOperators(), this::encodeSpatialOperators);
+        return json;
     }
 
-    private void encodeSpatialOperators(FilterCapabilities fc, ObjectNode sfc) {
-        SortedMap<SpatialOperator, SortedSet<QName>> sos = fc.getSpatialOperators();
-        if (sos != null && !sos.isEmpty()) {
-            ObjectNode operators = sfc.putObject(OPERATORS);
-            for (Entry<SpatialOperator, SortedSet<QName>> so : sos.entrySet()) {
-                operators.set(stringify(so.getKey()), encodeOperands(so.getValue()));
-            }
-        }
-    }
-
-    private void encodeSpatialOperands(FilterCapabilities fc, ObjectNode sfc) {
-        SortedSet<QName> so = fc.getSpatialOperands();
-        if (so != null && !so.isEmpty()) {
-            sfc.set(OPERANDS, encodeOperands(so));
-        }
+    private ObjectNode encodeSpatialOperators(SortedMap<SpatialOperator, SortedSet<QName>> operators) {
+        ObjectNode json = nodeFactory().objectNode();
+        operators.entrySet().forEach(so -> json.set(stringify(so.getKey()), encodeOperands(so.getValue())));
+        return json;
     }
 
     private String stringify(SpatialOperator so) {
         switch (so) {
-        case Equals:
-            return EQUALS;
-        case Disjoint:
-            return DISJOINT;
-        case Touches:
-            return TOUCHES;
-        case Within:
-            return WITHIN;
-        case Overlaps:
-            return OVERLAPS;
-        case Crosses:
-            return CROSSES;
-        case Intersects:
-            return INTERSECTS;
-        case Contains:
-            return CONTAINS;
-        case DWithin:
-            return D_WITHIN;
-        case Beyond:
-            return BEYOND;
-        case BBOX:
-            return BBOX;
-        default:
-            return so.name();
+            case Equals:
+                return JSONConstants.EQUALS;
+            case Disjoint:
+                return JSONConstants.DISJOINT;
+            case Touches:
+                return JSONConstants.TOUCHES;
+            case Within:
+                return JSONConstants.WITHIN;
+            case Overlaps:
+                return JSONConstants.OVERLAPS;
+            case Crosses:
+                return JSONConstants.CROSSES;
+            case Intersects:
+                return JSONConstants.INTERSECTS;
+            case Contains:
+                return JSONConstants.CONTAINS;
+            case DWithin:
+                return JSONConstants.D_WITHIN;
+            case Beyond:
+                return JSONConstants.BEYOND;
+            case BBOX:
+                return JSONConstants.BBOX;
+            default:
+                return so.name();
         }
     }
 
-    private void encodeTemporalCapabilities(ObjectNode jfc, FilterCapabilities fc) {
-        ObjectNode tfc = jfc.objectNode();
-        encodeTemporalOperands(fc, tfc);
-        encodeTemporalOperators(fc, tfc);
-        if (tfc.size() > 0) {
-            jfc.set(TEMPORAL, tfc);
-        }
+    private ObjectNode encodeTemporalCapabilities(FilterCapabilities fc) {
+        ObjectNode json = nodeFactory().objectNode();
+        encode(json, JSONConstants.OPERANDS, fc.getTemporalOperands(), this::encodeOperands);
+        encode(json, JSONConstants.OPERATORS, fc.getTemporalOperators(), this::encodeTemporalOperators);
+        return json;
     }
 
-    private void encodeTemporalOperators(FilterCapabilities fc, ObjectNode tfc) {
-        SortedMap<TimeOperator, SortedSet<QName>> tos = fc.getTempporalOperators();
-        if (tos != null && !tos.isEmpty()) {
-            ObjectNode operators = tfc.putObject(OPERATORS);
-            for (Entry<TimeOperator, SortedSet<QName>> to : tos.entrySet()) {
-                operators.set(stringify(to.getKey()), encodeOperands(to.getValue()));
-            }
-        }
-    }
-
-    private void encodeTemporalOperands(FilterCapabilities fc, ObjectNode tfc) {
-        SortedSet<QName> so = fc.getTemporalOperands();
-        if (so != null && !so.isEmpty()) {
-            tfc.set(OPERANDS, encodeOperands(so));
-        }
+    private ObjectNode encodeTemporalOperators(SortedMap<TimeOperator, SortedSet<QName>> operators) {
+        ObjectNode json = nodeFactory().objectNode();
+        operators.entrySet().forEach(so -> json.set(stringify(so.getKey()), encodeOperands(so.getValue())));
+        return json;
     }
 
     private String stringify(TimeOperator to) {
         switch (to) {
-        case TM_Before:
-            return BEFORE;
-        case TM_After:
-            return AFTER;
-        case TM_Begins:
-            return BEGINS;
-        case TM_Ends:
-            return ENDS;
-        case TM_EndedBy:
-            return ENDED_BY;
-        case TM_BegunBy:
-            return BEGUN_BY;
-        case TM_During:
-            return DURING;
-        case TM_Equals:
-            return EQUALS;
-        case TM_Contains:
-            return CONTAINS;
-        case TM_Overlaps:
-            return OVERLAPS;
-        case TM_Meets:
-            return MEETS;
-        case TM_MetBy:
-            return MET_BY;
-        case TM_OverlappedBy:
-            return OVERLAPPEDBY;
-        default:
-            return to.name();
+            case TM_Before:
+                return JSONConstants.BEFORE;
+            case TM_After:
+                return JSONConstants.AFTER;
+            case TM_Begins:
+                return JSONConstants.BEGINS;
+            case TM_Ends:
+                return JSONConstants.ENDS;
+            case TM_EndedBy:
+                return JSONConstants.ENDED_BY;
+            case TM_BegunBy:
+                return JSONConstants.BEGUN_BY;
+            case TM_During:
+                return JSONConstants.DURING;
+            case TM_Equals:
+                return JSONConstants.EQUALS;
+            case TM_Contains:
+                return JSONConstants.CONTAINS;
+            case TM_Overlaps:
+                return JSONConstants.OVERLAPS;
+            case TM_Meets:
+                return JSONConstants.MEETS;
+            case TM_MetBy:
+                return JSONConstants.MET_BY;
+            case TM_OverlappedBy:
+                return JSONConstants.OVERLAPPEDBY;
+            default:
+                return to.name();
         }
 
     }
@@ -459,43 +334,66 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     private void encodeScalarCapabilities(ObjectNode jfc, FilterCapabilities fc) {
         ObjectNode sfc = jfc.objectNode();
         // FIXME scalar filter capabilities
+
         if (sfc.size() > 0) {
-            jfc.set(SCALAR, sfc);
+            jfc.set(JSONConstants.SCALAR, sfc);
         }
     }
 
-    private void encodeContents(ObjectNode json, SosCapabilities caps) throws OwsExceptionReport {
-        if (caps.isSetContents()) {
-            ArrayNode jc = json.putArray(CONTENTS);
-            for (SosObservationOffering soo : caps.getContents()) {
-                if (!soo.isEmpty()) {
-                    jc.add(encodeOffering(soo));
-                }
-            }
-        }
-    }
 
     private void encodeExtensions(ObjectNode json, SosCapabilities caps) {
         // FIXME extensions
     }
 
-    private JsonNode encodeOffering(SosObservationOffering soo) throws OwsExceptionReport {
+    private JsonNode encodeOffering(SosObservationOffering soo) throws EncodingException {
         ObjectNode jsoo = nodeFactory().objectNode();
         SosOffering offering = soo.getOffering();
-        jsoo.put(IDENTIFIER, offering.getIdentifier());
+        jsoo.put(JSONConstants.IDENTIFIER, offering.getIdentifier());
         if (offering.isSetName()) {
-                jsoo.put(NAME, offering.getFirstName().getValue());
+            jsoo.put(JSONConstants.NAME, offering.getFirstName().getValue());
         }
-        encodeProcedures(soo, jsoo);
-        encodeObservableProperties(soo, jsoo);
-        encodeRelatedFeatures(soo, jsoo);
-        encodeObservedArea(soo, jsoo);
-        encodePhenomenonTime(soo, jsoo);
-        encodeResultTime(soo, jsoo);
-        encodeResponseFormat(soo, jsoo);
-        encodeObservationTypes(soo, jsoo);
-        encodeFeatureOfInterestTypes(soo, jsoo);
-        encodeProcedureDescriptionFormats(soo, jsoo);
+        if (soo.isSetProcedures()) {
+            jsoo.set(JSONConstants.PROCEDURE, soo.getProcedures().stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+        }
+        if (soo.isSetObservableProperties()) {
+            jsoo.set(JSONConstants.OBSERVABLE_PROPERTY, soo.getObservableProperties().stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+        }
+        if (soo.isSetRelatedFeature()) {
+            ArrayNode jrf = jsoo.putArray(JSONConstants.RELATED_FEATURE);
+            soo.getRelatedFeatures().forEach((feature, roles) -> {
+                jrf.addObject()
+                        .put(JSONConstants.FEATURE_OF_INTEREST, feature)
+                        .set(JSONConstants.ROLE, roles.stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+            });
+        }
+        if (soo.isSetObservedArea() && soo.getObservedArea().isSetEnvelope() && soo.getObservedArea().isSetSrid()) {
+            Envelope e = soo.getObservedArea().getEnvelope();
+            ObjectNode oa = jsoo.putObject(JSONConstants.OBSERVED_AREA);
+            oa.putArray(JSONConstants.LOWER_LEFT).add(e.getMinX()).add(e.getMinY());
+            oa.putArray(JSONConstants.UPPER_RIGHT).add(e.getMaxX()).add(e.getMaxY());
+            oa.putObject(JSONConstants.CRS)
+                    .put(JSONConstants.TYPE, JSONConstants.LINK)
+                    .putObject(JSONConstants.PROPERTIES)
+                            .put(JSONConstants.HREF, SRID_LINK_PREFIX + soo.getObservedArea().getSrid());
+        }
+        if (soo.isSetPhenomenonTime()) {
+            jsoo.set(JSONConstants.PHENOMENON_TIME, encodeObjectToJson(soo.getPhenomenonTime()));
+        }
+        if (soo.isSetResultTime()) {
+            jsoo.set(JSONConstants.RESULT_TIME, encodeObjectToJson(soo.getResultTime()));
+        }
+        if (soo.isSetResponseFormats()) {
+            jsoo.set(JSONConstants.RESPONSE_FORMAT, soo.getResponseFormats().stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+        }
+        if (soo.isSetObservationTypes()) {
+            jsoo.set(JSONConstants.OBSERVATION_TYPE, soo.getObservationTypes().stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+        }
+        if (soo.isSetFeatureOfInterestTypes()) {
+            jsoo.set(JSONConstants.FEATURE_OF_INTEREST_TYPE, soo.getFeatureOfInterestTypes().stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+        }
+        if (soo.isSetProcedureDescriptionFormats()) {
+            jsoo.set(JSONConstants.PROCEDURE_DESCRIPTION_FORMAT, soo.getProcedureDescriptionFormats().stream().map(nodeFactory()::textNode).collect(toJsonArray()));
+        }
         // TODO soo.getCompositePhenomena();
         // TODO soo.getFeatureOfInterest();
         // TODO soo.getObservationResultTypes();
@@ -504,224 +402,180 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
         return jsoo;
     }
 
-    private void encodeObservableProperties(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetObservableProperties()) {
-            ArrayNode jops = jsoo.putArray(OBSERVABLE_PROPERTY);
-            for (String op : soo.getObservableProperties()) {
-                jops.add(op);
-            }
-        }
+
+    private JsonNode encodeOperationMetadata(OwsOperationsMetadata operationsMetadata) {
+        ObjectNode node = nodeFactory().objectNode();
+        encodeList(node, JSONConstants.OPERATIONS, operationsMetadata.getOperations(), this::encodeOperation);
+        encodeList(node, JSONConstants.CONSTRAINTS, operationsMetadata.getConstraints(), this::encodeOwsDomain);
+        encodeList(node, JSONConstants.PARAMETERS, operationsMetadata.getParameters(), this::encodeOwsDomain);
+        encodeOptional(node, JSONConstants.EXTENSIONS, operationsMetadata.getExtension(), this::encodeOwsOperationMetadataExtension);
+        return node;
     }
 
-    private void encodeProcedures(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetProcedures()) {
-            ArrayNode jps = jsoo.putArray(PROCEDURE);
-            for (String p : soo.getProcedures()) {
-                jps.add(p);
-            }
-        }
-    }
-
-    private void encodeRelatedFeatures(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetRelatedFeature()) {
-            ArrayNode jrf = jsoo.putArray(RELATED_FEATURE);
-            for (Entry<String, SortedSet<String>> rf : soo.getRelatedFeatures().entrySet()) {
-                ArrayNode roles = jrf.addObject().put(FEATURE_OF_INTEREST, rf.getKey()).putArray(ROLE);
-                for (String role : rf.getValue()) {
-                    roles.add(role);
-                }
-            }
-        }
-    }
-
-    private void encodeObservedArea(SosObservationOffering soo, ObjectNode jsoo) throws OwsExceptionReport {
-        if (soo.isSetObservedArea() && soo.getObservedArea().isSetEnvelope() && soo.getObservedArea().isSetSrid()) {
-            Envelope e = soo.getObservedArea().getEnvelope();
-            ObjectNode oa = jsoo.putObject(OBSERVED_AREA);
-            oa.putArray(LOWER_LEFT).add(e.getMinX()).add(e.getMinY());
-            oa.putArray(UPPER_RIGHT).add(e.getMaxX()).add(e.getMaxY());
-            oa.putObject(CRS).put(TYPE, LINK).putObject(PROPERTIES)
-                    .put(HREF, SRID_LINK_PREFIX + soo.getObservedArea().getSrid());
-        }
-    }
-
-    private void encodePhenomenonTime(SosObservationOffering soo, ObjectNode jsoo) throws OwsExceptionReport {
-        if (soo.isSetPhenomenonTime()) {
-            jsoo.set(PHENOMENON_TIME, encodeObjectToJson(soo.getPhenomenonTime()));
-        }
-    }
-
-    private void encodeResultTime(SosObservationOffering soo, ObjectNode jsoo) throws OwsExceptionReport {
-        if (soo.isSetResultTime()) {
-            jsoo.set(RESULT_TIME, encodeObjectToJson(soo.getResultTime()));
-        }
-    }
-
-    private void encodeResponseFormat(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetResponseFormats()) {
-            ArrayNode jrf = jsoo.putArray(RESPONSE_FORMAT);
-            for (String rf : soo.getResponseFormats()) {
-                jrf.add(rf);
-            }
-        }
-    }
-
-    private void encodeFeatureOfInterestTypes(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetFeatureOfInterestTypes()) {
-            ArrayNode jft = jsoo.putArray(FEATURE_OF_INTEREST_TYPE);
-            for (String ft : soo.getFeatureOfInterestTypes()) {
-                jft.add(ft);
-            }
-        }
-    }
-
-    private void encodeObservationTypes(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetObservationTypes()) {
-            ArrayNode jot = jsoo.putArray(OBSERVATION_TYPE);
-            for (String ot : soo.getObservationTypes()) {
-                jot.add(ot);
-            }
-        }
-    }
-
-    private void encodeOperationMetadata(ObjectNode json, SosCapabilities caps) {
-        if (caps.isSetOperationsMetadata()) {
-            ObjectNode jom = json.putObject(OPERATION_METADATA);
-            OwsOperationsMetadata om = caps.getOperationsMetadata();
-            encodeCommonValues(om, jom);
-            encodeOperations(om, jom);
-            // TODO om.isSetExtendedCapabilities();
-        }
+    private JsonNode encodeOwsOperationMetadataExtension(OwsOperationMetadataExtension operationMetadataExtension) {
+        //TODO extension
+        return nodeFactory().nullNode();
     }
 
     private JsonNode encodeOperation(OwsOperation o) {
         ObjectNode jo = nodeFactory().objectNode();
-        SortedMap<String, Set<DCP>> dcp = o.getDcp();
-        Map<String, List<OwsParameterValue>> param = o.getParameterValues();
-        if (param != null && !param.isEmpty()) {
-            ObjectNode jcv = jo.putObject(PARAMETERS);
-            for (Entry<String, List<OwsParameterValue>> e : param.entrySet()) {
-                jcv.set(e.getKey(), encodeParameterValues(e.getValue()));
-            }
-        }
-        if (dcp != null && !dcp.isEmpty()) {
-            jo.set(DCP, encodeDcp(dcp));
-        }
+        jo.put(JSONConstants.NAME, o.getName());
+        encodeList(jo, JSONConstants.PARAMETERS, o.getParameters(), this::encodeOwsDomain);
+        encodeList(jo, JSONConstants.CONSTRAINTS, o.getConstraints(), this::encodeOwsDomain);
+        encodeList(jo, JSONConstants.METADATA, o.getMetadata(), this::encodeOwsMetadata);
+        encodeList(jo, JSONConstants.DCP, o.getDCP(), this::encodeOwsDCP);
         return jo;
     }
 
-    private JsonNode encodeParameterValues(List<OwsParameterValue> parameterValues) {
-        if (parameterValues.isEmpty()) {
-            return nodeFactory().textNode(NONE);
+    private JsonNode encodeOwsDCP(OwsDCP dcp) {
+        if (dcp.isHTTP()) {
+            return encodeOwsHTTP(dcp.asHTTP());
         }
-        if (parameterValues.size() == 1) {
-            return encodeParamterValue(parameterValues.get(0));
-        }
-        ArrayNode parameters = nodeFactory().arrayNode();
-        for (OwsParameterValue parameterValue : parameterValues) {
-            JsonNode node = encodeParamterValue(parameterValue);
-            if (node != null) {
-                parameters.add(node);
-            }
-        }
-        return parameters;
+        return nodeFactory().nullNode();
     }
 
-    private JsonNode encodeDcp(SortedMap<String, Set<DCP>> dcpByMethod) {
-        ArrayNode jdcps = nodeFactory().arrayNode();
-        for (Entry<String, Set<DCP>> e : dcpByMethod.entrySet()) {
-            String method = e.getKey();
-            for (DCP dcp : e.getValue()) {
-                ObjectNode jdcp = jdcps.addObject().put(METHOD, method).put(HREF, dcp.getUrl());
-                Set<Constraint> constraints = dcp.getConstraints();
-                if (constraints != null && !constraints.isEmpty()) {
-                    ObjectNode jc = jdcp.putObject(CONSTRAINTS);
-                    for (Constraint c : constraints) {
-                        jc.set(c.getName(), encodeParameterValues(c.getValues()));
-                    }
-                }
-            }
-        }
-        return jdcps;
+    private JsonNode encodeOwsMetadata(OwsMetadata metadata) {
+        ObjectNode node = encodeLink(metadata);
+        encodeOptional(node, JSONConstants.ABOUT, metadata.getAbout(), this::encodeURI);
+        return node;
     }
 
-    private JsonNode encodeParamterValue(OwsParameterValue parameterValue) {
-        if (parameterValue instanceof OwsParameterValuePossibleValues) {
-            return encodeParameterPossibleValues(parameterValue);
-        } else if (parameterValue instanceof OwsParameterValueRange) {
-            return encodeParameterValueRange(parameterValue);
-        } else if (parameterValue instanceof OwsParameterDataType) {
-            return encodeParameterDataType(parameterValue);
+    private JsonNode encodeOwsDomainMetadata(OwsDomainMetadata metadata) {
+        ObjectNode node = nodeFactory().objectNode();
+        encodeOptional(node, JSONConstants.REFERENCE, metadata.getReference(), this::encodeURI);
+        encodeOptional(node, JSONConstants.VALUE, metadata.getValue(), this::encodeAsString);
+        return node;
+    }
+
+    private ObjectNode encodeLink(Link link) {
+        ObjectNode node = nodeFactory().objectNode();
+        encodeOptional(node, JSONConstants.$REF, link.getHref(), this::encodeURI);
+        encodeOptional(node, JSONConstants.TITLE, link.getTitle(), nodeFactory()::textNode);
+        encodeOptional(node, JSONConstants.ACTUATE, link.getActuate(), this::encodeAsString);
+        encodeOptional(node, JSONConstants.ARCROLE, link.getArcrole(), this::encodeURI);
+        encodeOptional(node, JSONConstants.ROLE, link.getRole(), this::encodeURI);
+        encodeOptional(node, JSONConstants.SHOW, link.getShow(), this::encodeAsString);
+        return node;
+    }
+
+    private JsonNode encodeOwsDomain(OwsDomain domain) {
+        ObjectNode node = nodeFactory().objectNode();
+        encode(node, JSONConstants.NAME, domain.getName(), this::encodeAsString);
+        encodeOptional(node, JSONConstants.DATA_TYPE, domain.getDataType(), this::encodeOwsDomainMetadata);
+        encodeOptional(node, JSONConstants.DEFAULT, domain.getDefaultValue(), this::encodeOwsValue);
+        encodeOptional(node, JSONConstants.MEANING, domain.getMeaning(), this::encodeOwsDomainMetadata);
+        encodeOptional(node, JSONConstants.METADATA, domain.getMeaning(), this::encodeOwsDomainMetadata);
+        encode(node, JSONConstants.POSSIBLE_VALUES, domain.getPossibleValues(), this::encodeParameterPossibleValues);
+
+        domain.getValuesUnit().ifPresent(unit -> {
+            JsonNode json = encodeOwsValuesUnit(unit);
+            if (unit.isReferenceSystem()) {
+                node.set(JSONConstants.REFERENCE_SYSTEM, json);
+            } else if (unit.isUOM()) {
+                node.set(JSONConstants.UOM, json);
+            }
+        });
+
+        encodeOptional(node, JSONConstants.VALUES_UNIT, domain.getValuesUnit(), this::encodeOwsValuesUnit);
+        return node;
+    }
+
+    private JsonNode encodeOwsValuesUnit(OwsValuesUnit unit)  {
+        ObjectNode node = nodeFactory().objectNode();
+        encodeOptional(node, JSONConstants.REFERENCE, unit.getReference(), this::encodeURI);
+        encodeOptional(node, JSONConstants.VALUE, unit.getValue(), this::encodeAsString);
+        return node;
+    }
+
+    private JsonNode encodeParameterPossibleValues(OwsPossibleValues parameterValue) {
+        if (parameterValue.isAnyValue()) {
+            return nodeFactory().textNode(JSONConstants.ANY);
+        } else if (parameterValue.isNoValues()) {
+            return nodeFactory().textNode(JSONConstants.NONE);
+        } else if (parameterValue.isAllowedValues()) {
+            return encodeOwsAllowedValues(parameterValue.asAllowedValues());
+        } else if (parameterValue.isValuesReference()) {
+            return encodeOwsValueReference(parameterValue.asValuesReference());
         } else {
-            LOG.warn("Unsupported OwsParameterValue type: {}",
-                    parameterValue == null ? null : parameterValue.getClass());
-            return null;
+            LOG.warn("Unsupported OwsParameterValue type: {}", parameterValue.getClass());
+            return nodeFactory().nullNode();
         }
     }
 
-    private JsonNode encodeParameterPossibleValues(OwsParameterValue parameterValue) {
-        OwsParameterValuePossibleValues possibleValues = (OwsParameterValuePossibleValues) parameterValue;
-        SortedSet<String> values = possibleValues.getValues();
-        if (values == null) {
-            return nodeFactory().textNode(NONE);
-        }
-        if (values.isEmpty()) {
-            return nodeFactory().textNode(ANY);
-        }
+
+    private ObjectNode encodeServiceIdentification(OwsServiceIdentification serviceIdentification) {
         ObjectNode json = nodeFactory().objectNode();
-        ArrayNode av = json.putArray(ALLOWED_VALUES);
-        for (String v : values) {
-            av.add(v);
-        }
+        encodeMultilingualString(json, JSONConstants.TITLE, serviceIdentification.getTitle());
+        encodeMultilingualString(json, JSONConstants.ABSTRACT, serviceIdentification.getAbstract());
+        encodeList(json, JSONConstants.ACCESS_CONSTRAINTS, serviceIdentification.getAccessConstraints(), nodeFactory()::textNode);
+        encodeList(json, JSONConstants.FEES, serviceIdentification.getFees(), nodeFactory()::textNode);
+        encode(json, JSONConstants.SERVICE_TYPE, serviceIdentification.getServiceType(), this::encodeOwsCode);
+        encodeList(json, JSONConstants.KEYWORDS, serviceIdentification.getKeywords(), this::encodeOwsKeyword);
+        encodeList(json, JSONConstants.PROFILES, serviceIdentification.getProfiles(), this::encodeURI);
+        encodeList(json, JSONConstants.VERSIONS, serviceIdentification.getServiceTypeVersion(), nodeFactory()::textNode);
         return json;
     }
 
-    private JsonNode encodeParameterValueRange(OwsParameterValue parameterValue) {
-        OwsParameterValueRange valueRange = (OwsParameterValueRange) parameterValue;
-        String min = valueRange.getMinValue();
-        String max = valueRange.getMaxValue();
-        if (min == null || max == null) {
-            return nodeFactory().textNode(NONE);
-        }
-        if (min.isEmpty() || max.isEmpty()) {
-            return nodeFactory().textNode(ANY);
-        }
-        return nodeFactory().objectNode().put(MIN, min).put(MAX, max);
+    private JsonNode encodeOwsValue(OwsValueRestriction restriction) {
+        return nodeFactory().textNode(restriction.asValue().getValue());
     }
 
-    private JsonNode encodeParameterDataType(OwsParameterValue parameterValue) {
-        OwsParameterDataType dataType = (OwsParameterDataType) parameterValue;
-        String reference = dataType.getReference();
-        if (reference == null || reference.isEmpty()) {
-            return nodeFactory().textNode(NONE);
-        }
-        return nodeFactory().objectNode().put(DATA_TYPE, reference);
+    private JsonNode encodeOwsRange(OwsValueRestriction restriction) {
+        OwsRange range = restriction.asRange();
+        ObjectNode json = nodeFactory().objectNode();
+        encodeOptional(json, JSONConstants.MIN, range.getLowerBound(), this::encodeOwsValue);
+        encodeOptional(json, JSONConstants.MAX, range.getUpperBound(), this::encodeOwsValue);
+        json.set(JSONConstants.TYPE, nodeFactory().textNode(range.getType()));
+        encodeOptional(json, JSONConstants.SPACING, range.getSpacing(), this::encodeOwsValue);
+        return json;
     }
 
-    private void encodeCommonValues(OwsOperationsMetadata om, ObjectNode jom) {
-        if (om.isSetCommonValues()) {
-            ObjectNode jcv = jom.putObject(COMMON_PARAMETERS);
-            for (Entry<String, List<OwsParameterValue>> e : om.getCommonValues().entrySet()) {
-                jcv.set(e.getKey(), encodeParameterValues(e.getValue()));
-            }
-        }
+    public JsonNode encodeOwsAllowedValues(OwsAllowedValues allowedValues) {
+        return allowedValues.getRestrictions().stream().map(this::encodeOwsValueRestriction)
+                .collect(nodeFactory()::arrayNode, ArrayNode::add, ArrayNode::addAll);
     }
 
-    private void encodeOperations(OwsOperationsMetadata om, ObjectNode jom) {
-        if (om.isSetOperations()) {
-            ObjectNode jo = jom.putObject(OPERATIONS);
-            for (OwsOperation o : om.getOperations()) {
-                jo.set(o.getOperationName(), encodeOperation(o));
-            }
-        }
+    public JsonNode encodeOwsValueReference(OwsValuesReference valuesReference) {
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.REFERENCE, valuesReference.getReference().toString());
+        node.put(JSONConstants.VALUE, valuesReference.getValue());
+        return node;
     }
 
-    private void encodeProcedureDescriptionFormats(SosObservationOffering soo, ObjectNode jsoo) {
-        if (soo.isSetProcedureDescriptionFormats()) {
-            ArrayNode jpdf = jsoo.putArray(PROCEDURE_DESCRIPTION_FORMAT);
-            for (String pdf : soo.getProcedureDescriptionFormats()) {
-                jpdf.add(pdf);
-            }
-        }
+    private JsonNode encodeOwsHTTP(OwsHttp http) {
+        ObjectNode node = nodeFactory().objectNode();
+        node.put(JSONConstants.TYPE, JSONConstants.HTTP_TYPE);
+
+        node.set(JSONConstants.METHODS, http.getRequestMethods().stream()
+                 .collect(toJsonObject(groupingBy(OwsRequestMethod::getHttpMethod,
+                                                  mapping(this::encodeOwsRequestMethod, toJsonArray())))));
+        return node;
     }
+
+    public ObjectNode encodeOwsRequestMethod(OwsRequestMethod m) {
+        ObjectNode jm = encodeLink(m);
+        encodeList(jm, JSONConstants.CONSTRAINTS, m.getConstraints(), this::encodeOwsDomain);
+        return jm;
+    }
+
+    public JsonNode encodeOwsValueRestriction(OwsValueRestriction restriction) {
+        JsonNode n;
+        if (restriction.isValue()) {
+            n = encodeOwsValue(restriction);
+        } else if (restriction.isRange()) {
+            n = encodeOwsRange(restriction.asRange());
+        } else {
+            n = nodeFactory().nullNode();
+        }
+        return n;
+    }
+
+    private JsonNode encodeContents(SortedSet<SosObservationOffering> contents) throws EncodingException {
+        ArrayNode node = nodeFactory().arrayNode();
+        for (SosObservationOffering offering : contents) {
+            node.add(encodeOffering(offering));
+        }
+        return node;
+    }
+
 }

@@ -28,11 +28,11 @@
  */
 package org.n52.sos.ds.hibernate.util.observation;
 
-import org.n52.iceland.component.Component;
-import org.n52.iceland.exception.CodedException;
+import org.n52.janmayen.component.Component;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
-import org.n52.sos.ogc.om.OmObservation;
 
 public interface AdditionalObservationCreator extends Component<AdditionalObservationCreatorKey> {
 

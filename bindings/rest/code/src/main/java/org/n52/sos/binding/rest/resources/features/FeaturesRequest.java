@@ -28,8 +28,8 @@
  */
 package org.n52.sos.binding.rest.resources.features;
 
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

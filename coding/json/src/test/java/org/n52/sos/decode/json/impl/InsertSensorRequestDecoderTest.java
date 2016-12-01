@@ -41,9 +41,11 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
@@ -65,7 +67,7 @@ public class InsertSensorRequestDecoderTest {
     private InsertSensorRequest req;
 
     @Before
-    public void setUp() throws OwsExceptionReport, IOException {
+    public void setUp() throws DecodingException, IOException {
         this.decoder = new InsertSensorRequestDecoder();
         final JsonNode json = JsonLoader.fromResource("/examples/sos/InsertSensorRequest.json");
         this.req = decoder.decode(json);

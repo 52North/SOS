@@ -28,9 +28,9 @@
  */
 package org.n52.sos.ds.hibernate;
 
-import static org.n52.iceland.util.CollectionHelper.isEmpty;
-import static org.n52.iceland.util.CollectionHelper.isNotEmpty;
-import static org.n52.iceland.util.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.janmayen.http.HTTPStatus.INTERNAL_SERVER_ERROR;
+import static org.n52.shetland.util.CollectionHelper.isEmpty;
+import static org.n52.shetland.util.CollectionHelper.isNotEmpty;
 
 import java.util.Collection;
 import java.util.List;
@@ -38,6 +38,8 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -47,14 +49,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.GetResultRequest;
+import org.n52.shetland.ogc.sos.response.GetResultResponse;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.encoding.SweAbstractEncoding;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractGetResultHandler;
 import org.n52.sos.ds.FeatureQueryHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
@@ -77,11 +83,14 @@ import org.n52.sos.ds.hibernate.util.TemporalRestrictions;
 import org.n52.sos.exception.ows.concrete.UnsupportedOperatorException;
 import org.n52.sos.exception.ows.concrete.UnsupportedTimeException;
 import org.n52.sos.exception.ows.concrete.UnsupportedValueReferenceException;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.request.GetResultRequest;
-import org.n52.sos.response.GetResultResponse;
 import org.n52.sos.util.GeometryHandler;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.Sets;
 
@@ -97,6 +106,8 @@ public class GetResultDAO extends AbstractGetResultHandler {
 
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
+    private final EntitiyHelper entitiyHelper = new EntitiyHelper();
+    private DecoderRepository decoderRepository;
 
     public GetResultDAO() {
         super(SosConstants.SOS);
@@ -112,35 +123,65 @@ public class GetResultDAO extends AbstractGetResultHandler {
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
     }
 
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    protected DecoderRepository getDecoderRepository() {
+        return decoderRepository;
+    }
+
+    protected <T> T decode(String xml) throws DecodingException {
+        try {
+            return decode(XmlObject.Factory.parse(xml));
+        } catch (XmlException ex) {
+            throw new DecodingException(ex);
+        }
+    }
+
+    protected <T> T decode(XmlObject xbObject) throws DecodingException {
+        final DecoderKey key = getDecoderKey(xbObject);
+        final Decoder<T, XmlObject> decoder = getDecoderRepository().getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xbObject);
+    }
+
+    protected DecoderKey getDecoderKey(XmlObject doc) {
+        return new XmlNamespaceDecoderKey(XmlHelper.getNamespace(doc), doc.getClass());
+    }
+
     @Override
-    public GetResultResponse getResult(final GetResultRequest request) throws OwsExceptionReport {
+    public GetResultResponse getResult(GetResultRequest request) throws OwsExceptionReport {
         Session session = null;
         try {
             session = sessionHolder.getSession();
-            final GetResultResponse response = new GetResultResponse();
-            response.setService(request.getService());
-            response.setVersion(request.getVersion());
-            final Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
-            final List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
+            GetResultResponse response = new GetResultResponse(request.getService(), request.getVersion());
+            Set<String> featureIdentifier = QueryHelper.getFeatures(this.featureQueryHandler, request, session);
+            List<ResultTemplate> resultTemplates = queryResultTemplate(request, featureIdentifier, session);
             if (isNotEmpty(resultTemplates)) {
-                final SosResultEncoding sosResultEncoding =
-                        new SosResultEncoding(resultTemplates.get(0).getResultEncoding());
-                final SosResultStructure sosResultStructure =
-                        new SosResultStructure(resultTemplates.get(0).getResultStructure());
-                final List<Observation<?>> observations;
-                if (EntitiyHelper.getInstance().isSeriesObservationSupported()) {
+
+                SweAbstractEncoding encoding = decode(resultTemplates.get(0).getResultEncoding());
+                SweAbstractDataComponent structure = decode(resultTemplates.get(0).getResultStructure());
+
+                List<Observation<?>> observations;
+
+                if (entitiyHelper.isSeriesObservationSupported()) {
                     observations = querySeriesObservation(request, featureIdentifier, session);
                 } else {
                     observations = queryObservation(request, featureIdentifier, session);
                 }
 
-                response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations,
-                        sosResultEncoding, sosResultStructure));
+                response.setResultValues(ResultHandlingHelper.createResultValuesFromObservations(observations, encoding, structure));
             }
             return response;
-        } catch (final HibernateException he) {
+        } catch (HibernateException he) {
             throw new NoApplicableCodeException().causedBy(he).withMessage("Error while querying result data!")
                     .setStatus(INTERNAL_SERVER_ERROR);
+        } catch (DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex);
         } finally {
             sessionHolder.returnSession(session);
         }
@@ -334,8 +375,7 @@ public class GetResultDAO extends AbstractGetResultHandler {
                 criteria.add(SpatialRestrictions.filter(
                         AbstractObservation.SAMPLING_GEOMETRY,
                         request.getSpatialFilter().getOperator(),
-                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(
-                                request.getSpatialFilter().getGeometry())));
+                        GeometryHandler.getInstance().switchCoordinateAxisFromToDatasourceIfNeeded(request.getSpatialFilter().getGeometry())));
         }
     }
 }

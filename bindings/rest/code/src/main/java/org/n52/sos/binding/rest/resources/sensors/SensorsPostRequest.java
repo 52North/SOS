@@ -30,7 +30,7 @@ package org.n52.sos.binding.rest.resources.sensors;
 
 import net.opengis.sensorML.x101.SystemType;
 
-import org.n52.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

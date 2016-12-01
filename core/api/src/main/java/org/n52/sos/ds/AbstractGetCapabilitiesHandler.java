@@ -28,20 +28,27 @@
  */
 package org.n52.sos.ds;
 
+import static java.util.stream.Collectors.toSet;
+
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.response.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
 import org.n52.iceland.service.operator.ServiceOperatorRepository;
-
-//import org.n52.sos.service.operator.ServiceOperatorRepository;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.shetland.ogc.ows.OwsAllowedValues;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.ows.OwsNoValues;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 /**
  * interface for getting capabilities for a passed GetCapabilities request from
@@ -53,57 +60,66 @@ import org.n52.iceland.service.operator.ServiceOperatorRepository;
  */
 public abstract class AbstractGetCapabilitiesHandler extends AbstractOperationHandler {
 
-    protected static final String FALSE = Boolean.FALSE.toString();
-
-    protected static final String TRUE = Boolean.TRUE.toString();
-
     public AbstractGetCapabilitiesHandler(String service) {
         super(service, SosConstants.Operations.GetCapabilities.name());
     }
 
-    @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
-        // set param Sections
-        List<String> sectionsValues = new LinkedList<String>();
-        /* common sections */
-        sectionsValues.add(SosConstants.CapabilitiesSections.ServiceIdentification.name());
-        sectionsValues.add(SosConstants.CapabilitiesSections.ServiceProvider.name());
-        sectionsValues.add(SosConstants.CapabilitiesSections.OperationsMetadata.name());
-        sectionsValues.add(SosConstants.CapabilitiesSections.Contents.name());
-        sectionsValues.add(SosConstants.CapabilitiesSections.All.name());
-
-        if (version.equals(Sos1Constants.SERVICEVERSION)) {
-            sectionsValues.add(Sos1Constants.CapabilitiesSections.Filter_Capabilities.name());
-        } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
-            sectionsValues.add(Sos2Constants.CapabilitiesSections.FilterCapabilities.name());
-            /* sections of extension points */
-            for (String section : getExtensionSections(service, version)) {
-                sectionsValues.add(section);
-            }
-        }
-
-        opsMeta.addPossibleValuesParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.Sections, sectionsValues);
-        opsMeta.addPossibleValuesParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptFormats,
-                SosConstants.ACCEPT_FORMATS);
-        opsMeta.addPossibleValuesParameter(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.AcceptVersions,
-                ServiceOperatorRepository.getInstance().getSupportedVersions(service));
-        opsMeta.addAnyParameterValue(org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams.updateSequence);
-    }
-
-    protected abstract Set<String> getExtensionSections(final String service, final String version)
+    protected abstract Set<String> getExtensionSections(String service, String version)
             throws OwsExceptionReport;
 
     /**
      * Get the SOS capabilities
      *
      * @param request
-     *            GetCapabilities request
+     *                GetCapabilities request
+     *
      * @return internal SOS capabilities representation
      *
      * @throws OwsExceptionReport
-     *             If an error occurs.
+     *                            If an error occurs.
      */
     public abstract GetCapabilitiesResponse getCapabilities(GetCapabilitiesRequest request) throws OwsExceptionReport;
+
+    @Override
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
+        return Stream.of(getSectionsParameter(service, version),
+                         getAcceptFormatsParameter(service, version),
+                         getAcceptVersionsParameter(service, version),
+                         getUpdateSequenceParameter(service, version))
+                .collect(toSet());
+    }
+
+    private OwsDomain getSectionsParameter(String service, String version) throws OwsExceptionReport {
+        // set param Sections
+        List<String> sections = new LinkedList<>();
+        /* common sections */
+        Arrays.stream(SosConstants.CapabilitiesSections.values()).map(Enum::name).forEach(sections::add);
+
+        if (version.equals(Sos1Constants.SERVICEVERSION)) {
+            sections.add(Sos1Constants.CapabilitiesSections.Filter_Capabilities.name());
+        } else if (version.equals(Sos2Constants.SERVICEVERSION)) {
+            sections.add(Sos2Constants.CapabilitiesSections.FilterCapabilities.name());
+            /* sections of extension points */
+            getExtensionSections(service, version).forEach(sections::add);
+        }
+        GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.Sections;
+        return  new OwsDomain(name, new OwsAllowedValues(sections.stream().map(OwsValue::new)));
+    }
+
+    private static OwsDomain getAcceptFormatsParameter(String service, String version) {
+        GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.AcceptFormats;
+        return new OwsDomain(name, new OwsAllowedValues(SosConstants.ACCEPT_FORMATS.stream().map(OwsValue::new)));
+    }
+
+    private static OwsDomain getAcceptVersionsParameter(String service, String version) {
+        GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.AcceptVersions;
+        Set<String> versions = ServiceOperatorRepository.getInstance().getSupportedVersions(service);
+        return new OwsDomain(name, new OwsAllowedValues(versions.stream().map(OwsValue::new)));
+    }
+
+    private static OwsDomain getUpdateSequenceParameter(String service, String version) {
+        GetCapabilitiesParams name = OWSConstants.GetCapabilitiesParams.updateSequence;
+        return new OwsDomain(name, OwsNoValues.instance());
+    }
 
 }

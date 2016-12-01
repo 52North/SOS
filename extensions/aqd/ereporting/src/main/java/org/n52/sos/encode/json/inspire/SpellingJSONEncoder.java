@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.util.AQDJSONConstants;
@@ -49,7 +49,7 @@ public class SpellingJSONEncoder extends JSONEncoder<Spelling> {
 
     @Override
     public JsonNode encodeJSON(Spelling t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         ObjectNode j = nodeFactory().objectNode();
         j.put(AQDJSONConstants.TEXT, t.getText());
         j.set(AQDJSONConstants.SCRIPT, encodeObjectToJson(t.getScript()));

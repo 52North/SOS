@@ -35,9 +35,9 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import org.n52.iceland.request.RequestContext;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.net.IPAddress;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequestContext;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.net.IPAddress;
 
 /**
  * @since 4.0.0
@@ -47,14 +47,14 @@ public class RequestContextTest {
 
     @Test
     public void shouldEmpty() {
-        RequestContext rc = new RequestContext();
+        OwsServiceRequestContext rc = new OwsServiceRequestContext();
         assertThat(rc.getIPAddress().isPresent(), is(false));
         assertThat(rc.getToken().isPresent(), is(false));
     }
 
     @Test
     public void shouldNotEmptyTokenSet() {
-        RequestContext rc = new RequestContext();
+        OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setToken("asfsf");
         assertThat(rc.getIPAddress().isPresent(), is(false));
         assertThat(rc.getToken().isPresent(), is(true));
@@ -62,14 +62,14 @@ public class RequestContextTest {
 
     @Test
     public void shouldNotEmptyIpSet() {
-        RequestContext rc = new RequestContext();
+        OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setIPAddress(new IPAddress("192.168.1.1"));
         assertThat(rc.getIPAddress().isPresent(), is(true));
     }
 
     @Test
     public void shouldNotEmptyIpAndTokenSet() {
-        RequestContext rc = new RequestContext();
+        OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setIPAddress(new IPAddress("192.168.1.1"));
         rc.setToken("asfsf");
         assertThat(rc.getIPAddress().isPresent(), is(true));
@@ -78,7 +78,7 @@ public class RequestContextTest {
 
     @Test
     public void shouldNotEmptyAcceptType() {
-        RequestContext rc = new RequestContext();
+        OwsServiceRequestContext rc = new OwsServiceRequestContext();
         MediaType xml = new MediaType("application", "xml");
         MediaType json = new MediaType("text", "plain");
         rc.setAcceptType(Arrays.asList(xml, json));
@@ -88,7 +88,7 @@ public class RequestContextTest {
 
     @Test
     public void shouldNotEmptyContentType() {
-        RequestContext rc = new RequestContext();
+        OwsServiceRequestContext rc = new OwsServiceRequestContext();
         rc.setContentType("application/xml");
         assertThat(rc.getContentType().isPresent(), is(true));
     }

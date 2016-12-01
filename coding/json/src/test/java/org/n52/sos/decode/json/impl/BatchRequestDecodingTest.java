@@ -41,15 +41,16 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.ConfiguredSettingsManager;
-import org.n52.sos.request.BatchRequest;
-import org.n52.sos.request.InsertObservationRequest;
-import org.n52.sos.request.InsertResultTemplateRequest;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.util.BatchConstants;
+import org.n52.shetland.ogc.sos.request.BatchRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.BatchConstants;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -83,7 +84,7 @@ public class BatchRequestDecodingTest {
     }
 
     @Before
-    public void before() throws OwsExceptionReport {
+    public void before() throws DecodingException {
         this.decoder = new BatchRequestDecoder();
         this.request = decoder.decodeJSON(json, true);
     }

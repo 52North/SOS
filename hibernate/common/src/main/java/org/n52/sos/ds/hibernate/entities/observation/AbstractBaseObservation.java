@@ -31,7 +31,7 @@ package org.n52.sos.ds.hibernate.entities.observation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.AbstractIdentifierNameDescriptionEntity;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.parameter.Parameter;

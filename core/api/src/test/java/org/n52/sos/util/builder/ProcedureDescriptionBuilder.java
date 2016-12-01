@@ -28,11 +28,12 @@
  */
 package org.n52.sos.util.builder;
 
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.util.StringHelper;
-import org.n52.sos.ogc.sos.SosOffering;
-import org.n52.sos.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosProcedureDescriptionUnknowType;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.SosProcedureDescriptionUnknownType;
+
+import com.google.common.base.Strings;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk
@@ -70,14 +71,14 @@ public class ProcedureDescriptionBuilder {
         return this;
     }
 
-    public SosProcedureDescription build() {
-        SosProcedureDescription description = new SosProcedureDescriptionUnknowType(procedureIdentifer, null, null);
+    public SosProcedureDescription<?> build() {
+        SosProcedureDescription<?> description = new SosProcedureDescriptionUnknownType(procedureIdentifer, null, null);
         if (offeringIdentifier != null && offeringName != null) {
             SosOffering sosOffering = new SosOffering(offeringIdentifier, offeringName);
-            if (StringHelper.isNotEmpty(offeringDescription)) {
+            if (!Strings.isNullOrEmpty(offeringDescription)) {
                 sosOffering.setDescription(offeringDescription);
             }
-            ((SosProcedureDescriptionUnknowType) description).addOffering(sosOffering);
+            ((SosProcedureDescriptionUnknownType) description).addOffering(sosOffering);
         }
         return description;
     }

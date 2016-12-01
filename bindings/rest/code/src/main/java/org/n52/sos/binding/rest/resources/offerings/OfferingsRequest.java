@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.offerings;
 
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.sos.binding.rest.requests.RestRequest;
 
 /**

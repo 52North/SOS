@@ -35,7 +35,7 @@ import org.n52.sos.ds.hibernate.entities.observation.VoidObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.VoidValuedObservationVisitor;
 import org.n52.sos.ds.hibernate.entities.observation.full.GeometryObservation;
 import org.n52.sos.ds.hibernate.entities.observation.legacy.AbstractLegacyObservation;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 
 import com.vividsolutions.jts.geom.Geometry;
 

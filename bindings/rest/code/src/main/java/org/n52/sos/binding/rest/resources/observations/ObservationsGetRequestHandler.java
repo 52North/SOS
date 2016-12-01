@@ -37,14 +37,15 @@ import net.opengis.sos.x20.GetObservationResponseDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.binding.rest.requests.RequestHandler;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

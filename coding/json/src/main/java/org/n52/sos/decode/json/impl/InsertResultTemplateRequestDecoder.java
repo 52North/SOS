@@ -37,19 +37,19 @@ import static org.n52.sos.coding.json.JSONConstants.RESULT_ENCODING;
 import static org.n52.sos.coding.json.JSONConstants.RESULT_STRUCTURE;
 import static org.n52.sos.coding.json.JSONConstants.TOKEN_SEPARATOR;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.encoding.SweTextEncoding;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.encoding.SweTextEncoding;
-import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -71,7 +71,7 @@ public class InsertResultTemplateRequestDecoder extends AbstractSosRequestDecode
     }
 
     @Override
-    public InsertResultTemplateRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    public InsertResultTemplateRequest decodeRequest(JsonNode node) throws DecodingException {
         InsertResultTemplateRequest irtr = new InsertResultTemplateRequest();
         if (!node.path(IDENTIFIER).isMissingNode()) {
             irtr.setIdentifier(node.path(IDENTIFIER).textValue());
@@ -82,16 +82,15 @@ public class InsertResultTemplateRequestDecoder extends AbstractSosRequestDecode
         return irtr;
     }
 
-    private OmObservationConstellation parseObservationTemplate(JsonNode node) throws OwsExceptionReport {
-        final OmObservationConstellation oc =
-                observationDecoder.parseObservationConstellation(node.path(OBSERVATION_TEMPLATE));
+    private OmObservationConstellation parseObservationTemplate(JsonNode node) throws DecodingException {
+        OmObservationConstellation oc = observationDecoder.parseObservationConstellation(node.path(OBSERVATION_TEMPLATE));
         oc.addOffering(node.path(OFFERING).textValue());
         return oc;
     }
 
-    private SosResultStructure parseResultStructure(JsonNode node) throws OwsExceptionReport {
+    private SosResultStructure parseResultStructure(JsonNode node) throws DecodingException {
         SweDataRecord dataRecord = parseFields(node.path(JSONConstants.FIELDS));
-        return new SosResultStructure().setResultStructure(dataRecord);
+        return new SosResultStructure(dataRecord);
     }
 
     private SosResultEncoding parseResultEncoding(JsonNode node) {
@@ -101,10 +100,10 @@ public class InsertResultTemplateRequestDecoder extends AbstractSosRequestDecode
         if (!node.path(DECIMAL_SEPARATOR).isMissingNode()) {
             textEncoding.setDecimalSeparator(node.path(DECIMAL_SEPARATOR).textValue());
         }
-        return new SosResultEncoding().setEncoding(textEncoding);
+        return new SosResultEncoding(textEncoding);
     }
 
-    protected SweDataRecord parseFields(JsonNode node) throws OwsExceptionReport {
+    protected SweDataRecord parseFields(JsonNode node) throws DecodingException {
         SweDataRecord dataRecord = new SweDataRecord();
         for (JsonNode field : node) {
             dataRecord.addField(decodeJsonToObject(field, SweField.class));

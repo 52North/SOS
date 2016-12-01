@@ -35,34 +35,40 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.RandomAccess;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OperationNotSupportedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeException;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.ExtendedIndeterminateTime;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.GetCapabilitiesRequest;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.util.DateTimeHelper;
-import org.n52.iceland.util.http.HTTPMethods;
-import org.n52.sos.binding.rest.Constants;
-import org.n52.sos.binding.rest.requests.RestRequest;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.util.JTSHelper;
-import org.n52.sos.util.SosHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.IndeterminateValue;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.util.CRSHelper;
+import org.n52.shetland.util.DateTimeException;
+import org.n52.shetland.util.DateTimeHelper;
+import org.n52.shetland.util.DateTimeParseException;
+import org.n52.sos.binding.rest.Constants;
+import org.n52.sos.binding.rest.requests.RestRequest;
+import org.n52.sos.util.JTSHelper;
+import org.n52.svalbard.decode.exception.DecodingException;
+
+import com.google.common.base.Strings;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -74,17 +80,17 @@ public abstract class ResourceDecoder extends RestDecoder {
 
     protected Constants bindingConstants = Constants.getInstance();
 
-    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport, DateTimeException;
+    protected abstract RestRequest decodeGetRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
+    protected abstract RestRequest decodeDeleteRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
+    protected abstract RestRequest decodePostRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
-    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws OwsExceptionReport;
+    protected abstract RestRequest decodePutRequest(HttpServletRequest httpRequest, String pathPayload) throws DecodingException, OwsExceptionReport;
 
     protected abstract RestRequest decodeOptionsRequest(HttpServletRequest httpRequest, String pathPayload);
 
-    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws OwsExceptionReport, DateTimeException
+    protected RestRequest decodeRestRequest(final HttpServletRequest httpRequest) throws DecodingException, OwsExceptionReport
     {
         String resourceType = null;
         String pathPayload = null;
@@ -92,7 +98,7 @@ public abstract class ResourceDecoder extends RestDecoder {
         if (httpRequest != null && httpRequest.getPathInfo() != null) {
 
             final String resourceTypeWithOrWithoutId = getResourceTypeFromPathInfoWithWorkingUrl(httpRequest.getPathInfo());
-            final int indexOfPotentialSecondSlash = resourceTypeWithOrWithoutId.indexOf("/");
+            final int indexOfPotentialSecondSlash = resourceTypeWithOrWithoutId.indexOf('/');
 
             if (indexOfPotentialSecondSlash > 1) {
                 resourceType = resourceTypeWithOrWithoutId.substring(0,indexOfPotentialSecondSlash);
@@ -184,7 +190,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
     protected String checkParameterSingleValue(final String parameterValue, final String parameterName)
-            throws OwsExceptionReport {
+            throws DecodingException {
         if (!parameterValue.isEmpty() && (parameterValue.split(",").length == 1)) {
             return parameterValue;
         } else {
@@ -204,15 +210,13 @@ public abstract class ResourceDecoder extends RestDecoder {
      * {@link org.n52.sos.decode.SosKvpDecoderv20#parseNamespaces(String)}
      */
     protected Map<String, String> parseNamespaces(final String values) {
-        final Map<String, String> namespaces = new HashMap<String, String>();
-        final List<String> array =
-                Arrays.asList(values.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("));
-        for (final String string : array) {
-            if ((string != null) && !string.isEmpty()) {
-                final String[] s = string.split(",");
-                namespaces.put(s[0], s[1]);
-            }
-        }
+        final List<String> array = Arrays.asList(values.replaceAll("\\),", "").replaceAll("\\)", "").split("xmlns\\("));
+        final Map<String, String> namespaces = new HashMap<>(array.size());
+        array.stream()
+                .map(Strings::emptyToNull)
+                .filter(Objects::nonNull)
+                .map(string -> string.split(","))
+                .forEachOrdered(s -> namespaces.put(s[0], s[1]));
         return namespaces;
     }
 
@@ -221,10 +225,10 @@ public abstract class ResourceDecoder extends RestDecoder {
      * TODO move to KVP map decoder to share code
      */
     protected List<TemporalFilter> parseTemporalFilter(final List<String> parameterValues)
-            throws DateTimeException, InvalidParameterValueException {
-        final List<TemporalFilter> filterList = new ArrayList<TemporalFilter>(1);
+            throws DateTimeException, DecodingException {
+        final List<TemporalFilter> filterList = new ArrayList<>(1);
         if (parameterValues.size() != 2) {
-            throw new InvalidParameterValueException(
+            throw new DecodingException(
                     bindingConstants.getHttpGetParameterNameTemporalFilter(),
                     Arrays.toString(parameterValues.toArray()));
         }
@@ -237,34 +241,35 @@ public abstract class ResourceDecoder extends RestDecoder {
      * {@link org.n52.sos.decode.kvp.v2.AbstractKvpDecoder#createTemporalFilterFromValue(String, String)}
      * TODO move to KVP map decoder to share code
      */
-    private TemporalFilter createTemporalFilterFromValue(final String value, final String valueReference) throws DateTimeException, InvalidParameterValueException {
+    private TemporalFilter createTemporalFilterFromValue(final String value, final String valueReference) throws DateTimeException, DecodingException {
         final TemporalFilter temporalFilter = new TemporalFilter();
         temporalFilter.setValueReference(valueReference);
         final String[] times = value.split("/");
 
-        if (times.length == 1) {
-            final TimeInstant ti = new TimeInstant();
-            if (ExtendedIndeterminateTime.contains(times[0])) {
-                ti.setSosIndeterminateTime(ExtendedIndeterminateTime.getEnumForString(times[0]));
-            } else {
-                final DateTime instant = DateTimeHelper.parseIsoString2DateTime(times[0]);
-                ti.setValue(instant);
-                ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(times[0]));
-            }
-            temporalFilter.setOperator(TimeOperator.TM_Equals);
-            temporalFilter.setTime(ti);
-        } else if (times.length == 2) {
-            final DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
-            // check if end time is a full ISO 8106 string
-            int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
-            DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
-            DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
-                    origEnd, timeLength);
-            final TimePeriod tp = new TimePeriod(start, end);
-            temporalFilter.setOperator(TimeOperator.TM_During);
-            temporalFilter.setTime(tp);
-        } else {
-            throw new InvalidParameterValueException(bindingConstants.getHttpGetParameterNameTemporalFilter(),value);
+        switch (times.length) {
+            case 1:
+                final TimeInstant ti = new TimeInstant();
+                try {
+                    ti.setValue(DateTimeHelper.parseIsoString2DateTime(times[0]));
+                    ti.setRequestedTimeLength(DateTimeHelper.getTimeLengthBeforeTimeZone(times[0]));
+                } catch (DateTimeParseException e) {
+                    ti.setIndeterminateValue(new IndeterminateValue(times[0]));
+                }   temporalFilter.setOperator(TimeOperator.TM_Equals);
+                temporalFilter.setTime(ti);
+                break;
+            case 2:
+                final DateTime start = DateTimeHelper.parseIsoString2DateTime(times[0]);
+                // check if end time is a full ISO 8106 string
+                int timeLength = DateTimeHelper.getTimeLengthBeforeTimeZone(times[1]);
+                DateTime origEnd = DateTimeHelper.parseIsoString2DateTime(times[1]);
+                DateTime end = DateTimeHelper.setDateTime2EndOfMostPreciseUnit4RequestedEndPosition(
+                        origEnd, timeLength);
+                final TimePeriod tp = new TimePeriod(start, end);
+                temporalFilter.setOperator(TimeOperator.TM_During);
+                temporalFilter.setTime(tp);
+                break;
+            default:
+                throw new DecodingException(bindingConstants.getHttpGetParameterNameTemporalFilter(),"The value '%s' of the parameter '%s' is invalid", value);
         }
         return temporalFilter;
     }
@@ -274,10 +279,10 @@ public abstract class ResourceDecoder extends RestDecoder {
      * TODO move to KVP map decoder to share code
      */
     protected SpatialFilter parseSpatialFilter(List<String> parameterValues, final String parameterName)
-            throws OwsExceptionReport {
+            throws DecodingException {
         if (!parameterValues.isEmpty()) {
             if (!(parameterValues instanceof RandomAccess)) {
-                parameterValues = new ArrayList<String>(parameterValues);
+                parameterValues = new ArrayList<>(parameterValues);
             }
             final SpatialFilter spatialFilter = new SpatialFilter();
 
@@ -289,7 +294,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             if (parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefixSosV2())
                     || parameterValues.get(parameterValues.size() - 1).startsWith(getSrsNamePrefix())) {
                 hasSrid = true;
-                srid = SosHelper.parseSrsName(parameterValues.get(parameterValues.size() - 1));
+                srid = CRSHelper.parseSrsName(parameterValues.get(parameterValues.size() - 1));
             }
 
             List<String> coordinates;
@@ -300,9 +305,7 @@ public abstract class ResourceDecoder extends RestDecoder {
             }
 
             if (coordinates.size() != 4) {
-                throw new InvalidParameterValueException().
-                at(parameterName).
-                withMessage("The parameter value of '%s' is not valid!", parameterName);
+                throw new DecodingException(parameterName, "The parameter value of '%s' is not valid!", parameterName);
             }
             final String lowerCorner = String.format(Locale.US, "%f %f", new Float(coordinates.get(0)), new Float(coordinates.get(1)));
             final String upperCorner = String.format(Locale.US, "%f %f", new Float(coordinates.get(2)), new Float(coordinates.get(3)));
@@ -322,7 +325,7 @@ public abstract class ResourceDecoder extends RestDecoder {
     }
 
 
-    protected boolean isContentOfPostRequestValid(final HttpServletRequest httpRequest) throws OwsExceptionReport
+    protected boolean isContentOfPostRequestValid(final HttpServletRequest httpRequest) throws DecodingException
     {
         if ((httpRequest == null) || (httpRequest.getContentType() == null))
         {
@@ -337,8 +340,7 @@ public abstract class ResourceDecoder extends RestDecoder {
                     httpRequest.getContentType(),
                     bindingConstants.getContentTypeDefault());
             LOGGER.debug(errorMessage);
-            throw new InvalidParameterValueException("Content-Type", httpRequest.getContentType()).
-                withMessage(errorMessage);
+            throw new DecodingException("Content-Type", errorMessage);
         }
         return true;
     }

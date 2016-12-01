@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.lifecycle.Destroyable;
+import org.n52.janmayen.lifecycle.Destroyable;
 
 /**
  * @since 4.0.0

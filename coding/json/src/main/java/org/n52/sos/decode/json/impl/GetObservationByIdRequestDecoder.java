@@ -30,13 +30,12 @@ package org.n52.sos.decode.json.impl;
 
 import java.util.List;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -59,7 +58,7 @@ public class GetObservationByIdRequestDecoder extends AbstractSosRequestDecoder<
     }
 
     @Override
-    protected GetObservationByIdRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected GetObservationByIdRequest decodeRequest(JsonNode node) {
         GetObservationByIdRequest req = new GetObservationByIdRequest();
         req.setObservationIdentifier(parseObservationIdentifiers(node));
         return req;

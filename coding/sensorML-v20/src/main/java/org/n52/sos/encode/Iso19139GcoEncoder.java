@@ -28,7 +28,6 @@
  */
 package org.n52.sos.encode;
 
-import static org.n52.iceland.util.CollectionHelper.union;
 import static org.n52.sos.util.CodingHelper.encoderKeysForElements;
 
 import java.util.Collections;
@@ -40,17 +39,15 @@ import org.isotc211.x2005.gco.CodeListValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.encode.EncoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.coding.encode.AbstractXmlEncoder;
-import org.n52.sos.iso.GcoConstants;
-import org.n52.sos.ogc.sensorML.Role;
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.ogc.sensorML.Role;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
+import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -62,13 +59,11 @@ import com.google.common.collect.Sets;
  * @since 4.2.0
  *
  */
-public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
+public class Iso19139GcoEncoder extends AbstractXmlEncoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Iso19139GcoEncoder.class);
 
-    @SuppressWarnings("unchecked")
-    private static final Set<EncoderKey> ENCODER_KEYS = union(encoderKeysForElements(GcoConstants.NS_GCO,
-            Role.class));
+    private static final Set<EncoderKey> ENCODER_KEYS = encoderKeysForElements(GcoConstants.NS_GCO, Role.class);
 
     public Iso19139GcoEncoder() {
         LOGGER.debug("Encoder for the following keys initialized successfully: {}!", Joiner.on(", ")
@@ -78,11 +73,6 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
     @Override
     public Set<EncoderKey> getKeys() {
         return Collections.unmodifiableSet(ENCODER_KEYS);
-    }
-
-    @Override
-    public Set<SupportedType> getSupportedTypes() {
-        return Collections.emptySet();
     }
 
     @Override
@@ -96,7 +86,7 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws OwsExceptionReport,
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         if (element instanceof Role) {
@@ -104,14 +94,13 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<Object> {
         } else {
             throw new UnsupportedEncoderInputException(this, element);
         }
-        LOGGER.debug("Encoded object {} is valid: {}", encodedObject.schemaType().toString(),
-                XmlHelper.validateDocument(encodedObject));
+        XmlHelper.validateDocument(encodedObject, EncodingException::new);
         return encodedObject;
     }
 
     private XmlObject encodeRole(Role role) {
         CodeListValueType circ =
-                CodeListValueType.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                CodeListValueType.Factory.newInstance(getXmlOptions());
         circ.setStringValue(role.getValue());
         circ.setCodeList(role.getCodeList());
         circ.setCodeListValue(role.getCodeListValue());

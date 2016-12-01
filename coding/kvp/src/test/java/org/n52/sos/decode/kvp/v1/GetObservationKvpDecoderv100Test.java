@@ -40,16 +40,16 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.Constants;
-import org.n52.iceland.util.http.MediaType;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.janmayen.http.MediaType;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
@@ -73,7 +73,7 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     private static final String SPATIAL_FILTER_VALUE_REFERENCE = "om:featureOfInterest/*/sams:shape";
 
     private static final String SPATIAL_FILTER = SPATIAL_FILTER_VALUE_REFERENCE
-            + ",0.0,0.0,60.0,60.0,urn:ogc:def:crs:EPSG::" + Constants.EPSG_WGS84;
+            + ",0.0,0.0,60.0,60.0,urn:ogc:def:crs:EPSG::4326";
 
     private static final String ADDITIONAL_PARAMETER = "additionalParameter";
 
@@ -87,7 +87,7 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     }
 
     @Test
-    public void basic() throws OwsExceptionReport {
+    public void basic() throws DecodingException {
         GetObservationRequest req =
                 decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
                         OBSERVED_PROPERTY, RESPONSE_FORMAT));
@@ -105,7 +105,7 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     }
 
     @Test
-    public void eventTime() throws OwsExceptionReport {
+    public void eventTime() throws DecodingException {
         Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
                         RESPONSE_FORMAT);
@@ -124,7 +124,7 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     // TODO: This fails without a Configurator loaded. Research how to set this
     // up for a test.
     // @Test
-    // public void spatialFilter() throws OwsExceptionReport {
+    // public void spatialFilter() throws DecodingException {
     // Map<String, String> map = createMap(SosConstants.SOS,
     // Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
     // OBSERVED_PROPERTY, RESPONSE_FORMAT);
@@ -146,44 +146,44 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     // assertThat(polygon.getExteriorRing().getPointN(2).getY(), is(60.0));
     // }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingService() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void missingService() throws DecodingException {
         decoder.decode(createMap(EMPTY_STRING, Sos1Constants.SERVICEVERSION, EMPTY_STRING, PROCEDURE,
                 OBSERVED_PROPERTY, RESPONSE_FORMAT));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingVersion() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void missingVersion() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, EMPTY_STRING, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
                 RESPONSE_FORMAT));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingOffering() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void missingOffering() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, EMPTY_STRING, PROCEDURE,
                 OBSERVED_PROPERTY, RESPONSE_FORMAT));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingProcedure() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void missingProcedure() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, EMPTY_STRING,
                 OBSERVED_PROPERTY, RESPONSE_FORMAT));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingObservedProperty() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void missingObservedProperty() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, EMPTY_STRING,
                 RESPONSE_FORMAT));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void missingResponse() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void missingResponse() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE,
                 OBSERVED_PROPERTY, EMPTY_STRING));
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void additionalParameter() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void additionalParameter() throws DecodingException {
         final Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, OFFERING, PROCEDURE, OBSERVED_PROPERTY,
                         RESPONSE_FORMAT);
@@ -191,9 +191,8 @@ public class GetObservationKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
         decoder.decode(map);
     }
 
-    private Map<String, String> createMap(String service, String version, String offering, String procedure,
-            String observedProperty, String responseFormat) {
-        Map<String, String> map = new HashMap<String, String>(1);
+    private Map<String, String> createMap(String service, String version, String offering, String procedure, String observedProperty, String responseFormat) {
+        Map<String, String> map = new HashMap<>(7);
         map.put(RequestParams.service.name(), service);
         map.put(RequestParams.request.name(), SosConstants.Operations.DescribeSensor.name());
         map.put(RequestParams.version.name(), version);

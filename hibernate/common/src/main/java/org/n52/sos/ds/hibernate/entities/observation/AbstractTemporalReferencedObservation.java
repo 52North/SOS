@@ -31,8 +31,9 @@ package org.n52.sos.ds.hibernate.entities.observation;
 import java.util.Date;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.util.DateTimeHelper;
+
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.util.GmlHelper;
 
 /**

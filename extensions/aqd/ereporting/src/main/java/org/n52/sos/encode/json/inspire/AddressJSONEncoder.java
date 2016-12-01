@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.inspire.aqd.Address;
 import org.n52.sos.util.AQDJSONConstants;
@@ -49,7 +49,7 @@ public class AddressJSONEncoder extends JSONEncoder<Address> {
 
     @Override
     public JsonNode encodeJSON(Address t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         ObjectNode j = nodeFactory().objectNode();
         j.set(AQDJSONConstants.ADDRESS_AREAS, encodeObjectToJson(t.getAddressAreas()));
         j.set(AQDJSONConstants.ADDRESS_FEATURE, encodeObjectToJson(t.getAddressFeature()));

@@ -28,13 +28,12 @@
  */
 package org.n52.sos.decode.json.impl;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.AbstractSosRequestDecoder;
-import org.n52.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -57,7 +56,7 @@ public class InsertResultRequestDecoder extends AbstractSosRequestDecoder<Insert
     }
 
     @Override
-    protected InsertResultRequest decodeRequest(JsonNode node) throws OwsExceptionReport {
+    protected InsertResultRequest decodeRequest(JsonNode node) {
         InsertResultRequest irr = new InsertResultRequest();
         irr.setTemplateIdentifier(node.path(JSONConstants.TEMPLATE_IDENTIFIER).textValue());
         irr.setResultValues(node.path(JSONConstants.RESULT_VALUES).textValue());

@@ -28,6 +28,8 @@
  */
 package org.n52.sos.ds.hibernate.values;
 
+import static org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper.checkMaxNumberOfReturnedValues;
+
 import java.util.Locale;
 import java.util.Set;
 
@@ -38,20 +40,21 @@ import org.hibernate.criterion.Criterion;
 
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
+import org.n52.iceland.i18n.LocaleHelper;
 import org.n52.iceland.util.LocalizedProducer;
-import org.n52.iceland.util.http.HTTPStatus;
+import org.n52.janmayen.http.HTTPStatus;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.HibernateSessionHolder;
 import org.n52.sos.ds.hibernate.entities.observation.Observation;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.entities.observation.series.SeriesObservation;
 import org.n52.sos.ds.hibernate.util.HibernateGetObservationHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.sos.ogc.om.OmObservation;
 import org.n52.sos.ogc.om.StreamingObservation;
-import org.n52.sos.request.GetObservationRequest;
 import org.n52.sos.service.profile.ProfileHandler;
 
 /**
@@ -63,7 +66,6 @@ import org.n52.sos.service.profile.ProfileHandler;
  */
 public abstract class AbstractHibernateStreamingObservation extends StreamingObservation {
 
-    private static final long serialVersionUID = 7836070766447328741L;
     protected final HibernateSessionHolder sessionHolder;
     protected Session session;
     protected ScrollableResults result;
@@ -88,7 +90,7 @@ public abstract class AbstractHibernateStreamingObservation extends StreamingObs
                 ProfileHandler.getInstance().getActiveProfile().isShowMetadataOfEmptyObservations();
         this.sessionHolder = new HibernateSessionHolder(connectionProvider);
         this.serviceProvider = serviceProvider;
-        this.locale =  request.getRequestedLocale();
+        this.locale =  LocaleHelper.fromString(request.getRequestedLanguage());
     }
 
     @Override

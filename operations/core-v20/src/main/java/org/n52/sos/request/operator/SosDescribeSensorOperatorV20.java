@@ -31,15 +31,15 @@ package org.n52.sos.request.operator;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.CompositeOwsException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
-import org.n52.sos.request.DescribeSensorRequest;
-import org.n52.sos.response.DescribeSensorResponse;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.wsdl.WSDLConstants;
 import org.n52.sos.wsdl.WSDLOperation;
@@ -71,7 +71,7 @@ public class SosDescribeSensorOperatorV20 extends
 
     @Override
     public DescribeSensorResponse receive(DescribeSensorRequest request) throws OwsExceptionReport {
-        return getDao().getSensorDescription(request);
+        return getOperationHandler().getSensorDescription(request);
         // TODO check if sensor description position/location/observedArea should be transformed (CRS support)
     }
 

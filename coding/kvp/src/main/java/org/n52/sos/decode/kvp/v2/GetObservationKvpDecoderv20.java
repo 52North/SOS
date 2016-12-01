@@ -28,179 +28,146 @@
  */
 package org.n52.sos.decode.kvp.v2;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.function.Supplier;
 
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.coding.decode.OperationDecoderKey;
-import org.n52.iceland.exception.ows.CompositeOwsException;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.MissingServiceParameterException;
-import org.n52.iceland.exception.ows.concrete.MissingVersionParameterException;
-import org.n52.iceland.exception.ows.concrete.ParameterNotSupportedException;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants.Extensions;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swes.SwesExtension;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.KvpHelper;
-import org.n52.iceland.util.http.MediaTypes;
-import org.n52.sos.decode.kvp.AbstractKvpDecoder;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swes.SwesExtensions;
-import org.n52.sos.request.GetObservationRequest;
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.shetland.ogc.ows.extension.Extension;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swes.SwesExtension;
+import org.n52.sos.decode.kvp.AbstractSosKvpDecoder;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @since 4.0.0
  *
  */
-public class GetObservationKvpDecoderv20 extends AbstractKvpDecoder {
+public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObservationRequest> {
 
-    private static final DecoderKey KVP_DECODER_KEY_TYPE = new OperationDecoderKey(SosConstants.SOS,
-            Sos2Constants.SERVICEVERSION, SosConstants.Operations.GetObservation, MediaTypes.APPLICATION_KVP);
 
-    @Override
-    public Set<DecoderKey> getKeys() {
-        return Collections.singleton(KVP_DECODER_KEY_TYPE);
+    private DecoderRepository decoderRepository;
+
+    public GetObservationKvpDecoderv20() {
+        super(GetObservationRequest::new,
+              Sos2Constants.SERVICEVERSION,
+              SosConstants.Operations.GetObservation);
+    }
+
+    public GetObservationKvpDecoderv20(String version, String operation) {
+        this(GetObservationRequest::new, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(String version, Enum<?> operation) {
+        this(GetObservationRequest::new, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(DecoderKey... keys) {
+        this(GetObservationRequest::new, keys);
+    }
+
+    public GetObservationKvpDecoderv20(Collection<? extends DecoderKey> keys) {
+        this(GetObservationRequest::new, keys);
+    }
+
+    public GetObservationKvpDecoderv20(String service, String version, String operation) {
+        super(GetObservationRequest::new, service, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(String service, String version, Enum<?> operation) {
+        super(GetObservationRequest::new, service, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String version, String operation) {
+        super(supplier, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String version, Enum<?> operation) {
+        super(supplier, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, DecoderKey... keys) {
+        super(supplier, keys);
+    }
+
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, Collection<? extends DecoderKey> keys) {
+        super(supplier, keys);
+    }
+
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String service, String version, String operation) {
+        super(supplier, service, version, operation);
+    }
+
+    public GetObservationKvpDecoderv20(Supplier<? extends GetObservationRequest> supplier, String service, String version, Enum<?> operation) {
+        super(supplier, service, version, operation);
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
     }
 
     @Override
-    public GetObservationRequest decode(final Map<String, String> element) throws OwsExceptionReport {
+    @SuppressWarnings("rawtypes")
+    protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
+        builder.add(SosConstants.GetObservationParams.offering,
+                    decodeList(GetObservationRequest::setOfferings));
+        builder.add(SosConstants.GetObservationParams.procedure,
+                    decodeList(GetObservationRequest::setProcedures));
+        builder.add(SosConstants.GetObservationParams.observedProperty,
+                    decodeList(GetObservationRequest::setObservedProperties));
+        builder.add(SosConstants.GetObservationParams.featureOfInterest,
+                    decodeList(GetObservationRequest::setFeatureIdentifiers));
+        builder.add(Sos2Constants.GetObservationParams.temporalFilter,
+                    decodeList(decodeTemporalFilter(asList(GetObservationRequest::setTemporalFilters))));
+        builder.add(Sos2Constants.GetObservationParams.spatialFilter,
+                    decodeList(decodeSpatialFilter(GetObservationRequest::setSpatialFilter)));
+        builder.add(Sos2Constants.GetObservationParams.namespaces,
+                    decodeNamespaces(GetObservationRequest::setNamespaces));
+        builder.add(SosConstants.GetObservationParams.responseFormat,
+                    GetObservationRequest::setResponseFormat);
+        builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
+                    OwsServiceRequest::addSweBooleanExtension);
+        builder.add("extension", decodeList(this::parseExtensionParameter));
 
-        final GetObservationRequest request = new GetObservationRequest();
-        final CompositeOwsException exceptions = new CompositeOwsException();
+    }
 
-        for (final String parameterName : element.keySet()) {
-            final String parameterValues = element.get(parameterName);
-            try {
-                if (!parseDefaultParameter(request, parameterValues, parameterName)) {
-                    // offering (optional)
-                    if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.offering.name())) {
-                        request.setOfferings(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                    }
-
-                    // observedProperty (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.observedProperty.name())) {
-                        request.setObservedProperties(KvpHelper.checkParameterMultipleValues(parameterValues,
-                                parameterName));
-                    }
-
-                    // procedure (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.procedure.name())) {
-                        request.setProcedures(KvpHelper.checkParameterMultipleValues(parameterValues, parameterName));
-                    }
-
-                    // featureOfInterest (optional)
-                    else if (parameterName
-                            .equalsIgnoreCase(SosConstants.GetObservationParams.featureOfInterest.name())) {
-                        request.setFeatureIdentifiers(KvpHelper.checkParameterMultipleValues(parameterValues,
-                                parameterName));
-                    }
-
-                    // eventTime (optional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.temporalFilter.name())) {
-                        try {
-                            request.setTemporalFilters(parseTemporalFilter(
-                                    KvpHelper.checkParameterMultipleValues(parameterValues, parameterName),
-                                    parameterName));
-                        } catch (final OwsExceptionReport e) {
-                            exceptions.add(new InvalidParameterValueException(parameterName, parameterValues)
-                                    .causedBy(e));
-                        }
-                    }
-
-                    // spatialFilter (optional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.spatialFilter.name())) {
-                        List<String> splittedParameterValues = Arrays.asList(parameterValues.split(","));
-                        if (CollectionHelper.isEmpty(splittedParameterValues)) {
-                            throw new MissingParameterValueException(parameterName);
-                        }
-                        KvpHelper.checkParameterSingleValue(splittedParameterValues.get(0),
-                                FilterConstants.Expression.ValueReference);
-                        KvpHelper.checkParameterMultipleValues(splittedParameterValues, parameterName);
-                        request.setSpatialFilter(parseSpatialFilter(splittedParameterValues, parameterName));
-                    }
-
-                    // responseFormat (optional)
-                    else if (parameterName.equalsIgnoreCase(SosConstants.GetObservationParams.responseFormat.name())) {
-                        request.setResponseFormat(KvpHelper.checkParameterSingleValue(parameterValues, parameterName));
-                    }
-                    // namespaces (conditional)
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.GetObservationParams.namespaces.name())) {
-                        request.setNamespaces(parseNamespaces(parameterValues));
-                    }
-                    /*
-                     * EXTENSIONS
-                     */
-                    // MergeObservationsIntoDataArray
-                    else if (parameterName.equalsIgnoreCase(Sos2Constants.Extensions.MergeObservationsIntoDataArray
-                            .name())) {
-                        request.setExtensions(parseExtension(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-                                parameterValues, request.getExtensions()));
-                    } else {
-                        exceptions.add(new ParameterNotSupportedException(parameterName));
-                    }
-                }
-            } catch (final OwsExceptionReport owse) {
-                exceptions.add(owse);
+    protected void parseExtensionParameter(OwsServiceRequest request, String name, List<String> value)
+            throws DecodingException {
+        try {
+            for (String parameterValue : value) {
+                request.addExtension(parseExtensionParameter(parameterValue));
             }
+        } catch (DecodingException ex) {
+            throw new DecodingException(ex, name);
         }
-
-        if (!request.isSetService()) {
-            exceptions.add(new MissingServiceParameterException());
-        }
-
-        if (!request.isSetVersion()) {
-            exceptions.add(new MissingVersionParameterException());
-        }
-
-        exceptions.throwIfNotEmpty();
-
-        return request;
     }
 
-    @Override
-    protected boolean parseExtensionParameter(AbstractServiceRequest<?> request, String parameterValues,
-            String parameterName) throws OwsExceptionReport {
-        if ("extension".equalsIgnoreCase(parameterName)) {
-            List<String> checkParameterMultipleValues = KvpHelper.checkParameterMultipleValues(parameterValues, parameterName);
-            for (String parameterValue : checkParameterMultipleValues) {
-                final Object obj = CodingHelper.decodeXmlElement(XmlHelper.parseXmlString(parameterValue));
-                if (obj instanceof Extension<?>) {
-                    request.addExtension((Extension<?>) obj);
-                } else {
-                    request.addExtension(new SwesExtension<Object>().setValue(obj));
-                }
-            }
-            return true;
+    public Extension<?> parseExtensionParameter(String value) throws DecodingException {
+        XmlObject xml = XmlHelper.parseXmlString(value);
+        DecoderKey key = CodingHelper.getDecoderKey(xml);
+        Decoder<Object, XmlObject> decoder = decoderRepository.getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
         }
-        return super.parseExtensionParameter(request, parameterValues, parameterName);
+        Object obj = decoder.decode(xml);
+        if (obj instanceof Extension) {
+            return (Extension<?>) obj;
+        } else {
+            return new SwesExtension<>().setValue(obj);
+        }
     }
 
-    private org.n52.iceland.ogc.ows.Extensions parseExtension(final Extensions extension,
-            final String parameterValues, org.n52.iceland.ogc.ows.Extensions extensions) {
-        if (extensions == null || extensions.isEmpty()) {
-            extensions = new SwesExtensions();
-        }
-        switch (extension) {
-        case MergeObservationsIntoDataArray:
-            extensions.addExtension(new SwesExtension<SweBoolean>().setDefinition(extension.name()).setValue(
-                    (SweBoolean) new SweBoolean().setValue(Boolean.parseBoolean(parameterValues)).setDefinition(
-                            extension.name())));
-            break;
-        default:
-            break;
-        }
-        return extensions;
-    }
 }

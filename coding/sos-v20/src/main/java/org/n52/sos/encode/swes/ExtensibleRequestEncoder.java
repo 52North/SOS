@@ -28,15 +28,16 @@
  */
 package org.n52.sos.encode.swes;
 
-import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
-
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.Extension;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
 
 import net.opengis.swes.x20.ExtensibleRequestType;
+
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.extension.Extension;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -45,7 +46,7 @@ import net.opengis.swes.x20.ExtensibleRequestType;
  */
 public interface ExtensibleRequestEncoder {
 
-    default void addService(ExtensibleRequestType ert, AbstractServiceRequest<?> request) {
+    default void addService(ExtensibleRequestType ert, OwsServiceRequest request) {
         if (request.isSetService()) {
             ert.setService(request.getService());
         } else {
@@ -53,7 +54,7 @@ public interface ExtensibleRequestEncoder {
         }
     }
 
-    default void addVersion(ExtensibleRequestType ert, AbstractServiceRequest<?> request) {
+    default void addVersion(ExtensibleRequestType ert, OwsServiceRequest request) {
         if (request.isSetVersion()) {
             ert.setVersion(request.getVersion());
         } else {
@@ -61,12 +62,14 @@ public interface ExtensibleRequestEncoder {
         }
     }
 
-    default void addExtension(ExtensibleRequestType ert, AbstractServiceRequest<?> request) throws OwsExceptionReport {
+    default void addExtension(ExtensibleRequestType ert, OwsServiceRequest request) throws EncodingException {
         if (request.isSetExtensions()) {
             for (Extension<?> extension : request.getExtensions().getExtensions()) {
-                ert.addNewExtension().set(encodeObjectToXml( extension.getNamespace(), extension));
+                ert.addNewExtension().set(encodeObjectToXml(extension.getNamespace(), extension));
             }
         }
     }
+
+    XmlObject encodeObjectToXml(String namespace, Object object) throws EncodingException;
 
 }

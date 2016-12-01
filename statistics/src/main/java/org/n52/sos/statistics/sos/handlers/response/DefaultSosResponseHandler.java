@@ -28,9 +28,9 @@
  */
 package org.n52.sos.statistics.sos.handlers.response;
 
-import org.n52.iceland.response.AbstractServiceResponse;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
 
-public class DefaultSosResponseHandler extends AbstractSosResponseHandler<AbstractServiceResponse> {
+public class DefaultSosResponseHandler extends AbstractSosResponseHandler<OwsServiceResponse> {
 
     @Override
     protected void resolveConcreteResponse() {

@@ -28,7 +28,6 @@
  */
 package org.n52.sos.coding.json;
 
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -37,22 +36,16 @@ import static org.junit.Assert.assertThat;
 import static org.junit.internal.matchers.ThrowableMessageMatcher.hasMessage;
 import static org.n52.sos.coding.json.matchers.JSONMatchers.equalTo;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.util.http.MediaTypes;
+
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.encode.json.JSONEncoderKey;
-
-import com.google.common.collect.Maps;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 /**
  * TODO JavaDoc
@@ -64,7 +57,6 @@ public class JSONEncoderTest {
 
 
     private final JSONEncoder<String> encoder = new JSONEncoderForTesting(String.class);
-
     private final JSONEncoder<String> throwingEncoder = new JSONEncoderForExceptionTesting(String.class);
 
     @Rule
@@ -84,42 +76,24 @@ public class JSONEncoderTest {
     }
 
     @Test
-    public void testAddNamespacePrefixToMap() {
-        HashMap<String, String> empty = Maps.newHashMap();
-        encoder.addNamespacePrefixToMap(empty);
-        assertThat(empty.size(), is(0));
-    }
-
-    @Test
     public void testContentType() {
         assertThat(encoder.getContentType(), is(MediaTypes.APPLICATION_JSON));
     }
 
     @Test
-    public void testSchemaLocations() {
-        assertThat(encoder.getSchemaLocations(), is(empty()));
-    }
-
-    @Test
-    public void testEncode() throws OwsExceptionReport {
+    public void testEncode() throws EncodingException {
         assertThat(encoder.encode("test"), equalTo("test"));
     }
 
     @Test
-    public void testEncodeWithHelperValues() throws OwsExceptionReport {
-        final EnumMap<HelperValues, String> vals = Maps.newEnumMap(HelperValues.class);
-        assertThat(encoder.encode("test", vals), equalTo("test"));
+    public void testEncodeWithHelperValues() throws EncodingException {
+        assertThat(encoder.encode("test", EncodingContext.empty()), equalTo("test"));
     }
 
     @Test
-    public void testThrowingEncoder() throws OwsExceptionReport {
+    public void testThrowingEncoder() throws EncodingException {
         thrown.expect(NoApplicableCodeException.class);
         thrown.expectCause(hasMessage(is("message")));
         throwingEncoder.encode("test");
-    }
-
-    @Test
-    public void testConformaceClasses() throws OwsExceptionReport {
-        assertThat(encoder.getConformanceClasses(SosConstants.SOS, Sos2Constants.SERVICEVERSION), is(empty()));
     }
 }

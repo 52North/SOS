@@ -54,19 +54,22 @@ import org.n52.iceland.binding.MediaTypeBindingKey;
 import org.n52.iceland.binding.PathBindingKey;
 import org.n52.iceland.binding.SimpleBinding;
 import org.n52.iceland.coding.OperationKey;
-import org.n52.iceland.coding.decode.Decoder;
+import org.n52.iceland.coding.decode.OwsDecodingException;
 import org.n52.iceland.exception.HTTPException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.request.AbstractServiceRequest;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.iceland.util.http.MediaType;
-import org.n52.iceland.util.http.MediaTypes;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceRequest;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.janmayen.http.MediaType;
+import org.n52.janmayen.http.MediaTypes;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.sos.utils.EXIUtils;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.collect.ImmutableSet;
 import com.siemens.ct.exi.EXIFactory;
@@ -122,10 +125,10 @@ public class EXIBinding extends SimpleBinding {
 
     @Override
     public void doPostOperation(HttpServletRequest req, HttpServletResponse res) throws HTTPException, IOException {
-        AbstractServiceRequest<?> sosRequest = null;
+        OwsServiceRequest sosRequest = null;
         try {
             sosRequest = parseRequest(req);
-            AbstractServiceResponse sosResponse = getServiceOperator(sosRequest).receiveRequest(sosRequest);
+            OwsServiceResponse sosResponse = getServiceOperator(sosRequest).receiveRequest(sosRequest);
             writeResponse(req, res, sosResponse);
         } catch (OwsExceptionReport oer) {
             oer.setVersion(sosRequest != null ? sosRequest.getVersion() : null);
@@ -139,18 +142,25 @@ public class EXIBinding extends SimpleBinding {
      * @param request
      *            {@link HttpServletRequest} with EXI encoded
      *            {@link InputStream}
-     * @return {@link AbstractServiceRequest} from EXI encoded
+     * @return {@link OwsServiceRequest} from EXI encoded
      *         {@link InputStream}
      * @throws OwsExceptionReport
      *             If an error occurs during parsing
      */
-    protected AbstractServiceRequest<?> parseRequest(HttpServletRequest request) throws OwsExceptionReport {
+    protected OwsServiceRequest parseRequest(HttpServletRequest request) throws OwsExceptionReport {
         XmlObject doc = decode(request);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("EXI-REQUEST: {}", doc.xmlText());
         }
-        Decoder<AbstractServiceRequest<?>, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));
-        return decoder.decode(doc).setRequestContext(getRequestContext(request));
+        Decoder<OwsServiceRequest, XmlObject> decoder = getDecoder(CodingHelper.getDecoderKey(doc));
+        try {
+            return decoder.decode(doc).setRequestContext(getRequestContext(request));
+        } catch (OwsDecodingException ex) {
+            throw ex.getCause();
+        } catch (DecodingException ex) {
+            throw new InvalidParameterValueException().withMessage(ex.getMessage())
+                    .causedBy(ex).at(ex.getLocation().orElse(null));
+        }
     }
 
     /**
@@ -188,12 +198,15 @@ public class EXIBinding extends SimpleBinding {
 
             // create XmlObject from OutputStream
             return XmlHelper.parseXmlString(os.toString());
-        } catch (IOException | EXIException ioe) {
-            throw new NoApplicableCodeException().causedBy(ioe).withMessage(
-                    "Error while reading request! Message: %s", ioe.getMessage());
-        } catch (TransformerException te) {
-            throw new NoApplicableCodeException().causedBy(te).withMessage(
-                    "Error while transforming request! Message: %s", te.getMessage());
+        } catch (IOException | EXIException ex) {
+            throw new NoApplicableCodeException().causedBy(ex).withMessage(
+                    "Error while reading request! Message: %s", ex.getMessage());
+        } catch (TransformerException ex) {
+            throw new NoApplicableCodeException().causedBy(ex).withMessage(
+                    "Error while transforming request! Message: %s", ex.getMessage());
+        } catch (DecodingException ex) {
+            throw new NoApplicableCodeException().causedBy(ex).withMessage(
+                    "Error while parsing request! Message: %s", ex.getMessage());
         }
     }
 

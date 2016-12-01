@@ -31,9 +31,9 @@ package org.n52.sos.decode.xml.stream.inspire.gco;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.iso.GcoConstants;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.xml.stream.XmlReader;
-import org.n52.sos.iso.GcoConstants;
 
 /**
  * TODO JavaDoc

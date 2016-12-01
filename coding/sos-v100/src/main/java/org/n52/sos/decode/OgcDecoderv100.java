@@ -47,25 +47,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.Time;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.filter.SpatialFilter;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.Time;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
-import org.n52.sos.ogc.filter.SpatialFilter;
-import org.n52.sos.ogc.filter.TemporalFilter;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 import com.vividsolutions.jts.geom.Geometry;
@@ -74,7 +72,7 @@ import com.vividsolutions.jts.geom.Geometry;
  * @since 4.0.0
  *
  */
-public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
+public class OgcDecoderv100 extends AbstractXmlDecoder<XmlObject, Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OgcDecoderv100.class);
 
@@ -93,7 +91,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
     }
 
     @Override
-    public Object decode(XmlObject xmlObject) throws OwsExceptionReport {
+    public Object decode(XmlObject xmlObject) throws DecodingException {
         // validate document
 
         // FIXME Validation currently fails against abstract types
@@ -103,7 +101,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
             return parseTemporalOperatorType((BinaryTemporalOpType) xmlObject);
         }
         if (xmlObject instanceof TemporalOperatorType) {
-            throw new InvalidParameterValueException().at(Sos1Constants.GetObservationParams.eventTime).withMessage(
+            throw new DecodingException(Sos1Constants.GetObservationParams.eventTime,
                     "The requested temporal filter operand is not supported by this SOS!");
         }
         // add propertyNameDoc here
@@ -137,10 +135,10 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
      * @return Returns SOS representation of temporal filter
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             if parsing of the element failed
      */
-    private Object parseTemporalOperatorType(BinaryTemporalOpType xbBinaryTemporalOp) throws OwsExceptionReport {
+    private Object parseTemporalOperatorType(BinaryTemporalOpType xbBinaryTemporalOp) throws DecodingException {
 
         TemporalFilter temporalFilter = new TemporalFilter();
         // FIXME local workaround against SOSHelper check value reference
@@ -153,7 +151,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
                 if (nodes.item(i).getNamespaceURI() != null
                         && !nodes.item(i).getLocalName().equals(FilterConstants.EN_VALUE_REFERENCE)) {
                     // GML decoder will return TimeInstant or TimePriod
-                    Object timeObject = CodingHelper.decodeXmlElement(XmlObject.Factory.parse(nodes.item(i)));
+                    Object timeObject = decodeXmlElement(XmlObject.Factory.parse(nodes.item(i)));
 
                     if (timeObject instanceof PropertyNameType) {
                         PropertyNameType propType = (PropertyNameType) timeObject;
@@ -178,8 +176,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
                         } else if (localName.equals(TimeOperator.TM_Before.name()) && time instanceof TimeInstant) {
                             operator = TimeOperator.TM_Before;
                         } else {
-                            throw new InvalidParameterValueException()
-                                    .at(Sos1Constants.GetObservationParams.eventTime).withMessage(
+                            throw new DecodingException(Sos1Constants.GetObservationParams.eventTime,
                                             "The requested temporal filter operand is not supported by this SOS!");
                         }
                         temporalFilter.setOperator(operator);
@@ -192,7 +189,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
             }
 
         } catch (XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error while parsing temporal filter!");
+            throw new DecodingException("Error while parsing temporal filter!", xmle);
         }
         return temporalFilter;
 
@@ -208,10 +205,10 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
      *         parameter
      *
      *
-     * @throws OwsExceptionReport
+     * @throws DecodingException
      *             * if creation of the SpatialFilter failed
      */
-    private SpatialFilter parseBBOXFilterType(BBOXTypeImpl xbBBOX) throws OwsExceptionReport {
+    private SpatialFilter parseBBOXFilterType(BBOXTypeImpl xbBBOX) throws DecodingException {
 
         SpatialFilter spatialFilter = new SpatialFilter();
         // FIXME local workaround for SOSHelper check value reference
@@ -222,7 +219,7 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
             XmlCursor geometryCursor = xbBBOX.newCursor();
             if (geometryCursor.toChild(GmlConstants.QN_ENVELOPE)) {
                 Object sosGeometry =
-                        CodingHelper.decodeXmlElement(XmlObject.Factory.parse(geometryCursor.getDomNode()));
+                        decodeXmlElement(XmlObject.Factory.parse(geometryCursor.getDomNode()));
 
                 if (sosGeometry instanceof PropertyNameType) {
                     PropertyNameType propType = (PropertyNameType) sosGeometry;
@@ -239,18 +236,18 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
                 }
 
             } else {
-                throw new InvalidParameterValueException().at("FeatureOfInterest Filter").withMessage(
+                throw new DecodingException("FeatureOfInterest Filter",
                         "The requested spatial filter operand is not supported by this SOS!");
             }
             geometryCursor.dispose();
 
         } catch (XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error while parsing spatial filter!");
+            throw new DecodingException("Error while parsing spatial filter!", xmle);
         }
         return spatialFilter;
     }
 
-    private Object parseSpatialOperatorType(BinarySpatialOpType xbSpatialOpsType) throws OwsExceptionReport {
+    private Object parseSpatialOperatorType(BinarySpatialOpType xbSpatialOpsType) throws DecodingException {
         SpatialFilter spatialFilter = new SpatialFilter();
         try {
             if (xbSpatialOpsType instanceof BBOXTypeImpl) {
@@ -259,23 +256,22 @@ public class OgcDecoderv100 implements Decoder<Object, XmlObject> {
                 spatialFilter.setOperator(FilterConstants.SpatialOperator.BBOX);
                 XmlCursor geometryCursor = xbBBOX.newCursor();
                 if (geometryCursor.toChild(GmlConstants.QN_ENVELOPE)) {
-                    Object sosGeometry =
-                            CodingHelper.decodeXmlElement(XmlObject.Factory.parse(geometryCursor.getDomNode()));
+                    Object sosGeometry = decodeXmlElement(XmlObject.Factory.parse(geometryCursor.getDomNode()));
                     if (sosGeometry instanceof Geometry) {
                         spatialFilter.setGeometry((Geometry) sosGeometry);
                     }
 
                 } else {
-                    throw new InvalidParameterValueException().at(Sos2Constants.GetObservationParams.spatialFilter)
-                            .withMessage("The requested spatial filter operand is not supported by this SOS!");
+                    throw new DecodingException(Sos2Constants.GetObservationParams.spatialFilter,
+                            "The requested spatial filter operand is not supported by this SOS!");
                 }
                 geometryCursor.dispose();
             } else {
-                throw new InvalidParameterValueException().at("GetFeatureOfInterest Filter").withMessage(
+                throw new DecodingException("GetFeatureOfInterest Filter",
                         "The requested spatial filter is not supported by this SOS!");
             }
         } catch (XmlException xmle) {
-            throw new NoApplicableCodeException().causedBy(xmle).withMessage("Error while parsing spatial filter!");
+            throw new DecodingException("Error while parsing spatial filter!", xmle);
         }
         return spatialFilter;
     }

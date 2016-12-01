@@ -28,18 +28,22 @@
  */
 package org.n52.sos.util;
 
-import java.io.UnsupportedEncodingException;
+import static java.util.stream.Collectors.toList;
+
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,34 +52,34 @@ import org.n52.iceland.binding.Binding;
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.coding.CodingRepository;
+import org.n52.iceland.service.ServiceConfiguration;
+import org.n52.iceland.util.MinMax;
+import org.n52.oxf.xml.NcNameResolver;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.ows.OwsRange;
+import org.n52.shetland.ogc.ows.OwsValue;
+import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.service.OwsServiceKey;
+import org.n52.shetland.ogc.sensorML.elements.SmlIo;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.SosQueryBuilder;
 import org.n52.sos.coding.encode.ProcedureDescriptionFormatRepository;
 import org.n52.sos.coding.encode.ResponseFormatRepository;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.MissingParameterValueException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.service.ServiceConfiguration;
-import org.n52.iceland.service.operator.ServiceOperatorKey;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.MinMax;
-import org.n52.iceland.util.StringHelper;
-import org.n52.oxf.xml.NcNameResolver;
 import org.n52.sos.exception.ows.concrete.InvalidResponseFormatParameterException;
 import org.n52.sos.exception.ows.concrete.MissingResponseFormatParameterException;
 import org.n52.sos.exception.sos.ResponseExceedsSizeLimitException;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.sensorML.elements.SmlIo;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
+import org.n52.sos.service.Configurator;
+import org.n52.svalbard.encode.Encoder;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -119,26 +123,6 @@ public class SosHelper {
         return url.toString();
     }
 
-    private static String getRequest(String requestName) {
-        return new StringBuilder().append(RequestParams.request.name()).append('=').append(requestName)
-                .toString();
-    }
-
-    private static String getServiceParam() {
-        return new StringBuilder().append('&').append(OWSConstants.RequestParams.service.name())
-                .append('=').append(SosConstants.SOS).toString();
-    }
-
-    private static String getVersionParam(String version) {
-        return new StringBuilder().append('&').append(OWSConstants.RequestParams.version.name())
-                .append('=').append(version).toString();
-    }
-
-    private static String getParameter(String name, String value) {
-        return new StringBuilder().append('&').append(name).append('=').append(value)
-                .toString();
-    }
-
     /**
      * Creates a HTTP-Get URL from FOI identifier and service URL for SOS
      * version
@@ -151,24 +135,18 @@ public class SosHelper {
      *            Service URL
      * @return HTTP-Get request for featureOfInterst identifier
      */
-    public static String createFoiGetUrl(final String foiId, final String version, final String serviceURL,
-            final String urlPattern) {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(getBaseGetUrl(serviceURL, urlPattern));
-        // request
-        url.append(getRequest(SosConstants.Operations.GetFeatureOfInterest.name()));
-        // service
-        url.append(getServiceParam());
-        // version
-        url.append(getVersionParam(version));
-        // FOI identifier
+    public static URL createFoiGetUrl(final String foiId, final String version, final String serviceURL,
+            final String urlPattern) throws MalformedURLException {
+
+        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(serviceURL, urlPattern));
+        b.addService().addVersion(version);
+        b.addGetFeatureOfInterestRequest();
         if (version.equalsIgnoreCase(Sos1Constants.SERVICEVERSION)) {
-            url.append(getParameter(Sos1Constants.GetFeatureOfInterestParams.featureOfInterestID.name(), foiId));
+            b.addFeatureOfInterestId(foiId);
         } else {
-            url.append(getParameter(Sos2Constants.GetFeatureOfInterestParams.featureOfInterest.name(), foiId));
+            b.addFeatureOfInterest(foiId);
         }
-        return url.toString();
+        return b.build();
     }
 
     /**
@@ -185,119 +163,44 @@ public class SosHelper {
      *
      * @param urlPattern
      *            the url pattern (e.g. /kvp)
+     *
      * @return Get-URL as String
-     * @throws UnsupportedEncodingException
+     *
+     * @throws MalformedURLException
      */
-    public static String getDescribeSensorUrl(final String version, final String serviceURL, final String procedureId,
-            final String urlPattern, String procedureDescriptionFormat) throws UnsupportedEncodingException {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(getBaseGetUrl(serviceURL, urlPattern));
-        // request
-        url.append(getRequest(SosConstants.Operations.DescribeSensor.name()));
-        // service
-        url.append(getServiceParam());
-        // version
-        url.append(getVersionParam(version));
-        // procedure
-        url.append(getParameter(SosConstants.DescribeSensorParams.procedure.name(), procedureId));
-        // outputFormat
+    public static URL getDescribeSensorUrl(String version, String serviceURL, String procedureId, String urlPattern,
+                                           String procedureDescriptionFormat) throws MalformedURLException {
+        SosQueryBuilder b = new SosQueryBuilder(urlPattern);
+        b.addService();
+        b.addVersion(version);
+        b.addDescribeSensorRequest();
+        b.addProcedure(procedureId);
         if (version.equalsIgnoreCase(Sos1Constants.SERVICEVERSION)) {
-            url.append(getParameter(Sos1Constants.DescribeSensorParams.outputFormat.name(),
-                    URLEncoder.encode(procedureDescriptionFormat, "UTF-8")));
+            b.addOutputFormat(procedureDescriptionFormat);
         } else {
-
-            url.append(getParameter(Sos2Constants.DescribeSensorParams.procedureDescriptionFormat.name(),
-                    URLEncoder.encode(procedureDescriptionFormat, "UTF-8")));
+            b.addProcedureDescriptionFormat(procedureDescriptionFormat);
         }
 
-        return url.toString();
+        return b.build();
     }
 
-    public static String getGetObservationKVPRequest(String version) {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
+    public static URL getGetObservationKVPRequest(String version) throws MalformedURLException {
+        SosQueryBuilder b = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
                 BindingConstants.KVP_BINDING_ENDPOINT));
-        // request
-        url.append(getRequest(SosConstants.Operations.GetObservation.name()));
-        // service
-        url.append(getServiceParam());
-        // version
-        url.append(getVersionParam(version));
-        return url.toString();
+        b.addService();
+        b.addVersion(version);
+        b.addGetObservationRequest();
+        return b.build();
     }
 
-    public static String addKVPOfferingParameterToRequest(String request, String offering) {
-        if (StringHelper.isNotEmpty(offering)) {
-            final StringBuilder url = new StringBuilder(request);
-            url.append(getParameter(SosConstants.GetObservationParams.offering.name(), offering));
-            return url.toString();
-        }
-        return request;
+    public static URL getGetCapabilitiesKVPRequest() throws MalformedURLException {
+        SosQueryBuilder builder = new SosQueryBuilder(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
+                                                    BindingConstants.KVP_BINDING_ENDPOINT));
+        builder.addGetCapabilitiesRequest();
+        builder.addService();
+        return builder.build();
     }
 
-    public static String addKVPLanguageParameterToRequest(String request, String language) {
-        if (StringHelper.isNotEmpty(language)) {
-            final StringBuilder url = new StringBuilder(request);
-            url.append(getParameter(OWSConstants.AdditionalRequestParams.language.name(), language));
-            return url.toString();
-        }
-        return request;
-    }
-
-    public static String addKVPCrsParameterToRequest(String request, String crs) {
-        if (StringHelper.isNotEmpty(crs)) {
-            final StringBuilder url = new StringBuilder(request);
-            url.append(getParameter(OWSConstants.AdditionalRequestParams.crs.name(), crs));
-            return url.toString();
-        }
-        return request;
-    }
-
-    public static String getGetCapabilitiesKVPRequest() {
-        final StringBuilder url = new StringBuilder();
-        // service URL
-        url.append(getBaseGetUrl(ServiceConfiguration.getInstance().getServiceURL(),
-                BindingConstants.KVP_BINDING_ENDPOINT));
-        // request
-        url.append(getRequest(SosConstants.Operations.GetCapabilities.name()));
-        // service
-        url.append(getServiceParam());
-        return url.toString();
-    }
-
-    /**
-     *
-     * Parse the srsName to integer value
-     *
-     * @param srsName
-     *            the srsName to parse
-     * @return srsName integer value
-     * @throws OwsExceptionReport
-     *             If the srsName can not be parsed
-     *
-     */
-    public static int parseSrsName(final String srsName) throws OwsExceptionReport {
-        int srid = -1;
-        if (StringHelper.isNotEmpty(srsName) && !"NOT_SET".equalsIgnoreCase(srsName)) {
-            final String urnSrsPrefix = getConfiguration().getSrsNamePrefix();
-            final String urlSrsPrefix = getConfiguration().getSrsNamePrefixSosV2();
-            try {
-                srid =
-                        Integer.valueOf(srsName.replace(urnSrsPrefix, "").replace(urlSrsPrefix, ""));
-            } catch (final NumberFormatException nfe) {
-                throw new InvalidParameterValueException()
-                        .causedBy(nfe)
-                        .at(SosConstants.GetObservationParams.srsName)
-                        .withMessage(
-                                "Error while parsing srsName parameter! Parameter has to match "
-                                        + "pattern '%s' or '%s' with appended EPSGcode number", urnSrsPrefix,
-                                urlSrsPrefix);
-            }
-        }
-        return srid;
-    }
 
     /**
      * Checks the free memory size.
@@ -372,23 +275,20 @@ public class SosHelper {
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final String key,
             final boolean fullHierarchy, final boolean includeStartKey) {
-        final Set<String> hierarchyValues = Sets.newHashSet();
+
+        Set<String> hierarchyValues = Sets.newHashSet();
         if (includeStartKey) {
             hierarchyValues.add(key);
         }
 
-        final Stack<String> keysToCheck = new Stack<String>();
+        Stack<String> keysToCheck = new Stack<>();
         keysToCheck.push(key);
 
         while (!keysToCheck.isEmpty()) {
-            final Collection<String> keyValues = hierarchy.get(keysToCheck.pop());
-            if (keyValues != null) {
-                for (final String value : keyValues) {
-                    if (hierarchyValues.add(value) && fullHierarchy) {
-                        keysToCheck.push(value);
-                    }
-                }
-            }
+            Optional.ofNullable(hierarchy.get(keysToCheck.pop()))
+                    .map(Collection::stream).orElseGet(Stream::empty)
+                    .filter(value -> hierarchyValues.add(value) && fullHierarchy)
+                    .forEachOrdered(keysToCheck::push);
         }
 
         return hierarchyValues;
@@ -411,7 +311,7 @@ public class SosHelper {
     // FIXME move to ReadableCache
     public static Set<String> getHierarchy(final Map<String, Set<String>> hierarchy, final Set<String> keys,
             final boolean fullHierarchy, final boolean includeStartKeys) {
-        final Set<String> parents = new HashSet<String>();
+        final Set<String> parents = new HashSet<>();
         for (final String key : keys) {
             parents.addAll(getHierarchy(hierarchy, key, fullHierarchy, includeStartKeys));
         }
@@ -460,7 +360,7 @@ public class SosHelper {
      */
     public static void checkProcedureDescriptionFormat(final String procedureDescriptionFormat, final String service,
             final String version) throws OwsExceptionReport {
-        checkFormat(procedureDescriptionFormat, new ServiceOperatorKey(service, version),
+        checkFormat(procedureDescriptionFormat, new OwsServiceKey(service, version),
                 Sos2Constants.DescribeSensorParams.procedureDescriptionFormat);
     }
 
@@ -478,7 +378,7 @@ public class SosHelper {
      */
     public static void checkOutputFormat(final String checkOutputFormat, final String service, final String version)
             throws OwsExceptionReport {
-        checkFormat(checkOutputFormat, new ServiceOperatorKey(service, version),
+        checkFormat(checkOutputFormat, new OwsServiceKey(service, version),
                 Sos1Constants.DescribeSensorParams.outputFormat);
     }
 
@@ -494,7 +394,7 @@ public class SosHelper {
      * @throws OwsExceptionReport
      *             if the value of the procedure format is incorrect
      */
-    private static void checkFormat(final String format, ServiceOperatorKey serviceOperatorKey, Enum<?> parameter)
+    private static void checkFormat(final String format, OwsServiceKey serviceOperatorKey, Enum<?> parameter)
             throws OwsExceptionReport {
         if (Strings.isNullOrEmpty(format)) {
             throw new MissingParameterValueException(parameter);
@@ -518,13 +418,9 @@ public class SosHelper {
      */
     public static Collection<String> getFeatureIDs(final Collection<String> featureIDs, final String version) {
         if (Sos2Constants.SERVICEVERSION.equals(version)) {
-            final Collection<String> validFeatureIDs = new ArrayList<String>(featureIDs.size());
-            for (final String featureID : featureIDs) {
-                if (checkFeatureOfInterestIdentifierForSosV2(featureID, version)) {
-                    validFeatureIDs.add(featureID);
-                }
-            }
-            return validFeatureIDs;
+            return featureIDs.stream()
+                    .filter(featureID -> checkFeatureOfInterestIdentifierForSosV2(featureID, version))
+                    .collect(toList());
         }
         return featureIDs;
     }
@@ -532,30 +428,41 @@ public class SosHelper {
     /**
      * Creates the minimum and maximum values of this envelope in the default
      * EPSG.
-     * <p/>
      *
      * @param envelope
      *            the envelope
-     *            <p/>
      * @return the {@code MinMax} describing the envelope
-     *         <p/>
      */
     public static MinMax<String> getMinMaxFromEnvelope(final Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
-        return new MinMax<String>().setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
+        return new MinMax<String>()
+                .setMaximum(Joiner.on(' ').join(envelope.getMaxX(), envelope.getMaxY()))
                 .setMinimum(Joiner.on(' ').join(envelope.getMinX(), envelope.getMinY()));
+    }
+
+     /**
+     * Creates the minimum and maximum values of this envelope in the default
+     * EPSG.
+     *
+     * @param envelope
+     *            the envelope
+     * @return the {@code MinMax} describing the envelope
+     */
+    public static OwsRange getOwsRangeFromEnvelope(Envelope envelope) {
+        Joiner joiner = Joiner.on(' ');
+        // TODO for full 3D support add minz to parameter in setStringValue
+        return new OwsRange(
+            new OwsValue(joiner.join(envelope.getMaxX(), envelope.getMaxY())),
+            new OwsValue(joiner.join(envelope.getMinX(), envelope.getMinY())));
     }
 
     /**
      * Creates the minimum and maximum values of this envelope in the default
      * EPSG as list.
-     * <p/>
      *
      * @param envelope
      *            the envelope
-     *            <p/>
      * @return the {@code MinMax} describing the envelope
-     *         <p/>
      */
     public static MinMax<List<String>> getMinMaxFromEnvelopeAsList(final Envelope envelope) {
         // TODO for full 3D support add minz to parameter in setStringValue
@@ -643,8 +550,8 @@ public class SosHelper {
     }
 
     public static List<CodeType> createCodeTypeListFromCSV(final String csv) throws URISyntaxException {
-        final List<CodeType> names = new ArrayList<CodeType>(0);
-        if (StringHelper.isNotEmpty(csv)) {
+        final List<CodeType> names = new ArrayList<>(0);
+        if (!Strings.isNullOrEmpty(csv)) {
             for (final String nameCodespaces : csv.split(",")) {
                 String[] nameCodespace = nameCodespaces.split("@@");
                 CodeType codeType = new CodeType(nameCodespace[0]);
@@ -692,7 +599,7 @@ public class SosHelper {
     }
 
     public static Map<String, String> getNcNameResolvedOfferings(Collection<String> offerings) {
-        Map<String, String> resolvedOfferings = new HashMap<String, String>();
+        Map<String, String> resolvedOfferings = new HashMap<>();
         for (String offering : offerings) {
             if (!NcNameResolver.isNCName(offering)) {
                 resolvedOfferings.put(NcNameResolver.fixNcName(offering), offering);

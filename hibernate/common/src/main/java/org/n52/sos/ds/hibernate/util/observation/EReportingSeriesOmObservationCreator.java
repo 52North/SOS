@@ -34,12 +34,12 @@ import java.util.Locale;
 import org.hibernate.Session;
 
 import org.n52.iceland.convert.ConverterException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsServiceProvider;
 import org.n52.iceland.util.LocalizedProducer;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.OwsServiceProvider;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.AbstractObservationRequest;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.EReportingSeries;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.request.AbstractObservationRequest;
 
 public class EReportingSeriesOmObservationCreator extends SeriesOmObservationCreator {
 

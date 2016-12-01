@@ -28,8 +28,6 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 import net.opengis.sos.x20.GetResultTemplateResponseDocument;
@@ -41,16 +39,16 @@ import net.opengis.swe.x20.TextEncodingDocument;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.response.GetResultTemplateResponse;
+
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 
@@ -62,12 +60,13 @@ import com.google.common.collect.Sets;
  * @since 4.0.0
  */
 public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder<GetResultTemplateResponse> {
+
     public GetResultTemplateResponseEncoder() {
         super(Sos2Constants.Operations.GetResultTemplate.name(), GetResultTemplateResponse.class);
     }
 
     @Override
-    protected XmlObject create(GetResultTemplateResponse response) throws OwsExceptionReport {
+    protected XmlObject create(GetResultTemplateResponse response) throws EncodingException {
         GetResultTemplateResponseDocument doc = GetResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
         GetResultTemplateResponseType xbResponse = doc.addNewGetResultTemplateResponse();
         xbResponse.setResultEncoding(createResultEncoding(response.getResultEncoding()));
@@ -75,25 +74,23 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
         return doc;
     }
 
-    private ResultEncoding createResultEncoding(SosResultEncoding resultEncoding) throws OwsExceptionReport {
+    private ResultEncoding createResultEncoding(SosResultEncoding resultEncoding) throws EncodingException {
         // TODO move encoding to SWECommonEncoder
         final TextEncodingDocument xbEncoding;
-        if (resultEncoding.isSetXml()) {
+        if (resultEncoding.isEncoded()) {
             try {
-                xbEncoding = TextEncodingDocument.Factory.parse(resultEncoding.getXml());
-            } catch (final XmlException e) {
-                throw new NoApplicableCodeException().causedBy(e).withMessage(
-                        "ResultEncoding element encoding is not supported!");
+                xbEncoding = TextEncodingDocument.Factory.parse(resultEncoding.getXml().get());
+            } catch (XmlException ex) {
+                throw new EncodingException("ResultEncoding element encoding is not supported!", ex);
             }
         } else {
-            Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
-            helperValues.put(HelperValues.DOCUMENT, null);
-            XmlObject xml = encodeSwe(helperValues, resultEncoding.getEncoding());
+            XmlObject xml = encodeSwe(EncodingContext.of(SosHelperValues.DOCUMENT), resultEncoding.get().get());
             if (xml instanceof TextEncodingDocument) {
                 xbEncoding = (TextEncodingDocument) xml;
             } else {
-                throw new NoApplicableCodeException().withMessage("ResultEncoding element encoding is not supported!");
+                throw new EncodingException("ResultEncoding element encoding is not supported!");
             }
+
         }
         ResultEncoding xbResultEncoding = ResultEncoding.Factory.newInstance(getXmlOptions());
         xbResultEncoding.addNewAbstractEncoding().set(xbEncoding.getTextEncoding());
@@ -101,29 +98,24 @@ public class GetResultTemplateResponseEncoder extends AbstractSosResponseEncoder
         return xbResultEncoding;
     }
 
-    private ResultStructure createResultStructure(SosResultStructure resultStructure) throws OwsExceptionReport {
+    private ResultStructure createResultStructure(SosResultStructure resultStructure) throws EncodingException {
         // TODO move encoding to SWECommonEncoder
         final DataRecordDocument dataRecordDoc;
-        if (resultStructure.isSetXml()) {
+        if (resultStructure.isEncoded()) {
             try {
-                dataRecordDoc = DataRecordDocument.Factory.parse(resultStructure.getXml());
-            } catch (XmlException e) {
-                throw new NoApplicableCodeException()
-                        .withMessage("ResultStructure element encoding is not supported!");
+                dataRecordDoc = DataRecordDocument.Factory.parse(resultStructure.getXml().get());
+            } catch (XmlException ex) {
+                throw new EncodingException("ResultStructure element encoding is not supported!", ex);
             }
         } else {
-            Map<HelperValues, String> helperValues = new HashMap<HelperValues, String>(1);
-            helperValues.put(HelperValues.DOCUMENT, null);
-            XmlObject xml = encodeSwe(helperValues, resultStructure.getResultStructure());
+            XmlObject xml = encodeSwe(EncodingContext.of(SosHelperValues.DOCUMENT), resultStructure.get().get());
             if (xml instanceof DataRecordDocument) {
                 dataRecordDoc = (DataRecordDocument) xml;
             } else {
-                throw new NoApplicableCodeException()
-                        .withMessage("ResultStructure element encoding is not supported!");
+                throw new EncodingException("ResultStructure element encoding is not supported!");
             }
         }
-        ResultStructure xbResultStructure =
-                ResultStructure.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+        ResultStructure xbResultStructure = ResultStructure.Factory.newInstance(getXmlOptions());
         xbResultStructure.addNewAbstractDataComponent().set(dataRecordDoc.getDataRecord());
         XmlHelper.substituteElement(xbResultStructure.getAbstractDataComponent(), dataRecordDoc.getDataRecord());
         return xbResultStructure;

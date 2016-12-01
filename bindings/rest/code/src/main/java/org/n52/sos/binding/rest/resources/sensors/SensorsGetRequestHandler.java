@@ -40,20 +40,19 @@ import net.opengis.swes.x20.SensorDescriptionType;
 
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionCode;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.service.Configurator;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sensorML.SensorMLConstants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.binding.rest.requests.ResourceNotFoundResponse;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.requests.RestResponse;
-import org.n52.sos.ogc.sensorML.SensorMLConstants;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.n52.sos.service.Configurator;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

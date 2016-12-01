@@ -28,35 +28,44 @@
  */
 package org.n52.sos.decode.sos.v2;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
-import org.n52.iceland.ogc.ows.OwsCapabilities;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.decode.AbstractCapabilitiesBaseTypeDecoder;
-import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.util.CodingHelper;
+import net.opengis.fes.x20.FilterCapabilitiesDocument;
+import net.opengis.sos.x20.CapabilitiesType;
+import net.opengis.sos.x20.CapabilitiesType.Contents;
+import net.opengis.sos.x20.ContentsType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.FilterCapabilities;
+import org.n52.shetland.ogc.ows.OwsCapabilities;
+import org.n52.sos.decode.AbstractCapabilitiesBaseTypeDecoder;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
+import org.n52.sos.util.CodingHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+
 import com.google.common.base.Joiner;
 
-import net.opengis.sos.x20.CapabilitiesType;
-
-public class CapabilitiesTypeDecoder extends AbstractCapabilitiesBaseTypeDecoder implements Decoder<SosCapabilities, CapabilitiesType> {
+public class CapabilitiesTypeDecoder extends AbstractCapabilitiesBaseTypeDecoder implements
+        Decoder<SosCapabilities, CapabilitiesType> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CapabilitiesTypeDecoder.class);
 
-    private static final Set<DecoderKey> DECODER_KEYS =
-            CodingHelper.decoderKeysForElements(Sos2Constants.NS_SOS_20, CapabilitiesType.class);
+    private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
+            .decoderKeysForElements(Sos2Constants.NS_SOS_20, CapabilitiesType.class);
 
     public CapabilitiesTypeDecoder() {
         LOGGER.debug("Decoder for the following keys initialized successfully: {}!", Joiner.on(", ")
-                .join(DECODER_KEYS));
+                     .join(DECODER_KEYS));
     }
 
     @Override
@@ -65,14 +74,37 @@ public class CapabilitiesTypeDecoder extends AbstractCapabilitiesBaseTypeDecoder
     }
 
     @Override
-    public SosCapabilities decode(CapabilitiesType ct)
-            throws OwsExceptionReport, UnsupportedDecoderInputException {
+    public SosCapabilities decode(CapabilitiesType ct) throws DecodingException {
         if (ct != null) {
-            OwsCapabilities owsCapabilities = parseCapabilitiesBaseType(ct);
-            SosCapabilities capatilities = new SosCapabilities(owsCapabilities);
-            return capatilities;
+            OwsCapabilities owsCapabilities = parseCapabilitiesBaseType(SosConstants.SOS, ct);
+            FilterCapabilities filterCapabilities = parseFilterCapabilities(ct.getFilterCapabilities());
+            Collection<SosObservationOffering> contents = parseContents(ct.getContents());
+            return new SosCapabilities(owsCapabilities, filterCapabilities, contents);
         }
         throw new UnsupportedDecoderInputException(this, ct);
     }
 
+    private Collection<SosObservationOffering> parseContents(Contents contents) {
+        if (contents == null) {
+            return null;
+        }
+        return parseContents(contents.getContents());
+    }
+
+    private Collection<SosObservationOffering> parseContents(ContentsType contents) {
+        //TODO parse contents
+        return null;
+    }
+
+    private FilterCapabilities parseFilterCapabilities(CapabilitiesType.FilterCapabilities filterCapabilities) {
+        if (filterCapabilities == null) {
+            return null;
+        }
+        return parseFilterCapabilities(filterCapabilities.getFilterCapabilities());
+    }
+
+    private FilterCapabilities parseFilterCapabilities(FilterCapabilitiesDocument.FilterCapabilities filterCapabilities) {
+        // TOOD parse filter capabilities
+        return null;
+    }
 }

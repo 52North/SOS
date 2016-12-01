@@ -30,7 +30,7 @@ package org.n52.sos.request;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Constructable;
 
 /**
  * ProcedureRequestSettings for procedure request/response handling
@@ -41,30 +41,19 @@ import org.n52.iceland.lifecycle.Constructable;
  */
 @Configurable
 public class ProcedureRequestSettingProvider implements Constructable {
-
     public static final String ALLOW_QUERYING_FOR_INSTANCES_ONLY = "request.procedure.instancesOnly";
-
     public static final String SHOW_ONLY_AGGREGATED_PROCEDURES = "request.procedure.aggregationOnly";
-
     public static final String ENCODE_FULL_CHILDREN_IN_DESCRIBE_SENSOR = "service.encodeFullChildrenInDescribeSensor";
-
     public static final String ADD_OUTPUTS_TO_SENSOR_ML = "service.addOutputsToSensorML";
-
-    private boolean allowQueryingForInstancesOnly;
-
-    private boolean showOnlyAggregatedProcedures;
-
-    private boolean encodeFullChildrenInDescribeSensor;
-
-    private boolean addOutputsToSensorML;
 
     @Deprecated
     private static ProcedureRequestSettingProvider instance = null;
 
-    @Deprecated
-    public static synchronized ProcedureRequestSettingProvider getInstance() {
-        return ProcedureRequestSettingProvider.instance;
-    }
+    private boolean allowQueryingForInstancesOnly;
+    private boolean showOnlyAggregatedProcedures;
+    private boolean encodeFullChildrenInDescribeSensor;
+    private boolean addOutputsToSensorML;
+
 
     @Override
     public void init() {
@@ -120,6 +109,10 @@ public class ProcedureRequestSettingProvider implements Constructable {
     @Setting(ADD_OUTPUTS_TO_SENSOR_ML)
     public void setAddOutputsToSensorML(final boolean addOutputsToSensorML) {
         this.addOutputsToSensorML = addOutputsToSensorML;
+    }
+    @Deprecated
+    public static synchronized ProcedureRequestSettingProvider getInstance() {
+        return ProcedureRequestSettingProvider.instance;
     }
 
 }

@@ -28,8 +28,8 @@
  */
 package org.n52.sos.exception.sos;
 
-import org.n52.iceland.ogc.ows.ExceptionCode;
-import org.n52.iceland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.exception.ExceptionCode;
+import org.n52.shetland.ogc.sos.SosConstants;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>
@@ -37,8 +37,8 @@ import org.n52.iceland.ogc.sos.SosConstants;
  * @since 4.0.0
  */
 public enum SosExceptionCode implements ExceptionCode {
-    ResponseExceedsSizeLimit(SosConstants.SOAP_REASON_RESPONSE_EXCEEDS_SIZE_LIMIT), InvalidPropertyOfferingCombination(
-            SosConstants.SOAP_REASON_INVALID_PROPERTY_OFFERING_COMBINATION);
+    ResponseExceedsSizeLimit(SosConstants.SOAP_REASON_RESPONSE_EXCEEDS_SIZE_LIMIT),
+    InvalidPropertyOfferingCombination(SosConstants.SOAP_REASON_INVALID_PROPERTY_OFFERING_COMBINATION);
     private final String soapFaultReason;
 
     private SosExceptionCode(String soapFaultReason) {

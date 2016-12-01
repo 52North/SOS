@@ -33,29 +33,33 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import net.opengis.gml.x32.FeaturePropertyType;
+import net.opengis.gml.x32.ReferenceType;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
+import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
+import net.opengis.samplingSpatial.x20.ShapeType;
+
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.decode.DecoderKey;
-import org.n52.iceland.exception.ows.InvalidParameterValueException;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.ogc.gml.AbstractFeature;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.service.ServiceConstants.FeatureType;
-import org.n52.iceland.service.ServiceConstants.SupportedType;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.sos.ogc.om.features.SfConstants;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.util.CodingHelper;
-import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.n52.iceland.ogc.sos.ConformanceClasses;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.ogc.SupportedType;
+import org.n52.shetland.ogc.gml.AbstractFeature;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.om.features.SfConstants;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.sos.FeatureType;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.sos.util.CodingHelper;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -66,17 +70,11 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-import net.opengis.gml.x32.FeaturePropertyType;
-import net.opengis.gml.x32.ReferenceType;
-import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureDocument;
-import net.opengis.samplingSpatial.x20.SFSpatialSamplingFeatureType;
-import net.opengis.samplingSpatial.x20.ShapeType;
-
 /**
  * @since 4.0.0
  *
  */
-public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, XmlObject> {
+public class SamplingDecoderv20 extends AbstractGmlDecoderv321<XmlObject, AbstractFeature> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SamplingDecoderv20.class);
 
@@ -122,7 +120,7 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
     }
 
     @Override
-    public AbstractFeature decode(final XmlObject element) throws OwsExceptionReport {
+    public AbstractFeature decode(XmlObject element) throws DecodingException {
         // validate XmlObject
         XmlHelper.validateDocument(element);
         if (element instanceof SFSpatialSamplingFeatureDocument) {
@@ -135,7 +133,7 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
     }
 
     private AbstractFeature parseSpatialSamplingFeature(final SFSpatialSamplingFeatureType spatialSamplingFeature)
-            throws OwsExceptionReport {
+            throws DecodingException {
         final SamplingFeature sosFeat = new SamplingFeature(null, spatialSamplingFeature.getId());
         // parse identifier, names, description
         parseAbstractFeatureType(spatialSamplingFeature, sosFeat);
@@ -150,9 +148,9 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
 
     private String getXmlDescription(final SFSpatialSamplingFeatureType spatialSamplingFeature) {
         final SFSpatialSamplingFeatureDocument featureDoc =
-                SFSpatialSamplingFeatureDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+                SFSpatialSamplingFeatureDocument.Factory.newInstance(getXmlOptions());
         featureDoc.setSFSpatialSamplingFeature(spatialSamplingFeature);
-        return featureDoc.xmlText(XmlOptionsHelper.getInstance().getXmlOptions());
+        return featureDoc.xmlText(getXmlOptions());
     }
 
     private String getFeatureType(final ReferenceType type) {
@@ -166,10 +164,10 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
      *  Parse {@link FeaturePropertyType} sampledFeatures to {@link AbstractFeature} list.
      * @param sampledFeatureArray SampledFeatures to parse
      * @return List with the parsed sampledFeatures
-     * @throws OwsExceptionReport If an error occurs
+     * @throws DecodingException If an error occurs
      */
     private List<AbstractFeature> getSampledFeatures(FeaturePropertyType[] sampledFeatureArray)
-            throws OwsExceptionReport {
+            throws DecodingException {
         final List<AbstractFeature> sampledFeatures = Lists.newArrayList();
         for (FeaturePropertyType featurePropertyType : sampledFeatureArray) {
             sampledFeatures.addAll(getSampledFeatures(featurePropertyType));
@@ -182,10 +180,10 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
      *
      * @param sampledFeature SampledFeature to parse
      * @return List with the parsed sampledFeature
-     * @throws OwsExceptionReport If an error occurs
+     * @throws DecodingException If an error occurs
      */
     private List<AbstractFeature> getSampledFeatures(final FeaturePropertyType sampledFeature)
-            throws OwsExceptionReport {
+            throws DecodingException {
         final List<AbstractFeature> sampledFeatures = new ArrayList<>(1);
         if (sampledFeature != null && !sampledFeature.isNil()) {
             // if xlink:href is set
@@ -206,44 +204,41 @@ public class SamplingDecoderv20 extends AbstractGmlDecoderv321<AbstractFeature, 
                     abstractFeature = sampledFeature.getAbstractFeature();
                 } else if (sampledFeature.getDomNode().hasChildNodes()) {
                     try {
-                        abstractFeature =
-                                XmlObject.Factory.parse(XmlHelper.getNodeFromNodeList(sampledFeature.getDomNode()
-                                        .getChildNodes()));
-                    } catch (final XmlException xmle) {
-                        throw new NoApplicableCodeException().causedBy(xmle).withMessage(
-                                "Error while parsing feature request!");
+                        abstractFeature = XmlObject.Factory.parse(XmlHelper.getNodeFromNodeList(sampledFeature.getDomNode().getChildNodes()));
+                    } catch (XmlException xmle) {
+                        throw new DecodingException("Error while parsing feature request!", xmle);
                     }
                 }
                 if (abstractFeature != null) {
-                    final Object decodedObject = CodingHelper.decodeXmlObject(abstractFeature);
+                    final Object decodedObject = decodeXmlObject(abstractFeature);
                     if (decodedObject instanceof AbstractFeature) {
                         sampledFeatures.add((AbstractFeature) decodedObject);
                     }
                 }
-                throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation)
-                        .withMessage("The requested sampledFeature type is not supported by this service!");
+                throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
+                        "The requested sampledFeature type is not supported by this service!");
             }
         }
         return sampledFeatures;
     }
 
-    private Geometry getGeometry(final ShapeType shape) throws OwsExceptionReport {
-        final Object decodedObject = CodingHelper.decodeXmlElement(shape.getAbstractGeometry());
+    private Geometry getGeometry(final ShapeType shape) throws DecodingException {
+        final Object decodedObject = decodeXmlElement(shape.getAbstractGeometry());
         if (decodedObject instanceof Geometry) {
             return (Geometry) decodedObject;
         }
-        throw new InvalidParameterValueException().at(Sos2Constants.InsertObservationParams.observation).withMessage(
+        throw new DecodingException(Sos2Constants.InsertObservationParams.observation,
                 "The requested geometry type of featureOfInterest is not supported by this service!");
     }
 
-    private void checkTypeAndGeometry(final SamplingFeature sosFeat) throws OwsExceptionReport {
+    private void checkTypeAndGeometry(final SamplingFeature sosFeat) throws DecodingException {
         final String featTypeForGeometry = getFeatTypeForGeometry(sosFeat.getGeometry());
         if (sosFeat.getFeatureType() == null) {
             sosFeat.setFeatureType(featTypeForGeometry);
         } else {
             if (!featTypeForGeometry.equals(sosFeat.getFeatureType())) {
 
-                throw new NoApplicableCodeException().withMessage(
+                throw new DecodingException(
                         "The requested observation is invalid! The featureOfInterest type "
                                 + "does not comply with the defined type (%s)!", sosFeat.getFeatureType());
             }

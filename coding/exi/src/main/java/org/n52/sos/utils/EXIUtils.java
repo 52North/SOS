@@ -33,11 +33,11 @@ import org.slf4j.LoggerFactory;
 
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.util.Producer;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.iceland.util.Validation;
+import org.n52.janmayen.Producer;
 import org.n52.sos.exi.EXISettings;
 
 import com.siemens.ct.exi.CodingMode;

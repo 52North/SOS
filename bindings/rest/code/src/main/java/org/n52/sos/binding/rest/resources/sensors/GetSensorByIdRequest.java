@@ -28,7 +28,7 @@
  */
 package org.n52.sos.binding.rest.resources.sensors;
 
-import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>

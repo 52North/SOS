@@ -38,11 +38,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.Constants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -55,7 +50,8 @@ import org.w3c.dom.NodeList;
  */
 public final class W3cHelper {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(W3cHelper.class);
+    private W3cHelper() {
+    }
 
     /**
      * Parses w3c.Node to String
@@ -65,32 +61,20 @@ public final class W3cHelper {
      *
      * @return Node as String.
      *
-     * @throws OwsExceptionReport
+     * @throws IOException
      *             if an error occurs.
      */
-    public static String nodeToXmlString(Node node) throws OwsExceptionReport {
-        String xmlString = Constants.EMPTY_STRING;
-        StringWriter sw = null;
-        try {
-            sw = new StringWriter();
+    public static String nodeToXmlString(Node node) throws IOException {
+        try (StringWriter sw = new StringWriter()) {
             Transformer t = TransformerFactory.newInstance().newTransformer();
             t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             t.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             t.transform(new DOMSource(node), new StreamResult(sw));
-            xmlString = sw.toString();
+            return sw.toString();
         } catch (TransformerException te) {
-            throw new NoApplicableCodeException().causedBy(te).withMessage(
-                    "The request was sent in an unknown format or is invalid!");
-        } finally {
-            try {
-                if (sw != null) {
-                    sw.close();
-                }
-            } catch (IOException ioe) {
-                LOGGER.error("cannot close string writer", ioe);
-            }
+            throw new IOException(te);
         }
-        return xmlString;
+
     }
 
     /**
@@ -114,6 +98,4 @@ public final class W3cHelper {
         return elementContent;
     }
 
-    private W3cHelper() {
-    }
 }

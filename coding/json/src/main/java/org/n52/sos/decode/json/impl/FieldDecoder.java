@@ -29,26 +29,26 @@
 package org.n52.sos.decode.json.impl;
 
 import org.joda.time.DateTime;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.DateTimeParseException;
-import org.n52.iceland.exception.ows.concrete.UnsupportedDecoderInputException;
+
+import org.n52.shetland.ogc.swe.RangeValue;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweCountRange;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.coding.json.JSONValidator;
 import org.n52.sos.coding.json.SchemaConstants;
 import org.n52.sos.decode.json.JSONDecoder;
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweCountRange;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -66,14 +66,14 @@ public class FieldDecoder extends JSONDecoder<SweField> {
     }
 
     @Override
-    public SweField decodeJSON(JsonNode node, boolean validate) throws OwsExceptionReport {
+    public SweField decodeJSON(JsonNode node, boolean validate) throws DecodingException {
         if (validate) {
             JSONValidator.getInstance().validateAndThrow(node, SchemaConstants.Common.FIELD);
         }
         return decodeJSON(node);
     }
 
-    public SweField decodeJSON(JsonNode node) throws DateTimeParseException, UnsupportedDecoderInputException {
+    public SweField decodeJSON(JsonNode node) throws DecodingException {
         final String type = node.path(JSONConstants.TYPE).textValue();
         final SweAbstractDataComponent element;
 
@@ -148,7 +148,7 @@ public class FieldDecoder extends JSONDecoder<SweField> {
         return new SweText().setValue(node.path(JSONConstants.VALUE).textValue());
     }
 
-    protected SweAbstractDataComponent decodeQuality(JsonNode node) throws UnsupportedDecoderInputException {
+    protected SweAbstractDataComponent decodeQuality(JsonNode node) throws DecodingException {
         // TODO quality
         throw new UnsupportedDecoderInputException(this, node);
     }
@@ -158,7 +158,7 @@ public class FieldDecoder extends JSONDecoder<SweField> {
         return swe.setValue(node.path(JSONConstants.VALUE).textValue());
     }
 
-    protected SweAbstractDataComponent decodeTime(JsonNode node) throws DateTimeParseException {
+    protected SweAbstractDataComponent decodeTime(JsonNode node) throws DecodingException {
         SweTime swe = new SweTime();
         if (node.hasNonNull(JSONConstants.VALUE)) {
             String value = node.path(JSONConstants.VALUE).textValue();
@@ -183,7 +183,7 @@ public class FieldDecoder extends JSONDecoder<SweField> {
         return swe.setUom(node.path(JSONConstants.UOM).textValue());
     }
 
-    protected SweAbstractDataComponent decodeTimeRange(JsonNode node) throws DateTimeParseException {
+    protected SweAbstractDataComponent decodeTimeRange(JsonNode node) throws DecodingException {
         SweTimeRange swe = new SweTimeRange();
         if (node.hasNonNull(JSONConstants.VALUE)) {
             String start = node.path(JSONConstants.VALUE).path(0).textValue();

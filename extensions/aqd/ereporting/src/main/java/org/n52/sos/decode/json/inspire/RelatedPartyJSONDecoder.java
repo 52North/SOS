@@ -29,7 +29,7 @@
 package org.n52.sos.decode.json.inspire;
 
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.inspire.aqd.Contact;
 import org.n52.sos.inspire.aqd.RelatedParty;
 import org.n52.sos.util.AQDJSONConstants;
@@ -44,7 +44,7 @@ public class RelatedPartyJSONDecoder extends AbstractJSONDecoder<RelatedParty> {
 
     @Override
     public RelatedParty decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         RelatedParty relatedParty = new RelatedParty();
         relatedParty.setContact(decodeJsonToNillable(node
                 .path(AQDJSONConstants.CONTACT), Contact.class));

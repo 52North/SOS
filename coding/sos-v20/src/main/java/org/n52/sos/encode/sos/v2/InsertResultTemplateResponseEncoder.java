@@ -34,10 +34,11 @@ import net.opengis.sos.x20.InsertResultTemplateResponseDocument;
 import net.opengis.sos.x20.InsertResultTemplateResponseType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.response.InsertResultTemplateResponse;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.response.InsertResultTemplateResponse;
 
 import com.google.common.collect.Sets;
 
@@ -54,7 +55,7 @@ public class InsertResultTemplateResponseEncoder extends AbstractSosResponseEnco
     }
 
     @Override
-    protected XmlObject create(InsertResultTemplateResponse response) throws OwsExceptionReport {
+    protected XmlObject create(InsertResultTemplateResponse response) throws EncodingException {
         InsertResultTemplateResponseDocument doc =
                 InsertResultTemplateResponseDocument.Factory.newInstance(getXmlOptions());
         InsertResultTemplateResponseType irtr = doc.addNewInsertResultTemplateResponse();

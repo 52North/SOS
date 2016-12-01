@@ -28,7 +28,7 @@
  */
 package org.n52.sos.encode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.sos.encode.json.JSONEncoder;
 import org.n52.sos.util.AQDJSONConstants;
 import org.n52.sos.util.Reference;
@@ -49,7 +49,7 @@ public class ReferenceJSONEncoder extends JSONEncoder<Reference> {
 
     @Override
     public JsonNode encodeJSON(Reference t)
-            throws OwsExceptionReport {
+            throws EncodingException {
         ObjectNode ref = nodeFactory().objectNode();
         ref.put(AQDJSONConstants.HREF, t.getHref().toString());
         if (t.getActuate().isPresent()) {

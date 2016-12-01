@@ -37,13 +37,15 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OWSConstants.RequestParams;
-import org.n52.iceland.ogc.ows.OWSConstants.GetCapabilitiesParams;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
+
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.OWSConstants.GetCapabilitiesParams;
+import org.n52.shetland.ogc.ows.OWSConstants.RequestParams;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.decode.kvp.v2.DeleteSensorKvpDecoderv20;
-import org.n52.sos.request.DescribeSensorRequest;
+import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:shane@axiomalaska.com">Shane StClair</a>
@@ -66,7 +68,7 @@ public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     }
 
     @Test
-    public void basic() throws OwsExceptionReport {
+    public void basic() throws DecodingException {
         DescribeSensorRequest req =
                 decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT));
         assertThat(req, is(notNullValue()));
@@ -77,35 +79,35 @@ public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingService() throws OwsExceptionReport {
+    public void missingService() throws DecodingException {
         decoder.decode(createMap(EMPTY_STRING, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingVersion() throws OwsExceptionReport {
+    public void missingVersion() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, EMPTY_STRING, PROCEDURE, OUTPUT_FORMAT));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingProcedure() throws OwsExceptionReport {
+    public void missingProcedure() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, EMPTY_STRING, OUTPUT_FORMAT));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void missingOutputFormat() throws OwsExceptionReport {
+    public void missingOutputFormat() throws DecodingException {
         decoder.decode(createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, EMPTY_STRING));
     }
 
     @Test(expected = OwsExceptionReport.class)
-    public void additionalParameter() throws OwsExceptionReport {
+    public void additionalParameter() throws DecodingException {
         final Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT);
         map.put(ADDITIONAL_PARAMETER, ADDITIONAL_PARAMETER);
         decoder.decode(map);
     }
 
-    @Test(expected = OwsExceptionReport.class)
-    public void emptyParam() throws OwsExceptionReport {
+    @Test(expected = DecodingException.class)
+    public void emptyParam() throws DecodingException {
         final Map<String, String> map =
                 createMap(SosConstants.SOS, Sos1Constants.SERVICEVERSION, PROCEDURE, OUTPUT_FORMAT);
         map.put(GetCapabilitiesParams.AcceptVersions.name(), EMPTY_STRING);
@@ -113,7 +115,7 @@ public class DescribeSensorKvpDecoderv100Test extends DeleteSensorKvpDecoderv20 
     }
 
     private Map<String, String> createMap(String service, String version, String procedure, String outputFormat) {
-        Map<String, String> map = new HashMap<String, String>(1);
+        Map<String, String> map = new HashMap<>(1);
         map.put(RequestParams.service.name(), service);
         map.put(RequestParams.request.name(), SosConstants.Operations.DescribeSensor.name());
         map.put(RequestParams.version.name(), version);

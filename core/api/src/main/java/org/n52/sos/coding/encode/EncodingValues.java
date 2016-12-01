@@ -28,18 +28,19 @@
  */
 package org.n52.sos.coding.encode;
 
-import java.util.Map;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
 
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.StringHelper;
+import com.google.common.base.Strings;
 
-import com.google.common.collect.Maps;
-
+/**
+ * @deprecated move everything to {@link CodingContext}.
+ */
+@Deprecated
 public class EncodingValues {
 
-    private Map<HelperValues, String> additionalValues = Maps.newHashMap();
+    private EncodingContext additionalValues = EncodingContext.empty();
 
     private String gmlId;
 
@@ -48,50 +49,41 @@ public class EncodingValues {
     private String version;
 
     private String type;
-
     private boolean asDocument = false;
-
     private boolean asPropertyType = false;
-
     private boolean encode = false;
-
     private String encodingNamespace;
-
     private boolean encodeOwsExceptionOnly = false;
-
     private boolean addSchemaLocation = false;
-
     private int indent = 0;
-
     private boolean embedded = false;
-
     private Encoder<?, ?> encoder;
 
     public EncodingValues() {
 
     }
 
-    public EncodingValues(Map<HelperValues, String> additionalValues) {
+    public EncodingValues(EncodingContext additionalValues) {
         setAdditionalValues(additionalValues);
     }
 
     /**
      * @return the additionalValues
      */
-    public Map<HelperValues, String> getAdditionalValues() {
+    public EncodingContext getAdditionalValues() {
         return additionalValues;
     }
 
     /**
      * @param additionalValues the additionalValues to set
      */
-    public EncodingValues setAdditionalValues(Map<HelperValues, String> additionalValues) {
+    public EncodingValues setAdditionalValues(EncodingContext additionalValues) {
         this.additionalValues = additionalValues;
         return this;
     }
 
     public boolean hasAddtitionalValues() {
-        return CollectionHelper.isEmpty(getAdditionalValues());
+        return this.additionalValues.isEmpty();
     }
 
     /**
@@ -110,7 +102,7 @@ public class EncodingValues {
     }
 
     public boolean isSetGmlId() {
-        return StringHelper.isNotEmpty(getGmlId());
+        return !Strings.isNullOrEmpty(getGmlId());
     }
 
     /**
@@ -144,7 +136,7 @@ public class EncodingValues {
     }
 
     public boolean isSetVersion() {
-        return StringHelper.isNotEmpty(getVersion());
+        return !Strings.isNullOrEmpty(getVersion());
     }
 
     /**
@@ -163,7 +155,7 @@ public class EncodingValues {
     }
 
     public boolean isSetType() {
-        return StringHelper.isNotEmpty(getType());
+        return !Strings.isNullOrEmpty(getType());
     }
 
     /**
@@ -215,14 +207,14 @@ public class EncodingValues {
      * @return the encodingNamespace
      */
     public String getEncodingNamespace() {
-        if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().containsKey(HelperValues.ENCODE_NAMESPACE)) {
-            setEncodingNamespace(getAdditionalValues().get(HelperValues.ENCODE_NAMESPACE));
+        if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().has(SosHelperValues.ENCODE_NAMESPACE)) {
+            setEncodingNamespace(getAdditionalValues().get(SosHelperValues.ENCODE_NAMESPACE));
         }
         return encodingNamespace;
     }
 
     public boolean isSetEncodingNamespace() {
-        return StringHelper.isNotEmpty(getEncodingNamespace());
+        return !Strings.isNullOrEmpty(getEncodingNamespace());
     }
 
     /**

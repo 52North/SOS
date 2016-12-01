@@ -28,17 +28,20 @@
  */
 package org.n52.sos.inspire.aqd.persistence;
 
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 
-import org.n52.iceland.coding.decode.DecoderRepository;
-import org.n52.iceland.coding.encode.EncoderRepository;
-import org.n52.iceland.coding.decode.Decoder;
-import org.n52.iceland.coding.decode.JsonDecoderKey;
-import org.n52.iceland.coding.encode.Encoder;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.svalbard.decode.JsonDecoderKey;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.ds.ConnectionProviderException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.iceland.util.JSONUtils;
 import org.n52.sos.aqd.ReportObligationType;
 import org.n52.sos.config.sqlite.AbstractSQLiteDao;
@@ -123,7 +126,7 @@ public class ReportingHeaderSQLiteManager
                 JsonNode node = encoder.encode(o);
                 String json = JSONUtils.print(node);
                 session.saveOrUpdate(new JSONFragment().setID(key).setJSON(json));
-            } catch (OwsExceptionReport ex) {
+            } catch (EncodingException ex) {
                 throw new RuntimeException(ex);
             }
         }
@@ -141,12 +144,12 @@ public class ReportingHeaderSQLiteManager
         }
 
         @Override
-        public T call(Session session) throws OwsExceptionReport {
+        public T call(Session session) throws OwsExceptionReport, DecodingException {
             JSONFragment entity = (JSONFragment) session.get(JSONFragment.class, this.key);
             return entity == null ? null : decode(entity);
         }
 
-        protected T decode(JSONFragment entity) throws OwsExceptionReport {
+        protected T decode(JSONFragment entity) throws OwsExceptionReport, DecodingException {
             Decoder<T, JsonNode> decoder = decoderRepository.getDecoder(new JsonDecoderKey(type));
             JsonNode node = JSONUtils.loadString(entity.getJSON());
             return decoder.decode(node);

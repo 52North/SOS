@@ -38,15 +38,17 @@ import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.iceland.coding.encode.EncoderRepository;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.iceland.lifecycle.Constructable;
-import org.n52.iceland.lifecycle.Destroyable;
-import org.n52.iceland.ogc.OGCConstants;
-import org.n52.iceland.util.Producer;
 import org.n52.iceland.util.Validation;
-import org.n52.iceland.w3c.W3CConstants;
+import org.n52.janmayen.Producer;
+import org.n52.janmayen.function.Functions;
+import org.n52.janmayen.lifecycle.Constructable;
+import org.n52.janmayen.lifecycle.Destroyable;
+import org.n52.shetland.ogc.OGCConstants;
+import org.n52.shetland.w3c.W3CConstants;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.SchemaAwareEncoder;
 
 /**
  * XML utility class
@@ -75,6 +77,7 @@ public final class XmlOptionsHelper implements Constructable, Destroyable, Produ
     }
 
     // TODO: To be used by other encoders to have common prefixes
+    @SuppressWarnings("unchecked")
     private Map<String, String> getPrefixMap() {
         final Map<String, String> prefixMap = new HashMap<>();
         prefixMap.put(OGCConstants.NS_OGC, OGCConstants.NS_OGC_PREFIX);
@@ -85,6 +88,8 @@ public final class XmlOptionsHelper implements Constructable, Destroyable, Produ
         prefixMap.put(W3CConstants.NS_XSI, W3CConstants.NS_XSI_PREFIX);
         prefixMap.put(W3CConstants.NS_XS, W3CConstants.NS_XS_PREFIX);
         encoderRepository.getEncoders().stream()
+                .filter(Functions.instanceOf(SchemaAwareEncoder.class))
+                .map(Functions.cast(SchemaAwareEncoder.class))
                 .forEach(e -> e.addNamespacePrefixToMap(prefixMap));
         return prefixMap;
     }

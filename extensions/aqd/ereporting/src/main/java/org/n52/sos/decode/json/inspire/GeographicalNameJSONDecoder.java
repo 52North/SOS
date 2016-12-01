@@ -28,13 +28,14 @@
  */
 package org.n52.sos.decode.json.inspire;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.sos.inspire.aqd.GeographicalName;
 import org.n52.sos.inspire.aqd.Pronunciation;
 import org.n52.sos.inspire.aqd.Spelling;
 import org.n52.sos.util.AQDJSONConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -49,7 +50,7 @@ public class GeographicalNameJSONDecoder  extends AbstractJSONDecoder<Geographic
 
     @Override
     public GeographicalName decodeJSON(JsonNode node, boolean validate)
-            throws OwsExceptionReport {
+            throws DecodingException {
         GeographicalName geographicalName = new GeographicalName();
         geographicalName.setGrammaticalGender(parseNillableCodeType(node
                 .path(AQDJSONConstants.GRAMMATICAL_GENDER)));

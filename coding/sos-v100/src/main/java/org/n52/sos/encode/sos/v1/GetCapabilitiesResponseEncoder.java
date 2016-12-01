@@ -31,10 +31,7 @@ package org.n52.sos.encode.sos.v1;
 import java.util.Collection;
 import java.util.Set;
 
-import javax.xml.namespace.QName;
-
 import net.opengis.ogc.ComparisonOperatorType;
-import net.opengis.ogc.ComparisonOperatorsType;
 import net.opengis.ogc.GeometryOperandsType;
 import net.opengis.ogc.IdCapabilitiesType;
 import net.opengis.ogc.ScalarCapabilitiesType;
@@ -55,29 +52,24 @@ import net.opengis.sos.x10.FilterCapabilitiesDocument.FilterCapabilities;
 import net.opengis.sos.x10.ObservationOfferingType;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.coding.encode.Encoder;
-import org.n52.iceland.exception.ows.NoApplicableCodeException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants.ComparisonOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.SpatialOperator;
-import org.n52.iceland.ogc.filter.FilterConstants.TimeOperator;
-import org.n52.iceland.ogc.gml.CodeType;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.sos.Sos1Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.w3c.SchemaLocation;
+
 import org.n52.oxf.xml.NcNameResolver;
-import org.n52.sos.ogc.sos.SosCapabilities;
-import org.n52.sos.ogc.sos.SosEnvelope;
-import org.n52.sos.ogc.sos.SosObservationOffering;
-import org.n52.sos.util.CodingHelper;
+import org.n52.shetland.ogc.filter.FilterConstants.ComparisonOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.SpatialOperator;
+import org.n52.shetland.ogc.filter.FilterConstants.TimeOperator;
+import org.n52.shetland.ogc.gml.CodeType;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.sos.SosCapabilities;
+import org.n52.shetland.ogc.sos.SosObservationOffering;
 import org.n52.sos.util.N52XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 
@@ -97,9 +89,8 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
     }
 
     @Override
-    protected XmlObject create(GetCapabilitiesResponse response) throws OwsExceptionReport {
-        CapabilitiesDocument xbCapsDoc =
-                CapabilitiesDocument.Factory.newInstance(XmlOptionsHelper.getInstance().getXmlOptions());
+    protected XmlObject create(GetCapabilitiesResponse response) throws EncodingException {
+        CapabilitiesDocument xbCapsDoc = CapabilitiesDocument.Factory.newInstance(getXmlOptions());
         // cursor for getting prefixes
         Capabilities xbCaps = xbCapsDoc.addNewCapabilities();
 
@@ -108,28 +99,24 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
         SosCapabilities sosCapabilities = (SosCapabilities)response.getCapabilities();
 
-        if (sosCapabilities.isSetServiceIdentification()) {
-            xbCaps.addNewServiceIdentification().set(
-                    CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, sosCapabilities.getServiceIdentification()));
+        if (sosCapabilities.getServiceIdentification().isPresent()) {
+            xbCaps.addNewServiceIdentification().set(encodeObjectToXml(OWSConstants.NS_OWS, sosCapabilities.getServiceIdentification().get()));
         }
-        if (sosCapabilities.isSetServiceProvider()) {
-            xbCaps.addNewServiceProvider().set(
-                    CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, sosCapabilities.getServiceProvider()));
+        if (sosCapabilities.getServiceProvider().isPresent()) {
+            xbCaps.addNewServiceProvider().set(encodeObjectToXml(OWSConstants.NS_OWS, sosCapabilities.getServiceProvider().get()));
 
         }
-        if (sosCapabilities.isSetOperationsMetadata()) {
-            xbCaps.addNewOperationsMetadata().set(
-                    CodingHelper.encodeObjectToXml(OWSConstants.NS_OWS, sosCapabilities.getOperationsMetadata()));
+        if (sosCapabilities.getOperationsMetadata().isPresent()) {
+            xbCaps.addNewOperationsMetadata().set(encodeObjectToXml(OWSConstants.NS_OWS, sosCapabilities.getOperationsMetadata().get()));
         }
-        if (sosCapabilities.isSetFilterCapabilities()) {
-            setFilterCapabilities(xbCaps.addNewFilterCapabilities(), sosCapabilities.getFilterCapabilities());
+        if (sosCapabilities.getFilterCapabilities().isPresent()) {
+            setFilterCapabilities(xbCaps.addNewFilterCapabilities(), sosCapabilities.getFilterCapabilities().get());
         }
-        if (sosCapabilities.isSetContents()) {
-            setContents(xbCaps.addNewContents(), sosCapabilities.getContents(), response.getVersion());
+        if (sosCapabilities.getContents().isPresent()) {
+            setContents(xbCaps.addNewContents(), sosCapabilities.getContents().get(), response.getVersion());
         }
 
-        N52XmlHelper.setSchemaLocationsToDocument(xbCapsDoc,
-                Sets.newHashSet(N52XmlHelper.getSchemaLocationForSOS100()));
+        N52XmlHelper.setSchemaLocationsToDocument(xbCapsDoc, Sets.newHashSet(N52XmlHelper.getSchemaLocationForSOS100()));
 
         return xbCapsDoc;
     }
@@ -143,7 +130,7 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      *            FilterCapabilities.
      */
     protected void setFilterCapabilities(FilterCapabilities filterCapabilities,
-            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
+                                         org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) {
         setScalarFilterCapabilities(filterCapabilities.addNewScalarCapabilities(), sosFilterCaps);
         setSpatialFilterCapabilities(filterCapabilities.addNewSpatialCapabilities(), sosFilterCaps);
         setTemporalFilterCapabilities(filterCapabilities.addNewTemporalCapabilities(), sosFilterCaps);
@@ -162,11 +149,11 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      *            SOS response version
      *
      *
-     * @throws OwsExceptionReport
+     * @throws EncodingException
      *             * if an error occurs.
      */
     protected void setContents(Contents xbContents, Collection<SosObservationOffering> offerings, String version)
-            throws OwsExceptionReport {
+            throws EncodingException{
         // Contents xbContType = xbContents.addNewContents();
         ObservationOfferingList xbObservationOfferings = xbContents.addNewObservationOfferingList();
 
@@ -178,16 +165,16 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
 
             // only if fois are contained for the offering set the values of the
             // envelope
-            Encoder<XmlObject, SosEnvelope> encoder =
-                    CodingHelper.getEncoder(GmlConstants.NS_GML, offering.getObservedArea());
-            xbObservationOffering.addNewBoundedBy().addNewEnvelope().set(encoder.encode(offering.getObservedArea()));
+            if (offering.isSetObservedArea()) {
+                xbObservationOffering.addNewBoundedBy().addNewEnvelope().set(encodeObjectToXml(GmlConstants.NS_GML, offering.getObservedArea()));
+            }
 
             // TODO: add intended application
             // xbObservationOffering.addIntendedApplication("");
 
             // set gml:name to offering's id (not ncname resolved)
             for (CodeType name : offering.getOffering().getName()) {
-                xbObservationOffering.addNewName().set(CodingHelper.encodeObjectToXml(GmlConstants.NS_GML, name));
+                xbObservationOffering.addNewName().set(encodeObjectToXml(GmlConstants.NS_GML, name));
             }
 
             /*
@@ -210,74 +197,20 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
              * }
              */
 
-            // set observableProperties [0..*]
-            for (String phenomenon : offering.getObservableProperties()) {
-                xbObservationOffering.addNewObservedProperty().setHref(phenomenon);
-            }
 
             // set up time
             if (offering.getPhenomenonTime() instanceof TimePeriod) {
-                XmlObject encodeObject =
-                        CodingHelper.encodeObjectToXml(SweConstants.NS_SWE_101, offering.getPhenomenonTime());
-                xbObservationOffering.addNewTime().set(encodeObject);
+                xbObservationOffering.addNewTime().set(encodeObjectToXml(SweConstants.NS_SWE_101, offering.getPhenomenonTime()));
             }
 
-            // add feature of interests
-            if (offering.isSetFeatureOfInterestTypes()) {
-                for (String featureOfInterestType : offering.getFeatureOfInterestTypes()) {
-                    xbObservationOffering.addNewFeatureOfInterest().setHref(featureOfInterestType);
-                }
-            }
-
-            // set procedures
-            if (offering.isSetProcedureDescriptionFormats()) {
-                for (String procedureDescriptionFormat : offering.getProcedureDescriptionFormats()) {
-                    xbObservationOffering.addNewProcedure().setHref(procedureDescriptionFormat);
-                }
-            }
-            for (String procedure : offering.getProcedures()) {
-                xbObservationOffering.addNewProcedure().setHref(procedure);
-            }
-
-            for (String featureOfInterest : offering.getFeatureOfInterest()) {
-                xbObservationOffering.addNewFeatureOfInterest().setHref(featureOfInterest);
-            }
-
-            // insert result models
-            Collection<QName> resultModels = offering.getResultModels();
-
-            if (CollectionHelper.isEmpty(resultModels)) {
-                throw new NoApplicableCodeException()
-                        .withMessage(
-                                "No result models are contained in the database for the offering: %s! Please contact the admin of this SOS.",
-                                offering);
-            }
-
-            /*
-             * for (QName resultModelQName : resultModels) { XmlQName
-             * xbResultModel = xb_oo.addNewResultModel();
-             * xbResultModel.setStringValue(rmString.getPrefix() + ":" +
-             * rmString.getLocalPart());
-             * xbResultModel.set(Sos1Constants.RESULT_MODEL_MEASUREMENT);
-             * xbResultModel.setStringValue("om:Measurement"); QName qName = new
-             * QName(rmString.getPrefix(), rmString.getLocalPart());
-             * xbResultModel.setQNameValue(resultModelQName); // TODO: Change if
-             * XmlBeans-Bug is fixed // String value = cursor.getTextValue(); //
-             * cursor.setTextValue(value.replaceFirst("ns", //
-             * OMConstants.NS_OM_PREFIX)); }
-             */
-
-            // set responseFormat [0..*]
-            if (offering.isSetResponseFormats()) {
-                for (String responseFormat : offering.getResponseFormats()) {
-                    xbObservationOffering.addNewResponseFormat().setStringValue(responseFormat);
-                }
-            }
-
-            // set response Mode
-            for (String responseMode : offering.getResponseModes()) {
-                xbObservationOffering.addNewResponseMode().setStringValue(responseMode);
-            }
+            offering.getObservableProperties().forEach(phenomenon -> xbObservationOffering.addNewObservedProperty().setHref(phenomenon));
+            offering.getFeatureOfInterestTypes().forEach(featureOfInterestType -> xbObservationOffering.addNewFeatureOfInterest().setHref(featureOfInterestType));
+            offering.getProcedureDescriptionFormats().forEach(procedureDescriptionFormat -> xbObservationOffering.addNewProcedure().setHref(procedureDescriptionFormat));
+            offering.getProcedures().forEach(procedure -> xbObservationOffering.addNewProcedure().setHref(procedure));
+            offering.getFeatureOfInterest().forEach(featureOfInterest -> xbObservationOffering.addNewFeatureOfInterest().setHref(featureOfInterest));
+            offering.getResultModels().forEach(xbObservationOffering::addResultModel);
+            offering.getResponseFormats().forEach(responseFormat -> xbObservationOffering.addNewResponseFormat().setStringValue(responseFormat));
+            offering.getResponseModes().forEach(responseMode -> xbObservationOffering.addNewResponseMode().setStringValue(responseMode));
         }
     }
 
@@ -305,28 +238,24 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      * @param sosFilterCaps
      */
     protected void setSpatialFilterCapabilities(SpatialCapabilitiesType spatialCapabilities,
-            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
+                                                org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) {
 
         // set GeometryOperands
         if (!sosFilterCaps.getSpatialOperands().isEmpty()) {
-            GeometryOperandsType spatialOperands = spatialCapabilities.addNewGeometryOperands();
-            for (QName operand : sosFilterCaps.getSpatialOperands()) {
-                spatialOperands.addGeometryOperand(operand);
-            }
+            sosFilterCaps.getSpatialOperands().forEach(spatialCapabilities.addNewGeometryOperands()::addGeometryOperand);
         }
 
         // set SpatialOperators
         if (!sosFilterCaps.getSpatialOperators().isEmpty()) {
             SpatialOperatorsType spatialOps = spatialCapabilities.addNewSpatialOperators();
             Set<SpatialOperator> keys = sosFilterCaps.getSpatialOperators().keySet();
-            for (SpatialOperator spatialOperator : keys) {
+            keys.forEach(spatialOperator -> {
                 SpatialOperatorType operator = spatialOps.addNewSpatialOperator();
                 operator.setName(getEnum4SpatialOperator(spatialOperator));
                 GeometryOperandsType bboxGeomOps = operator.addNewGeometryOperands();
-                for (QName operand : sosFilterCaps.getSpatialOperators().get(spatialOperator)) {
-                    bboxGeomOps.addGeometryOperand(operand);
-                }
-            }
+                sosFilterCaps.getSpatialOperators().get(spatialOperator)
+                        .forEach(bboxGeomOps::addGeometryOperand);
+            });
         }
     }
 
@@ -340,28 +269,24 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      * @param sosFilterCaps
      */
     protected void setTemporalFilterCapabilities(TemporalCapabilitiesType temporalCapabilities,
-            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
+                                                 org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) {
 
         // set TemporalOperands
         if (!sosFilterCaps.getTemporalOperands().isEmpty()) {
             TemporalOperandsType tempOperands = temporalCapabilities.addNewTemporalOperands();
-            for (QName operand : sosFilterCaps.getTemporalOperands()) {
-                tempOperands.addTemporalOperand(operand);
-            }
+            sosFilterCaps.getTemporalOperands().forEach(tempOperands::addTemporalOperand);
         }
 
         // set TemporalOperators
-        if (!sosFilterCaps.getTempporalOperators().isEmpty()) {
+        if (!sosFilterCaps.getTemporalOperators().isEmpty()) {
             TemporalOperatorsType temporalOps = temporalCapabilities.addNewTemporalOperators();
-            Set<TimeOperator> keys = sosFilterCaps.getTempporalOperators().keySet();
-            for (TimeOperator temporalOperator : keys) {
-                TemporalOperatorType operator = temporalOps.addNewTemporalOperator();
-                operator.setName(getEnum4TemporalOperator(temporalOperator));
-                TemporalOperandsType bboxGeomOps = operator.addNewTemporalOperands();
-                for (QName operand : sosFilterCaps.getTempporalOperators().get(temporalOperator)) {
-                    bboxGeomOps.addTemporalOperand(operand);
-                }
-            }
+
+            sosFilterCaps.getTemporalOperators().forEach((operator, operands) -> {
+                TemporalOperatorType xbOperator = temporalOps.addNewTemporalOperator();
+                xbOperator.setName(getEnum4TemporalOperator(operator));
+                TemporalOperandsType bboxGeomOps = xbOperator.addNewTemporalOperands();
+                operands.forEach(bboxGeomOps::addTemporalOperand);
+            });
         }
     }
 
@@ -375,13 +300,12 @@ public class GetCapabilitiesResponseEncoder extends AbstractSosResponseEncoder<G
      * @param sosFilterCaps
      */
     protected void setScalarFilterCapabilities(ScalarCapabilitiesType scalarCapabilities,
-            org.n52.sos.ogc.filter.FilterCapabilities sosFilterCaps) {
+                                               org.n52.shetland.ogc.filter.FilterCapabilities sosFilterCaps) {
 
         if (!sosFilterCaps.getComparisonOperators().isEmpty()) {
-            ComparisonOperatorsType scalarOps = scalarCapabilities.addNewComparisonOperators();
-            for (ComparisonOperator operator : sosFilterCaps.getComparisonOperators()) {
-                scalarOps.addComparisonOperator(getEnum4ComparisonOperator(operator));
-            }
+            sosFilterCaps.getComparisonOperators().stream()
+                    .map(this::getEnum4ComparisonOperator)
+                    .forEachOrdered(scalarCapabilities.addNewComparisonOperators()::addComparisonOperator);
         }
     }
 

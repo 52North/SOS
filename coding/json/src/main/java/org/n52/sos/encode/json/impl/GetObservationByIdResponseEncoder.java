@@ -28,8 +28,8 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.sos.response.GetObservationByIdResponse;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.response.GetObservationByIdResponse;
 
 /**
  * TODO JavaDoc

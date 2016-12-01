@@ -29,11 +29,12 @@
 package org.n52.sos.ds.hibernate.dao.observation.ereporting;
 
 import org.hibernate.Criteria;
-import org.n52.iceland.exception.CodedException;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.sos.ds.hibernate.dao.ereporting.EReportingDaoHelper;
 import org.n52.sos.ds.hibernate.dao.observation.series.AbstractSeriesValueDAO;
 import org.n52.sos.ds.hibernate.entities.observation.ereporting.AbstractValuedEReportingObservation;
-import org.n52.sos.request.GetObservationRequest;
 
 public class EReportingValueDAO extends AbstractSeriesValueDAO {
 
@@ -42,10 +43,10 @@ public class EReportingValueDAO extends AbstractSeriesValueDAO {
         return AbstractValuedEReportingObservation.class;
     }
 
-        @Override
-        protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
-            // add quality restrictions
-            EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
-        }
+    @Override
+    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws OwsExceptionReport {
+
+        EReportingDaoHelper.addValidityAndVerificationRestrictions(c, request);
+    }
 
 }

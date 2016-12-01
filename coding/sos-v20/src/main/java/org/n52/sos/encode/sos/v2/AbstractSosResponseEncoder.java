@@ -28,27 +28,25 @@
  */
 package org.n52.sos.encode.sos.v2;
 
-import static org.n52.sos.util.CodingHelper.encodeObjectToXml;
-
-import java.util.Map;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.filter.FilterConstants;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.ows.OWSConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.response.AbstractServiceResponse;
-import org.n52.sos.service.Configurator;
-import org.n52.iceland.w3c.SchemaLocation;
+import org.n52.shetland.ogc.filter.FilterConstants;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.ows.OWSConstants;
+import org.n52.shetland.ogc.ows.service.OwsServiceResponse;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.AbstractResponseEncoder;
 import org.n52.sos.service.profile.Profile;
 import org.n52.sos.service.profile.ProfileHandler;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.Sets;
 
@@ -62,10 +60,22 @@ import com.google.common.collect.Sets;
  *
  * @since 4.0.0
  */
-public abstract class AbstractSosResponseEncoder<T extends AbstractServiceResponse> extends AbstractResponseEncoder<T> {
+public abstract class AbstractSosResponseEncoder<T extends OwsServiceResponse> extends AbstractResponseEncoder<T> {
+
+    private ProfileHandler profileHandler;
+
     public AbstractSosResponseEncoder(String operation, Class<T> responseType) {
-        super(SosConstants.SOS, Sos2Constants.SERVICEVERSION, operation, Sos2Constants.NS_SOS_20,
-                SosConstants.NS_SOS_PREFIX, responseType);
+        super(SosConstants.SOS,
+              Sos2Constants.SERVICEVERSION,
+              operation,
+              Sos2Constants.NS_SOS_20,
+              SosConstants.NS_SOS_PREFIX,
+              responseType);
+    }
+
+    @Inject
+    public void setProfileHandler(ProfileHandler profileHandler) {
+        this.profileHandler = profileHandler;
     }
 
     @Override
@@ -74,38 +84,39 @@ public abstract class AbstractSosResponseEncoder<T extends AbstractServiceRespon
     }
 
     protected Profile getActiveProfile() {
-        return ProfileHandler.getInstance().getActiveProfile();
+        return this.profileHandler.getActiveProfile();
     }
 
-    protected XmlObject encodeGml(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeGml(Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o);
     }
 
-    protected XmlObject encodeGml(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeGml(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(GmlConstants.NS_GML_32, o, helperValues);
     }
 
-    protected XmlObject encodeOws(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeOws(Object o) throws EncodingException {
         return encodeObjectToXml(OWSConstants.NS_OWS, o);
     }
 
-    protected XmlObject encodeOws(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeOws(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(OWSConstants.NS_OWS, o, helperValues);
     }
 
-    protected XmlObject encodeFes(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeFes(Object o) throws EncodingException {
         return encodeObjectToXml(FilterConstants.NS_FES_2, o);
     }
 
-    protected XmlObject encodeFes(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeFes(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(FilterConstants.NS_FES_2, o, helperValues);
     }
 
-    protected XmlObject encodeSwe(Object o) throws OwsExceptionReport {
+    protected XmlObject encodeSwe(Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o);
     }
 
-    protected XmlObject encodeSwe(Map<HelperValues, String> helperValues, Object o) throws OwsExceptionReport {
+    protected XmlObject encodeSwe(EncodingContext helperValues, Object o) throws EncodingException {
         return encodeObjectToXml(SweConstants.NS_SWE_20, o, helperValues);
     }
+
 }

@@ -45,11 +45,14 @@ import org.hibernate.criterion.Subqueries;
 import org.hibernate.transform.ResultTransformer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.n52.iceland.exception.CodedException;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.util.CollectionHelper;
-import org.n52.iceland.util.DateTimeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.ows.exception.CodedException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.ds.hibernate.dao.observation.AbstractObservationDAO;
 import org.n52.sos.ds.hibernate.dao.observation.series.SeriesObservationDAO;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterestType;
@@ -65,8 +68,6 @@ import org.n52.sos.ds.hibernate.entities.observation.series.ContextualReferenced
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.OfferingTimeExtrema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

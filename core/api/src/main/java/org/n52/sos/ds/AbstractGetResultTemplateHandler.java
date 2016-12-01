@@ -28,14 +28,16 @@
  */
 package org.n52.sos.ds;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.ows.OwsOperation;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.sos.request.GetResultTemplateRequest;
-import org.n52.sos.response.GetResultTemplateResponse;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.ows.OwsDomain;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.GetResultTemplateRequest;
+import org.n52.shetland.ogc.sos.response.GetResultTemplateResponse;
 
 /**
  * Renamed, in version 4.x called AbstractGetResultTemplateDAO
@@ -48,9 +50,11 @@ public abstract class AbstractGetResultTemplateHandler extends AbstractOperation
         super(service, Sos2Constants.Operations.GetResultTemplate.name());
     }
 
+    public abstract GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request)
+            throws OwsExceptionReport;
+
     @Override
-    protected void setOperationsMetadata(OwsOperation opsMeta, String service, String version)
-            throws OwsExceptionReport {
+    protected Set<OwsDomain> getOperationParameters(String service, String version) throws OwsExceptionReport {
         Set<String> resultTemplates = getCache().getResultTemplates();
         Collection<String> offerings = null;
         Collection<String> observableProperties = null;
@@ -58,11 +62,9 @@ public abstract class AbstractGetResultTemplateHandler extends AbstractOperation
             offerings = getCache().getOfferingsWithResultTemplate();
             observableProperties = getCache().getObservablePropertiesWithResultTemplate();
         }
-        addOfferingParameter(opsMeta, offerings);
-        addObservablePropertyParameter(opsMeta, observableProperties);
+        return new HashSet<>(Arrays.asList(
+                getOfferingParameter(service, version, offerings),
+                getObservablePropertyParameter(service, version, observableProperties)));
     }
-
-    public abstract GetResultTemplateResponse getResultTemplate(GetResultTemplateRequest request)
-            throws OwsExceptionReport;
 
 }

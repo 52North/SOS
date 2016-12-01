@@ -32,10 +32,11 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.response.GetCapabilitiesResponse;
-import org.n52.iceland.w3c.SchemaLocation;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesResponse;
+import org.n52.shetland.w3c.SchemaLocation;
 
 public class AqdGetCapabilitiesResponseEncoder extends AbstractAqdResponseEncoder<GetCapabilitiesResponse> {
 
@@ -49,7 +50,7 @@ public class AqdGetCapabilitiesResponseEncoder extends AbstractAqdResponseEncode
     }
 
     @Override
-    protected XmlObject create(GetCapabilitiesResponse response) throws OwsExceptionReport {
+    protected XmlObject create(GetCapabilitiesResponse response) throws EncodingException {
         return encodeWithSosEncoder(response);
     }
 }

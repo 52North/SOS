@@ -42,8 +42,9 @@ import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
+
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.AfterRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeforeRestriction;
 import org.n52.sos.ds.hibernate.util.TemporalRestriction.BeginsRestriction;

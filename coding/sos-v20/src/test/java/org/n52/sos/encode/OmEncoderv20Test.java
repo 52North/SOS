@@ -30,9 +30,7 @@ package org.n52.sos.encode;
 
 import static org.hamcrest.Matchers.containsString;
 
-import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.namespace.NamespaceContext;
 
@@ -44,33 +42,35 @@ import org.joda.time.DateTimeZone;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.gml.CodeWithAuthority;
-import org.n52.iceland.ogc.gml.GmlConstants;
-import org.n52.iceland.ogc.gml.time.TimeInstant;
-import org.n52.iceland.ogc.gml.time.TimePeriod;
-import org.n52.iceland.ogc.om.OmConstants;
-import org.n52.iceland.ogc.ows.OWSConstants.HelperValues;
-import org.n52.iceland.ogc.swe.SweConstants;
-import org.n52.iceland.w3c.W3CConstants;
-import org.n52.sos.ogc.om.OmCompositePhenomenon;
-import org.n52.sos.ogc.om.OmObservableProperty;
-import org.n52.sos.ogc.om.OmObservation;
-import org.n52.sos.ogc.om.OmObservationConstellation;
-import org.n52.sos.ogc.om.SingleObservationValue;
-import org.n52.sos.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.sos.ogc.om.values.ComplexValue;
-import org.n52.sos.ogc.sensorML.SensorML;
-import org.n52.sos.ogc.swe.SweDataRecord;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweText;
+import org.w3c.dom.Node;
+
+import org.n52.shetland.ogc.gml.CodeWithAuthority;
+import org.n52.shetland.ogc.gml.GmlConstants;
+import org.n52.shetland.ogc.gml.time.TimeInstant;
+import org.n52.shetland.ogc.gml.time.TimePeriod;
+import org.n52.shetland.ogc.om.OmCompositePhenomenon;
+import org.n52.shetland.ogc.om.OmConstants;
+import org.n52.shetland.ogc.om.OmObservableProperty;
+import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.om.OmObservationConstellation;
+import org.n52.shetland.ogc.om.SingleObservationValue;
+import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.om.values.ComplexValue;
+import org.n52.shetland.ogc.sensorML.v20.PhysicalComponent;
+import org.n52.shetland.ogc.swe.SweConstants;
+import org.n52.shetland.ogc.swe.SweDataRecord;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlOptionsHelper;
-import org.w3c.dom.Node;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
@@ -79,18 +79,12 @@ public class OmEncoderv20Test {
 
     private static final String PROCEDURE = "procedure";
     private static final String OFFERING = "offering";
-    private static final String PARENT_OBSERVABLE_PROPERTY
-            = "http://example.tld/phenomenon/parent";
-    private static final String CHILD_OBSERVABLE_PROPERTY_5
-            = "http://example.tld/phenomenon/child/5";
-    private static final String CHILD_OBSERVABLE_PROPERTY_4
-            = "http://example.tld/phenomenon/child/4";
-    private static final String CHILD_OBSERVABLE_PROPERTY_3
-            = "http://example.tld/phenomenon/child/3";
-    private static final String CHILD_OBSERVABLE_PROPERTY_2
-            = "http://example.tld/phenomenon/child/2";
-    private static final String CHILD_OBSERVABLE_PROPERTY_1
-            = "http://example.tld/phenomenon/child/1";
+    private static final String PARENT_OBSERVABLE_PROPERTY = "http://example.tld/phenomenon/parent";
+    private static final String CHILD_OBSERVABLE_PROPERTY_5 = "http://example.tld/phenomenon/child/5";
+    private static final String CHILD_OBSERVABLE_PROPERTY_4 = "http://example.tld/phenomenon/child/4";
+    private static final String CHILD_OBSERVABLE_PROPERTY_3 = "http://example.tld/phenomenon/child/3";
+    private static final String CHILD_OBSERVABLE_PROPERTY_2 = "http://example.tld/phenomenon/child/2";
+    private static final String CHILD_OBSERVABLE_PROPERTY_1 = "http://example.tld/phenomenon/child/1";
     private static final String CODE_SPACE = "codespace";
 
     private static final String TOKEN_SEPERATOR = "##";
@@ -107,12 +101,9 @@ public class OmEncoderv20Test {
 
     @Test
     public void testComplexObservation()
-            throws OwsExceptionReport {
+            throws EncodingException {
         OmObservation observation = createComplexObservation();
-        Map<HelperValues, String> helperValues
-                = new EnumMap<>(HelperValues.class);
-        helperValues.put(HelperValues.DOCUMENT, "true");
-        XmlObject xb = CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, observation, helperValues);
+        XmlObject xb = CodingHelper.encodeObjectToXml(OmConstants.NS_OM_2, observation, EncodingContext.of(SosHelperValues.DOCUMENT));
         Node node = xb.getDomNode();
         Checker checker = new Checker(new NamespaceContextImpl());
         System.out.println(xb.xmlText(XmlOptionsHelper.getInstance().getXmlOptions()));
@@ -142,7 +133,7 @@ public class OmEncoderv20Test {
         observationConstellation.setObservableProperty(observableProperty);
         observationConstellation.setObservationType(OmConstants.OBS_TYPE_COMPLEX_OBSERVATION);
         observationConstellation.addOffering(OFFERING);
-        SensorML procedure = new SensorML();
+        PhysicalComponent procedure = new PhysicalComponent();
         procedure.setIdentifier(new CodeWithAuthority(PROCEDURE, CODE_SPACE));
         observationConstellation.setProcedure(procedure);
         observation.setObservationConstellation(observationConstellation);

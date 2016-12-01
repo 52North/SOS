@@ -28,7 +28,7 @@
  */
 package org.n52.sos.ext.deleteobservation;
 
-import org.n52.iceland.exception.ows.MissingParameterValueException;
+import org.n52.shetland.ogc.ows.exception.MissingParameterValueException;
 
 /**
  * @author Christian Autermann <c.autermann@52north.org>

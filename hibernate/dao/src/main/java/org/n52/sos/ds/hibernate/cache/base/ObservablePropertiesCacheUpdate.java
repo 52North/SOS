@@ -31,8 +31,8 @@ package org.n52.sos.ds.hibernate.cache.base;
 import java.util.Collection;
 import java.util.Map;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.util.CollectionHelper;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.cache.AbstractThreadableDatasourceCacheUpdate;
 import org.n52.sos.ds.hibernate.cache.DatasourceCacheUpdateHelper;
 import org.n52.sos.ds.hibernate.dao.ObservablePropertyDAO;
@@ -43,6 +43,7 @@ import org.n52.sos.ds.hibernate.entities.ObservableProperty;
 import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
 import org.n52.sos.ds.hibernate.util.ObservationConstellationInfo;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -30,21 +30,22 @@ package org.n52.sos.encode.sos.v2;
 
 import java.util.Set;
 
-import org.apache.xmlbeans.XmlObject;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.ogc.sos.Sos2Constants;
-import org.n52.iceland.ogc.sos.SosConstants;
-import org.n52.iceland.w3c.SchemaLocation;
-import org.n52.sos.encode.swes.ExtensibleRequestEncoder;
-import org.n52.sos.ogc.filter.TemporalFilter;
-import org.n52.sos.request.GetObservationRequest;
-
-import com.google.common.collect.Sets;
-
 import net.opengis.fes.x20.SpatialOpsDocument;
 import net.opengis.fes.x20.TemporalOpsDocument;
 import net.opengis.sos.x20.GetObservationDocument;
 import net.opengis.sos.x20.GetObservationType;
+
+import org.apache.xmlbeans.XmlObject;
+
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.filter.TemporalFilter;
+import org.n52.shetland.w3c.SchemaLocation;
+import org.n52.sos.encode.swes.ExtensibleRequestEncoder;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
@@ -63,7 +64,7 @@ public class GetObservationRequestEncoder extends AbstractSosRequestEncoder<GetO
     }
 
     @Override
-    protected XmlObject create(GetObservationRequest request) throws OwsExceptionReport {
+    protected XmlObject create(GetObservationRequest request) throws EncodingException {
         GetObservationDocument doc = GetObservationDocument.Factory.newInstance(getXmlOptions());
         GetObservationType got = doc.addNewGetObservation();
         addService(got, request);
@@ -80,30 +81,24 @@ public class GetObservationRequestEncoder extends AbstractSosRequestEncoder<GetO
 
     private void addProcedure(GetObservationType got, GetObservationRequest request) {
         if (request.isSetProcedure()) {
-            for (String procedure : request.getProcedures()) {
-                got.addProcedure(procedure);
-            }
+            request.getProcedures().forEach(got::addProcedure);
         }
     }
 
     private void addOffering(GetObservationType got, GetObservationRequest request) {
         if (request.isSetOffering()) {
-            for (String offering : request.getOfferings()) {
-                got.addOffering(offering);
-            }
+            request.getOfferings().forEach(got::addOffering);
         }
 
     }
 
     private void addObservedProperty(GetObservationType got, GetObservationRequest request) {
         if (request.isSetObservableProperty()) {
-            for (String observedProperty : request.getObservedProperties()) {
-                got.addObservedProperty(observedProperty);
-            }
+            request.getObservedProperties().forEach(got::addObservedProperty);
         }
     }
 
-    private void addTemporalFilter(GetObservationType got, GetObservationRequest request) throws OwsExceptionReport {
+    private void addTemporalFilter(GetObservationType got, GetObservationRequest request) throws EncodingException {
         if (request.isSetTemporalFilter()) {
             for (TemporalFilter temporalFilter : request.getTemporalFilters()) {
                 // TODO fixme
@@ -117,13 +112,11 @@ public class GetObservationRequestEncoder extends AbstractSosRequestEncoder<GetO
 
     private void addFeatureOfInterest(GetObservationType got, GetObservationRequest request) {
         if (request.isSetFeatureOfInterest()) {
-            for (String featureOfInterest : request.getFeatureIdentifiers()) {
-                got.addFeatureOfInterest(featureOfInterest);
-            }
+            request.getFeatureIdentifiers().forEach(got::addFeatureOfInterest);
         }
     }
 
-    private void addSpatialFilter(GetObservationType got, GetObservationRequest request) throws OwsExceptionReport {
+    private void addSpatialFilter(GetObservationType got, GetObservationRequest request) throws EncodingException {
         if (request.isSetSpatialFilter()) {
             // TODO fixme
             XmlObject encodeFes = encodeFes(request.getSpatialFilter());

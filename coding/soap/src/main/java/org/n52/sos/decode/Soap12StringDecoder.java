@@ -33,7 +33,7 @@ import javax.xml.soap.SOAPConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.iceland.coding.decode.Decoder;
+import org.n52.svalbard.decode.Decoder;
 
 import com.google.common.base.Joiner;
 

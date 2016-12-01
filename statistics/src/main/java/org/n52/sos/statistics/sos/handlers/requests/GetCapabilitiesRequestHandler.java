@@ -28,7 +28,7 @@
  */
 package org.n52.sos.statistics.sos.handlers.requests;
 
-import org.n52.iceland.request.GetCapabilitiesRequest;
+import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.sos.statistics.sos.SosDataMapping;
 
 public class GetCapabilitiesRequestHandler extends AbstractSosRequestHandler<GetCapabilitiesRequest> {

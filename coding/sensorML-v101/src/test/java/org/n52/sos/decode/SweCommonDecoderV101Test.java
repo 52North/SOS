@@ -48,15 +48,16 @@ import net.opengis.swe.x101.UomPropertyType;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.RangeValue;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.swe.RangeValue;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Lists;
 
@@ -70,7 +71,7 @@ public class SweCommonDecoderV101Test {
 
     @Test public void
     should_decode_Count_with_Quality_Text()
-            throws OwsExceptionReport {
+            throws DecodingException {
         final CountDocument xbCount = CountDocument.Factory.newInstance();
 
         final String textValue = "quality-text";
@@ -88,7 +89,7 @@ public class SweCommonDecoderV101Test {
 
     @Test public void
     should_decode_Quantity_with_Quality_Category()
-            throws OwsExceptionReport {
+            throws DecodingException {
         final QuantityDocument xbQuantity = QuantityDocument.Factory.newInstance();
 
         final String categoryValue = "quality-category";
@@ -106,7 +107,7 @@ public class SweCommonDecoderV101Test {
 
     @Test public void
     should_decode_Category_with_Quality_QuantityRange()
-            throws OwsExceptionReport {
+            throws DecodingException {
         final CategoryDocument xbQuantity = CategoryDocument.Factory.newInstance();
 
         final Double rangeStart = 1.0;
@@ -126,7 +127,7 @@ public class SweCommonDecoderV101Test {
 
     @Test public void
     should_decode_Boolean_with_Quality_Quantity()
-            throws OwsExceptionReport {
+            throws DecodingException {
         final BooleanDocument xbBoolean = BooleanDocument.Factory.newInstance();
 
         final double quantityValue = 42.0;
@@ -144,7 +145,7 @@ public class SweCommonDecoderV101Test {
 
     @Test public void
     should_decode_QuantityRange()
-            throws OwsExceptionReport {
+            throws DecodingException {
         final QuantityRangeDocument xbQuantityRange = QuantityRangeDocument.Factory.newInstance();
 
         final ArrayList<Double> values = Lists.newArrayList(1.0,2.0);
@@ -177,7 +178,7 @@ public class SweCommonDecoderV101Test {
     }
 
    @Test
-   public void should_decode_TimeRange() throws OwsExceptionReport {
+   public void should_decode_TimeRange() throws DecodingException {
         final TimeRangeDocument xbTimeRangeDoc = TimeRangeDocument.Factory.newInstance();
         TimeRange xbTimeRange = xbTimeRangeDoc.addNewTimeRange();
         final DateTime startDate = new DateTime(1970, 1, 1, 0, 0, DateTimeZone.UTC);

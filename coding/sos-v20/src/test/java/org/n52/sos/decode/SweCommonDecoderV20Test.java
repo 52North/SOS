@@ -45,10 +45,11 @@ import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+
+import org.n52.svalbard.decode.exception.DecodingException;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 
 import com.google.common.collect.Lists;
 
@@ -76,7 +77,7 @@ public class SweCommonDecoderV20Test {
 
     @Test
     public void should_encode_xbBoolean_into_SosSweBoolean_with_correct_value_and_definition()
-            throws OwsExceptionReport {
+            throws DecodingException {
         BooleanType xbBoolean = BooleanType.Factory.newInstance();
         final boolean value = true;
         xbBoolean.setValue(value);
@@ -94,7 +95,7 @@ public class SweCommonDecoderV20Test {
 
     @Test
     public void should_encode_xbCategory_into_SosSweCategory_with_correct_value_definition_and_codespace()
-            throws OwsExceptionReport, XmlException {
+            throws DecodingException, XmlException {
         final String codeSpace = "test-codespace";
         final String value = "test-category-value";
 
@@ -115,7 +116,7 @@ public class SweCommonDecoderV20Test {
     }
 
     @Test
-    public void should_decode_TimeRange() throws OwsExceptionReport {
+    public void should_decode_TimeRange() throws DecodingException {
          final TimeRangeDocument xbTimeRangeDoc = TimeRangeDocument.Factory.newInstance();
          TimeRangeType xbTimeRange = xbTimeRangeDoc.addNewTimeRange();
          final DateTime startDate = new DateTime(1970, 1, 1, 0, 0, DateTimeZone.UTC);

@@ -28,25 +28,25 @@
  */
 package org.n52.sos.encode.json.impl;
 
-import static org.n52.iceland.util.DateTimeHelper.formatDateTime2IsoString;
+import static org.n52.shetland.util.DateTimeHelper.formatDateTime2IsoString;
 
-import org.n52.iceland.exception.ows.OwsExceptionReport;
-import org.n52.iceland.exception.ows.concrete.UnsupportedEncoderInputException;
-import org.n52.iceland.util.DateTimeHelper;
+import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
+import org.n52.shetland.ogc.swe.SweField;
+import org.n52.shetland.ogc.swe.simpleType.SweBoolean;
+import org.n52.shetland.ogc.swe.simpleType.SweCategory;
+import org.n52.shetland.ogc.swe.simpleType.SweCount;
+import org.n52.shetland.ogc.swe.simpleType.SweCountRange;
+import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantity;
+import org.n52.shetland.ogc.swe.simpleType.SweQuantityRange;
+import org.n52.shetland.ogc.swe.simpleType.SweText;
+import org.n52.shetland.ogc.swe.simpleType.SweTime;
+import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
+import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.json.JSONConstants;
 import org.n52.sos.encode.json.JSONEncoder;
-import org.n52.sos.ogc.swe.SweAbstractDataComponent;
-import org.n52.sos.ogc.swe.SweField;
-import org.n52.sos.ogc.swe.simpleType.SweBoolean;
-import org.n52.sos.ogc.swe.simpleType.SweCategory;
-import org.n52.sos.ogc.swe.simpleType.SweCount;
-import org.n52.sos.ogc.swe.simpleType.SweCountRange;
-import org.n52.sos.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.sos.ogc.swe.simpleType.SweQuantity;
-import org.n52.sos.ogc.swe.simpleType.SweQuantityRange;
-import org.n52.sos.ogc.swe.simpleType.SweText;
-import org.n52.sos.ogc.swe.simpleType.SweTime;
-import org.n52.sos.ogc.swe.simpleType.SweTimeRange;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -65,7 +65,7 @@ public class FieldEncoder extends JSONEncoder<SweField> {
     }
 
     @Override
-    public JsonNode encodeJSON(SweField field) throws OwsExceptionReport {
+    public JsonNode encodeJSON(SweField field) throws EncodingException {
         switch (field.getElement().getDataComponentType()) {
         case Count:
             return encodeSweCountField(field);

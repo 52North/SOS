@@ -78,7 +78,7 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.coding.encode.ObservationEncoder;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.shetland.ogc.sos.response.InsertObservationResponse;
 import org.n52.sos.service.profile.ProfileHandler;
 import org.n52.sos.util.OMHelper;

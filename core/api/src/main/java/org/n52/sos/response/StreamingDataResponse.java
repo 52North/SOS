@@ -26,36 +26,31 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
  * Public License for more details.
  */
-package org.n52.sos.ds.hibernate.dao.observation.series;
+package org.n52.sos.response;
 
-import org.hibernate.Criteria;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.n52.shetland.ogc.ows.exception.CodedException;
-import org.n52.shetland.ogc.sos.request.GetObservationRequest;
-import org.n52.sos.ds.hibernate.dao.observation.AbstractValueDAO;
-import org.n52.sos.ds.hibernate.entities.observation.series.AbstractValuedSeriesObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.sos.response.AbstractStreaming;
 
 /**
- * Implementation of {@link AbstractValueDAO} for series concept
+ * Interface to indicate that the response may contain streaming data.
  *
- * @author Carsten Hollmann <c.hollmann@52north.org>
- * @since 4.1.0
+ * @author <a href="mailto:c.hollmann@52north.org">Carsten Hollmann</a>
+ * @since 4.3.0
  *
  */
-public class SeriesValueDAO extends AbstractSeriesValueDAO {
+public interface StreamingDataResponse {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SeriesValueDAO.class);
+    /**
+     *  Check if the response contains streaming data {@link AbstractStreaming}
+     *
+     * @return <code>true</code> if the response contains streaming data
+     */
+    boolean hasStreamingData();
 
-    @Override
-    protected void addSpecificRestrictions(Criteria c, GetObservationRequest request) throws CodedException {
-        // nothing  to add
-}
-
-    @Override
-    protected Class<?> getSeriesValueClass() {
-        return AbstractValuedSeriesObservation.class;
-    }
-
+    /**
+     * Merge the streaming data.
+     *
+     * @throws OwsExceptionReport If an error occurs.
+     */
+    void mergeStreamingData() throws OwsExceptionReport;
 }

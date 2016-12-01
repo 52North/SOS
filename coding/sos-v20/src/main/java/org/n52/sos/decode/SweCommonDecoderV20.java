@@ -70,7 +70,6 @@ import net.opengis.swe.x20.VectorType.Coordinate;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,12 +99,11 @@ import org.n52.shetland.util.DateTimeHelper;
 import org.n52.sos.exception.ows.concrete.UnsupportedDecoderXmlInputException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
-import org.n52.sos.util.XmlOptionsHelper;
-import org.n52.svalbard.decode.Decoder;
 import org.n52.svalbard.decode.DecoderKey;
 import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.decode.exception.NotYetSupportedDecodingException;
 import org.n52.svalbard.decode.exception.UnsupportedDecoderInputException;
+import org.n52.svalbard.xml.AbstractXmlDecoder;
 
 import com.google.common.base.Joiner;
 
@@ -113,7 +111,7 @@ import com.google.common.base.Joiner;
  * @since 4.0.0
  *
  */
-public class SweCommonDecoderV20 implements Decoder<Object, Object> {
+public class SweCommonDecoderV20 extends AbstractXmlDecoder<Object, Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweCommonDecoderV20.class);
 
     private static final Set<DecoderKey> DECODER_KEYS = CodingHelper
@@ -558,9 +556,5 @@ public class SweCommonDecoderV20 implements Decoder<Object, Object> {
             return (SweCount) parseAbstractDataComponent(elementCount.getCount());
         }
         return null;
-    }
-
-    protected static XmlOptions getXmlOptions() {
-        return XmlOptionsHelper.getInstance().getXmlOptions();
     }
 }

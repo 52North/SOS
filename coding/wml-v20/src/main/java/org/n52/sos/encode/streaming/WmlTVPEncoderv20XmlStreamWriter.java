@@ -49,7 +49,7 @@ import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 import com.google.common.base.Strings;
 

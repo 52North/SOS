@@ -44,7 +44,7 @@ import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.sos.aqd.AqdConstants;
 import org.n52.shetland.ogc.sos.request.GetObservationRequest;
 import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.GetObservationResponse;
 
 import com.google.common.collect.Sets;
 

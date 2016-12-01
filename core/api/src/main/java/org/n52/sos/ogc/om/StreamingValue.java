@@ -37,7 +37,7 @@ import org.n52.shetland.ogc.om.TimeValuePair;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.shetland.ogc.ows.OWSConstants.AdditionalRequestParams;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
-import org.n52.shetland.ogc.sos.AbstractStreaming;
+import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.util.GeometryHandler;
 
 import com.vividsolutions.jts.geom.Geometry;

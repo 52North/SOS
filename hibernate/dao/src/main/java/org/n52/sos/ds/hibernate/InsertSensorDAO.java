@@ -41,13 +41,17 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosOffering;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertSensorRequest;
+import org.n52.shetland.ogc.sos.response.InsertSensorResponse;
 import org.n52.shetland.ogc.swes.SwesFeatureRelationship;
 import org.n52.sos.ds.AbstractInsertSensorHandler;
 import org.n52.sos.ds.hibernate.dao.FeatureOfInterestTypeDAO;
@@ -68,10 +72,6 @@ import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.ProcedureDescriptionFormat;
 import org.n52.sos.ds.hibernate.entities.RelatedFeature;
 import org.n52.sos.ds.hibernate.entities.RelatedFeatureRole;
-import org.n52.shetland.ogc.sos.SosOffering;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.request.InsertSensorRequest;
-import org.n52.sos.response.InsertSensorResponse;
 
 /**
  * Implementation of the abstract class AbstractInsertSensorHandler

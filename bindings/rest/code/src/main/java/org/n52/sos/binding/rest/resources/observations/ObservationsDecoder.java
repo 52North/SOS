@@ -46,22 +46,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.om.OmObservation;
-import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OperationNotSupportedException;
 import org.n52.shetland.ogc.ows.extension.Extensions;
 import org.n52.shetland.ogc.ows.service.GetCapabilitiesRequest;
 import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.request.GetObservationByIdRequest;
+import org.n52.shetland.ogc.sos.request.GetObservationRequest;
+import org.n52.shetland.ogc.sos.request.InsertObservationRequest;
 import org.n52.shetland.ogc.swes.SwesExtension;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.exception.ows.concrete.InvalidObservationTypeException;
 import org.n52.sos.ext.deleteobservation.DeleteObservationRequest;
-import org.n52.sos.request.GetObservationByIdRequest;
-import org.n52.sos.request.GetObservationRequest;
-import org.n52.sos.request.InsertObservationRequest;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.decode.exception.DecodingException;
@@ -282,12 +280,11 @@ public class ObservationsDecoder extends ResourceDecoder {
                 request.setNamespaces(parseNamespaces(value));
                 parameterMapValid = true;
             } else {
-                throw new InvalidParameterValueException(parameter, value);
+                throw new DecodingException(parameter, "The value '%s' of the parameter '%s' is invalid", value);
             }
         }
         if (!parameterMapValid) {
-            throw new InvalidParameterValueException().withMessage(bindingConstants
-                    .getErrorMessageBadGetRequestNoValidKvpParameter());
+            throw new DecodingException(bindingConstants.getErrorMessageBadGetRequestNoValidKvpParameter());
         }
         return request;
     }
@@ -323,8 +320,9 @@ public class ObservationsDecoder extends ResourceDecoder {
             OmObservation sosObservation = (OmObservation) decodedObject;
             return sosObservation;
         } else {
-            throw new InvalidObservationTypeException(decodedObject != null ? decodedObject.getClass().getName()
-                                                      : "null");
+            throw new DecodingException(Sos2Constants.InsertObservationParams.observationType,
+                    "The value '%s' of the parameter '%s' is invalid",
+                    decodedObject != null ? decodedObject.getClass().getName(): "null");
         }
     }
 

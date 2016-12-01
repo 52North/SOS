@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 
-import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.janmayen.Producer;
 import org.n52.janmayen.http.MediaType;
@@ -48,6 +47,7 @@ import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 /**
  * @param <T>
@@ -97,8 +97,6 @@ public abstract class AbstractXmlEncoder<T, S>
     }
 
     public <T> Encoder<XmlObject, T> getEncoder(String namespace, Class<? super T> o) throws EncodingException {
-
-        getEncoderKey(namespace, o);
         EncoderKey key = getEncoderKey(namespace, o);
         Encoder<XmlObject, T> encoder = getEncoder(key);
         if (encoder == null) {

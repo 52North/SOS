@@ -58,8 +58,8 @@ import org.n52.sos.encode.streaming.StreamingDataEncoder;
 import org.n52.sos.encode.streaming.aqd.v1.AqdGetObservationResponseXmlStreamWriter;
 import org.n52.sos.inspire.aqd.EReportingHeader;
 import org.n52.sos.ogc.om.StreamingValue;
-import org.n52.shetland.ogc.sos.AbstractStreaming;
-import org.n52.shetland.ogc.sos.response.GetObservationResponse;
+import org.n52.sos.response.AbstractStreaming;
+import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.Referenceable;
 
 public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse>

@@ -37,16 +37,15 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.AbstractPhenomenon;
@@ -63,6 +62,11 @@ import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sensorML.SensorML;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.SosProcedureDescription;
+import org.n52.shetland.ogc.sos.request.InsertResultRequest;
+import org.n52.shetland.ogc.sos.response.InsertResultResponse;
 import org.n52.shetland.ogc.swe.SweAbstractDataComponent;
 import org.n52.shetland.ogc.swe.SweDataArray;
 import org.n52.shetland.ogc.swe.SweDataRecord;
@@ -88,11 +92,13 @@ import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.entities.Unit;
 import org.n52.sos.ds.hibernate.util.ResultHandlingHelper;
 import org.n52.sos.ds.hibernate.util.observation.HibernateObservationUtilities;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.request.InsertResultRequest;
-import org.n52.sos.response.InsertResultResponse;
+import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.decode.Decoder;
+import org.n52.svalbard.decode.DecoderKey;
+import org.n52.svalbard.decode.DecoderRepository;
+import org.n52.svalbard.decode.NoDecoderForKeyException;
+import org.n52.svalbard.decode.XmlNamespaceDecoderKey;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
@@ -111,8 +117,19 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
     private HibernateSessionHolder sessionHolder;
     private FeatureQueryHandler featureQueryHandler;
 
+    private DecoderRepository decoderRepository;
+
     public InsertResultDAO() {
         super(SosConstants.SOS);
+    }
+
+    @Inject
+    public void setDecoderRepository(DecoderRepository decoderRepository) {
+        this.decoderRepository = decoderRepository;
+    }
+
+    protected DecoderRepository getDecoderRepository() {
+        return decoderRepository;
     }
 
     @Inject
@@ -201,17 +218,15 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
      * @throws OwsExceptionReport
      *             If an error occurs during the processing
      */
-    private OmObservation getSingleObservationFromResultValues(final String version,
-            final ResultTemplate resultTemplate, final String resultValues, final Session session)
-            throws OwsExceptionReport {
+    private OmObservation getSingleObservationFromResultValues(String version,
+            ResultTemplate resultTemplate, String resultValues, Session session) throws OwsExceptionReport {
         try {
-            final SosResultEncoding resultEncoding = new SosResultEncoding(resultTemplate.getResultEncoding());
-            final SosResultStructure resultStructure = new SosResultStructure(resultTemplate.getResultStructure());
-            final String[] blockValues = getBlockValues(resultValues, resultEncoding.getEncoding());
-            final OmObservation singleObservation =
-                    getObservation(resultTemplate, blockValues, resultStructure.getResultStructure(),
-                                                            resultEncoding.getEncoding(), session);
-            final AbstractFeature feature = getSosAbstractFeature(resultTemplate.getFeatureOfInterest(), version, session);
+            SweAbstractEncoding encoding = decode(resultTemplate.getResultEncoding());
+            SweAbstractDataComponent structure = decode(resultTemplate.getResultStructure());
+
+            String[] blockValues = getBlockValues(resultValues, encoding);
+            OmObservation singleObservation = getObservation(resultTemplate, blockValues, structure, encoding, session);
+            AbstractFeature feature = getSosAbstractFeature(resultTemplate.getFeatureOfInterest(), version, session);
             singleObservation.getObservationConstellation().setFeatureOfInterest(feature);
             return singleObservation;
         } catch (DecodingException ex) {
@@ -262,6 +277,29 @@ public class InsertResultDAO extends AbstractInsertResultHandler {
                             "The resultValues format does not comply to the resultStructure of the resultTemplate!");
         }
     }
+
+
+    protected <T> T decode(String xml) throws DecodingException {
+        try {
+            return decode(XmlObject.Factory.parse(xml));
+        } catch (XmlException ex) {
+            throw new DecodingException(ex);
+        }
+    }
+
+    protected <T> T decode(XmlObject xbObject) throws DecodingException {
+        final DecoderKey key = getDecoderKey(xbObject);
+        final Decoder<T, XmlObject> decoder = getDecoderRepository().getDecoder(key);
+        if (decoder == null) {
+            throw new NoDecoderForKeyException(key);
+        }
+        return decoder.decode(xbObject);
+    }
+
+    protected DecoderKey getDecoderKey(XmlObject doc) {
+        return new XmlNamespaceDecoderKey(XmlHelper.getNamespace(doc), doc.getClass());
+    }
+
 
     /**
      * Get internal ObservationConstellation from result template

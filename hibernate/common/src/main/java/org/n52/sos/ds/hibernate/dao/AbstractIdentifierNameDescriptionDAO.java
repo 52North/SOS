@@ -42,8 +42,8 @@ import org.n52.shetland.ogc.gml.AbstractGML;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
-import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.ds.hibernate.entities.Codespace;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.IdentifierNameDescriptionEntity;
@@ -106,7 +106,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
     }
 
     public void getAndAddIdentifierNameDescription(AbstractGML abstractFeature,
-                                                   IdentifierNameDescriptionEntity entity) throws CodedException {
+                                                   IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
         abstractFeature.setIdentifier(getIdentifier(entity));
         abstractFeature.addName(getName(entity));
         abstractFeature.setDescription(getDescription(entity));
@@ -120,7 +120,7 @@ public class AbstractIdentifierNameDescriptionDAO extends TimeCreator {
         return identifier;
     }
 
-    public CodeType getName(IdentifierNameDescriptionEntity entity) throws CodedException {
+    public CodeType getName(IdentifierNameDescriptionEntity entity) throws OwsExceptionReport {
         if (entity.isSetName()) {
             CodeType name = new CodeType(entity.getName());
             if (entity.isSetCodespaceName()) {

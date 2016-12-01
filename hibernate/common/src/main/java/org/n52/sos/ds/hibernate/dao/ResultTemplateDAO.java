@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.apache.xmlbeans.XmlObject;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Session;
@@ -39,13 +42,16 @@ import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.decode.exception.DecodingException;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.iceland.coding.encode.XmlEncoderKey;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosResultEncoding;
+import org.n52.shetland.ogc.sos.SosResultStructure;
+import org.n52.shetland.ogc.sos.request.InsertResultTemplateRequest;
+import org.n52.shetland.ogc.swe.SweConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.hibernate.entities.FeatureOfInterest;
 import org.n52.sos.ds.hibernate.entities.ObservableProperty;
@@ -53,9 +59,12 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Offering;
 import org.n52.sos.ds.hibernate.entities.ResultTemplate;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.ogc.sos.SosResultEncoding;
-import org.n52.sos.ogc.sos.SosResultStructure;
-import org.n52.sos.request.InsertResultTemplateRequest;
+import org.n52.sos.util.XmlOptionsHelper;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.EncoderRepository;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.NoEncoderForKeyException;
 
 import com.google.common.collect.Lists;
 
@@ -68,6 +77,18 @@ import com.google.common.collect.Lists;
 public class ResultTemplateDAO {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResultTemplateDAO.class);
+    private EncoderRepository encoderRepository;
+    private XmlOptionsHelper xmlOptionsHelper;
+
+    @Inject
+    public void setEncoderRepository(EncoderRepository encoderRepository) {
+        this.encoderRepository = encoderRepository;
+    }
+
+    @Inject
+    public void setXmlOptionsHelper(XmlOptionsHelper xmlOptionsHelper) {
+        this.xmlOptionsHelper = xmlOptionsHelper;
+    }
 
     /**
      * Get result template object for result template identifier
@@ -252,10 +273,12 @@ public class ResultTemplateDAO {
                 }
 
             }
-        } catch (EncodingException | DecodingException ex) {
+        } catch (EncodingException ex) {
             throw new NoApplicableCodeException().causedBy(ex);
         }
     }
+
+
 
 
     /**
@@ -273,16 +296,44 @@ public class ResultTemplateDAO {
      */
     private void createAndSaveResultTemplate(final InsertResultTemplateRequest request,
             final ObservationConstellation observationConstellation, final FeatureOfInterest featureOfInterest,
-            final Session session) throws EncodingException, DecodingException {
+            final Session session) throws EncodingException {
         final ResultTemplate resultTemplate = new ResultTemplate();
-        resultTemplate.setIdentifier(request.getIdentifier());
+        resultTemplate.setIdentifier(request.getIdentifier().getValue());
         resultTemplate.setProcedure(observationConstellation.getProcedure());
         resultTemplate.setObservableProperty(observationConstellation.getObservableProperty());
         resultTemplate.setOffering(observationConstellation.getOffering());
         resultTemplate.setFeatureOfInterest(featureOfInterest);
-        resultTemplate.setResultStructure(request.getResultStructure().getXml());
-        resultTemplate.setResultEncoding(request.getResultEncoding().getXml());
+
+        if (request.getResultEncoding().isEncoded()) {
+            resultTemplate.setResultEncoding(request.getResultEncoding().getXml().get());
+        } else {
+            resultTemplate.setResultEncoding(encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultEncoding().get().get()));
+        }
+        if (request.getResultStructure().isEncoded()) {
+            resultTemplate.setResultStructure(request.getResultStructure().getXml().get());
+        } else {
+            resultTemplate.setResultStructure(encodeObjectToXmlText(SweConstants.NS_SWE_20, request.getResultStructure().get().get()));
+        }
+
         session.save(resultTemplate);
         session.flush();
     }
+
+    public String encodeObjectToXmlText(String namespace, Object object) throws EncodingException {
+        return encodeObjectToXml(namespace, object).xmlText(this.xmlOptionsHelper.getXmlOptions());
+    }
+
+    private XmlObject encodeObjectToXml(String namespace, Object object) throws EncodingException {
+        return getEncoder(namespace, object).encode(object);
+    }
+
+    private <T> Encoder<XmlObject, T> getEncoder(String namespace, T o) throws EncodingException {
+        EncoderKey key = new XmlEncoderKey(namespace, o.getClass());
+        Encoder<XmlObject, T> encoder = encoderRepository.getEncoder(key);
+        if (encoder == null) {
+            throw new NoEncoderForKeyException(key);
+        }
+        return encoder;
+    }
+
 }

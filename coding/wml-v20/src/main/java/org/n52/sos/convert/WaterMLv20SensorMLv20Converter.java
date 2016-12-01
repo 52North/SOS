@@ -37,7 +37,7 @@ import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.sos.ogc.wml.WaterMLConstants;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

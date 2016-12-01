@@ -37,9 +37,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import org.n52.iceland.ds.ConnectionProvider;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.sos.request.DeleteSensorRequest;
+import org.n52.shetland.ogc.sos.response.DeleteSensorResponse;
 import org.n52.sos.ds.AbstractDeleteSensorHandler;
 import org.n52.sos.ds.hibernate.dao.DaoFactory;
 import org.n52.sos.ds.hibernate.dao.ObservationConstellationDAO;
@@ -53,8 +55,6 @@ import org.n52.sos.ds.hibernate.entities.ObservationConstellation;
 import org.n52.sos.ds.hibernate.entities.Procedure;
 import org.n52.sos.ds.hibernate.entities.observation.series.Series;
 import org.n52.sos.ds.hibernate.util.HibernateHelper;
-import org.n52.sos.request.DeleteSensorRequest;
-import org.n52.sos.response.DeleteSensorResponse;
 
 /**
  * Implementation of the abstract class AbstractDeleteSensorHandler

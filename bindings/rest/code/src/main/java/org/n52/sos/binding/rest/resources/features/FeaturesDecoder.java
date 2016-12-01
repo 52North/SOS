@@ -42,12 +42,13 @@ import org.n52.shetland.ogc.filter.SpatialFilter;
 import org.n52.shetland.ogc.ows.exception.InvalidParameterValueException;
 import org.n52.shetland.ogc.ows.exception.NoApplicableCodeException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.request.GetFeatureOfInterestRequest;
 import org.n52.shetland.util.DateTimeException;
 import org.n52.sos.binding.rest.decode.ResourceDecoder;
 import org.n52.sos.binding.rest.requests.BadRequestException;
 import org.n52.sos.binding.rest.requests.RestRequest;
 import org.n52.sos.binding.rest.resources.OptionsRestRequest;
-import org.n52.sos.request.GetFeatureOfInterestRequest;
+import org.n52.svalbard.decode.exception.DecodingException;
 
 /**
  * @author <a href="mailto:e.h.juerrens@52north.org">Eike Hinderk J&uuml;rrens</a>
@@ -207,7 +208,7 @@ public class FeaturesDecoder extends ResourceDecoder {
 
     @Override
     protected RestRequest decodePostRequest(HttpServletRequest httpRequest,
-            String pathPayload) throws OwsExceptionReport
+            String pathPayload) throws OwsExceptionReport, DecodingException
     {
         throw createHttpMethodForThisResourceNotSupportedException(HTTPMethods.POST,
                 bindingConstants.getResourceFeatures());

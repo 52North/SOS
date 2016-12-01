@@ -99,7 +99,6 @@ import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.ogc.swe.simpleType.SweTime;
 import org.n52.shetland.ogc.swe.simpleType.SweTimeRange;
 import org.n52.shetland.w3c.SchemaLocation;
-import org.n52.sos.exception.ows.concrete.XmlDecodingException;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.HelperValues;
@@ -201,8 +200,8 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<XmlObject, Object>
         return XmlHelper.validateDocument(encodedObject, EncodingException::new);
     }
 
-    private XmlObject createAbstractDataComponent(final SweAbstractDataComponent sosSweAbstractDataComponent,
-            final Map<HelperValues, String> additionalValues) throws EncodingException {
+    private XmlObject createAbstractDataComponent(SweAbstractDataComponent sosSweAbstractDataComponent,
+                                                  Map<HelperValues, String> additionalValues) throws EncodingException {
         if (sosSweAbstractDataComponent == null) {
             throw new UnsupportedEncoderInputException(this, sosSweAbstractDataComponent);
         }
@@ -219,8 +218,10 @@ public class SweCommonEncoderv20 extends AbstractXmlEncoder<XmlObject, Object>
             try {
                 return XmlObject.Factory.parse(sosSweAbstractDataComponent.getXml());
             } catch (final XmlException ex) {
-                throw new XmlDecodingException(SweAbstractDataComponent.class.getName(),
-                        sosSweAbstractDataComponent.getXml(), ex);
+                throw new EncodingException(ex, "Error while decoding %s:\n%s", new Object[] {
+                    SweAbstractDataComponent.class.getName(),
+                    sosSweAbstractDataComponent.getXml()
+                });
             }
         } else {
             throw new NotYetSupportedEncodingException(SweAbstractDataComponent.class.getName(), sosSweAbstractDataComponent);

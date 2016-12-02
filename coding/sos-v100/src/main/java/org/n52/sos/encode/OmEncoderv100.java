@@ -84,6 +84,7 @@ import org.n52.shetland.ogc.om.values.CountValue;
 import org.n52.shetland.ogc.om.values.GeometryValue;
 import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TextValue;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.Sos1Constants;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
@@ -289,9 +290,13 @@ public class OmEncoderv100 extends AbstractXmlEncoder<XmlObject, Object> impleme
                         || (!Strings.isNullOrEmpty(resultModel) && observationType.equals(resultModel))) {
                     if (sosObservation.getValue() instanceof StreamingValue) {
                         StreamingValue streamingValue = (StreamingValue) sosObservation.getValue();
-                        while (streamingValue.hasNextValue()) {
-                            xbObservationCollection.addNewMember().set(
-                                    createObservation(streamingValue.nextSingleObservation(), null));
+                        try {
+                            while (streamingValue.hasNextValue()) {
+                                xbObservationCollection.addNewMember().set(
+                                        createObservation(streamingValue.nextSingleObservation(), null));
+                            }
+                        } catch (OwsExceptionReport owse) {
+                            throw new EncodingException(owse);
                         }
                     } else {
                         xbObservationCollection.addNewMember().set(createObservation(sosObservation, null));

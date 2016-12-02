@@ -30,11 +30,11 @@ package org.n52.sos.netcdf.data.dataset;
 
 import java.util.Map;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.values.Value;
 import org.n52.sos.netcdf.data.subsensor.SubSensor;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 
 import ucar.nc2.constants.CF;
 
@@ -52,7 +52,7 @@ public class TimeSeriesSensorDataset extends AbstractSensorDataset implements St
     private final Double alt;
 
     public TimeSeriesSensorDataset( DatasetSensor sensor, Double lng, Double lat, Double alt,
-            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, SosProcedureDescription<?> procedure) {
+            Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>> dataValues, AbstractFeature procedure) {
         super( CF.FeatureType.timeSeries, sensor, dataValues, procedure);
         this.lng = lng;
         this.lat = lat;

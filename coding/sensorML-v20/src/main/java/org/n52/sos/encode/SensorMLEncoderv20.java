@@ -616,7 +616,7 @@ public class SensorMLEncoderv20 extends AbstractSensorMLEncoder {
                     dot.addNewValidTime().addNewTimePeriod().set(xbtime);
                 }
             }
-            
+
             // } else {
             // TODO remove or
             // remove existing validTime element

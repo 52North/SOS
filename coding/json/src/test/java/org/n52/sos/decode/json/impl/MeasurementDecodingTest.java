@@ -204,7 +204,7 @@ public class MeasurementDecodingTest {
         assertThat(observation, is(notNullValue()));
         final OmObservationConstellation oc = observation.getObservationConstellation();
         assertThat(oc, is(notNullValue()));
-        final SosProcedureDescription p = oc.getProcedure();
+        final AbstractFeature p = oc.getProcedure();
         assertThat(p, is(notNullValue()));
         assertThat(p.getIdentifier(), is(equalTo(PROCEDURE)));
     }

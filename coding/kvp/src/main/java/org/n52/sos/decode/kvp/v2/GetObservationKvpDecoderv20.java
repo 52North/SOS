@@ -34,7 +34,6 @@ import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
-import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
 import org.n52.shetland.ogc.ows.extension.Extension;
@@ -121,7 +120,6 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     protected void getRequestParameterDefinitions(Builder<GetObservationRequest> builder) {
         builder.add(SosConstants.GetObservationParams.offering,
                     decodeList(GetObservationRequest::setOfferings));
@@ -140,7 +138,7 @@ public class GetObservationKvpDecoderv20 extends AbstractSosKvpDecoder<GetObserv
         builder.add(SosConstants.GetObservationParams.responseFormat,
                     GetObservationRequest::setResponseFormat);
         builder.add(Sos2Constants.Extensions.MergeObservationsIntoDataArray,
-                    OwsServiceRequest::addSweBooleanExtension);
+                    GetObservationRequest::addSweBooleanExtension);
         builder.add("extension", decodeList(this::parseExtensionParameter));
 
     }

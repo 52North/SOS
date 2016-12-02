@@ -118,17 +118,17 @@ public class Soap11Decoder extends AbstractSoapDecoder {
                 throw new NoApplicableCodeException().causedBy(ex).withMessage("Error while parsing SOAPMessage!");
             }
         } catch (OwsExceptionReport owse) {
-            throw owse;
+            throw new DecodingException(owse);
         }
         return soapRequest;
     }
 
     @Override
-    protected SoapRequest createFault(OwsExceptionReport owse) {
+    protected SoapRequest createFault(DecodingException de) {
         SoapFault fault = new SoapFault();
         fault.setFaultCode(new QName(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, "Client"));
         fault.setLocale(Locale.ENGLISH);
-        fault.setFaultReason(owse.getMessage());
+        fault.setFaultReason(de.getMessage());
         SoapRequest r = new SoapRequest(SOAPConstants.URI_NS_SOAP_1_1_ENVELOPE, SOAPConstants.SOAP_1_1_PROTOCOL);
         r.setSoapFault(fault);
         return r;

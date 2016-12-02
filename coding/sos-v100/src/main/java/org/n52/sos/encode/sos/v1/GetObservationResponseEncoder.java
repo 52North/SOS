@@ -29,7 +29,7 @@
 package org.n52.sos.encode.sos.v1;
 
 import org.apache.xmlbeans.XmlObject;
-
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.svalbard.encode.Encoder;
@@ -52,7 +52,11 @@ public class GetObservationResponseEncoder extends AbstractSosResponseEncoder<Ge
         String responseFormat = response.getResponseFormat();
         Encoder<XmlObject, GetObservationResponse> encoder = getEncoder(responseFormat, response);
         if (response.hasStreamingData()) {
-            response.mergeStreamingData();
+            try {
+                response.mergeStreamingData();
+            } catch (OwsExceptionReport owse) {
+                throw new EncodingException(owse);
+            }
         }
         return encoder.encode(response);
     }

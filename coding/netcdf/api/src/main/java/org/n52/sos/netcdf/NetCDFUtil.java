@@ -103,7 +103,7 @@ public class NetCDFUtil {
         Map<String, Map<Time, Map<OmObservableProperty, Map<SubSensor, Value<?>>>>> obsValuesMap = new HashMap<>();
 
         SetMultimap<String, OmObservableProperty> sensorPhens = HashMultimap.create();
-        Map<String, SosProcedureDescription<?>> sensorProcedure = Maps.newHashMap();
+        Map<String, AbstractFeature> sensorProcedure = Maps.newHashMap();
         // Map<StationAsset,TimePeriod> stationPeriodMap = new
         // HashMap<StationAsset,TimePeriod>();
 

@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.n52.iceland.convert.Converter;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
 import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.values.TextValue;
@@ -50,7 +51,6 @@ import org.n52.shetland.ogc.sensorML.elements.SmlIo;
 import org.n52.shetland.ogc.swe.SweField;
 import org.n52.shetland.ogc.swe.simpleType.SweAbstractSimpleType;
 import org.n52.shetland.ogc.swe.simpleType.SweObservableProperty;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
 
 /**
@@ -62,7 +62,7 @@ import org.n52.sos.ogc.wml.ObservationProcess;
  *
  */
 public abstract class AbstractWaterMLv20SensorMLConverter
-        implements Converter<SosProcedureDescription, SosProcedureDescription> {
+        implements Converter<AbstractFeature, AbstractFeature> {
 
     protected AbstractProcess convertObservationProcessToAbstractProcess(ObservationProcess observationProcess, AbstractProcess abstractProcess) {
         abstractProcess.addIdentifier(createUniqueIDIdentifier(observationProcess.getIdentifier()));

@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.n52.iceland.binding.BindingConstants;
 import org.n52.iceland.binding.BindingRepository;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
@@ -69,6 +71,7 @@ import org.n52.shetland.ogc.swe.SweSimpleDataRecord;
 import org.n52.shetland.ogc.swe.simpleType.SweText;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.ds.AbstractDescribeSensorHandler;
+import org.n52.sos.request.ProcedureRequestSettingProvider;
 import org.n52.shetland.ogc.sos.request.DescribeSensorRequest;
 import org.n52.shetland.ogc.sos.response.DescribeSensorResponse;
 import org.n52.sos.util.SosHelper;
@@ -165,6 +168,12 @@ public class SosDescribeSensorOperatorV20 extends
     }
 
     private class PostProcessor {
+        private ProcedureRequestSettingProvider procedureRequestSettingProvider;
+
+        @Inject
+        public void setProcedureRequestSettingProvider(ProcedureRequestSettingProvider procedureRequestSettingProvider) {
+            this.procedureRequestSettingProvider = procedureRequestSettingProvider;
+        }
 
         public DescribeSensorResponse process(DescribeSensorResponse response) {
             if (response.isSetProcedureDescriptions()) {
@@ -254,10 +263,10 @@ public class SosDescribeSensorOperatorV20 extends
                 mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_OFFERINGS,
                         SensorMLConstants.OFFERING_FIELD_DEFINITION, null, offeringsSet);
             }
-            if (procedureDescription.isSetParentProcedures()) {
+            if (procedureDescription.isSetParentProcedure()) {
                 final Map<String, String> valueNamePairs =
                         createValueNamePairs(SensorMLConstants.PARENT_PROCEDURE_FIELD_NAME,
-                                procedureDescription.getParentProcedures());
+                                Sets.newHashSet(procedureDescription.getParentProcedure().getTitleOrFromHref()));
                 mergeCapabilities(abstractProcess, SensorMLConstants.ELEMENT_NAME_PARENT_PROCEDURES,
                         SensorMLConstants.PARENT_PROCEDURE_FIELD_DEFINITION, valueNamePairs);
             }
@@ -404,7 +413,7 @@ public class SosDescribeSensorOperatorV20 extends
             return offeringSet;
         }
 
-        private Map<String, String> createValueNamePairs(final String fieldName, final Set<String> values) {
+        private Map<String, String> createValueNamePairs(final String fieldName, final Collection<String> values) {
             final Map<String, String> valueNamePairs = Maps.newHashMapWithExpectedSize(values.size());
             if (values.size() == 1) {
                 valueNamePairs.put(values.iterator().next(), fieldName);
@@ -488,22 +497,22 @@ public class SosDescribeSensorOperatorV20 extends
         /**
          * Create SOS component list from child SOS procedure descriptions
          *
-         * @param childProcedures
+         * @param set
          *            Chile procedure descriptions
          * @return SOS component list
          * @throws EncodingException
          *             If an error occurs
          */
-        private List<SmlComponent> createComponentsForChildProcedures(final Set<SosProcedureDescription> childProcedures) {
+        private List<SmlComponent> createComponentsForChildProcedures(final Set<AbstractSensorML> set) {
             final List<SmlComponent> smlComponents = Lists.newLinkedList();
             int childCount = 0;
-            for (final SosProcedureDescription<?> childProcedure : childProcedures) {
+            for (final AbstractSensorML childProcedure : set) {
                 childCount++;
                 final SmlComponent component = new SmlComponent("component" + childCount);
                 component.setTitle(childProcedure.getIdentifier());
 
-                if (ProcedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor() && childProcedure.getProcedureDescription() instanceof AbstractSensorML) {
-                    component.setProcess((AbstractSensorML) childProcedure.getProcedureDescription());
+                if (procedureRequestSettingProvider.getInstance().isEncodeFullChildrenInDescribeSensor()) {
+                    component.setProcess(childProcedure);
                 } else {
                     if (BindingRepository.getInstance().isBindingSupported(BindingConstants.KVP_BINDING_ENDPOINT)) {
                         try {
@@ -511,7 +520,7 @@ public class SosDescribeSensorOperatorV20 extends
                                             .contains(Sos2Constants.SERVICEVERSION) ? Sos2Constants.SERVICEVERSION
                                             : Sos1Constants.SERVICEVERSION;
                             String serviceURL = ServiceConfiguration.getInstance().getServiceURL();
-                            String pdf = childProcedure.getDescriptionFormat();
+                            String pdf = childProcedure.getDefaultElementEncoding();
                             component.setHref(SosHelper.getDescribeSensorUrl(version, serviceURL, childProcedure.getIdentifier(),
                                     BindingConstants.KVP_BINDING_ENDPOINT, pdf).toString());
                         } catch (MalformedURLException uee) {

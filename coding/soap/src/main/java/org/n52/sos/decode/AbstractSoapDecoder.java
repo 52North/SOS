@@ -52,7 +52,6 @@ import org.n52.iceland.w3c.soap.SoapHeader;
 import org.n52.iceland.w3c.soap.SoapRequest;
 import org.n52.iceland.w3c.wsa.WsaActionHeader;
 import org.n52.iceland.w3c.wsa.WsaConstants;
-import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.sos.util.W3cHelper;
 import org.n52.svalbard.decode.Decoder;
@@ -85,14 +84,14 @@ public abstract class AbstractSoapDecoder extends AbstractXmlDecoder<XmlObject, 
     public SoapRequest decode(XmlObject xmlObject) throws DecodingException {
         try {
             return createEnvelope(xmlObject);
-        } catch (DecodingException owse) {
-            return createFault(owse);
+        } catch (DecodingException de) {
+            return createFault(de);
         }
     }
 
     protected abstract SoapRequest createEnvelope(XmlObject xml) throws DecodingException;
 
-    protected abstract SoapRequest createFault(OwsExceptionReport xml);
+    protected abstract SoapRequest createFault(DecodingException xml);
 
     /**
      * Parses the SOAPBody content to a text representation

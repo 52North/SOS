@@ -80,6 +80,7 @@ import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.decode.exception.DecodingException;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
@@ -343,8 +344,12 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      */
     protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure, EncodingContext additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
-        if (procedure.isSetSensorDescriptionXmlString()) {
-            encodedObject = XmlObject.Factory.parse(procedure.getSensorDescriptionXmlString());
+        if (procedure.isSetXml()) {
+            try {
+                encodedObject = XmlHelper.parseXmlString(procedure.getXml());
+            } catch (DecodingException de) {
+                throw new EncodingException(de);
+            }
             checkAndAddIdentifier(procedure, ((ObservationProcessDocument) encodedObject).getObservationProcess());
         } else {
             encodedObject = ObservationProcessDocument.Factory.newInstance();

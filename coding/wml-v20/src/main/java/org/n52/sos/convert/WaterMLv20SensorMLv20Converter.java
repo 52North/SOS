@@ -34,8 +34,8 @@ import java.util.Set;
 import org.n52.iceland.convert.ConverterException;
 import org.n52.iceland.convert.ConverterKey;
 import org.n52.shetland.util.CollectionHelper;
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.ReferenceType;
-import org.n52.shetland.ogc.sos.SosProcedureDescription;
 import org.n52.sos.ogc.wml.ObservationProcess;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
 
@@ -43,6 +43,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.n52.shetland.ogc.sensorML.AbstractProcess;
+import org.n52.shetland.ogc.sensorML.AbstractSensorML;
+import org.n52.shetland.ogc.sensorML.SensorML;
 import org.n52.shetland.ogc.sensorML.SensorML20Constants;
 import org.n52.shetland.ogc.sensorML.v20.AbstractPhysicalProcess;
 import org.n52.shetland.ogc.sensorML.v20.AbstractProcessV20;
@@ -72,12 +74,14 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
     }
 
     @Override
-    public SosProcedureDescription convert(final SosProcedureDescription objectToConvert) throws ConverterException {
-        if (objectToConvert.getDescriptionFormat().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)) {
-            return convertWML2ObservationProcessToSensorML20(objectToConvert);
-        } else if (objectToConvert.getDescriptionFormat().equals(SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL)
-                || objectToConvert.getDescriptionFormat().equals(SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE)) {
-            return convertSensorML20ToWML2ObservationProcess(objectToConvert);
+    public AbstractFeature convert(final AbstractFeature objectToConvert) throws ConverterException {
+        if (objectToConvert.getDefaultElementEncoding().equals(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING)
+                && objectToConvert instanceof ObservationProcess) {
+            return convertWML2ObservationProcessToSensorML20((ObservationProcess)objectToConvert);
+        } else if ((objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_OUTPUT_FORMAT_URL)
+                || objectToConvert.getDefaultElementEncoding().equals(SensorML20Constants.SENSORML_OUTPUT_FORMAT_MIME_TYPE))
+                && objectToConvert instanceof AbstractSensorML) {
+            return convertSensorML20ToWML2ObservationProcess((AbstractSensorML)objectToConvert);
         }
         return null;
     }
@@ -87,7 +91,7 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
         return Collections.unmodifiableSet(CONVERTER_KEYS);
     }
 
-    private SosProcedureDescription convertSensorML20ToWML2ObservationProcess(final SosProcedureDescription objectToConvert) {
+    private ObservationProcess convertSensorML20ToWML2ObservationProcess(AbstractSensorML objectToConvert) {
         final ObservationProcess observationProcess = new ObservationProcess();
         if (objectToConvert instanceof AbstractProcessV20) {
             convertSensorMLToObservationProcess(observationProcess, (AbstractProcessV20)objectToConvert);
@@ -100,11 +104,10 @@ public class WaterMLv20SensorMLv20Converter extends AbstractWaterMLv20SensorMLCo
             observationProcess.setProcessType(new ReferenceType(WaterMLConstants.PROCESS_TYPE_UNKNOWN));
         }
         observationProcess.setIdentifier(objectToConvert.getIdentifierCodeWithAuthority());
-        observationProcess.setDescriptionFormat(WaterMLConstants.NS_WML_20_PROCEDURE_ENCODING);
         return observationProcess;
     }
 
-    private SosProcedureDescription convertWML2ObservationProcessToSensorML20(final SosProcedureDescription objectToConvert) {
+    private AbstractSensorML convertWML2ObservationProcessToSensorML20(ObservationProcess objectToConvert) {
         final SensorML sensorML = new SensorML();
         if (objectToConvert instanceof ObservationProcess) {
             final ObservationProcess observationProcess = new ObservationProcess();

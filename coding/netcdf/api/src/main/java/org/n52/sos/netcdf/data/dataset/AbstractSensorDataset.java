@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.om.OmObservableProperty;
 import org.n52.shetland.ogc.om.values.Value;
@@ -60,7 +61,7 @@ import ucar.nc2.constants.CF;
 public abstract class AbstractSensorDataset implements Comparable<AbstractSensorDataset>{
     private CF.FeatureType featureType;
     private DatasetSensor sensor;
-    private SosProcedureDescription<?> procedure;
+    private AbstractFeature procedure;
 
     private List<OmObservableProperty> obsProps;
     private List<Time> times;
@@ -69,7 +70,7 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
     private Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues;
 
     public AbstractSensorDataset( CF.FeatureType featureType, DatasetSensor sensor,
-            Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues, SosProcedureDescription<?> procedure){
+            Map<Time,Map<OmObservableProperty,Map<SubSensor,Value<?>>>> dataValues, AbstractFeature procedure){
         this.featureType = featureType;
         this.sensor = sensor;
         this.procedure = procedure;
@@ -129,7 +130,7 @@ public abstract class AbstractSensorDataset implements Comparable<AbstractSensor
         return subSensors;
     }
 
-    public SosProcedureDescription<?> getProcedureDescription() {
+    public AbstractFeature getProcedureDescription() {
         return procedure;
     }
 

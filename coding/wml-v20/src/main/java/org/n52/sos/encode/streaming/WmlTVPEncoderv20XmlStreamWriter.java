@@ -46,10 +46,12 @@ import org.n52.shetland.ogc.om.values.QuantityValue;
 import org.n52.shetland.ogc.om.values.TVPValue;
 import org.n52.shetland.ogc.om.values.TextValue;
 import org.n52.shetland.ogc.om.values.Value;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.shetland.ogc.wml.WaterMLConstants;
+import org.n52.shetland.util.DateTimeFormatException;
 
 import com.google.common.base.Strings;
 
@@ -114,10 +116,14 @@ public class WmlTVPEncoderv20XmlStreamWriter extends AbstractOmV20XmlStreamWrite
             StreamingValue<?> observationValue = (StreamingValue) observation.getValue();
             writeDefaultPointMetadata(observationValue.getUnit());
             writeNewLine();
-            while (observationValue.hasNextValue()) {
-                TimeValuePair timeValuePair = observationValue.nextValue();
-                writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
-                writeNewLine();
+            try {
+                while (observationValue.hasNextValue()) {
+                    TimeValuePair timeValuePair = observationValue.nextValue();
+                    writePoint(getTimeString(timeValuePair.getTime()), getValue(timeValuePair.getValue()));
+                    writeNewLine();
+                }
+            } catch (DateTimeFormatException | OwsExceptionReport e) {
+                throw new EncodingException(e);
             }
             close();
         } else {

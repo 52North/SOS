@@ -42,6 +42,7 @@ import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.ogc.sos.Sos2Constants;
 import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.om.OmObservation;
+import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.coding.encode.ObservationEncoder;
@@ -103,10 +104,7 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
 
     private void processAbstractStreaming(GetObservationResponseType xbResponse, AbstractStreaming value,
             ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge) throws EncodingException {
-        if (value instanceof StreamingObservation) {
-            processStreamingObservation(xbResponse, (StreamingObservation) value, encoder,
-                    merge);
-        } else if (value instanceof StreamingValue) {
+        if (value instanceof StreamingValue) {
             processStreamingValue(xbResponse, (StreamingValue<?>) value, encoder,
                     merge);
         } else {
@@ -117,40 +115,24 @@ public class GetObservationResponseEncoder extends AbstractObservationResponseEn
     private void processStreamingValue(GetObservationResponseType xbResponse, StreamingValue<?> streamingValue,
             ObservationEncoder<XmlObject, OmObservation> encoder, boolean merge)
             throws EncodingException {
-        if (streamingValue.hasNextValue()) {
-            if (merge) {
-                for (OmObservation obs : streamingValue.mergeObservation()) {
-                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+        try {
+            if (streamingValue.hasNextValue()) {
+                if (merge) {
+                    for (OmObservation obs : streamingValue.mergeObservation()) {
+                        xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
+                    }
+                } else {
+                    do {
+                        xbResponse.addNewObservationData().addNewOMObservation()
+                                .set(encoder.encode(streamingValue.nextSingleObservation()));
+                    } while (streamingValue.hasNextValue());
                 }
-            } else {
-                do {
-                    xbResponse.addNewObservationData().addNewOMObservation()
-                            .set(encoder.encode(streamingValue.nextSingleObservation()));
-                } while (streamingValue.hasNextValue());
+            } else if (streamingValue.getValue() != null) {
+                xbResponse.addNewObservationData().addNewOMObservation()
+                        .set(encoder.encode(streamingValue.getValue().getValue()));
             }
-        } else if (streamingValue.getValue() != null) {
-            xbResponse.addNewObservationData().addNewOMObservation()
-                    .set(encoder.encode(streamingValue.getValue().getValue()));
-        }
-    }
-
-    private void processStreamingObservation(GetObservationResponseType xbResponse,
-            StreamingObservation streamingObservation, ObservationEncoder<XmlObject, OmObservation> encoder,
-            boolean merge) throws EncodingException {
-        if (streamingObservation.hasNextValue()) {
-            if (merge) {
-                for (OmObservation obs : streamingObservation.mergeObservation()) {
-                    xbResponse.addNewObservationData().addNewOMObservation().set(encoder.encode(obs));
-                }
-            } else {
-                do {
-                    xbResponse.addNewObservationData().addNewOMObservation()
-                            .set(encoder.encode(streamingObservation.nextSingleObservation()));
-                } while (streamingObservation.hasNextValue());
-            }
-        } else if (streamingObservation.getValue() != null) {
-            xbResponse.addNewObservationData().addNewOMObservation()
-                    .set(encoder.encode(streamingObservation.getValue().getValue()));
+        } catch (OwsExceptionReport owse) {
+           throw new EncodingException(owse);
         }
     }
 

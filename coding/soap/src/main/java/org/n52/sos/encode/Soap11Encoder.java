@@ -40,10 +40,6 @@ import javax.xml.soap.SOAPMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.w3c.soap.SoapHeader;
 import org.n52.iceland.w3c.soap.SoapHelper;
 import org.n52.iceland.w3c.soap.SoapResponse;
@@ -53,6 +49,10 @@ import org.n52.iceland.w3c.wsa.WsaHeader;
 import org.n52.shetland.w3c.W3CConstants;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Joiner;
 
@@ -71,7 +71,7 @@ public class Soap11Encoder extends AbstractSoapEncoder<SOAPMessage, SoapResponse
     }
 
     @Override
-    public SOAPMessage encode(SoapResponse soapResponse, Map<HelperValues, String> additionalValues)
+    public SOAPMessage encode(SoapResponse soapResponse, EncodingContext additionalValues)
             throws EncodingException {
         if (soapResponse == null) {
             throw new UnsupportedEncoderInputException(this, soapResponse);

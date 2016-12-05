@@ -80,7 +80,8 @@ import org.n52.sos.coding.encode.EncodingValues;
 import org.n52.sos.encode.streaming.WmlTDREncoderv20XmlStreamWriter;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
@@ -89,7 +90,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -171,7 +171,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException {
         if (element instanceof ObservationValue) {
             return encodeResult((ObservationValue<?>) element);
         } else {
@@ -300,9 +300,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         }
         SweField field = new SweField("observed_value", quantity);
         dataRecord.addField(field);
-        Map<HelperValues, String> additionalValues = Maps.newEnumMap(HelperValues.class);
-        additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        return encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
+        return encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, EncodingContext.of(SosHelperValues.FOR_OBSERVATION));
     }
 
     /**
@@ -429,9 +427,7 @@ public class WmlTDREncoderv20 extends AbstractWmlEncoderv20 {
         quantity.setUom(unit);
         SweField field = new SweField("observed_value", quantity);
         dataRecord.addField(field);
-        Map<HelperValues, String> additionalValues = Maps.newEnumMap(HelperValues.class);
-        additionalValues.put(HelperValues.FOR_OBSERVATION, null);
-        return encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, additionalValues);
+        return encodeObjectToXml(SweConstants.NS_SWE_20, dataRecord, EncodingContext.of(SosHelperValues.FOR_OBSERVATION));
     }
 
     private TimePositionListDocument getTimePositionList(AbstractObservationValue<?> observationValue)

@@ -30,7 +30,7 @@ package org.n52.sos.encode;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,14 +52,8 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.coding.encode.ProcedureEncoder;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.janmayen.http.MediaType;
 import org.n52.shetland.ogc.gml.AbstractFeature;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
@@ -72,22 +66,28 @@ import org.n52.shetland.ogc.om.NamedValue;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
+import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.util.DateTimeFormatException;
 import org.n52.shetland.util.DateTimeHelper;
 import org.n52.shetland.util.JavaHelper;
-import org.n52.janmayen.http.MediaType;
 import org.n52.sos.ogc.wml.ObservationProcess;
-import org.n52.shetland.ogc.wml.WaterMLConstants;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -140,7 +140,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException {
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException {
         if (element instanceof ObservationProcess) {
             return createObservationProcess((ObservationProcess) element, additionalValues);
         } else if (element instanceof AbstractFeature) {
@@ -150,7 +150,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
         }
     }
 
-    private XmlObject encodeAbstractFeature(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues) throws EncodingException {
+    private XmlObject encodeAbstractFeature(AbstractFeature abstractFeature, EncodingContext additionalValues) throws EncodingException {
         if (abstractFeature instanceof OmObservation) {
             return super.encode(abstractFeature, additionalValues);
         } else {
@@ -186,7 +186,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      */
     protected XmlObject createWmlGetObservationResponse(GetObservationResponse getObservationResonse) throws EncodingException {
         // TODO: set schemaLocation if final
-        Map<CodeWithAuthority, String> gmlID4sfIdentifier = Maps.newHashMap();
+        Map<CodeWithAuthority, String> gmlID4sfIdentifier = new HashMap<>();
         int sfIdCounter = 1;
         if (getObservationResonse.getObservationCollection() != null
             && !getObservationResonse.getObservationCollection().isEmpty()) {
@@ -195,10 +195,8 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 OMObservationDocument omObservationDoc =
                         OMObservationDocument.Factory.newInstance(getXmlOptions());
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(HelperValues.class);
                     String gmlId = "sf_" + sfIdCounter;
-                    foiHelper.put(HelperValues.GMLID, gmlId);
-                    omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, foiHelper));
+                    omObservationDoc.setOMObservation((OMObservationType) encodeOmObservation(sosObservation, EncodingContext.of(SosHelperValues.GMLID, gmlId)));
                 }
                 return omObservationDoc;
             } else {
@@ -206,23 +204,25 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                         CollectionDocument.Factory.newInstance(getXmlOptions());
                 CollectionType wmlCollection = xmlCollectionDoc.addNewCollection();
                 for (OmObservation sosObservation : sosObservations) {
-                    Map<HelperValues, String> foiHelper = new EnumMap<>(HelperValues.class);
+
                     String gmlId;
+                    boolean exists;
+                    CodeWithAuthority cwa = sosObservation.getObservationConstellation()
+                            .getFeatureOfInterest().getIdentifierCodeWithAuthority();
+
                     // FIXME CodeWithAuthority VS. String keys
-                    if (gmlID4sfIdentifier.containsKey(sosObservation.getObservationConstellation()
-                            .getFeatureOfInterest().getIdentifierCodeWithAuthority())) {
-                        gmlId = gmlID4sfIdentifier.get(sosObservation.getObservationConstellation()
-                                .getFeatureOfInterest().getIdentifierCodeWithAuthority());
-                        foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(true));
+
+                    if (gmlID4sfIdentifier.containsKey(cwa)) {
+                        gmlId = gmlID4sfIdentifier.get(cwa);
+                        exists = true;
                     } else {
                         gmlId = "sf_" + sfIdCounter;
-                        gmlID4sfIdentifier.put(sosObservation.getObservationConstellation().getFeatureOfInterest()
-                                .getIdentifierCodeWithAuthority(), gmlId);
-                        foiHelper.put(HelperValues.EXIST_FOI_IN_DOC, Boolean.toString(false));
+                        gmlID4sfIdentifier.put(cwa, gmlId);
+                        exists = false;
+
                     }
-                    foiHelper.put(HelperValues.GMLID, gmlId);
-                    wmlCollection.addNewObservationMember().setOMObservation(
-                            (OMObservationType) encodeOmObservation(sosObservation, foiHelper));
+                    EncodingContext codingContext = EncodingContext.empty().with(SosHelperValues.GMLID, gmlId).with(SosHelperValues.EXIST_FOI_IN_DOC, exists);
+                    wmlCollection.addNewObservationMember().setOMObservation((OMObservationType) encodeOmObservation(sosObservation, codingContext));
                 }
                 return xmlCollectionDoc;
             }
@@ -302,11 +302,8 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
                 } else {
                     FeatureCollection featureCollection = new FeatureCollection();
                     featureCollection.setGmlId("sampledFeatures_" + absFeature.getGmlId());
-                    for (AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
-                        featureCollection.addMember(sampledFeature);
-                    }
-                    XmlObject encodeObjectToXml =
-                            encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
+                    sampFeat.getSampledFeatures().forEach(featureCollection::addMember);
+                    XmlObject encodeObjectToXml = encodeObjectToXml(GmlConstants.NS_GML_32, featureCollection);
                     monitoringPoint.addNewSampledFeature().set(encodeObjectToXml);
                 }
             } else {
@@ -321,9 +318,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             ShapeType xbShape = monitoringPoint.addNewShape();
             Encoder<XmlObject, Geometry> encoder = getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML_32, sampFeat.getGeometry()));
             if (encoder != null) {
-                Map<HelperValues, String> gmlAdditionalValues = new EnumMap<>(HelperValues.class);
-                gmlAdditionalValues.put(HelperValues.GMLID, absFeature.getGmlId());
-                XmlObject xmlObject = encoder.encode(sampFeat.getGeometry(), gmlAdditionalValues);
+                XmlObject xmlObject = encoder.encode(sampFeat.getGeometry(), EncodingContext.of(SosHelperValues.GMLID, absFeature.getGmlId()));
                 xbShape.addNewAbstractGeometry().set(xmlObject);
                 XmlHelper.substituteElement(xbShape.getAbstractGeometry(), xmlObject);
             } else {
@@ -346,7 +341,7 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
      * @throws EncodingException
      *             If an error occurs
      */
-    protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure, Map<HelperValues, String> additionalValues) throws EncodingException {
+    protected ObservationProcessDocument createObservationProcess(ObservationProcess procedure, EncodingContext additionalValues) throws EncodingException {
         XmlObject encodedObject = null;
         if (procedure.isSetSensorDescriptionXmlString()) {
             encodedObject = XmlObject.Factory.parse(procedure.getSensorDescriptionXmlString());
@@ -355,8 +350,8 @@ public abstract class AbstractWmlEncoderv20 extends AbstractOmEncoderv20
             encodedObject = ObservationProcessDocument.Factory.newInstance();
             ObservationProcessType observationProcess =
                     ((ObservationProcessDocument) encodedObject).addNewObservationProcess();
-            if (additionalValues.containsKey(HelperValues.GMLID)) {
-                observationProcess.setId("process." + additionalValues.get(HelperValues.GMLID));
+            if (additionalValues.has(SosHelperValues.GMLID)) {
+                observationProcess.setId("process." + additionalValues.get(SosHelperValues.GMLID));
             } else {
                 observationProcess.setId("process." + JavaHelper.generateID(procedure.toString()));
             }

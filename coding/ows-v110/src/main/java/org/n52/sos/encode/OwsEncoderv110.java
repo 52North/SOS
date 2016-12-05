@@ -81,14 +81,11 @@ import org.slf4j.LoggerFactory;
 import org.w3.x1999.xlink.ActuateType;
 import org.w3.x1999.xlink.ShowType;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.ExceptionEncoderKey;
 import org.n52.iceland.config.annotation.Configurable;
 import org.n52.iceland.config.annotation.Setting;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.i18n.LocaleHelper;
+import org.n52.janmayen.http.HTTPMethods;
+import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.i18n.LocalizedString;
 import org.n52.shetland.i18n.MultilingualString;
 import org.n52.shetland.ogc.ows.OWSConstants;
@@ -122,13 +119,17 @@ import org.n52.shetland.ogc.ows.exception.CodedException;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionCode;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.shetland.util.CollectionHelper;
-import org.n52.janmayen.http.HTTPMethods;
-import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.shetland.w3c.xlink.Actuate;
 import org.n52.shetland.w3c.xlink.Show;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.N52XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.ExceptionEncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -182,7 +183,7 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<org.n52.svalbard.HelperValues, String> additionalValues)
+    public XmlObject encode(Object element, EncodingContext additionalValues)
             throws EncodingException {
         if (element instanceof OwsServiceIdentification) {
             return encodeServiceIdentification((OwsServiceIdentification) element);
@@ -211,9 +212,8 @@ public class OwsEncoderv110 extends AbstractXmlEncoder<XmlObject, Object> {
         throw new UnsupportedEncoderInputException(this, element);
     }
 
-    protected boolean isEncodeExceptionsOnly(Map<HelperValues, String> additionalValues) {
-        return additionalValues != null && !additionalValues.isEmpty()
-                && additionalValues.containsKey(HelperValues.ENCODE_OWS_EXCEPTION_ONLY);
+    protected boolean isEncodeExceptionsOnly(EncodingContext additionalValues) {
+        return additionalValues != null && additionalValues.has(SosHelperValues.ENCODE_OWS_EXCEPTION_ONLY);
     }
 
     private XmlObject encodeServiceIdentification(OwsServiceIdentification serviceIdentification)

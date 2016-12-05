@@ -30,8 +30,6 @@ package org.n52.sos.encode.aqd.v1;
 
 import java.io.OutputStream;
 import java.util.Collections;
-import java.util.EnumMap;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamException;
@@ -40,9 +38,6 @@ import org.apache.xmlbeans.XmlObject;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.ogc.gml.time.Time;
 import org.n52.shetland.ogc.gml.time.TimeInstant;
 import org.n52.shetland.ogc.gml.time.TimePeriod;
@@ -50,6 +45,7 @@ import org.n52.shetland.ogc.om.OmConstants;
 import org.n52.shetland.ogc.om.OmObservation;
 import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.JavaHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.aqd.ReportObligationType;
@@ -61,6 +57,9 @@ import org.n52.sos.ogc.om.StreamingValue;
 import org.n52.sos.response.AbstractStreaming;
 import org.n52.sos.response.GetObservationResponse;
 import org.n52.sos.util.Referenceable;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder<GetObservationResponse>
         implements StreamingDataEncoder {
@@ -112,10 +111,10 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
             if (!timePeriod.isEmpty()) {
                 eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
             }
-            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-            additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
-            additionalValues.put(HelperValues.DOCUMENT, null);
-            return encodeGml(additionalValues, featureCollection);
+            EncodingContext ctx = EncodingContext.empty()
+                    .with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2)
+                    .with(SosHelperValues.DOCUMENT);
+            return encodeGml(ctx, featureCollection);
         } catch (OwsExceptionReport ex) {
             throw new EncodingException(ex);
         }
@@ -137,9 +136,7 @@ public class AqdGetObservationResponseEncoder extends AbstractAqdResponseEncoder
             eReportingHeader.setReportingPeriod(Referenceable.of((Time) timePeriod));
         }
         encodingValues.setEncodingNamespace(OmConstants.NS_OM_2);
-        Map<HelperValues, String> additionalValues = encodingValues.getAdditionalValues();
-        additionalValues.put(HelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2);
-        additionalValues.put(HelperValues.DOCUMENT, null);
+        encodingValues.setAdditionalValues(encodingValues.getAdditionalValues().with(SosHelperValues.ENCODE_NAMESPACE, OmConstants.NS_OM_2).with(SosHelperValues.DOCUMENT));
         try {
             new AqdGetObservationResponseXmlStreamWriter().write(featureCollection, outputStream, encodingValues);
         } catch (XMLStreamException xmlse) {

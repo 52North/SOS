@@ -28,18 +28,19 @@
  */
 package org.n52.sos.coding.encode;
 
-import java.util.Map;
-
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
 import org.n52.svalbard.encode.Encoder;
-import org.n52.shetland.util.CollectionHelper;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Maps;
 
+/**
+ * @deprecated move everything to {@link CodingContext}.
+ */
+@Deprecated
 public class EncodingValues {
 
-    private Map<HelperValues, String> additionalValues = Maps.newHashMap();
+    private EncodingContext additionalValues = EncodingContext.empty();
 
     private String gmlId;
 
@@ -62,27 +63,27 @@ public class EncodingValues {
 
     }
 
-    public EncodingValues(Map<HelperValues, String> additionalValues) {
+    public EncodingValues(EncodingContext additionalValues) {
         setAdditionalValues(additionalValues);
     }
 
     /**
      * @return the additionalValues
      */
-    public Map<HelperValues, String> getAdditionalValues() {
+    public EncodingContext getAdditionalValues() {
         return additionalValues;
     }
 
     /**
      * @param additionalValues the additionalValues to set
      */
-    public EncodingValues setAdditionalValues(Map<HelperValues, String> additionalValues) {
+    public EncodingValues setAdditionalValues(EncodingContext additionalValues) {
         this.additionalValues = additionalValues;
         return this;
     }
 
     public boolean hasAddtitionalValues() {
-        return CollectionHelper.isEmpty(getAdditionalValues());
+        return this.additionalValues.isEmpty();
     }
 
     /**
@@ -206,8 +207,8 @@ public class EncodingValues {
      * @return the encodingNamespace
      */
     public String getEncodingNamespace() {
-        if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().containsKey(HelperValues.ENCODE_NAMESPACE)) {
-            setEncodingNamespace(getAdditionalValues().get(HelperValues.ENCODE_NAMESPACE));
+        if (encodingNamespace == null && hasAddtitionalValues() && getAdditionalValues().has(SosHelperValues.ENCODE_NAMESPACE)) {
+            setEncodingNamespace(getAdditionalValues().get(SosHelperValues.ENCODE_NAMESPACE));
         }
         return encodingNamespace;
     }

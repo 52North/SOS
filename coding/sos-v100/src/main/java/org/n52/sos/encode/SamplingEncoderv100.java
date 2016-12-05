@@ -29,7 +29,6 @@
 package org.n52.sos.encode;
 
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,15 +49,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.Encoder;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.iceland.ogc.sos.ConformanceClasses;
-import org.n52.shetland.ogc.sos.Sos1Constants;
-import org.n52.shetland.ogc.sos.Sos2Constants;
-import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.iceland.service.ConformanceClass;
 import org.n52.shetland.ogc.OGCConstants;
 import org.n52.shetland.ogc.SupportedType;
@@ -69,11 +60,20 @@ import org.n52.shetland.ogc.om.features.FeatureCollection;
 import org.n52.shetland.ogc.om.features.SfConstants;
 import org.n52.shetland.ogc.om.features.samplingFeatures.SamplingFeature;
 import org.n52.shetland.ogc.sos.FeatureType;
+import org.n52.shetland.ogc.sos.Sos1Constants;
+import org.n52.shetland.ogc.sos.Sos2Constants;
+import org.n52.shetland.ogc.sos.SosConstants;
 import org.n52.shetland.util.CollectionHelper;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.CodingHelper;
 import org.n52.sos.util.SosHelper;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.SosHelperValues;
+import org.n52.svalbard.encode.Encoder;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -144,7 +144,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<XmlObject, AbstractF
     }
 
     @Override
-    public XmlObject encode(AbstractFeature abstractFeature, Map<HelperValues, String> additionalValues)
+    public XmlObject encode(AbstractFeature abstractFeature, EncodingContext additionalValues)
             throws EncodingException {
         return XmlHelper.validateDocument(createFeature(abstractFeature), EncodingException::new);
     }
@@ -193,9 +193,7 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<XmlObject, AbstractF
         Encoder<XmlObject, Geometry> encoder =
                 getEncoderRepository().getEncoder(CodingHelper.getEncoderKey(GmlConstants.NS_GML, geometry));
         if (encoder != null) {
-            Map<HelperValues, String> additionalValues = new EnumMap<>(HelperValues.class);
-            additionalValues.put(HelperValues.GMLID, gmlId);
-            return encoder.encode(geometry, additionalValues);
+            return encoder.encode(geometry, EncodingContext.empty().with(SosHelperValues.GMLID, gmlId));
         } else {
             throw new EncodingException("Error while encoding geometry for feature, needed encoder is missing!");
         }
@@ -219,14 +217,14 @@ public class SamplingEncoderv100 extends AbstractXmlEncoder<XmlObject, AbstractF
         // set sampledFeatures
         // TODO: CHECK
         if (sampFeat.getSampledFeatures() != null && !sampFeat.getSampledFeatures().isEmpty()) {
-            for (AbstractFeature sampledFeature : sampFeat.getSampledFeatures()) {
-                FeaturePropertyType sp = xbSamplingFeature.addNewSampledFeature();
-                sp.setHref(sampledFeature.getIdentifier());
-                if (sampFeat.isSetName() && sampFeat.getFirstName().isSetValue()) {
-                    sp.setTitle(sampFeat.getFirstName().getValue());
-                }
-//                xbSamplingFeature.addNewSampledFeature().set(createFeature(sampledFeature));
-            }
+            sampFeat.getSampledFeatures().stream()
+                    .map(sampledFeature -> {
+                        FeaturePropertyType sp = xbSamplingFeature.addNewSampledFeature();
+                        sp.setHref(sampledFeature.getIdentifier());
+                        return sp;
+                        })
+                    .filter(sp -> sampFeat.isSetName() && sampFeat.getFirstName().isSetValue())
+                    .forEachOrdered(sp -> sp.setTitle(sampFeat.getFirstName().getValue()));
         } else {
             xbSamplingFeature.addNewSampledFeature().setHref(GmlConstants.NIL_UNKNOWN);
         }

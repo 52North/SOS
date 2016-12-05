@@ -29,24 +29,23 @@
 package org.n52.sos.encode.exi.impl;
 
 import java.util.Collections;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
 
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.shetland.ogc.ows.exception.OwsExceptionReport;
 import org.n52.sos.exi.EXIObject;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
 import org.n52.svalbard.encode.ExceptionEncoderKey;
 import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -103,7 +102,7 @@ public class OwsExceptionReportEncoder implements Encoder<EXIObject, OwsExceptio
     }
 
     @Override
-    public EXIObject encode(OwsExceptionReport objectToEncode, Map<HelperValues, String> additionalValues)
+    public EXIObject encode(OwsExceptionReport objectToEncode, EncodingContext additionalValues)
             throws EncodingException {
         return encode(objectToEncode);
     }

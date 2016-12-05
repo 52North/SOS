@@ -37,7 +37,6 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.encode.exception.EncodingException;
 import org.n52.iceland.exception.ows.concrete.NoEncoderForResponseException;
 import org.n52.iceland.response.ServiceResponse;
 import org.n52.janmayen.http.MediaType;
@@ -73,9 +72,10 @@ import org.n52.sos.binding.rest.resources.sensors.SensorsPostResponse;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutEncoder;
 import org.n52.sos.binding.rest.resources.sensors.SensorsPutResponse;
 import org.n52.sos.util.CodingHelper;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
+import org.n52.svalbard.encode.exception.EncodingException;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
@@ -182,7 +182,7 @@ public class RestEncoder implements Constructable, SchemaAwareEncoder<ServiceRes
 
     @Override
     public ServiceResponse encode(final RestResponse objectToEncode,
-                                  final Map<HelperValues, String> iGNOREDadditionalValues) throws EncodingException {
+                                  EncodingContext iGNOREDadditionalValues) throws EncodingException {
         return encode(objectToEncode);
     }
 

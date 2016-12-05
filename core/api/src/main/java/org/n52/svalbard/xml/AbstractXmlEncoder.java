@@ -28,9 +28,6 @@
  */
 package org.n52.svalbard.xml;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.apache.xmlbeans.XmlObject;
@@ -42,7 +39,7 @@ import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
 import org.n52.sos.util.XmlHelper;
 import org.n52.svalbard.AbstractDelegatingEncoder;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.SchemaAwareEncoder;
@@ -73,7 +70,7 @@ public abstract class AbstractXmlEncoder<T, S>
 
     @Override
     public T encode(S element) throws EncodingException {
-        return encode(element, new EnumMap<>(HelperValues.class));
+        return encode(element, EncodingContext.empty());
     }
 
     @Override
@@ -105,18 +102,16 @@ public abstract class AbstractXmlEncoder<T, S>
         return encoder;
     }
 
-    public <T> XmlObject encodeObjectToXml(String namespace, T object, Map<HelperValues, String> helperValues) throws
-            EncodingException {
-        return getEncoder(namespace, object).encode(object, helperValues == null ? new EnumMap<>(HelperValues.class)
-                                                                    : helperValues);
+    public <T> XmlObject encodeObjectToXml(String namespace, T object, EncodingContext helperValues)
+            throws EncodingException {
+        return getEncoder(namespace, object).encode(object, helperValues == null ? EncodingContext.empty() : helperValues);
     }
 
     public XmlObject encodeObjectToXml(String namespace, Object object) throws EncodingException {
         return encodeObjectToXml(namespace, object, null);
     }
 
-    public String encodeObjectToXmlText(String namespace, Object object, Map<HelperValues, String> helperValues) throws
-            EncodingException {
+    public String encodeObjectToXmlText(String namespace, Object object, EncodingContext helperValues) throws EncodingException {
         return encodeObjectToXml(namespace, object, helperValues).xmlText(getXmlOptions());
     }
 

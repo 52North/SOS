@@ -39,14 +39,14 @@ import org.isotc211.x2005.gco.CodeListValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.n52.svalbard.HelperValues;
-import org.n52.svalbard.encode.EncoderKey;
-import org.n52.svalbard.encode.exception.EncodingException;
-import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.shetland.iso.GcoConstants;
 import org.n52.shetland.ogc.sensorML.Role;
 import org.n52.shetland.w3c.SchemaLocation;
 import org.n52.sos.util.XmlHelper;
+import org.n52.svalbard.EncodingContext;
+import org.n52.svalbard.encode.EncoderKey;
+import org.n52.svalbard.encode.exception.EncodingException;
+import org.n52.svalbard.encode.exception.UnsupportedEncoderInputException;
 import org.n52.svalbard.xml.AbstractXmlEncoder;
 
 import com.google.common.base.Joiner;
@@ -86,7 +86,7 @@ public class Iso19139GcoEncoder extends AbstractXmlEncoder<XmlObject, Object> {
     }
 
     @Override
-    public XmlObject encode(Object element, Map<HelperValues, String> additionalValues) throws EncodingException,
+    public XmlObject encode(Object element, EncodingContext additionalValues) throws EncodingException,
             UnsupportedEncoderInputException {
         XmlObject encodedObject = null;
         if (element instanceof Role) {

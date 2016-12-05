@@ -83,20 +83,20 @@ public class ObservationProcess extends AbstractFeature {
      * a list of references to the data sets used (e.g. model input series) or a
      * input array to an algorithm.
      */
-    private final List<ReferenceType> inputs = new ArrayList<ReferenceType>(0);
+    private final List<ReferenceType> inputs = new ArrayList<>(0);
 
     /*
      * Multiplicity: 0..* Comments specific to the process from the operator or
      * system performing the process.
      */
-    private List<String> comments = new ArrayList<String>(0);
+    private List<String> comments = new ArrayList<>(0);
 
     /*
      * Multiplicity: 0..* A defintion of the type of process used in the
      * observation. This may be a Sensor, ManualMethod, Algorithm or Simulation
      * (including models).
      */
-    private final List<NamedValue<?>> parameters = new ArrayList<NamedValue<?>>(0);
+    private final List<NamedValue<?>> parameters = new ArrayList<>(0);
 
 
     public ObservationProcess(String identifier) {

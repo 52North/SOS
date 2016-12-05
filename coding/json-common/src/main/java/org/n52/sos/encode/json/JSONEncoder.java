@@ -47,12 +47,11 @@ import org.n52.janmayen.exception.CompositeException;
 import org.n52.janmayen.function.ThrowingFunction;
 import org.n52.janmayen.http.MediaType;
 import org.n52.janmayen.http.MediaTypes;
-import org.n52.janmayen.stream.MoreCollectors;
 import org.n52.shetland.ogc.gml.CodeType;
 import org.n52.shetland.ogc.gml.CodeWithAuthority;
 import org.n52.shetland.ogc.ows.OwsCode;
 import org.n52.sos.coding.json.JSONConstants;
-import org.n52.svalbard.HelperValues;
+import org.n52.svalbard.EncodingContext;
 import org.n52.svalbard.encode.Encoder;
 import org.n52.svalbard.encode.EncoderKey;
 import org.n52.svalbard.encode.EncoderRepository;
@@ -105,7 +104,7 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     @Override
-    public JsonNode encode(T objectToEncode, Map<HelperValues, String> v) throws EncodingException {
+    public JsonNode encode(T objectToEncode, EncodingContext v) throws EncodingException {
         return encode(objectToEncode);
     }
 
@@ -215,21 +214,17 @@ public abstract class JSONEncoder<T> implements Encoder<JsonNode, T> {
     }
 
     protected Collector<JsonNode, ?, ArrayNode> toJsonArray() {
-        return MoreCollectors.collector(nodeFactory()::arrayNode, ArrayNode::add, (BinaryOperator<ArrayNode>) ArrayNode::addAll);
+        return Collector.of(nodeFactory()::arrayNode, ArrayNode::add, (BinaryOperator<ArrayNode>) ArrayNode::addAll);
     }
 
-    @SuppressWarnings("unchecked")
     protected <T> Collector<T, ?, ObjectNode> toJsonObject(Collector<T, ?, ? extends Map<String, ? extends JsonNode>> mapper) {
-
+        @SuppressWarnings("unchecked")
         Collector<T, Object, Map<String, ? extends JsonNode>> m = (Collector<T, Object, Map<String, ? extends JsonNode>>) mapper;
-
-        Function<Map<String, ? extends JsonNode>, ObjectNode> finisher
-                = map -> {
-                    ObjectNode node = nodeFactory().objectNode();
-                    node.setAll(map);
-                    return node;
-                };
-
-        return MoreCollectors.collector(m.supplier(), m.accumulator(), m.combiner(), m.finisher().andThen(finisher));
+        Function<Map<String, ? extends JsonNode>, ObjectNode> finisher = map -> {
+            ObjectNode node = nodeFactory().objectNode();
+            node.setAll(map);
+            return node;
+        };
+        return Collector.of(m.supplier(), m.accumulator(), m.combiner(), m.finisher().andThen(finisher));
     }
 }
